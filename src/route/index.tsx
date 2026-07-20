@@ -88,6 +88,7 @@ export default function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/notifications" element={<MobileNotifications />} />
       <Route path="/address/create" element={<AddressCreatePage />} />
+      <Route path="*" element={<LandingGate />} />
     </Routes>
   )
 }
