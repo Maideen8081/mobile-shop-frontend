@@ -55,7 +55,6 @@ export default function MobileProductDetail() {
   const [cartError, setCartError] = useState('')
   const [related, setRelated] = useState<any[]>([])
   const [relatedFlash, setRelatedFlash] = useState<Record<number, boolean>>({})
-  const [zoomed, setZoomed] = useState(false)
   const [cartCount, setCartCount] = useState(0)
   const [deliveryPincode, setDeliveryPincode] = useState('600001')
   const [cartTick, setCartTick] = useState(0)
@@ -63,6 +62,8 @@ export default function MobileProductDetail() {
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const [descOpen, setDescOpen] = useState(false)
   const [imgLoaded, setImgLoaded] = useState<Record<number, boolean>>({})
+  const [zoomScale, setZoomScale] = useState(1)
+  const [zoomOrigin, setZoomOrigin] = useState('center center')
   const trackRef = useRef<HTMLDivElement>(null)
   const startX = useRef(0)
   const dragX = useRef(0)
@@ -107,7 +108,8 @@ export default function MobileProductDetail() {
     setSelectedStorageIdx(0)
     setSelectedRamIdx(0)
     setImgLoaded({})
-    setZoomed(false)
+    setZoomScale(1)
+    setZoomOrigin('center center')
     setSpecsOpen(false)
     setReviewsOpen(false)
     setDescOpen(false)
@@ -508,33 +510,70 @@ export default function MobileProductDetail() {
         </div>
       </div>
 
-      {/* Full-width image gallery */}
+      {/* Full-width premium image gallery (full-bleed, Zomato-style) */}
       <div className="px-3 mt-3">
-        <div className={`${card} overflow-hidden p-2`}>
+        <div className={`${card} overflow-hidden p-0`}>
           <div
             ref={trackRef}
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
-            className="relative rounded-2xl overflow-hidden"
-            style={{ background: 'linear-gradient(180deg,#F8F9FF 0%,#F1ECFF 100%)' }}
+            className="relative overflow-hidden"
+            style={{
+              height: 340,
+              borderRadius: 24,
+              background: 'linear-gradient(180deg,#ffffff 0%,#f5f6ff 100%)',
+            }}
           >
-            <div className="flex transition-transform duration-300 ease-out" style={{ transform: `translateX(-${selectedImage * 100}%)` }}>
+            {/* subtle shine animation */}
+            <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
+              <div className="absolute -inset-y-10 -left-1/3 w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shine_3.5s_ease-in-out_infinite]" />
+            </div>
+
+            <div className="flex w-full h-full transition-transform duration-300 ease-out" style={{ transform: `translateX(-${selectedImage * 100}%)` }}>
               {images.map((img, i) => (
-                <div key={i} className="w-full flex-shrink-0 flex items-center justify-center" style={{ height: 'min(52vh, 420px)' }}>
-                  {!imgLoaded[i] && <div className="absolute inset-0 bg-[#F4F4F7] animate-pulse" />}
-                  <motion.img
+                <div key={i} className="w-full h-full flex-shrink-0 relative overflow-hidden">
+                  {!imgLoaded[i] && (
+                    <div className="absolute inset-0 bg-[#F1F2F6] animate-pulse flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full border-4 border-[#E0E0EA] border-t-[#6C3BFF] animate-spin" />
+                    </div>
+                  )}
+                  <img
+                    ref={(el) => {
+                      if (el && el.complete && el.naturalWidth > 0) {
+                        setImgLoaded((p) => (p[i] ? p : { ...p, [i]: true }))
+                      }
+                    }}
                     src={img || FALLBACK_IMG}
                     alt={productName}
                     loading={i === 0 ? 'eager' : 'lazy'}
-                    onClick={() => setZoomed(true)}
+                    draggable={false}
+                    onClick={(e) => {
+                      if (zoomScale > 1) { setZoomScale(1); setZoomOrigin('center center'); return }
+                      const rect = (e.currentTarget as HTMLImageElement).getBoundingClientRect()
+                      const x = ((e.clientX - rect.left) / rect.width) * 100
+                      const y = ((e.clientY - rect.top) / rect.height) * 100
+                      setZoomOrigin(`${x}% ${y}%`)
+                      setZoomScale(zoomScale === 1 ? 2 : zoomScale === 2 ? 3 : 1)
+                    }}
                     onLoad={() => setImgLoaded((p) => ({ ...p, [i]: true }))}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: imgLoaded[i] ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full h-full object-contain p-4"
-                    onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
+                    onError={(e) => {
+                      setImgLoaded((p) => ({ ...p, [i]: true }))
+                      ;(e.target as HTMLImageElement).src = FALLBACK_IMG
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      opacity: imgLoaded[i] ? 1 : 0,
+                      transition: 'opacity .3s ease, transform .25s ease',
+                      transform: `scale(${zoomScale > 1 && i === selectedImage ? zoomScale : 1})`,
+                      transformOrigin: i === selectedImage ? zoomOrigin : 'center center',
+                      touchAction: 'pinch-zoom',
+                      cursor: 'zoom-in',
+                    }}
+                    className="select-none"
                   />
                 </div>
               ))}
@@ -577,8 +616,8 @@ export default function MobileProductDetail() {
         {images.length > 1 && (
           <div className="flex gap-2.5 px-2 py-2 overflow-x-auto scrollbar-hide">
             {images.map((img, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`w-[68px] h-[68px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#6C3BFF] scale-105' : 'border-transparent'}`} style={{ background: 'linear-gradient(180deg,#F8F9FF,#F1ECFF)' }}>
-                <img src={img || FALLBACK_IMG} alt="" className="w-full h-full object-contain p-1" />
+              <button key={i} onClick={() => goTo(i)} className={`w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#6C3BFF] scale-105 shadow-[0_4px_12px_rgba(108,59,255,0.3)]' : 'border-transparent'}`} style={{ background: '#F1F2F6' }}>
+                <img src={img || FALLBACK_IMG} alt="" loading="lazy" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
@@ -1042,15 +1081,13 @@ export default function MobileProductDetail() {
         </div>
       )}
 
-      {/* Zoom overlay */}
-      <AnimatePresence>
-        {zoomed && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setZoomed(false)}
-            className="fixed inset-0 z-[60] bg-black/85 flex items-center justify-center p-6" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
-            <motion.img src={images[selectedImage] || FALLBACK_IMG} alt={productName} initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }} className="w-full max-w-[400px] max-h-[80vh] object-contain" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Zoom helper hint */}
+      {zoomScale > 1 && (
+        <button onClick={() => { setZoomScale(1); setZoomOrigin('center center') }}
+          className="fixed bottom-28 right-4 z-[60] px-3.5 py-2 rounded-full bg-black/75 text-white text-[12px] font-semibold shadow-lg active:scale-90 transition">
+          Reset Zoom
+        </button>
+      )}
       {Toast}
     </div>
   )

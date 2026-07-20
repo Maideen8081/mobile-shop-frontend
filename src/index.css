@@ -470,9 +470,15 @@
 }
 
 @keyframes scan {
-  0% { top: 0%; }
-  100% { top: 100%; }
+   0% { top: 0%; }
+   100% { top: 100%; }
 }
+
+@keyframes shine {
+   0% { transform: translateX(-150%) skewX(12deg); }
+   60%, 100% { transform: translateX(300%) skewX(12deg); }
+}
+
 
 @keyframes fadeInUp {
   to {
