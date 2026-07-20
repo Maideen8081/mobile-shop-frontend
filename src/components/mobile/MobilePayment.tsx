@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
-import { getImageUrl, useIsMobile } from './helpers'
 import { useMobileToast } from './useMobileToast'
 
 const PURPLE = '#6C3BFF'

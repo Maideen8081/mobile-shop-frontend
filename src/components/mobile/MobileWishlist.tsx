@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, Trash2, ShoppingCart, Loader2, Star } from 'lucide-react'
 import { getImageUrl } from './helpers'
+import { productService } from '../../services/productService'
 import MobileTopSection from './MobileTopSection'
 
 const PURPLE = '#6C3BFF'
 const PURPLE_DEEP = '#4B2ECC'
-const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 function resolveImage(raw: string): string {
@@ -40,7 +40,6 @@ export default function MobileWishlist() {
         setLoading(false)
         return
       }
-      const { productService } = await import('../../services/productService')
       const results = await Promise.allSettled(ids.map((id) => productService.getById(id)))
       const fetched = results.filter((r) => r.status === 'fulfilled').map((r) => (r as PromiseFulfilledResult<any>).value)
       setProducts(fetched)
@@ -110,7 +109,7 @@ export default function MobileWishlist() {
               <ShoppingCart size={15} /> Move All to Cart ({products.length})
             </button>
             <div className="space-y-3">
-              {products.map((product, idx) => {
+              {products.map((product) => {
                 const id = product.id || product.product_id
                 const rawPrice = product.variants?.[0]?.discount_price || product.variants?.[0]?.price || product.min_price || product.price || 0
                 const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)

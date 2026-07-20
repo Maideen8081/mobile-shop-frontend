@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Heart, Trash2, ShoppingCart, Loader2, ArrowLeft, Star } from 'lucide-react'
 import { productService } from '../services/productService'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'

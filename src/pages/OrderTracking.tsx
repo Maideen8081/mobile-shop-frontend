@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
@@ -483,7 +483,6 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function OrderTracking() {
-  const navigate = useNavigate()
   const [params] = useSearchParams()
   const urlOrderId = params.get('order_id')
 

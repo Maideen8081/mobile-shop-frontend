@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   FiMapPin, FiHome, FiBriefcase, FiCheck, FiArrowLeft,
-  FiUser, FiPhone, FiMail,
+  FiUser, FiPhone,
 } from 'react-icons/fi'
 import { addressService, type AddressData } from '../services/addressService'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
@@ -69,7 +69,7 @@ export default function AddressCreatePage() {
     if (Object.keys(errs).length > 0) return
     setSaving(true)
     try {
-      const created = await addressService.create(form)
+      await addressService.create(form)
       navigate('/profile/addresses')
     } catch {
       setErrors({ _form: 'Failed to save address. Please try again.' })

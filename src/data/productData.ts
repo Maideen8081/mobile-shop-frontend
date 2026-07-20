@@ -116,7 +116,7 @@ export const productsData: Product[] = [
       { id: 'v11', name: 'Black 256GB', ram: '12GB', storage: '256GB', battery: 5000, color: 'Black', processor: 'Snapdragon 8s Gen 3', display: '6.7" AMOLED 120Hz', camera: '50MP + 50MP', price: 44999, discountPrice: 39999, stock: 30, lowStockAlert: 10, images: ['📱'] },
       { id: 'v12', name: 'White 256GB', ram: '12GB', storage: '256GB', battery: 5000, color: 'White', processor: 'Snapdragon 8s Gen 3', display: '6.7" AMOLED 120Hz', camera: '50MP + 50MP', price: 44999, discountPrice: 39999, stock: 25, lowStockAlert: 10, images: ['📱'] },
     ],
-    trending: true, newArrival: true, bestSelling: false, featured: false, status: 'active',
+    trending: true, newArrival: true, bestSelling: false, featured: false, refurbished: false, status: 'active',
     rating: 4.3, sold: 67, created: '2026-03-05', videoUrl: 'https://cdn.coverr.co/videos/coverr-close-up-of-a-smartphone-display-5682/1080p.mp4',
   },
   {

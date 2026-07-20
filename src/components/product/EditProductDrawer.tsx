@@ -100,7 +100,7 @@ export default function EditProductDrawer({ open, product, onClose, onSave, load
       const reader = new FileReader()
       reader.onload = (e) => {
         if (e.target?.result) {
-          setProductImages((prev) => [...prev, e.target.result as string])
+          setProductImages((prev) => [...prev, e.target?.result as string])
         }
       }
       reader.readAsDataURL(files[i])

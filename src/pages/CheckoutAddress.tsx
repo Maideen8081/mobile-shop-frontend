@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, type ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link, useNavigate } from 'react-router-dom'
-import { FiChevronRight, FiHome, FiCheck, FiPlus, FiEdit2, FiShoppingCart, FiLoader, FiMapPin, FiPhone, FiAlertCircle, FiChevronLeft, FiTrash2, FiSave } from 'react-icons/fi'
-import { Home, Briefcase, CreditCard, Package } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { FiCheck, FiPlus, FiEdit2, FiLoader, FiMapPin, FiPhone, FiAlertCircle, FiTrash2 } from 'react-icons/fi'
+import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
 import { useToast } from '../context/ToastContext'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
@@ -10,6 +10,8 @@ import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileCheckoutAddress from '../components/mobile/MobileCheckoutAddress'
 import { useIsMobile } from '../components/mobile/helpers'
+
+type AddressType = AddressData['addressType']
 
 const steps = [
   { id: 1, label: 'AUTHENTICATION', icon: 'verified_user' },
@@ -132,7 +134,7 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
     fullName: initialAddress?.fullName || '', mobile: initialAddress?.mobile || '', alternateMobile: initialAddress?.alternateMobile || '',
     addressLine1: initialAddress?.addressLine1 || '', addressLine2: initialAddress?.addressLine2 || '',
     landmark: initialAddress?.landmark || '', city: initialAddress?.city || '', state: initialAddress?.state || '',
-    zipCode: initialAddress?.zipCode || '', country: initialAddress?.country || 'India', addressType: (initialAddress?.addressType || 'Home') as const,
+    zipCode: initialAddress?.zipCode || '', country: initialAddress?.country || 'India', addressType: (initialAddress?.addressType || 'Home') as AddressType,
     isDefault: initialAddress?.isDefault || false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -316,7 +318,7 @@ export default function CheckoutAddress() {
   const [terminalForm, setTerminalForm] = useState({
     fullName: '', mobile: '', addressLine1: '', addressLine2: '',
     city: '', state: '', zipCode: '', landmark: '',
-    addressType: 'Home' as const,
+    addressType: 'Home' as AddressType,
     isDefault: false,
   })
 
@@ -331,7 +333,7 @@ export default function CheckoutAddress() {
         state: selectedAddress.state || '',
         zipCode: selectedAddress.zipCode || '',
         landmark: selectedAddress.landmark || '',
-        addressType: (selectedAddress.addressType as 'Home' | 'Office' | 'Other') || 'Home',
+        addressType: (selectedAddress.addressType as AddressType) || 'Home',
         isDefault: selectedAddress.isDefault || false,
       })
     }
@@ -743,7 +745,7 @@ export default function CheckoutAddress() {
                   </div>
 
                   <label className="flex items-center gap-3 cursor-pointer group pt-2">
-                    <motion.div whileTap={{ scale: 0.9 }} type="button"
+                    <motion.div whileTap={{ scale: 0.9 }}
                       onClick={() => setTerminalForm(p => ({ ...p, isDefault: !p.isDefault }))}
                       className={`w-5 h-5 rounded flex items-center justify-center transition-all border ${
                         terminalForm.isDefault ? 'bg-mint border-mint shadow-sm shadow-mint/30' : 'bg-white/80 border-glass-border group-hover:border-mint/50'

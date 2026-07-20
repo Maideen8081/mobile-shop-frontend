@@ -4,7 +4,7 @@ import {
   FiSearch, FiGrid, FiList, FiEye, FiEdit2, FiTrash2, FiX, FiClock, FiCheckCircle,
   FiAlertTriangle, FiTool, FiSmartphone, FiDollarSign, FiUser, FiCalendar, FiChevronDown,
   FiRefreshCw, FiPhone, FiMail, FiStar, FiTrendingUp, FiBarChart2, FiPackage, FiSave,
-  FiMapPin, FiCamera, FiImage, FiSend, FiMessageSquare,
+  FiMapPin, FiCamera, FiImage,
 } from 'react-icons/fi'
 import { repairService, type RepairTicket } from '../../services/repairService'
 import { deviceCategories, deviceBrands, issueCategories, repairTechnicians } from '../../data/repairData'
@@ -130,9 +130,6 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
   const [deleting, setDeleting] = useState(false)
   const [saving, setSaving] = useState(false)
   const editInputRef = useRef<HTMLInputElement>(null)
-  const [replyMessage, setReplyMessage] = useState('')
-  const [sendingReply, setSendingReply] = useState(false)
-
   useLockBodyScroll(viewModalOpen || editModalOpen || deleteModalOpen)
 
   const [editForm, setEditForm] = useState({
@@ -193,7 +190,6 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
   const openView = async (ticket: RepairTicket) => {
     try { const full = await repairService.getById(ticket.id); setSelectedTicket(full) }
     catch { setSelectedTicket(ticket) }
-    setReplyMessage('')
     setViewModalOpen(true)
   }
 

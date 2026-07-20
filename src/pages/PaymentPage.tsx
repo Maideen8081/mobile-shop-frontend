@@ -95,13 +95,15 @@ export default function PaymentPage() {
     if (!canvas) return
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') as WebGLRenderingContext | null
     if (!gl) return
+    const cv = canvas
+    const glc = gl
 
     function syncSize() {
-      const w = canvas.clientWidth || 1280
-      const h = canvas.clientHeight || 720
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w
-        canvas.height = h
+      const w = cv.clientWidth || 1280
+      const h = cv.clientHeight || 720
+      if (cv.width !== w || cv.height !== h) {
+        cv.width = w
+        cv.height = h
       }
     }
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncSize).observe(canvas)
@@ -142,39 +144,39 @@ void main() {
     gl_FragColor = vec4(col, 1.0);
 }`
     function cs(type: number, src: string) {
-      const s = gl.createShader(type)
+      const s = glc.createShader(type)
       if (!s) return null
-      gl.shaderSource(s, src)
-      gl.compileShader(s)
+      glc.shaderSource(s, src)
+      glc.compileShader(s)
       return s
     }
-    const prog = gl.createProgram()
+    const prog = glc.createProgram()
     if (!prog) return
-    const vsh = cs(gl.VERTEX_SHADER, vs)
-    const fsh = cs(gl.FRAGMENT_SHADER, fs)
+    const vsh = cs(glc.VERTEX_SHADER, vs)
+    const fsh = cs(glc.FRAGMENT_SHADER, fs)
     if (!vsh || !fsh) return
-    gl.attachShader(prog, vsh)
-    gl.attachShader(prog, fsh)
-    gl.linkProgram(prog)
-    gl.useProgram(prog)
-    const buf = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW)
-    const pos = gl.getAttribLocation(prog, 'a_position')
-    gl.enableVertexAttribArray(pos)
-    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0)
-    const uTime = gl.getUniformLocation(prog, 'u_time')
-    const uRes = gl.getUniformLocation(prog, 'u_resolution')
-    const uMouse = gl.getUniformLocation(prog, 'u_mouse')
+    glc.attachShader(prog, vsh)
+    glc.attachShader(prog, fsh)
+    glc.linkProgram(prog)
+    glc.useProgram(prog)
+    const buf = glc.createBuffer()
+    glc.bindBuffer(glc.ARRAY_BUFFER, buf)
+    glc.bufferData(glc.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), glc.STATIC_DRAW)
+    const pos = glc.getAttribLocation(prog, 'a_position')
+    glc.enableVertexAttribArray(pos)
+    glc.vertexAttribPointer(pos, 2, glc.FLOAT, false, 0, 0)
+    const uTime = glc.getUniformLocation(prog, 'u_time')
+    const uRes = glc.getUniformLocation(prog, 'u_resolution')
+    const uMouse = glc.getUniformLocation(prog, 'u_mouse')
 
-    let mouse = { x: canvas.width / 2, y: canvas.height / 2 }
+    let mouse = { x: cv.width / 2, y: cv.height / 2 }
     const onMove = (event: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
+      const rect = cv.getBoundingClientRect()
       if (rect.width && rect.height) {
         const nx = (event.clientX - rect.left) / rect.width
         const ny = 1.0 - (event.clientY - rect.top) / rect.height
-        mouse.x = nx * canvas.width
-        mouse.y = ny * canvas.height
+        mouse.x = nx * cv.width
+        mouse.y = ny * cv.height
       }
     }
     window.addEventListener('mousemove', onMove)
@@ -182,11 +184,11 @@ void main() {
     let animId = 0
     function render(t: number) {
       if (typeof ResizeObserver === 'undefined') syncSize()
-      gl.viewport(0, 0, canvas.width, canvas.height)
-      if (uTime) gl.uniform1f(uTime, t * 0.001)
-      if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height)
-      if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y)
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+      glc.viewport(0, 0, cv.width, cv.height)
+      if (uTime) glc.uniform1f(uTime, t * 0.001)
+      if (uRes) glc.uniform2f(uRes, cv.width, cv.height)
+      if (uMouse) glc.uniform2f(uMouse, mouse.x, mouse.y)
+      glc.drawArrays(glc.TRIANGLE_STRIP, 0, 4)
       animId = requestAnimationFrame(render)
     }
     animId = requestAnimationFrame(render)

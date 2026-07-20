@@ -95,8 +95,9 @@ export default function ProductForm({ onSubmit, loading, categoryOptions, subcat
     for (let i = 0; i < toAdd; i++) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        if (e.target?.result) {
-          setProductImages((prev) => [...prev, e.target.result as string])
+        const result = e.target?.result
+        if (result) {
+          setProductImages((prev) => [...prev, result as string])
         }
       }
       reader.readAsDataURL(files[i])

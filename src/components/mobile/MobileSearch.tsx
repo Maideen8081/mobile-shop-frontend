@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, X, ArrowLeft, TrendingUp, Flame } from 'lucide-react'
+import { Search, X, ArrowLeft, Flame } from 'lucide-react'
 import { productService } from '../../services/productService'
 import ProductCard from './ProductCard'
 
@@ -13,7 +13,7 @@ export default function MobileSearch() {
   const [suggested, setSuggested] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
-  const debounce = useRef<number>()
+  const debounce = useRef<number | undefined>(undefined)
 
   // Load suggested "top products" once.
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiChevronLeft, FiPackage, FiTruck, FiTag, FiHeart, FiBell, FiCheck } from 'react-icons/fi'
+import { FiChevronLeft, FiPackage, FiTruck, FiTag, FiHeart, FiBell } from 'react-icons/fi'
 
 const PURPLE = '#6C3BFF'
 const PURPLE_DEEP = '#4B2ECC'

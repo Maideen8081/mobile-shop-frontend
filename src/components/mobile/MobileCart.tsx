@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, Star, Zap, Check, Bike } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, Star, Check, Bike } from 'lucide-react'
 import { useMobileToast } from './useMobileToast'
 import MobileTopSection from './MobileTopSection'
 import {
@@ -94,10 +94,8 @@ export default function MobileCart() {
   useEffect(() => {
     let mounted = true
     const controller = new AbortController()
-    const first = items[0]
     const brands = items.map((i) => i.brand).filter(Boolean)
     const cats = items.map((i) => i.category).filter(Boolean)
-    const anchorId = first?.productId
 
     productService.list({ page_size: 40 } as any)
       .then((all: any[]) => {

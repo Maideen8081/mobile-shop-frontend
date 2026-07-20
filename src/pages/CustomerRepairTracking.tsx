@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
 import { FiLoader } from 'react-icons/fi'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
@@ -42,27 +41,6 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
   Delivered: { label: 'Delivered', color: '#16a34a' },
   Cancelled: { label: 'Cancelled', color: '#6b7280' },
-}
-
-const REPAIR_STEPS = [
-  { key: 'created', label: 'Ticket Created', desc: 'Your repair request has been submitted', icon: 'assignment' },
-  { key: 'received', label: 'Device Received', desc: 'Device has been received at our service center', icon: 'phonelink_setup' },
-  { key: 'diagnosis', label: 'Diagnosis & Approval', desc: 'Diagnosis complete, awaiting your approval', icon: 'precision_manufacturing' },
-  { key: 'repair', label: 'Repair In Progress', desc: 'Repair work is currently underway', icon: 'build_circle' },
-  { key: 'quality', label: 'Quality Check', desc: 'Device is undergoing quality inspection', icon: 'verified' },
-  { key: 'ready', label: 'Ready for Delivery', desc: 'Device is ready for pickup/delivery', icon: 'inventory_2' },
-  { key: 'delivered', label: 'Delivered', desc: 'Device has been delivered successfully', icon: 'check_circle' },
-] as const
-
-const STATUS_TO_STEP: Record<string, number> = {
-  Received: 1,
-  Diagnosing: 2,
-  'Waiting for Parts': 2,
-  'Repair In Progress': 3,
-  'Quality Check': 4,
-  'Ready for Delivery': 5,
-  Delivered: 6,
-  Cancelled: -1,
 }
 
 const FILTER_OPTIONS = ['All', 'Pending', 'In Progress', 'Completed', 'Cancelled'] as const
@@ -408,7 +386,6 @@ function RepairDetailModal({
   const [ticket, setTicket] = useState(initialTicket)
   const [message, setMessage] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
-  const step = STATUS_TO_STEP[ticket.status] ?? 0
   const needsApproval = ['Diagnosing', 'Waiting for Parts'].includes(ticket.status) && ticket.estimatedCost > 0
 
   const sendMessage = async () => {
@@ -647,7 +624,6 @@ function InfoRow({ label, value, highlight }: { label: string; value: string; hi
 }
 
 export default function CustomerRepairTracking() {
-  const navigate = useNavigate()
   const [tickets, setTickets] = useState<RepairTicket[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')

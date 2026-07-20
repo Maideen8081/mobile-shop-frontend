@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiMail, FiLock, FiUserPlus, FiCheck, FiChevronLeft } from 'react-icons/fi'
+import { FiMail, FiLock, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useAuthForm } from '../../hooks/useAuthForm'
 import { createValidator, required, email, minLength, passwordStrength } from '../../utils/validation'
 import { authService } from '../../services/authService'

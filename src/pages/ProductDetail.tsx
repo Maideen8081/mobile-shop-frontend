@@ -1,17 +1,15 @@
 import { Component, useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import CUDep from 'react-countup'
-const CountUp = (CUDep as any).default ?? CUDep
 import {
   FiShoppingCart, FiHeart, FiCheck, FiChevronRight,
   FiStar, FiRefreshCw, FiMinus, FiPlus,
   FiCpu, FiMonitor, FiBattery,
   FiHardDrive, FiAlertTriangle, FiCheckCircle,
-  FiShare2, FiArrowLeft, FiMaximize2,
-  FiClock, FiTruck, FiShield, FiGift, FiGrid, FiZap,
-  FiWifi, FiBluetooth, FiSmartphone, FiEye, FiDroplet,
-  FiLayers, FiSliders, FiAward, FiTrendingUp, FiCopy,
+  FiShare2, FiArrowLeft,
+  FiClock, FiTruck, FiShield, FiGrid, FiZap,
+  FiWifi, FiBluetooth, FiSmartphone, FiEye,
+  FiSliders, FiAward,
   FiExternalLink, FiInfo, FiTrash2
 } from 'react-icons/fi'
 import { FaWhatsapp, FaTelegram, FaFacebook, FaEnvelope } from 'react-icons/fa'
@@ -142,25 +140,6 @@ const COLOR_PALETTE: Record<string, string> = {
   sierra: '#9ca3af', 'deep purple': '#7c3aed', red: '#ef4444',
 }
 
-const SPEC_ICONS: Record<string, React.ReactNode> = {
-  processor: <FiCpu size={22} />,
-  ram: <FiHardDrive size={22} />,
-  gpu: <FiZap size={22} />,
-  os: <FiMonitor size={22} />,
-  size: <FiMonitor size={22} />,
-  resolution: <FiEye size={22} />,
-  'refresh rate': <FiSliders size={22} />,
-  brightness: <FiSun size={22} />,
-  capacity: <FiBattery size={22} />,
-  charging: <FiZap size={22} />,
-  wireless: <FiWifi size={22} />,
-  standby: <FiClock size={22} />,
-  network: <FiSmartphone size={22} />,
-  bluetooth: <FiBluetooth size={22} />,
-  wifi: <FiWifi size={22} />,
-  nfc: <FiShare2 size={22} />,
-}
-
 function ProductDetailContent() {
   const navigate = useNavigate()
   const { productId, variationId, variantId, id } = useParams()
@@ -188,7 +167,7 @@ function ProductDetailContent() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [imageZoomed, setImageZoomed] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [, setCopied] = useState(false)
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
   const imageRef = useRef<HTMLDivElement>(null)
   const shareRef = useRef<HTMLDivElement>(null)
@@ -312,7 +291,7 @@ function ProductDetailContent() {
       window.dispatchEvent(new Event('cart-updated'))
       setAdded(false)
       setIsAdding(false)
-      showToast('Removed from cart!', 'info')
+      showToast('Removed from cart!', 'error')
     } else {
       cart.push({
         productId: product.id, variantId: activeVariant?.id || null, name: productName,

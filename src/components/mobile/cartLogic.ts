@@ -19,6 +19,7 @@ export interface CartItem {
   storage?: string
   ram?: string
   color?: string
+  category?: string
 }
 
 export interface StockInfo {

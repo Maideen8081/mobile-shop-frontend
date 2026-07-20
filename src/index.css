@@ -1,21 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'TT Norms Pro';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/tt-norms-pro-regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'TT Norms Pro';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/tt-norms-pro-semibold.woff2') format('woff2');
-}
-
 @theme {
   --font-primary: 'TT Norms Pro', system-ui, -apple-system, sans-serif;
 

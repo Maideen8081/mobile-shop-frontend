@@ -83,14 +83,16 @@ export default function ScrollReveal() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    const cv = canvas
+    const context = ctx
 
     function setupCanvas() {
       const dpr = window.devicePixelRatio || 1
-      canvas.width = window.innerWidth * dpr
-      canvas.height = window.innerHeight * dpr
-      canvas.style.width = '100vw'
-      canvas.style.height = '100vh'
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      cv.width = window.innerWidth * dpr
+      cv.height = window.innerHeight * dpr
+      cv.style.width = '100vw'
+      cv.style.height = '100vh'
+      context.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
     setupCanvas()
@@ -100,12 +102,12 @@ export default function ScrollReveal() {
       const img = imagesRef.current[index]
       if (!img || !img.complete) {
         if (prevFrameRef.current) {
-          drawImageCover(ctx, prevFrameRef.current, window.innerWidth, window.innerHeight)
+          drawImageCover(context, prevFrameRef.current, window.innerWidth, window.innerHeight)
         }
         return
       }
       prevFrameRef.current = img
-      drawImageCover(ctx, img, window.innerWidth, window.innerHeight)
+      drawImageCover(context, img, window.innerWidth, window.innerHeight)
     }
 
     function onScroll() {
