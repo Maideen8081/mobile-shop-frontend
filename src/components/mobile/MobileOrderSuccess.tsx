@@ -1,0 +1,198 @@
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { FiChevronLeft, FiPackage, FiCheck, FiCopy, FiTruck, FiHome, FiShoppingBag, FiStar } from 'react-icons/fi'
+
+const PURPLE = '#6C3BFF'
+const PURPLE_DEEP = '#4B2ECC'
+const SUCCESS = '#16A34A'
+const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const emojiToImage: Record<string, string> = {
+  '📱': 'https://pngimg.com/d/iphone16_PNG37.png',
+  '📲': 'https://pngimg.com/d/samsung_PNG2.png',
+  '🎧': 'https://pngimg.com/d/headphones_PNG7645.png',
+  '⌚': 'https://pngimg.com/d/apple_watch_PNG19558.png',
+  '📟': 'https://pngimg.com/d/ipad_PNG2133.png',
+  '💻': 'https://pngimg.com/d/laptop_PNG101814.png',
+  '🎮': 'https://pngimg.com/d/ps5_PNG31.png',
+  '📷': 'https://pngimg.com/d/camera_PNG101583.png',
+  '🛡️': 'https://pngimg.com/d/iphone15_PNG40.png',
+}
+function resolveImage(item: any): string {
+  if (item.image) {
+    if (item.image.startsWith('http') || item.image.startsWith('data:')) return item.image
+    const mapped = emojiToImage[item.image]
+    if (mapped) return mapped
+    return `${API_BASE_URL.replace(/\/$/, '')}/${item.image.replace(/^\//, '')}`
+  }
+  if (item.emoji && emojiToImage[item.emoji]) return emojiToImage[item.emoji]
+  return ''
+}
+function formatPrice(n: number): string {
+  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+
+const timeline = [
+  { icon: <FiPackage size={14} />, label: 'Order Placed', done: true },
+  { icon: <FiShoppingBag size={14} />, label: 'Packed', done: false },
+  { icon: <FiTruck size={14} />, label: 'Shipped', done: false },
+  { icon: <FiHome size={14} />, label: 'Delivered', done: false },
+]
+
+export default function MobileOrderSuccess() {
+  const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const [orderData] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('last_order') || 'null') } catch { return null }
+  })
+  const orderId = params.get('order_id') || orderData?.orderId || 'ORD-' + String(Math.random()).slice(2, 10).toUpperCase()
+  const deliveryDate = orderData?.deliveryDate || (() => {
+    const d = new Date(); d.setDate(d.getDate() + 5)
+    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  })()
+  const items: any[] = orderData?.items || []
+  const total = orderData?.total ?? items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
+  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setCopied(false), 1500)
+    return () => clearTimeout(t)
+  }, [copied])
+
+  const copyId = () => {
+    navigator.clipboard?.writeText(orderId)
+    setCopied(true)
+  }
+
+  const confetti = ['#6C3BFF', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#8B5CF6']
+
+  return (
+    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      {/* Confetti */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {confetti.map((c, i) => (
+          <span key={i} className="absolute top-[-10px] w-2 h-2 rounded-sm animate-[fall_2.4s_ease-in_forwards]"
+            style={{ left: `${(i * 16 + 5) % 100}%`, background: c, animationDelay: `${(i % 5) * 0.25}s`, transform: `rotate(${i * 40}deg)` }} />
+        ))}
+      </div>
+
+      {/* Top banner */}
+      <div className="relative px-4 pt-4 pb-24 text-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
+        <div className="absolute -top-16 -right-10 w-48 h-48 rounded-full bg-white/15 blur-2xl" />
+        <div className="absolute -bottom-12 -left-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+        <button onClick={() => navigate('/home')} className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center z-10">
+          <FiChevronLeft size={20} className="text-white" />
+        </button>
+        {/* Animated check */}
+        <div className="relative w-24 h-24 mx-auto mt-6">
+          <span className="absolute inset-0 rounded-full bg-white/25 animate-ping" />
+          <div className="relative w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-xl">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
+              <FiCheck size={34} className="text-white" />
+            </div>
+          </div>
+        </div>
+        <h1 className="text-[22px] font-bold text-white mt-4">Order Confirmed!</h1>
+        <p className="text-[13px] text-white/80 mt-1">Thank you — your order has been placed.</p>
+        <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-white/20 text-[11px] font-semibold text-white">
+          <FiCheck size={12} /> Payment Successful
+        </span>
+      </div>
+
+      <div className="px-4 -mt-16 space-y-3 relative z-10">
+        {/* Order id card */}
+        <div className={`${card} rounded-[20px] p-4 flex items-center justify-between`}>
+          <div>
+            <p className="text-[11px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
+            <p className="text-[16px] font-bold text-[#1F2937]">{orderId}</p>
+          </div>
+          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(108,59,255,0.1)', color: PURPLE }}>
+            {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+
+        {/* Delivery estimate */}
+        <div className={`${card} rounded-[20px] p-4`}>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-xl" style={{ background: 'rgba(22,163,74,0.1)' }}>🚚</div>
+            <div className="flex-1">
+              <p className="text-[11px] text-[#6B7280] font-semibold uppercase tracking-wide">Estimated Delivery</p>
+              <p className="text-[15px] font-bold text-[#1F2937]">{deliveryDate}</p>
+            </div>
+          </div>
+          {/* Timeline */}
+          <div className="flex items-center justify-between mt-4">
+            {timeline.map((t, i) => (
+              <div key={t.label} className="flex items-center flex-1 last:flex-none">
+                <div className="flex flex-col items-center flex-shrink-0">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${t.done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
+                    style={t.done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
+                    {t.icon}
+                  </div>
+                  <span className={`text-[9px] mt-1 font-semibold text-center ${t.done ? 'text-[#15803D]' : 'text-[#9CA3AF]'}`}>{t.label}</span>
+                </div>
+                {i < timeline.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-full ${t.done ? '' : 'bg-[#E5E7EB]'}`} style={t.done ? { background: SUCCESS } : undefined} />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Items */}
+        <div className={`${card} rounded-[20px] p-4`}>
+          <p className="text-[14px] font-bold text-[#1F2937] mb-3">Order Items ({items.length})</p>
+          <div className="space-y-3">
+            {items.length === 0 ? (
+              <p className="text-[12px] text-[#9CA3AF]">Order details loading…</p>
+            ) : items.map((item) => {
+              const imgUrl = resolveImage(item)
+              const hasImg = imgUrl && !imgErrors[item.productId]
+              return (
+                <div key={item.productId} className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-[12px] bg-[#F8F9FF] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    {hasImg ? (
+                      <img src={imgUrl} alt={item.name} className="w-full h-full object-contain" onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))} />
+                    ) : (
+                      <span className="text-xl">{item.emoji || '📦'}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-[#1F2937] truncate">{item.name}</p>
+                    <p className="text-[11px] text-[#6B7280]">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}</p>
+                  </div>
+                  <span className="text-[13px] font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                </div>
+              )
+            })}
+          </div>
+          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="flex justify-between items-center">
+            <span className="text-[12px] text-[#6B7280] font-semibold uppercase tracking-wide">Total Paid</span>
+            <span className="text-[18px] font-bold text-[#1F2937]">{formatPrice(total)}</span>
+          </div>
+        </div>
+
+        {/* Review CTA */}
+        <button onClick={() => navigate('/collection/all')} className={`${card} rounded-[18px] p-3.5 w-full flex items-center gap-3`}>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><FiStar size={18} /></div>
+          <div className="flex-1 text-left">
+            <p className="text-[13px] font-semibold text-[#1F2937]">Rate your experience</p>
+            <p className="text-[11px] text-[#6B7280]">Help others by reviewing your purchase</p>
+          </div>
+        </button>
+      </div>
+
+      {/* Sticky CTAs */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5">
+        <button onClick={() => navigate(`/orders?order_id=${orderId}`)} className="flex-1 h-12 rounded-full text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2"
+          style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
+          <FiTruck size={15} /> Track Order
+        </button>
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-full text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2">
+          <FiShoppingBag size={15} /> Shop More
+        </button>
+      </div>
+    </div>
+  )
+}

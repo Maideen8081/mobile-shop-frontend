@@ -1,0 +1,761 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'TT Norms Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/tt-norms-pro-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'TT Norms Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/tt-norms-pro-semibold.woff2') format('woff2');
+}
+
+@theme {
+  --font-primary: 'TT Norms Pro', system-ui, -apple-system, sans-serif;
+
+  --color-dark: #0a0a0a;
+  --color-dark-card: #111111;
+  --color-dark-card2: #1a1a1a;
+  --color-dark-border: #1e1e1e;
+  --color-gold: #e8c27a;
+  --color-gold-light: rgba(232, 194, 122, 0.12);
+  --color-gold-lighter: rgba(232, 194, 122, 0.06);
+  --color-gold-hover: #d4a85c;
+  --color-text: #f5f0eb;
+  --color-text-muted: #8a8580;
+  --color-text-dim: #5a5550;
+  --color-accent-green: #4ade80;
+  --color-accent-purple: #a855f7;
+
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* PhoneFix Pro theme */
+  --font-headline-md: "DM Sans", sans-serif;
+  --font-label-xs: "DM Sans", sans-serif;
+  --font-label-sm: "DM Sans", sans-serif;
+  --font-display-lg: "DM Sans", sans-serif;
+  --font-body-lg: "DM Sans", sans-serif;
+  --font-body-md: "DM Sans", sans-serif;
+
+  --color-background: #f9f9f9;
+  --color-surface: #f9f9f9;
+  --color-surface-dim: #dadada;
+  --color-surface-bright: #f9f9f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3f3;
+  --color-surface-container: #eeeeee;
+  --color-surface-container-high: #e8e8e8;
+  --color-surface-container-highest: #e2e2e2;
+  --color-surface-variant: #e2e2e2;
+  --color-surface-tint: #5d5c74;
+  --color-primary: #00000b;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1a1a2e;
+  --color-on-primary-container: #83829b;
+  --color-primary-fixed: #e2e0fc;
+  --color-primary-fixed-dim: #c6c4df;
+  --color-on-primary-fixed: #1a1a2e;
+  --color-on-primary-fixed-variant: #45455b;
+  --color-secondary: #006d36;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #6dfe9c;
+  --color-on-secondary-container: #007439;
+  --color-secondary-fixed: #6dfe9c;
+  --color-secondary-fixed-dim: #4de082;
+  --color-on-secondary-fixed: #00210c;
+  --color-on-secondary-fixed-variant: #005227;
+  --color-tertiary: #000106;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #001a45;
+  --color-on-tertiary-container: #4d81e9;
+  --color-tertiary-fixed: #d9e2ff;
+  --color-tertiary-fixed-dim: #afc6ff;
+  --color-on-tertiary-fixed: #001944;
+  --color-on-tertiary-fixed-variant: #00429a;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-on-surface: #1a1c1c;
+  --color-on-surface-variant: #47464c;
+  --color-on-background: #1a1c1c;
+  --color-outline: #78767d;
+  --color-outline-variant: #c8c5cd;
+  --color-inverse-surface: #2f3131;
+  --color-inverse-on-surface: #f1f1f1;
+  --color-inverse-primary: #c6c4df;
+  --color-mint: #4FE3C1;
+  --color-glass-border: rgba(217,222,229,0.5);
+
+  --spacing-container-max: 1280px;
+  --spacing-gutter: 24px;
+  --spacing-margin-desktop: 40px;
+  --spacing-margin-mobile: 16px;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 600;
+  --text-label-xs: 12px;
+  --text-label-xs--line-height: 16px;
+  --text-label-xs--letter-spacing: 0.05em;
+  --text-label-xs--font-weight: 600;
+  --text-label-sm: 14px;
+  --text-label-sm--line-height: 20px;
+  --text-label-sm--letter-spacing: 0.02em;
+  --text-label-sm--font-weight: 500;
+  --text-display-lg: 48px;
+  --text-display-lg--line-height: 56px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 700;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+  --text-display-lg-mobile: 32px;
+  --text-display-lg-mobile--line-height: 40px;
+  --text-display-lg-mobile--letter-spacing: -0.01em;
+  --text-display-lg-mobile--font-weight: 700;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    line-height: 1.6;
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    background: #F8F9FF;
+  }
+
+  * {
+    font-family: inherit;
+  }
+
+  ::selection {
+    background-color: #6dfe9c;
+    color: #00210c;
+  }
+
+  input, textarea, select {
+    @apply outline-none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 194, 122, 0.12) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(232, 194, 122, 0.12);
+    border-radius: 8px;
+  }
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll 40s linear infinite;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background-color: #00000b;
+}
+
+.hero-carousel {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.carousel-slide.active {
+  opacity: 0.5;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent, rgba(0,0,11,0.9) 100%);
+  z-index: 2;
+}
+
+.hero-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 3;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.interactive-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid transparent;
+}
+
+.interactive-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border-color: rgba(109, 254, 156, 0.3);
+}
+
+.slide-up-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.reveal.active .slide-up-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.faq-item[open] .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-icon {
+  transition: transform 0.3s ease;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide all scrollbars on mobile viewports only — does NOT affect desktop */
+@media (max-width: 481px) {
+  html, body, #root,
+  html *, body *, #root * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  html ::-webkit-scrollbar,
+  body ::-webkit-scrollbar,
+  #root ::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
+/* Ripple effect for mobile Add to Cart buttons */
+.ripple { position: relative; }
+.ripple > .ripple-dot {
+  position: absolute;
+  border-radius: 9999px;
+  transform: scale(0);
+  background: rgba(255, 255, 255, 0.55);
+  animation: rippleAnim 0.6s linear;
+  pointer-events: none;
+}
+@keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+
+.material-symbols-outlined.fill-1 {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.5s ease forwards;
+}
+
+.nav-link {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  transform: translateY(-1px);
+}
+
+/* ─── New Landing Page Animations ─── */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+@keyframes float-slow {
+  0% { transform: translateY(0px) translateX(0px); }
+  50% { transform: translateY(-10px) translateX(5px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+}
+@keyframes toastUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+.animate-marquee { animation: marquee 30s linear infinite; }
+.animate-gradient { animation: gradient-shift 3s ease infinite; }
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.emerald-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel-item {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  position: absolute;
+  inset: 0;
+}
+.carousel-item.active {
+  opacity: 1;
+  position: relative;
+}
+.stagger-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stagger-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* New landing page glass card dark variant */
+.glass-card-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.diagnostic-beam {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, rgba(79, 227, 193, 0.3), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.group:hover .diagnostic-beam {
+  opacity: 1;
+  animation: beam-scan 2s infinite linear;
+}
+
+@keyframes beam-scan {
+  0% { top: -20%; }
+  100% { top: 120%; }
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to bottom, transparent, #4FE3C1, transparent);
+  animation: scan 4s linear infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s forwards;
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 2s ease-in-out;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.glass-card-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(217, 222, 229, 0.5);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-panel:hover {
+  transform: translateY(-4px);
+  border-color: #4FE3C1;
+}
+
+.mint-glow {
+  box-shadow: 0 0 20px rgba(79, 227, 193, 0.4);
+}
+
+/* ============================================================
+   ADMIN PANEL THEME (scoped) — white + green (#22C55E)
+   Isolated under .admin-theme so the user-side app is untouched.
+   Admin components reference Tailwind color utilities
+   (bg-primary, text-text-primary, border-border, etc.) which
+   resolve to the CSS variables defined below.
+   ============================================================ */
+.admin-theme {
+  --color-bg: #f6f8f7;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f3fbf6;
+  --color-surface: #f6f8f7;
+  --color-surface-light: #ffffff;
+  --color-surface-lighter: #f3f5f4;
+  --color-surface-hover: #eef6f1;
+  --color-border: #e4e9e7;
+  --color-border-light: #eef1f0;
+  --color-border-dark: #d6dcd9;
+
+  --color-primary: #22c55e;
+  --color-primary-hover: #16a34a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #e8f8ef;
+  --color-on-primary-container: #0f7a38;
+
+  --color-secondary: #16a34a;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e8f8ef;
+
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-label: #64748b;
+  --color-text-muted: #94a3b8;
+
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-on-danger-container: #7f1d1d;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.10);
+  --shadow-pop: 0 12px 40px rgba(15, 23, 42, 0.14);
+
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* ---- Cards ---- */
+.admin-theme .bg-bg-card,
+.admin-theme .shadow-card,
+.admin-theme [class*="shadow-card"] {
+  background-color: var(--color-bg-card);
+  box-shadow: var(--shadow-card);
+}
+.admin-theme .border-border {
+  border-color: var(--color-border);
+}
+.admin-theme .hover\:shadow-card-hover:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ---- Tables ---- */
+.admin-theme .table-wrap {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.admin-theme table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.admin-theme thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #f8faf9;
+  color: var(--color-text-label);
+  font-weight: 600;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.admin-theme tbody td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border-light);
+  vertical-align: middle;
+}
+.admin-theme tbody tr {
+  transition: background-color 0.15s ease;
+}
+.admin-theme tbody tr:nth-child(even) {
+  background: #fafcfb;
+}
+.admin-theme tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+.admin-theme tbody tr:last-child td {
+  border-bottom: none;
+}
+.admin-theme .table-scroll {
+  overflow-x: auto;
+}
+
+/* ---- Forms ---- */
+.admin-theme input,
+.admin-theme select,
+.admin-theme textarea {
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.admin-theme input:focus,
+.admin-theme select:focus,
+.admin-theme textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  outline: none;
+}
+
+/* ---- Scrollbars ---- */
+.admin-theme .scrollbar-thin::-webkit-scrollbar,
+.admin-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-theme .scrollbar-thin::-webkit-scrollbar-thumb,
+.admin-theme ::-webkit-scrollbar-thumb {
+  background-color: #d3dcd8;
+  border-radius: 8px;
+}
+.admin-theme ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---- Animations ---- */
+@keyframes admin-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.admin-theme .animate-admin-in {
+  animation: admin-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.admin-theme .transition-admin {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- Pagination / empty states ---- */
+.admin-theme .empty-state {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   PRODUCT DETAIL — scoped WHITE theme (PhoneFix style)
+   Wraps only ProductDetail.tsx so other pages are untouched.
+   ============================================================ */
+.product-light {
+  --color-surface: #ffffff;
+  --color-background: #ffffff;
+  --color-surface-dim: #f1f5f4;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f8f7;
+  --color-surface-container: #eef2f1;
+  --color-surface-container-high: #e6ebea;
+  --color-surface-container-highest: #dde3e2;
+  --color-surface-variant: #e6ebea;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-outline: #64748b;
+  --color-outline-variant: #d8dee2;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-shadow: rgba(15, 23, 42, 0.08);
+
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.product-light .glass-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(203, 213, 225, 0.6);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.product-light .glass-premium {
+  background: #ffffff;
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  box-shadow: 0 10px 34px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.product-light .glass-premium-dark {
+  background: #ffffff;
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.product-light .animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.06), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.product-light .bg-surface-container-low {
+  background-color: #f6f8f7;
+}
+
+/* Skeleton bars should be visible on white */
+.product-light .animate-pulse {
+  background-color: rgba(148, 163, 184, 0.35) !important;
+}

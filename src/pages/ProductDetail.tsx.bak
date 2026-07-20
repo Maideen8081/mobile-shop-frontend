@@ -1,0 +1,1337 @@
+import { Component, useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import CUDep from 'react-countup'
+const CountUp = (CUDep as any).default ?? CUDep
+import {
+  FiShoppingCart, FiHeart, FiCheck, FiChevronRight,
+  FiStar, FiRefreshCw, FiMinus, FiPlus,
+  FiCpu, FiMonitor, FiCamera, FiBattery,
+  FiHardDrive, FiDroplet, FiAlertTriangle, FiCheckCircle,
+  FiInfo, FiUsers,
+  FiAward, FiZap,
+  FiMessageCircle, FiBriefcase, FiEye, FiShield,
+  FiTool, FiSearch, FiThermometer, FiMenu, FiX,
+  FiTrendingUp, FiMoreVertical,
+  FiShare2, FiChevronDown as FiChevronDownIcon
+} from 'react-icons/fi'
+import { productService } from '../services/productService'
+import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import EcommerceFooter from '../components/ecommerce/Footer'
+import ScrollReveal from '../components/ecommerce/ScrollReveal'
+import { FaWhatsapp } from 'react-icons/fa'
+
+gsap.registerPlugin(ScrollTrigger)
+
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error } }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-[#F2F4F6] flex items-center justify-center p-6">
+          <div className="bg-white/35 backdrop-blur-[30px] rounded-[24px] p-10 border border-white/70 max-w-md mx-auto shadow-[0_15px_50px_rgba(0,0,0,0.08)] text-center">
+            <span className="text-5xl mb-4 block">⚠️</span>
+            <h2 className="text-xl font-bold text-[#141414] mb-2">Something went wrong</h2>
+            <p className="text-sm text-[#6B7280] mb-6">{this.state.error?.message || 'An unexpected error occurred'}</p>
+            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-[#141414] text-white rounded-full text-sm font-semibold transition-all hover:scale-[1.03] shadow-lg">
+              Reload Page
+            </button>
+          </div>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+
+const FALLBACK_IMG = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 480%22 fill=%22%23F2F4F6%22%3E%3Crect width=%22400%22 height=%22480%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2218%22 fill=%22%2300D084%22%3EProduct%3C/text%3E%3C/svg%3E'
+
+function resolveImage(raw: string): string {
+  if (!raw) return ''
+  if (raw.startsWith('http') || raw.startsWith('data:')) return raw
+  return `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
+}
+
+function formatPrice(n: number): string {
+  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+}
+
+function extractImages(raw: any): string[] {
+  if (!raw) return []
+  if (Array.isArray(raw)) {
+    return raw.map((i: any) => {
+      if (typeof i === 'string') return resolveImage(i)
+      if (typeof i === 'object') return resolveImage(i.image || i.url || i.src || '')
+      return ''
+    }).filter(Boolean)
+  }
+  return []
+}
+
+const SPEC_META: Record<string, { label: string; icon: any; color: string }> = {
+  ram: { label: 'RAM', icon: FiCpu, color: '#8B5CF6' },
+  storage: { label: 'Storage', icon: FiHardDrive, color: '#3B82F6' },
+  battery: { label: 'Battery', icon: FiBattery, color: '#00D084' },
+  processor: { label: 'Processor', icon: FiMonitor, color: '#FF8A00' },
+  display: { label: 'Display', icon: FiMonitor, color: '#EC4899' },
+  camera: { label: 'Camera', icon: FiCamera, color: '#14B8A6' },
+  color: { label: 'Color', icon: FiDroplet, color: '#F97316' },
+}
+
+function QuantitySelector({ qty, setQty, max, stock }: { qty: number; setQty: (v: number) => void; max: number; stock: number }) {
+  const dec = () => setQty(Math.max(1, qty - 1))
+  const inc = () => { if (qty < max) setQty(qty + 1) }
+  const atMax = qty >= max
+  const remaining = Math.max(0, stock - qty)
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center bg-white/35 backdrop-blur-[30px] border border-white/70 rounded-full overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.08)]">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={dec} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#00D084] transition-all cursor-pointer">
+          <FiMinus size={14} />
+        </motion.button>
+        <motion.span key={qty} initial={{ scale: 1.3, opacity: 0.5 }} animate={{ scale: 1, opacity: 1 }} className="w-10 text-center text-sm font-bold text-[#141414] select-none">
+          {qty}
+        </motion.span>
+        <motion.button whileTap={{ scale: 0.9 }} onClick={inc} disabled={atMax} className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${atMax ? 'text-gray-200 cursor-not-allowed' : 'text-gray-400 hover:text-[#00D084]'}`}>
+          <FiPlus size={14} />
+        </motion.button>
+      </div>
+      <AnimatePresence mode="wait">
+        {qty >= stock ? (
+          <motion.p key="max" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} className="text-[10px] font-medium text-red-400 flex items-center gap-1">
+            <FiAlertTriangle size={10} /> Max available stock reached
+          </motion.p>
+        ) : remaining <= 5 && remaining > 0 ? (
+          <motion.p key="low" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} className="text-[10px] font-medium text-amber-400 flex items-center gap-1">
+            <FiInfo size={10} /> Only {remaining} left in stock
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function useToast() {
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; id: number } | null>(null)
+  const idRef = useRef(0)
+  const show = (message: string, type: 'success' | 'error') => {
+    const id = ++idRef.current
+    setToast({ message, type, id })
+    setTimeout(() => setToast(prev => prev?.id === id ? null : prev), 2500)
+  }
+  return { toast, show }
+}
+
+function Toast({ toast }: { toast: { message: string; type: 'success' | 'error'; id: number } | null }) {
+  return (
+    <AnimatePresence>
+      {toast && (
+        <motion.div
+          key={toast.id}
+          initial={{ opacity: 0, y: 40, x: '-50%' }}
+          animate={{ opacity: 1, y: 0, x: '-50%' }}
+          exit={{ opacity: 0, y: -20, x: '-50%' }}
+          className="fixed bottom-28 left-1/2 z-[200] flex items-center gap-2.5 px-5 py-3 rounded-full shadow-2xl"
+          style={{
+            background: toast.type === 'success' ? '#00D084' : 'linear-gradient(135deg, #EF4444, #DC2626)',
+            color: 'white',
+          }}
+        >
+          {toast.type === 'success' ? <FiCheckCircle size={18} /> : <FiAlertTriangle size={18} />}
+          <span className="text-sm font-semibold">{toast.message}</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+const AI_RECOMMENDATIONS = [
+  { icon: FiUsers, title: 'Students', desc: 'Perfect for daily study, notes, and online classes.', color: '#8B5CF6' },
+  { icon: FiBriefcase, title: 'Business', desc: 'Secure, reliable, with multitasking capabilities.', color: '#3B82F6' },
+  { icon: FiCamera, title: 'Photography', desc: 'Advanced camera system with AI-enhanced processing.', color: '#EC4899' },
+  { icon: FiZap, title: 'Gaming', desc: 'High refresh rate display for smooth gameplay.', color: '#FF8A00' },
+  { icon: FiMonitor, title: 'Multimedia', desc: 'Stunning display and audio for entertainment.', color: '#00D084' },
+]
+
+const CUSTOMER_REVIEWS = [
+  { name: 'Rahul S.', rating: 5, text: 'The phone looks and feels brand new! Battery health at 98%. Highly recommend PhoneFix Pro.', avatar: 'https://i.pravatar.cc/80?u=rahul', time: '2 weeks ago', badge: 'Verified Purchase' },
+  { name: 'Priya M.', rating: 5, text: 'Amazing quality for a refurbished phone. No scratches, perfect screen. Better than expected!', avatar: 'https://i.pravatar.cc/80?u=priya', time: '1 month ago', badge: 'Verified Purchase' },
+  { name: 'Arun K.', rating: 4, text: 'Great phone, great price. The 1-year warranty gives peace of mind. Will buy again.', avatar: 'https://i.pravatar.cc/80?u=arun', time: '3 weeks ago', badge: 'Verified Purchase' },
+]
+
+const BENCHMARKS = [
+  { label: 'Performance', value: 95, color: '#FF8A00', icon: FiZap },
+  { label: 'Battery', value: 92, color: '#00D084', icon: FiBattery },
+  { label: 'Processor', value: 74, color: '#FFC400', icon: FiCpu },
+  { label: 'Best CPU', value: 85, color: '#00D084', icon: FiTrendingUp },
+]
+
+const TIMELINE_STAGES = [
+  { icon: FiSearch, title: 'Inspection', desc: 'Thorough examination of every component.', color: '#00D084' },
+  { icon: FiTool, title: 'Testing', desc: 'Stress testing of all internal hardware.', color: '#00D084' },
+  { icon: FiThermometer, title: 'Repairing', desc: 'Replacement of worn parts with OEM-grade.', color: '#6B7280' },
+  { icon: FiBattery, title: 'Battery', desc: 'Battery health check and replacement if needed.', color: '#6B7280' },
+  { icon: FiAward, title: 'Final QC', desc: '30-point checklist before listing for sale.', color: '#6B7280' },
+]
+
+function Gauge({ value, label, color, icon: Icon, delay }: { value: number; label: string; color: string; icon: any; delay: number }) {
+  const [inView, setInView] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const radius = 50
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (value / 100) * circumference
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.unobserve(el) } },
+      { threshold: 0.3 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className="flex flex-col items-center gap-2">
+      <div className="relative w-[120px] h-[120px]">
+        <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r={radius} fill="none" stroke="#E5E7EB" strokeWidth="10" />
+          <motion.circle
+            cx="60" cy="60" r={radius} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={{ strokeDashoffset: circumference }}
+            animate={inView ? { strokeDashoffset: offset } : {}}
+            transition={{ duration: 1.5, delay, ease: 'easeOut' }}
+            style={{ filter: `drop-shadow(0 0 6px ${color}40)` }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <Icon size={16} style={{ color }} className="mb-1" />
+          {inView ? (
+            <CountUp start={0} end={Number(value)} duration={1.5} delay={delay} suffix="%">
+              {({ countUpRef }) => <span ref={countUpRef} className="text-2xl font-bold text-[#141414]" />}
+            </CountUp>
+          ) : (
+            <span className="text-2xl font-bold text-[#141414]">0%</span>
+          )}
+        </div>
+      </div>
+      <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">{label}</span>
+    </div>
+  )
+}
+
+function GiantCircles() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Large rotating ring - top left */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 50, repeat: Infinity, ease: 'linear' }}
+        className="absolute -top-[100px] -left-[100px] w-[500px] h-[500px] rounded-full border border-[#00D084]/20"
+      />
+      {/* Inner ring */}
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 35, repeat: Infinity, ease: 'linear' }}
+        className="absolute -top-[50px] -left-[50px] w-[400px] h-[400px] rounded-full border border-white/30"
+        style={{ top: '-30px', left: '-30px' }}
+      />
+
+      {/* Large rotating ring - bottom right */}
+      <motion.div
+        animate={{ rotate: -360 }}
+        transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+        className="absolute -bottom-[150px] -right-[100px] w-[600px] h-[600px] rounded-full border border-[#8B5CF6]/15"
+      />
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+        className="absolute -bottom-[80px] -right-[50px] w-[450px] h-[450px] rounded-full border border-white/20"
+      />
+
+      {/* Floating glowing orbs */}
+      <motion.div
+        animate={{ y: [0, -30, 0], scale: [1, 1.05, 1] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-[15%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#00D084]/10 blur-[80px]"
+      />
+      <motion.div
+        animate={{ y: [0, 25, 0], scale: [1, 1.08, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="absolute top-[50%] left-[5%] w-[250px] h-[250px] rounded-full bg-[#8B5CF6]/10 blur-[80px]"
+      />
+      <motion.div
+        animate={{ y: [0, -20, 0], scale: [1, 1.06, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="absolute bottom-[20%] right-[10%] w-[200px] h-[200px] rounded-full bg-[#FF8A00]/8 blur-[80px]"
+      />
+      <motion.div
+        animate={{ x: [0, 20, 0], y: [0, -15, 0] }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        className="absolute top-[30%] left-[40%] w-[180px] h-[180px] rounded-full bg-[#3B82F6]/8 blur-[80px]"
+      />
+
+      {/* Central ambient glow */}
+      <motion.div
+        animate={{ scale: [1, 1.06, 1], opacity: [0.4, 0.6, 0.4] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-[#00D084]/5 via-[#8B5CF6]/5 to-[#FF8A00]/5 blur-[120px]"
+      />
+
+      {/* Small accent dots */}
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{
+            y: [0, -(10 + i * 3), 0],
+            opacity: [0.3, 0.7, 0.3],
+          }}
+          transition={{ duration: 5 + i * 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.8 }}
+          className="absolute w-[6px] h-[6px] rounded-full bg-[#00D084]/40"
+          style={{
+            top: `${15 + i * 12}%`,
+            left: `${8 + i * 15}%`,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ProductSkeleton() {
+  return (
+    <div className="min-h-screen bg-[#F2F4F6]">
+      <div className="h-20" />
+      <div className="max-w-[1320px] mx-auto px-6 py-12 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <div className="h-6 w-40 rounded-full bg-white/35 animate-pulse" />
+            <div className="h-16 w-3/4 rounded-lg bg-white/35 animate-pulse" />
+            <div className="h-4 w-full rounded bg-white/35 animate-pulse" />
+            <div className="h-4 w-5/6 rounded bg-white/35 animate-pulse" />
+            <div className="flex gap-3">
+              <div className="h-12 w-36 rounded-full bg-white/35 animate-pulse" />
+              <div className="h-12 w-36 rounded-full bg-white/35 animate-pulse" />
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="w-[340px] h-[500px] rounded-[24px] bg-white/35 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProductDetailContent() {
+  const { productId, variationId, variantId, id } = useParams()
+  const resolvedId = productId || id
+  const resolvedVariantId = variationId || variantId
+
+  const [apiProduct, setApiProduct] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [qty, setQty] = useState(1)
+  const [added, setAdded] = useState(false)
+  const [, setCartError] = useState('')
+  const { toast, show: showToast } = useToast()
+  const [wishlist, setWishlist] = useState<Set<number>>(() => {
+    try { const stored = JSON.parse(localStorage.getItem('wishlist') || '[]'); return new Set<number>(stored.map((item: any) => typeof item === 'number' ? item : item.id)) }
+    catch { return new Set<number>() }
+  })
+  const [selectedColorIdx, setSelectedColorIdx] = useState(0)
+  const [selectedStorageIdx, setSelectedStorageIdx] = useState(0)
+  const [selectedRamIdx, setSelectedRamIdx] = useState(0)
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
+  const [highlightIdx, setHighlightIdx] = useState(0)
+  const timelineRef = useRef<HTMLDivElement>(null)
+  const [matchScore, setMatchScore] = useState(0)
+  const imageContainerRef = useRef<HTMLDivElement>(null)
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 })
+  const [isHovering, setIsHovering] = useState(false)
+  const [fullscreenPreview, setFullscreenPreview] = useState(false)
+  const [showFullDesc, setShowFullDesc] = useState(false)
+
+  const product = useMemo(() => apiProduct || {}, [apiProduct])
+
+  useEffect(() => {
+    if (!resolvedId) { setLoading(false); return }
+    let cancelled = false
+    setLoading(true)
+    setFetchError('')
+    productService.getById(Number(resolvedId))
+      .then((res) => { if (!cancelled) setApiProduct(res) })
+      .catch((err) => { if (!cancelled) setFetchError(err?.message || 'Failed to load product') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [resolvedId])
+
+  const { colors, storageOptions, ramOptions, variants } = useMemo(() => {
+    if (apiProduct?.variants?.length > 0) {
+      const cols = [...new Set(apiProduct.variants.map((v: any) => v.color).filter(Boolean))] as string[]
+      const store = [...new Set(apiProduct.variants.map((v: any) => v.storage).filter(Boolean))] as string[]
+      const ram = [...new Set(apiProduct.variants.map((v: any) => v.ram).filter(Boolean))] as string[]
+      return { colors: cols, storageOptions: store, ramOptions: ram, variants: apiProduct.variants }
+    }
+    return { colors: (product?.colors || []) as string[], storageOptions: (product?.storage || []) as string[], ramOptions: (product?.ram || []) as string[], variants: [] as any[] }
+  }, [apiProduct, product])
+
+  useEffect(() => { if (resolvedVariantId) setSelectedVariantId(resolvedVariantId) }, [resolvedVariantId])
+
+  const activeVariant = useMemo(() => {
+    if (variants.length > 0) {
+      if (selectedVariantId) return variants.find((v: any) => String(v.id) === selectedVariantId) || variants[0]
+      const match = variants.find((v: any) => {
+        const colorMatch = !colors.length || !v.color || v.color === colors[selectedColorIdx]
+        const storageMatch = !storageOptions.length || !v.storage || v.storage === storageOptions[selectedStorageIdx]
+        const ramMatch = !ramOptions.length || !v.ram || v.ram === ramOptions[selectedRamIdx]
+        return colorMatch && storageMatch && ramMatch
+      })
+      return match || variants[0]
+    }
+    return null
+  }, [variants, selectedVariantId, selectedColorIdx, selectedStorageIdx, selectedRamIdx, colors, storageOptions, ramOptions])
+
+  const showVariantDetail = variants.length === 0 || selectedVariantId !== null || !!resolvedVariantId
+  const parentImages = useMemo(() => extractImages(apiProduct?.images || []), [apiProduct])
+
+  useEffect(() => { setSelectedImage(0) }, [activeVariant?.id])
+  useEffect(() => { if (qty < 1) setQty(1); setCartError('') }, [activeVariant?.id])
+
+  const images = useMemo(() => {
+    if (activeVariant?.images?.length > 0) return extractImages(activeVariant.images)
+    if (apiProduct?.images?.length > 0) return extractImages(apiProduct.images)
+    return []
+  }, [activeVariant, apiProduct])
+
+  const currentPrice = activeVariant?.discountPrice || activeVariant?.price || product?.price || 0
+  const oldPriceVal = activeVariant?.price && activeVariant.discountPrice ? activeVariant.price : (product?.oldPrice || 0)
+  const inStock = activeVariant ? activeVariant.stock > 0 : (product?.inStock ?? true)
+  const stockQty = activeVariant?.stock ?? 0
+  const discount = oldPriceVal > currentPrice ? Math.round((1 - currentPrice / oldPriceVal) * 100) : 0
+  const description = apiProduct?.description || product?.description || ''
+  const productName = product?.name || product?.product_name || 'Product'
+  const productBrand = product?.brand || ''
+  const productRating = product?.rating || 0
+  const productSold = product?.sold || 0
+  const modelNumber = product?.model || ''
+  const categoryName = product?.category || ''
+  const subCategoryName = product?.subcategory || ''
+  const careInstructions: string[] = product?.careInstructions || []
+  const variantName = activeVariant?.name || ''
+  const youSave = oldPriceVal > currentPrice ? oldPriceVal - currentPrice : 0
+
+  const specEntries = useMemo(() => {
+    const src = activeVariant || product || {}
+    const keys = ['ram', 'storage', 'battery', 'processor', 'display', 'camera', 'color'] as const
+    return keys.map((key) => {
+      const meta = SPEC_META[key]; let val = src[key]
+      if (!val && key === 'battery' && typeof src.battery === 'number') val = `${src.battery} mAh`
+      if (!val) return null
+      let display = String(val)
+      if (key === 'battery') display = `${val} mAh`
+      return { ...meta, key, value: display }
+    }).filter(Boolean) as ({ key: string; label: string; value: string; icon: any; color: string })[]
+  }, [activeVariant, product])
+
+  const validateStock = (requestedQty: number): string | null => {
+    if (!inStock) return 'This product is currently out of stock'
+    if (requestedQty > stockQty) return `Only ${stockQty} units available. You requested ${requestedQty}.`
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    const existing = cart.find((item: any) => item.productId === product.id && item.variantId === (activeVariant?.id || null))
+    const totalInCart = existing ? existing.quantity + requestedQty : requestedQty
+    if (totalInCart > stockQty) {
+      const canAdd = stockQty - (existing?.quantity || 0)
+      return canAdd <= 0 ? `${existing.quantity} already in cart \u2014 no more stock available.` : `Only ${canAdd} more can be added (${existing.quantity} already in cart, ${stockQty} in stock).`
+    }
+    return null
+  }
+
+  const handleAddToCart = () => {
+    const error = validateStock(qty)
+    if (error) { setCartError(error); showToast(error, 'error'); return }
+    setCartError('')
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    const existingIdx = cart.findIndex((item: any) => item.productId === product.id && item.variantId === (activeVariant?.id || null))
+    if (existingIdx >= 0) { cart[existingIdx].quantity += qty }
+    else {
+      cart.push({
+        productId: product.id, variantId: activeVariant?.id || null, name: productName,
+        brand: productBrand, price: currentPrice, image: images[0] || '', quantity: qty,
+        storage: activeVariant?.storage || product?.storage?.[selectedStorageIdx] || '',
+        ram: activeVariant?.ram || product?.ram?.[selectedRamIdx] || '',
+        color: activeVariant?.color || product?.colors?.[selectedColorIdx] || '',
+      })
+    }
+    localStorage.setItem('cart', JSON.stringify(cart))
+    window.dispatchEvent(new Event('cart-updated'))
+    setAdded(true); showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+    setTimeout(() => setAdded(false), 2000)
+  }
+
+  const toggleWishlist = (id: number) => {
+    setWishlist((prev) => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); localStorage.setItem('wishlist', JSON.stringify(Array.from(next))); window.dispatchEvent(new Event('wishlist-updated')); return next })
+  }
+
+  const handleImageMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setMousePos({ x, y })
+  }, [])
+
+  useEffect(() => {
+    if (matchScore < 94) {
+      const timer = setTimeout(() => setMatchScore(94), 500)
+      return () => clearTimeout(timer)
+    }
+  }, [matchScore])
+
+  useEffect(() => {
+    const interval = setInterval(() => setHighlightIdx((prev) => (prev + 1) % 4), 2000)
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const el = timelineRef.current
+    if (!el) return
+    try {
+      const ctx = gsap.context(() => {
+        gsap.fromTo(el.querySelectorAll('.tl-dot'), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.15, scrollTrigger: { trigger: el, start: 'top 75%', toggleActions: 'play none none none' } })
+      })
+      return () => ctx.revert()
+    } catch { /* ignore */ }
+  }, [])
+
+  const handlePrevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
+  const handleNextImage = () => setSelectedImage((prev) => (prev + 1) % images.length)
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!fullscreenPreview && showVariantDetail) {
+      if (e.key === 'ArrowLeft') handlePrevImage()
+      if (e.key === 'ArrowRight') handleNextImage()
+    }
+    if (fullscreenPreview && e.key === 'Escape') setFullscreenPreview(false)
+  }, [fullscreenPreview, showVariantDetail, images.length])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  if (loading) return <ProductSkeleton />
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F2F4F6] to-[#EDF1F4] flex items-center justify-center p-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/35 backdrop-blur-[30px] rounded-[24px] p-10 border border-white/70 flex flex-col items-center max-w-md mx-auto shadow-[0_15px_50px_rgba(0,0,0,0.08)] text-center">
+          <div className="w-16 h-16 rounded-xl bg-red-50 flex items-center justify-center mb-6">
+            <FiAlertTriangle size={28} className="text-red-400" />
+          </div>
+          <h2 className="text-xl font-bold text-[#141414] mb-2">Unable to load product</h2>
+          <p className="text-sm text-[#6B7280] mb-6">{fetchError}</p>
+          <div className="flex gap-3">
+            <button onClick={() => window.location.reload()} className="px-8 py-3 rounded-full bg-[#141414] text-white text-sm font-semibold transition-all hover:scale-[1.03] shadow-lg flex items-center gap-2">
+              <FiRefreshCw size={14} /> Try Again
+            </button>
+            <Link to="/collection/all" className="px-8 py-3 rounded-full bg-white/35 backdrop-blur-[30px] border border-white/70 text-[#141414] text-sm font-semibold transition-all hover:scale-[1.03] flex items-center gap-2">
+              Browse Products
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (!apiProduct) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#F2F4F6] to-[#EDF1F4] flex items-center justify-center p-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/35 backdrop-blur-[30px] rounded-[24px] p-10 border border-white/70 flex flex-col items-center max-w-md mx-auto shadow-[0_15px_50px_rgba(0,0,0,0.08)] text-center">
+          <div className="w-16 h-16 rounded-xl bg-amber-50 flex items-center justify-center mb-6">
+            <FiSearch size={28} className="text-amber-400" />
+          </div>
+          <h2 className="text-xl font-bold text-[#141414] mb-2">Product Not Found</h2>
+          <p className="text-sm text-[#6B7280] mb-6">This product does not exist or has been removed.</p>
+          <Link to="/collection/all" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[#141414] text-white text-sm font-semibold transition-all hover:scale-[1.03] shadow-lg">
+            <FiChevronRight size={14} /> Browse Products
+          </Link>
+        </motion.div>
+      </div>
+    )
+  }
+
+  const colorMap: Record<string, string> = {
+    black: '#1a1a1a', white: '#f0f0f0', silver: '#c0c0c0',
+    gray: '#808080', 'titanium gray': '#6b7280', 'titanium black': '#374151',
+    'titanium violet': '#8b5cf6', 'natural titanium': '#d4c5a9',
+    'blue titanium': '#2563eb', 'white titanium': '#e5e7eb',
+    'flowy emerald': '#10b981', 'silky black': '#111827',
+    green: '#22c55e',
+  }
+  const getColorSwatch = (c: string) => colorMap[c.toLowerCase().trim()] || '#ccc'
+
+  const features = product?.features || []
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#F2F4F6] to-[#EDF1F4] overflow-x-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* ===== STICKY PURCHASE PANEL ===== */}
+      {showVariantDetail && (
+        <motion.div initial={{ y: 100 }} animate={{ y: 0 }}
+          className="fixed bottom-0 left-0 right-0 z-[100] bg-white/35 backdrop-blur-[30px] border-t border-white/70 shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+        >
+          <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              {images[selectedImage] && (
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/35 shrink-0 hidden sm:block">
+                  <img src={images[selectedImage]} alt="" className="w-full h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-[#6B7280]">{variantName || productName}</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-[#00D084]">{formatPrice(currentPrice)}</span>
+                  {oldPriceVal > currentPrice && <span className="text-xs text-[#6B7280] line-through">{formatPrice(oldPriceVal)}</span>}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <QuantitySelector qty={qty} setQty={setQty} max={stockQty} stock={stockQty} />
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleAddToCart} disabled={!inStock}
+                className={`h-10 px-6 rounded-full text-xs font-semibold transition-all flex items-center gap-2 ${!inStock ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : added ? 'bg-[#00D084] text-white' : 'bg-[#141414] text-white hover:scale-[1.03] shadow-lg'}`}>
+                {!inStock ? 'Out of Stock' : added ? <><FiCheck size={14} /> Added</> : <><FiShoppingCart size={14} /> Add to Cart</>}
+              </motion.button>
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => { if (product?.id) toggleWishlist(product.id) }}
+                className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${product?.id && wishlist.has(product.id) ? 'bg-[#FF3B30]/10 border-[#FF3B30]/30 text-[#FF3B30]' : 'bg-white/35 border-white/70 text-[#6B7280]'}`}>
+                <FiHeart size={14} className={product?.id && wishlist.has(product.id) ? 'fill-[#FF3B30]' : ''} />
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      <StorefrontNavbar
+        brand={`${productBrand || 'PhoneFix'} ${productName.includes(' ') ? productName.split(' ').slice(0, 2).join(' ') : productName}`}
+        navItems={[
+          { label: 'Home', to: '/' },
+          { label: 'Product', to: '#' },
+          { label: 'Features', to: '#features' },
+          { label: 'My Store', to: '/store' },
+          { label: 'Contact', to: '#contact' },
+        ]}
+        activeLabel="Product"
+      />
+
+      {/* ===== HERO ===== */}
+      <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+        <GiantCircles />
+
+        {!showVariantDetail && variants.length > 0 ? (
+          /* ─── BROWSE MODE: Parent Product Showcase ─── */
+          <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 py-24 lg:py-0">
+            <div className="flex flex-col items-center text-center min-h-[80vh] justify-center">
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+                className="w-full max-w-lg mb-10"
+              >
+                <div className="relative flex items-center justify-center">
+                  <motion.div animate={{ scale: [1, 1.02, 1] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute bottom-[10%] w-[80%] h-[30px] bg-white/35 backdrop-blur-[30px] rounded-full border border-white/70 shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+                  />
+                  {parentImages[0] ? (
+                    <motion.img initial={{ scale: 1.1, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6 }}
+                      src={parentImages[0]} alt={productName}
+                      className="w-full h-auto max-h-[450px] object-contain relative z-10 drop-shadow-2xl"
+                      onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
+                    />
+                  ) : (
+                    <div className="w-[400px] h-[450px] flex items-center justify-center text-8xl relative z-10 bg-white/20 rounded-[32px] backdrop-blur-sm">
+                      <motion.span animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity }}>📱</motion.span>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+
+              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-5xl md:text-7xl lg:text-[80px] font-bold text-[#141414] leading-[0.95] mb-4"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                {productName}
+              </motion.h1>
+
+              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 }}
+                className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#00D084]/15 border border-[#00D084]/30 mb-4"
+              >
+                <span className="text-[11px] font-semibold text-[#00D084] uppercase tracking-[0.08em]">{variants.length} Variants Available</span>
+              </motion.div>
+
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.3 }}
+                className="text-lg text-[#6B7280] mb-12"
+              >
+                Choose Your Perfect Device
+              </motion.p>
+
+              {/* Browse variant cards */}
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
+                className="w-full max-w-5xl"
+              >
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {variants.map((v: any) => {
+                    const vImages = extractImages(v.images || [])
+                    const vPrice = v.discountPrice || v.price || 0
+                    const vOldPrice = v.price && v.discountPrice ? v.price : 0
+                    const vInStock = v.stock > 0
+                    return (
+                      <motion.button key={v.id} whileHover={{ y: -4, scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                        onClick={() => { setSelectedVariantId(String(v.id)); setSelectedColorIdx(colors.indexOf(v.color) > -1 ? colors.indexOf(v.color) : 0); setSelectedStorageIdx(storageOptions.indexOf(v.storage) > -1 ? storageOptions.indexOf(v.storage) : 0); setSelectedRamIdx(ramOptions.indexOf(v.ram) > -1 ? ramOptions.indexOf(v.ram) : 0) }}
+                        className="relative text-left p-4 rounded-2xl border border-white/70 bg-white/35 backdrop-blur-[30px] hover:shadow-lg hover:border-[#00D084]/50 transition-all"
+                      >
+                        {vImages[0] && (
+                          <div className="w-full h-24 rounded-xl overflow-hidden bg-white/50 mb-3 flex items-center justify-center">
+                            <img src={vImages[0]} alt="" className="h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1">
+                          {(v.name || v.storage || v.color) && (
+                            <p className="text-[11px] font-semibold text-[#141414] truncate">{v.name || `${v.storage || ''}${v.storage && v.color ? ' - ' : ''}${v.color || ''}`}</p>
+                          )}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {v.storage && <span className="text-[10px] font-semibold bg-[#141414]/10 text-[#141414] px-1.5 py-0.5 rounded">{v.storage}</span>}
+                            {v.ram && <span className="text-[10px] font-semibold bg-[#8B5CF6]/10 text-[#8B5CF6] px-1.5 py-0.5 rounded">{v.ram}</span>}
+                            {v.color && <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: getColorSwatch(v.color) }} />}
+                          </div>
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-sm font-bold text-[#141414]">{formatPrice(vPrice)}</span>
+                            {vOldPrice > vPrice && <span className="text-[10px] text-[#6B7280] line-through">{formatPrice(vOldPrice)}</span>}
+                          </div>
+                          <span className={`text-[10px] font-medium ${vInStock ? 'text-[#00D084]' : 'text-red-400'}`}>
+                            {vInStock ? (v.stock <= 5 ? `Only ${v.stock} left` : 'In Stock') : 'Out of Stock'}
+                          </span>
+                        </div>
+                      </motion.button>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        ) : (
+          /* ─── DETAIL MODE: Variant Detail View ─── */
+          <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 py-16 lg:py-0">
+            <div className="grid lg:grid-cols-12 gap-8 items-start min-h-[80vh]">
+
+              {/* ─── LEFT COLUMN: Image Gallery ─── */}
+              <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}
+                className="lg:col-span-7"
+              >
+                <div className="flex gap-4">
+                  {/* Thumbnail column */}
+                  {images.length > 1 && (
+                    <div className="flex flex-col gap-2 w-20 shrink-0">
+                      {images.map((img, i) => (
+                        <button key={i} onClick={() => setSelectedImage(i)}
+                          className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${i === selectedImage ? 'border-[#00D084] shadow-[0_0_12px_rgba(0,208,132,0.3)]' : 'border-transparent hover:border-[#00D084]/50'}`}
+                        >
+                          <img src={img} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Main image */}
+                  <div className="flex-1 relative">
+                    <div ref={imageContainerRef}
+                      onMouseMove={handleImageMouseMove} onMouseEnter={() => setIsHovering(true)}
+                      onMouseLeave={() => { setIsHovering(false); setMousePos({ x: 50, y: 50 }) }}
+                      className="relative overflow-hidden rounded-[24px] bg-white/20 backdrop-blur-sm cursor-crosshair"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      {images.length > 0 ? (
+                        <motion.img key={selectedImage} initial={{ scale: 1.05, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.4 }}
+                          src={images[selectedImage]} alt={variantName || productName}
+                          className="w-full h-[500px] lg:h-[600px] object-contain select-none transition-transform duration-100 ease-out"
+                          style={{
+                            transform: isHovering
+                              ? `scale(1.8) translate(${(mousePos.x - 50) * -0.5}%, ${(mousePos.y - 50) * -0.5}%)`
+                              : 'scale(1) translate(0, 0)',
+                          }}
+                          onClick={() => setFullscreenPreview(true)}
+                          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} draggable={false}
+                        />
+                      ) : (
+                        <div className="h-[500px] lg:h-[600px] flex items-center justify-center text-8xl bg-white/20 rounded-[32px] backdrop-blur-sm">
+                          <motion.span animate={{ scale: [1, 1.05, 1] }} transition={{ duration: 3, repeat: Infinity }}>📱</motion.span>
+                        </div>
+                      )}
+
+                      {/* Gallery nav */}
+                      {images.length > 1 && (
+                        <>
+                          <button onClick={(e) => { e.stopPropagation(); handlePrevImage() }}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-[10px] flex items-center justify-center text-[#141414] hover:bg-white transition-all shadow-lg z-10"
+                          >‹</button>
+                          <button onClick={(e) => { e.stopPropagation(); handleNextImage() }}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/70 backdrop-blur-[10px] flex items-center justify-center text-[#141414] hover:bg-white transition-all shadow-lg z-10"
+                          >›</button>
+                          <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/40 backdrop-blur-[10px] text-white text-[10px] font-semibold z-10">
+                            {selectedImage + 1} / {images.length}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Variant selector below gallery */}
+                    {variants.length > 1 && (
+                      <div className="mt-4">
+                        <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Quick Switch</p>
+                        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                          {variants.map((v: any) => {
+                            const vImages = extractImages(v.images || [])
+                            const isActive = String(v.id) === String(selectedVariantId)
+                            return (
+                              <motion.button key={v.id} whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}
+                                onClick={() => { setSelectedVariantId(String(v.id)); setSelectedColorIdx(colors.indexOf(v.color) > -1 ? colors.indexOf(v.color) : 0); setSelectedStorageIdx(storageOptions.indexOf(v.storage) > -1 ? storageOptions.indexOf(v.storage) : 0); setSelectedRamIdx(ramOptions.indexOf(v.ram) > -1 ? ramOptions.indexOf(v.ram) : 0) }}
+                                className={`flex items-center gap-2 px-3 py-2 rounded-xl border whitespace-nowrap transition-all shrink-0 ${isActive ? 'bg-[#00D084]/10 border-[#00D084]' : 'bg-white/35 border-white/70 hover:border-[#00D084]/50'}`}
+                              >
+                                {vImages[0] && <img src={vImages[0]} alt="" className="w-8 h-8 rounded-lg object-cover" />}
+                                <div className="text-left">
+                                  <p className="text-[10px] font-semibold text-[#141414]">{v.name || `${v.storage || ''}${v.storage && v.color ? ' - ' : ''}${v.color || ''}`}</p>
+                                  <p className="text-[9px] text-[#6B7280]">{formatPrice(v.discountPrice || v.price || 0)}</p>
+                                </div>
+                                {isActive && <FiCheck size={12} className="text-[#00D084]" />}
+                              </motion.button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ─── RIGHT COLUMN: Variant Details ─── */}
+              <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+                className="lg:col-span-5 space-y-6"
+              >
+                {/* Variant badge */}
+                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3 }}
+                  className="inline-flex items-center px-3 py-1 rounded-full bg-[#00D084]/15 border border-[#00D084]/30"
+                >
+                  <span className="text-[10px] font-semibold text-[#00D084] uppercase tracking-[0.08em]">
+                    {productBrand} {product?.refurbished ? 'Refurbished' : ''}
+                  </span>
+                </motion.div>
+
+                {/* Variant name */}
+                <div>
+                  {variantName && (
+                    <p className="text-sm font-medium text-[#00D084] mb-1">{variantName}</p>
+                  )}
+                  <h1 className="text-3xl md:text-4xl font-bold text-[#141414] leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {productName}
+                  </h1>
+                  {modelNumber && <p className="text-sm text-[#6B7280] mt-1">Model: {modelNumber}</p>}
+                </div>
+
+                {/* Spec summary chips */}
+                <div className="flex flex-wrap gap-2">
+                  {activeVariant?.color && (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/35 backdrop-blur-[30px] border border-white/70">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: getColorSwatch(activeVariant.color) }} />
+                      <span className="text-[11px] font-medium text-[#6B7280]">{activeVariant.color}</span>
+                    </div>
+                  )}
+                  {activeVariant?.ram && (
+                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#8B5CF6]/10 border border-[#8B5CF6]/20">
+                      <FiCpu size={12} className="text-[#8B5CF6]" />
+                      <span className="text-[11px] font-medium text-[#8B5CF6]">{activeVariant.ram}</span>
+                    </div>
+                  )}
+                  {activeVariant?.storage && (
+                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/20">
+                      <FiHardDrive size={12} className="text-[#3B82F6]" />
+                      <span className="text-[11px] font-medium text-[#3B82F6]">{activeVariant.storage}</span>
+                    </div>
+                  )}
+                  {activeVariant?.battery ? (
+                    <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#00D084]/10 border border-[#00D084]/20">
+                      <FiBattery size={12} className="text-[#00D084]" />
+                      <span className="text-[11px] font-medium text-[#00D084]">{activeVariant.battery}mAh</span>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Price Section */}
+                <div className="bg-white/35 backdrop-blur-[30px] rounded-[20px] border border-white/70 p-5 shadow-[0_15px_50px_rgba(0,0,0,0.08)]">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-3xl md:text-4xl font-bold text-[#141414]">{formatPrice(currentPrice)}</span>
+                    {oldPriceVal > currentPrice && (
+                      <span className="text-lg text-[#6B7280] line-through">{formatPrice(oldPriceVal)}</span>
+                    )}
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-sm font-bold text-[#00D084] bg-[#00D084]/10 px-3 py-0.5 rounded-full">{discount}% OFF</span>
+                      <span className="text-sm text-[#6B7280]">You save <span className="font-semibold text-[#141414]">{formatPrice(youSave)}</span></span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Stock Visualization */}
+                <div className="bg-white/35 backdrop-blur-[30px] rounded-[16px] border border-white/70 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[#6B7280]">Availability</span>
+                    <span className={`text-xs font-semibold ${inStock ? (stockQty <= 5 ? 'text-amber-500' : 'text-[#00D084]') : 'text-red-500'}`}>
+                      {inStock ? (stockQty <= 5 ? `Only ${stockQty} left` : `${stockQty} in stock`) : 'Out of Stock'}
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-[#E5E7EB] rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (stockQty / Math.max(...variants.map((v: any) => v.stock), 1)) * 100)}%` }}
+                      className={`h-full rounded-full ${stockQty <= 5 ? 'bg-amber-500' : 'bg-[#00D084]'}`}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-2 bg-white/35 backdrop-blur-[30px] border border-white/70 rounded-full px-1 shadow-[0_15px_50px_rgba(0,0,0,0.08)]">
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => setQty(Math.max(1, qty - 1))}
+                      className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#00D084] transition-all cursor-pointer">
+                      <FiMinus size={14} />
+                    </motion.button>
+                    <motion.span key={qty} initial={{ scale: 1.3, opacity: 0.5 }} animate={{ scale: 1, opacity: 1 }}
+                      className="w-10 text-center text-sm font-bold text-[#141414] select-none">{qty}</motion.span>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => { if (qty < stockQty) setQty(qty + 1) }}
+                      disabled={qty >= stockQty}
+                      className={`w-10 h-10 flex items-center justify-center transition-all cursor-pointer ${qty >= stockQty ? 'text-gray-200 cursor-not-allowed' : 'text-gray-400 hover:text-[#00D084]'}`}>
+                      <FiPlus size={14} />
+                    </motion.button>
+                  </div>
+                  <motion.button whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleAddToCart} disabled={!inStock}
+                    className={`flex-1 h-12 px-8 rounded-full text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg ${!inStock ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#141414] text-white hover:shadow-[0_15px_50px_rgba(0,0,0,0.15)]'}`}>
+                    <FiShoppingCart size={16} /> {added ? 'Added' : 'Add to Cart'}
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.9 }} onClick={() => { if (product?.id) toggleWishlist(product.id) }}
+                    className={`h-12 w-12 rounded-full flex items-center justify-center border shadow-lg transition-all ${product?.id && wishlist.has(product.id) ? 'bg-[#FF3B30]/10 border-[#FF3B30]/30 text-[#FF3B30]' : 'bg-white/35 backdrop-blur-[30px] border-white/70 text-[#6B7280] hover:shadow-lg'}`}>
+                    <FiHeart size={16} className={product?.id && wishlist.has(product.id) ? 'fill-[#FF3B30]' : ''} />
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.9 }}
+                    className="h-12 w-12 rounded-full bg-white/35 backdrop-blur-[30px] border border-white/70 text-[#6B7280] flex items-center justify-center hover:shadow-lg transition-all">
+                    <FiShare2 size={16} />
+                  </motion.button>
+                </div>
+
+                {/* Category info */}
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-[#6B7280]">
+                  {productBrand && <span>Brand: <strong className="text-[#141414]">{productBrand}</strong></span>}
+                  {modelNumber && <span>Model: <strong className="text-[#141414]">{modelNumber}</strong></span>}
+                  {categoryName && <span>Category: <strong className="text-[#141414]">{categoryName}</strong></span>}
+                  {subCategoryName && <span>Sub Category: <strong className="text-[#141414]">{subCategoryName}</strong></span>}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        )}
+
+        {/* Scroll indicator */}
+        {showVariantDetail && images.length > 0 && (
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+          >
+            <span className="text-[10px] text-[#6B7280] font-medium uppercase tracking-widest">Scroll</span>
+            <FiChevronDownIcon size={16} className="text-[#6B7280]" />
+          </motion.div>
+        )}
+      </section>
+
+      {/* ─── DETAIL SECTIONS (only when variant selected) ─── */}
+      {showVariantDetail && (
+        <div className="max-w-[1600px] mx-auto px-6">
+          {/* ===== PRODUCT FEATURES ===== */}
+          {features.length > 0 && (
+            <section className="py-16">
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-2xl md:text-3xl font-bold text-[#141414] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Product Features
+              </motion.h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {features.map((f: string, i: number) => (
+                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }} whileHover={{ y: -2 }}
+                    className="flex items-center gap-3 bg-white/35 backdrop-blur-[30px] rounded-[16px] border border-white/70 p-4 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#00D084]/10 flex items-center justify-center shrink-0">
+                      <FiCheckCircle size={16} className="text-[#00D084]" />
+                    </div>
+                    <span className="text-sm text-[#141414]">{f}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ===== SPECIFICATIONS ===== */}
+          {specEntries.length > 0 && (
+            <section className="py-16 border-t border-white/70">
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-2xl md:text-3xl font-bold text-[#141414] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Specifications
+              </motion.h2>
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+              >
+                {specEntries.map((spec, i) => (
+                  <motion.div key={spec.key} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }}
+                    className="bg-white/35 backdrop-blur-[30px] rounded-[20px] border border-white/70 p-5 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: `${spec.color}15` }}>
+                      <spec.icon size={18} style={{ color: spec.color }} />
+                    </div>
+                    <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-1">{spec.label}</p>
+                    <p className="text-sm font-bold text-[#141414]">{spec.value}</p>
+                  </motion.div>
+                ))}
+                {variantName && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="bg-white/35 backdrop-blur-[30px] rounded-[20px] border border-white/70 p-5 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: '#00D08415' }}>
+                      <FiInfo size={18} style={{ color: '#00D084' }} />
+                    </div>
+                    <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-1">Variant</p>
+                    <p className="text-sm font-bold text-[#141414]">{variantName}</p>
+                  </motion.div>
+                )}
+                {productBrand && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="bg-white/35 backdrop-blur-[30px] rounded-[20px] border border-white/70 p-5 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: '#3B82F615' }}>
+                      <FiAward size={18} style={{ color: '#3B82F6' }} />
+                    </div>
+                    <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-1">Brand</p>
+                    <p className="text-sm font-bold text-[#141414]">{productBrand}</p>
+                  </motion.div>
+                )}
+                {modelNumber && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="bg-white/35 backdrop-blur-[30px] rounded-[20px] border border-white/70 p-5 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: '#8B5CF615' }}>
+                      <FiMonitor size={18} style={{ color: '#8B5CF6' }} />
+                    </div>
+                    <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-1">Model</p>
+                    <p className="text-sm font-bold text-[#141414]">{modelNumber}</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            </section>
+          )}
+
+          {/* ===== DESCRIPTION ===== */}
+          {description && (
+            <section className="py-16 border-t border-white/70">
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-2xl md:text-3xl font-bold text-[#141414] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Description
+              </motion.h2>
+              <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="bg-white/35 backdrop-blur-[30px] rounded-[24px] border border-white/70 p-6 shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+              >
+                <div className={`text-sm text-[#6B7280] leading-relaxed ${!showFullDesc ? 'line-clamp-4' : ''}`}>
+                  {description}
+                </div>
+                {description.length > 200 && (
+                  <button onClick={() => setShowFullDesc(!showFullDesc)}
+                    className="mt-3 text-sm font-semibold text-[#00D084] hover:underline"
+                  >
+                    {showFullDesc ? 'Read Less' : 'Read More'}
+                  </button>
+                )}
+              </motion.div>
+            </section>
+          )}
+
+          {/* ===== CARE INSTRUCTIONS ===== */}
+          {careInstructions.length > 0 && (
+            <section className="py-16 border-t border-white/70">
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-2xl md:text-3xl font-bold text-[#141414] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Care Instructions
+              </motion.h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {careInstructions.map((ci: string, i: number) => (
+                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }} whileHover={{ y: -2 }}
+                    className="flex items-center gap-3 bg-white/35 backdrop-blur-[30px] rounded-[16px] border border-white/70 p-4 hover:shadow-lg transition-all"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+                      <FiAlertTriangle size={14} className="text-amber-500" />
+                    </div>
+                    <span className="text-sm text-[#141414]">{ci}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ===== VARIANT COMPARISON TABLE ===== */}
+          {variants.length > 1 && (
+            <section className="py-16 border-t border-white/70">
+              <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-2xl md:text-3xl font-bold text-[#141414] mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
+                Compare Variants
+              </motion.h2>
+              <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="bg-white/35 backdrop-blur-[30px] rounded-[24px] border border-white/70 overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+              >
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/70 bg-white/20">
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Variant</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Color</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">RAM</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Storage</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Battery</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Price</th>
+                        <th className="text-left p-4 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Stock</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {variants.map((v: any) => {
+                        const vPrice = v.discountPrice || v.price || 0
+                        const isActive = String(v.id) === String(selectedVariantId)
+                        return (
+                          <motion.tr key={v.id} whileHover={{ backgroundColor: 'rgba(0,208,132,0.05)' }}
+                            onClick={() => { setSelectedVariantId(String(v.id)); setSelectedColorIdx(colors.indexOf(v.color) > -1 ? colors.indexOf(v.color) : 0); setSelectedStorageIdx(storageOptions.indexOf(v.storage) > -1 ? storageOptions.indexOf(v.storage) : 0); setSelectedRamIdx(ramOptions.indexOf(v.ram) > -1 ? ramOptions.indexOf(v.ram) : 0) }}
+                            className={`cursor-pointer border-b border-white/30 transition-all ${isActive ? 'bg-[#00D084]/10' : ''}`}
+                          >
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                {v.name && <span className="text-xs font-semibold text-[#141414]">{v.name}</span>}
+                                {!v.name && <span className="text-xs text-[#6B7280]">{v.storage || ''}{v.storage && v.color ? ' - ' : ''}{v.color || ''}</span>}
+                                {isActive && <FiCheck size={12} className="text-[#00D084]" />}
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-1.5">
+                                {v.color && <span className="w-3 h-3 rounded-full" style={{ backgroundColor: getColorSwatch(v.color) }} />}
+                                <span className="text-xs text-[#6B7280]">{v.color || '-'}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 text-xs text-[#141414]">{v.ram || '-'}</td>
+                            <td className="p-4 text-xs text-[#141414]">{v.storage || '-'}</td>
+                            <td className="p-4 text-xs text-[#141414]">{v.battery ? `${v.battery}mAh` : '-'}</td>
+                            <td className="p-4">
+                              <span className="text-xs font-bold text-[#141414]">{formatPrice(vPrice)}</span>
+                              {v.price && v.discountPrice && v.price > vPrice && (
+                                <span className="text-[10px] text-[#6B7280] line-through ml-1">{formatPrice(v.price)}</span>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <span className={`text-[10px] font-semibold ${v.stock > 0 ? 'text-[#00D084]' : 'text-red-500'}`}>
+                                {v.stock > 0 ? `${v.stock} left` : 'Out of Stock'}
+                              </span>
+                            </td>
+                          </motion.tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* ===== BENCHMARKS + AI MATCH (always visible) ===== */}
+      <section className="py-20 bg-white relative">
+        <div className="max-w-[1320px] mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-8">
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              className="bg-white/35 backdrop-blur-[30px] rounded-[24px] border border-white/70 p-8 shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-[#141414]" style={{ fontFamily: "'Playfair Display', serif" }}>Benchmarks</h3>
+                <FiMoreVertical size={16} className="text-[#6B7280]" />
+              </div>
+              <div className="grid grid-cols-2 gap-8 justify-items-center">
+                {BENCHMARKS.map((bench, i) => (
+                  <Gauge key={bench.label} value={bench.value} label={bench.label} color={bench.color} icon={bench.icon} delay={i * 0.2} />
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              className="bg-white/35 backdrop-blur-[30px] rounded-[24px] border border-white/70 p-8 shadow-[0_15px_50px_rgba(0,0,0,0.08)]"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="text-sm text-[#6B7280]">AI Match</p>
+                  <h3 className="text-2xl font-bold text-[#141414]" style={{ fontFamily: "'Playfair Display', serif" }}>Perfect For You</h3>
+                </div>
+                <div className="relative w-[100px] h-[100px]">
+                  <motion.svg className="w-full h-full" viewBox="0 0 100 100" animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}>
+                    <defs>
+                      <radialGradient id="matchGrad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="#00D084" />
+                        <stop offset="100%" stopColor="#50F4D4" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="45" fill="url(#matchGrad)" />
+                  </motion.svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-white">
+                      {matchScore > 0 ? (
+                        <CountUp start={0} end={Number(matchScore)} duration={2} suffix="%">
+                          {({ countUpRef }) => <span ref={countUpRef} />}
+                        </CountUp>
+                      ) : '0%'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {AI_RECOMMENDATIONS.map((item, i) => (
+                  <motion.div key={item.title} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ delay: i * 0.05 }} whileHover={{ y: -3, scale: 1.02 }}
+                    className="bg-white/35 backdrop-blur-[30px] rounded-[16px] border border-white/70 p-4 flex items-center gap-3 hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <item.icon size={18} style={{ color: item.color }} />
+                    <span className="text-sm font-medium text-[#141414]">{item.title}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== REFURBISHMENT JOURNEY ===== */}
+      <section ref={timelineRef} className="py-20 bg-gradient-to-b from-[#F2F4F6] to-[#EDF1F4]">
+        <div className="max-w-[1000px] mx-auto px-6">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="text-3xl font-bold text-[#141414] mb-14 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Refurbishment Journey
+          </motion.h2>
+          <div className="relative">
+            <div className="absolute top-[14px] left-[40px] right-[40px] h-[3px] bg-[#E5E7EB] rounded-full">
+              <motion.div className="h-full bg-[#00D084] rounded-full" initial={{ width: '0%' }} whileInView={{ width: '40%' }} viewport={{ once: true }} transition={{ duration: 2, ease: 'easeOut' }} />
+            </div>
+            <div className="grid grid-cols-5 gap-4">
+              {TIMELINE_STAGES.map((stage, i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <motion.div
+                    className={`tl-dot w-[30px] h-[30px] rounded-full border-[3px] z-10 flex items-center justify-center ${i < 2 ? 'bg-[#00D084] border-[#00D084] shadow-[0_0_20px_rgba(0,208,132,0.5)]' : 'bg-white border-[#D1D5DB]'}`}
+                    initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }}
+                  >
+                    <stage.icon size={12} className="text-white" />
+                  </motion.div>
+                  <p className="text-xs font-medium text-[#6B7280] mt-4 text-center">{stage.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TESTIMONIALS ===== */}
+      <section className="py-20 bg-white">
+        <div className="max-w-[1320px] mx-auto px-6">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="text-3xl font-bold text-[#141414] mb-12 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Testimonials
+          </motion.h2>
+          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+            {CUSTOMER_REVIEWS.map((review, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }} whileHover={{ y: -10 }}
+                className="min-w-[340px] bg-white/35 backdrop-blur-[30px] rounded-[24px] border border-white/70 p-6 hover:shadow-xl transition-all duration-300 flex-shrink-0"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <img src={review.avatar} alt={review.name} className="w-12 h-12 rounded-full object-cover" />
+                  <div>
+                    <p className="text-sm font-bold text-[#141414]">{review.name}</p>
+                    <p className="text-xs text-[#6B7280]">{review.time}</p>
+                  </div>
+                  <span className="ml-auto text-[10px] font-medium text-[#00D084] bg-[#00D084]/10 px-2 py-0.5 rounded-full">{review.badge}</span>
+                </div>
+                <div className="flex items-center gap-0.5 mb-3">
+                  {[...Array(5)].map((_, s) => (
+                    <FiStar key={s} size={14} className={s < review.rating ? 'fill-[#FFC400] text-[#FFC400]' : 'text-[#D1D5DB]'} />
+                  ))}
+                </div>
+                <p className="text-sm text-[#6B7280] leading-relaxed">"{review.text}"</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <ScrollReveal />
+      <EcommerceFooter />
+
+      {/* ===== WHATSAPP FAB ===== */}
+      <motion.a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer"
+        initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 2, type: 'spring', stiffness: 200 }}
+        className="fixed bottom-24 right-6 z-[150] w-[52px] h-[52px] rounded-full bg-[#25D366] flex items-center justify-center shadow-[0_4px_16px_rgba(37,211,102,0.4)] hover:scale-105 transition-transform"
+      >
+        <FaWhatsapp size={24} className="text-white" />
+        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#FF3B30] border-2 border-white" />
+      </motion.a>
+
+      {/* ===== FULLSCREEN PREVIEW ===== */}
+      {fullscreenPreview && images[selectedImage] && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center cursor-zoom-out"
+          onClick={() => setFullscreenPreview(false)}
+        >
+          <button onClick={() => setFullscreenPreview(false)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
+          >✕</button>
+          {images.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); handlePrevImage() }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all z-10 text-2xl"
+              >‹</button>
+              <button onClick={(e) => { e.stopPropagation(); handleNextImage() }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all z-10 text-2xl"
+              >›</button>
+            </>
+          )}
+          <motion.img key={selectedImage} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            src={images[selectedImage]} alt={productName}
+            className="max-w-[90vw] max-h-[90vh] object-contain"
+          />
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-black/40 text-white text-xs font-semibold">
+            {selectedImage + 1} / {images.length}
+          </div>
+        </motion.div>
+      )}
+
+      <div className="h-24" />
+      <Toast toast={toast} />
+    </div>
+  )
+}
+
+export default function ProductDetail() {
+  return (
+    <ErrorBoundary>
+      <ProductDetailContent />
+    </ErrorBoundary>
+  )
+}
