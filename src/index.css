@@ -751,3 +751,53 @@
 .product-light .animate-pulse {
   background-color: rgba(148, 163, 184, 0.35) !important;
 }
+
+/* ============================================================
+   HOME LOADER — Zepto/Blinkit-style animated loading icons
+   ============================================================ */
+.loader-float {
+  animation: loader-float 2s ease-in-out infinite;
+}
+.loader-bounce-x {
+  animation: loader-bounce-x 1.5s ease-in-out infinite;
+}
+.loader-rotate {
+  animation: loader-rotate 2s ease-in-out infinite;
+}
+.loader-scale-pulse {
+  animation: loader-scale-pulse 1.5s ease-in-out infinite;
+}
+.loader-drive {
+  animation: loader-drive 2s ease-in-out infinite;
+}
+
+@keyframes loader-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes loader-bounce-x {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+@keyframes loader-rotate {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(8deg); }
+  75% { transform: rotate(-8deg); }
+}
+@keyframes loader-scale-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+@keyframes loader-drive {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

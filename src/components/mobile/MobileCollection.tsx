@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, Search, SlidersHorizontal, Check, Sparkles, Flame, TrendingUp, Star, Trophy, Mic, QrCode, Heart, ShoppingBag } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { categoryService } from '../../services/categoryService'
@@ -9,6 +9,7 @@ import { BRAND } from './theme'
 import ProductCard from './ProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
+import MobileCollectionLoader from './MobileCollectionLoader'
 import HeroCarousel from './HeroCarousel'
 
 type TabKey = 'all' | 'new' | 'trending' | 'best' | 'featured'
@@ -33,24 +34,33 @@ const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }>
   'all': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#4F46E5 0%,#7C3AED 100%)' },
 }
 
+// Module-level cache — persists data across remounts (back-navigation)
+let cachedCategories: { name: string; count: number; image?: string }[] | null = null
+let cachedProducts: Record<string, any[]> = {} // key = `${categoryName}|${tab}|${sortBy}`
+
 // First home-page style swipeable hero banners
 export default function MobileCollection() {
   const navigate = useNavigate()
   const { category } = useParams<{ category: string }>()
   const categoryName = category ? decodeURIComponent(category) : ''
-  const [searchParams] = useSearchParams()
-  const activeTab = (searchParams.get('tab') as TabKey) || 'all'
+  const activeTab: TabKey = 'all'
 
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const cacheKey = `${categoryName}|${activeTab}|newest`
+
+  const [products, setProducts] = useState<any[]>(() => cachedProducts[cacheKey] || [])
   const [loadingMore, setLoadingMore] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [sortBy, setSortBy] = useState('newest')
   const [sortOpen, setSortOpen] = useState(false)
   const [tab, setTab] = useState<TabKey>(activeTab)
-  const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>([])
+  const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>(() => cachedCategories || [])
+  const [categoriesLoaded, setCategoriesLoaded] = useState(() => cachedCategories !== null)
+  const [productsLoading, setProductsLoading] = useState(() => !cachedProducts[cacheKey])
   const [activeCategory, setActiveCategory] = useState(categoryName || 'all')
+
+  // Combined loading: show loader until BOTH categories AND products are loaded
+  const loading = !categoriesLoaded || productsLoading
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
   const tabTrackRef = useRef<HTMLDivElement>(null)
@@ -85,12 +95,21 @@ export default function MobileCollection() {
   }, [tab])
 
   useEffect(() => {
+    if (cachedCategories) { setCategoriesLoaded(true); return }
     categoryService.list().then((cats) => {
-      setCategories((cats || []).filter((c: any) => c.status === 'active').map((c: any) => ({ name: c.name, count: typeof c.products === 'number' ? c.products : 0, image: c.image })))
-    }).catch(() => {})
+      const mapped = (cats || []).filter((c: any) => c.status === 'active').map((c: any) => ({ name: c.name, count: typeof c.products === 'number' ? c.products : 0, image: c.image }))
+      cachedCategories = mapped
+      setCategories(mapped)
+    }).catch(() => {}).finally(() => setCategoriesLoaded(true))
   }, [])
 
   const load = (pageNum: number, replace: boolean) => {
+    // If we have cached data and this is the first page, skip fetch
+    if (replace && cachedProducts[cacheKey]) {
+      setProductsLoading(false)
+      return
+    }
+
     const params: any = {
       page: pageNum,
       page_size: 12,
@@ -103,16 +122,17 @@ export default function MobileCollection() {
     if (tab === 'best') params.is_best_selling = true
     if (tab === 'featured') params.is_featured = true
 
-    setLoading(pageNum === 1)
+    setProductsLoading(true)
     setLoadingMore(pageNum > 1)
     productService.list(params).then((res: any) => {
       const items = Array.isArray(res) ? res : (res?.results || res?.data || [])
+      cachedProducts[cacheKey] = items
       setProducts(replace ? items : [...products, ...items])
       setHasMore(items.length >= 12)
       setPage(pageNum)
     }).catch(() => {
       if (replace) setProducts([])
-    }).finally(() => { setLoading(false); setLoadingMore(false) })
+    }).finally(() => { setProductsLoading(false); setLoadingMore(false) })
   }
 
   useEffect(() => { load(1, true) }, [categoryName, tab, sortBy])
@@ -122,7 +142,7 @@ export default function MobileCollection() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#0F172A] max-w-[480px] mx-auto pb-24">
-      {/* Sticky premium header — Android-app style vertical stack */}
+      {/* ── TOP SECTION — always visible ── */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] shadow-[0_4px_16px_rgba(15,23,42,0.05)]">
         {/* Row 1: back · centered title · search */}
         <div className="flex items-center gap-2 px-3.5 h-[54px]">
@@ -163,11 +183,10 @@ export default function MobileCollection() {
           </button>
         </div>
 
-        {/* Row 3: filter chips (All, Trending, etc.) with edge fades + sort */}
+        {/* Row 3: filter chips + sort */}
         <div className="px-3.5 pb-3">
           <div className="flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
-              {/* fade edges */}
               <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-5 z-10 bg-gradient-to-r from-white to-transparent" />
               <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-5 z-10 bg-gradient-to-l from-white to-transparent" />
               <div
@@ -213,112 +232,112 @@ export default function MobileCollection() {
           )}
         </div>
 
-        {/* Row 4: category tiles — circular gradient avatars (app-style) */}
-        <div className="flex gap-3.5 overflow-x-auto px-3.5 pb-3 snap-x snap-mandatory scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
-          {/* All tile */}
-          <button
-            onClick={() => { setActiveCategory('all'); navigate('/collection/all') }}
-            className="snap-start flex-shrink-0 w-[68px] flex flex-col items-center gap-1.5 active:scale-95 transition"
-          >
-            <div className={`w-[64px] h-[64px] rounded-full overflow-hidden flex items-center justify-center transition-all ${
-              (!categoryName || categoryName.toLowerCase() === 'all' || activeCategory === 'all')
-                ? 'bg-gradient-to-br from-[#6C3BFF] to-[#4B2ECC] ring-4 ring-[#6C3BFF]/20 scale-105'
-                : 'bg-[#F1ECFF]'
-            }`}>
-              <span className={`text-[12px] font-bold text-center px-1 leading-tight ${activeCategory === 'all' ? 'text-white' : 'text-[#6C3BFF]'}`}>All</span>
-            </div>
-            <span className="text-[11px] text-center leading-tight max-w-[68px] truncate font-semibold text-[#1F2937]">All</span>
-          </button>
+        {/* Row 4: category tiles — visible once categories load */}
+        {categoriesLoaded && (
+          <div className="flex gap-3.5 overflow-x-auto px-3.5 pb-3 snap-x snap-mandatory scrollbar-hide" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <button
+              onClick={() => { setActiveCategory('all'); navigate('/collection/all') }}
+              className="snap-start flex-shrink-0 w-[68px] flex flex-col items-center gap-1.5 active:scale-95 transition"
+            >
+              <div className={`w-[64px] h-[64px] rounded-full overflow-hidden flex items-center justify-center transition-all ${
+                (!categoryName || categoryName.toLowerCase() === 'all' || activeCategory === 'all')
+                  ? 'bg-gradient-to-br from-[#6C3BFF] to-[#4B2ECC] ring-4 ring-[#6C3BFF]/20 scale-105'
+                  : 'bg-[#F1ECFF]'
+              }`}>
+                <span className={`text-[12px] font-bold text-center px-1 leading-tight ${activeCategory === 'all' ? 'text-white' : 'text-[#6C3BFF]'}`}>All</span>
+              </div>
+              <span className="text-[11px] text-center leading-tight max-w-[68px] truncate font-semibold text-[#1F2937]">All</span>
+            </button>
 
-          {categories.map((c, i) => {
-            const img = getImageUrl(c.image)
-            const tile = BRAND.colorful
-            const palette = [
-              { bg: 'linear-gradient(135deg,#6C3BFF,#4B2ECC)', fg: tile.indigo },
-              { bg: 'linear-gradient(135deg,#0EA5E9,#4F46E5)', fg: tile.sky },
-              { bg: 'linear-gradient(135deg,#10B981,#059669)', fg: tile.emerald },
-              { bg: 'linear-gradient(135deg,#F59E0B,#F97316)', fg: tile.amber },
-              { bg: 'linear-gradient(135deg,#F43F5E,#E11D48)', fg: tile.rose },
-              { bg: 'linear-gradient(135deg,#8B5CF6,#7C3AED)', fg: tile.violet },
-            ][i % 6]
-            const active = activeCategory.toLowerCase() === c.name.toLowerCase()
-            return (
-              <button
-                key={c.name}
-                onClick={() => { setActiveCategory(c.name); navigate(`/collection/${encodeURIComponent(c.name)}`) }}
-                className="snap-start flex-shrink-0 w-[68px] flex flex-col items-center gap-1.5 active:scale-95 transition"
-              >
-                <div className={`w-[64px] h-[64px] rounded-full overflow-hidden flex items-center justify-center transition-all ${
-                  active ? 'ring-4 ring-[#6C3BFF]/20 scale-105 shadow-[0_6px_18px_rgba(108,59,255,0.30)]' : 'ring-1 ring-[#E5E7EB]'
-                }`} style={active ? undefined : { background: palette.bg }}>
-                  {img ? (
-                    <img src={img} alt={c.name} loading="lazy" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-                  ) : (
-                    <span className="text-[13px] font-bold text-center px-1 leading-tight text-white drop-shadow">{c.name.slice(0, 2).toUpperCase()}</span>
-                  )}
-                </div>
-                <span className={`text-[11px] text-center leading-tight max-w-[68px] truncate font-semibold ${active ? 'text-[#6C3BFF]' : 'text-[#1F2937]'}`}>{c.name}</span>
-              </button>
-            )
-          })}
-        </div>
+            {categories.map((c, i) => {
+              const img = getImageUrl(c.image)
+              const tile = BRAND.colorful
+              const palette = [
+                { bg: 'linear-gradient(135deg,#6C3BFF,#4B2ECC)', fg: tile.indigo },
+                { bg: 'linear-gradient(135deg,#0EA5E9,#4F46E5)', fg: tile.sky },
+                { bg: 'linear-gradient(135deg,#10B981,#059669)', fg: tile.emerald },
+                { bg: 'linear-gradient(135deg,#F59E0B,#F97316)', fg: tile.amber },
+                { bg: 'linear-gradient(135deg,#F43F5E,#E11D48)', fg: tile.rose },
+                { bg: 'linear-gradient(135deg,#8B5CF6,#7C3AED)', fg: tile.violet },
+              ][i % 6]
+              const active = activeCategory.toLowerCase() === c.name.toLowerCase()
+              return (
+                <button
+                  key={c.name}
+                  onClick={() => { setActiveCategory(c.name); navigate(`/collection/${encodeURIComponent(c.name)}`) }}
+                  className="snap-start flex-shrink-0 w-[68px] flex flex-col items-center gap-1.5 active:scale-95 transition"
+                >
+                  <div className={`w-[64px] h-[64px] rounded-full overflow-hidden flex items-center justify-center transition-all ${
+                    active ? 'ring-4 ring-[#6C3BFF]/20 scale-105 shadow-[0_6px_18px_rgba(108,59,255,0.30)]' : 'ring-1 ring-[#E5E7EB]'
+                  }`} style={active ? undefined : { background: palette.bg }}>
+                    {img ? (
+                      <img src={img} alt={c.name} loading="lazy" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                    ) : (
+                      <span className="text-[13px] font-bold text-center px-1 leading-tight text-white drop-shadow">{c.name.slice(0, 2).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <span className={`text-[11px] text-center leading-tight max-w-[68px] truncate font-semibold ${active ? 'text-[#6C3BFF]' : 'text-[#1F2937]'}`}>{c.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </header>
 
-      {/* Premium hero banner (Zepto/Blinkit style) */}
-      <div className="px-3.5 pt-3.5">
-        <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(79,70,229,0.22)]" style={{ background: hero.bg }}>
-          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
-          <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/15 blur-2xl" />
-          <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
-            <Sparkles size={26} className="text-white" />
+      {/* ── MIDDLE SECTION — loader OR content ── */}
+      {loading ? (
+        <MobileCollectionLoader />
+      ) : (
+        <>
+          {/* Premium hero banner */}
+          <div className="px-3.5 pt-3.5">
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(79,70,229,0.22)]" style={{ background: hero.bg }}>
+              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
+              <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/15 blur-2xl" />
+              <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
+                <Sparkles size={26} className="text-white" />
+              </div>
+              <div className="relative z-10 flex flex-col justify-center h-full max-w-[78%]">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90">
+                  {tab === 'all' ? 'Collection' : TABS.find((t) => t.key === tab)?.label}
+                </span>
+                <h2 className="text-[21px] font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
+                <p className="text-[11.5px] text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
+              </div>
+            </div>
           </div>
-          <div className="relative z-10 flex flex-col justify-center h-full max-w-[78%]">
-            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90">
-              {tab === 'all' ? 'Collection' : TABS.find((t) => t.key === tab)?.label}
-            </span>
-            <h2 className="text-[21px] font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
-            <p className="text-[11.5px] text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
+
+          <HeroCarousel />
+
+          <div className="flex items-center justify-between px-3.5 mt-3.5 mb-1">
+            <p className="text-[12px] font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
           </div>
-        </div>
-      </div>
 
-      {/* Home-page first carousel — swipeable hero banners */}
-      <HeroCarousel />
+          <div className="px-3.5">
+            {products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-[15px] font-bold text-[#0F172A]">No products found</p>
+                <p className="text-[13px] text-[#64748B] mt-1">Try a different filter or category.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2.5">
+                {products.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            )}
 
-      {/* Product count chip */}
-      <div className="flex items-center justify-between px-3.5 mt-3.5 mb-1">
-        <p className="text-[12px] font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
-      </div>
-
-      {/* Product grid */}
-      <div className="px-3.5">
-        {loading ? (
-          <div className="grid grid-cols-2 gap-2.5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="rounded-xl bg-[#EEF1F4] animate-pulse aspect-[3/4]" />
-            ))}
+            {hasMore && !productsLoading && (
+              <button onClick={() => load(page + 1, false)} disabled={loadingMore}
+                className="w-full mt-4 h-11 rounded-full bg-white border border-[#EEF1F4] text-[13px] font-bold text-[#4F46E5] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
+                {loadingMore ? 'Loading…' : 'Load More'}
+              </button>
+            )}
           </div>
-        ) : products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-[15px] font-bold text-[#0F172A]">No products found</p>
-            <p className="text-[13px] text-[#64748B] mt-1">Try a different filter or category.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-2.5">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        )}
+        </>
+      )}
 
-        {hasMore && !loading && (
-          <button onClick={() => load(page + 1, false)} disabled={loadingMore}
-            className="w-full mt-4 h-11 rounded-full bg-white border border-[#EEF1F4] text-[13px] font-bold text-[#4F46E5] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
-            {loadingMore ? 'Loading…' : 'Load More'}
-          </button>
-        )}
-      </div>
-
+      {/* ── BOTTOM SECTION — always visible ── */}
       <MobileBottomNav />
       <MobileCartBarActions />
     </div>

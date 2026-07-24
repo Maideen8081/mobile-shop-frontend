@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import MobileHeader from './MobileHeader'
 import CategoryCarousel from './CategoryCarousel'
 import BenefitsBanner from './BenefitsBanner'
 import HeroCarousel from './HeroCarousel'
 import AdCarousel from './AdCarousel'
-import { ProductSection, ProductSectionSkeleton } from './ProductSection'
+import { ProductSection } from './ProductSection'
 import FlashSale from './FlashSale'
 import RepairServices from './RepairServices'
 import RefurbishedSection from './RefurbishedSection'
@@ -16,6 +17,7 @@ import Partners from './Partners'
 import Testimonials from './Testimonials'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
+import MobileHomeLoader from './MobileHomeLoader'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
 
@@ -30,19 +32,33 @@ const HERO_SLIDES: Slide[] = [
   { title: 'One Stop Tech Store — All You Need', subtitle: 'From phones to accessories to repairs under one roof.', image: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1920&q=80', link: '/collection/all' },
 ]
 
+// Module-level cache: persists across re-mounts (navigating back from product detail).
+// On first load → fetch from API and cache. On subsequent mounts → use cache instantly.
+let cachedData: {
+  categories: Category[]
+  flashSale: any[]
+  trending: any[]
+  bestSellers: any[]
+  newArrivals: any[]
+  featured: any[]
+  refurbished: any[]
+  recommended: any[]
+} | null = null
+
 export default function MobileHome() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [heroSlides, setHeroSlides] = useState<Slide[]>([])
-  const [flashSale, setFlashSale] = useState<any[]>([])
-  const [trending, setTrending] = useState<any[]>([])
-  const [bestSellers, setBestSellers] = useState<any[]>([])
-  const [newArrivals, setNewArrivals] = useState<any[]>([])
-  const [featured, setFeatured] = useState<any[]>([])
-  const [refurbished, setRefurbished] = useState<any[]>([])
-  const [recommended, setRecommended] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState<Category[]>(() => cachedData?.categories ?? [])
+  const [heroSlides] = useState<Slide[]>(HERO_SLIDES)
+  const [flashSale, setFlashSale] = useState<any[]>(() => cachedData?.flashSale ?? [])
+  const [trending, setTrending] = useState<any[]>(() => cachedData?.trending ?? [])
+  const [bestSellers, setBestSellers] = useState<any[]>(() => cachedData?.bestSellers ?? [])
+  const [newArrivals, setNewArrivals] = useState<any[]>(() => cachedData?.newArrivals ?? [])
+  const [featured, setFeatured] = useState<any[]>(() => cachedData?.featured ?? [])
+  const [refurbished, setRefurbished] = useState<any[]>(() => cachedData?.refurbished ?? [])
+  const [recommended, setRecommended] = useState<any[]>(() => cachedData?.recommended ?? [])
+  const [loading, setLoading] = useState(!cachedData)
 
   useEffect(() => {
+    if (cachedData) return
     let cancelled = false
     const load = async () => {
       const [cats, trend, best, fresh, feat, refurb, all] = await Promise.all([
@@ -56,32 +72,54 @@ export default function MobileHome() {
       ])
 
       if (cancelled) return
-      setCategories(cats.filter((c) => c.status === 'active'))
-      setHeroSlides(HERO_SLIDES)
 
-      // Flash sale = products with a real discount
+      const activeCats = cats.filter((c) => c.status === 'active')
       const deals = all.filter((p) => {
         const v = (p.variants || [])[0]
         return v && v.discountPrice > 0 && v.discountPrice < v.price
       })
-      setFlashSale(deals.slice(0, 10))
 
-      setTrending(trend.slice(0, 10))
-      setBestSellers(best.slice(0, 10))
-      setNewArrivals(fresh.slice(0, 10))
-      setFeatured(feat.slice(0, 10))
-      setRefurbished(refurb.slice(0, 10))
-      setRecommended(all.slice(0, 10))
+      cachedData = {
+        categories: activeCats,
+        flashSale: deals.slice(0, 10),
+        trending: trend.slice(0, 10),
+        bestSellers: best.slice(0, 10),
+        newArrivals: fresh.slice(0, 10),
+        featured: feat.slice(0, 10),
+        refurbished: refurb.slice(0, 10),
+        recommended: all.slice(0, 10),
+      }
+
+      setCategories(cachedData.categories)
+      setFlashSale(cachedData.flashSale)
+      setTrending(cachedData.trending)
+      setBestSellers(cachedData.bestSellers)
+      setNewArrivals(cachedData.newArrivals)
+      setFeatured(cachedData.featured)
+      setRefurbished(cachedData.refurbished)
+      setRecommended(cachedData.recommended)
       setLoading(false)
     }
     load()
     return () => { cancelled = true }
   }, [])
 
-  const skeleton = loading
-
   return (
     <div className="min-h-screen bg-[#F8F9FF] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      {/* Full-screen animated loading overlay — Zepto/Blinkit style */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="home-loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <MobileHomeLoader />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
       <div className="sticky top-0 z-50 bg-[#F8F9FF] will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <MobileHeader />
@@ -100,43 +138,24 @@ export default function MobileHome() {
       </div>
 
       <div className="pb-28">
-        {skeleton ? (
-          <>
-            <div className="h-[190px] rounded-3xl bg-[#E2E8F0] animate-pulse mx-3.5 mt-4" />
-            <div className="flex gap-3.5 overflow-hidden px-3.5 mt-4">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex-shrink-0 w-[72px] flex flex-col items-center gap-2">
-                  <div className="w-[72px] h-[72px] rounded-2xl bg-[#E2E8F0] animate-pulse" />
-                  <div className="h-3 w-12 bg-[#E2E8F0] rounded animate-pulse" />
-                </div>
-              ))}
-            </div>
-            <ProductSectionSkeleton />
-            <ProductSectionSkeleton />
-            <ProductSectionSkeleton />
-          </>
-        ) : (
-          <>
-            <HeroCarousel />
-            <BenefitsBanner />
+        <HeroCarousel />
+        <BenefitsBanner />
 
-            <FlashSale products={flashSale} />
-            <ProductSection title="Trending Products" viewAllTo="/collection/all?tab=trending" products={trending} />
-            <FeaturedCollections />
-            <ProductSection title="Best Sellers" viewAllTo="/collection/all?tab=best" products={bestSellers} />
-            <TopSales banner={heroSlides[0]} products={[...bestSellers, ...trending, ...featured].slice(0, 5)} />
-            <ProductSection title="New Arrivals" viewAllTo="/collection/all?tab=new" products={newArrivals} />
-            <CouponsOffers />
-            <ProductSection title="Featured" viewAllTo="/collection/all?tab=featured" products={featured} />
-            <AdCarousel />
-            <RefurbishedSection products={refurbished} />
-            <RepairServices />
-            <VideoShowcase />
-            <Partners />
-            <Testimonials />
-            <ProductSection title="Recommended For You" viewAllTo="/collection/all" products={recommended} />
-          </>
-        )}
+        <FlashSale products={flashSale} />
+        <ProductSection title="Trending Products" viewAllTo="/collection/all?tab=trending" products={trending} />
+        <FeaturedCollections />
+        <ProductSection title="Best Sellers" viewAllTo="/collection/all?tab=best" products={bestSellers} />
+        <TopSales banner={heroSlides[0]} products={[...bestSellers, ...trending, ...featured].slice(0, 5)} />
+        <ProductSection title="New Arrivals" viewAllTo="/collection/all?tab=new" products={newArrivals} />
+        <CouponsOffers />
+        <ProductSection title="Featured" viewAllTo="/collection/all?tab=featured" products={featured} />
+        <AdCarousel />
+        <RefurbishedSection products={refurbished} />
+        <RepairServices />
+        <VideoShowcase />
+        <Partners />
+        <Testimonials />
+        <ProductSection title="Recommended For You" viewAllTo="/collection/all" products={recommended} />
       </div>
 
       <MobileBottomNav />
