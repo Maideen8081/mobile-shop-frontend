@@ -131,6 +131,11 @@
     font-family: "DM Sans", system-ui, -apple-system, sans-serif;
     background: #F8F9FF;
     overscroll-behavior-y: none;
+    overflow-x: hidden;
+  }
+
+  #root {
+    overflow-x: hidden;
   }
 
   * {
