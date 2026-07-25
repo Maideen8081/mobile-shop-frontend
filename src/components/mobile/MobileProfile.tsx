@@ -120,16 +120,61 @@ export default function MobileProfile() {
 
   if (!authService.isAuthenticated()) {
     return (
-      <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-        <div className="w-20 h-20 rounded-full flex items-center justify-center mb-5" style={{ background: 'rgba(91,46,255,0.1)' }}>
-          <FiUser size={34} style={{ color: PRIMARY }} />
+      <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        {/* Header */}
+        <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
+          <span className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/20 blur-2xl" />
+          <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-full bg-white/10 blur-2xl" />
+          <span className="absolute top-1/3 right-10 w-20 h-20 rounded-full border border-white/20" />
+          <div className="relative z-10 px-5 pt-4 pb-6">
+            <div className="flex items-center justify-between">
+              <button onClick={() => navigate('/')} aria-label="Home" className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </button>
+              <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
+              <div className="w-9 h-9" />
+            </div>
+          </div>
         </div>
-        <h2 className="text-[20px] font-bold text-[#1F2937] mb-1">Not Logged In</h2>
-        <p className="text-[13px] text-[#6B7280] mb-6">Please log in to view your profile.</p>
-        <button onClick={() => navigate('/login')} className="h-12 px-8 rounded-full text-[14px] font-semibold text-white"
-          style={{ background: grad }}>
-          Go to Login
-        </button>
+
+        {/* Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 -mt-4">
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(91,46,255,0.1)', boxShadow: '0 8px 30px rgba(91,46,255,0.12)' }}>
+            <FiUser size={40} style={{ color: PRIMARY }} />
+          </div>
+
+          <h2 className="text-[22px] font-bold text-[#1F2937] mb-1.5">Welcome!</h2>
+          <p className="text-[13px] text-[#6B7280] text-center mb-8 leading-relaxed max-w-[260px]">
+            Sign in to access your profile, orders, wishlist and more.
+          </p>
+
+          <button
+            onClick={() => navigate('/login')}
+            className="w-full h-13 rounded-full text-[15px] font-semibold text-white flex items-center justify-center gap-2 mb-3"
+            style={{ background: grad, boxShadow: '0 6px 20px rgba(91,46,255,0.3)' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Login
+          </button>
+
+          <button
+            onClick={() => navigate('/signup')}
+            className="w-full h-13 rounded-full text-[15px] font-semibold text-[#5B2EFF] flex items-center justify-center gap-2"
+            style={{ background: 'rgba(91,46,255,0.08)', border: '1.5px solid rgba(91,46,255,0.2)' }}
+          >
+            Create Account
+          </button>
+
+          <button
+            onClick={() => navigate('/')}
+            className="mt-6 flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] active:scale-95 transition"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Back to Home
+          </button>
+        </div>
+
+        <MobileBottomNav />
       </div>
     )
   }
