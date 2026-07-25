@@ -1,196 +1,208 @@
 import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  ShoppingCart,
-  Headphones,
-  Smartphone,
-  Package,
-  Truck,
   ShoppingBag,
   Zap,
   ShieldCheck,
   Clock,
   Star,
+  Smartphone,
+  Headphones,
+  Laptop,
+  Watch,
+  Camera,
+  Speaker,
+  Tablet,
 } from 'lucide-react'
 
 const stages = [
-  {
-    Icon: ShoppingCart,
-    animation: 'loader-float',
-    message: 'Finding the best products...',
-    sub: 'Scanning thousands of items',
-  },
-  {
-    Icon: Headphones,
-    animation: 'loader-bounce-x',
-    message: 'Loading your favorites...',
-    sub: 'Curating top picks for you',
-  },
-  {
-    Icon: Smartphone,
-    animation: 'loader-scale-pulse',
-    message: 'Preparing today\'s deals...',
-    sub: 'Unbeatable prices await',
-  },
-  {
-    Icon: Package,
-    animation: 'loader-rotate',
-    message: 'Almost ready...',
-    sub: 'Finalizing your storefront',
-  },
-  {
-    Icon: Truck,
-    animation: 'loader-drive',
-    message: 'Fresh products on the way...',
-    sub: 'Fast delivery guaranteed',
-  },
-  {
-    Icon: ShoppingBag,
-    animation: 'loader-float',
-    message: 'Just a moment more...',
-    sub: 'Your shop is loading',
-  },
+  { text: 'Discovering latest phones...', sub: 'New arrivals just dropped' },
+  { text: 'Loading audio deals...', sub: 'Premium sound, best prices' },
+  { text: 'Checking accessories...', sub: 'Cases, chargers & more' },
+  { text: 'Preparing fast delivery...', sub: '10-minute express available' },
+  { text: 'Setting up your store...', sub: 'Personalized for you' },
 ]
 
-const trustBadges = [
-  { Icon: Zap, label: '10-Min Delivery' },
-  { Icon: ShieldCheck, label: 'Quality Assured' },
-  { Icon: Clock, label: '24/7 Support' },
-  { Icon: Star, label: 'Top Rated' },
+const orbitIcons = [
+  { Icon: Smartphone, color: '#4F46E5' },
+  { Icon: Headphones, color: '#0EA5E9' },
+  { Icon: Laptop, color: '#7C3AED' },
+  { Icon: Watch, color: '#059669' },
+  { Icon: Camera, color: '#F59E0B' },
+  { Icon: Speaker, color: '#E11D48' },
+  { Icon: Tablet, color: '#6366F1' },
+  { Icon: ShoppingBag, color: '#0EA5E9' },
+]
+
+const badges = [
+  { Icon: Zap, label: '10-Min Delivery', color: '#34D399' },
+  { Icon: ShieldCheck, label: '100% Genuine', color: '#60A5FA' },
+  { Icon: Clock, label: '24/7 Support', color: '#FBBF24' },
+  { Icon: Star, label: '4.9 Rating', color: '#F472B6' },
 ]
 
 export default function MobileHomeLoader() {
   const [stage, setStage] = useState(0)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStage((prev) => (prev + 1) % stages.length)
-    }, 2800)
-    return () => clearInterval(interval)
+    const t = setInterval(() => setStage((p) => (p + 1) % stages.length), 2400)
+    return () => clearInterval(t)
   }, [])
 
-  const { Icon, animation, message, sub } = stages[stage]
+  const { text, sub } = stages[stage]
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col overflow-hidden"
+      className="fixed inset-0 z-[9999] flex flex-col"
       style={{
         width: '100vw',
         height: '100dvh',
+        background: 'linear-gradient(165deg, #1e1145 0%, #2d1b69 30%, #4F46E5 70%, #6366F1 100%)',
         touchAction: 'none',
         userSelect: 'none',
-        background: 'linear-gradient(160deg, #1a0533 0%, #2d1065 25%, #6C3BFF 55%, #8B5CF6 80%, #a78bfa 100%)',
       }}
     >
-      {/* Decorative background circles */}
+      {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute top-1/3 -left-16 w-48 h-48 rounded-full bg-purple-300/10 blur-2xl" />
-        <div className="absolute bottom-20 right-0 w-56 h-56 rounded-full bg-indigo-400/8 blur-3xl" />
+        <div className="absolute top-[10%] right-[-20%] w-[300px] h-[300px] rounded-full bg-white/[0.03] blur-[60px]" />
+        <div className="absolute bottom-[20%] left-[-15%] w-[250px] h-[250px] rounded-full bg-purple-400/[0.06] blur-[50px]" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
       </div>
 
-      {/* ─── TOP: App branding + delivery promise ─── */}
-      <div className="relative z-10 flex items-center justify-between px-6 pt-14 pb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/10">
-            <ShoppingBag size={22} className="text-white" />
+      {/* ─── TOP: Brand ─── */}
+      <div className="relative z-10 flex items-center justify-between px-5 pt-12 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-[14px] bg-white/12 backdrop-blur-sm flex items-center justify-center border border-white/10">
+            <ShoppingBag size={20} className="text-white" strokeWidth={2} />
           </div>
           <div>
-            <p className="text-white text-[18px] font-extrabold tracking-tight leading-tight">PhoneFix Pro</p>
-            <p className="text-white/50 text-[11px] font-medium tracking-wide">Your Tech Store</p>
+            <p className="text-white text-[16px] font-extrabold tracking-[-0.02em]">PhoneFix Pro</p>
+            <p className="text-white/40 text-[10px] font-semibold tracking-[0.08em] uppercase">Your Tech Store</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-          <Truck size={13} className="text-green-400" />
-          <span className="text-white/80 text-[11px] font-semibold">10-min delivery</span>
+        <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/8">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-white/70 text-[10px] font-semibold">Live</span>
         </div>
       </div>
 
-      {/* ─── CENTER: Animated icon + messages ─── */}
+      {/* ─── CENTER: White circle + rotating orbit icons ─── */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6">
-        {/* Animated icon circle */}
-        <div className="relative w-[200px] h-[200px] mb-8">
-          {/* Glow ring */}
-          <div
-            className="absolute inset-[-8px] rounded-full opacity-40"
-            style={{
-              background: 'conic-gradient(from 0deg, transparent, rgba(139,92,246,0.5), transparent, rgba(139,92,246,0.5), transparent)',
-              animation: 'spin 4s linear infinite',
-            }}
-          />
-          {/* Main circle */}
-          <div
-            className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-xl border border-white/15"
-            style={{ boxShadow: '0 25px 80px rgba(108,59,255,0.3), inset 0 1px 1px rgba(255,255,255,0.1)' }}
-          />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={stage}
-              initial={{ opacity: 0, scale: 0.7, rotate: -15 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.7, rotate: 15 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              <div className={animation}>
-                <Icon size={88} className="text-white drop-shadow-lg" strokeWidth={1.3} />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        {/* Orbit ring + center */}
+        <div className="relative w-[240px] h-[240px] mb-10">
 
-        {/* Loading message + subtitle */}
-        <div className="text-center h-16">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={stage}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35 }}
-            >
-              <p className="text-white text-[19px] font-bold tracking-tight">{message}</p>
-              <p className="text-white/50 text-[13px] font-medium mt-1.5">{sub}</p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+          {/* Rotating orbit icons */}
+          <div
+            className="absolute inset-0"
+            style={{ animation: 'h-orbit 10s linear infinite' }}
+          >
+            {orbitIcons.map(({ Icon, color }, i) => {
+              const angle = (i / orbitIcons.length) * 360
+              const rad = (angle * Math.PI) / 180
+              const r = 92
+              const x = 120 + r * Math.cos(rad) - 18
+              const y = 120 + r * Math.sin(rad) - 18
+              return (
+                <div
+                  key={i}
+                  className="absolute w-[36px] h-[36px] rounded-full flex items-center justify-center"
+                  style={{
+                    left: x,
+                    top: y,
+                    background: `linear-gradient(135deg, ${color}DD, ${color}99)`,
+                    boxShadow: `0 4px 12px ${color}40, 0 0 0 2px ${color}30`,
+                    animation: 'h-orbit-reverse 10s linear infinite',
+                  }}
+                >
+                  <Icon size={16} className="text-white" strokeWidth={2.2} />
+                </div>
+              )
+            })}
+          </div>
 
-        {/* Progress dots */}
-        <div className="flex items-center gap-2.5 mt-8">
-          {stages.map((_, i) => (
+          {/* Center white circle */}
+          <div className="absolute inset-0 flex items-center justify-center">
             <div
-              key={i}
-              className="relative"
+              className="relative w-[100px] h-[100px] rounded-full bg-white flex items-center justify-center"
+              style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.25), 0 0 0 6px rgba(255,255,255,0.08)' }}
             >
-              <span
-                className={`block rounded-full transition-all duration-500 ${
-                  i === stage
-                    ? 'w-7 h-2 bg-white'
-                    : i < stage
-                    ? 'w-2 h-2 bg-white/50'
-                    : 'w-2 h-2 bg-white/25'
-                }`}
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={stage}
+                  initial={{ opacity: 0, scale: 0.7, rotate: -20 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.7, rotate: 20 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <ShoppingBag size={40} className="text-[#4F46E5]" strokeWidth={1.8} />
+                </motion.div>
+              </AnimatePresence>
             </div>
+          </div>
+        </div>
+
+        {/* Text */}
+        <div className="text-center min-h-[56px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={stage}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className="text-white text-[17px] font-bold tracking-[-0.01em]">{text}</p>
+              <p className="text-white/40 text-[12px] font-medium mt-1">{sub}</p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Dots */}
+        <div className="flex items-center gap-1.5 mt-6">
+          {stages.map((_, i) => (
+            <span
+              key={i}
+              className={`block rounded-full transition-all duration-400 ${
+                i === stage ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/20'
+              }`}
+            />
           ))}
         </div>
-
-        <p className="text-white/40 text-[11px] mt-5 font-semibold tracking-widest uppercase">Please wait</p>
       </div>
 
       {/* ─── BOTTOM: Trust badges ─── */}
-      <div className="relative z-10 px-6 pb-10">
-        <div className="flex items-center justify-center gap-6">
-          {trustBadges.map(({ Icon: BadgeIcon, label }) => (
+      <div className="relative z-10 px-5 pb-8">
+        <div className="flex items-center justify-between">
+          {badges.map(({ Icon: BadgeIcon, label, color }) => (
             <div key={label} className="flex flex-col items-center gap-1.5">
-              <div className="w-9 h-9 rounded-xl bg-white/8 backdrop-blur flex items-center justify-center border border-white/8">
-                <BadgeIcon size={16} className="text-white/60" />
+              <div
+                className="w-9 h-9 rounded-[10px] flex items-center justify-center"
+                style={{ background: `${color}15`, border: `1px solid ${color}20` }}
+              >
+                <BadgeIcon size={15} style={{ color }} strokeWidth={2} />
               </div>
-              <span className="text-white/40 text-[9px] font-semibold tracking-wide">{label}</span>
+              <span className="text-white/35 text-[8px] font-semibold tracking-wide text-center leading-tight max-w-[60px]">{label}</span>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes h-orbit {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes h-orbit-reverse {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(-360deg); }
+        }
+      `}</style>
     </div>
   )
 }
