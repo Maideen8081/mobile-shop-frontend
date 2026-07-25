@@ -77,7 +77,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80',
-    accent: '#4F46E5',
+    accent: '#CB202D',
   },
   {
     id: 6,
@@ -163,8 +163,8 @@ export default function AdCarousel() {
         onMouseLeave={() => swiperRef.current?.autoplay?.start()}
       >
         {!loaded && (
-          <div className="absolute inset-0 bg-[#EEF2FF] animate-pulse flex items-center justify-center z-30">
-            <div className="w-10 h-10 rounded-full border-4 border-[#C7D2FE] border-t-[#4F46E5] animate-spin" />
+          <div className="absolute inset-0 bg-[#FEE2E6] animate-pulse flex items-center justify-center z-30">
+            <div className="w-10 h-10 rounded-full border-4 border-[#C7D2FE] border-t-[#CB202D] animate-spin" />
           </div>
         )}
 

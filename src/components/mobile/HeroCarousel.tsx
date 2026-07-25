@@ -45,7 +45,7 @@ export default function HeroCarousel() {
   return (
     <section className="px-3.5 mt-4">
       <div
-        className="relative h-[200px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(108,59,255,0.22)]"
+        className="relative h-[200px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(203,32,45,0.22)]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -62,7 +62,7 @@ export default function HeroCarousel() {
               role="button"
             >
               <img src={b.image} alt={b.brand} loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#4B2ECC]/80 via-[#6C3BFF]/45 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#A81D2A]/80 via-[#CB202D]/45 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4">
                 <span className="self-start mb-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-[10px] font-semibold tracking-wide uppercase text-white">{b.tag}</span>
@@ -71,7 +71,7 @@ export default function HeroCarousel() {
                 <p className="text-white/90 text-[12px] mt-0.5 font-medium line-clamp-1">{b.desc}</p>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#6C3BFF] text-[12px] font-bold px-4 py-2 rounded-full active:scale-95 transition"
+                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#CB202D] text-[12px] font-bold px-4 py-2 rounded-full active:scale-95 transition"
                 >
                   Shop Now
                 </button>

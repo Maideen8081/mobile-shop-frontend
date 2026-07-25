@@ -6,8 +6,8 @@ import { addressService, type AddressData } from '../../services/addressService'
 import { useMobileToast } from './useMobileToast'
 import MobileBottomNav from './MobileBottomNav'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -28,7 +28,7 @@ function Field({ label, value, onChange, error, type = 'text', maxLength }: {
         value={value}
         maxLength={maxLength}
         onChange={e => onChange(e.target.value)}
-        className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F2F1FB] border outline-none transition focus:bg-white"
+        className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FEE2E6] border outline-none transition focus:bg-white"
         style={{ borderColor: error ? '#EF4444' : '#E5E7EB', color: '#1F2937' }}
       />
       {error && <p className="text-[11px] text-[#EF4444] mt-1">{error}</p>}
@@ -137,7 +137,7 @@ export default function MobileAddressManagement() {
     <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-40" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] px-3 py-3 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div>
@@ -166,7 +166,7 @@ export default function MobileAddressManagement() {
           <div className="flex justify-center py-16"><FiLoader size={26} className="animate-spin" style={{ color: PURPLE }} /></div>
         ) : addresses.length === 0 ? (
           <div className={`${card} p-6 flex flex-col items-center text-center`}>
-            <div className="w-16 h-16 rounded-2xl bg-[#F1ECFF] flex items-center justify-center mb-3" style={{ color: PURPLE }}><FiHome size={26} /></div>
+            <div className="w-16 h-16 rounded-2xl bg-[#FEE2E6] flex items-center justify-center mb-3" style={{ color: PURPLE }}><FiHome size={26} /></div>
             <p className="text-[15px] font-bold">No addresses yet</p>
             <p className="text-[12px] text-[#6B7280] mt-1 mb-4">Add your first delivery address to get started</p>
             <button onClick={() => openForm()} className="px-6 h-11 rounded-2xl text-[13px] font-bold text-white flex items-center gap-1.5" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}><FiPlus size={15} /> Add Address</button>
@@ -175,13 +175,13 @@ export default function MobileAddressManagement() {
           addresses.map(addr => (
             <div key={addr.id} className={`${card} p-4 border-2`} style={{ borderColor: addr.isDefault ? PURPLE : 'transparent' }}>
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F1ECFF] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}>
+                <div className="w-10 h-10 rounded-xl bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}>
                   {typeIcons[addr.addressType] || <FiMapPin size={16} />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-[14px] font-bold">{addr.fullName}</p>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F1ECFF]" style={{ color: PURPLE }}>{addr.addressType}</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
                     {addr.isDefault && <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
                   </div>
                   <p className="text-[12px] text-[#6B7280] flex items-center gap-1 mt-0.5"><FiPhone size={11} /> {addr.mobile}</p>
@@ -189,7 +189,7 @@ export default function MobileAddressManagement() {
                   <p className="text-[12px] font-semibold text-[#1F2937]">{addr.city}, {addr.state} - {addr.zipCode}</p>
                 </div>
                 <div className="flex flex-col gap-2 flex-shrink-0">
-                  <button onClick={() => openForm(addr)} className="w-8 h-8 rounded-xl bg-[#F2F1FB] flex items-center justify-center text-[#6B7280]">
+                  <button onClick={() => openForm(addr)} className="w-8 h-8 rounded-xl bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]">
                     <FiEdit2 size={13} />
                   </button>
                   <button onClick={() => handleDelete(addr.id!)} disabled={deleting === addr.id} className="w-8 h-8 rounded-xl bg-[#FEF2F2] flex items-center justify-center text-[#EF4444]">
@@ -241,7 +241,7 @@ export default function MobileAddressManagement() {
                         <button key={t} onClick={() => set('addressType', t)}
                           className={`relative flex flex-col items-center justify-center gap-1.5 h-[68px] rounded-2xl border-2 transition active:scale-95 ${active ? 'text-white border-transparent' : 'bg-white border-[#E5E7EB] text-[#6B7280]'}`}
                           style={active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
-                          <span className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? 'bg-white/20' : 'bg-[#F2F1FB]'}`} style={active ? undefined : { color: PURPLE }}>
+                          <span className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? 'bg-white/20' : 'bg-[#FEE2E6]'}`} style={active ? undefined : { color: PURPLE }}>
                             {typeIcons[t]}
                           </span>
                           <span className="text-[12px] font-bold">{t}</span>
@@ -256,7 +256,7 @@ export default function MobileAddressManagement() {
                   </div>
                 </div>
                 <label className="flex items-center gap-2.5 cursor-pointer">
-                  <span onClick={() => set('isDefault', !form.isDefault)} className={`w-5 h-5 rounded flex items-center justify-center transition ${form.isDefault ? 'text-white' : ''}`} style={{ background: form.isDefault ? PURPLE : '#F2F1FB', border: form.isDefault ? 'none' : '1px solid #E5E7EB' }}>
+                  <span onClick={() => set('isDefault', !form.isDefault)} className={`w-5 h-5 rounded flex items-center justify-center transition ${form.isDefault ? 'text-white' : ''}`} style={{ background: form.isDefault ? PURPLE : '#FEE2E6', border: form.isDefault ? 'none' : '1px solid #E5E7EB' }}>
                     {form.isDefault && <FiCheck size={12} />}
                   </span>
                   <span className="text-[13px] text-[#4B5563]">Set as default address</span>

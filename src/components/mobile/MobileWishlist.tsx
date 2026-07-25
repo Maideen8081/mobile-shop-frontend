@@ -5,8 +5,8 @@ import { getImageUrl } from './helpers'
 import { productService } from '../../services/productService'
 import MobileTopSection from './MobileTopSection'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 function resolveImage(raw: string): string {
@@ -80,7 +80,7 @@ export default function MobileWishlist() {
   }, [products])
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Header */}
       <MobileTopSection title="My Wishlist" subtitle={`${products.length} ${products.length === 1 ? 'item' : 'items'} saved`} icon="wishlist" />
 
@@ -91,7 +91,7 @@ export default function MobileWishlist() {
           </div>
         ) : products.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
-            <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)' }}>
+            <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <Heart size={34} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[18px] font-bold text-[#1F2937] mb-1">Your wishlist is empty</h2>
@@ -123,7 +123,7 @@ export default function MobileWishlist() {
                 return (
                   <div key={id} className={`${card} rounded-[20px] p-3 overflow-hidden`}>
                     <div className="flex gap-3">
-                      <div className="w-[88px] h-[88px] rounded-[16px] bg-[#F8F9FF] flex items-center justify-center flex-shrink-0 overflow-hidden" onClick={() => navigate(`/product/${id}`)}>
+                      <div className="w-[88px] h-[88px] rounded-[16px] bg-[#FFFBFB] flex items-center justify-center flex-shrink-0 overflow-hidden" onClick={() => navigate(`/product/${id}`)}>
                         {image ? (
                           <img src={image} alt={name} className="w-full h-full object-contain" />
                         ) : (
@@ -145,7 +145,7 @@ export default function MobileWishlist() {
                         </div>
                       </div>
                       <button onClick={() => removeFromWishlist(id)}
-                        className="w-8 h-8 rounded-full bg-[#F8F9FF] flex items-center justify-center flex-shrink-0"
+                        className="w-8 h-8 rounded-full bg-[#FFFBFB] flex items-center justify-center flex-shrink-0"
                         style={{ color: '#EF4444' }}>
                         <Trash2 size={15} />
                       </button>
@@ -161,7 +161,7 @@ export default function MobileWishlist() {
             </div>
 
             <button onClick={() => navigate('/collection/all')} className={`${card} rounded-[20px] py-5 mt-3 w-full flex flex-col items-center justify-center text-center gap-0.5`}>
-              <div className="w-12 h-12 rounded-full mb-2 flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)' }}>
+              <div className="w-12 h-12 rounded-full mb-2 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
                 <Heart size={22} style={{ color: PURPLE }} />
               </div>
               <h3 className="text-[14px] font-bold text-[#1F2937] w-full text-center">Discover More</h3>

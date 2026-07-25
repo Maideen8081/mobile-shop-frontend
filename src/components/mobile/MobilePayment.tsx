@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -108,9 +108,9 @@ export default function MobilePayment() {
 
   if (isCartEmpty) {
     return (
-      <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-        <div className="sticky top-0 z-30 bg-[#F8F9FF] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(108,59,255,0.12)]">
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <h1 className="text-[18px] font-bold text-[#1F2937]">Payment</h1>
@@ -130,9 +130,9 @@ export default function MobilePayment() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-      <div className="sticky top-0 z-30 bg-[#F8F9FF] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(108,59,255,0.12)]">
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="flex-1">
@@ -172,7 +172,7 @@ export default function MobilePayment() {
               const hasImg = imgUrl && !imgErrors[item.productId]
               return (
                 <div key={item.productId} className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-[14px] bg-[#F8F9FF] flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-14 h-14 rounded-[14px] bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden relative">
                     {hasImg ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-contain"
                         onError={() => setImgErrors((p) => ({ ...p, [item.productId]: true }))} />
@@ -215,7 +215,7 @@ export default function MobilePayment() {
                 <button key={pm.id} onClick={() => setSelectedMethod(pm.id)}
                   className={`w-full ${card} rounded-[18px] p-3.5 flex items-center gap-3 border-2 transition`}
                   style={{ borderColor: active ? PURPLE : 'transparent' }}>
-                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(108,59,255,0.1)' : '#F8F9FF' }}>{pm.icon}</div>
+                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(203,32,45,0.1)' : '#FFFBFB' }}>{pm.icon}</div>
                   <div className="flex-1 text-left min-w-0">
                     <p className="text-[13px] font-semibold text-[#1F2937]">{pm.label}</p>
                     <p className="text-[11px] text-[#6B7280]">{pm.subtitle}</p>
@@ -236,14 +236,14 @@ export default function MobilePayment() {
               <div className="grid grid-cols-4 gap-2.5">
                 {[{ n: 'GPay', e: '🟢' }, { n: 'PhonePe', e: '🟣' }, { n: 'Paytm', e: '🔵' }, { n: 'UPI', e: '🅰️' }].map(a => (
                   <button key={a.n} onClick={handlePayment} disabled={processing}
-                    className="h-16 rounded-[14px] bg-[#F8F9FF] flex flex-col items-center justify-center gap-1 active:scale-95 transition disabled:opacity-60">
+                    className="h-16 rounded-[14px] bg-[#FFFBFB] flex flex-col items-center justify-center gap-1 active:scale-95 transition disabled:opacity-60">
                     <span className="text-xl">{a.e}</span>
                     <span className="text-[10px] font-semibold text-[#1F2937]">{a.n}</span>
                   </button>
                 ))}
               </div>
               <div className="flex items-center gap-2 mt-3">
-                <input placeholder="enter UPI ID (name@bank)" className="flex-1 h-11 px-3 rounded-2xl text-[13px] bg-[#F8F9FF] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
+                <input placeholder="enter UPI ID (name@bank)" className="flex-1 h-11 px-3 rounded-2xl text-[13px] bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
                 <button onClick={handlePayment} disabled={processing} className="h-11 px-5 rounded-2xl text-[13px] font-bold text-white disabled:opacity-60"
                   style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Pay</button>
               </div>
@@ -253,16 +253,16 @@ export default function MobilePayment() {
             <div className={`${card} rounded-[18px] p-4 mt-2 space-y-3`}>
               <div>
                 <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Card Number</label>
-                <input inputMode="numeric" placeholder="1234 5678 9012 3456" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F8F9FF] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
+                <input inputMode="numeric" placeholder="1234 5678 9012 3456" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Expiry</label>
-                  <input placeholder="MM/YY" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F8F9FF] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
+                  <input placeholder="MM/YY" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
                 </div>
                 <div>
                   <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">CVV</label>
-                  <input placeholder="•••" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F8F9FF] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
+                  <input placeholder="•••" className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
                 </div>
               </div>
             </div>

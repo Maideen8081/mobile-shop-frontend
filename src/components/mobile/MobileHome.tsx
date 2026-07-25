@@ -105,7 +105,7 @@ export default function MobileHome() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Full-screen animated loading overlay — Zepto/Blinkit style */}
       <AnimatePresence>
         {loading && (
@@ -121,9 +121,9 @@ export default function MobileHome() {
       </AnimatePresence>
 
       {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
-      <div className="sticky top-0 z-50 bg-[#F8F9FF] will-change-transform" style={{ transform: 'translateZ(0)' }}>
+      <div className="sticky top-0 z-50 bg-[#FFFBFB] will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <MobileHeader />
-        <div className="bg-[#F8F9FF] pt-9 pb-3">
+        <div className="bg-[#FFFBFB] pt-9 pb-3">
           <CategoryCarousel categories={categories} />
         </div>
       </div>

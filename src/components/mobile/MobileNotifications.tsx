@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiPackage, FiTruck, FiTag, FiHeart, FiBell } from 'react-icons/fi'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -23,7 +23,7 @@ const SAMPLE: Notif[] = [
   { id: 2, icon: <FiTag size={18} />, title: 'Flash Sale Live', description: 'Up to 40% off on premium smartphones for the next 6 hours.', time: '5h ago', color: '#F59E0B', unread: true, action: '/collection/all' },
   { id: 3, icon: <FiHeart size={18} />, title: 'Back in Stock', description: 'iPhone 16 Pro (256GB, Desert) is back in stock. Grab it now!', time: '1d ago', color: SUCCESS, unread: true, action: '/wishlist' },
   { id: 4, icon: <FiPackage size={18} />, title: 'Order Delivered', description: 'Your order ORD-48290551 has been delivered. Enjoy!', time: '2d ago', color: '#0EA5E9', unread: false },
-  { id: 5, icon: <FiBell size={18} />, title: 'New Repair Slot', description: 'Weekend repair appointments are now open for booking.', time: '3d ago', color: '#8B5CF6', unread: false, action: '/book-repair' },
+  { id: 5, icon: <FiBell size={18} />, title: 'New Repair Slot', description: 'Weekend repair appointments are now open for booking.', time: '3d ago', color: '#FF5A65', unread: false, action: '/book-repair' },
 ]
 
 export default function MobileNotifications() {
@@ -59,10 +59,10 @@ export default function MobileNotifications() {
   const visible = filter === 'unread' ? items.filter((n) => n.unread) : items
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-10" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-      <div className="sticky top-0 z-30 bg-[#F8F9FF] px-4 pt-3 pb-3 border-b border-[#EEF0F6]">
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(108,59,255,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
@@ -87,7 +87,7 @@ export default function MobileNotifications() {
       <div className="px-4 pt-4">
         {visible.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-6`}>
-            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)' }}>
+            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <FiBell size={32} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[16px] font-bold text-[#1F2937] mb-1">No notifications</h2>

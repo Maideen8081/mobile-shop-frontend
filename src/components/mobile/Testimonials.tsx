@@ -26,7 +26,7 @@ export default function Testimonials() {
               <span className="w-5 h-5 rounded-full bg-[#16A34A] text-white flex items-center justify-center text-[11px] font-bold">✓</span>
               <div>
                 <h4 className="text-[12.5px] font-bold text-[#0F172A]">{t.name}</h4>
-                <span className="text-[10px] font-bold text-[#4F46E5] uppercase tracking-widest">{t.badge}</span>
+                <span className="text-[10px] font-bold text-[#CB202D] uppercase tracking-widest">{t.badge}</span>
               </div>
             </div>
           </div>

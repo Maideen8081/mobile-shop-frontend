@@ -38,20 +38,20 @@ export default function MobileRepairs() {
       {/* Sticky header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] shadow-[0_4px_16px_rgba(15,23,42,0.05)]">
         <div className="flex items-center gap-2 px-3.5 h-[54px]">
-          <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <ChevronLeft size={20} className="text-[#6C3BFF]" />
+          <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <ChevronLeft size={20} className="text-[#CB202D]" />
           </button>
           <div className="flex-1 flex justify-center min-w-0">
             <h1 className="text-[18px] font-extrabold text-[#1F2937] truncate">Repairs</h1>
           </div>
-          <button onClick={() => navigate('/search')} aria-label="Search" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <Search size={18} className="text-[#6C3BFF]" />
+          <button onClick={() => navigate('/search')} aria-label="Search" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <Search size={18} className="text-[#CB202D]" />
           </button>
         </div>
 
         {/* Hero banner */}
         <div className="px-3.5 pt-3.5">
-          <div className="relative overflow-hidden rounded-3xl p-4 h-[140px] shadow-[0_12px_30px_rgba(108,59,255,0.22)]" style={{ background: 'linear-gradient(135deg,#6C3BFF 0%,#4B2ECC 100%)' }}>
+          <div className="relative overflow-hidden rounded-3xl p-4 h-[140px] shadow-[0_12px_30px_rgba(203,32,45,0.22)]" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)' }}>
             <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
             <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/15 blur-2xl" />
             <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -72,7 +72,7 @@ export default function MobileRepairs() {
       <div className="px-3.5 mt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-[17px] font-extrabold text-[#0F172A] tracking-tight">Our Services</h2>
-          <button onClick={() => navigate('/book-repair')} className="text-[12px] font-bold text-[#6C3BFF] flex items-center gap-0.5 active:opacity-70">
+          <button onClick={() => navigate('/book-repair')} className="text-[12px] font-bold text-[#CB202D] flex items-center gap-0.5 active:opacity-70">
             Book <ArrowRight size={13} />
           </button>
         </div>
@@ -86,14 +86,14 @@ export default function MobileRepairs() {
                 onClick={() => navigate(`/book-repair/${encodeURIComponent(svc.title)}`)}
                 className="w-full bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_4px_16px_rgba(15,23,42,0.05)] p-3.5 flex items-center gap-3 text-left active:scale-[0.98] transition"
               >
-                <div className="w-12 h-12 rounded-2xl bg-[#F1ECFF] text-[#6C3BFF] flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-[#FEE2E6] text-[#CB202D] flex items-center justify-center flex-shrink-0">
                   <Icon size={22} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-[14px] font-bold text-[#1F2937] leading-tight">{svc.title}</h3>
                   <p className="text-[11.5px] text-[#64748B] mt-0.5 leading-snug line-clamp-2">{svc.desc}</p>
                 </div>
-                <ArrowRight size={16} className="text-[#6C3BFF] flex-shrink-0" />
+                <ArrowRight size={16} className="text-[#CB202D] flex-shrink-0" />
               </button>
             )
           })}
@@ -107,8 +107,8 @@ export default function MobileRepairs() {
           {steps.map((item, idx) => {
             const active = idx === activeStep
             return (
-            <div key={item.step} className={`flex gap-3 items-center bg-white rounded-2xl border shadow-[0_4px_16px_rgba(15,23,42,0.05)] p-3.5 transition-all duration-500 ${active ? 'border-[#6C3BFF] ring-2 ring-[#6C3BFF]/20 -translate-y-0.5' : 'border-[#E5E7EB]'}`}>
-              <span className={`font-extrabold text-2xl w-10 flex-shrink-0 ${active ? 'text-[#6C3BFF]' : 'text-[#CBD5E1]'}`}>{item.step}</span>
+            <div key={item.step} className={`flex gap-3 items-center bg-white rounded-2xl border shadow-[0_4px_16px_rgba(15,23,42,0.05)] p-3.5 transition-all duration-500 ${active ? 'border-[#CB202D] ring-2 ring-[#CB202D]/20 -translate-y-0.5' : 'border-[#E5E7EB]'}`}>
+              <span className={`font-extrabold text-2xl w-10 flex-shrink-0 ${active ? 'text-[#CB202D]' : 'text-[#CBD5E1]'}`}>{item.step}</span>
               <div className="min-w-0">
                 <h3 className="text-[14px] font-bold text-[#1F2937]">{item.title}</h3>
                 <p className="text-[11.5px] text-[#64748B] mt-0.5 leading-snug">{item.desc}</p>
@@ -133,7 +133,7 @@ export default function MobileRepairs() {
 
       {/* Schedule CTA */}
       <div className="px-3.5 mt-5">
-        <button onClick={() => navigate('/book-repair')} className="w-full flex items-center justify-center gap-2 h-12 rounded-full text-white text-[14px] font-bold active:scale-95 transition" style={{ background: 'linear-gradient(135deg,#6C3BFF,#4B2ECC)' }}>
+        <button onClick={() => navigate('/book-repair')} className="w-full flex items-center justify-center gap-2 h-12 rounded-full text-white text-[14px] font-bold active:scale-95 transition" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }}>
           <Wrench size={17} /> Schedule a Repair
         </button>
       </div>

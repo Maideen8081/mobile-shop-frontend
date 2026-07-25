@@ -25,7 +25,7 @@ export function useMobileToast() {
           ? { icon: '✓', bg: '#22C55E' }
           : t.type === 'error'
             ? { icon: '!', bg: '#EF4444' }
-            : { icon: 'i', bg: '#6C3BFF' }
+            : { icon: 'i', bg: '#CB202D' }
         return (
           <div
             key={t.id}

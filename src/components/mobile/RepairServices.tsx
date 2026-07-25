@@ -25,7 +25,7 @@ export default function RepairServices() {
               className="flex items-center gap-3 rounded-2xl bg-white border border-[#EEF1F4] shadow-[0_2px_10px_rgba(15,23,42,0.05)] p-3.5 active:scale-[0.99] transition"
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${C.iconWrap}`}>
-                <Icon size={24} className="text-[#4F46E5]" />
+                <Icon size={24} className="text-[#CB202D]" />
               </div>
               <div className="min-w-0">
                 <h3 className="text-[14px] font-bold text-[#0F172A]">{s.title}</h3>

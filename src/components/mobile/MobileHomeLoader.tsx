@@ -24,13 +24,13 @@ const stages = [
 ]
 
 const orbitIcons = [
-  { Icon: Smartphone, color: '#4F46E5' },
+  { Icon: Smartphone, color: '#CB202D' },
   { Icon: Headphones, color: '#0EA5E9' },
-  { Icon: Laptop, color: '#7C3AED' },
+  { Icon: Laptop, color: '#CB202D' },
   { Icon: Watch, color: '#059669' },
   { Icon: Camera, color: '#F59E0B' },
   { Icon: Speaker, color: '#E11D48' },
-  { Icon: Tablet, color: '#6366F1' },
+  { Icon: Tablet, color: '#FF5A65' },
   { Icon: ShoppingBag, color: '#0EA5E9' },
 ]
 
@@ -57,7 +57,7 @@ export default function MobileHomeLoader() {
       style={{
         width: '100vw',
         height: '100dvh',
-        background: 'linear-gradient(165deg, #1e1145 0%, #2d1b69 30%, #4F46E5 70%, #6366F1 100%)',
+        background: 'linear-gradient(165deg, #4A0E14 0%, #7A1825 30%, #CB202D 70%, #FF5A65 100%)',
         touchAction: 'none',
         userSelect: 'none',
       }}
@@ -140,7 +140,7 @@ export default function MobileHomeLoader() {
                   exit={{ opacity: 0, scale: 0.7, rotate: 20 }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <ShoppingBag size={40} className="text-[#4F46E5]" strokeWidth={1.8} />
+                  <ShoppingBag size={40} className="text-[#CB202D]" strokeWidth={1.8} />
                 </motion.div>
               </AnimatePresence>
             </div>

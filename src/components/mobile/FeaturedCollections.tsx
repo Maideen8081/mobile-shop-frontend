@@ -44,7 +44,7 @@ export default function FeaturedCollections() {
             <button
               key={c.id}
               onClick={() => navigate(to)}
-              className="relative h-[140px] rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(15,23,42,0.08)] bg-[#EEF2FF] active:scale-[0.97] transition-transform duration-150 group"
+              className="relative h-[140px] rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(15,23,42,0.08)] bg-[#FEE2E6] active:scale-[0.97] transition-transform duration-150 group"
             >
               <img
                 src={img || FALLBACK_IMG}

@@ -31,11 +31,11 @@ export default function MobileBottomNav() {
               className="flex flex-col items-center gap-0.5 py-1 px-2 min-w-[46px] active:scale-90 transition relative"
             >
               <span
-                className={`w-12 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#6C3BFF] text-white shadow-[0_6px_16px_rgba(108,59,255,0.45)]' : 'text-[#9CA3AF]'}`}
+                className={`w-12 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#CB202D] text-white shadow-[0_6px_16px_rgba(203,32,45,0.45)]' : 'text-[#9CA3AF]'}`}
               >
                 <Icon size={19} />
               </span>
-              <span className={`text-[9px] font-semibold transition-colors ${active ? 'text-[#6C3BFF]' : 'text-[#9CA3AF]'}`}>
+              <span className={`text-[9px] font-semibold transition-colors ${active ? 'text-[#CB202D]' : 'text-[#9CA3AF]'}`}>
                 {tab.name}
               </span>
             </button>

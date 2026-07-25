@@ -5,8 +5,8 @@ import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../../services/addressService'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -27,7 +27,7 @@ function Field({ label, value, onChange, error, type = 'text', maxLength }: {
         value={value}
         maxLength={maxLength}
         onChange={e => onChange(e.target.value)}
-        className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F8F9FF] border outline-none transition"
+        className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
         style={{ borderColor: error ? '#EF4444' : '#E5E7EB', color: '#1F2937' }}
       />
       {error && <p className="text-[11px] text-[#EF4444] mt-1">{error}</p>}
@@ -142,10 +142,10 @@ export default function MobileCheckoutAddress() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] px-3 py-3 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div>
@@ -180,7 +180,7 @@ export default function MobileCheckoutAddress() {
           <div className="flex justify-center py-16"><FiLoader size={26} className="animate-spin" style={{ color: PURPLE }} /></div>
         ) : addresses.length === 0 ? (
           <div className={`${card} rounded-[24px] p-8 text-center mt-6`}>
-            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)' }}>
+            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <FiMapPin size={32} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[17px] font-bold text-[#1F2937] mb-1">No saved addresses</h2>
@@ -199,13 +199,13 @@ export default function MobileCheckoutAddress() {
                   className={`${card} p-4 cursor-pointer border-2 transition`}
                   style={{ borderColor: isSel ? PURPLE : 'transparent' }}>
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#F1ECFF] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}>
+                    <div className="w-10 h-10 rounded-xl bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}>
                       {typeIcons[addr.addressType] || <FiMapPin size={16} />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-[14px] font-bold">{addr.fullName}</p>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F1ECFF]" style={{ color: PURPLE }}>{addr.addressType}</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
                         {addr.isDefault && <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
                       </div>
                       <p className="text-[12px] text-[#6B7280] flex items-center gap-1 mt-0.5"><FiPhone size={11} /> {addr.mobile}</p>
@@ -213,7 +213,7 @@ export default function MobileCheckoutAddress() {
                       <p className="text-[12px] font-semibold text-[#1F2937]">{addr.city}, {addr.state} - {addr.zipCode}</p>
                     </div>
                     <div className="flex flex-col gap-2 flex-shrink-0">
-                      <button onClick={e => { e.stopPropagation(); openForm(addr) }} className="w-8 h-8 rounded-full bg-[#F8F9FF] flex items-center justify-center text-[#6B7280] active:scale-90 transition">
+                      <button onClick={e => { e.stopPropagation(); openForm(addr) }} className="w-8 h-8 rounded-full bg-[#FFFBFB] flex items-center justify-center text-[#6B7280] active:scale-90 transition">
                         <FiEdit2 size={13} />
                       </button>
                       <button onClick={e => { e.stopPropagation(); handleDelete(addr.id!) }} disabled={deleting === addr.id} className="w-8 h-8 rounded-full bg-[#FEF2F2] flex items-center justify-center text-[#EF4444] active:scale-90 transition">
@@ -227,7 +227,7 @@ export default function MobileCheckoutAddress() {
             })}
 
             <button onClick={() => openForm()} className="w-full h-12 rounded-2xl text-[14px] font-bold text-white inline-flex items-center justify-center gap-2 active:scale-[0.98] transition"
-              style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, boxShadow: '0 8px 20px rgba(108,59,255,0.25)' }}>
+              style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, boxShadow: '0 8px 20px rgba(203,32,45,0.25)' }}>
               <FiPlus size={18} /> Add New Address
             </button>
           </>
@@ -255,7 +255,7 @@ export default function MobileCheckoutAddress() {
                     const active = form.addressType === t
                     return (
                       <button key={t} onClick={() => set('addressType', t)}
-                        className={`h-12 rounded-2xl text-[13px] font-semibold border-2 transition flex flex-col items-center justify-center gap-0.5 ${active ? 'text-white border-transparent' : 'bg-[#F8F9FF] border-[#E5E7EB] text-[#6B7280]'}`}
+                        className={`h-12 rounded-2xl text-[13px] font-semibold border-2 transition flex flex-col items-center justify-center gap-0.5 ${active ? 'text-white border-transparent' : 'bg-[#FFFBFB] border-[#E5E7EB] text-[#6B7280]'}`}
                         style={active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                         {typeIcons[t]} {t}
                       </button>
@@ -264,7 +264,7 @@ export default function MobileCheckoutAddress() {
                 </div>
               </div>
               <label className="flex items-center gap-2.5 cursor-pointer">
-                <span onClick={() => set('isDefault', !form.isDefault)} className={`w-5 h-5 rounded flex items-center justify-center transition ${form.isDefault ? 'text-white' : ''}`} style={{ background: form.isDefault ? PURPLE : '#F8F9FF', border: form.isDefault ? 'none' : '1px solid #E5E7EB' }}>
+                <span onClick={() => set('isDefault', !form.isDefault)} className={`w-5 h-5 rounded flex items-center justify-center transition ${form.isDefault ? 'text-white' : ''}`} style={{ background: form.isDefault ? PURPLE : '#FFFBFB', border: form.isDefault ? 'none' : '1px solid #E5E7EB' }}>
                   {form.isDefault && <FiCheck size={12} />}
                 </span>
                 <span className="text-[13px] text-[#4B5563]">Set as default address</span>

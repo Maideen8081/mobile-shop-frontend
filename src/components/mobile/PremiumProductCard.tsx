@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Heart, ShoppingBag } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { useState } from 'react'
 import { FALLBACK_IMG } from './fallback'
 import { getProductImage, getProductPrice } from './helpers'
@@ -7,7 +7,6 @@ import { getProductImage, getProductPrice } from './helpers'
 interface PremiumProductCardProps {
   product: any
   onWishlistToggle?: (id: number, e: React.MouseEvent) => void
-  onAddToCart?: (product: any, e: React.MouseEvent) => void
   wishlist?: Set<number>
   variant?: 'grid' | 'list' | 'featured'
 }
@@ -15,7 +14,6 @@ interface PremiumProductCardProps {
 export default function PremiumProductCard({
   product,
   onWishlistToggle,
-  onAddToCart,
   wishlist = new Set(),
   variant = 'grid',
 }: PremiumProductCardProps) {
@@ -27,9 +25,9 @@ export default function PremiumProductCard({
 
   const tags = []
   if (product.is_new_arrival || product.isNewArrival) tags.push({ label: 'New', color: 'bg-emerald-500' })
-  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'bg-indigo-500' })
+  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'bg-[#CB202D]' })
   if (product.is_featured || product.isFeatured) tags.push({ label: 'Featured', color: 'bg-amber-500' })
-  if (product.is_trending || product.isTrending) tags.push({ label: 'Trending', color: 'bg-sky-500' })
+  if (product.is_trending || product.isTrending) tags.push({ label: 'Trending', color: 'bg-[#0EA5E9]' })
   if (product.is_refurbished || product.isRefurbished) tags.push({ label: 'Refurbished', color: 'bg-violet-500' })
   if (discountPct > 0) tags.push({ label: `${discountPct}% OFF`, color: 'bg-rose-500' })
 
@@ -43,17 +41,11 @@ export default function PremiumProductCard({
     onWishlistToggle?.(product.id, e)
   }
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    onAddToCart?.(product, e)
-  }
-
   if (variant === 'list') {
     return (
       <div
         onClick={handleClick}
-        className="group flex gap-4 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 active:scale-[0.99] animate-fade-in-up"
+        className="group flex gap-4 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-[#FDD] transition-all duration-300 active:scale-[0.99] animate-fade-in-up"
       >
         <div className="relative w-24 h-24 flex-shrink-0 rounded-xl bg-slate-50 overflow-hidden animate-scale-in">
           <img
@@ -77,36 +69,27 @@ export default function PremiumProductCard({
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             {product.brand && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1 block truncate">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
                 {product.brand}
               </span>
             )}
-            <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-sm">
+            <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-sm">
               {product.name}
             </h3>
           </div>
 
           <div className="flex items-center justify-end mt-2 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleWishlist}
-                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
-                  isInWishlist
-                    ? 'bg-rose-500 text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)]'
-                    : 'bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-500'
-                }`}
-                aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-              >
-                <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
-              </button>
-              <button
-                onClick={handleAddToCart}
-                className="w-9 h-9 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_16px_rgba(79,70,229,0.4)] transition-all active:scale-95"
-                aria-label="Add to cart"
-              >
-                <ShoppingBag size={16} />
-              </button>
-            </div>
+            <button
+              onClick={handleWishlist}
+              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                isInWishlist
+                  ? 'bg-[#CB202D] text-white shadow-[0_4px_12px_rgba(203,32,45,0.3)]'
+                  : 'bg-[#FEE2E6] text-[#CB202D] hover:bg-[#FDD] hover:text-[#A81D2A]'
+              }`}
+              aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+            >
+              <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
+            </button>
           </div>
         </div>
       </div>
@@ -117,7 +100,7 @@ export default function PremiumProductCard({
     return (
       <div
         onClick={handleClick}
-        className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-500 active:scale-[0.99] animate-fade-in-up"
+        className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#FDD] transition-all duration-500 active:scale-[0.99] animate-fade-in-up"
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
@@ -136,31 +119,24 @@ export default function PremiumProductCard({
             ))}
           </div>
 
-          <div className="absolute bottom-3 right-3 flex flex-col gap-2">
+          <div className="absolute bottom-3 right-3">
             <button
               onClick={handleWishlist}
-              className={`animate-slide-up ${isInWishlist ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-600 backdrop-blur-sm'} w-10 h-10 rounded-full flex items-center justify-center shadow-lg`}
+              className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-10 h-10 rounded-full flex items-center justify-center shadow-lg`}
               aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
             >
               <Heart size={18} className={isInWishlist ? 'fill-current' : ''} />
-            </button>
-            <button
-              onClick={handleAddToCart}
-              className="animate-slide-up w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg"
-              aria-label="Add to cart"
-            >
-              <ShoppingBag size={18} />
             </button>
           </div>
         </div>
 
         <div className="p-4">
           {product.brand && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1.5 block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1.5 block">
               {product.brand}
             </span>
           )}
-          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-base">
+          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-base">
             {product.name}
           </h3>
         </div>
@@ -171,7 +147,7 @@ export default function PremiumProductCard({
   return (
     <div
       onClick={handleClick}
-      className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-400 active:scale-[0.98] animate-fade-in-up"
+      className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-[#FDD] transition-all duration-400 active:scale-[0.98] animate-fade-in-up"
     >
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
         <img
@@ -192,41 +168,24 @@ export default function PremiumProductCard({
           </div>
         )}
 
-        <div className="absolute bottom-2 right-2 flex flex-col gap-1.5">
+        <div className="absolute bottom-2 right-2">
           <button
             onClick={handleWishlist}
-            className={`animate-slide-up ${isInWishlist ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-600 backdrop-blur-sm'} w-9 h-9 rounded-full flex items-center justify-center shadow-lg`}
+            className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-9 h-9 rounded-full flex items-center justify-center shadow-lg`}
             aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
-          </button>
-          <button
-            onClick={handleAddToCart}
-            className="animate-slide-up w-9 h-9 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg"
-            aria-label="Add to cart"
-          >
-            <ShoppingBag size={16} />
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}
-            className="animate-slide-up w-9 h-9 rounded-full bg-white/90 text-slate-600 backdrop-blur-sm flex items-center justify-center shadow-lg"
-            aria-label="Quick view"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
           </button>
         </div>
       </div>
 
         <div className="p-3.5">
         {product.brand && (
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1 block truncate">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
             {product.brand}
           </span>
         )}
-        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-sm">
+        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-sm">
           {product.name}
         </h3>
       </div>

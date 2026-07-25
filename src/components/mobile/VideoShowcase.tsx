@@ -23,7 +23,7 @@ export default function VideoShowcase() {
               <span className="text-white text-[13px] font-bold block">{c.title}</span>
               <span className="text-white/60 text-[11px]">{c.desc}</span>
             </div>
-            <div className="absolute top-2.5 right-2.5 w-9 h-9 rounded-full bg-[#4F46E5]/25 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+            <div className="absolute top-2.5 right-2.5 w-9 h-9 rounded-full bg-[#CB202D]/25 backdrop-blur-sm border border-white/30 flex items-center justify-center">
               <Play size={16} className="text-white" />
             </div>
           </div>

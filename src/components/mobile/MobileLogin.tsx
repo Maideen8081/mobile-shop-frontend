@@ -6,8 +6,8 @@ import { createValidator, required, email } from '../../utils/validation'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 
 interface LoginFormData { email: string; password: string }
 
@@ -66,10 +66,10 @@ export default function MobileLogin() {
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Brand header */}
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>P</div>
@@ -83,7 +83,7 @@ export default function MobileLogin() {
             <img src={s.src} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(75,46,204,0.85), transparent)' }}>
+        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(203,32,45,0.85), transparent)' }}>
           <p className="text-white text-[20px] font-bold leading-tight">{slides[activeSlide].label}</p>
           <p className="text-white/80 text-[12px]">Premium mobile engineering</p>
         </div>
@@ -106,7 +106,7 @@ export default function MobileLogin() {
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="email" name="email" type="email" value={formData.email} onChange={handleChange}
-                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#F8F9FF] border outline-none transition"
+                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
                   style={{ borderColor: errors.email ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
               </div>
               {errors.email && <p className="text-[11px] text-[#EF4444] mt-1">{errors.email}</p>}
@@ -120,7 +120,7 @@ export default function MobileLogin() {
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="password" name="password" type="password" value={formData.password} onChange={handleChange}
-                  placeholder="••••••••" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#F8F9FF] border outline-none transition"
+                  placeholder="••••••••" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
                   style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
               </div>
               {errors.password && <p className="text-[11px] text-[#EF4444] mt-1">{errors.password}</p>}

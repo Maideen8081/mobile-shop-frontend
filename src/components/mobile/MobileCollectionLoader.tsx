@@ -10,7 +10,7 @@ const messages = [
 
 const badges = [
   { Icon: Zap, label: 'Fast Delivery', color: '#059669' },
-  { Icon: ShieldCheck, label: 'Genuine', color: '#4F46E5' },
+  { Icon: ShieldCheck, label: 'Genuine', color: '#CB202D' },
   { Icon: Truck, label: 'Free Ship', color: '#0EA5E9' },
   { Icon: Star, label: 'Top Rated', color: '#F59E0B' },
 ]
@@ -44,12 +44,12 @@ export default function MobileCollectionLoader() {
       {/* ── Icon ── */}
       <div className="relative mb-5">
         {/* Glow */}
-        <div className="absolute inset-[-16px] rounded-full bg-[#4F46E5]/10 blur-xl" />
+        <div className="absolute inset-[-16px] rounded-full bg-[#CB202D]/10 blur-xl" />
         {/* Pulse rings */}
-        <div className="absolute inset-[-10px] rounded-full border border-[#4F46E5]/10 cloader-pulse-1" />
-        <div className="absolute inset-[-10px] rounded-full border border-[#4F46E5]/5 cloader-pulse-2" />
+        <div className="absolute inset-[-10px] rounded-full border border-[#CB202D]/10 cloader-pulse-1" />
+        <div className="absolute inset-[-10px] rounded-full border border-[#CB202D]/5 cloader-pulse-2" />
 
-        <div className="relative w-[72px] h-[72px] rounded-full bg-gradient-to-br from-[#4F46E5] to-[#6366F1] flex items-center justify-center shadow-[0_12px_32px_rgba(79,70,229,0.25)]">
+        <div className="relative w-[72px] h-[72px] rounded-full bg-gradient-to-br from-[#CB202D] to-[#FF5A65] flex items-center justify-center shadow-[0_12px_32px_rgba(203,32,45,0.25)]">
           <div className="absolute inset-[3px] rounded-full border border-white/15" />
           <ShoppingBag size={30} className="text-white" strokeWidth={1.8} />
         </div>
@@ -75,7 +75,7 @@ export default function MobileCollectionLoader() {
       <div className="w-[180px] mt-4">
         <div className="h-[2px] rounded-full bg-[#F1F5F9] overflow-hidden">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[#4F46E5] to-[#818CF8]"
+            className="h-full rounded-full bg-gradient-to-r from-[#CB202D] to-[#E53E4E]"
             style={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
           />
@@ -87,13 +87,13 @@ export default function MobileCollectionLoader() {
       <div className="grid grid-cols-2 gap-2.5 mt-6 w-full max-w-[340px]">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="bg-white rounded-xl border border-[#F1F5F9] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
-            <div className="aspect-square bg-gradient-to-br from-[#F8F9FB] to-[#F1ECFF] cloader-shimmer" style={{ animationDelay: `${i * 150}ms` }} />
+            <div className="aspect-square bg-gradient-to-br from-[#F8F9FB] to-[#FEE2E6] cloader-shimmer" style={{ animationDelay: `${i * 150}ms` }} />
             <div className="p-2.5">
               <div className="h-2.5 bg-[#F1F5F9] rounded-full w-3/4 cloader-shimmer" style={{ animationDelay: `${i * 150 + 100}ms` }} />
               <div className="h-2 bg-[#F8F9FB] rounded-full w-1/2 mt-1.5 cloader-shimmer" style={{ animationDelay: `${i * 150 + 200}ms` }} />
               <div className="flex items-center justify-between mt-2">
-                <div className="h-3 bg-[#EEF2FF] rounded-full w-16 cloader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
-                <div className="h-5 bg-[#4F46E5]/10 rounded-full w-10 cloader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
+                <div className="h-3 bg-[#FEE2E6] rounded-full w-16 cloader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
+                <div className="h-5 bg-[#CB202D]/10 rounded-full w-10 cloader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
               </div>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function MobileCollectionLoader() {
           100% { transform: scale(1.5); opacity: 0; }
         }
         .cloader-shimmer {
-          background: linear-gradient(110deg, #F1F5F9 30%, #E8E0FF 50%, #F1F5F9 70%);
+          background: linear-gradient(110deg, #F1F5F9 30%, #FDD 50%, #F1F5F9 70%);
           background-size: 200% 100%;
           animation: cshimmer 1.8s ease-in-out infinite;
         }

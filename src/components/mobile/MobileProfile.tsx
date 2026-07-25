@@ -6,11 +6,11 @@ import { useMobileToast } from './useMobileToast'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 
-const PRIMARY = '#5B2EFF'
+const PRIMARY = '#CB202D'
 const DANGER = '#EF4444'
 const INK = '#1F2937'
 const MUTED = '#6B7280'
-const grad = 'linear-gradient(135deg,#5B2EFF 0%,#7C4DFF 100%)'
+const grad = 'linear-gradient(135deg,#CB202D 0%,#FF5A65 100%)'
 
 export default function MobileProfile() {
   const navigate = useNavigate()
@@ -120,7 +120,7 @@ export default function MobileProfile() {
 
   if (!authService.isAuthenticated()) {
     return (
-      <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
         {/* Header */}
         <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
           <span className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/20 blur-2xl" />
@@ -139,7 +139,7 @@ export default function MobileProfile() {
 
         {/* Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 -mt-4">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(91,46,255,0.1)', boxShadow: '0 8px 30px rgba(91,46,255,0.12)' }}>
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)', boxShadow: '0 8px 30px rgba(203,32,45,0.12)' }}>
             <FiUser size={40} style={{ color: PRIMARY }} />
           </div>
 
@@ -151,7 +151,7 @@ export default function MobileProfile() {
           <button
             onClick={() => navigate('/login')}
             className="w-full h-13 rounded-full text-[15px] font-semibold text-white flex items-center justify-center gap-2 mb-3"
-            style={{ background: grad, boxShadow: '0 6px 20px rgba(91,46,255,0.3)' }}
+            style={{ background: grad, boxShadow: '0 6px 20px rgba(203,32,45,0.3)' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
             Login
@@ -159,8 +159,8 @@ export default function MobileProfile() {
 
           <button
             onClick={() => navigate('/signup')}
-            className="w-full h-13 rounded-full text-[15px] font-semibold text-[#5B2EFF] flex items-center justify-center gap-2"
-            style={{ background: 'rgba(91,46,255,0.08)', border: '1.5px solid rgba(91,46,255,0.2)' }}
+            className="w-full h-13 rounded-full text-[15px] font-semibold text-[#CB202D] flex items-center justify-center gap-2"
+            style={{ background: 'rgba(203,32,45,0.08)', border: '1.5px solid rgba(203,32,45,0.2)' }}
           >
             Create Account
           </button>
@@ -181,7 +181,7 @@ export default function MobileProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto flex items-center justify-center">
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex items-center justify-center">
         <FiEdit3 size={30} className="animate-spin" style={{ color: PRIMARY }} />
       </div>
     )
@@ -291,7 +291,7 @@ export default function MobileProfile() {
             const Icon = a.icon
             return (
               <button key={a.label} onClick={() => navigate(a.to)} className={`${card} ${press} rounded-[18px] p-3 flex flex-col items-center text-center gap-1.5`}>
-                <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(91,46,255,0.10)', color: PRIMARY }}>
+                <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.10)', color: PRIMARY }}>
                   <Icon size={19} />
                 </div>
                 <span className="text-[12px] font-semibold leading-tight" style={{ color: INK }}>{a.label}</span>
@@ -308,7 +308,7 @@ export default function MobileProfile() {
             const Icon = r.icon
             return (
               <button key={r.label} onClick={openEdit} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < infoRows.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(91,46,255,0.08)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -331,7 +331,7 @@ export default function MobileProfile() {
               : () => setDetail({ title: s.label, body: DETAILS[s.label] || 'Details coming soon.' })
             return (
               <button key={s.label} onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < settings.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(91,46,255,0.08)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
@@ -383,7 +383,7 @@ export default function MobileProfile() {
         </button>
 
         {/* ── Delete account danger card ── */}
-        <div className="mt-4 rounded-[20px] p-4 border" style={{ background: '#FFF5F5', borderColor: '#FFD5D5' }}>
+        <div className="mt-4 rounded-[20px] p-4 border" style={{ background: '#FFFBFB', borderColor: '#FFD5D5' }}>
           <div className="flex items-center gap-2 mb-2">
             <FiAlertTriangle size={16} style={{ color: DANGER }} />
             <p className="text-[13px] font-semibold" style={{ color: DANGER }}>Delete Account</p>

@@ -6,8 +6,8 @@ import { createValidator, required, email, minLength, passwordStrength } from '.
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 
 interface RegisterFormData { fullName: string; email: string; password: string; confirmPassword: string; agreeTerms: boolean }
 
@@ -71,12 +71,12 @@ export default function MobileRegister() {
   const nextSlide = useCallback(() => setActiveSlide(p => (p + 1) % slides.length), [])
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
-  const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F8F9FF] border outline-none transition'
+  const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition'
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#F1ECFF] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>P</div>
@@ -89,7 +89,7 @@ export default function MobileRegister() {
             <img src={s.src} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(75,46,204,0.85), transparent)' }}>
+        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(203,32,45,0.85), transparent)' }}>
           <p className="text-white text-[20px] font-bold leading-tight">{slides[activeSlide].label}</p>
           <p className="text-white/80 text-[12px]">Join the premium club</p>
         </div>
@@ -135,7 +135,7 @@ export default function MobileRegister() {
             </div>
 
             <div className="flex items-start gap-2.5 pt-1">
-              <span onClick={() => setField('agreeTerms', !formData.agreeTerms)} className={`w-5 h-5 rounded mt-0.5 flex items-center justify-center transition flex-shrink-0 ${formData.agreeTerms ? 'text-white' : ''}`} style={{ background: formData.agreeTerms ? PURPLE : '#F8F9FF', border: formData.agreeTerms ? 'none' : '1px solid #E5E7EB' }}>
+              <span onClick={() => setField('agreeTerms', !formData.agreeTerms)} className={`w-5 h-5 rounded mt-0.5 flex items-center justify-center transition flex-shrink-0 ${formData.agreeTerms ? 'text-white' : ''}`} style={{ background: formData.agreeTerms ? PURPLE : '#FFFBFB', border: formData.agreeTerms ? 'none' : '1px solid #E5E7EB' }}>
                 {formData.agreeTerms && <FiCheck size={12} />}
               </span>
               <label className="text-[12px] text-[#4B5563] cursor-pointer" onClick={() => setField('agreeTerms', !formData.agreeTerms)}>

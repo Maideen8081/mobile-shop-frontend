@@ -10,7 +10,7 @@ type Benefit = {
 
 const BENEFITS: Benefit[] = [
   { title: 'Free Shipping', subtitle: 'On all orders, no minimum', Icon: Truck, iconBg: '#ECFDF5', iconColor: '#059669' },
-  { title: 'Secure Payment', subtitle: '100% safe & encrypted', Icon: ShieldCheck, iconBg: '#EEF2FF', iconColor: '#4F46E5' },
+  { title: 'Secure Payment', subtitle: '100% safe & encrypted', Icon: ShieldCheck, iconBg: '#FEE2E6', iconColor: '#CB202D' },
   { title: 'Easy Returns', subtitle: '7-day hassle-free', Icon: RotateCcw, iconBg: '#FEF3C7', iconColor: '#D97706' },
   { title: 'Genuine Products', subtitle: '100% authentic guarantee', Icon: BadgeCheck, iconBg: '#FCE7F3', iconColor: '#DB2777' },
 ]
@@ -19,7 +19,7 @@ export default function BenefitsBanner() {
   return (
     <section className="mt-6 px-3.5">
       <div className="flex items-center gap-1.5 mb-2.5 px-0.5">
-        <Sparkles size={14} className="text-[#4F46E5]" />
+        <Sparkles size={14} className="text-[#CB202D]" />
         <h2 className="text-[13px] font-extrabold text-[#0F172A] tracking-tight">Why shop with us</h2>
       </div>
 

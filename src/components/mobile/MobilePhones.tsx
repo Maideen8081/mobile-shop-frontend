@@ -22,7 +22,7 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 const HERO_COPY: { title: string; subtitle: string; bg: string } = {
   title: 'Premium Smartphones',
   subtitle: 'iPhone, Galaxy, Pixel & more — best prices, full warranty',
-  bg: 'linear-gradient(135deg,#4F46E5 0%,#4B2ECC 100%)',
+  bg: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)',
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
@@ -172,7 +172,7 @@ export default function MobilePhones() {
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
-            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(79,70,229,0.22)]" style={{ background: hero.bg }}>
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(203,32,45,0.22)]" style={{ background: hero.bg }}>
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
               <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/15 blur-2xl" />
               <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -217,29 +217,6 @@ export default function MobilePhones() {
                         return next
                       })
                     }}
-                    onAddToCart={(product, e) => {
-                      e.stopPropagation()
-                      const price = product.variants?.[0]?.discountPrice || product.variants?.[0]?.price || 0
-                      const image = product.common_image || product.image || product.images?.[0] || product.thumbnail || product.variants?.[0]?.images?.[0] || ''
-                      const name = product.product_name ?? product.name ?? ''
-                      const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-                      const existingIdx = cart.findIndex((item: any) => item.productId === product.id)
-                      if (existingIdx >= 0) {
-                        cart[existingIdx].quantity += 1
-                      } else {
-                        cart.push({
-                          productId: product.id,
-                          variantId: null,
-                          name,
-                          brand: product.brand || '',
-                          price,
-                          image,
-                          quantity: 1,
-                        })
-                      }
-                      localStorage.setItem('cart', JSON.stringify(cart))
-                      window.dispatchEvent(new Event('cart-updated'))
-                    }}
                   />
                 ))}
               </div>
@@ -247,7 +224,7 @@ export default function MobilePhones() {
           </div>
 
           <div className="px-3.5 mt-5">
-            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(79,70,229,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#4B2ECC,#6C3BFF)' }}>
+            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(203,32,45,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#A81D2A,#CB202D)' }}>
               <div className="min-w-0">
                 <p className="text-[13px] font-extrabold text-white leading-tight">Upgrade & Save Up To ₹30,000</p>
                 <p className="text-[11px] text-white/80 mt-0.5">Trade in your old device for instant credit.</p>

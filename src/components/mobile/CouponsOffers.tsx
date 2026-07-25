@@ -37,12 +37,12 @@ export default function CouponsOffers() {
             className="snap-start flex-shrink-0 w-[150px] h-[112px] rounded-2xl bg-white border border-[#EEF1F4] shadow-[0_4px_14px_rgba(15,23,42,0.06)] p-3 flex flex-col active:scale-[0.97] transition relative overflow-hidden"
           >
             <div className="absolute -right-4 -top-4 w-16 h-16 rounded-full" style={{ background: C.gradSoft }} />
-            <div className="relative w-7 h-7 rounded-full bg-[#4F46E5] flex items-center justify-center shrink-0">
+            <div className="relative w-7 h-7 rounded-full bg-[#CB202D] flex items-center justify-center shrink-0">
               <Tag size={14} className="text-white" />
             </div>
             <p className="relative text-[20px] font-extrabold text-[#0F172A] leading-tight mt-1.5">{c.label}</p>
             <div className="relative mt-auto">
-              <span className="text-[10px] font-bold text-[#4F46E5] bg-[#EEF2FF] rounded px-1.5 py-0.5 inline-block">
+              <span className="text-[10px] font-bold text-[#CB202D] bg-[#FEE2E6] rounded px-1.5 py-0.5 inline-block">
                 {c.code}
               </span>
             </div>

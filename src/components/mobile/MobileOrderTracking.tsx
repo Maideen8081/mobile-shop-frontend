@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Copy, Check, Package, Truck, ShoppingBag, MapPin, Receipt, Star } from 'lucide-react'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -50,10 +50,10 @@ const STATUS_INDEX: Record<string, number> = {
 }
 
 const STATUS_BADGE: Record<string, { label: string; color: string }> = {
-  confirmed: { label: 'Confirmed', color: '#6C3BFF' },
+  confirmed: { label: 'Confirmed', color: '#CB202D' },
   processing: { label: 'Processing', color: '#F59E0B' },
   shipped: { label: 'Shipped', color: '#3B82F6' },
-  out_for_delivery: { label: 'Out for Delivery', color: '#8B5CF6' },
+  out_for_delivery: { label: 'Out for Delivery', color: '#FF5A65' },
   delivered: { label: 'Delivered', color: '#16A34A' },
 }
 
@@ -86,13 +86,13 @@ export default function MobileOrderTracking() {
 function OrderList({ orders, onSelect }: { orders: any[]; onSelect: (o: any) => void }) {
   const navigate = useNavigate()
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <MobileHeader title="My Orders" onBack={() => navigate(-1)} />
 
       <div className="px-4 mt-3">
         {orders.length === 0 ? (
           <div className={`${card} p-8 flex flex-col items-center text-center`}>
-            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(108,59,255,0.1)' }}>
+            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <Package size={36} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[17px] font-bold text-[#1F2937]">No orders yet</h2>
@@ -119,7 +119,7 @@ function OrderList({ orders, onSelect }: { orders: any[]; onSelect: (o: any) => 
                   onClick={() => onSelect(order)}
                   className={`${card} p-3.5 w-full text-left active:scale-[0.99] transition flex items-center gap-3`}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-[#F8F9FF] flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="w-14 h-14 rounded-2xl bg-[#FFFBFB] flex items-center justify-center overflow-hidden flex-shrink-0">
                     {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = '' }} /> : <Package size={22} className="text-[#9CA3AF]" />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -174,7 +174,7 @@ function OrderDetailView({ order, onBack }: { order: any; onBack: () => void }) 
   const progressPct = isDelivered ? 100 : Math.round(((currentStepIndex) / (STEPS.length - 1)) * 100)
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <MobileHeader title="Track Order" onBack={onBack} />
 
       {/* Status banner */}
@@ -230,13 +230,13 @@ function OrderDetailView({ order, onBack }: { order: any; onBack: () => void }) 
               <p className="text-[10px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
               <p className="text-[15px] font-bold text-[#1F2937]">{order.orderId}</p>
             </div>
-            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(108,59,255,0.1)', color: PURPLE }}>
+            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
               {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
           <div className="h-px bg-[#EEF0F6] my-3" />
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)' }}>
+            <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <MapPin size={20} style={{ color: PURPLE }} />
             </div>
             <div className="flex-1 min-w-0">
@@ -267,7 +267,7 @@ function OrderDetailView({ order, onBack }: { order: any; onBack: () => void }) 
                 <div key={item.productId}>
                   {idx > 0 && <div className="h-px my-3 bg-[#EEF0F6]" />}
                   <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-2xl bg-[#F8F9FF] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    <div className="w-14 h-14 rounded-2xl bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden">
                       {hasImg ? (
                         <img src={imgUrl} alt={item.name} className="w-full h-full object-contain p-1.5" onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))} />
                       ) : (
@@ -325,7 +325,7 @@ function OrderDetailView({ order, onBack }: { order: any; onBack: () => void }) 
           }}
           className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}
         >
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(108,59,255,0.1)', color: PURPLE }}><Receipt size={18} /></div>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}><Receipt size={18} /></div>
           <div className="flex-1 text-left">
             <p className="text-[13px] font-semibold text-[#1F2937]">Digital Receipt</p>
             <p className="text-[11px] text-[#6B7280]">Download order summary</p>
@@ -359,7 +359,7 @@ function Row({ label, value, highlight }: { label: string; value: string; highli
 
 function MobileHeader({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <div className="sticky top-0 z-40 w-full bg-[#F8F9FF]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="px-3 py-2.5 flex items-center gap-2.5">
         <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
           <ChevronLeft size={22} className="text-[#1F2937]" />

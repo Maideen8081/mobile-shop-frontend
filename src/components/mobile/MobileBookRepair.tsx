@@ -5,8 +5,8 @@ import { repairService } from '../../services/repairService'
 import { deviceBrands } from '../../data/repairData'
 import MobileTopSection from './MobileTopSection'
 
-const PURPLE = '#5B2EFF'
-const grad = 'linear-gradient(135deg,#5B2EFF 0%,#7C4DFF 100%)'
+const PURPLE = '#CB202D'
+const grad = 'linear-gradient(135deg,#CB202D 0%,#FF5A65 100%)'
 
 const issueQuestions: Record<string, string[]> = {
   'Screen Repair': ['Is the glass only cracked or is the display also affected?', 'Is the touch functionality working?', 'Do you have a screen protector installed?', 'Any dead pixels or discoloration?'],
@@ -144,12 +144,12 @@ export default function MobileBookRepair() {
   if (result) {
     return (
       <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(91,46,255,0.1)' }}>
+        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(203,32,45,0.1)' }}>
           <FiCheckCircle size={40} style={{ color: PURPLE }} />
         </div>
         <h1 className="text-[22px] font-extrabold text-[#1F2937] mb-1">Booking Confirmed!</h1>
         <p className="text-[13px] text-[#6B7280] mb-6">Your repair has been submitted successfully.</p>
-        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(91,46,255,0.06)', border: '1.5px solid rgba(91,46,255,0.18)' }}>
+        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.18)' }}>
           <p className="text-[11px] text-[#6B7280] mb-1">Your Tracking ID</p>
           <p className="text-[24px] font-bold font-mono" style={{ color: PURPLE }}>{result.repairId}</p>
           <p className="text-[11px] text-[#6B7280] mt-2">Save this ID to track your repair.</p>
@@ -165,7 +165,7 @@ export default function MobileBookRepair() {
   }
 
   const cardCls = 'bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-4'
-  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] text-[#1F2937] focus:border-[#7C4DFF] transition-all'
+  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] text-[#1F2937] focus:border-[#FF5A65] transition-all'
   const nextBtn = 'flex items-center justify-center gap-1.5 h-11 rounded-full text-[13px] font-bold text-white active:scale-95 transition'
   const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-full bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#374151] active:scale-95 transition'
 
@@ -176,7 +176,7 @@ export default function MobileBookRepair() {
       <div className="px-4 pt-4">
         {decodedIssue && (
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(91,46,255,0.1)', color: PURPLE }}>
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
               <FiSmartphone size={16} />
             </div>
             <p className="text-[14px] font-bold text-[#1F2937]">{decodedIssue}</p>
@@ -186,7 +186,7 @@ export default function MobileBookRepair() {
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-2">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-[#7C4DFF]' : 'bg-[#E5E7EB]'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-[#FF5A65]' : 'bg-[#E5E7EB]'}`} />
           ))}
         </div>
         <p className="text-[11px] font-semibold text-[#6B7280] mb-4">{progressLabel}</p>
@@ -201,7 +201,7 @@ export default function MobileBookRepair() {
                 value={answers[step - 1]}
                 onChange={(e) => { updateAnswer(step - 1, e.target.value); if (errors.q) setErrors({}) }}
                 rows={4}
-                className="w-full px-4 py-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] text-[14px] text-[#1F2937] outline-none focus:border-[#7C4DFF] transition-all resize-none"
+                className="w-full px-4 py-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] text-[14px] text-[#1F2937] outline-none focus:border-[#FF5A65] transition-all resize-none"
                 placeholder="Type your answer..."
               />
               {errors.q && <p className="text-[11px] text-[#EF4444] mt-1">{errors.q}</p>}

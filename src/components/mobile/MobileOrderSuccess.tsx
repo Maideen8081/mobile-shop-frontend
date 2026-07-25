@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiChevronLeft, FiPackage, FiCheck, FiCopy, FiTruck, FiHome, FiShoppingBag, FiStar } from 'react-icons/fi'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -66,10 +66,10 @@ export default function MobileOrderSuccess() {
     setCopied(true)
   }
 
-  const confetti = ['#6C3BFF', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#8B5CF6']
+  const confetti = ['#CB202D', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#FF5A65']
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       {/* Confetti */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {confetti.map((c, i) => (
@@ -108,7 +108,7 @@ export default function MobileOrderSuccess() {
             <p className="text-[11px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
             <p className="text-[16px] font-bold text-[#1F2937]">{orderId}</p>
           </div>
-          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(108,59,255,0.1)', color: PURPLE }}>
+          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
             {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
           </button>
         </div>
@@ -150,7 +150,7 @@ export default function MobileOrderSuccess() {
               const hasImg = imgUrl && !imgErrors[item.productId]
               return (
                 <div key={item.productId} className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-[12px] bg-[#F8F9FF] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="w-12 h-12 rounded-[12px] bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {hasImg ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-contain" onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))} />
                     ) : (

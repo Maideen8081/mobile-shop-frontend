@@ -76,8 +76,8 @@ export default function PremiumMobileHeader({
           width: 40px;
           height: 40px;
           border-radius: 14px;
-          background: rgba(241, 245, 249, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.8);
+          background: rgba(254, 226, 230, 0.9);
+          border: 1px solid rgba(253, 221, 221, 0.8);
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
           align-items: center;
@@ -86,7 +86,23 @@ export default function PremiumMobileHeader({
         }
         .icon-btn:active {
           transform: scale(0.92);
-          background: rgba(79, 70, 229, 0.08);
+          background: rgba(203, 32, 45, 0.12);
+        }
+        .icon-btn-red {
+          width: 40px;
+          height: 40px;
+          border-radius: 14px;
+          background: #CB202D;
+          transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(203, 32, 45, 0.3);
+        }
+        .icon-btn-red:active {
+          transform: scale(0.92);
+          background: #A81D2A;
         }
         .filter-pill {
           display: flex;
@@ -95,17 +111,17 @@ export default function PremiumMobileHeader({
           height: 40px;
           padding: 0 12px;
           border-radius: 14px;
-          background: rgba(241, 245, 249, 0.9);
-          border: 1px solid rgba(226, 232, 240, 0.8);
+          background: #CB202D;
+          color: white;
           gap: 5px;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           position: relative;
           flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(203, 32, 45, 0.3);
         }
         .filter-pill:active {
           transform: scale(0.92);
-          background: rgba(79, 70, 229, 0.08);
-          border-color: rgba(79, 70, 229, 0.3);
+          background: #A81D2A;
         }
         .filter-badge {
           position: absolute;
@@ -115,21 +131,21 @@ export default function PremiumMobileHeader({
           height: 18px;
           padding: 0 5px;
           border-radius: 9px;
-          background: linear-gradient(135deg, #4F46E5, #6366F1);
+          background: linear-gradient(135deg, #CB202D, #FF5A65);
           color: white;
           font-size: 10px;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+          box-shadow: 0 2px 8px rgba(203, 32, 45, 0.4);
         }
         .search-bar {
           width: 100%;
           height: 44px;
           border-radius: 14px;
-          background: rgba(241, 245, 249, 0.8);
-          border: 1px solid rgba(226, 232, 240, 0.8);
+          background: rgba(254, 226, 230, 0.5);
+          border: 1px solid rgba(253, 221, 221, 0.8);
           display: flex;
           align-items: center;
           padding: 0 14px;
@@ -139,8 +155,8 @@ export default function PremiumMobileHeader({
         }
         .search-bar:focus-within {
           background: white;
-          border-color: rgba(79, 70, 229, 0.3);
-          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.08);
+          border-color: rgba(203, 32, 45, 0.3);
+          box-shadow: 0 0 0 3px rgba(203, 32, 45, 0.08);
         }
         .badge {
           transform-origin: 100% 0%;
@@ -173,19 +189,19 @@ export default function PremiumMobileHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn relative">
-              <Heart size={18} className="text-slate-500" />
+            <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn-red relative">
+              <Heart size={18} className="text-white" />
               {wishlistCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
             </button>
 
-            <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn relative">
-              <ShoppingBag size={18} className="text-slate-500" />
+            <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn-red relative">
+              <ShoppingBag size={18} className="text-white" />
               {cartCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -193,7 +209,7 @@ export default function PremiumMobileHeader({
 
             {showFilter && (
               <button onClick={onFilterClick} className="filter-pill" aria-label="Filters">
-                <SlidersHorizontal size={16} className="text-slate-600" />
+                <SlidersHorizontal size={16} className="text-white" />
                 {filterCount > 0 && (
                   <span className="filter-badge">{filterCount}</span>
                 )}
@@ -228,7 +244,7 @@ export default function PremiumMobileHeader({
                   <div
                     className={`w-[64px] h-[64px] rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : ''}`}
                     style={active
-                      ? { background: 'linear-gradient(135deg,#6C3BFF,#4B2ECC)', boxShadow: '0 8px 20px rgba(108,59,255,0.35)' }
+                      ? { background: 'linear-gradient(135deg,#CB202D,#A81D2A)', boxShadow: '0 8px 20px rgba(203,32,45,0.35)' }
                       : { background: '#FFFFFF', boxShadow: '0 4px 14px rgba(31,41,55,0.07)' }}
                   >
                     {img ? (
@@ -237,7 +253,7 @@ export default function PremiumMobileHeader({
                       <span className="text-[24px] leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                     )}
                   </div>
-                  <span className={`text-[10px] text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#6C3BFF]' : 'text-[#1F2937]'}`}>
+                  <span className={`text-[10px] text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#CB202D]' : 'text-[#1F2937]'}`}>
                     {cat.name}
                   </span>
                 </button>

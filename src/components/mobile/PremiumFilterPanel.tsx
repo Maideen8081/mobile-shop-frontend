@@ -174,9 +174,9 @@ export default function PremiumFilterPanel({
         }
         .filter-chip:active { transform: scale(0.95); }
         .filter-chip.active {
-          background: #4F46E5;
+          background: #CB202D;
           color: white;
-          border-color: #4F46E5;
+          border-color: #CB202D;
           box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
         }
         .filter-chip.active span { color: white; }
@@ -185,20 +185,20 @@ export default function PremiumFilterPanel({
         }
         .price-btn:active { transform: scale(0.95); }
         .price-btn.active {
-          background: #4F46E5;
+          background: #CB202D;
           color: white;
-          border-color: #4F46E5;
+          border-color: #CB202D;
         }
         .sort-row {
           transition: all 0.15s ease;
         }
         .sort-row:active { transform: scale(0.98); }
         .sort-row.active {
-          background: #EEF2FF;
-          border-color: #4F46E5;
-          color: #4F46E5;
+          background: #FEE2E6;
+          border-color: #CB202D;
+          color: #CB202D;
         }
-        .sort-row.active svg { color: #4F46E5; }
+        .sort-row.active svg { color: #CB202D; }
       `}</style>
 
       <div
@@ -215,13 +215,13 @@ export default function PremiumFilterPanel({
           <div className="handle-bar mb-3" />
           <div className="w-full flex items-center justify-between px-5 pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
-                <SlidersHorizontal size={18} className="text-indigo-600" />
+              <div className="w-9 h-9 rounded-xl bg-[#FEE2E6] flex items-center justify-center">
+                <SlidersHorizontal size={18} className="text-[#CB202D]" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-slate-900">Filters</h2>
                 {activeFilterCount > 0 && (
-                  <p className="text-[11px] text-indigo-600 font-semibold">{activeFilterCount} active</p>
+                  <p className="text-[11px] text-[#CB202D] font-semibold">{activeFilterCount} active</p>
                 )}
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function PremiumFilterPanel({
                     value={filters.priceRange?.min || ''}
                     onChange={(e) => setPriceRange({ min: parseInt(e.target.value) || 0, max: filters.priceRange?.max || Infinity })}
                     placeholder="Min price"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/10"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#FF5A65] focus:ring-2 focus:ring-[#CB202D]/10"
                   />
                 </div>
                 <span className="text-slate-300 font-medium">—</span>
@@ -352,7 +352,7 @@ export default function PremiumFilterPanel({
                       setPriceRange({ min: filters.priceRange?.min || 0, max: val || Infinity })
                     }}
                     placeholder="Max price"
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/10"
+                    className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#FF5A65] focus:ring-2 focus:ring-[#CB202D]/10"
                   />
                 </div>
               </div>
@@ -400,7 +400,7 @@ export default function PremiumFilterPanel({
                   }`}
                 >
                   {sort.label}
-                  {filters.sortBy === sort.value && <Check size={16} className="text-indigo-600" />}
+                  {filters.sortBy === sort.value && <Check size={16} className="text-[#CB202D]" />}
                 </button>
               ))}
             </div>
@@ -417,7 +417,7 @@ export default function PremiumFilterPanel({
             </button>
             <button
               onClick={() => { onApply(filters); onClose(); }}
-              className="flex-1 h-12 rounded-xl bg-indigo-600 text-white font-semibold text-sm active:scale-[0.98] transition-all shadow-[0_4px_12px_rgba(79,70,229,0.25)]"
+              className="flex-1 h-12 rounded-xl bg-[#CB202D] text-white font-semibold text-sm active:scale-[0.98] transition-all shadow-[0_4px_12px_rgba(203,32,45,0.25)]"
             >
               Apply{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
             </button>

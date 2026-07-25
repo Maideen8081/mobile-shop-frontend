@@ -4,8 +4,8 @@ import { FiChevronLeft, FiCheck, FiArrowRight, FiLoader, FiSmartphone, FiTruck, 
 import MobileBottomNav from './MobileBottomNav'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#6C3BFF'
-const PURPLE_DEEP = '#4B2ECC'
+const PURPLE = '#CB202D'
+const PURPLE_DEEP = '#A81D2A'
 const GREEN = '#00C46A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -129,7 +129,7 @@ export default function MobileTradeIn() {
   }
 
   const inputClass = (field: string) =>
-    `w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#F2F1FB] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
+    `w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FEE2E6] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
 
   const filteredRows = estimateRows.filter(r => !selectedBrand || r.device.toLowerCase().includes(selectedBrand.toLowerCase()))
 
@@ -177,7 +177,7 @@ export default function MobileTradeIn() {
             const Icon = step.icon
             return (
               <div key={step.title} className={`${card} p-4`}>
-                <div className="w-11 h-11 rounded-full bg-[#F1ECFF] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
+                <div className="w-11 h-11 rounded-full bg-[#FEE2E6] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
                   <Icon size={20} />
                 </div>
                 <span className="text-[11px] font-bold" style={{ color: PURPLE }}>STEP {idx + 1}</span>
@@ -197,7 +197,7 @@ export default function MobileTradeIn() {
           <div className="flex flex-wrap gap-2 mb-3">
             {brands.map((brand) => (
               <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                className={`px-3.5 h-9 rounded-full text-[12px] font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#F2F1FB] border-[#E5E7EB] text-[#4B5563]'}`}
+                className={`px-3.5 h-9 rounded-full text-[12px] font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
                 style={selectedBrand === brand ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                 {brand}
               </button>
@@ -227,7 +227,7 @@ export default function MobileTradeIn() {
               const Icon = item.icon
               return (
                 <li key={i} className="flex items-center gap-2.5">
-                  <span className="w-7 h-7 rounded-full bg-[#F1ECFF] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
+                  <span className="w-7 h-7 rounded-full bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
                   <span className="text-[12px] text-[#4B5563]">{item.text}</span>
                 </li>
               )
@@ -264,7 +264,7 @@ export default function MobileTradeIn() {
           <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
             <div className="px-4 pt-4 pb-2 flex-shrink-0">
               <div className="w-10 h-1 rounded-full bg-[#D9D9E3] mx-auto mb-3" />
-              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#F2F1FB] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
+              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
               <p className="text-[15px] font-extrabold">Sell Your Phone</p>
               <p className="text-[12px] text-[#6B7280] mt-0.5">Fill details — we'll analyze the value instantly.</p>
             </div>
