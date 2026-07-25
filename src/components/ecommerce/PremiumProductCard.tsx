@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { Heart, ShoppingBag, Eye, Star, Tag } from 'lucide-react'
+import { Heart, ShoppingBag, Eye } from 'lucide-react'
 import { FALLBACK_IMG } from '../../components/mobile/fallback'
 import { getProductImage, getProductPrice } from '../../components/mobile/helpers'
 
@@ -37,7 +36,8 @@ export default function PremiumProductCard({
   if (discountPct > 0) tags.push({ label: `${discountPct}% OFF`, color: 'from-rose-500 to-rose-600' })
 
   const handleClick = (e: React.MouseEvent) => {
-    if (!e.target.closest('button') && !e.target.closest('a')) {
+    const target = e.target as HTMLElement
+    if (!target.closest('button') && !target.closest('a')) {
       window.location.href = `/product/${product.id}`
     }
   }

@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, Search, SlidersHorizontal, Check, Sparkles, Flame, TrendingUp, Star, Trophy, Heart, ShoppingBag, Filter, X, ChevronRight } from 'lucide-react'
+import { Sparkles, Flame, TrendingUp, Star, Trophy } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { categoryService } from '../../services/categoryService'
-import { BRAND } from './theme'
 import PremiumProductCard from './PremiumProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 import MobileCollectionLoader from './MobileCollectionLoader'
-import HeroCarousel from './HeroCarousel'
 import PremiumMobileHeader from './PremiumMobileHeader'
 import PremiumFilterPanel from './PremiumFilterPanel'
 
@@ -20,13 +18,6 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
   { key: 'trending', label: 'Trending', icon: TrendingUp },
   { key: 'best', label: 'Best Sellers', icon: Trophy },
   { key: 'featured', label: 'Featured', icon: Star },
-]
-
-const SORTS: { key: string; label: string }[] = [
-  { key: 'newest', label: 'Newest First' },
-  { key: 'price-asc', label: 'Price: Low to High' },
-  { key: 'price-desc', label: 'Price: High to Low' },
-  { key: 'popular', label: 'Popular' },
 ]
 
 const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }> = {
@@ -50,7 +41,6 @@ export default function MobileCollection() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [sortBy, setSortBy] = useState('newest')
-  const [sortOpen, setSortOpen] = useState(false)
   const [tab, setTab] = useState<TabKey>(activeTab)
   const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>(() => cachedCategories || [])
   const [categoriesLoaded, setCategoriesLoaded] = useState(() => cachedCategories !== null)

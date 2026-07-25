@@ -21,7 +21,6 @@ export default function PremiumProductCard({
 }: PremiumProductCardProps) {
   const navigate = useNavigate()
   const [imageError, setImageError] = useState(false)
-  const [isPressed, setIsPressed] = useState(false)
   const img = getProductImage(product)
   const { discountPct } = getProductPrice(product)
   const isInWishlist = wishlist.has(product.id)
@@ -55,9 +54,6 @@ export default function PremiumProductCard({
       <div
         onClick={handleClick}
         className="group flex gap-4 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 active:scale-[0.99] animate-fade-in-up"
-        onMouseDown={() => setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => setIsPressed(false)}
       >
         <div className="relative w-24 h-24 flex-shrink-0 rounded-xl bg-slate-50 overflow-hidden animate-scale-in">
           <img
@@ -122,9 +118,6 @@ export default function PremiumProductCard({
       <div
         onClick={handleClick}
         className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-500 active:scale-[0.99] animate-fade-in-up"
-        onMouseDown={() => setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => setIsPressed(false)}
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
@@ -179,9 +172,6 @@ export default function PremiumProductCard({
     <div
       onClick={handleClick}
       className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-400 active:scale-[0.98] animate-fade-in-up"
-      onMouseDown={() => setIsPressed(true)}
-      onMouseUp={() => setIsPressed(false)}
-      onMouseLeave={() => setIsPressed(false)}
     >
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
         <img

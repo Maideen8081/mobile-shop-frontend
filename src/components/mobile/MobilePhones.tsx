@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, Search, Heart, ShoppingBag, SlidersHorizontal, Check, Sparkles, Flame, TrendingUp, Star, Filter, X, ChevronRight } from 'lucide-react'
+import { Sparkles, Flame, TrendingUp, Star } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { categoryService } from '../../services/categoryService'
-import { BRAND } from './theme'
 import PremiumProductCard from './PremiumProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
@@ -18,13 +17,6 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
   { key: 'new', label: 'New', icon: Flame },
   { key: 'trending', label: 'Trending', icon: TrendingUp },
   { key: 'popular', label: 'Popular', icon: Star },
-]
-
-const SORTS: { key: string; label: string }[] = [
-  { key: 'newest', label: 'Newest First' },
-  { key: 'price-asc', label: 'Price: Low to High' },
-  { key: 'price-desc', label: 'Price: High to Low' },
-  { key: 'popular', label: 'Popular' },
 ]
 
 const HERO_COPY: { title: string; subtitle: string; bg: string } = {
@@ -43,7 +35,6 @@ export default function MobilePhones() {
   const [productsLoading, setProductsLoading] = useState(() => !cachedProducts['all|newest'])
   const loading = !categoriesLoaded || productsLoading
   const [sortBy, setSortBy] = useState('newest')
-  const [sortOpen, setSortOpen] = useState(false)
   const [tab, setTab] = useState<TabKey>('all')
   const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>(() => cachedCategories || [])
   const [activeCategory, setActiveCategory] = useState('all')
@@ -219,9 +210,8 @@ export default function MobilePhones() {
                       e.stopPropagation()
                       setWishlist((prev) => {
                         const next = new Set(prev)
-                        let added = false
-                        if (next.has(id)) { next.delete(id); added = false }
-                        else { next.add(id); added = true }
+                        if (next.has(id)) next.delete(id)
+                        else next.add(id)
                         localStorage.setItem('wishlist', JSON.stringify(Array.from(next)))
                         window.dispatchEvent(new Event('wishlist-updated'))
                         return next

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { X, ChevronDown, ChevronUp, SlidersHorizontal, Tag, DollarSign, Check } from 'lucide-react'
+import { X, ChevronDown, ChevronUp, SlidersHorizontal, Check } from 'lucide-react'
 import { createPortal } from 'react-dom'
 
 interface FilterOption {
@@ -150,7 +150,7 @@ export default function PremiumFilterPanel({
 
   const panelContent = (
     <div className="fixed inset-0 z-50">
-      <style jsx>{`
+      <style>{`
         .sheet-overlay {
           transition: opacity 0.3s ease;
         }

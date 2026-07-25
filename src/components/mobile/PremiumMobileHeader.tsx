@@ -1,12 +1,10 @@
-import { useNavigate, useLocation } from 'react-router-dom'
-import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ChevronLeft,
   Search,
   Heart,
   ShoppingBag,
   SlidersHorizontal,
-  X,
 } from 'lucide-react'
 import { getImageUrl } from './helpers'
 import { FALLBACK_IMG } from './fallback'
@@ -60,7 +58,6 @@ export default function PremiumMobileHeader({
   onCategoryClick,
 }: PremiumMobileHeaderProps) {
   const navigate = useNavigate()
-  const location = useLocation()
 
   const handleBack = () => {
     navigate(-1)
@@ -68,7 +65,7 @@ export default function PremiumMobileHeader({
 
   return (
     <header className="sticky top-0 z-50 overflow-x-hidden">
-      <style jsx>{`
+      <style>{`
         .header-wrap {
           background: rgba(255, 255, 255, 0.94);
           backdrop-filter: blur(24px);
