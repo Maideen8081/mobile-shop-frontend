@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiPlus, FiEdit2, FiTrash2, FiPhone, FiCheck, FiLoader, FiMapPin } from 'react-icons/fi'
 import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../../services/addressService'
+import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
 const PURPLE = '#CB202D'
@@ -38,6 +39,13 @@ function Field({ label, value, onChange, error, type = 'text', maxLength }: {
 export default function MobileCheckoutAddress() {
   const navigate = useNavigate()
   const { show: showToast, Toast } = useMobileToast()
+
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      sessionStorage.setItem('redirect_after_login', '/checkout/address')
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
   const [addresses, setAddresses] = useState<AddressData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -118,7 +126,9 @@ export default function MobileCheckoutAddress() {
         showToast('Address added', 'success')
       }
       setShowForm(false)
-    } catch { showToast('Failed to save', 'error') }
+    } catch {
+      showToast('Failed to save address', 'error')
+    }
   }
 
   const handleContinue = async () => {

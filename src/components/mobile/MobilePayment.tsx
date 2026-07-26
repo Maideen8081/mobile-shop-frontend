@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
+import { orderService } from '../../services/orderService'
+import { authService } from '../../services/authService'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -42,12 +44,12 @@ function formatPrice(n: number): string {
 
 type PaymentMethod = 'card' | 'razorpay' | 'paypal' | 'netbanking' | 'cod'
 
-const paymentMethods: { id: PaymentMethod; label: string; subtitle: string; icon: any }[] = [
-  { id: 'card', label: 'Credit / Debit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💳' },
-  { id: 'razorpay', label: 'UPI / Razorpay', subtitle: 'GPay, PhonePe, Paytm', icon: '📲' },
-  { id: 'paypal', label: 'PayPal', subtitle: 'International payments', icon: '🌐' },
-  { id: 'netbanking', label: 'Net Banking', subtitle: 'All major banks', icon: '🏦' },
+const paymentMethods: { id: PaymentMethod; label: string; subtitle: string; icon: string; comingSoon?: boolean }[] = [
   { id: 'cod', label: 'Cash on Delivery', subtitle: 'Pay on delivery', icon: '💵' },
+  { id: 'card', label: 'Credit / Debit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💳', comingSoon: true },
+  { id: 'razorpay', label: 'UPI / Razorpay', subtitle: 'GPay, PhonePe, Paytm', icon: '📲', comingSoon: true },
+  { id: 'paypal', label: 'PayPal', subtitle: 'International payments', icon: '🌐', comingSoon: true },
+  { id: 'netbanking', label: 'Net Banking', subtitle: 'All major banks', icon: '🏦', comingSoon: true },
 ]
 
 export default function MobilePayment() {
@@ -56,7 +58,7 @@ export default function MobilePayment() {
   const [items, setItems] = useState<any[]>(() => {
     try { return JSON.parse(localStorage.getItem('cart') || '[]') } catch { return [] }
   })
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('card')
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod')
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
@@ -69,37 +71,85 @@ export default function MobilePayment() {
     return () => window.removeEventListener('cart-updated', handler)
   }, [])
 
+  const checkoutAddressId = useMemo(() => {
+    try { return Number(localStorage.getItem('checkout_address_id') || '0') || null } catch { return null }
+  }, [])
+
+  const checkoutCoupon = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('checkout_coupon') || 'null') } catch { return null }
+  }, [])
+
   const subtotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items])
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
   const tax = Math.round(subtotal * TAX_RATE)
-  const grandTotal = subtotal + shipping + tax
+  const discount = checkoutCoupon?.discount || 0
+  const grandTotal = subtotal + shipping + tax - discount
 
   const isCartEmpty = items.length === 0 && !processing && !success
 
   const handlePayment = async () => {
+    if (!authService.isAuthenticated()) {
+      sessionStorage.setItem('redirect_after_login', '/checkout/payment')
+      showToast('Please login to complete your order', 'error')
+      navigate('/login')
+      return
+    }
     setProcessing(true)
     try {
       if (selectedMethod !== 'cod') await new Promise((resolve) => setTimeout(resolve, 2000))
-      setSuccess(true)
       const isCod = selectedMethod === 'cod'
+
+      const apiOrder = await orderService.create({
+        items: items.map((it: any) => ({
+          product_id: it.productId || 0,
+          variant_id: it.variantId || null,
+          name: it.name || '',
+          brand: it.brand || '',
+          price: it.price || 0,
+          quantity: it.quantity || 1,
+          emoji: it.emoji || '',
+          image: it.image || '',
+          storage: it.storage || '',
+          ram: it.ram || '',
+          color: it.color || '',
+          category: it.category || '',
+        })),
+        total: grandTotal,
+        subtotal,
+        shipping,
+        tax,
+        payment_method: isCod ? 'Cash on Delivery' : selectedMethod,
+        delivery_address_id: checkoutAddressId,
+        discount: checkoutCoupon?.discount || 0,
+        coupon_code: checkoutCoupon?.code || undefined,
+      })
+
+      setSuccess(true)
       showToast(isCod ? 'Order placed successfully!' : 'Payment successful!', 'success')
-      const orderId = 'ORD-' + String(Math.random()).slice(2, 10).toUpperCase()
+
       const d = new Date()
       d.setDate(d.getDate() + 5)
+
       const lastOrder = {
-        orderId, items, total: grandTotal, subtotal, shipping, tax,
+        orderId: apiOrder.id,
+        items, total: grandTotal, subtotal, shipping, tax,
+        discount: checkoutCoupon?.discount || 0,
+        couponCode: checkoutCoupon?.code || '',
         paymentMethod: isCod ? 'Cash on Delivery' : selectedMethod,
-        deliveryDate: d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
-        orderDate: new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
-        status: 'confirmed' as const,
+        deliveryDate: apiOrder.est_delivery || d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+        orderDate: apiOrder.created_at || new Date().toISOString(),
+        status: apiOrder.delivery_status || 'order_placed',
       }
       localStorage.setItem('last_order', JSON.stringify(lastOrder))
       const history = JSON.parse(localStorage.getItem('order_history') || '[]')
       history.unshift(lastOrder)
       localStorage.setItem('order_history', JSON.stringify(history.slice(0, 50)))
       localStorage.removeItem('cart')
+      localStorage.removeItem('checkout_coupon')
+      localStorage.removeItem('checkout_address_id')
+      localStorage.removeItem('checkout_delivery_tip')
       window.dispatchEvent(new Event('cart-updated'))
-      setTimeout(() => navigate(`/checkout/success?order_id=${orderId}`), 1500)
+      setTimeout(() => navigate(`/checkout/success?order_id=${apiOrder.id}`), 1500)
     } catch {
       showToast('Payment failed. Please try again.', 'error')
     }
@@ -197,6 +247,7 @@ export default function MobilePayment() {
             <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
             <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
             <div className="flex justify-between text-[#6B7280]"><span>Tax (GST)</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
+            {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({checkoutCoupon?.code})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
           </div>
           <div className="h-px bg-[#EEF0F6] my-3" />
           <div className="flex justify-between items-end">
@@ -211,13 +262,21 @@ export default function MobilePayment() {
           <div className="space-y-2.5">
             {paymentMethods.map((pm) => {
               const active = selectedMethod === pm.id
+              const disabled = !!pm.comingSoon
               return (
-                <button key={pm.id} onClick={() => setSelectedMethod(pm.id)}
-                  className={`w-full ${card} rounded-[18px] p-3.5 flex items-center gap-3 border-2 transition`}
+                <button key={pm.id} onClick={() => {
+                    if (pm.comingSoon) { showToast('Coming soon — Currently only Cash on Delivery is available', 'error'); return }
+                    setSelectedMethod(pm.id)
+                  }}
+                  disabled={disabled && !active}
+                  className={`w-full ${card} rounded-[18px] p-3.5 flex items-center gap-3 border-2 transition ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={{ borderColor: active ? PURPLE : 'transparent' }}>
                   <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(203,32,45,0.1)' : '#FFFBFB' }}>{pm.icon}</div>
                   <div className="flex-1 text-left min-w-0">
-                    <p className="text-[13px] font-semibold text-[#1F2937]">{pm.label}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[13px] font-semibold text-[#1F2937]">{pm.label}</p>
+                      {pm.comingSoon && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Coming Soon</span>}
+                    </div>
                     <p className="text-[11px] text-[#6B7280]">{pm.subtitle}</p>
                   </div>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${active ? 'border-[#4FE3C1]' : 'border-[#D1D5DB]'}`}

@@ -35,11 +35,6 @@ function lsWrite(data: AddressData[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(data))
 }
 
-function nextId(): number {
-  const existing = lsRead()
-  return existing.length > 0 ? Math.max(...existing.map(a => a.id || 0)) + 1 : 1
-}
-
 function now(): string {
   return new Date().toISOString()
 }
@@ -119,24 +114,15 @@ export const addressService = {
 
   create: async (data: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'>): Promise<AddressData> => {
     const payload = { ...data, isDefault: data.isDefault || false }
-    try {
-      const r = await api.post(`${BASE}/create/`, toSnake(payload as Record<string, unknown>))
-      const body = r.data
-      const raw = body?.success === true && 'data' in body ? body.data : body
-      const created = normalize(raw)
-      const all = lsRead().filter(a => a.id !== created.id)
-      if (created.isDefault) all.forEach(a => { a.isDefault = false })
-      all.push(created)
-      lsWrite(all)
-      return created
-    } catch {
-      const all = lsRead()
-      const created: AddressData = { id: nextId(), ...payload, createdAt: now(), updatedAt: now() }
-      if (created.isDefault) all.forEach(a => { a.isDefault = false })
-      all.push(created)
-      lsWrite(all)
-      return created
-    }
+    const r = await api.post(`${BASE}/create/`, toSnake(payload as Record<string, unknown>))
+    const body = r.data
+    const raw = body?.success === true && 'data' in body ? body.data : body
+    const created = normalize(raw)
+    const all = lsRead().filter(a => a.id !== created.id)
+    if (created.isDefault) all.forEach(a => { a.isDefault = false })
+    all.push(created)
+    lsWrite(all)
+    return created
   },
 
   update: async (id: number, data: Partial<AddressData>): Promise<AddressData> => {

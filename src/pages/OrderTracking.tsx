@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
+import { orderService } from '../services/orderService'
 
 interface OrderItem {
   productId: number
@@ -19,14 +20,17 @@ interface OrderItem {
 
 interface OrderData {
   orderId: string
+  displayOrderId: string
   items: OrderItem[]
   total: number
   subtotal: number
   shipping: number
   tax: number
+  discount: number
+  couponCode: string
   deliveryDate: string
   orderDate: string
-  status: 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered'
+  status: string
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -59,7 +63,8 @@ function formatPrice(n: number): string {
 }
 
 const STEPS = [
-  { key: 'confirmed', label: 'Order Confirmed', desc: 'Order placed & payment verified', icon: 'verified' },
+  { key: 'order_placed', label: 'Order Placed', desc: 'Order placed & payment verified', icon: 'receipt_long' },
+  { key: 'accepted', label: 'Order Accepted', desc: 'Order accepted by seller', icon: 'verified' },
   { key: 'processing', label: 'Processing', desc: 'Items being packed & prepared', icon: 'package_2' },
   { key: 'shipped', label: 'Shipped', desc: 'Package handed to courier partner', icon: 'local_shipping' },
   { key: 'out_for_delivery', label: 'Out for Delivery', desc: 'Delivery agent is on the way', icon: 'local_shipping' },
@@ -67,19 +72,22 @@ const STEPS = [
 ] as const
 
 const STATUS_INDEX: Record<string, number> = {
-  confirmed: 0,
-  processing: 1,
-  shipped: 2,
-  out_for_delivery: 3,
-  delivered: 4,
+  order_placed: 0,
+  accepted: 1,
+  processing: 2,
+  shipped: 3,
+  out_for_delivery: 4,
+  delivered: 5,
 }
 
 const STATUS_BADGE: Record<string, { label: string; color: string }> = {
-  confirmed: { label: 'Confirmed', color: '#006d37' },
+  order_placed: { label: 'Order Placed', color: '#6b7280' },
+  accepted: { label: 'Accepted', color: '#0891b2' },
   processing: { label: 'Processing', color: '#f59e0b' },
   shipped: { label: 'Shipped', color: '#3b82f6' },
   out_for_delivery: { label: 'Out for Delivery', color: '#8b5cf6' },
   delivered: { label: 'Delivered', color: '#006d37' },
+  cancelled: { label: 'Cancelled', color: '#ef4444' },
 }
 
 function emptyState() {
@@ -196,7 +204,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>
-              Order <span style={{ color: '#006d37' }}>#{order.orderId}</span>
+              Order <span style={{ color: '#006d37' }}>#{order.displayOrderId || order.orderId}</span>
             </h1>
             <p className="text-sm mt-1" style={{ color: 'rgba(59,75,61,0.7)' }}>Placed on {order.orderDate}</p>
           </div>
@@ -255,7 +263,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                     border: '1px solid rgba(0,255,136,0.3)',
                   }}>
                     <div className="text-[8px] font-bold mb-0.5" style={{ color: '#006d37' }}>ORDER ID</div>
-                    <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>{order.orderId}</div>
+                    <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>{order.displayOrderId || order.orderId}</div>
                   </div>
                 </div>
 
@@ -415,6 +423,12 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                   <span>Tax (12%)</span>
                   <span className="font-semibold text-[#191c1d]">{formatPrice(order.tax)}</span>
                 </div>
+                {order.discount ? (
+                  <div className="flex justify-between text-xs" style={{ color: 'rgba(59,75,61,0.8)' }}>
+                    <span>Coupon ({order.couponCode})</span>
+                    <span className="font-semibold" style={{ color: '#006d37' }}>-{formatPrice(order.discount)}</span>
+                  </div>
+                ) : null}
                 <div className="h-px" style={{ background: 'rgba(185,203,185,0.3)' }} />
                 <div className="flex justify-between text-sm font-bold text-[#191c1d] pt-1">
                   <span>Total</span>
@@ -424,6 +438,26 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
             </section>
 
             <div className="flex flex-col gap-3">
+              {isDelivered && items.length > 0 && (
+                <button
+                  onClick={() => {
+                    const first = items[0]
+                    if (first?.productId) {
+                      const params = new URLSearchParams({ order_id: String(order.orderId), rate: 'true' })
+                      navigate(`/product/${first.productId}?${params.toString()}`)
+                    }
+                  }}
+                  className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: '#fff',
+                    boxShadow: '0 4px 15px rgba(245,158,11,0.25)',
+                  }}
+                >
+                  <span className="material-symbols-outlined">star</span>
+                  Rate Your Experience
+                </button>
+              )}
               <button
                 onClick={() => navigate('/collection/all')}
                 className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
@@ -440,12 +474,13 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
               </button>
               <button
                 onClick={() => {
-                  const receipt = `Order: ${order.orderId}\nDate: ${order.orderDate}\nTotal: ${formatPrice(order.total)}\nStatus: ${badge.label}`
+                  const displayId = order.displayOrderId || order.orderId
+                  const receipt = `Order: ${displayId}\nDate: ${order.orderDate}\nTotal: ${formatPrice(order.total)}\nStatus: ${badge.label}`
                   const blob = new Blob([receipt], { type: 'text/plain' })
                   const url = URL.createObjectURL(blob)
                   const a = document.createElement('a')
                   a.href = url
-                  a.download = `receipt-${order.orderId}.txt`
+                  a.download = `receipt-${displayId}.txt`
                   a.click()
                   URL.revokeObjectURL(url)
                 }}
@@ -486,7 +521,7 @@ export default function OrderTracking() {
   const [params] = useSearchParams()
   const urlOrderId = params.get('order_id')
 
-  const [orders] = useState<OrderData[]>(() => {
+  const [orders, setOrders] = useState<OrderData[]>(() => {
     try {
       const saved = localStorage.getItem('order_history')
       return saved ? JSON.parse(saved) : []
@@ -498,9 +533,53 @@ export default function OrderTracking() {
     try {
       const saved = localStorage.getItem('order_history')
       const list: OrderData[] = saved ? JSON.parse(saved) : []
-      return list.find(o => o.orderId === urlOrderId) || null
+      return list.find(o => String(o.orderId) === urlOrderId) || null
     } catch { return null }
   })
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const apiOrders = await orderService.list()
+        if (cancelled || apiOrders.length === 0) return
+        const mapped: OrderData[] = apiOrders.map(o => ({
+          orderId: String(o.id),
+          displayOrderId: o.order_id,
+          items: (o.items || []).map((it: any) => ({
+            productId: it.product_id,
+            name: it.product_name,
+            price: Number(it.price),
+            quantity: it.quantity,
+            emoji: '',
+            image: it.image,
+            storage: it.selected_storage,
+            ram: it.selected_ram,
+            color: it.selected_color,
+          })),
+          total: Number(o.grand_total),
+          subtotal: Number(o.subtotal),
+          shipping: Number(o.shipping_charge),
+          tax: Number(o.tax),
+          discount: o.discount || 0,
+          couponCode: o.coupon_code || '',
+          deliveryDate: o.est_delivery,
+          orderDate: o.created_at,
+          status: (o.delivery_status as any) || 'order_placed',
+        }))
+        if (!cancelled) {
+          setOrders(mapped)
+          localStorage.setItem('order_history', JSON.stringify(mapped.slice(0, 50)))
+        }
+        if (urlOrderId && !cancelled) {
+          const found = mapped.find(o => String(o.id) === urlOrderId)
+          if (found) setSelectedOrder(found)
+        }
+      } catch {}
+    }
+    load()
+    return () => { cancelled = true }
+  }, [urlOrderId])
 
   if (selectedOrder) {
     return (
@@ -572,7 +651,7 @@ export default function OrderTracking() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Order</span>
-                          <span className="text-sm font-bold" style={{ color: '#006d37' }}>{order.orderId}</span>
+                          <span className="text-sm font-bold" style={{ color: '#006d37' }}>{order.displayOrderId || order.orderId}</span>
                           <StatusBadge status={order.status} />
                         </div>
                         <p className="text-xs mb-2" style={{ color: 'rgba(59,75,61,0.6)' }}>{order.orderDate}</p>

@@ -62,6 +62,7 @@ export default function MobileProductDetail() {
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const [descOpen, setDescOpen] = useState(false)
   const [imgLoaded, setImgLoaded] = useState<Record<number, boolean>>({})
+  const [contentVisible, setContentVisible] = useState(false)
   const [zoomScale, setZoomScale] = useState(1)
   const [zoomOrigin, setZoomOrigin] = useState('center center')
   const trackRef = useRef<HTMLDivElement>(null)
@@ -108,6 +109,7 @@ export default function MobileProductDetail() {
     setSelectedStorageIdx(0)
     setSelectedRamIdx(0)
     setImgLoaded({})
+    setContentVisible(false)
     setZoomScale(1)
     setZoomOrigin('center center')
     setSpecsOpen(false)
@@ -189,6 +191,18 @@ export default function MobileProductDetail() {
   const featured = product?.featured
   const videoUrl = product?.videoUrl || ''
   const lowStockAlert = activeVariant?.lowStockAlert ?? product?.lowStockAlert ?? 5
+
+  const firstImageLoaded = !!imgLoaded[0]
+  useEffect(() => {
+    if (firstImageLoaded && !contentVisible) {
+      const t = setTimeout(() => setContentVisible(true), 350)
+      return () => clearTimeout(t)
+    }
+  }, [firstImageLoaded, contentVisible])
+
+  useEffect(() => {
+    setContentVisible(false)
+  }, [activeVariant?.id])
 
   const goTo = (i: number) => setSelectedImage((i + images.length) % images.length)
   const onTouchStart = (e: React.TouchEvent) => { startX.current = e.touches[0].clientX; dragX.current = 0 }
@@ -407,19 +421,13 @@ export default function MobileProductDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans overflow-x-hidden">
-        <div className="h-[60px] bg-[#FFFBFB] border-b border-[#EEF1F4] animate-pulse" />
-        <div className="px-3 mt-3">
-          <div className={`${card} p-2`}>
-            <div className="h-[400px] rounded-2xl bg-[#F4F4F7] animate-pulse" />
-          </div>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        <div className="relative w-16 h-16 mb-5">
+          <div className="absolute inset-0 rounded-full border-[3px] border-[#EEF0F6]" />
+          <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#CB202D] animate-spin" />
+          <div className="absolute inset-2 rounded-full border-[2px] border-transparent border-b-[#A81D2A]/40 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
         </div>
-        <div className="p-4 space-y-3">
-          <div className="h-5 w-1/2 bg-[#E9E3FA] rounded animate-pulse" />
-          <div className="h-7 w-3/4 bg-[#E9E3FA] rounded animate-pulse" />
-          <div className="h-10 w-full bg-[#E9E3FA] rounded-2xl animate-pulse" />
-          <div className="h-24 w-full bg-[#E9E3FA] rounded-[20px] animate-pulse" />
-        </div>
+        <p className="text-[13px] font-semibold text-[#6B7280] tracking-wide">Loading product…</p>
       </div>
     )
   }
@@ -436,6 +444,37 @@ export default function MobileProductDetail() {
 
   return (
     <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <style>{`
+        @keyframes shimmerSlide {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .shimmer-overlay::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 40%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.5) 60%, transparent 100%);
+          animation: shimmerSlide 2s ease-in-out infinite;
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.4s ease-out forwards;
+        }
+        @keyframes pulseBrand {
+          0%, 100% { opacity: 1; background-color: #F3EFFE; }
+          50% { opacity: 0.5; background-color: #FEE2E6; }
+        }
+        .skel-brand { animation: pulseBrand 1.8s ease-in-out infinite; }
+        .skel-stagger-1 { animation: pulseBrand 1.8s ease-in-out 0s infinite; }
+        .skel-stagger-2 { animation: pulseBrand 1.8s ease-in-out 0.15s infinite; }
+        .skel-stagger-3 { animation: pulseBrand 1.8s ease-in-out 0.3s infinite; }
+        .skel-stagger-4 { animation: pulseBrand 1.8s ease-in-out 0.45s infinite; }
+        .skel-stagger-5 { animation: pulseBrand 1.8s ease-in-out 0.6s infinite; }
+      `}</style>
+
       {/* Sticky top bar — product page style (white/neutral, no purple gradient) */}
       <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-3 py-2.5 flex items-center gap-2.5">
@@ -534,8 +573,15 @@ export default function MobileProductDetail() {
               {images.map((img, i) => (
                 <div key={i} className="w-full h-full flex-shrink-0 relative overflow-hidden">
                   {!imgLoaded[i] && (
-                    <div className="absolute inset-0 bg-[#F1F2F6] animate-pulse flex items-center justify-center">
-                      <div className="w-10 h-10 rounded-full border-4 border-[#E0E0EA] border-t-[#CB202D] animate-spin" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#F1F2F6] via-[#F3EFFE] to-[#F1F2F6] shimmer-overlay flex flex-col items-center justify-center gap-3">
+                        <div className="w-16 h-16 rounded-2xl bg-white/50 flex items-center justify-center shadow-sm" style={{ animation: 'pulseBrand 2s ease-in-out infinite' }}>
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CB202D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="3" ry="3" opacity="0.35"/>
+                            <line x1="12" y1="18" x2="12" y2="18.01" strokeWidth="2" opacity="0.35"/>
+                            <circle cx="12" cy="18" r="0.5" fill="#CB202D" opacity="0.35"/>
+                          </svg>
+                        </div>
+                      <p className="text-[11px] font-semibold text-[#6B7280]">Loading image...</p>
                     </div>
                   )}
                   <img
@@ -625,8 +671,80 @@ export default function MobileProductDetail() {
         </div>
       </div>
 
+      {/* Body content — skeleton while main image loads, then fades in */}
+      {!contentVisible ? (
+        <div className="px-3 mt-3 space-y-3">
+          {/* Product info card */}
+          <div className={`${card} p-4 skel-stagger-1`}>
+            <div className="h-3 w-16 rounded-full skel-brand" />
+            <div className="h-5 w-3/4 rounded mt-2.5 skel-brand" />
+            <div className="h-3 w-2/5 rounded mt-2 skel-brand" />
+            <div className="flex items-center gap-2 mt-3">
+              <div className="h-4 w-9 rounded skel-brand" />
+              <div className="h-3 w-14 rounded skel-brand" />
+              <div className="h-3 w-10 rounded skel-brand" />
+            </div>
+            <div className="flex items-end gap-2 mt-3">
+              <div className="h-7 w-24 rounded skel-brand" />
+              <div className="h-3.5 w-14 rounded skel-brand" />
+              <div className="h-5 w-12 rounded-full skel-brand" />
+            </div>
+            <div className="h-3 w-20 rounded mt-2 skel-brand" />
+          </div>
+
+          {/* Specs grid card */}
+          <div className={`${card} p-4 skel-stagger-2`}>
+            <div className="grid grid-cols-2 gap-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-[#FFFBFB] rounded-xl px-3 py-3 skel-stagger-3">
+                  <div className="h-2 w-12 rounded skel-brand" />
+                  <div className="h-3 w-16 rounded mt-1.5 skel-brand" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Variant buttons card */}
+          <div className={`${card} p-4 skel-stagger-3`}>
+            <div className="h-3 w-20 rounded-full skel-brand" />
+            <div className="flex gap-2 mt-2.5">
+              <div className="flex-1 h-11 rounded-2xl skel-brand" />
+              <div className="flex-1 h-11 rounded-2xl skel-brand" />
+            </div>
+          </div>
+
+          {/* Offers card */}
+          <div className={`${card} p-4 skel-stagger-4`}>
+            <div className="h-4 w-28 rounded skel-brand" />
+            <div className="space-y-3 mt-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full skel-brand flex-shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3 w-3/4 rounded skel-brand" />
+                    <div className="h-2.5 w-1/2 rounded skel-brand" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Services grid card */}
+          <div className={`${card} p-4 skel-stagger-5`}>
+            <div className="grid grid-cols-3 gap-2.5">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="flex flex-col items-center gap-1.5 bg-[#FFFBFB] rounded-xl px-2 py-3">
+                  <div className="w-9 h-9 rounded-full skel-brand" />
+                  <div className="h-2 w-12 rounded skel-brand" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="px-3 mt-3 animate-fade-in-up">
       {/* Product info */}
-      <div className="px-3 mt-3">
+      <div>
         <div className={`${card} p-4`}>
           {/* Badges */}
           {(trending || newArrival || bestSelling || featured) && (
@@ -1036,6 +1154,8 @@ export default function MobileProductDetail() {
           </div>
         )}
       </div>
+        </div>
+      )}
 
       {/* Sticky bottom action bar */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2.5 bg-white/95 backdrop-blur-xl flex items-center gap-2.5 border-t border-[#EEF1F4]" style={{ boxShadow: '0 -5px 25px rgba(0,0,0,0.10)' }}>

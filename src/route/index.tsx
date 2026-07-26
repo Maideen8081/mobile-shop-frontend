@@ -40,6 +40,7 @@ import RegisterPage from '../pages/RegisterPage'
 import AddressCreatePage from '../pages/AddressCreatePage'
 import ProfilePage from '../pages/ProfilePage'
 import MobileNotifications from '../components/mobile/MobileNotifications'
+import AdminOrders from '../pages/AdminOrders'
 
 export default function AppRoutes() {
   return (
@@ -88,6 +89,7 @@ export default function AppRoutes() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/notifications" element={<MobileNotifications />} />
       <Route path="/address/create" element={<AddressCreatePage />} />
+      <Route path="/online-orders" element={<AdminOrders />} />
       <Route path="*" element={<LandingGate />} />
     </Routes>
   )

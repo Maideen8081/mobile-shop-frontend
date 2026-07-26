@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { FiChevronLeft, FiPackage, FiCheck, FiCopy, FiTruck, FiHome, FiShoppingBag, FiStar } from 'react-icons/fi'
+import { FiChevronLeft, FiCheck, FiCopy, FiTruck, FiShoppingBag, FiStar } from 'react-icons/fi'
+import { orderService, type OrderResponse } from '../../services/orderService'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -33,36 +34,87 @@ function formatPrice(n: number): string {
   return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
 }
 
-const timeline = [
-  { icon: <FiPackage size={14} />, label: 'Order Placed', done: true },
-  { icon: <FiShoppingBag size={14} />, label: 'Packed', done: false },
-  { icon: <FiTruck size={14} />, label: 'Shipped', done: false },
-  { icon: <FiHome size={14} />, label: 'Delivered', done: false },
-]
+const STATUS_STEPS = ['order_placed', 'accepted', 'processing', 'shipped', 'out_for_delivery', 'delivered']
+const STATUS_LABELS: Record<string, string> = {
+  order_placed: 'Order Placed', accepted: 'Order Accepted', processing: 'Processing',
+  shipped: 'Shipped', out_for_delivery: 'Out for Delivery', delivered: 'Delivered',
+}
+const statusIndex = (s: string) => {
+  const l = s.toLowerCase().replace(/\s+/g, '_')
+  const map: Record<string, number> = {
+    order_placed: 0, confirmed: 0, placed: 0,
+    accepted: 1,
+    processing: 2, packed: 2,
+    shipped: 3,
+    out_for_delivery: 4,
+    delivered: 5,
+  }
+  for (const [key, idx] of Object.entries(map)) {
+    if (l === key || l.includes(key)) return idx
+  }
+  return 0
+}
 
 export default function MobileOrderSuccess() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const [orderData] = useState<any>(() => {
-    try { return JSON.parse(localStorage.getItem('last_order') || 'null') } catch { return null }
-  })
-  const orderId = params.get('order_id') || orderData?.orderId || 'ORD-' + String(Math.random()).slice(2, 10).toUpperCase()
-  const deliveryDate = orderData?.deliveryDate || (() => {
-    const d = new Date(); d.setDate(d.getDate() + 5)
-    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-  })()
-  const items: any[] = orderData?.items || []
-  const total = orderData?.total ?? items.reduce((s: number, i: any) => s + i.price * i.quantity, 0)
+  const orderId = params.get('order_id') || ''
+
+  const [apiOrder, setApiOrder] = useState<OrderResponse | null>(null)
+  const [loading, setLoading] = useState(true)
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
   const [copied, setCopied] = useState(false)
+
+  const localOrder = (() => {
+    try { return JSON.parse(localStorage.getItem('last_order') || 'null') } catch { return null }
+  })()
+
+  useEffect(() => {
+    if (!orderId) { setLoading(false); return }
+    let mounted = true
+    orderService.detail(orderId)
+      .then(o => { if (mounted) setApiOrder(o) })
+      .catch(() => {})
+      .finally(() => { if (mounted) setLoading(false) })
+    return () => { mounted = false }
+  }, [orderId])
 
   useEffect(() => {
     const t = setTimeout(() => setCopied(false), 1500)
     return () => clearTimeout(t)
   }, [copied])
 
+  const order = apiOrder
+  const displayOrderId = order?.order_id || orderId || localOrder?.orderId || ''
+  const deliveryDate = order?.est_delivery || localOrder?.deliveryDate || (() => {
+    const d = new Date(); d.setDate(d.getDate() + 5)
+    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  })()
+
+  const items = order?.items?.map(it => ({
+    productId: it.product_id,
+    name: it.product_name,
+    image: it.image,
+    storage: it.selected_storage,
+    ram: it.selected_ram,
+    color: it.selected_color,
+    quantity: it.quantity,
+    price: Number(it.price),
+  })) || localOrder?.items || []
+
+  const grandTotal = order ? Number(order.grand_total) : (localOrder?.total ?? items.reduce((s: number, i: any) => s + i.price * i.quantity, 0))
+  const subtotal = order ? Number(order.subtotal) : (localOrder?.subtotal ?? 0)
+  const shipping = order ? Number(order.shipping_charge) : (localOrder?.shipping ?? 0)
+  const tax = order ? Number(order.tax) : (localOrder?.tax ?? 0)
+  const discount = localOrder?.discount || 0
+  const couponCode = localOrder?.couponCode || ''
+  const paymentMethod = order?.payment_method || localOrder?.paymentMethod || ''
+
+  const deliveryStatus = order?.delivery_status || localOrder?.status || 'order_placed'
+  const currentStep = statusIndex(deliveryStatus)
+
   const copyId = () => {
-    navigator.clipboard?.writeText(orderId)
+    navigator.clipboard?.writeText(displayOrderId)
     setCopied(true)
   }
 
@@ -85,7 +137,6 @@ export default function MobileOrderSuccess() {
         <button onClick={() => navigate('/home')} className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center z-10">
           <FiChevronLeft size={20} className="text-white" />
         </button>
-        {/* Animated check */}
         <div className="relative w-24 h-24 mx-auto mt-6">
           <span className="absolute inset-0 rounded-full bg-white/25 animate-ping" />
           <div className="relative w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-xl">
@@ -106,7 +157,7 @@ export default function MobileOrderSuccess() {
         <div className={`${card} rounded-[20px] p-4 flex items-center justify-between`}>
           <div>
             <p className="text-[11px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
-            <p className="text-[16px] font-bold text-[#1F2937]">{orderId}</p>
+            <p className="text-[16px] font-bold text-[#1F2937]">{displayOrderId}</p>
           </div>
           <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
             {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
@@ -124,18 +175,22 @@ export default function MobileOrderSuccess() {
           </div>
           {/* Timeline */}
           <div className="flex items-center justify-between mt-4">
-            {timeline.map((t, i) => (
-              <div key={t.label} className="flex items-center flex-1 last:flex-none">
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center ${t.done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
-                    style={t.done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
-                    {t.icon}
+            {STATUS_STEPS.map((step, i) => {
+              const done = i <= currentStep
+              const label = STATUS_LABELS[step] || step
+              return (
+                <div key={step} className="flex items-center flex-1 last:flex-none">
+                  <div className="flex flex-col items-center flex-shrink-0">
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
+                      style={done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
+                      {done ? <FiCheck size={14} /> : <span className="text-[10px] font-bold">{i + 1}</span>}
+                    </div>
+                    <span className={`text-[9px] mt-1 font-semibold text-center leading-tight ${done ? 'text-[#15803D]' : 'text-[#9CA3AF]'}`}>{label}</span>
                   </div>
-                  <span className={`text-[9px] mt-1 font-semibold text-center ${t.done ? 'text-[#15803D]' : 'text-[#9CA3AF]'}`}>{t.label}</span>
+                  {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-full ${done && i < currentStep ? '' : 'bg-[#E5E7EB]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
                 </div>
-                {i < timeline.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-full ${t.done ? '' : 'bg-[#E5E7EB]'}`} style={t.done ? { background: SUCCESS } : undefined} />}
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
@@ -143,44 +198,82 @@ export default function MobileOrderSuccess() {
         <div className={`${card} rounded-[20px] p-4`}>
           <p className="text-[14px] font-bold text-[#1F2937] mb-3">Order Items ({items.length})</p>
           <div className="space-y-3">
-            {items.length === 0 ? (
-              <p className="text-[12px] text-[#9CA3AF]">Order details loading…</p>
-            ) : items.map((item) => {
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2].map(i => (
+                  <div key={i} className="flex items-center gap-3 animate-pulse">
+                    <div className="w-12 h-12 rounded-[12px] bg-[#F1F5F9]" />
+                    <div className="flex-1 space-y-2"><div className="h-3 bg-[#F1F5F9] rounded w-3/4" /><div className="h-2.5 bg-[#F1F5F9] rounded w-1/2" /></div>
+                    <div className="h-3 bg-[#F1F5F9] rounded w-16" />
+                  </div>
+                ))}
+              </div>
+            ) : items.length === 0 ? (
+              <p className="text-[12px] text-[#9CA3AF]">No items found</p>
+            ) : items.map((item: any, idx: number) => {
               const imgUrl = resolveImage(item)
-              const hasImg = imgUrl && !imgErrors[item.productId]
+              const hasImg = imgUrl && !imgErrors[item.productId ?? idx]
               return (
-                <div key={item.productId} className="flex items-center gap-3">
+                <div key={item.productId ?? idx} className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-[12px] bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {hasImg ? (
-                      <img src={imgUrl} alt={item.name} className="w-full h-full object-contain" onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))} />
+                      <img src={imgUrl} alt={item.name} className="w-full h-full object-contain" onError={() => setImgErrors(p => ({ ...p, [item.productId ?? idx]: true }))} />
                     ) : (
                       <span className="text-xl">{item.emoji || '📦'}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-semibold text-[#1F2937] truncate">{item.name}</p>
-                    <p className="text-[11px] text-[#6B7280]">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}</p>
+                    <p className="text-[11px] text-[#6B7280]">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.ram ? ` · ${item.ram}` : ''}</p>
                   </div>
-                  <span className="text-[13px] font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                  </div>
                 </div>
               )
             })}
           </div>
           <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="space-y-1.5 text-[12px]">
+            <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
+            <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
+            <div className="flex justify-between text-[#6B7280]"><span>Tax (GST)</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
+            {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({couponCode})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
+          </div>
+          <div className="h-px bg-[#EEF0F6] my-3" />
           <div className="flex justify-between items-center">
             <span className="text-[12px] text-[#6B7280] font-semibold uppercase tracking-wide">Total Paid</span>
-            <span className="text-[18px] font-bold text-[#1F2937]">{formatPrice(total)}</span>
+            <span className="text-[18px] font-bold text-[#1F2937]">{formatPrice(grandTotal)}</span>
           </div>
+          {paymentMethod && (
+            <div className="flex justify-between mt-1.5">
+              <span className="text-[11px] text-[#6B7280]">Payment Method</span>
+              <span className="text-[11px] font-semibold text-[#1F2937]">{paymentMethod}</span>
+            </div>
+          )}
         </div>
 
-        {/* Review CTA */}
-        <button onClick={() => navigate('/collection/all')} className={`${card} rounded-[18px] p-3.5 w-full flex items-center gap-3`}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><FiStar size={18} /></div>
-          <div className="flex-1 text-left">
-            <p className="text-[13px] font-semibold text-[#1F2937]">Rate your experience</p>
-            <p className="text-[11px] text-[#6B7280]">Help others by reviewing your purchase</p>
+        {/* Review CTA - only when delivered */}
+        {currentStep >= 4 && (
+          <div className={`${card} rounded-[20px] p-4`}>
+            <p className="text-[14px] font-bold text-[#1F2937] mb-3">Rate & Review Your Purchase</p>
+            <div className="space-y-2.5">
+              {items.map((item: any, idx: number) => (
+                <button key={item.productId ?? idx} onClick={() => navigate(`/product/${item.productId}`)}
+                  className="w-full flex items-center gap-3 p-2.5 rounded-[14px] border border-[#FEE2E6] bg-[#FFFBFB] active:bg-[#FEE2E6] transition-colors">
+                  <div className="w-9 h-9 rounded-[10px] bg-[#FEE2E6] flex items-center justify-center flex-shrink-0">
+                    <FiStar size={16} className="text-[#CB202D]" />
+                  </div>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-[13px] font-semibold text-[#1F2937] truncate">{item.name}</p>
+                    <p className="text-[11px] text-[#6B7280]">Tap to rate & write a review</p>
+                  </div>
+                  <FiChevronLeft size={16} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
+                </button>
+              ))}
+            </div>
           </div>
-        </button>
+        )}
       </div>
 
       {/* Sticky CTAs */}

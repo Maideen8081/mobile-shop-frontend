@@ -17,4 +17,27 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+let isRedirecting = false
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401 && !isRedirecting) {
+      isRedirecting = true
+      const AUTH_FLAG = 'is_authenticated'
+      const USER_KEY = 'user_profile'
+      ;[AUTH_FLAG, 'access_token', 'refresh_token', USER_KEY].forEach(k => localStorage.removeItem(k))
+      window.dispatchEvent(new Event('auth-changed'))
+
+      const currentPath = window.location.pathname + window.location.search
+      if (!currentPath.startsWith('/login')) {
+        sessionStorage.setItem('redirect_after_login', currentPath)
+      }
+      window.location.href = '/login'
+      setTimeout(() => { isRedirecting = false }, 2000)
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default api

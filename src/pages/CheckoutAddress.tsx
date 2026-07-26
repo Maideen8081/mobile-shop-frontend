@@ -5,6 +5,7 @@ import { FiCheck, FiPlus, FiEdit2, FiLoader, FiMapPin, FiPhone, FiAlertCircle, F
 import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
 import { useToast } from '../context/ToastContext'
+import { authService } from '../services/authService'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -130,6 +131,7 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
   onCancel: () => void
   initialAddress?: AddressData
 }) {
+  const showToast = useToast().show
   const [form, setForm] = useState({
     fullName: initialAddress?.fullName || '', mobile: initialAddress?.mobile || '', alternateMobile: initialAddress?.alternateMobile || '',
     addressLine1: initialAddress?.addressLine1 || '', addressLine2: initialAddress?.addressLine2 || '',
@@ -176,7 +178,9 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
         const created = await addressService.create({ ...form, country: form.country, isDefault: form.isDefault })
         onSaved(created)
       }
-    } catch { /* ignore */ }
+    } catch {
+      showToast('Failed to save address', 'error')
+    }
     setSaving(false)
   }
 
@@ -313,6 +317,13 @@ export default function CheckoutAddress() {
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState<number | null>(null)
 
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      sessionStorage.setItem('redirect_after_login', '/checkout/address')
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
+
   const selectedAddress = addresses.find(a => a.id === selectedId)
 
   const [terminalForm, setTerminalForm] = useState({
@@ -416,7 +427,7 @@ export default function CheckoutAddress() {
       }
       setTimeout(() => navigate('/checkout/payment'), 300)
     } catch {
-      showToast('Failed to save changes', 'error')
+      showToast('Failed to save address. Please try again.', 'error')
       setSubmitting(false)
     }
   }

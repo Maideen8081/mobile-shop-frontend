@@ -4,18 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import {
   FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck,
-  FiSmartphone, FiFileText, FiBarChart2, FiUsers, FiAward,
-  FiSend, FiMessageCircle, FiStar, FiGift, FiShield, FiClock,
-  FiSearch, FiShoppingCart, FiGrid, FiRefreshCw, FiShoppingBag,
-  FiTruck, FiServer, FiCreditCard, FiZap, FiTrendingUp, FiFile,
-  FiSettings, FiX,
+  FiShoppingBag, FiSearch, FiSmartphone, FiX,
 } from 'react-icons/fi'
-import { navItems } from '../../data/dashboardData'
-import { repairNavItems } from '../../data/repairData'
-import { crmNavItems } from '../../data/crmData'
-import { warrantyNavItems } from '../../data/warrantyData'
-import { ecommerceNavItems } from '../../data/ecommerceData'
-import { storeNavItems } from '../../data/storeData'
 
 interface NavItem {
   id: string
@@ -25,21 +15,37 @@ interface NavItem {
 }
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
-  FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck,
-  FiSmartphone, FiFileText, FiBarChart2, FiUsers, FiAward,
-  FiSend, FiMessageCircle, FiStar, FiGift, FiShield, FiClock,
-  FiSearch, FiShoppingCart, FiGrid, FiRefreshCw, FiShoppingBag,
-  FiTruck, FiServer, FiCreditCard, FiZap, FiTrendingUp, FiFile,
-  FiSettings,
+  FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck, FiShoppingBag, FiSmartphone,
 }
 
 const navSections: { label: string; items: NavItem[] }[] = [
-  { label: 'Main', items: navItems },
-  { label: 'Repairs', items: repairNavItems },
-  { label: 'CRM', items: crmNavItems },
-  { label: 'Warranty', items: warrantyNavItems },
-  { label: 'E-Commerce', items: ecommerceNavItems },
-  { label: 'Store', items: storeNavItems },
+  {
+    label: 'Main',
+    items: [
+      { id: 'dashboard', label: 'Dashboard', icon: 'FiHome', path: '/dashboard' },
+      { id: 'products', label: 'Products', icon: 'FiPackage', path: '/products' },
+      { id: 'categories', label: 'Categories', icon: 'FiFolder', path: '/categories' },
+    ],
+  },
+  {
+    label: 'Repairs',
+    items: [
+      { id: 'new-repair', label: 'New Repair Ticket', icon: 'FiPlus', path: '/new-repair' },
+      { id: 'repair-history', label: 'Repair History', icon: 'FiTool', path: '/repair-history' },
+    ],
+  },
+  {
+    label: 'Customers',
+    items: [
+      { id: 'customer-list', label: 'Customers', icon: 'FiUserCheck', path: '/customer-list' },
+    ],
+  },
+  {
+    label: 'Orders',
+    items: [
+      { id: 'online-orders', label: 'Online Orders', icon: 'FiShoppingBag', path: '/online-orders' },
+    ],
+  },
 ]
 
 interface SidebarProps {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, Star, Check, Bike } from 'lucide-react'
 import { useMobileToast } from './useMobileToast'
@@ -355,11 +355,21 @@ export default function MobileCart() {
             <p className="text-[10.5px] text-[#64748B]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
             <p className="text-[17px] font-extrabold leading-none" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</p>
           </div>
-          <Link to="/checkout/address" className="flex-shrink-0">
-            <button className="h-11 px-6 rounded-xl text-white text-[14px] font-bold active:scale-95 transition flex items-center justify-center gap-2" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
-              Checkout <ArrowLeft size={16} className="rotate-180" />
-            </button>
-          </Link>
+          <button
+            onClick={() => {
+              if (couponApplied && activeCoupon) {
+                localStorage.setItem('checkout_coupon', JSON.stringify({ code: activeCoupon, discount }))
+              } else {
+                localStorage.removeItem('checkout_coupon')
+              }
+              localStorage.setItem('checkout_delivery_tip', String(deliveryTip))
+              navigate('/checkout/address')
+            }}
+            className="flex-shrink-0 h-11 px-6 rounded-xl text-white text-[14px] font-bold active:scale-95 transition flex items-center justify-center gap-2"
+            style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}
+          >
+            Checkout <ArrowLeft size={16} className="rotate-180" />
+          </button>
         </div>
       </div>
       {Toast}

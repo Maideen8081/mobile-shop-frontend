@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   FiMapPin, FiHome, FiBriefcase, FiCheck, FiArrowLeft,
   FiUser, FiPhone,
 } from 'react-icons/fi'
 import { addressService, type AddressData } from '../services/addressService'
+import { authService } from '../services/authService'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
 
@@ -30,6 +31,13 @@ export default function AddressCreatePage() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    if (!authService.isAuthenticated()) {
+      sessionStorage.setItem('redirect_after_login', '/addresses/new')
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
 
   const update = (k: keyof typeof form, v: string | boolean) => {
     if (k === 'mobile' || k === 'alternateMobile') {

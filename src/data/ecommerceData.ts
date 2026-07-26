@@ -134,10 +134,15 @@ export interface OnlineOrder {
   customerName: string
   customerMobile: string
   total: number
+  subtotal?: number
+  shipping?: number
+  tax?: number
+  discount?: number
+  couponCode?: string
   deliveryStatus: string
   paymentStatus: string
   paymentMethod: string
-  products: { name: string; qty: number }[]
+  products: { name: string; qty: number; price?: number }[]
   deliveryPartner: string
   trackingId: string
   deliveryAddress: string

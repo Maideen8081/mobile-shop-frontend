@@ -19,21 +19,55 @@ export interface RegisterData {
 function extractTokens(body: any): { access: string; refresh?: string } | null {
   if (!body) return null
   const src = body.data || body
+
+  // 1) Direct keys: { access: "..." } or { access_token: "..." }
   for (const key of ['access', 'access_token', 'token', 'key']) {
     const val = src[key]
     if (val && typeof val === 'string') {
-      const refresh = src.refresh || src.refresh_token || null
-      return { access: val, refresh }
+      return { access: val, refresh: src.refresh || src.refresh_token || null }
     }
   }
-  for (const key of Object.keys(src)) {
-    const val = src[key]
-    if (typeof val === 'string' && val.startsWith('eyJ') && val.split('.').length === 3) {
-      const refresh = src.refresh || src.refresh_token || null
-      return { access: val, refresh }
+
+  // 2) Nested tokens object: { data: { tokens: { access: "..." } } }
+  if (src.tokens && typeof src.tokens === 'object') {
+    const t = src.tokens
+    for (const key of ['access', 'access_token', 'token', 'key']) {
+      const val = t[key]
+      if (val && typeof val === 'string') {
+        return { access: val, refresh: t.refresh || t.refresh_token || null }
+      }
     }
   }
-  return null
+
+  // 3) Deeply nested: { data: { data: { tokens: { access: "..." } } } }
+  if (src.data && typeof src.data === 'object') {
+    const deep = src.data
+    if (deep.tokens && typeof deep.tokens === 'object') {
+      const t = deep.tokens
+      for (const key of ['access', 'access_token', 'token', 'key']) {
+        const val = t[key]
+        if (val && typeof val === 'string') {
+          return { access: val, refresh: t.refresh || t.refresh_token || null }
+        }
+      }
+    }
+  }
+
+  // 4) JWT string fallback anywhere in the object
+  function findJwt(obj: Record<string, unknown>): { access: string; refresh?: string } | null {
+    for (const key of Object.keys(obj)) {
+      const val = obj[key]
+      if (typeof val === 'string' && val.startsWith('eyJ') && val.split('.').length === 3) {
+        return { access: val }
+      }
+      if (val && typeof val === 'object' && !Array.isArray(val)) {
+        const found = findJwt(val as Record<string, unknown>)
+        if (found) return found
+      }
+    }
+    return null
+  }
+  return findJwt(src)
 }
 
 function markAuthenticated() {
@@ -44,8 +78,8 @@ function markAuthenticated() {
 function markUnauthenticated() {
   const keys = [
     AUTH_FLAG, 'access_token', 'refresh_token', USER_KEY,
-    'cart', 'wishlist', 'last_order', 'order_history',
-    'phonehub_addresses', 'checkout_address_id',
+    'wishlist', 'last_order', 'order_history',
+    'phonehub_addresses',
   ]
   keys.forEach(k => localStorage.removeItem(k))
   window.dispatchEvent(new Event('auth-changed'))
@@ -94,9 +128,9 @@ export const authService = {
     if (tokens) {
       localStorage.setItem('access_token', tokens.access)
       if (tokens.refresh) localStorage.setItem('refresh_token', tokens.refresh)
+      saveUserProfile(r.data, data.email)
+      markAuthenticated()
     }
-    saveUserProfile(r.data, data.email)
-    markAuthenticated()
     return r.data
   },
 
@@ -112,9 +146,9 @@ export const authService = {
     if (tokens) {
       localStorage.setItem('access_token', tokens.access)
       if (tokens.refresh) localStorage.setItem('refresh_token', tokens.refresh)
+      saveUserProfile(r.data, data.email)
+      markAuthenticated()
     }
-    saveUserProfile(r.data, data.email)
-    markAuthenticated()
     return r.data
   },
 
