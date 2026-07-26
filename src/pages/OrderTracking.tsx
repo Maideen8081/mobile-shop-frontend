@@ -572,7 +572,7 @@ export default function OrderTracking() {
           localStorage.setItem('order_history', JSON.stringify(mapped.slice(0, 50)))
         }
         if (urlOrderId && !cancelled) {
-          const found = mapped.find(o => String(o.id) === urlOrderId)
+          const found = mapped.find(o => o.orderId === urlOrderId)
           if (found) setSelectedOrder(found)
         }
       } catch {}
