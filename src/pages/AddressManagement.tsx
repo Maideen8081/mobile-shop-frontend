@@ -120,14 +120,14 @@ export default function AddressManagement() {
       <div className="relative pt-6 pb-20">
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-60 -right-60 w-[500px] h-[500px] rounded-full opacity-10"
-            style={{ background: 'radial-gradient(circle, #22C55E 0%, transparent 70%)' }} />
+            style={{ background: 'radial-gradient(circle, #CB202D 0%, transparent 70%)' }} />
           <div className="absolute -bottom-60 -left-60 w-[400px] h-[400px] rounded-full opacity-10"
-            style={{ background: 'radial-gradient(circle, #16A34A 0%, transparent 70%)' }} />
+            style={{ background: 'radial-gradient(circle, #A81D2A 0%, transparent 70%)' }} />
           <motion.div
             animate={{ scale: [1, 1.1, 1], opacity: [0.05, 0.1, 0.05] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-            style={{ background: 'radial-gradient(circle, #22C55E 0%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, #CB202D 0%, transparent 70%)' }}
           />
         </div>
 
@@ -138,11 +138,11 @@ export default function AddressManagement() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-2 text-xs mb-6 pt-4 text-[#6B7280]"
           >
-            <Link to="/" className="hover:text-[#16A34A] transition-colors">
+            <Link to="/" className="hover:text-[#A81D2A] transition-colors">
               <FiHome size={12} className="inline mr-1" />Home
             </Link>
             <FiChevronRight size={10} />
-            <span className="hover:text-[#16A34A] transition-colors">Profile</span>
+            <span className="hover:text-[#A81D2A] transition-colors">Profile</span>
             <FiChevronRight size={10} />
             <span className="text-[#2D2118]">Addresses</span>
           </motion.div>
@@ -171,9 +171,9 @@ export default function AddressManagement() {
               onClick={openAdd}
               className="flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
                 color: 'white',
-                boxShadow: '0 4px 16px rgba(34,197,94,0.3)',
+                boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
               }}
             >
               <FiPlus size={16} /> Add New Address
@@ -183,7 +183,7 @@ export default function AddressManagement() {
           {/* Content */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <FiLoader size={32} className="animate-spin" style={{ color: '#16A34A' }} />
+              <FiLoader size={32} className="animate-spin" style={{ color: '#A81D2A' }} />
             </div>
           ) : addresses.length === 0 ? (
             <EmptyAddressState onAdd={openAdd} />
@@ -212,19 +212,19 @@ export default function AddressManagement() {
                 onClick={openAdd}
                 className="group rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-3 h-64 transition-all duration-300 cursor-pointer"
                 style={{
-                  borderColor: 'rgba(34,197,94,0.2)',
+                  borderColor: 'rgba(203,32,45,0.2)',
                   background: '#F9FAFB',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(34,197,94,0.5)'; e.currentTarget.style.background = 'rgba(34,197,94,0.05)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(34,197,94,0.2)'; e.currentTarget.style.background = '#F9FAFB' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.5)'; e.currentTarget.style.background = 'rgba(203,32,45,0.05)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.2)'; e.currentTarget.style.background = '#F9FAFB' }}
               >
                 <motion.div
                   whileHover={{ rotate: 90, scale: 1.1 }}
                   transition={{ type: 'spring', stiffness: 200 }}
                   className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ background: 'rgba(34,197,94,0.15)' }}
+                  style={{ background: 'rgba(203,32,45,0.15)' }}
                 >
-                  <FiPlus size={22} style={{ color: '#16A34A' }} />
+                  <FiPlus size={22} style={{ color: '#A81D2A' }} />
                 </motion.div>
                 <span className="text-sm font-semibold text-[#6B7280] group-hover:text-emerald-600 transition-colors">
                   Add New Address
@@ -265,17 +265,17 @@ function EmptyAddressState({ onAdd }: { onAdd: () => void }) {
         transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
         className="relative w-32 h-32 rounded-3xl mb-8 flex items-center justify-center overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(22,196,74,0.1))',
-          border: '1px solid rgba(34,197,94,0.15)',
+          background: 'linear-gradient(135deg, rgba(203,32,45,0.1), rgba(168,29,42,0.1))',
+          border: '1px solid rgba(203,32,45,0.15)',
         }}
       >
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute inset-0"
-          style={{ background: 'radial-gradient(circle at 50% 50%, rgba(34,197,94,0.15), transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle at 50% 50%, rgba(203,32,45,0.15), transparent 70%)' }}
         />
-        <FiMapPin size={48} style={{ color: 'rgba(22,196,74,0.4)' }} />
+        <FiMapPin size={48} style={{ color: 'rgba(168,29,42,0.4)' }} />
       </motion.div>
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
@@ -302,9 +302,9 @@ function EmptyAddressState({ onAdd }: { onAdd: () => void }) {
         onClick={onAdd}
         className="flex items-center gap-2 px-8 h-12 rounded-2xl text-sm font-bold transition-all cursor-pointer"
         style={{
-          background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+          background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
           color: 'white',
-          boxShadow: '0 8px 32px rgba(34,197,94,0.3)',
+          boxShadow: '0 8px 32px rgba(203,32,45,0.3)',
         }}
       >
         <FiPlus size={18} /> Add New Address
@@ -327,20 +327,20 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
       className="group relative rounded-3xl overflow-hidden transition-all duration-500 cursor-pointer"
       style={{
         background: addr.isDefault
-          ? 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(22,196,74,0.05))'
+          ? 'linear-gradient(135deg, rgba(203,32,45,0.08), rgba(168,29,42,0.05))'
           : '#ffffff',
         border: addr.isDefault
-          ? '1px solid rgba(34,197,94,0.3)'
+          ? '1px solid rgba(203,32,45,0.3)'
           : '1px solid #E5E7EB',
         boxShadow: addr.isDefault
-          ? '0 8px 24px rgba(34,197,94,0.12)'
+          ? '0 8px 24px rgba(203,32,45,0.12)'
           : '0 2px 12px rgba(0,0,0,0.05)',
       }}
       onMouseEnter={(e) => {
         if (!addr.isDefault) {
-          e.currentTarget.style.borderColor = 'rgba(34,197,94,0.3)'
+          e.currentTarget.style.borderColor = 'rgba(203,32,45,0.3)'
           e.currentTarget.style.background = '#F9FAFB'
-          e.currentTarget.style.boxShadow = '0 8px 24px rgba(34,197,94,0.08)'
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(203,32,45,0.08)'
         }
       }}
       onMouseLeave={(e) => {
@@ -357,7 +357,7 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
           transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
           className="absolute inset-0 rounded-3xl pointer-events-none"
           style={{
-            background: 'linear-gradient(135deg, rgba(34,197,94,0.04), transparent, rgba(22,196,74,0.04))',
+            background: 'linear-gradient(135deg, rgba(203,32,45,0.04), transparent, rgba(168,29,42,0.04))',
             zIndex: 0,
           }}
         />
@@ -370,13 +370,13 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
               className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
               style={{
                 background: addr.addressType === 'Home'
-                  ? 'linear-gradient(135deg, rgba(34,197,94,0.2), rgba(22,196,74,0.2))'
+                  ? 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(168,29,42,0.2))'
                   : addr.addressType === 'Office'
                     ? 'linear-gradient(135deg, rgba(6,182,212,0.2), rgba(14,165,233,0.2))'
-                    : 'linear-gradient(135deg, rgba(34,197,94,0.2), rgba(16,185,129,0.2))',
+                    : 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(16,185,129,0.2))',
               }}
             >
-              {typeIcons[addr.addressType] || <MapPin size={14} style={{ color: '#16A34A' }} />}
+              {typeIcons[addr.addressType] || <MapPin size={14} style={{ color: '#A81D2A' }} />}
             </motion.div>
             <div>
               <div className="flex items-center gap-2">
@@ -388,7 +388,7 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
                     transition={{ type: 'spring', stiffness: 300 }}
                     className="text-[9px] font-bold px-2 py-0.5 rounded-full"
                     style={{
-                      background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                      background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
                       color: 'white',
                     }}
                   >DEFAULT</motion.span>
@@ -405,12 +405,12 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
             className="text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0"
             style={{
               background: addr.addressType === 'Home'
-                ? 'rgba(34,197,94,0.15)'
+                ? 'rgba(203,32,45,0.15)'
                 : addr.addressType === 'Office'
                   ? 'rgba(6,182,212,0.15)'
-                  : 'rgba(34,197,94,0.15)',
+                  : 'rgba(203,32,45,0.15)',
               color: addr.addressType === 'Home'
-                ? '#16A34A'
+                ? '#A81D2A'
                 : addr.addressType === 'Office'
                   ? '#22d3ee'
                   : '#34d399',
@@ -439,11 +439,11 @@ function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: 
                 onClick={onSetDefault}
                 className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
                 style={{
-                  background: 'rgba(34,197,94,0.1)',
-                  color: 'rgba(22,196,74,0.7)',
+                  background: 'rgba(203,32,45,0.1)',
+                  color: 'rgba(168,29,42,0.7)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(34,197,94,0.2)'; e.currentTarget.style.color = 'rgba(22,196,74,0.9)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(34,197,94,0.1)'; e.currentTarget.style.color = 'rgba(22,196,74,0.7)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(203,32,45,0.2)'; e.currentTarget.style.color = 'rgba(168,29,42,0.9)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(203,32,45,0.1)'; e.currentTarget.style.color = 'rgba(168,29,42,0.7)' }}
               >
                 <FiStar size={11} /> Set Default
               </motion.button>
@@ -568,7 +568,7 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
         style={{
           background: '#ffffff',
           border: '1px solid #E5E7EB',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.15), 0 0 60px rgba(34,197,94,0.04)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.15), 0 0 60px rgba(203,32,45,0.04)',
         }}
       >
         <motion.div
@@ -587,9 +587,9 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 400, delay: 0.15 }}
               className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.2), rgba(22,196,74,0.2))' }}
+              style={{ background: 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(168,29,42,0.2))' }}
             >
-              <FiMapPin size={16} style={{ color: '#16A34A' }} />
+              <FiMapPin size={16} style={{ color: '#A81D2A' }} />
             </motion.div>
             <h2 className="text-lg font-bold text-[#2D2118]">
               {editing ? 'Edit Address' : 'Add New Address'}
@@ -684,13 +684,13 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer"
                   style={{
                     background: form.addressType === type
-                      ? 'linear-gradient(135deg, #22C55E, #16A34A)'
+                      ? 'linear-gradient(135deg, #CB202D, #A81D2A)'
                       : '#F3F4F6',
                     border: form.addressType === type
                       ? '1px solid transparent'
                       : '1px solid #E5E7EB',
                     color: form.addressType === type ? 'white' : '#6B7280',
-                    boxShadow: form.addressType === type ? '0 4px 12px rgba(34,197,94,0.25)' : 'none',
+                    boxShadow: form.addressType === type ? '0 4px 12px rgba(203,32,45,0.25)' : 'none',
                   }}
                 >
                   {typeIcons[type]}
@@ -709,7 +709,7 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
             <div
               className="w-5 h-5 rounded-md flex items-center justify-center transition-all"
               style={{
-                background: form.isDefault ? 'linear-gradient(135deg, #22C55E, #16A34A)' : '#ffffff',
+                background: form.isDefault ? 'linear-gradient(135deg, #CB202D, #A81D2A)' : '#ffffff',
                 border: form.isDefault ? '1px solid transparent' : '1px solid #D1D5DB',
               }}
               onClick={() => update('isDefault', !form.isDefault)}
@@ -749,9 +749,9 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
             disabled={saving || !isValid}
             className="flex-1 h-12 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
             style={{
-              background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+              background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
               color: 'white',
-              boxShadow: '0 4px 16px rgba(34,197,94,0.3)',
+              boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
               opacity: saving || !isValid ? 0.5 : 1,
             }}
           >
@@ -784,7 +784,7 @@ function FormField({ label, value, onChange, placeholder, type = 'text', error }
           color: '#2D2118',
           boxShadow: error ? '0 0 12px rgba(239,68,68,0.1)' : 'none',
         }}
-        onFocus={(e) => { e.target.style.borderColor = error ? '#EF4444' : '#22C55E'; e.target.style.boxShadow = error ? '0 0 20px rgba(239,68,68,0.12)' : '0 0 20px rgba(34,197,94,0.08)' }}
+        onFocus={(e) => { e.target.style.borderColor = error ? '#EF4444' : '#CB202D'; e.target.style.boxShadow = error ? '0 0 20px rgba(239,68,68,0.12)' : '0 0 20px rgba(203,32,45,0.08)' }}
         onBlur={(e) => { e.target.style.borderColor = error ? '#EF4444' : '#D1D5DB'; e.target.style.boxShadow = error ? '0 0 12px rgba(239,68,68,0.1)' : 'none' }}
       />
       {error && (

@@ -79,7 +79,7 @@ export default function OrderSuccess() {
           box-shadow: 0 10px 30px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
         }
         .neon-mint-glow {
-          filter: drop-shadow(0 0 10px rgba(79, 227, 193, 0.6));
+          filter: drop-shadow(0 0 10px rgba(203, 32, 45, 0.6));
         }
         .progress-fill {
           transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -94,7 +94,7 @@ export default function OrderSuccess() {
       `}</style>
 
       {/* Parallax Background Circles */}
-      <div className="fixed w-[600px] h-[600px] rounded-full bg-[#4FE3C1] top-[-200px] left-[-100px] -z-10 opacity-15 blur-[80px]" />
+      <div className="fixed w-[600px] h-[600px] rounded-full bg-[#CB202D] top-[-200px] left-[-100px] -z-10 opacity-15 blur-[80px]" />
       <div className="fixed w-[500px] h-[500px] rounded-full bg-[#454747] top-[40%] right-[-100px] -z-10 opacity-15 blur-[80px]" />
 
       {/* Parallax mouse effect */}
@@ -122,9 +122,9 @@ export default function OrderSuccess() {
         <div className="glass-card w-full rounded-[2rem] p-10 flex flex-col items-center text-center relative overflow-hidden">
           {/* Success Icon */}
           <div className="w-32 h-32 mb-8 relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-[#4FE3C1]/20 rounded-full blur-xl animate-pulse" />
-            <div className="glass-card rounded-full w-24 h-24 flex items-center justify-center neon-mint-glow float-animation border-[#4FE3C1]/30">
-              <span className="material-symbols-outlined text-[#4FE3C1] text-6xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <div className="absolute inset-0 bg-[#CB202D]/20 rounded-full blur-xl animate-pulse" />
+            <div className="glass-card rounded-full w-24 h-24 flex items-center justify-center neon-mint-glow float-animation border-[#CB202D]/30">
+              <span className="material-symbols-outlined text-[#CB202D] text-6xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 verified_user
               </span>
             </div>
@@ -140,8 +140,8 @@ export default function OrderSuccess() {
           {/* Order ID */}
           <div className="flex items-center gap-3 bg-white/40 border border-[rgba(217,222,229,0.5)] px-6 py-4 rounded-full mb-12 group cursor-pointer hover:bg-white/60 transition-all duration-300">
             <span className="text-[0.75rem] tracking-[0.1em] text-[#454747]/60 font-bold">ORDER ID:</span>
-            <span className="font-bold text-[#4FE3C1]">{orderId}</span>
-            <span className="material-symbols-outlined text-[#4FE3C1] text-lg group-hover:scale-110 transition-transform"
+            <span className="font-bold text-[#CB202D]">{orderId}</span>
+            <span className="material-symbols-outlined text-[#CB202D] text-lg group-hover:scale-110 transition-transform"
               onClick={() => { navigator.clipboard.writeText(orderId) }}
             >
               content_copy
@@ -154,16 +154,16 @@ export default function OrderSuccess() {
             <div className="bg-white/30 rounded-2xl p-6 border border-[rgba(217,222,229,0.5)] flex flex-col gap-4">
               <div className="flex justify-between items-center">
                 <span className="text-[0.75rem] tracking-[0.1em] text-[#434748]/60 font-bold">Estimated Delivery</span>
-                <span className="material-symbols-outlined text-[#4FE3C1]">calendar_today</span>
+                <span className="material-symbols-outlined text-[#CB202D]">calendar_today</span>
               </div>
               <div className="text-3xl font-bold text-[#454747]">{deliveryDate}</div>
               <div className="flex flex-col gap-2 mt-2">
                 <div className="flex justify-between text-[10px] tracking-[0.1em] text-[#434748]/80 font-bold">
                   <span>STATUS: PAYMENT CONFIRMED & PROCESSING</span>
-                  <span className="text-[#4FE3C1] font-bold">88%</span>
+                  <span className="text-[#CB202D] font-bold">88%</span>
                 </div>
                 <div className="w-full bg-white/50 h-2 rounded-full overflow-hidden">
-                  <div className="progress-fill h-full bg-[#4FE3C1] rounded-full" style={{ width: '88%', boxShadow: '0 0 8px rgba(79,227,193,0.8)' }} />
+                  <div className="progress-fill h-full bg-[#CB202D] rounded-full" style={{ width: '88%', boxShadow: '0 0 8px rgba(203,32,45,0.8)' }} />
                 </div>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function OrderSuccess() {
             <div className="bg-white/30 rounded-2xl p-6 border border-[rgba(217,222,229,0.5)]">
               <div className="flex justify-between items-center mb-4">
                 <span className="text-[0.75rem] tracking-[0.1em] text-[#434748]/60 font-bold">Order Items</span>
-                <span className="material-symbols-outlined text-[#4FE3C1]">shopping_bag</span>
+                <span className="material-symbols-outlined text-[#CB202D]">shopping_bag</span>
               </div>
               <div className="flex flex-col gap-3">
                 {items.length === 0 ? (
@@ -201,7 +201,7 @@ export default function OrderSuccess() {
                             {item.storage && ` | ${item.storage}`}
                           </span>
                         </div>
-                        <span className="material-symbols-outlined text-[#4FE3C1] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        <span className="material-symbols-outlined text-[#CB202D] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                       </div>
                     </div>
                   )
@@ -223,8 +223,8 @@ export default function OrderSuccess() {
             <button onClick={() => navigate(`/orders?order_id=${orderId}`)}
               className="flex items-center justify-center gap-2 px-10 py-4 rounded-full font-bold text-white transition-all duration-300"
               style={{
-                background: 'linear-gradient(135deg, #4FE3C1 0%, #006b58 100%)',
-                boxShadow: '0 8px 20px rgba(79,227,193,0.3)',
+                background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)',
+                boxShadow: '0 8px 20px rgba(203,32,45,0.3)',
               }}
             >
               <span className="material-symbols-outlined">rocket_launch</span>
@@ -244,19 +244,19 @@ export default function OrderSuccess() {
       <footer className="max-w-5xl mx-auto px-4 py-8 mt-12">
         <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 opacity-60">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm text-[#4FE3C1]">security</span>
+            <span className="material-symbols-outlined text-sm text-[#CB202D]">security</span>
             <span className="text-[10px] tracking-widest text-[#454747] uppercase font-bold">Secure Payment</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm text-[#4FE3C1]">lock_person</span>
+            <span className="material-symbols-outlined text-sm text-[#CB202D]">lock_person</span>
             <span className="text-[10px] tracking-widest text-[#454747] uppercase font-bold">Encrypted Checkout</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm text-[#4FE3C1]">verified</span>
+            <span className="material-symbols-outlined text-sm text-[#CB202D]">verified</span>
             <span className="text-[10px] tracking-widest text-[#454747] uppercase font-bold">Trusted Service</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm text-[#4FE3C1]">support</span>
+            <span className="material-symbols-outlined text-sm text-[#CB202D]">support</span>
             <span className="text-[10px] tracking-widest text-[#454747] uppercase font-bold">24/7 Support</span>
           </div>
         </div>

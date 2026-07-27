@@ -18,7 +18,7 @@ type ViewMode = 'table' | 'cards'
 const statConfig = [
   { label: 'Total Categories', icon: 'FiFolder', color: '#8b5cf6' },
   { label: 'Sub Categories', icon: 'FiGrid', color: '#4f6bff' },
-  { label: 'Active Categories', icon: 'FiCheckCircle', color: '#22c55e' },
+  { label: 'Active Categories', icon: 'FiCheckCircle', color: '#CB202D' },
   { label: 'Inactive', icon: 'FiXCircle', color: '#ef4444' },
 ]
 

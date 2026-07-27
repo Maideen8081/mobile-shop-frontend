@@ -84,7 +84,7 @@ export default function RepairsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#00ff88]/30 selection:text-[#00391c]">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
       <StorefrontNavbar activeLabel="Repairs" absolute />
 
       {/* ─── HERO CAROUSEL ─── */}
@@ -99,15 +99,15 @@ export default function RepairsPage() {
             <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(0,255,136,0.06)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(203,32,45,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/25 text-[#00ff88] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#CB202D]/10 border border-[#CB202D]/25 text-[#CB202D] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88] animate-ping" />
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88]" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D] animate-ping" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -115,9 +115,9 @@ export default function RepairsPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block bg-gradient-to-r from-[#00ff88] via-[#80ffbb] to-[#00ff88] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(0,255,136,0.4)]">
+                  <span className="relative inline-block bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(203,32,45,0.4)]">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00ff88] to-transparent rounded-full opacity-60 animate-pulse" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#CB202D] to-transparent rounded-full opacity-60 animate-pulse" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>
@@ -130,7 +130,7 @@ export default function RepairsPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   <Link to="/book-repair"
-                    className="group inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_60px_rgba(0,255,136,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float cursor-pointer"
+                    className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float cursor-pointer"
                   >
                     <span>Schedule Repair</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -153,7 +153,7 @@ export default function RepairsPage() {
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
-                i === currentSlide ? 'w-16 bg-[#00ff88]' : 'w-6 bg-white/30 hover:bg-white/50'
+                i === currentSlide ? 'w-16 bg-[#CB202D]' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
@@ -171,7 +171,7 @@ export default function RepairsPage() {
       <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Our Services</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Our Services</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Precision Repair Services</h2>
             <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">We cover everything from simple fixes to complex board-level repairs. All work is backed by our satisfaction guarantee.</p>
           </div>
@@ -179,17 +179,17 @@ export default function RepairsPage() {
             {services.map((svc, idx) => (
               <div
                 key={svc.title}
-                className="glass-card p-6 md:p-8 rounded-[1.75rem] flex flex-col gap-4 group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,255,136,0.10)] hover:border-[#00ff88]/25 hover:-translate-y-1 stagger-item"
+                className="glass-card p-6 md:p-8 rounded-[1.75rem] flex flex-col gap-4 group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(203,32,45,0.10)] hover:border-[#CB202D]/25 hover:-translate-y-1 stagger-item"
                 style={{ transitionDelay: `${idx * 60}ms` }}
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#00ff88]/15 text-[#00391c] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#00ff88]/25 transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-[#CB202D]/15 text-[#A81D2A] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#CB202D]/25 transition-all duration-300">
                   <span className="material-symbols-outlined text-2xl">{svc.icon}</span>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-on-surface mb-2">{svc.title}</h3>
                   <p className="text-sm text-on-surface-variant leading-relaxed">{svc.desc}</p>
                 </div>
-                <Link to={`/book-repair/${encodeURIComponent(svc.title)}`} className="inline-flex items-center gap-1.5 text-[#00391c] font-bold text-sm group-hover:gap-3 transition-all duration-300 mt-auto pt-2 cursor-pointer">
+                <Link to={`/book-repair/${encodeURIComponent(svc.title)}`} className="inline-flex items-center gap-1.5 text-[#A81D2A] font-bold text-sm group-hover:gap-3 transition-all duration-300 mt-auto pt-2 cursor-pointer">
                   Book Now <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </Link>
               </div>
@@ -203,7 +203,7 @@ export default function RepairsPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Process</span>
+              <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Process</span>
               <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-8">How It Works</h2>
               <div className="space-y-8">
                 {[
@@ -213,7 +213,7 @@ export default function RepairsPage() {
                   { step: '04', title: 'Enjoy Peace of Mind', desc: 'Pick up your device with a 90-day warranty and a renewed sense of reliability.' },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-5 group stagger-item">
-                    <span className="text-[#00ff88] font-extrabold text-3xl w-14 flex-shrink-0 group-hover:scale-110 transition-transform">{item.step}</span>
+                    <span className="text-[#CB202D] font-extrabold text-3xl w-14 flex-shrink-0 group-hover:scale-110 transition-transform">{item.step}</span>
                     <div className="pt-1">
                       <h3 className="text-lg font-bold text-on-surface mb-1">{item.title}</h3>
                       <p className="text-sm text-on-surface-variant leading-relaxed">{item.desc}</p>
@@ -231,14 +231,14 @@ export default function RepairsPage() {
       </section>
 
       {/* ─── BRANDS ─── */}
-      <section className="py-20 px-6 md:px-12 bg-[#00391c] scroll-reveal">
+      <section className="py-20 px-6 md:px-12 bg-[#A81D2A] scroll-reveal">
         <div className="max-w-[1440px] mx-auto text-center">
-          <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Brands</span>
+          <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Brands</span>
           <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-white mb-4">Brands We Service</h2>
           <p className="text-white/60 text-lg mb-12 max-w-xl mx-auto">We work on all major smartphone brands. Don't see yours? Give us a call.</p>
           <div className="flex flex-wrap justify-center gap-4">
             {brands.map((brand) => (
-              <div key={brand} className="bg-white/5 border border-white/10 rounded-xl px-7 py-4 text-white font-bold text-lg hover:bg-white/10 hover:border-[#00ff88]/30 hover:text-[#00ff88] transition-all duration-300 cursor-pointer">
+              <div key={brand} className="bg-white/5 border border-white/10 rounded-xl px-7 py-4 text-white font-bold text-lg hover:bg-white/10 hover:border-[#CB202D]/30 hover:text-[#CB202D] transition-all duration-300 cursor-pointer">
                 {brand}
               </div>
             ))}

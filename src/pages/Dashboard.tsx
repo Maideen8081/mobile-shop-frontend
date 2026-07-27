@@ -114,7 +114,7 @@ export default function Dashboard() {
                       <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                       <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }} />
                       <Bar dataKey="revenue" fill="#7c3aed" radius={[6, 6, 0, 0]} />
-                      <Bar dataKey="profit" fill="#22c55e" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="profit" fill="#CB202D" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

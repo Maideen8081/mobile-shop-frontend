@@ -39,7 +39,7 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
   'Quality Check': { label: 'Quality Check', color: '#06b6d4' },
   'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
-  Delivered: { label: 'Delivered', color: '#16a34a' },
+  Delivered: { label: 'Delivered', color: '#CB202D' },
   Cancelled: { label: 'Cancelled', color: '#6b7280' },
 }
 
@@ -120,11 +120,11 @@ function EmptyState({ onBrowse }: { onBrowse: () => void }) {
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-8"
         style={{
-          background: 'linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,109,55,0.08))',
-          border: '1px solid rgba(0,255,136,0.25)',
+          background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
+          border: '1px solid rgba(203,32,45,0.25)',
         }}
       >
-        <span className="material-symbols-outlined text-5xl" style={{ color: '#006d37' }}>build</span>
+        <span className="material-symbols-outlined text-5xl" style={{ color: '#A81D2A' }}>build</span>
       </motion.div>
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
@@ -150,8 +150,8 @@ function EmptyState({ onBrowse }: { onBrowse: () => void }) {
         onClick={onBrowse}
         className="px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-300 active:scale-[0.98]"
         style={{
-          background: '#006d37',
-          boxShadow: '0 4px 15px rgba(0,109,55,0.3)',
+          background: '#A81D2A',
+          boxShadow: '0 4px 15px rgba(168,29,42,0.3)',
         }}
       >
         Book a Repair
@@ -168,7 +168,7 @@ function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
     <section className="p-5 rounded-xl" style={{
       background: 'rgba(255,255,255,0.7)',
       backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(0,109,55,0.05)',
+      border: '1px solid rgba(168,29,42,0.05)',
       boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
     }}>
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -181,27 +181,27 @@ function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
                 style={{
-                  background: isActive ? 'rgba(0,255,136,0.2)' : 'rgba(237,238,239,0.8)',
-                  border: `2px solid ${isActive ? '#006d37' : 'rgba(185,203,185,0.3)'}`,
-                  boxShadow: isActive ? '0 0 15px rgba(0,255,136,0.2)' : 'none',
+                  background: isActive ? 'rgba(203,32,45,0.2)' : 'rgba(237,238,239,0.8)',
+                  border: `2px solid ${isActive ? '#A81D2A' : 'rgba(185,203,185,0.3)'}`,
+                  boxShadow: isActive ? '0 0 15px rgba(203,32,45,0.2)' : 'none',
                 }}
               >
                 {isPast ? (
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#006d37', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#A81D2A', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 ) : isCurrent ? (
                   <div className="relative">
-                    <div className="w-4 h-4 rounded-full" style={{ background: '#00ff88' }} />
-                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#00ff88] animate-ping opacity-50" />
+                    <div className="w-4 h-4 rounded-full" style={{ background: '#CB202D' }} />
+                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#CB202D] animate-ping opacity-50" />
                   </div>
                 ) : (
-                  <span className="material-symbols-outlined text-xl" style={{ color: isCancelled && idx === 0 ? '#6b7280' : isActive ? '#006d37' : 'rgba(59,75,61,0.3)' }}>{s.icon}</span>
+                  <span className="material-symbols-outlined text-xl" style={{ color: isCancelled && idx === 0 ? '#6b7280' : isActive ? '#A81D2A' : 'rgba(59,75,61,0.3)' }}>{s.icon}</span>
                 )}
               </div>
               <span className="text-xs font-bold text-center" style={{
                 color: isActive ? '#191c1d' : isCancelled ? 'rgba(107,114,128,0.5)' : 'rgba(59,75,61,0.4)',
               }}>{s.label}</span>
               <span className="text-[10px] mt-0.5" style={{
-                color: isPast ? '#006d37' : isCurrent ? '#006d37' : isCancelled ? 'rgba(107,114,128,0.4)' : 'rgba(185,203,185,0.6)',
+                color: isPast ? '#A81D2A' : isCurrent ? '#A81D2A' : isCancelled ? 'rgba(107,114,128,0.4)' : 'rgba(185,203,185,0.6)',
               }}>
                 {isPast ? 'Completed' : isCurrent ? 'In Progress' : isCancelled ? 'Cancelled' : 'Queue'}
               </span>
@@ -225,11 +225,11 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
       style={{
         background: 'rgba(255,255,255,0.7)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(0,109,55,0.05)',
+        border: '1px solid rgba(168,29,42,0.05)',
         boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
       }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,255,136,0.3)'; e.currentTarget.style.boxShadow = '0 4px 25px rgba(0,0,0,0.07)' }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,109,55,0.05)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.04)' }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.3)'; e.currentTarget.style.boxShadow = '0 4px 25px rgba(0,0,0,0.07)' }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(168,29,42,0.05)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.04)' }}
     >
       <div className="w-full md:w-48 h-36 rounded-lg overflow-hidden shrink-0 relative" style={{ background: 'rgba(237,238,239,0.5)' }}>
         <div className="w-full h-full flex items-center justify-center text-5xl opacity-60">
@@ -244,10 +244,10 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
             <span>📱</span>
           )}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#006d37]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#A81D2A]/30 to-transparent" />
         <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}>
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDelivered ? '#16a34a' : '#006d37' }} />
-          <span className="text-[9px] font-bold uppercase" style={{ color: '#006d37' }}>{isDelivered ? 'Completed' : 'Active'}</span>
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDelivered ? '#CB202D' : '#A81D2A' }} />
+          <span className="text-[9px] font-bold uppercase" style={{ color: '#A81D2A' }}>{isDelivered ? 'Completed' : 'Active'}</span>
         </div>
       </div>
 
@@ -256,7 +256,7 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
           <div>
             <div className="flex items-center gap-2 mb-0.5">
               <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Ticket</span>
-              <span className="text-sm font-bold" style={{ color: '#006d37' }}>{ticket.repairId}</span>
+              <span className="text-sm font-bold" style={{ color: '#A81D2A' }}>{ticket.repairId}</span>
             </div>
             <h3 className="text-base font-bold text-[#191c1d] truncate">{ticket.deviceBrand} {ticket.deviceModel}</h3>
             <span className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>{ticket.deviceColor} | {formatDate(ticket.createdAt)}</span>
@@ -267,15 +267,15 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
         <div className="mb-3 mt-3">
           <div className="flex justify-between text-[10px] mb-1" style={{ color: 'rgba(59,75,61,0.6)' }}>
             <span>Hardware Integrity Protocol</span>
-            <span style={{ color: progressPct >= 100 ? '#16a34a' : '#006d37' }}>{progressPct}%</span>
+            <span style={{ color: progressPct >= 100 ? '#CB202D' : '#A81D2A' }}>{progressPct}%</span>
           </div>
           <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
                 width: `${progressPct}%`,
-                background: progressPct >= 100 ? 'linear-gradient(90deg, #00ff88, #16a34a)' : 'linear-gradient(90deg, #00ff88, #006d37)',
-                boxShadow: '0 0 8px rgba(0,109,55,0.3)',
+                background: progressPct >= 100 ? 'linear-gradient(90deg, #CB202D, #CB202D)' : 'linear-gradient(90deg, #CB202D, #A81D2A)',
+                boxShadow: '0 0 8px rgba(168,29,42,0.3)',
               }}
             />
           </div>
@@ -283,11 +283,11 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
 
         <div className="flex flex-wrap items-center gap-2 text-[10px]">
           <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: 'rgba(237,238,239,0.6)' }}>
-            <span className="material-symbols-outlined text-xs" style={{ color: '#006d37' }}>build_circle</span>
+            <span className="material-symbols-outlined text-xs" style={{ color: '#A81D2A' }}>build_circle</span>
             <span style={{ color: 'rgba(59,75,61,0.8)' }}>{ticket.issueCategory}</span>
           </div>
           <PriorityBadge priority={ticket.priority} />
-          <div className="font-bold" style={{ color: '#006d37' }}>{formatPrice(ticket.estimatedCost)}</div>
+          <div className="font-bold" style={{ color: '#A81D2A' }}>{formatPrice(ticket.estimatedCost)}</div>
         </div>
       </div>
 
@@ -295,9 +295,9 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
         <motion.div
           whileHover={{ x: 3 }}
           className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(0,255,136,0.1)' }}
+          style={{ background: 'rgba(203,32,45,0.1)' }}
         >
-          <span className="material-symbols-outlined text-sm" style={{ color: '#006d37' }}>chevron_right</span>
+          <span className="material-symbols-outlined text-sm" style={{ color: '#A81D2A' }}>chevron_right</span>
         </motion.div>
       </div>
     </div>
@@ -433,7 +433,7 @@ function RepairDetailModal({
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Ticket</span>
-                <span className="text-base font-extrabold" style={{ color: '#006d37' }}>{ticket.repairId}</span>
+                <span className="text-base font-extrabold" style={{ color: '#A81D2A' }}>{ticket.repairId}</span>
               </div>
               <p className="text-xs" style={{ color: 'rgba(59,75,61,0.6)' }}>Created on {formatDate(ticket.createdAt)}</p>
             </div>
@@ -449,7 +449,7 @@ function RepairDetailModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#006d37' }}>Customer Information</h3>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Customer Information</h3>
               <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
                 <InfoRow label="Name" value={ticket.customerName} />
                 <InfoRow label="Mobile" value={ticket.customerMobile} />
@@ -458,7 +458,7 @@ function RepairDetailModal({
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#006d37' }}>Device Information</h3>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Device Information</h3>
               <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
                 <InfoRow label="Category" value={ticket.deviceCategory} />
                 <InfoRow label="Brand" value={ticket.deviceBrand} />
@@ -473,7 +473,7 @@ function RepairDetailModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#006d37' }}>Issue Details</h3>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Issue Details</h3>
               <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
                 <InfoRow label="Category" value={ticket.issueCategory} />
                 <div>
@@ -486,7 +486,7 @@ function RepairDetailModal({
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#006d37' }}>Repair Estimation</h3>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Repair Estimation</h3>
               <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
                 <InfoRow label="Estimated Cost" value={formatPrice(ticket.estimatedCost)} highlight />
                 <InfoRow label="Est. Completion" value={ticket.estimatedDays ? `${ticket.estimatedDays} day${ticket.estimatedDays > 1 ? 's' : ''}` : '—'} />
@@ -497,13 +497,13 @@ function RepairDetailModal({
 
           {ticket.images && ticket.images.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#006d37' }}>Device Photos</h3>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Device Photos</h3>
               <ImageGallery images={ticket.images} />
             </div>
           )}
 
           <div className="mb-6">
-            <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#006d37' }}>Conversation with Admin</h3>
+            <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Conversation with Admin</h3>
             <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
               {ticket.notes && ticket.notes.length > 0 ? (
                 <div className="space-y-3 max-h-48 overflow-y-auto mb-3 pr-1">
@@ -515,7 +515,7 @@ function RepairDetailModal({
                           : 'rounded-br-sm'
                       }`}
                         style={{
-                          background: note.is_admin ? 'rgba(0,109,55,0.1)' : '#006d37',
+                          background: note.is_admin ? 'rgba(168,29,42,0.1)' : '#A81D2A',
                           color: note.is_admin ? '#191c1d' : '#ffffff',
                         }}
                       >
@@ -546,7 +546,7 @@ function RepairDetailModal({
                 />
                 <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all disabled:opacity-40 cursor-pointer"
-                  style={{ background: '#006d37' }}
+                  style={{ background: '#A81D2A' }}
                 >
                   {sendingMsg ? (
                     <FiLoader size={14} className="animate-spin" />
@@ -574,18 +574,18 @@ function RepairDetailModal({
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg mb-3" style={{ background: 'rgba(255,255,255,0.6)' }}>
                 <span className="text-sm" style={{ color: 'rgba(59,75,61,0.8)' }}>Estimated Cost</span>
-                <span className="text-lg font-extrabold" style={{ color: '#006d37' }}>{formatPrice(ticket.estimatedCost)}</span>
+                <span className="text-lg font-extrabold" style={{ color: '#A81D2A' }}>{formatPrice(ticket.estimatedCost)}</span>
               </div>
               <p className="text-xs mb-3" style={{ color: 'rgba(59,75,61,0.6)' }}>Do you approve the repair work to proceed at the estimated cost?</p>
               <div className="flex gap-2">
                 <button onClick={() => onApprove(true)}
                   className="flex-1 py-2.5 rounded-lg text-sm font-bold text-white transition-all active:scale-[0.98] cursor-pointer"
                   style={{
-                    background: '#006d37',
-                    boxShadow: '0 4px 15px rgba(0,109,55,0.3)',
+                    background: '#A81D2A',
+                    boxShadow: '0 4px 15px rgba(168,29,42,0.3)',
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#008a45'}
-                  onMouseLeave={e => e.currentTarget.style.background = '#006d37'}
+                  onMouseEnter={e => e.currentTarget.style.background = '#C22535'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#A81D2A'}
                 >Approve</button>
                 <button onClick={() => onApprove(false)}
                   className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all active:scale-[0.98] cursor-pointer"
@@ -598,14 +598,14 @@ function RepairDetailModal({
           <div className="flex gap-2 pt-4" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
             <button onClick={() => navigator.clipboard.writeText(ticket.repairId)}
               className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer"
-              style={{ background: 'rgba(0,255,136,0.1)', color: '#006d37', border: '1px solid rgba(0,255,136,0.2)' }}
+              style={{ background: 'rgba(203,32,45,0.1)', color: '#A81D2A', border: '1px solid rgba(203,32,45,0.2)' }}
             >
               <span className="material-symbols-outlined text-xs">content_copy</span>
               Copy Ticket ID
             </button>
             <button onClick={onClose}
               className="flex-1 py-2.5 rounded-lg text-xs font-bold text-white transition-all cursor-pointer"
-              style={{ background: '#006d37' }}
+              style={{ background: '#A81D2A' }}
             >Close</button>
           </div>
         </div>
@@ -618,7 +618,7 @@ function InfoRow({ label, value, highlight }: { label: string; value: string; hi
   return (
     <div className="flex justify-between items-start gap-2">
       <span className="text-[9px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: 'rgba(59,75,61,0.5)' }}>{label}</span>
-      <span className="text-sm text-right font-medium" style={{ color: highlight ? '#006d37' : '#191c1d', fontWeight: highlight ? 700 : 500 }}>{value || '—'}</span>
+      <span className="text-sm text-right font-medium" style={{ color: highlight ? '#A81D2A' : '#191c1d', fontWeight: highlight ? 700 : 500 }}>{value || '—'}</span>
     </div>
   )
 }
@@ -711,8 +711,8 @@ export default function CustomerRepairTracking() {
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="flex h-2 w-2 rounded-full" style={{ background: '#00ff88' }} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#006d37' }}>
+              <span className="flex h-2 w-2 rounded-full" style={{ background: '#CB202D' }} />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#A81D2A' }}>
                 {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
               </span>
             </div>
@@ -724,10 +724,10 @@ export default function CustomerRepairTracking() {
             <div className="px-3 py-2 rounded-lg flex items-center gap-2" style={{
               background: 'rgba(255,255,255,0.7)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(0,109,55,0.05)',
+              border: '1px solid rgba(168,29,42,0.05)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             }}>
-              <span className="material-symbols-outlined text-base" style={{ color: '#006d37' }}>terminal</span>
+              <span className="material-symbols-outlined text-base" style={{ color: '#A81D2A' }}>terminal</span>
               <div className="flex flex-col">
                 <span className="text-[9px] font-bold" style={{ color: 'rgba(59,75,61,0.5)' }}>Repair ID</span>
                 <span className="text-xs font-bold text-[#191c1d]">{dashboardStats.total} Tickets</span>
@@ -736,7 +736,7 @@ export default function CustomerRepairTracking() {
             <div className="px-3 py-2 rounded-lg flex items-center gap-2" style={{
               background: 'rgba(255,255,255,0.7)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(0,109,55,0.05)',
+              border: '1px solid rgba(168,29,42,0.05)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             }}>
               <span className="material-symbols-outlined text-base" style={{ color: 'rgba(59,75,61,0.5)' }}>update</span>
@@ -750,9 +750,9 @@ export default function CustomerRepairTracking() {
 
         <div className="grid grid-cols-3 gap-3 mb-8">
           {[
-            { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: '#006d37' },
+            { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: '#A81D2A' },
             { label: 'Active Repairs', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#3b82f6' },
-            { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#16a34a' },
+            { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#CB202D' },
           ].map((stat, idx) => (
             <motion.div
               key={stat.label}
@@ -780,7 +780,7 @@ export default function CustomerRepairTracking() {
         <div className="rounded-xl p-5 mb-8" style={{
           background: 'rgba(255,255,255,0.7)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(0,109,55,0.05)',
+          border: '1px solid rgba(168,29,42,0.05)',
           boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
         }}>
           <div className="flex flex-col md:flex-row gap-3 mb-4">
@@ -794,7 +794,7 @@ export default function CustomerRepairTracking() {
                   borderColor: 'rgba(185,203,185,0.3)',
                   color: '#191c1d',
                 }}
-                onFocus={e => e.currentTarget.style.borderColor = '#006d37'}
+                onFocus={e => e.currentTarget.style.borderColor = '#A81D2A'}
                 onBlur={e => e.currentTarget.style.borderColor = 'rgba(185,203,185,0.3)'}
               />
             </div>
@@ -804,7 +804,7 @@ export default function CustomerRepairTracking() {
               <button key={opt} onClick={() => setStatusFilter(opt)}
                 className="px-3.5 py-1.5 rounded-lg text-[10px] font-bold tracking-wider transition-all cursor-pointer"
                 style={{
-                  background: statusFilter === opt ? '#006d37' : 'rgba(237,238,239,0.6)',
+                  background: statusFilter === opt ? '#A81D2A' : 'rgba(237,238,239,0.6)',
                   color: statusFilter === opt ? '#fff' : 'rgba(59,75,61,0.7)',
                 }}
               >{opt}</button>
@@ -832,7 +832,7 @@ export default function CustomerRepairTracking() {
           <div className="rounded-xl p-8" style={{
             background: 'rgba(255,255,255,0.7)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(0,109,55,0.05)',
+            border: '1px solid rgba(168,29,42,0.05)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
           }}>
             <EmptyState onBrowse={() => window.location.href = '/repairs'} />
@@ -862,7 +862,7 @@ export default function CustomerRepairTracking() {
             exit={{ opacity: 0, y: 50, x: '-50%' }}
             className="fixed bottom-8 left-1/2 z-[150] px-5 py-3 rounded-xl shadow-xl flex items-center gap-2"
             style={{
-              background: notification.type === 'success' ? '#006d37' : '#dc2626',
+              background: notification.type === 'success' ? '#A81D2A' : '#dc2626',
               color: '#fff',
             }}
           >

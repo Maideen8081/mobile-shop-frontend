@@ -21,7 +21,7 @@ type ViewMode = 'table' | 'cards'
 
 const statConfig = [
   { label: 'Total Products', icon: 'FiPackage', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)' },
-  { label: 'Active Products', icon: 'FiCheckCircle', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)' },
+  { label: 'Active Products', icon: 'FiCheckCircle', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)' },
   { label: 'Trending', icon: 'FiTrendingUp', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)' },
   { label: 'Best Selling', icon: 'FiAward', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)' },
   { label: 'Low Stock', icon: 'FiAlertTriangle', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)' },

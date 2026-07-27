@@ -164,10 +164,10 @@ export default function TradeInPage() {
   }
 
   const inputClass = (field: string) =>
-    `w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-[#00ff88]/50 transition-all ${formErrors[field] ? 'border-red-400' : 'border-glass-border'}`
+    `w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-[#CB202D]/50 transition-all ${formErrors[field] ? 'border-red-400' : 'border-glass-border'}`
 
   return (
-    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-[#00ff88]/30 selection:text-[#00391c]">
+    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
       <StorefrontNavbar activeLabel="Trade-In" absolute />
 
       <main>
@@ -183,15 +183,15 @@ export default function TradeInPage() {
               <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(0,255,136,0.06)_0%,transparent_60%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(203,32,45,0.06)_0%,transparent_60%)]" />
               <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
                 <div className="max-w-3xl">
-                  <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/25 text-[#00ff88] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                  <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#CB202D]/10 border border-[#CB202D]/25 text-[#CB202D] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                   }`}>
                     <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-full bg-[#00ff88] animate-ping" />
-                      <span className="absolute inset-0 rounded-full bg-[#00ff88]" />
+                      <span className="absolute inset-0 rounded-full bg-[#CB202D] animate-ping" />
+                      <span className="absolute inset-0 rounded-full bg-[#CB202D]" />
                     </span>
                     {slide.tag}
                   </div>
@@ -199,9 +199,9 @@ export default function TradeInPage() {
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}>
                     {slide.title[0]}<br />
-                    <span className="relative inline-block bg-gradient-to-r from-[#00ff88] via-[#80ffbb] to-[#00ff88] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(0,255,136,0.4)]">
+                    <span className="relative inline-block bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(203,32,45,0.4)]">
                       {slide.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00ff88] to-transparent rounded-full opacity-60 animate-pulse" />
+                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#CB202D] to-transparent rounded-full opacity-60 animate-pulse" />
                     </span>{' '}
                     <span className="text-white/90">{slide.title[2]}</span>
                   </h1>
@@ -213,7 +213,7 @@ export default function TradeInPage() {
                   <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-500 ${
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}>
-                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_60px_rgba(0,255,136,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
+                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
                       Get Your Quote <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
                     <a href="#how-it-works" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full hover:bg-white/20 hover:border-white/40 transition-all duration-300">
@@ -221,9 +221,9 @@ export default function TradeInPage() {
                     </a>
                   </div>
                   <div className="flex items-center gap-6 mt-8 text-white/60 text-sm">
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#00ff88]">check_circle</span> Instant Quote</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#00ff88]">check_circle</span> Free Shipping</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#00ff88]">check_circle</span> Best Price Guarantee</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#CB202D]">check_circle</span> Instant Quote</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#CB202D]">check_circle</span> Free Shipping</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#CB202D]">check_circle</span> Best Price Guarantee</span>
                   </div>
                 </div>
               </div>
@@ -235,7 +235,7 @@ export default function TradeInPage() {
                 key={i}
                 onClick={() => setCurrentSlide(i)}
                 className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
-                  i === currentSlide ? 'w-16 bg-[#00ff88]' : 'w-6 bg-white/30 hover:bg-white/50'
+                  i === currentSlide ? 'w-16 bg-[#CB202D]' : 'w-6 bg-white/30 hover:bg-white/50'
                 }`}
               >
                 {i === currentSlide && (
@@ -257,11 +257,11 @@ export default function TradeInPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, idx) => (
-              <div key={step.title} className="glass-card p-8 rounded-[1.75rem] text-center group hover:shadow-[0_20px_60px_rgba(0,255,136,0.10)] hover:border-[#00ff88]/25 hover:-translate-y-1 transition-all duration-500" style={{ transitionDelay: `${idx * 100}ms` }}>
-                <div className="w-16 h-16 rounded-full bg-[#00ff88]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#00ff88]/20 transition-colors">
-                  <span className="material-symbols-outlined text-3xl text-[#00ff88]">{step.icon}</span>
+              <div key={step.title} className="glass-card p-8 rounded-[1.75rem] text-center group hover:shadow-[0_20px_60px_rgba(203,32,45,0.10)] hover:border-[#CB202D]/25 hover:-translate-y-1 transition-all duration-500" style={{ transitionDelay: `${idx * 100}ms` }}>
+                <div className="w-16 h-16 rounded-full bg-[#CB202D]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#CB202D]/20 transition-colors">
+                  <span className="material-symbols-outlined text-3xl text-[#CB202D]">{step.icon}</span>
                 </div>
-                <span className="text-[#00ff88] font-bold text-sm">Step {idx + 1}</span>
+                <span className="text-[#CB202D] font-bold text-sm">Step {idx + 1}</span>
                 <h3 className="text-lg font-bold text-[#181c1e] mt-2 mb-2">{step.title}</h3>
                 <p className="text-[#434748] text-sm">{step.desc}</p>
               </div>
@@ -279,7 +279,7 @@ export default function TradeInPage() {
                 <div className="flex flex-wrap gap-3 mb-8">
                   {brands.map((brand) => (
                     <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                      className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#00ff88] text-[#00391c] border-[#00ff88] shadow-lg shadow-[#00ff88]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#00ff88]/50'}`}
+                      className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#CB202D] text-[#A81D2A] border-[#CB202D] shadow-lg shadow-[#CB202D]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#CB202D]/50'}`}
                     >{brand}</button>
                   ))}
                 </div>
@@ -292,9 +292,9 @@ export default function TradeInPage() {
                     { device: 'Samsung Galaxy S24 Ultra', value: '₹24,000 - ₹33,000' },
                     { device: 'Google Pixel 10 Pro', value: '₹22,000 - ₹30,000' },
                   ].filter(e => !selectedBrand || e.device.toLowerCase().includes(selectedBrand.toLowerCase())).map((item) => (
-                    <div key={item.device} className="glass-card p-4 rounded-xl flex items-center justify-between hover:border-[#00ff88]/20 transition-all">
+                    <div key={item.device} className="glass-card p-4 rounded-xl flex items-center justify-between hover:border-[#CB202D]/20 transition-all">
                       <span className="font-bold text-[#181c1e]">{item.device}</span>
-                      <span className="font-bold text-[#00ff88]">{item.value}</span>
+                      <span className="font-bold text-[#CB202D]">{item.value}</span>
                     </div>
                   ))}
                 </div>
@@ -310,12 +310,12 @@ export default function TradeInPage() {
                     { icon: 'card_giftcard', text: 'Bonus credit when used toward a new device' },
                   ].map((item) => (
                     <li key={item.text} className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#00ff88]">{item.icon}</span>
+                      <span className="material-symbols-outlined text-[#CB202D]">{item.icon}</span>
                       <span className="text-[#434748]">{item.text}</span>
                     </li>
                   ))}
                 </ul>
-                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#00ff88] text-[#00391c] font-bold py-3.5 rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#00ff88]/20 cursor-pointer flex items-center justify-center gap-2">
+                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#CB202D] text-[#A81D2A] font-bold py-3.5 rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#CB202D]/20 cursor-pointer flex items-center justify-center gap-2">
                   Start Trade-In <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </button>
               </div>
@@ -353,7 +353,7 @@ export default function TradeInPage() {
                     <div>
                       <label className="block text-xs font-semibold text-[#434748] mb-1">Storage</label>
                       <select value={formStorage} onChange={(e) => setFormStorage(e.target.value)}
-                        className="w-full h-11 px-4 rounded-xl bg-white border border-glass-border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-[#00ff88]/50 transition-all">
+                        className="w-full h-11 px-4 rounded-xl bg-white border border-glass-border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-[#CB202D]/50 transition-all">
                         <option value="">Select storage</option>
                         {storageOptions.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
@@ -392,8 +392,8 @@ export default function TradeInPage() {
                     </div>
                   </div>
                   <button onClick={handleFormSubmit} disabled={submitting || !analysis}
-                    className="mt-8 w-full py-3.5 rounded-full text-sm font-bold shadow-lg shadow-[#00ff88]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
-                    style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #00ff88, #006b58)' }}
+                    className="mt-8 w-full py-3.5 rounded-full text-sm font-bold shadow-lg shadow-[#CB202D]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
+                    style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                   >
                     {submitting ? <span className="material-symbols-outlined animate-spin text-lg">refresh</span> : null}
                     {submitting ? 'Submitting...' : 'Submit Trade-In'}
@@ -404,14 +404,14 @@ export default function TradeInPage() {
                 <div className="lg:col-span-2">
                   <div className="glass-card p-8 rounded-[2rem] sticky top-28">
                     <h3 className="text-lg font-extrabold text-[#181c1e] mb-5 flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[#00ff88]">analytics</span>
+                      <span className="material-symbols-outlined text-[#CB202D]">analytics</span>
                       Value Analysis
                     </h3>
                     {analysis ? (
                       <div>
                         <div className="text-center mb-6">
                           <p className="text-sm text-[#434748] mb-1">Estimated Trade-In Value</p>
-                          <p className="text-[clamp(32px,4vw,48px)] font-extrabold text-[#00ff88]">₹{analysis.finalValue.toLocaleString('en-IN')}</p>
+                          <p className="text-[clamp(32px,4vw,48px)] font-extrabold text-[#CB202D]">₹{analysis.finalValue.toLocaleString('en-IN')}</p>
                           <p className="text-xs text-[#434748] mt-1">Final amount after adjustments</p>
                         </div>
                         <div className="space-y-2.5">
@@ -424,9 +424,9 @@ export default function TradeInPage() {
                             </div>
                           ))}
                         </div>
-                        <div className="mt-4 p-3 rounded-lg bg-[#00ff88]/5 border border-[#00ff88]/15">
+                        <div className="mt-4 p-3 rounded-lg bg-[#CB202D]/5 border border-[#CB202D]/15">
                           <p className="text-xs text-[#434748] flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-[16px] text-[#00ff88]">info</span>
+                            <span className="material-symbols-outlined text-[16px] text-[#CB202D]">info</span>
                             This is an estimate. Final value determined after physical inspection.
                           </p>
                         </div>
@@ -446,7 +446,7 @@ export default function TradeInPage() {
                           'No hidden fees or deductions',
                         ].map((tip) => (
                           <li key={tip} className="flex items-center gap-2 text-xs text-[#434748]">
-                            <span className="material-symbols-outlined text-[14px] text-[#00ff88]">check</span>
+                            <span className="material-symbols-outlined text-[14px] text-[#CB202D]">check</span>
                             {tip}
                           </li>
                         ))}
@@ -463,13 +463,13 @@ export default function TradeInPage() {
         {submitted && (
           <section className="py-24 px-4 md:px-8 bg-[#f0f3f5]">
             <div className="max-w-lg mx-auto text-center glass-card p-12 rounded-[2rem]">
-              <div className="w-20 h-20 rounded-3xl bg-[#00ff88]/10 flex items-center justify-center mx-auto mb-6">
-                <span className="material-symbols-outlined text-4xl text-[#00ff88]">check_circle</span>
+              <div className="w-20 h-20 rounded-3xl bg-[#CB202D]/10 flex items-center justify-center mx-auto mb-6">
+                <span className="material-symbols-outlined text-4xl text-[#CB202D]">check_circle</span>
               </div>
               <h2 className="text-2xl font-extrabold text-[#181c1e] mb-2">Trade-In Submitted!</h2>
               <p className="text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
               <button onClick={() => { setSubmitted(false); navigate('/') }}
-                className="inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold px-8 py-3.5 rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold px-8 py-3.5 rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer"
               >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
             </div>
           </section>

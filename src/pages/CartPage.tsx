@@ -148,7 +148,7 @@ void main() {
         p += vec2(cos(p.y + t), sin(p.x + t));
         n += (1.0/i) * abs(sin(dot(p, vec2(1.0, 1.0)) + t));
     }
-    vec3 mint = vec3(0.31, 0.89, 0.757);
+    vec3 mint = vec3(0.796, 0.125, 0.176);
     col = mix(col, mint, n * 0.025);
     float dist = length(uv - m);
     col += mint * (0.04 / (dist + 0.6)) * smoothstep(0.4, 0.0, dist);
@@ -260,7 +260,7 @@ void main() {
           {items.length > 0 && (
             <button onClick={() => navigate('/collection/all')}
               className="hidden md:inline-flex items-center gap-1.5 px-4 h-9 rounded-xl text-xs font-semibold transition-all cursor-pointer shrink-0"
-              style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)', color: 'white', border: 'none' }}>
+              style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)', color: 'white', border: 'none' }}>
               <ArrowLeft size={13} />
               Continue Shopping
             </button>
@@ -309,7 +309,7 @@ void main() {
             <div className="lg:col-span-4 sticky top-28 space-y-5"
               style={{ opacity: 0, transform: 'translateY(30px)', animation: 'revealUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards', animationDelay: '0.3s' }}>
               {/* Diagnostic Summary */}
-              <div className="rounded-[2rem] overflow-hidden border-2" style={{ borderColor: 'rgba(79, 227, 193, 0.2)', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
+              <div className="rounded-[2rem] overflow-hidden border-2" style={{ borderColor: 'rgba(203, 32, 45, 0.2)', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
                 <div className="px-8 py-6 text-white" style={{ background: '#454747' }}>
                   <h2 className="text-xl font-bold">Diagnostic Summary</h2>
                   <p className="text-xs opacity-70 mt-1 font-mono uppercase tracking-widest">
@@ -325,11 +325,11 @@ void main() {
                   </div>
                   <div className="flex justify-between text-sm" style={{ color: '#434748' }}>
                     <span>Calibration Fee</span>
-                    <span className="font-bold uppercase tracking-wider" style={{ color: '#4FE3C1' }}>Free</span>
+                    <span className="font-bold uppercase tracking-wider" style={{ color: '#CB202D' }}>Free</span>
                   </div>
                   <div className="flex justify-between text-sm" style={{ color: '#434748' }}>
                     <span>Shipping</span>
-                    <span className="font-bold tabular-nums" style={{ color: shipping === 0 ? '#4FE3C1' : '#181c1e' }}>
+                    <span className="font-bold tabular-nums" style={{ color: shipping === 0 ? '#CB202D' : '#181c1e' }}>
                       {shipping === 0 ? 'FREE' : <CountUp value={shipping} prefix="₹" />}
                     </span>
                   </div>
@@ -343,11 +343,11 @@ void main() {
                   {couponApplied && activeCoupon && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
                       className="flex justify-between text-sm pt-1">
-                      <span className="flex items-center gap-1" style={{ color: '#4FE3C1' }}>
+                      <span className="flex items-center gap-1" style={{ color: '#CB202D' }}>
                         <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>sell</span>
                         {activeCoupon} — {VALID_COUPONS[activeCoupon]?.label}
                       </span>
-                      <span className="font-bold" style={{ color: '#4FE3C1' }}>-₹{discount.toLocaleString('en-IN')}</span>
+                      <span className="font-bold" style={{ color: '#CB202D' }}>-₹{discount.toLocaleString('en-IN')}</span>
                     </motion.div>
                   )}
 
@@ -355,7 +355,7 @@ void main() {
                     <div className="flex justify-between items-end mb-2">
                       <div className="flex flex-col">
                         <span className="text-xs mb-1" style={{ color: '#434748' }}>Total Settlement</span>
-                        <span className="flex items-center gap-1 text-[10px] font-bold tracking-tighter uppercase" style={{ color: '#4FE3C1' }}>
+                        <span className="flex items-center gap-1 text-[10px] font-bold tracking-tighter uppercase" style={{ color: '#CB202D' }}>
                           <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
                           Mint Guarantee Active
                         </span>
@@ -369,13 +369,13 @@ void main() {
                   {/* Coupon */}
                   <div className="pt-4" style={{ borderTop: '1px solid #c4c7c7' }}>
                     <p className="text-xs font-semibold mb-2.5 flex items-center gap-1.5" style={{ color: '#434748' }}>
-                      <span className="material-symbols-outlined text-[14px]" style={{ color: '#4FE3C1', fontVariationSettings: "'FILL' 1" }}>confirmation_number</span>
+                      <span className="material-symbols-outlined text-[14px]" style={{ color: '#CB202D', fontVariationSettings: "'FILL' 1" }}>confirmation_number</span>
                       Have a coupon?
                     </p>
                     {couponApplied ? (
                       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold border"
-                        style={{ background: 'rgba(79,227,193,0.1)', color: '#006b58', borderColor: 'rgba(79,227,193,0.3)' }}>
+                        style={{ background: 'rgba(203,32,45,0.1)', color: '#A81D2A', borderColor: 'rgba(203,32,45,0.3)' }}>
                         <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                         {activeCoupon && `Coupon "${activeCoupon}" applied — ${VALID_COUPONS[activeCoupon]?.label}`}
                       </motion.div>
@@ -391,7 +391,7 @@ void main() {
                         />
                         <button onClick={handleApplyCoupon}
                           className="px-5 h-11 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                          style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)', color: 'white' }}>
+                          style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)', color: 'white' }}>
                           Apply
                         </button>
                       </div>
@@ -400,7 +400,7 @@ void main() {
 
                   {/* Precision Shipping Progress */}
                   <div className="pt-4">
-                    <div className="flex items-center justify-between text-xs mb-2" style={{ color: '#4FE3C1' }}>
+                    <div className="flex items-center justify-between text-xs mb-2" style={{ color: '#CB202D' }}>
                       <span>Precision Shipping Progress</span>
                       <span>{shipping === 0 ? 'Unlocked' : `₹${(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString('en-IN')} left`}</span>
                     </div>
@@ -410,7 +410,7 @@ void main() {
                         animate={{ width: `${shippingProgress}%` }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                         className="h-full rounded-full"
-                        style={{ background: '#4FE3C1', boxShadow: '0 0 10px rgba(79,227,193,0.8)' }}
+                        style={{ background: '#CB202D', boxShadow: '0 0 10px rgba(203,32,45,0.8)' }}
                       />
                     </div>
                     <p className="text-[11px] mt-2 text-center" style={{ color: 'rgba(116,120,120,0.6)' }}>
@@ -423,9 +423,9 @@ void main() {
                     <button ref={settlementBtnRef}
                       className="w-full mt-4 py-5 rounded-full flex items-center justify-center gap-3 text-sm font-bold tracking-tight transition-all cursor-pointer group"
                       style={{
-                        background: 'linear-gradient(135deg, #4FE3C1 0%, #454747 100%)',
+                        background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)',
                         color: 'white',
-                        boxShadow: '0 0 0 0 rgba(79, 227, 193, 0.4)',
+                        boxShadow: '0 0 0 0 rgba(203, 32, 45, 0.4)',
                         animation: 'pulseMint 2s infinite',
                       }}>
                       <span>Initiate Settlement</span>
@@ -448,7 +448,7 @@ void main() {
                 border: '1px solid rgba(217,222,229,0.5)',
                 boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)'
               }}>
-                <span className="material-symbols-outlined" style={{ color: '#006b58', fontVariationSettings: "'FILL' 1" }}>shield</span>
+                <span className="material-symbols-outlined" style={{ color: '#A81D2A', fontVariationSettings: "'FILL' 1" }}>shield</span>
                 <div>
                   <h4 className="font-bold text-sm" style={{ color: '#181c1e' }}>Laboratory Shield</h4>
                   <p className="text-xs leading-relaxed mt-1" style={{ color: '#434748' }}>
@@ -475,7 +475,7 @@ void main() {
           </div>
           <Link to="/checkout/address">
             <button className="w-full h-12 rounded-xl text-sm font-bold transition-all cursor-pointer"
-              style={{ background: 'linear-gradient(135deg, #4FE3C1 0%, #454747 100%)', color: 'white' }}>
+              style={{ background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)', color: 'white' }}>
               Initiate Settlement
             </button>
           </Link>
@@ -487,9 +487,9 @@ void main() {
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulseMint {
-          0% { box-shadow: 0 0 0 0 rgba(79, 227, 193, 0.4); }
-          70% { box-shadow: 0 0 0 10px rgba(79, 227, 193, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(79, 227, 193, 0); }
+          0% { box-shadow: 0 0 0 0 rgba(203, 32, 45, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(203, 32, 45, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(203, 32, 45, 0); }
         }
       `}</style>
     </div>
@@ -577,7 +577,7 @@ function CartItemCard({
                   ID: {formatUnitId(item.name, item.productId)}
                 </span>
                 {item.brand && (
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'rgba(79,227,193,0.1)', color: '#006b58' }}>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: '#A81D2A' }}>
                     {item.brand}
                   </span>
                 )}
@@ -600,7 +600,7 @@ function CartItemCard({
             )}
             {item.ram && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
-                style={{ background: 'rgba(0,107,88,0.08)', color: '#006b58', border: '1px solid rgba(0,107,88,0.2)' }}>
+                style={{ background: 'rgba(168,29,42,0.08)', color: '#A81D2A', border: '1px solid rgba(168,29,42,0.2)' }}>
                 <span className="material-symbols-outlined text-[12px]">memory</span>
                 {item.ram} RAM
               </span>
@@ -637,7 +637,7 @@ function CartItemCard({
                 Only {stockInfo.stock} left
               </span>
             ) : (
-              <span className="text-[10px] flex items-center gap-1" style={{ color: '#006b58' }}>
+              <span className="text-[10px] flex items-center gap-1" style={{ color: '#A81D2A' }}>
                 <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 In Stock {stockInfo && `(${stockInfo.stock})`}
               </span>
@@ -678,8 +678,8 @@ function EmptyCart() {
     <div className="flex flex-col items-center justify-center py-20 text-center"
       style={{ opacity: 0, transform: 'translateY(30px)', animation: 'revealUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards' }}>
       <div className="relative w-32 h-32 rounded-3xl mb-8 flex items-center justify-center"
-        style={{ background: 'rgba(79,227,193,0.1)' }}>
-        <span className="material-symbols-outlined text-[48px]" style={{ color: '#4FE3C1', fontVariationSettings: "'FILL' 1" }}>science</span>
+        style={{ background: 'rgba(203,32,45,0.1)' }}>
+        <span className="material-symbols-outlined text-[48px]" style={{ color: '#CB202D', fontVariationSettings: "'FILL' 1" }}>science</span>
       </div>
       <h2 className="text-2xl font-bold mb-3" style={{ color: '#454747' }}>
         Laboratory Is Empty
@@ -689,7 +689,7 @@ function EmptyCart() {
       </p>
       <button onClick={() => navigate('/collection/all')}
         className="inline-flex items-center gap-2 px-8 h-12 rounded-xl text-sm font-bold text-white transition-all cursor-pointer"
-        style={{ background: 'linear-gradient(135deg, #4FE3C1 0%, #454747 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)' }}>
         <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
         Browse Collection
       </button>

@@ -125,7 +125,7 @@ export default function LoginPage() {
                   style={{
                     width: index === activeSlide ? '28px' : '8px',
                     height: '8px',
-                    backgroundColor: index === activeSlide ? '#22C55E' : 'rgba(255,255,255,0.4)',
+                    backgroundColor: index === activeSlide ? '#CB202D' : 'rgba(255,255,255,0.4)',
                   }}
                 />
               ))}
@@ -166,7 +166,7 @@ export default function LoginPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#22C55E' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.email ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -182,7 +182,7 @@ export default function LoginPage() {
                     <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
                       PASSWORD
                     </label>
-                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#22C55E', fontFamily: "'Inter', sans-serif" }}>
+                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#CB202D', fontFamily: "'Inter', sans-serif" }}>
                       Forgot Password?
                     </Link>
                   </div>
@@ -202,7 +202,7 @@ export default function LoginPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#22C55E' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.password ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -219,10 +219,10 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full py-4 px-6 rounded-lg font-semibold text-white transition-all active:scale-95 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
-                  background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                  background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
                   fontSize: '20px',
                   fontFamily: "'Inter', sans-serif",
-                  boxShadow: '0 4px 16px rgba(34,197,94,0.3)',
+                  boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(0.9)' }}
                 onMouseLeave={e => { e.currentTarget.style.filter = 'none' }}
@@ -234,7 +234,7 @@ export default function LoginPage() {
             <div className="pt-6 border-t text-center space-y-4" style={{ borderTop: '1px solid #bccac0' }}>
               <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
                 Don't have an account?{' '}
-                <Link to="/signup" className="font-semibold hover:underline" style={{ color: '#22C55E' }}>
+                <Link to="/signup" className="font-semibold hover:underline" style={{ color: '#CB202D' }}>
                   Register
                 </Link>
               </p>

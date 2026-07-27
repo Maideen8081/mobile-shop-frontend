@@ -26,6 +26,7 @@ const SLIDE_IMAGES = [
   'https://images.unsplash.com/photo-1592890288564-76628a30a657?w=1920&q=80',
   'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1920&q=80',
   'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1920&q=80',
+  'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=1920&q=80',
 ]
 
 const heroSlides = [
@@ -63,6 +64,13 @@ const heroSlides = [
     desc: 'From phones to accessories to repairs — everything mobile under one roof. Shop the best tech deals today!',
     img: SLIDE_IMAGES[4],
     video: 'https://cdn.coverr.co/videos/coverr-close-up-of-a-smartphone-display-5682/1080p.mp4',
+  },
+  {
+    tag: 'Deals & Offers',
+    title: ['Best', 'Deals', '— Unbeatable Prices'],
+    desc: 'Grab the latest smartphones, tablets, and accessories at prices you won\'t find anywhere else. Limited time offers!',
+    img: SLIDE_IMAGES[5],
+    video: 'https://cdn.coverr.co/videos/coverr-phone-in-hands-5600/1080p.mp4',
   },
 ]
 
@@ -261,7 +269,7 @@ export default function LandingPage() {
   const refurbished = refurbishedPhones.length > 0 ? refurbishedPhones : productsData.filter((p) => p.refurbished).slice(0, 8)
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#00ff88]/30 selection:text-[#00391c]">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
       {/* ─── HERO CAROUSEL (Video Background) ─── */}
       <section className="hero-section relative h-screen min-h-[800px] overflow-hidden bg-black" style={{ marginTop: 0, paddingTop: 0 }}>
         <StorefrontNavbar activeLabel="Home" absolute />
@@ -292,16 +300,16 @@ export default function LandingPage() {
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88]/5 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(0,255,136,0.06)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#CB202D]/5 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(203,32,45,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex flex-col justify-center pt-[140px]">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/25 text-[#00ff88] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#CB202D]/10 border border-[#CB202D]/25 text-[#CB202D] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88] animate-ping" />
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88]" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D] animate-ping" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -309,9 +317,9 @@ export default function LandingPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block bg-gradient-to-r from-[#00ff88] via-[#80ffbb] to-[#00ff88] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(0,255,136,0.4)]">
+                  <span className="relative inline-block bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(203,32,45,0.4)]">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00ff88] to-transparent rounded-full opacity-60 animate-pulse" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#CB202D] to-transparent rounded-full opacity-60 animate-pulse" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>
@@ -325,7 +333,7 @@ export default function LandingPage() {
                 }`}>
                   <Link
                     to="/phones"
-                    className="group inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_60px_rgba(0,255,136,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
+                    className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
                   >
                     <span>Shop Now</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -349,7 +357,7 @@ export default function LandingPage() {
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
-                i === currentSlide ? 'w-16 bg-[#00ff88]' : 'w-6 bg-white/30 hover:bg-white/50'
+                i === currentSlide ? 'w-16 bg-[#CB202D]' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
@@ -368,7 +376,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 md:px-12 bg-surface">
         <div className="max-w-[1440px] mx-auto scroll-reveal">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Categories</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Categories</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">Browse by Category</h2>
           </div>
 
@@ -378,7 +386,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => scrollCategories('left')}
               aria-label="Previous categories"
-              className={`hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white border border-[#00ff88]/20 text-[#00391c] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-[#00ff88] hover:text-white hover:scale-105 transition-all duration-300 ${canScrollLeft ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+              className={`hidden md:flex absolute -left-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white border border-[#CB202D]/20 text-[#A81D2A] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-[#CB202D] hover:text-white hover:scale-105 transition-all duration-300 ${canScrollLeft ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
             >
               <span className="material-symbols-outlined text-2xl">chevron_left</span>
             </button>
@@ -388,7 +396,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => scrollCategories('right')}
               aria-label="Next categories"
-              className={`hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white border border-[#00ff88]/20 text-[#00391c] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-[#00ff88] hover:text-white hover:scale-105 transition-all duration-300 ${canScrollRight ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
+              className={`hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 items-center justify-center rounded-full bg-white border border-[#CB202D]/20 text-[#A81D2A] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:bg-[#CB202D] hover:text-white hover:scale-105 transition-all duration-300 ${canScrollRight ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'}`}
             >
               <span className="material-symbols-outlined text-2xl">chevron_right</span>
             </button>
@@ -403,25 +411,25 @@ export default function LandingPage() {
                 <Link
                   key={cat.id}
                   to={`/collection/${encodeURIComponent(cat.name)}`}
-                  className="relative flex-shrink-0 w-[200px] h-[230px] p-7 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-400 hover:-translate-y-1.5 stagger-item overflow-hidden snap-start hover:shadow-[0_20px_50px_rgba(0,255,136,0.18)] hover:border-[#00ff88]/40 border border-transparent"
+                  className="relative flex-shrink-0 w-[200px] h-[230px] p-7 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-400 hover:-translate-y-1.5 stagger-item overflow-hidden snap-start hover:shadow-[0_20px_50px_rgba(203,32,45,0.18)] hover:border-[#CB202D]/40 border border-transparent"
                   style={{
                     background: `linear-gradient(145deg, #ffffff, #f5f5f5)`,
                     boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
                   }}
                 >
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#00ff88]/5 rounded-bl-[100%] transition-all duration-500 group-hover:bg-[#00ff88]/15 group-hover:w-28 group-hover:h-28" />
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00ff88]/20 to-[#00ff88]/5 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(0,255,136,0.15)] transition-all duration-300 overflow-hidden relative z-10">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#CB202D]/5 rounded-bl-[100%] transition-all duration-500 group-hover:bg-[#CB202D]/15 group-hover:w-28 group-hover:h-28" />
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#CB202D]/20 to-[#CB202D]/5 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(203,32,45,0.15)] transition-all duration-300 overflow-hidden relative z-10">
                     {getCategoryImage(cat) ? (
                       <img src={getCategoryImage(cat)} alt={cat.name} className="w-full h-full object-cover rounded-2xl" />
                     ) : (
-                      <span className="material-symbols-outlined text-3xl text-[#00391c]">{getCategoryIcon(cat.name)}</span>
+                      <span className="material-symbols-outlined text-3xl text-[#A81D2A]">{getCategoryIcon(cat.name)}</span>
                     )}
                   </div>
                   <div className="relative z-10 text-center">
-                    <h3 className="font-bold text-base text-on-surface group-hover:text-[#00391c] transition-colors">{cat.name}</h3>
+                    <h3 className="font-bold text-base text-on-surface group-hover:text-[#A81D2A] transition-colors">{cat.name}</h3>
                     <p className="text-xs text-on-surface-variant/70 font-medium mt-1">{cat.products} items</p>
                   </div>
-                  <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#00ff88]/0 rounded-full transition-all duration-400 group-hover:bg-[#00ff88]/30" />
+                  <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-[#CB202D]/0 rounded-full transition-all duration-400 group-hover:bg-[#CB202D]/30" />
                 </Link>
               ))}
             </div>
@@ -434,7 +442,7 @@ export default function LandingPage() {
               onClick={() => scrollCategories('left')}
               aria-label="Previous categories"
               disabled={!canScrollLeft}
-              className={`w-11 h-11 flex items-center justify-center rounded-full bg-white border border-[#00ff88]/20 text-[#00391c] shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-40'}`}
+              className={`w-11 h-11 flex items-center justify-center rounded-full bg-white border border-[#CB202D]/20 text-[#A81D2A] shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-40'}`}
             >
               <span className="material-symbols-outlined text-xl">chevron_left</span>
             </button>
@@ -443,7 +451,7 @@ export default function LandingPage() {
               onClick={() => scrollCategories('right')}
               aria-label="Next categories"
               disabled={!canScrollRight}
-              className={`w-11 h-11 flex items-center justify-center rounded-full bg-white border border-[#00ff88]/20 text-[#00391c] shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-40'}`}
+              className={`w-11 h-11 flex items-center justify-center rounded-full bg-white border border-[#CB202D]/20 text-[#A81D2A] shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-40'}`}
             >
               <span className="material-symbols-outlined text-xl">chevron_right</span>
             </button>
@@ -454,7 +462,7 @@ export default function LandingPage() {
       {/* ─── HOT DEAL ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface-container-low/20">
         <div className="max-w-[1440px] mx-auto scroll-reveal">
-          <div className="glass-card overflow-hidden rounded-[2.5rem] border border-[#00ff88]/15 flex flex-col lg:flex-row items-stretch relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
+          <div className="glass-card overflow-hidden rounded-[2.5rem] border border-[#CB202D]/15 flex flex-col lg:flex-row items-stretch relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
             <div className="absolute top-6 right-6 z-10">
               <span className="inline-flex items-center gap-1.5 bg-[#ba1a1a] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider animate-pulse">
                 <span className="w-1.5 h-1.5 rounded-full bg-white" />
@@ -462,19 +470,19 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex-1 p-8 md:p-14 flex flex-col gap-6 justify-center">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#00ff88] tracking-[0.15em] uppercase">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#CB202D] tracking-[0.15em] uppercase">
                 <span className="material-symbols-outlined text-base">local_fire_department</span>
                 Flash Sale
               </div>
-              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface leading-tight">Tech Essentials<br /><span className="text-[#00ff88]">Up to 25% Off</span></h2>
+              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface leading-tight">Tech Essentials<br /><span className="text-[#CB202D]">Up to 25% Off</span></h2>
               <div className="flex gap-4">
                 {[
                   { label: 'Hours', val: countdown.hours },
                   { label: 'Minutes', val: countdown.mins },
                   { label: 'Seconds', val: countdown.secs },
                 ].map((unit) => (
-                  <div key={unit.label} className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl min-w-[90px] border border-[#00ff88]/10 shadow-sm">
-                    <span className="text-[clamp(28px,3vw,40px)] font-extrabold text-[#00391c] tabular-nums">{unit.val}</span>
+                  <div key={unit.label} className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl min-w-[90px] border border-[#CB202D]/10 shadow-sm">
+                    <span className="text-[clamp(28px,3vw,40px)] font-extrabold text-[#A81D2A] tabular-nums">{unit.val}</span>
                     <span className="text-[10px] font-bold text-on-surface-variant tracking-widest mt-1">{unit.label}</span>
                   </div>
                 ))}
@@ -482,13 +490,13 @@ export default function LandingPage() {
               <p className="text-base md:text-lg text-on-surface-variant leading-relaxed">Grab the latest flagships and premium accessories at unbeatable prices. Certified performance, uncompromised quality.</p>
               <Link
                 to="/collection/all"
-                className="inline-flex items-center gap-2 w-fit bg-on-surface text-surface font-bold text-base px-8 py-3.5 rounded-full shadow-[0_0_25px_rgba(0,255,136,0.2)] hover:bg-[#00ff88] hover:text-[#00391c] hover:shadow-[0_0_40px_rgba(0,255,136,0.4)] transition-all duration-300"
+                className="inline-flex items-center gap-2 w-fit bg-on-surface text-surface font-bold text-base px-8 py-3.5 rounded-full shadow-[0_0_25px_rgba(203,32,45,0.2)] hover:bg-[#CB202D] hover:text-[#A81D2A] hover:shadow-[0_0_40px_rgba(203,32,45,0.4)] transition-all duration-300"
               >
                 Claim Offer Now
                 <span className="material-symbols-outlined text-lg">bolt</span>
               </Link>
             </div>
-            <div className="flex-1 min-h-[320px] lg:min-h-full relative overflow-hidden bg-gradient-to-br from-[#00391c]/5 to-[#00ff88]/5">
+            <div className="flex-1 min-h-[320px] lg:min-h-full relative overflow-hidden bg-gradient-to-br from-[#A81D2A]/5 to-[#CB202D]/5">
               <img alt="Flash Sale" className="absolute inset-0 w-full h-full object-contain p-8 md:p-12 hover:scale-105 transition-transform duration-700" src={heroSlides[4].img} />
             </div>
           </div>
@@ -500,11 +508,11 @@ export default function LandingPage() {
         <div className="max-w-[1440px] mx-auto scroll-reveal">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
-              <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Trending</span>
+              <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Trending</span>
               <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">Trending Devices</h2>
               <p className="text-base md:text-lg text-on-surface-variant mt-1">The most sought-after tech in our collection.</p>
             </div>
-            <Link to="/collection/all?tab=trending" className="inline-flex items-center gap-1.5 text-[#00391c] font-bold text-sm px-5 py-2.5 rounded-full border border-[#00ff88]/20 hover:bg-[#00ff88]/10 hover:border-[#00ff88]/40 transition-all shrink-0">
+            <Link to="/collection/all?tab=trending" className="inline-flex items-center gap-1.5 text-[#A81D2A] font-bold text-sm px-5 py-2.5 rounded-full border border-[#CB202D]/20 hover:bg-[#CB202D]/10 hover:border-[#CB202D]/40 transition-all shrink-0">
               Explore All <span className="material-symbols-outlined text-lg">arrow_forward</span>
             </Link>
           </div>
@@ -513,7 +521,7 @@ export default function LandingPage() {
               <div
                 key={product.id}
                 onClick={() => navigate(`/product/${product.id}`)}
-                className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,255,136,0.10)] hover:border-[#00ff88]/25 hover:-translate-y-1 stagger-item"
+                className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(203,32,45,0.10)] hover:border-[#CB202D]/25 hover:-translate-y-1 stagger-item"
               >
                 <div className="relative rounded-2xl overflow-hidden bg-white h-[270px] mb-4 flex items-center justify-center p-5">
                   {getProductImage(product) ? (
@@ -530,7 +538,7 @@ export default function LandingPage() {
                   )}
                   <Link
                     to={`/product/${product.id}`}
-                    className="absolute bottom-4 right-4 bg-[#00ff88] text-[#00391c] w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(0,255,136,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
+                    className="absolute bottom-4 right-4 bg-[#CB202D] text-[#A81D2A] w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(203,32,45,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
                   >
                     <span className="material-symbols-outlined text-xl">visibility</span>
                   </Link>
@@ -538,7 +546,7 @@ export default function LandingPage() {
                 <div className="px-1 pb-1">
                   <h3 className="font-bold text-base md:text-lg text-on-surface mb-1.5 leading-snug">{product.name}</h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-[#00391c] font-extrabold text-lg">{getProductPrice(product)}</span>
+                    <span className="text-[#A81D2A] font-extrabold text-lg">{getProductPrice(product)}</span>
                     <div className="flex items-center gap-1">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((s) => (
@@ -559,23 +567,23 @@ export default function LandingPage() {
       <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Services</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Services</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Precision Repair Services</h2>
             <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">From micro-soldering to full device restoration — we handle it all with clinical precision.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: 'bolt', title: 'Express Repair', desc: 'Wait in our comfortable lounge while we fix your screen or battery in under 60 minutes.', gradient: 'from-[#00ff88]/10 to-transparent' },
+              { icon: 'bolt', title: 'Express Repair', desc: 'Wait in our comfortable lounge while we fix your screen or battery in under 60 minutes.', gradient: 'from-[#CB202D]/10 to-transparent' },
               { icon: 'local_shipping', title: 'Mail-In Service', desc: 'Send your device from anywhere with our secure, prepaid shipping kits and track online.', gradient: 'from-[#e5c364]/10 to-transparent' },
-              { icon: 'home_repair_service', title: 'On-Site Tech', desc: "We'll come to your home or office for specific repairs, ensuring zero downtime for you.", gradient: 'from-[#00ff88]/10 to-transparent' },
+              { icon: 'home_repair_service', title: 'On-Site Tech', desc: "We'll come to your home or office for specific repairs, ensuring zero downtime for you.", gradient: 'from-[#CB202D]/10 to-transparent' },
             ].map((service) => (
-              <div key={service.title} className={`glass-card p-8 md:p-10 rounded-[2rem] flex flex-col gap-5 group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,255,136,0.10)] hover:-translate-y-1 stagger-item bg-gradient-to-b ${service.gradient}`}>
-                <div className="w-16 h-16 rounded-2xl bg-[#00ff88]/20 text-[#00391c] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#00ff88]/30 transition-all duration-300">
+              <div key={service.title} className={`glass-card p-8 md:p-10 rounded-[2rem] flex flex-col gap-5 group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(203,32,45,0.10)] hover:-translate-y-1 stagger-item bg-gradient-to-b ${service.gradient}`}>
+                <div className="w-16 h-16 rounded-2xl bg-[#CB202D]/20 text-[#A81D2A] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#CB202D]/30 transition-all duration-300">
                   <span className="material-symbols-outlined text-3xl">{service.icon}</span>
                 </div>
                 <h3 className="text-xl font-bold text-on-surface">{service.title}</h3>
                 <p className="text-base text-on-surface-variant leading-relaxed">{service.desc}</p>
-                <Link to="/repairs" className="inline-flex items-center gap-1.5 text-[#00391c] font-bold text-sm group-hover:gap-3 transition-all duration-300 mt-auto pt-2">
+                <Link to="/repairs" className="inline-flex items-center gap-1.5 text-[#A81D2A] font-bold text-sm group-hover:gap-3 transition-all duration-300 mt-auto pt-2">
                   Learn More <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </Link>
               </div>
@@ -590,11 +598,11 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
               <div>
-                <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">New</span>
+                <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">New</span>
                 <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">New Arrivals</h2>
                 <p className="text-base md:text-lg text-on-surface-variant mt-1">Discover the latest cutting-edge technology.</p>
               </div>
-              <Link to="/collection/all?tab=new" className="inline-flex items-center gap-1.5 text-[#00391c] font-bold text-sm px-5 py-2.5 rounded-full border border-[#00ff88]/20 hover:bg-[#00ff88]/10 hover:border-[#00ff88]/40 transition-all shrink-0">
+              <Link to="/collection/all?tab=new" className="inline-flex items-center gap-1.5 text-[#A81D2A] font-bold text-sm px-5 py-2.5 rounded-full border border-[#CB202D]/20 hover:bg-[#CB202D]/10 hover:border-[#CB202D]/40 transition-all shrink-0">
                 View All <span className="material-symbols-outlined text-lg">arrow_forward</span>
               </Link>
             </div>
@@ -603,10 +611,10 @@ export default function LandingPage() {
                 <div
                   key={product.id}
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#00ff88]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
+                  className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#CB202D]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                 >
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#00ff88] text-[#00391c] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">New</span>
+                    <span className="bg-[#CB202D] text-[#A81D2A] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">New</span>
                   </div>
                   <div className="bg-white rounded-xl overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
                     {getProductImage(product) ? (
@@ -624,14 +632,14 @@ export default function LandingPage() {
                   </div>
                   <h4 className="font-bold text-base text-on-surface mb-1">{product.name}</h4>
                   <div className="flex items-center justify-between mt-2">
-                    <p className="text-[#00391c] font-extrabold text-lg">{getProductPrice(product)}</p>
+                    <p className="text-[#A81D2A] font-extrabold text-lg">{getProductPrice(product)}</p>
                     <div className="flex gap-1">
-                      <Link to={`/product/${product.id}`} className="p-2.5 rounded-xl bg-[#00ff88]/10 text-[#00391c] hover:bg-[#00ff88] hover:text-[#00391c] transition-all duration-300">
+                      <Link to={`/product/${product.id}`} className="p-2.5 rounded-xl bg-[#CB202D]/10 text-[#A81D2A] hover:bg-[#CB202D] hover:text-[#A81D2A] transition-all duration-300">
                         <span className="material-symbols-outlined text-xl">visibility</span>
                       </Link>
                       <button onClick={(e) => toggleWishlist(product.id, e)}
                         className={`p-2.5 rounded-xl transition-all duration-300 ${
-                          wishlist.has(product.id) ? 'bg-[#FF3B30]/10 text-[#FF3B30]' : 'text-on-surface-variant hover:text-[#00391c] hover:bg-[#00ff88]/10'
+                          wishlist.has(product.id) ? 'bg-[#CB202D]/10 text-[#CB202D]' : 'text-on-surface-variant hover:text-[#A81D2A] hover:bg-[#CB202D]/10'
                         }`}>
                         <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: wishlist.has(product.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                       </button>
@@ -649,11 +657,11 @@ export default function LandingPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
-              <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Refurbished</span>
+              <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Refurbished</span>
               <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">Certified Refurbished</h2>
               <p className="text-base md:text-lg text-on-surface-variant mt-1">Pristine devices, verified for excellence.</p>
             </div>
-            <Link to="/phones" className="inline-flex bg-on-surface text-surface font-bold text-sm px-6 py-2.5 rounded-full hover:bg-[#00ff88] hover:text-[#00391c] transition-all duration-300 shrink-0">View Collection</Link>
+            <Link to="/phones" className="inline-flex bg-on-surface text-surface font-bold text-sm px-6 py-2.5 rounded-full hover:bg-[#CB202D] hover:text-[#A81D2A] transition-all duration-300 shrink-0">View Collection</Link>
           </div>
           {refurbishedLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
@@ -671,10 +679,10 @@ export default function LandingPage() {
                 <div
                   key={product.id}
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#00ff88]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
+                  className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#CB202D]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                 >
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#00391c] text-[#00ff88] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">Certified Refurbished</span>
+                    <span className="bg-[#A81D2A] text-[#CB202D] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">Certified Refurbished</span>
                   </div>
                   <div className="bg-white rounded-xl overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
                     {getProductImage(product) ? (
@@ -692,8 +700,8 @@ export default function LandingPage() {
                   </div>
                   <h4 className="font-bold text-base text-on-surface">{product.name}</h4>
                   <div className="flex items-center justify-between mt-2">
-                    <p className="text-[#00391c] font-extrabold text-lg">{getProductPrice(product)}</p>
-                    <Link to={`/product/${product.id}`} className="p-2.5 rounded-xl bg-[#00ff88]/10 text-[#00391c] hover:bg-[#00ff88] hover:text-[#00391c] transition-all duration-300">
+                    <p className="text-[#A81D2A] font-extrabold text-lg">{getProductPrice(product)}</p>
+                    <Link to={`/product/${product.id}`} className="p-2.5 rounded-xl bg-[#CB202D]/10 text-[#A81D2A] hover:bg-[#CB202D] hover:text-[#A81D2A] transition-all duration-300">
                       <span className="material-symbols-outlined text-xl">visibility</span>
                     </Link>
                   </div>
@@ -708,7 +716,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">In Action</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">In Action</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">See the Precision in Action</h2>
             <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">Watch how we bring your devices back to life with clinical-grade repair techniques.</p>
           </div>
@@ -722,8 +730,8 @@ export default function LandingPage() {
                 <span className="text-white text-lg md:text-xl font-bold">Precision Micro-Soldering</span>
                 <p className="text-white/60 text-sm mt-1">Board-level repair with microscopic accuracy</p>
               </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#00ff88]/20 backdrop-blur-sm border border-[#00ff88]/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="material-symbols-outlined text-[#00ff88]">play_arrow</span>
+              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#CB202D]/20 backdrop-blur-sm border border-[#CB202D]/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="material-symbols-outlined text-[#CB202D]">play_arrow</span>
               </div>
             </div>
             <div className="relative group rounded-[2rem] overflow-hidden shadow-xl aspect-video bg-black">
@@ -735,8 +743,8 @@ export default function LandingPage() {
                 <span className="text-white text-lg md:text-xl font-bold">Diagnostic Calibration</span>
                 <p className="text-white/60 text-sm mt-1">Advanced testing for peak performance</p>
               </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#00ff88]/20 backdrop-blur-sm border border-[#00ff88]/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="material-symbols-outlined text-[#00ff88]">play_arrow</span>
+              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#CB202D]/20 backdrop-blur-sm border border-[#CB202D]/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="material-symbols-outlined text-[#CB202D]">play_arrow</span>
               </div>
             </div>
           </div>
@@ -760,7 +768,7 @@ export default function LandingPage() {
       <section className="py-20 px-6 md:px-12 overflow-hidden bg-surface">
         <div className="max-w-[1440px] mx-auto scroll-reveal">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Testimonials</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Testimonials</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Trusted by Thousands</h2>
             <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">Real experiences from our community of tech enthusiasts.</p>
           </div>
@@ -768,11 +776,11 @@ export default function LandingPage() {
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className="min-w-[320px] md:min-w-[400px] snap-center glass-card p-8 md:p-10 rounded-[2rem] flex flex-col gap-5 shrink-0 hover:shadow-[0_20px_60px_rgba(0,255,136,0.08)] transition-shadow duration-500"
+                className="min-w-[320px] md:min-w-[400px] snap-center glass-card p-8 md:p-10 rounded-[2rem] flex flex-col gap-5 shrink-0 hover:shadow-[0_20px_60px_rgba(203,32,45,0.08)] transition-shadow duration-500"
                 style={{ animation: `float-slow 8s ease-in-out infinite`, animationDelay: `${i * 1.2}s` }}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full overflow-hidden bg-[#00ff88]/10 shrink-0 ring-2 ring-[#00ff88]/20">
+                  <div className="w-14 h-14 rounded-full overflow-hidden bg-[#CB202D]/10 shrink-0 ring-2 ring-[#CB202D]/20">
                     <img alt={t.name} className="w-full h-full object-cover" src={t.img} />
                   </div>
                   <div>
@@ -785,8 +793,8 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <p className="text-base text-on-surface-variant italic leading-relaxed">{t.quote}</p>
-                <div className="flex items-center gap-2 text-[10px] font-bold text-[#00391c] uppercase tracking-widest mt-auto pt-2 border-t border-[#00ff88]/10">
-                  <span className="material-symbols-outlined text-sm text-[#00ff88]">verified</span>
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[#A81D2A] uppercase tracking-widest mt-auto pt-2 border-t border-[#CB202D]/10">
+                  <span className="material-symbols-outlined text-sm text-[#CB202D]">verified</span>
                   {t.badge}
                 </div>
               </div>

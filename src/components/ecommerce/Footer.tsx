@@ -38,7 +38,7 @@ export default function EcommerceFooter() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
               <span
-                className="text-lg font-extrabold text-[#00391c] bg-[#00ff88] px-3 py-1.5 rounded-xl"
+                className="text-lg font-extrabold text-[#A81D2A] bg-[#CB202D] px-3 py-1.5 rounded-xl"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 PF
@@ -57,7 +57,7 @@ export default function EcommerceFooter() {
               {['public', 'share', 'mail'].map((icon) => (
                 <div
                   key={icon}
-                  className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-[#00ff88]/20 hover:text-[#00ff88] transition-all cursor-pointer"
+                  className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-[#CB202D]/20 hover:text-[#CB202D] transition-all cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-lg">{icon}</span>
                 </div>
@@ -67,7 +67,7 @@ export default function EcommerceFooter() {
           {linkColumns.map((col) => (
             <div key={col.title} className="flex flex-col gap-3.5">
               <h4
-                className="text-xs font-bold text-[#00391c] uppercase tracking-widest"
+                className="text-xs font-bold text-[#A81D2A] uppercase tracking-widest"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {col.title}
@@ -76,7 +76,7 @@ export default function EcommerceFooter() {
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-sm text-on-surface-variant hover:text-[#00ff88] transition-colors w-fit"
+                  className="text-sm text-on-surface-variant hover:text-[#CB202D] transition-colors w-fit"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {link.label}
@@ -90,9 +90,9 @@ export default function EcommerceFooter() {
             &copy; 2024 PhoneFix Pro. All rights reserved. Luminous Precision.
           </p>
           <div className="flex items-center gap-4 text-xs text-on-surface-variant/50">
-            <Link to="#" className="hover:text-[#00ff88] transition-colors">Privacy</Link>
-            <Link to="#" className="hover:text-[#00ff88] transition-colors">Terms</Link>
-            <Link to="#" className="hover:text-[#00ff88] transition-colors">Cookies</Link>
+            <Link to="#" className="hover:text-[#CB202D] transition-colors">Privacy</Link>
+            <Link to="#" className="hover:text-[#CB202D] transition-colors">Terms</Link>
+            <Link to="#" className="hover:text-[#CB202D] transition-colors">Cookies</Link>
           </div>
         </div>
       </div>

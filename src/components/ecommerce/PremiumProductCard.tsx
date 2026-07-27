@@ -29,7 +29,7 @@ export default function PremiumProductCard({
 
   const tags = []
   if (product.is_new_arrival || product.isNewArrival) tags.push({ label: 'New', color: 'from-emerald-500 to-emerald-600' })
-  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'from-indigo-500 to-indigo-600' })
+  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'from-red-500 to-red-600' })
   if (product.is_featured || product.isFeatured) tags.push({ label: 'Featured', color: 'from-amber-500 to-amber-600' })
   if (product.is_trending || product.isTrending) tags.push({ label: 'Trending', color: 'from-sky-500 to-sky-600' })
   if (product.is_refurbished || product.isRefurbished) tags.push({ label: 'Refurbished', color: 'from-violet-500 to-violet-600' })
@@ -61,7 +61,7 @@ export default function PremiumProductCard({
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: index * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         whileHover={{ x: 8, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
-        className="group flex gap-6 p-5 bg-white/80 backdrop-blur-xl rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-xl transition-all duration-500"
+        className="group flex gap-6 p-5 bg-white/80 backdrop-blur-xl rounded-2xl border border-slate-100 hover:border-red-200 hover:shadow-xl transition-all duration-500"
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -88,11 +88,11 @@ export default function PremiumProductCard({
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             {product.brand && (
-              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 mb-1 block truncate">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 mb-1 block truncate">
                 {product.brand}
               </span>
             )}
-            <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-base">
+            <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors text-base">
               {product.name}
             </h3>
           </div>
@@ -123,7 +123,7 @@ export default function PremiumProductCard({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleAddToCart}
-                className="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_16px_rgba(79,70,229,0.4)] transition-all"
+                className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(203,32,45,0.3)] hover:shadow-[0_6px_16px_rgba(203,32,45,0.4)] transition-all"
                 aria-label="Add to cart"
               >
                 <ShoppingBag size={18} />
@@ -151,7 +151,7 @@ export default function PremiumProductCard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         whileHover={{ y: -12, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
-        className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-indigo-200 transition-all duration-700"
+        className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-red-200 transition-all duration-700"
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -212,7 +212,7 @@ export default function PremiumProductCard({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleAddToCart}
-                  className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-xl"
+                  className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white flex items-center justify-center shadow-xl"
                   aria-label="Add to cart"
                 >
                   <ShoppingBag size={20} />
@@ -242,11 +242,11 @@ export default function PremiumProductCard({
 
         <div className="p-5">
           {product.brand && (
-            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 mb-2 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 mb-2 block">
               {product.brand}
             </span>
           )}
-          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-lg mb-3">
+          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors text-lg mb-3">
             {product.name}
           </h3>
           <div className="flex items-center gap-3">
@@ -271,7 +271,7 @@ export default function PremiumProductCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -12, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
-      className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-indigo-200 transition-all duration-700"
+      className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl hover:border-red-200 transition-all duration-700"
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -334,7 +334,7 @@ export default function PremiumProductCard({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleAddToCart}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-xl"
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white flex items-center justify-center shadow-xl"
                 aria-label="Add to cart"
               >
                 <ShoppingBag size={18} />
@@ -364,11 +364,11 @@ export default function PremiumProductCard({
 
       <div className="p-4">
         {product.brand && (
-          <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 mb-1.5 block truncate">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 mb-1.5 block truncate">
             {product.brand}
           </span>
         )}
-        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition-colors text-base mb-2">
+        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-red-600 transition-colors text-base mb-2">
           {product.name}
         </h3>
         <div className="flex items-center gap-2">

@@ -14,7 +14,7 @@
   --color-text: #f5f0eb;
   --color-text-muted: #8a8580;
   --color-text-dim: #5a5550;
-  --color-accent-green: #4ade80;
+  --color-accent-green: #CB202D;
   --color-accent-purple: #a855f7;
 
   --font-heading: 'Playfair Display', Georgia, serif;
@@ -49,12 +49,12 @@
   --color-on-primary-fixed-variant: #45455b;
   --color-secondary: #006d36;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #6dfe9c;
-  --color-on-secondary-container: #007439;
-  --color-secondary-fixed: #6dfe9c;
-  --color-secondary-fixed-dim: #4de082;
-  --color-on-secondary-fixed: #00210c;
-  --color-on-secondary-fixed-variant: #005227;
+  --color-secondary-container: #FEE2E6;
+  --color-on-secondary-container: #A81D2A;
+  --color-secondary-fixed: #FEE2E6;
+  --color-secondary-fixed-dim: #d4a8ac;
+  --color-on-secondary-fixed: #A81D2A;
+  --color-on-secondary-fixed-variant: #8b1823;
   --color-tertiary: #000106;
   --color-on-tertiary: #ffffff;
   --color-tertiary-container: #001a45;
@@ -75,7 +75,7 @@
   --color-inverse-surface: #2f3131;
   --color-inverse-on-surface: #f1f1f1;
   --color-inverse-primary: #c6c4df;
-  --color-mint: #4FE3C1;
+  --color-mint: #CB202D;
   --color-glass-border: rgba(217,222,229,0.5);
 
   --spacing-container-max: 1280px;
@@ -143,8 +143,8 @@
   }
 
   ::selection {
-    background-color: #6dfe9c;
-    color: #00210c;
+    background-color: #FEE2E6;
+    color: #A81D2A;
   }
 
   input, textarea, select {
@@ -258,7 +258,7 @@
 .interactive-card:hover {
   transform: scale(1.02);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  border-color: rgba(109, 254, 156, 0.3);
+  border-color: rgba(203, 32, 45, 0.3);
 }
 
 .slide-up-item {
@@ -400,7 +400,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 .emerald-glow {
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 20px rgba(203, 32, 45, 0.4);
 }
 .scroll-reveal {
   opacity: 0;
@@ -446,7 +446,7 @@
   left: 0;
   width: 100%;
   height: 20%;
-  background: linear-gradient(to bottom, transparent, rgba(79, 227, 193, 0.3), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(203, 32, 45, 0.3), transparent);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -468,7 +468,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(to bottom, transparent, #4FE3C1, transparent);
+  background: linear-gradient(to bottom, transparent, #CB202D, transparent);
   animation: scan 4s linear infinite;
   z-index: 10;
   pointer-events: none;
@@ -515,11 +515,11 @@
 
 .glass-card-panel:hover {
   transform: translateY(-4px);
-  border-color: #4FE3C1;
+  border-color: #CB202D;
 }
 
 .mint-glow {
-  box-shadow: 0 0 20px rgba(79, 227, 193, 0.4);
+  box-shadow: 0 0 20px rgba(203, 32, 45, 0.4);
 }
 
 /* ============================================================
@@ -541,15 +541,15 @@
   --color-border-light: #eef1f0;
   --color-border-dark: #d6dcd9;
 
-  --color-primary: #22c55e;
-  --color-primary-hover: #16a34a;
+  --color-primary: #CB202D;
+  --color-primary-hover: #A81D2A;
   --color-on-primary: #ffffff;
-  --color-primary-container: #e8f8ef;
-  --color-on-primary-container: #0f7a38;
+  --color-primary-container: #FEE2E6;
+  --color-on-primary-container: #A81D2A;
 
-  --color-secondary: #16a34a;
+  --color-secondary: #A81D2A;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #e8f8ef;
+  --color-secondary-container: #FEE2E6;
 
   --color-text-primary: #0f172a;
   --color-text-secondary: #475569;
@@ -560,7 +560,7 @@
   --color-danger-hover: #dc2626;
   --color-on-danger-container: #7f1d1d;
 
-  --color-success: #22c55e;
+  --color-success: #CB202D;
   --color-warning: #f59e0b;
   --color-info: #3b82f6;
 

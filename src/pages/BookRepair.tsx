@@ -162,7 +162,7 @@ export default function BookRepair() {
             </div>
             <h1 className="text-3xl font-extrabold text-[#181c1e] mb-2">Booking Confirmed!</h1>
             <p className="text-[#434748] mb-8">Your repair has been submitted successfully.</p>
-            <div className="rounded-2xl p-6 mb-8" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(79,227,193,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
+            <div className="rounded-2xl p-6 mb-8" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
               <p className="text-xs text-[#434748] mb-2">Your Tracking ID</p>
               <p className="text-3xl font-mono font-bold text-mint tracking-wider">{result.repairId}</p>
               <p className="text-xs text-[#434748] mt-3">Save this ID to track your repair.</p>
@@ -170,7 +170,7 @@ export default function BookRepair() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/my-repairs"
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all text-white"
-                style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
               >
                 Track My Repair <FiArrowRight size={16} />
               </Link>
@@ -188,7 +188,7 @@ export default function BookRepair() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-mint/30 selection:text-[#00391c]">
+    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-mint/30 selection:text-[#A81D2A]">
       <StorefrontNavbar activeLabel="Repairs" />
       <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
 
@@ -215,7 +215,7 @@ export default function BookRepair() {
         <AnimatePresence mode="wait">
           {step <= questions.length ? (
             <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(79,227,193,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
+              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="material-symbols-outlined text-lg text-mint">help</span>
@@ -232,13 +232,13 @@ export default function BookRepair() {
                 ><FiArrowLeft size={13} /> Back</button>
                 <button onClick={goNext}
                   className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                 >{step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={13} /></button>
               </div>
             </motion.div>
           ) : step === questions.length + 1 ? (
             <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(79,227,193,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
+              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
             >
               <div className="flex items-center gap-2 mb-4">
                 <FiUser size={14} className="text-mint" />
@@ -270,13 +270,13 @@ export default function BookRepair() {
                 </button>
                 <button onClick={goNext}
                   className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                 >Next <FiArrowRight size={13} /></button>
               </div>
             </motion.div>
           ) : step === questions.length + 2 ? (
             <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(79,227,193,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
+              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
             >
               <div className="flex items-center gap-2 mb-4">
                 <FiSmartphone size={14} className="text-mint" />
@@ -312,13 +312,13 @@ export default function BookRepair() {
                 </button>
                 <button onClick={goNext}
                   className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                 >Next <FiArrowRight size={13} /></button>
               </div>
             </motion.div>
           ) : (
             <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(79,227,193,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
+              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
             >
               <div className="flex items-center gap-2 mb-4">
                 <FiImage size={14} className="text-mint" />
@@ -357,7 +357,7 @@ export default function BookRepair() {
                 </button>
                 <button onClick={handleSubmit} disabled={submitting}
                   className="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all cursor-pointer text-white"
-                  style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                  style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                 ><FiSend size={13} /> {submitting ? 'Booking...' : 'Book Now'}</button>
               </div>
             </motion.div>

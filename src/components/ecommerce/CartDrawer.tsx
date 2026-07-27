@@ -94,7 +94,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           >
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7c3aed] to-[#a78bfa] flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#CB202D] to-[#E53E4E] flex items-center justify-center">
                   <FiShoppingCart size={18} className="text-white" />
                 </div>
                 <div>
@@ -115,7 +115,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                   </div>
                   <h3 className="text-lg font-semibold text-white/60 mb-2">Your cart is empty</h3>
                   <p className="text-sm text-white/30 mb-6">Looks like you haven't added anything yet.</p>
-                  <button onClick={onClose} className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#7c3aed]/20 transition-all cursor-pointer">
+                  <button onClick={onClose} className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#CB202D] to-[#E53E4E] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#CB202D]/20 transition-all cursor-pointer">
                     Continue Shopping
                   </button>
                 </div>
@@ -132,7 +132,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                     exit={{ opacity: 0, x: 20 }}
                     className="group flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.07] transition-all"
                   >
-                    <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-[#7c3aed]/10 to-[#a78bfa]/10 overflow-hidden shrink-0">
+                    <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-[#CB202D]/10 to-[#E53E4E]/10 overflow-hidden shrink-0">
                       {hasImg ? (
                         <img
                           src={imgUrl}
@@ -149,14 +149,14 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-white truncate">{item.name}</h4>
                       {item.storage && <p className="text-xs text-white/40 mt-0.5">{item.storage}</p>}
-                      <p className="text-sm font-bold text-[#a78bfa] mt-1">${item.price.toFixed(2)}</p>
+                      <p className="text-sm font-bold text-[#E53E4E] mt-1">${item.price.toFixed(2)}</p>
                       <div className="flex items-center gap-3 mt-3">
                         <div className="flex items-center gap-1.5">
-                          <button onClick={() => updateQuantity(item.productId, -1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#7c3aed]/30 transition-all cursor-pointer">
+                          <button onClick={() => updateQuantity(item.productId, -1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
                             <FiMinus size={10} />
                           </button>
                           <span className="w-8 text-center text-sm font-semibold text-white">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.productId, 1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#7c3aed]/30 transition-all cursor-pointer">
+                          <button onClick={() => updateQuantity(item.productId, 1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
                             <FiPlus size={10} />
                           </button>
                         </div>
@@ -178,7 +178,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 </div>
                 <Link to="/checkout"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#7c3aed]/25 transition-all"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-[#CB202D] to-[#E53E4E] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#CB202D]/25 transition-all"
                 >
                   <FiShoppingCart size={16} /> Checkout
                 </Link>

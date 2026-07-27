@@ -63,8 +63,8 @@ export default function ProfilePage() {
             onClick={() => navigate('/login')}
             className="px-8 py-3 text-sm font-semibold text-white rounded-full transition-all duration-300 hover:scale-105 cursor-pointer"
             style={{
-              background: 'linear-gradient(135deg, #22C55E, #16A34A)',
-              boxShadow: '0 4px 15px rgba(34,197,94,0.35)',
+              background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+              boxShadow: '0 4px 15px rgba(203,32,45,0.35)',
             }}
           >
             Go to Login
@@ -80,7 +80,7 @@ export default function ProfilePage() {
       <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
         <StorefrontNavbar />
         <div className="flex items-center justify-center pt-40 pb-20">
-          <FiLoader className="animate-spin" size={32} style={{ color: '#006d37' }} />
+          <FiLoader className="animate-spin" size={32} style={{ color: '#A81D2A' }} />
         </div>
         <EcommerceFooter />
       </div>
@@ -101,7 +101,7 @@ export default function ProfilePage() {
           style={{
             background: 'rgba(255,255,255,0.7)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(0,109,55,0.05)',
+            border: '1px solid rgba(168,29,42,0.05)',
             boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
           }}
         >
@@ -109,11 +109,11 @@ export default function ProfilePage() {
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
               style={{
-                background: 'linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,109,55,0.08))',
-                border: '2px solid rgba(0,255,136,0.25)',
+                background: 'linear-gradient(135deg, rgba(255,90,101,0.15), rgba(168,29,42,0.08))',
+                border: '2px solid rgba(255,90,101,0.25)',
               }}
             >
-              <FiUser size={32} style={{ color: '#006d37' }} />
+              <FiUser size={32} style={{ color: '#A81D2A' }} />
             </div>
             <h1 className="text-2xl font-bold text-[#191c1d]">{user.fullName}</h1>
             {user.email && <p className="text-sm mt-1" style={{ color: 'rgba(59,75,61,0.7)' }}>{user.email}</p>}
@@ -124,8 +124,8 @@ export default function ProfilePage() {
               className="flex items-center gap-4 p-4 rounded-xl"
               style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,255,136,0.1)' }}>
-                <FiUser size={18} style={{ color: '#006d37' }} />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,90,101,0.1)' }}>
+                <FiUser size={18} style={{ color: '#A81D2A' }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs" style={{ color: 'rgba(59,75,61,0.5)' }}>Full Name</p>
@@ -137,8 +137,8 @@ export default function ProfilePage() {
               className="flex items-center gap-4 p-4 rounded-xl"
               style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,255,136,0.1)' }}>
-                <FiMail size={18} style={{ color: '#006d37' }} />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,90,101,0.1)' }}>
+                <FiMail size={18} style={{ color: '#A81D2A' }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs" style={{ color: 'rgba(59,75,61,0.5)' }}>Email</p>
@@ -151,8 +151,8 @@ export default function ProfilePage() {
                 className="flex items-center gap-4 p-4 rounded-xl"
                 style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}
               >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,255,136,0.1)' }}>
-                  <FiPhone size={18} style={{ color: '#006d37' }} />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,90,101,0.1)' }}>
+                  <FiPhone size={18} style={{ color: '#A81D2A' }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs" style={{ color: 'rgba(59,75,61,0.5)' }}>Mobile</p>
@@ -166,8 +166,8 @@ export default function ProfilePage() {
                 className="flex items-center gap-4 p-4 rounded-xl"
                 style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}
               >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(0,255,136,0.1)' }}>
-                  <FiCalendar size={18} style={{ color: '#006d37' }} />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,90,101,0.1)' }}>
+                  <FiCalendar size={18} style={{ color: '#A81D2A' }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs" style={{ color: 'rgba(59,75,61,0.5)' }}>Member Since</p>

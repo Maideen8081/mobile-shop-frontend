@@ -143,7 +143,7 @@ export default function WishlistPage() {
             <p className="text-sm text-[#6B7280] mb-8">Save your favorite products to find them easily later.</p>
             <Link to="/collection/all"
               className="inline-flex items-center gap-2 h-[50px] px-8 rounded-full text-sm font-semibold text-white transition-all"
-              style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+              style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
             >
               <ShoppingCart size={16} /> Browse Products
             </Link>
@@ -257,7 +257,7 @@ export default function WishlistPage() {
                       <button
                         onClick={() => { addToCart(product); removeFromWishlist(id) }}
                         className="w-full h-11 rounded-full text-xs font-semibold text-white transition-all flex items-center justify-center gap-2"
-                        style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                        style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                       >
                         <ShoppingCart size={14} /> Move to Cart
                       </button>
@@ -313,7 +313,7 @@ export default function WishlistPage() {
             </div>
             <Link to="/collection/all"
               className="h-10 px-6 rounded-full text-xs font-semibold text-white transition-all flex items-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+              style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
             >
               <ShoppingCart size={14} /> Browse All
             </Link>

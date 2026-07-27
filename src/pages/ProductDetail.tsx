@@ -1,5 +1,5 @@
 import { Component, useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   FiShoppingCart, FiHeart, FiCheck, FiChevronRight,
@@ -15,6 +15,8 @@ import {
 import { FaWhatsapp, FaTelegram, FaFacebook, FaEnvelope } from 'react-icons/fa'
 import { productService } from '../services/productService'
 import { authService } from '../services/authService'
+import { reviewService, type Review, type ProductRating } from '../services/reviewService'
+import ReviewForm from '../components/ReviewForm'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 
@@ -91,7 +93,7 @@ function Toast({ toast }: { toast: { message: string; type: 'success' | 'error';
           exit={{ opacity: 0, y: -20, x: '-50%' }}
           className="fixed bottom-32 left-1/2 z-[200] flex items-center gap-2.5 px-5 py-3 rounded-full shadow-2xl"
           style={{
-            background: toast.type === 'success' ? 'linear-gradient(135deg, #4FE3C1, #00FF88)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
+            background: toast.type === 'success' ? 'linear-gradient(135deg, #CB202D, #FF5A65)' : 'linear-gradient(135deg, #EF4444, #DC2626)',
             color: toast.type === 'success' ? '#111c2d' : 'white',
           }}
         >
@@ -142,9 +144,13 @@ const COLOR_PALETTE: Record<string, string> = {
 
 function ProductDetailContent() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { productId, variationId, variantId, id } = useParams()
   const resolvedId = productId || id
   const resolvedVariantId = variationId || variantId
+
+  const rateParam = searchParams.get('rate') === 'true'
+  const orderIdParam = searchParams.get('order_id') || ''
 
   const [apiProduct, setApiProduct] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -169,6 +175,12 @@ function ProductDetailContent() {
   const [shareOpen, setShareOpen] = useState(false)
   const [, setCopied] = useState(false)
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
+  const [productReviews, setProductReviews] = useState<Review[]>([])
+  const [productRating, setProductRating] = useState<ProductRating>({ average: 0, count: 0, distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } })
+  const [canReview, setCanReview] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [hasReviewed, setHasReviewed] = useState(false)
+  const reviewSectionRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const shareRef = useRef<HTMLDivElement>(null)
 
@@ -185,6 +197,36 @@ function ProductDetailContent() {
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])
+
+  useEffect(() => {
+    if (!resolvedId) return
+    const pid = Number(resolvedId)
+    const reviews = reviewService.getByProduct(pid)
+    setProductReviews(reviews)
+    setProductRating(reviewService.getProductRating(pid))
+    setHasReviewed(reviewService.hasUserReviewed(pid))
+  }, [resolvedId])
+
+  useEffect(() => {
+    if (!resolvedId) return
+    if (!authService.isAuthenticated()) { setCanReview(false); return }
+    const { eligible } = reviewService.hasDeliveredOrder(Number(resolvedId))
+    setCanReview(eligible)
+    if (rateParam && eligible) {
+      setShowReviewForm(true)
+      setTimeout(() => {
+        reviewSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 600)
+    }
+  }, [resolvedId, rateParam])
+
+  const refreshReviews = () => {
+    if (!resolvedId) return
+    const pid = Number(resolvedId)
+    setProductReviews(reviewService.getByProduct(pid))
+    setProductRating(reviewService.getProductRating(pid))
+    setHasReviewed(reviewService.hasUserReviewed(pid))
+  }
 
   useEffect(() => {
     if (!apiProduct?.id) return
@@ -455,14 +497,14 @@ function ProductDetailContent() {
   }
 
   return (
-     <div className="product-light min-h-screen bg-surface text-on-surface font-sans selection:bg-[#4FE3C1]/30 overflow-x-hidden">
+     <div className="product-light min-h-screen bg-surface text-on-surface font-sans selection:bg-[#CB202D]/30 overflow-x-hidden">
       <style>{`
         @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
         @keyframes floatSlow { 0%, 100% { transform: translateY(0px) translateX(0px); } 50% { transform: translateY(-6px) translateX(3px); } }
-        @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(79,227,193,0.3); } 50% { box-shadow: 0 0 40px rgba(79,227,193,0.6); } }
+        @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(203,32,45,0.3); } 50% { box-shadow: 0 0 40px rgba(203,32,45,0.6); } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes borderGlow { 0%, 100% { border-color: rgba(79,227,193,0.2); } 50% { border-color: rgba(79,227,193,0.6); } }
+        @keyframes borderGlow { 0%, 100% { border-color: rgba(203,32,45,0.2); } 50% { border-color: rgba(203,32,45,0.6); } }
         .animate-float { animation: floatAnim 6s ease-in-out infinite; }
         .animate-float-slow { animation: floatSlow 8s ease-in-out infinite; }
         .animate-glow { animation: glowPulse 3s ease-in-out infinite; }
@@ -471,9 +513,9 @@ function ProductDetailContent() {
         .animate-border-glow { animation: borderGlow 2s ease-in-out infinite; }
         .glass-premium { background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(31,38,135,0.08); }
         .glass-premium-dark { background: rgba(255,255,255,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.2); }
-        .text-gradient { background: linear-gradient(135deg, #4FE3C1, #00FF88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .text-gradient-cyan { background: linear-gradient(135deg, #4FE3C1, #60f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .spec-card-glow:hover { box-shadow: 0 0 30px rgba(79,227,193,0.15), 0 0 60px rgba(79,227,193,0.05); }
+        .text-gradient { background: linear-gradient(135deg, #CB202D, #FF5A65); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .text-gradient-cyan { background: linear-gradient(135deg, #CB202D, #60f0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .spec-card-glow:hover { box-shadow: 0 0 30px rgba(203,32,45,0.15), 0 0 60px rgba(203,32,45,0.05); }
         .spec-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .spec-card:hover { transform: translateY(-4px) scale(1.02); }
       `}</style>
@@ -495,8 +537,8 @@ function ProductDetailContent() {
       {/* === HERO SECTION - Premium Luxury Gallery Layout === */}
       <section className="relative pt-28 md:pt-32 pb-12 md:pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#4FE3C1]/5 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#00FF88]/5 rounded-full blur-[100px]" />
+          <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#CB202D]/5 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#FF5A65]/5 rounded-full blur-[100px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 w-full">
@@ -507,11 +549,11 @@ function ProductDetailContent() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="flex items-center gap-2 text-xs text-outline/60 font-medium flex-wrap mb-4"
           >
-            <Link to="/" className="hover:text-[#4FE3C1] transition-colors">Home</Link>
+            <Link to="/" className="hover:text-[#CB202D] transition-colors">Home</Link>
             <span>/</span>
             {categoryName && (
               <>
-                <Link to={`/collection/${categoryName.toLowerCase()}`} className="hover:text-[#4FE3C1] transition-colors">{categoryName}</Link>
+                <Link to={`/collection/${categoryName.toLowerCase()}`} className="hover:text-[#CB202D] transition-colors">{categoryName}</Link>
                 <span>/</span>
               </>
             )}
@@ -539,8 +581,8 @@ function ProductDetailContent() {
                         whileTap={{ scale: 0.95 }}
                         className={`w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-200 ${
                           idx === selectedImage
-                            ? 'border-[#4FE3C1] ring-2 ring-[#4FE3C1]/30 shadow-md'
-                            : 'border-gray-200/60 hover:border-[#4FE3C1]/40 opacity-70 hover:opacity-100'
+                            ? 'border-[#CB202D] ring-2 ring-[#CB202D]/30 shadow-md'
+                            : 'border-gray-200/60 hover:border-[#CB202D]/40 opacity-70 hover:opacity-100'
                         }`}
                       >
                         <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -617,9 +659,9 @@ function ProductDetailContent() {
                         {features.includes('New') || !!(product as any).is_new_arrival ? (
                           <span className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold tracking-wider uppercase shadow-lg"
                             style={{
-                              background: 'linear-gradient(135deg, #4FE3C1, #00FF88)',
-                              color: '#00391c',
-                              boxShadow: '0 4px 15px rgba(79,227,193,0.3)',
+                              background: 'linear-gradient(135deg, #CB202D, #FF5A65)',
+                              color: '#A81D2A',
+                              boxShadow: '0 4px 15px rgba(203,32,45,0.3)',
                             }}
                           >
                             New Arrival
@@ -668,7 +710,7 @@ function ProductDetailContent() {
                           onClick={() => setSelectedImage(idx)}
                           className={`w-14 h-14 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all duration-200 ${
                             idx === selectedImage
-                              ? 'border-[#4FE3C1] ring-2 ring-[#4FE3C1]/30 shadow-md'
+                              ? 'border-[#CB202D] ring-2 ring-[#CB202D]/30 shadow-md'
                               : 'border-gray-200/60 opacity-60'
                           }`}
                         >
@@ -686,7 +728,7 @@ function ProductDetailContent() {
                           key={idx}
                           onClick={() => setSelectedImage(idx)}
                           className={`h-1.5 rounded-full transition-all duration-300 ${
-                            idx === selectedImage ? 'w-6 bg-[#4FE3C1]' : 'w-1.5 bg-gray-300'
+                            idx === selectedImage ? 'w-6 bg-[#CB202D]' : 'w-1.5 bg-gray-300'
                           }`}
                         />
                       ))}
@@ -707,7 +749,7 @@ function ProductDetailContent() {
                           <button key={c}
                             onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
                             className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${
-                              i === selectedColorIdx ? 'border-[#4FE3C1] scale-110 shadow-md shadow-[#4FE3C1]/30' : 'border-gray-300 hover:border-gray-400'
+                              i === selectedColorIdx ? 'border-[#CB202D] scale-110 shadow-md shadow-[#CB202D]/30' : 'border-gray-300 hover:border-gray-400'
                             }`}
                             style={{ backgroundColor: getColorSwatch(c) }}
                             title={c}
@@ -734,7 +776,7 @@ function ProductDetailContent() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#4FE3C1]">{productName}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#CB202D]">{productName}</span>
                   <span className="mx-2 text-[10px] text-outline/40">|</span>
                   <span className="text-[11px] text-outline/60 font-medium">Parent Product</span>
                 </motion.div>
@@ -778,13 +820,19 @@ function ProductDetailContent() {
                 transition={{ delay: 0.35 }}
                 className="flex items-center gap-3"
               >
-                <div className="flex items-center gap-0.5 text-amber-400">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <FiStar key={star} size={15} fill={star <= 4 ? 'currentColor' : 'none'} className={star <= 4 ? '' : 'text-gray-300'} />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-outline">4.0</span>
-                <span className="text-xs text-outline/50">(128 Reviews)</span>
+                {productRating.count > 0 ? (
+                  <>
+                    <div className="flex items-center gap-0.5 text-amber-400">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FiStar key={star} size={15} fill={star <= Math.round(productRating.average) ? 'currentColor' : 'none'} className={star <= Math.round(productRating.average) ? '' : 'text-gray-300'} />
+                      ))}
+                    </div>
+                    <span className="text-xs font-bold text-outline">{productRating.average}</span>
+                    <span className="text-xs text-outline/50">({productRating.count} Review{productRating.count !== 1 ? 's' : ''})</span>
+                  </>
+                ) : (
+                  <span className="text-xs text-outline/50">No reviews yet</span>
+                )}
               </motion.div>
 
               {/* Divider */}
@@ -801,7 +849,7 @@ function ProductDetailContent() {
                 {oldPriceVal > currentPrice && (
                   <>
                     <span className="text-lg text-outline line-through">{formatPrice(oldPriceVal)}</span>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#00FF88]/15 text-[#00FF88] text-xs font-extrabold tracking-wide">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FF5A65]/15 text-[#FF5A65] text-xs font-extrabold tracking-wide">
                       {discount}% OFF
                     </span>
                   </>
@@ -845,7 +893,7 @@ function ProductDetailContent() {
                         onClick={() => { setSelectedStorageIdx(i); setSelectedVariantId(null) }}
                         className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all duration-200 ${
                           i === selectedStorageIdx
-                            ? 'border-[#4FE3C1] bg-[#4FE3C1]/10 text-[#4FE3C1] shadow-sm'
+                            ? 'border-[#CB202D] bg-[#CB202D]/10 text-[#CB202D] shadow-sm'
                             : 'border-gray-200 text-outline hover:border-gray-300'
                         }`}
                       >
@@ -871,7 +919,7 @@ function ProductDetailContent() {
                         onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
                         className={`w-9 h-9 rounded-full border-2 transition-all duration-200 ${
                           i === selectedColorIdx
-                            ? 'border-[#4FE3C1] ring-2 ring-[#4FE3C1]/30 scale-110 shadow-md'
+                            ? 'border-[#CB202D] ring-2 ring-[#CB202D]/30 scale-110 shadow-md'
                             : 'border-gray-300 hover:border-gray-400'
                         }`}
                         style={{ backgroundColor: getColorSwatch(c) }}
@@ -922,9 +970,9 @@ function ProductDetailContent() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className={`flex-1 relative overflow-hidden px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition-all ${
-                          !inStock || isAdding ? 'opacity-50 cursor-not-allowed bg-gray-300' : isInCart ? 'bg-red-50 text-red-600 border-2 border-red-200' : 'text-white shadow-[#4FE3C1]/25'
+                          !inStock || isAdding ? 'opacity-50 cursor-not-allowed bg-gray-300' : isInCart ? 'bg-red-50 text-red-600 border-2 border-red-200' : 'text-white shadow-[#CB202D]/25'
                         }`}
-                        style={inStock && !isAdding && !isInCart ? { background: 'linear-gradient(135deg, #4FE3C1, #454747)' } : undefined}
+                        style={inStock && !isAdding && !isInCart ? { background: 'linear-gradient(135deg, #CB202D, #A81D2A)' } : undefined}
                       >
                         <span className="relative z-10 flex items-center justify-center gap-2">
                           {isAdding ? <><FiRefreshCw size={16} className="animate-spin" /> Adding...</> : isInCart ? <><FiTrash2 size={16} /> Remove from Cart</> : <><FiShoppingCart size={16} /> Add to Cart</>}
@@ -936,7 +984,7 @@ function ProductDetailContent() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="flex-1 px-6 py-3 rounded-xl font-bold text-sm shadow-lg text-white"
-                        style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                        style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                       >
                         <span className="flex items-center justify-center gap-2"><FiZap size={16} /> Buy Now</span>
                       </motion.button>
@@ -947,7 +995,7 @@ function ProductDetailContent() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       className="px-8 py-3 rounded-xl font-bold text-sm shadow-lg text-white flex items-center gap-2"
-                      style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                      style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                     >
                       <FiGrid size={16} /> Compare Variants
                     </motion.button>
@@ -983,7 +1031,7 @@ function ProductDetailContent() {
             >
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#4FE3C1] mb-2 block">Variants</span>
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#CB202D] mb-2 block">Variants</span>
                   <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Compare Configurations</h2>
                   <p className="text-outline mt-2">Choose the perfect configuration for your lifestyle.</p>
                 </div>
@@ -995,7 +1043,7 @@ function ProductDetailContent() {
                         {storageOptions.map((s, i) => (
                           <button key={s} onClick={() => { setSelectedStorageIdx(i); setSelectedVariantId(null) }}
                             className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all ${
-                              i === selectedStorageIdx ? 'bg-[#4FE3C1] text-white' : 'bg-gray-100 text-outline hover:bg-gray-200'
+                              i === selectedStorageIdx ? 'bg-[#CB202D] text-white' : 'bg-gray-100 text-outline hover:bg-gray-200'
                             }`}
                           >{s}</button>
                         ))}
@@ -1009,7 +1057,7 @@ function ProductDetailContent() {
                         {colors.map((c, i) => (
                           <button key={c} onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
                             className={`w-5 h-5 rounded-full border-2 transition-all ${
-                              i === selectedColorIdx ? 'border-[#4FE3C1] scale-110' : 'border-transparent'
+                              i === selectedColorIdx ? 'border-[#CB202D] scale-110' : 'border-transparent'
                             }`}
                             style={{ backgroundColor: getColorSwatch(c) }}
                             title={c}
@@ -1025,7 +1073,7 @@ function ProductDetailContent() {
                         {ramOptions.map((r, i) => (
                           <button key={r} onClick={() => { setSelectedRamIdx(i); setSelectedVariantId(null) }}
                             className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all ${
-                              i === selectedRamIdx ? 'bg-[#4FE3C1] text-white' : 'bg-gray-100 text-outline hover:bg-gray-200'
+                              i === selectedRamIdx ? 'bg-[#CB202D] text-white' : 'bg-gray-100 text-outline hover:bg-gray-200'
                             }`}
                           >{r}</button>
                         ))}
@@ -1054,12 +1102,12 @@ function ProductDetailContent() {
                     whileHover={{ y: -6 }}
                     className={`relative rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 ${
                       isActive
-                        ? 'ring-2 ring-[#4FE3C1] shadow-xl shadow-[#4FE3C1]/10 animate-border-glow'
-                        : 'glass-premium hover:shadow-lg hover:border-[#4FE3C1]/30'
+                        ? 'ring-2 ring-[#CB202D] shadow-xl shadow-[#CB202D]/10 animate-border-glow'
+                        : 'glass-premium hover:shadow-lg hover:border-[#CB202D]/30'
                     }`}
                     style={{
-                      background: isActive ? 'linear-gradient(135deg, rgba(79,227,193,0.05), rgba(0,255,136,0.05))' : '',
-                      border: isActive ? '2px solid rgba(79,227,193,0.4)' : '1px solid rgba(255,255,255,0.3)',
+                      background: isActive ? 'linear-gradient(135deg, rgba(203,32,45,0.05), rgba(255,90,101,0.05))' : '',
+                      border: isActive ? '2px solid rgba(203,32,45,0.4)' : '1px solid rgba(255,255,255,0.3)',
                     }}
                     onClick={() => {
                       setSelectedVariantId(String(v.id))
@@ -1069,7 +1117,7 @@ function ProductDetailContent() {
                     }}
                   >
                     {isActive && (
-                      <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}>
+                      <div className="absolute top-4 right-4 z-10 w-7 h-7 rounded-full flex items-center justify-center shadow-lg" style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}>
                         <FiCheck size={14} className="text-white" />
                       </div>
                     )}
@@ -1092,7 +1140,7 @@ function ProductDetailContent() {
                         <h3 className="text-lg font-bold">{v.name || `${v.storage || ''} ${v.color || ''}`}</h3>
                         <div className="flex flex-wrap gap-2">
                           {v.storage && (
-                            <span className="px-2.5 py-1 rounded-lg bg-[#4FE3C1]/10 text-[#4FE3C1] text-[10px] font-bold flex items-center gap-1">
+                            <span className="px-2.5 py-1 rounded-lg bg-[#CB202D]/10 text-[#CB202D] text-[10px] font-bold flex items-center gap-1">
                               <FiHardDrive size={10} /> {v.storage}
                             </span>
                           )}
@@ -1114,7 +1162,7 @@ function ProductDetailContent() {
                             <span className="text-sm text-outline line-through">{formatPrice(vOldPrice)}</span>
                           )}
                           {vDiscount > 0 && (
-                            <span className="text-[#00FF88] text-[10px] font-extrabold bg-[#00FF88]/10 px-2 py-0.5 rounded-full">{vDiscount}% OFF</span>
+                            <span className="text-[#FF5A65] text-[10px] font-extrabold bg-[#FF5A65]/10 px-2 py-0.5 rounded-full">{vDiscount}% OFF</span>
                           )}
                         </div>
                         <div className="pt-3 border-t border-gray-100">
@@ -1130,7 +1178,7 @@ function ProductDetailContent() {
                                   setSelectedVariantId(String(v.id))
                                   setTimeout(() => handleAddToCart(), 100)
                                 }}
-                                className="text-xs font-bold text-[#4FE3C1] hover:text-[#00FF88] transition-colors flex items-center gap-1"
+                                className="text-xs font-bold text-[#CB202D] hover:text-[#FF5A65] transition-colors flex items-center gap-1"
                               >
                                 <FiShoppingCart size={12} /> Quick Add
                               </button>
@@ -1156,9 +1204,9 @@ function ProductDetailContent() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-12"
           >
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#4FE3C1] mb-2 block">Specifications</span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#CB202D] mb-2 block">Specifications</span>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Technical Specifications</h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-[#4FE3C1] to-[#00FF88] rounded-full mx-auto" />
+            <div className="w-16 h-1 bg-gradient-to-r from-[#CB202D] to-[#FF5A65] rounded-full mx-auto" />
             <p className="text-outline mt-4">Deep dive into the engineering that powers your device.</p>
           </motion.div>
 
@@ -1182,7 +1230,7 @@ function ProductDetailContent() {
                     <motion.div
                       layoutId="specTab"
                       className="absolute inset-0 rounded-xl"
-                      style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                      style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -1214,8 +1262,8 @@ function ProductDetailContent() {
                   className="spec-card glass-premium p-6 md:p-8 rounded-2xl relative overflow-hidden group spec-card-glow"
                   style={{ border: '1px solid rgba(255,255,255,0.3)' }}
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#4FE3C1] to-[#00FF88] opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4FE3C1]/10 to-[#00FF88]/10 flex items-center justify-center mb-4 text-[#4FE3C1] group-hover:scale-110 transition-transform">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#CB202D] to-[#FF5A65] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#CB202D]/10 to-[#FF5A65]/10 flex items-center justify-center mb-4 text-[#CB202D] group-hover:scale-110 transition-transform">
                     {spec.label === 'Processor' || spec.key === 'processor' ? <FiCpu size={22} /> :
                      spec.key === 'ram' ? <FiHardDrive size={22} /> :
                      spec.key === 'gpu' ? <FiZap size={22} /> :
@@ -1235,7 +1283,7 @@ function ProductDetailContent() {
                   </div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-outline/70 mb-1.5">{spec.label}</p>
                   <h4 className="text-base md:text-lg font-extrabold tracking-tight">{spec.value}</h4>
-                  <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-[#4FE3C1]/5 to-transparent rounded-full group-hover:scale-150 transition-transform duration-500" />
+                  <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-[#CB202D]/5 to-transparent rounded-full group-hover:scale-150 transition-transform duration-500" />
                 </motion.div>
               ))}
             </motion.div>
@@ -1249,12 +1297,12 @@ function ProductDetailContent() {
               viewport={{ once: true, margin: '-60px' }}
               className="mt-12 glass-premium rounded-[2rem] p-8 md:p-12 max-w-4xl mx-auto relative overflow-hidden"
               style={{
-                border: '1px solid rgba(79,227,193,0.15)',
+                border: '1px solid rgba(203,32,45,0.15)',
                 background: 'linear-gradient(135deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))',
               }}
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#4FE3C1]/5 to-[#00FF88]/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#4FE3C1]/5 to-[#00FF88]/5 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#CB202D]/5 to-[#FF5A65]/5 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#CB202D]/5 to-[#FF5A65]/5 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
               <div className="relative z-10">
                 <div className="text-center mb-8">
@@ -1269,7 +1317,7 @@ function ProductDetailContent() {
 
                 {discount > 0 && (
                   <div className="flex justify-center mb-8">
-                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#00FF88]/15 to-[#4FE3C1]/15 border border-[#00FF88]/20">
+                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#FF5A65]/15 to-[#CB202D]/15 border border-[#FF5A65]/20">
                       <span className="text-sm font-extrabold text-gradient">{discount}% OFF</span>
                       <span className="w-px h-4 bg-outline/20" />
                       <span className="text-xs font-bold text-outline">You Save {formatPrice(youSave)}</span>
@@ -1285,7 +1333,7 @@ function ProductDetailContent() {
                     { icon: <FiAward size={20} />, label: 'Reward Points' },
                   ].map((item) => (
                     <div key={item.label} className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/30 hover:bg-white/50 transition-colors">
-                      <span className="text-[#4FE3C1]">{item.icon}</span>
+                      <span className="text-[#CB202D]">{item.icon}</span>
                       <span className="text-[10px] font-bold text-outline uppercase tracking-wider">{item.label}</span>
                     </div>
                   ))}
@@ -1306,9 +1354,9 @@ function ProductDetailContent() {
               viewport={{ once: true, margin: '-80px' }}
               className="mb-10"
             >
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#4FE3C1] mb-2 block">Related</span>
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#CB202D] mb-2 block">Related</span>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">More from {categoryName || 'this category'}</h2>
-              <div className="w-16 h-1 bg-gradient-to-r from-[#4FE3C1] to-[#00FF88] rounded-full mt-3" />
+              <div className="w-16 h-1 bg-gradient-to-r from-[#CB202D] to-[#FF5A65] rounded-full mt-3" />
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {relatedProducts.map((rp: any, idx: number) => {
@@ -1349,7 +1397,7 @@ function ProductDetailContent() {
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-8px)'
-                        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(79,227,193,0.3)'
+                        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(203,32,45,0.3)'
                         e.currentTarget.style.background = 'rgba(255,255,255,0.6)'
                       }}
                       onMouseLeave={(e) => {
@@ -1373,13 +1421,13 @@ function ProductDetailContent() {
                               background: badge === 'Trending'
                                 ? 'linear-gradient(135deg, #FF6B6B, #EE5A24)'
                                 : badge === 'New'
-                                  ? 'linear-gradient(135deg, #00FF88, #00D4FF)'
+                                  ? 'linear-gradient(135deg, #FF5A65, #00D4FF)'
                                   : 'linear-gradient(135deg, #7c3aed, #a78bfa)',
                               color: '#ffffff',
                               boxShadow: badge === 'Trending'
                                 ? '0 4px 15px rgba(255,107,107,0.4)'
                                 : badge === 'New'
-                                  ? '0 4px 15px rgba(0,255,136,0.3)'
+                                  ? '0 4px 15px rgba(255,90,101,0.3)'
                                   : '0 4px 15px rgba(124,58,237,0.3)',
                             }}>
                               <span className="material-symbols-outlined !text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -1406,7 +1454,7 @@ function ProductDetailContent() {
                           <h3 className="text-lg font-bold tracking-tight line-clamp-2" style={{ fontFamily: "'Inter', sans-serif", color: '#1a1c1c' }}>
                             {rpName}
                           </h3>
-                          <span className="text-lg font-bold shrink-0 ml-2" style={{ fontFamily: "'Inter', sans-serif", color: '#4FE3C1' }}>
+                          <span className="text-lg font-bold shrink-0 ml-2" style={{ fontFamily: "'Inter', sans-serif", color: '#CB202D' }}>
                             ₹{rpPrice.toLocaleString('en-IN')}
                           </span>
                         </div>
@@ -1425,7 +1473,7 @@ function ProductDetailContent() {
                           {rpOld && (
                             <div className="px-3 py-1 rounded-full text-xs border" style={{ fontFamily: "'Inter', sans-serif", backgroundColor: '#eeeeee', color: '#47464c', borderColor: 'rgba(217,222,229,0.5)' }}>
                               <span className="line-through">₹{rpOld.toLocaleString('en-IN')}</span>
-                              <span className="font-semibold ml-1" style={{ color: '#00FF88' }}>{rpDisc}% OFF</span>
+                              <span className="font-semibold ml-1" style={{ color: '#FF5A65' }}>{rpDisc}% OFF</span>
                             </div>
                           )}
                           {rp.brand && (
@@ -1440,7 +1488,7 @@ function ProductDetailContent() {
                       <Link
                         to={`/product/${rp.id}`}
                         className="w-full py-3.5 rounded-full font-bold shadow-lg transition-all active:scale-95 text-sm flex items-center justify-center gap-2 text-white"
-                        style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)', fontFamily: "'Inter', sans-serif" }}
+                        style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)', fontFamily: "'Inter', sans-serif" }}
                       >
                         <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_shopping_cart</span>
                         View Product
@@ -1454,8 +1502,8 @@ function ProductDetailContent() {
         </section>
       )}
 
-      {/* === COMMUNITY REVIEWS === */}
-      <section className="py-16 md:py-24 bg-white/40">
+      {/* === REVIEWS === */}
+      <section ref={reviewSectionRef} className="py-16 md:py-24 bg-white/40" id="reviews">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1463,81 +1511,117 @@ function ProductDetailContent() {
             viewport={{ once: true, margin: '-80px' }}
             className="text-center mb-12"
           >
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#4FE3C1] mb-2 block">Reviews</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Community Reviews</h2>
-            <div className="w-16 h-1 bg-gradient-to-r from-[#4FE3C1] to-[#00FF88] rounded-full mx-auto" />
-            <p className="text-outline mt-4">Trusted by thousands of customers worldwide.</p>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#CB202D] mb-2 block">Reviews</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Customer Reviews</h2>
+            <div className="w-16 h-1 bg-gradient-to-r from-[#CB202D] to-[#FF5A65] rounded-full mx-auto" />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col md:flex-row items-center justify-center gap-8 mb-12"
-          >
-            <div className="text-center">
-              <div className="text-5xl md:text-6xl font-black text-on-surface mb-1">4.6</div>
-              <div className="flex justify-center text-amber-400 mb-1 gap-0.5">
-                {[...Array(4)].map((_, i) => <FiStar key={i} size={18} fill="currentColor" />)}
-                <FiStar size={18} className="text-amber-400" fill="currentColor" />
-              </div>
-              <p className="text-[11px] font-bold text-outline uppercase tracking-wider mt-1">128 Reviews</p>
-            </div>
-            <div className="flex flex-col gap-2 w-full max-w-xs">
-              {[5, 4, 3].map((star) => {
-                const pct = star === 5 ? 45 : star === 4 ? 30 : 15
-                return (
-                  <div key={star} className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold w-4 text-outline">{star}</span>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${pct}%` }}
-                        viewport={{ once: true }}
-                        className="h-full bg-gradient-to-r from-[#4FE3C1] to-[#00FF88] rounded-full"
-                      />
-                    </div>
-                    <span className="text-[10px] font-bold w-6 text-outline">{pct}%</span>
-                  </div>
-                )
-              })}
-            </div>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { name: 'Rahul S.', rating: 5, text: 'The build quality is insane. It feels like a piece of jewelry but performs like a supercomputer. Battery life exceeds my expectations.', avatar: 'https://i.pravatar.cc/80?u=rahul', time: '2 weeks ago', badge: 'Verified Purchase' },
-              { name: 'Priya M.', rating: 5, text: 'Amazing quality! No scratches, perfect screen! Truly lives up to the Pro name.', avatar: 'https://i.pravatar.cc/80?u=priya', time: '1 month ago', badge: 'Verified Purchase' },
-              { name: 'Arun K.', rating: 4, text: 'Great watch, great price. The 1-year warranty gives peace of mind. Highly recommend for fitness enthusiasts.', avatar: 'https://i.pravatar.cc/80?u=arun', time: '3 weeks ago', badge: 'Verified Purchase' },
-            ].map((review, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className={`glass-premium p-6 md:p-8 rounded-2xl ${i === 1 ? 'ring-2 ring-[#4FE3C1]/20' : ''}`}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex gap-3">
-                    <img src={review.avatar} alt="" className="w-10 h-10 rounded-full bg-gray-200 object-cover" />
-                    <div>
-                      <h5 className="font-bold text-sm">{review.name}</h5>
-                      <p className="text-[10px] text-outline/60">{review.time}</p>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#00FF88]/10 text-[#00FF88] text-[10px] font-bold">{review.badge}</span>
-                </div>
-                <div className="flex text-amber-400 mb-3 gap-0.5">
-                  {[...Array(5)].map((_, s) => (
-                    <FiStar key={s} size={14} fill={s < review.rating ? 'currentColor' : 'none'} className={s < review.rating ? '' : 'text-gray-300'} />
+          {/* Rating Summary */}
+          {productRating.count > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col md:flex-row items-center justify-center gap-8 mb-12"
+            >
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-black text-on-surface mb-1">{productRating.average}</div>
+                <div className="flex justify-center text-amber-400 mb-1 gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <FiStar key={s} size={18} fill={s <= Math.round(productRating.average) ? 'currentColor' : 'none'} className={s <= Math.round(productRating.average) ? '' : 'text-gray-300'} />
                   ))}
                 </div>
-                <p className="text-sm leading-relaxed text-outline">&ldquo;{review.text}&rdquo;</p>
-              </motion.div>
-            ))}
-          </div>
+                <p className="text-[11px] font-bold text-outline uppercase tracking-wider mt-1">{productRating.count} Review{productRating.count !== 1 ? 's' : ''}</p>
+              </div>
+              <div className="flex flex-col gap-2 w-full max-w-xs">
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const count = productRating.distribution[star] || 0
+                  const pct = productRating.count > 0 ? Math.round((count / productRating.count) * 100) : 0
+                  return (
+                    <div key={star} className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold w-4 text-outline">{star}</span>
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${pct}%` }}
+                          viewport={{ once: true }}
+                          className="h-full bg-gradient-to-r from-[#CB202D] to-[#FF5A65] rounded-full"
+                        />
+                      </div>
+                      <span className="text-[10px] font-bold w-6 text-outline">{pct}%</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Review Form */}
+          {canReview && !hasReviewed && showReviewForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-xl mx-auto mb-12"
+            >
+              <ReviewForm
+                productId={Number(resolvedId)}
+                orderId={orderIdParam}
+                onSubmitted={refreshReviews}
+              />
+            </motion.div>
+          )}
+
+          {canReview && !hasReviewed && !showReviewForm && (
+            <div className="text-center mb-10">
+              <button
+                onClick={() => setShowReviewForm(true)}
+                className="px-6 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+              >
+                Write a Review
+              </button>
+            </div>
+          )}
+
+          {/* Reviews List */}
+          {productReviews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {productReviews.map((review, i) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -4 }}
+                  className="glass-premium p-6 md:p-8 rounded-2xl"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#CB202D] to-[#454747] flex items-center justify-center text-white font-bold text-sm">
+                        {review.userName.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-sm">{review.userName}</h5>
+                        <p className="text-[10px] text-outline/60">{new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      </div>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-[#FF5A65]/10 text-[#FF5A65] text-[10px] font-bold">Verified Purchase</span>
+                  </div>
+                  <div className="flex text-amber-400 mb-3 gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <FiStar key={s} size={14} fill={s <= review.rating ? 'currentColor' : 'none'} className={s <= review.rating ? '' : 'text-gray-300'} />
+                    ))}
+                  </div>
+                  <p className="text-sm leading-relaxed text-outline">&ldquo;{review.comment}&rdquo;</p>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-outline/50 text-sm">No reviews yet. Be the first to review this product!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -1547,8 +1631,8 @@ function ProductDetailContent() {
           onClick={() => setShareOpen(!shareOpen)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full text-white shadow-xl shadow-[#4FE3C1]/30 flex items-center justify-center"
-          style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+          className="w-12 h-12 rounded-full text-white shadow-xl shadow-[#CB202D]/30 flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
         >
           <FiShare2 size={20} />
         </motion.button>
@@ -1562,19 +1646,19 @@ function ProductDetailContent() {
             >
               <p className="text-[10px] font-bold uppercase tracking-wider text-outline/60 mb-2 px-2">Share</p>
               <div className="space-y-1">
-                <button onClick={handleShare} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#4FE3C1]/5 transition-colors text-sm font-medium">
+                <button onClick={handleShare} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#CB202D]/5 transition-colors text-sm font-medium">
                   <FiExternalLink size={16} className="text-outline" /> Copy Link
                 </button>
-                <button onClick={() => { window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#4FE3C1]/5 transition-colors text-sm font-medium">
+                <button onClick={() => { window.open(`https://wa.me/?text=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#CB202D]/5 transition-colors text-sm font-medium">
                   <FaWhatsapp size={16} className="text-green-500" /> WhatsApp
                 </button>
-                <button onClick={() => { window.open(`https://telegram.me/share/url?url=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#4FE3C1]/5 transition-colors text-sm font-medium">
+                <button onClick={() => { window.open(`https://telegram.me/share/url?url=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#CB202D]/5 transition-colors text-sm font-medium">
                   <FaTelegram size={16} className="text-blue-400" /> Telegram
                 </button>
-                <button onClick={() => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#4FE3C1]/5 transition-colors text-sm font-medium">
+                <button onClick={() => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#CB202D]/5 transition-colors text-sm font-medium">
                   <FaFacebook size={16} className="text-blue-600" /> Facebook
                 </button>
-                <button onClick={() => { window.open(`mailto:?subject=${encodeURIComponent(productName)}&body=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#4FE3C1]/5 transition-colors text-sm font-medium">
+                <button onClick={() => { window.open(`mailto:?subject=${encodeURIComponent(productName)}&body=${encodeURIComponent(window.location.href)}`, '_blank'); setShareOpen(false) }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#CB202D]/5 transition-colors text-sm font-medium">
                   <FaEnvelope size={16} className="text-gray-500" /> Email
                 </button>
               </div>
@@ -1632,9 +1716,9 @@ function ProductDetailContent() {
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : isInCart
                       ? 'bg-red-50 text-red-600 border-2 border-red-200 hover:bg-red-100'
-                      : 'text-white shadow-[#4FE3C1]/20 hover:shadow-xl hover:shadow-[#4FE3C1]/30'
+                      : 'text-white shadow-[#CB202D]/20 hover:shadow-xl hover:shadow-[#CB202D]/30'
                 }`}
-                style={inStock && !isAdding && !isInCart ? { background: 'linear-gradient(135deg, #4FE3C1, #454747)' } : undefined}
+                style={inStock && !isAdding && !isInCart ? { background: 'linear-gradient(135deg, #CB202D, #A81D2A)' } : undefined}
               >
                 {!inStock ? 'Out of Stock' : isAdding ? <><FiRefreshCw size={16} className="animate-spin" /> Adding...</> : isInCart ? <><FiTrash2 size={16} /> Remove from Cart</> : <><FiShoppingCart size={16} /> Add to Cart</>}
               </motion.button>

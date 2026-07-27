@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { addressService, type AddressData } from '../../services/addressService'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Heart, Share2, Plus, Minus, Star, Truck, ShieldCheck, Check, Zap, ChevronDown, BadgeCheck, MapPin, ChevronRight, Search, Award, CreditCard, Repeat, Package, Tag, Flame, Gift, ShoppingBag } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { authService } from '../../services/authService'
+import { reviewService, type Review, type ProductRating } from '../../services/reviewService'
+import ReviewForm from '../ReviewForm'
 import { useMobileToast } from './useMobileToast'
 import { getImageUrl, getProductImage } from './helpers'
 import { FALLBACK_IMG } from './fallback'
@@ -27,9 +29,13 @@ const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 export default function MobileProductDetail() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { productId, id } = useParams()
   const resolvedId = productId || id
   const { show: showToast, Toast } = useMobileToast()
+
+  const rateParam = searchParams.get('rate') === 'true'
+  const orderIdParam = searchParams.get('order_id') || ''
 
   useEffect(() => {
     addressService.list()
@@ -68,6 +74,11 @@ export default function MobileProductDetail() {
   const trackRef = useRef<HTMLDivElement>(null)
   const startX = useRef(0)
   const dragX = useRef(0)
+  const [productReviews, setProductReviews] = useState<Review[]>([])
+  const [productRating, setProductRating] = useState<ProductRating>({ average: 0, count: 0, distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } })
+  const [canReview, setCanReview] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [hasReviewed, setHasReviewed] = useState(false)
 
   useEffect(() => {
     if (!resolvedId) { setLoading(false); return }
@@ -80,6 +91,37 @@ export default function MobileProductDetail() {
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])
+
+  useEffect(() => {
+    if (!resolvedId) return
+    const pid = Number(resolvedId)
+    const reviews = reviewService.getByProduct(pid)
+    setProductReviews(reviews)
+    setProductRating(reviewService.getProductRating(pid))
+    setHasReviewed(reviewService.hasUserReviewed(pid))
+  }, [resolvedId])
+
+  useEffect(() => {
+    if (!resolvedId) return
+    if (!authService.isAuthenticated()) { setCanReview(false); return }
+    const { eligible } = reviewService.hasDeliveredOrder(Number(resolvedId))
+    setCanReview(eligible)
+    if (rateParam && eligible) {
+      setShowReviewForm(true)
+      setReviewsOpen(true)
+      setTimeout(() => {
+        document.getElementById('mobile-reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 600)
+    }
+  }, [resolvedId, rateParam])
+
+  const refreshReviews = () => {
+    if (!resolvedId) return
+    const pid = Number(resolvedId)
+    setProductReviews(reviewService.getByProduct(pid))
+    setProductRating(reviewService.getProductRating(pid))
+    setHasReviewed(reviewService.hasUserReviewed(pid))
+  }
 
   useEffect(() => {
     try { setWished(new Set<number>((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).map((i: any) => typeof i === 'number' ? i : i.id)).has(Number(resolvedId))) } catch { setWished(false) }
@@ -397,11 +439,7 @@ export default function MobileProductDetail() {
     ]
   }, [product, ramOptions, storageOptions, selectedRamIdx, selectedStorageIdx, activeVariant, productBrand, productModel, productCategory, productSubCategory, colors, selectedColorIdx])
 
-  const reviews = product?.reviews || [
-    { name: 'Aarav S.', rating: 5, comment: 'Absolutely love it! Premium build and fast performance.', date: '2 days ago', verified: true },
-    { name: 'Meera K.', rating: 4, comment: 'Great phone, battery could be better but worth it.', date: '1 week ago', verified: true },
-    { name: 'Rohit P.', rating: 5, comment: 'Best in this price range. Highly recommend!', date: '2 weeks ago', verified: false },
-  ]
+  const reviews = productReviews
 
   const coupons = Object.entries(VALID_COUPONS).map(([code, c]) => ({ code, label: c.label, discount: c.discount, fixed: !!c.fixed }))
 
@@ -1060,22 +1098,23 @@ export default function MobileProductDetail() {
         </div>
 
         {/* Ratings & Reviews */}
-        <div className={`${card} mt-3 p-4`}>
+        <div id="mobile-reviews-section" className={`${card} mt-3 p-4`}>
           <button onClick={() => setReviewsOpen((v) => !v)} className="w-full flex items-center justify-between">
             <h2 className="text-[15px] font-extrabold">Ratings & Reviews</h2>
             <ChevronDown size={18} className={`transition-transform ${reviewsOpen ? 'rotate-180' : ''}`} style={{ color: PURPLE }} />
           </button>
           <div className="flex items-center gap-3 mt-3">
-            <span className="text-[34px] font-black leading-none">{rating.toFixed(1)}</span>
+            <span className="text-[34px] font-black leading-none">{productRating.count > 0 ? productRating.average.toFixed(1) : '0.0'}</span>
             <div>
               <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} fill={s <= Math.round(rating) ? '#F59E0B' : 'none'} className={s <= Math.round(rating) ? 'text-[#F59E0B]' : 'text-[#E5E7EB]'} />)}
+                {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} fill={s <= Math.round(productRating.average) ? '#F59E0B' : 'none'} className={s <= Math.round(productRating.average) ? 'text-[#F59E0B]' : 'text-[#E5E7EB]'} />)}
               </div>
-              <p className="text-[11px] text-[#6B7280] mt-0.5">{ratingCount} ratings</p>
+              <p className="text-[11px] text-[#6B7280] mt-0.5">{productRating.count} rating{productRating.count !== 1 ? 's' : ''}</p>
             </div>
           </div>
-          {[5, 4, 3, 2, 1].map((star) => {
-            const pct = star === Math.round(rating) ? 70 : star === Math.round(rating) - 1 ? 20 : 5
+          {productRating.count > 0 && [5, 4, 3, 2, 1].map((star) => {
+            const count = productRating.distribution[star] || 0
+            const pct = productRating.count > 0 ? Math.round((count / productRating.count) * 100) : 0
             return (
               <div key={star} className="flex items-center gap-2 mt-1.5">
                 <span className="text-[11px] text-[#6B7280] w-3">{star}</span>
@@ -1089,23 +1128,48 @@ export default function MobileProductDetail() {
           <AnimatePresence initial={false}>
             {reviewsOpen && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                {/* Review Form (mobile) */}
+                {canReview && !hasReviewed && showReviewForm && (
+                  <div className="mt-3">
+                    <ReviewForm
+                      productId={Number(resolvedId)}
+                      orderId={orderIdParam}
+                      onSubmitted={refreshReviews}
+                    />
+                  </div>
+                )}
+                {canReview && !hasReviewed && !showReviewForm && (
+                  <div className="mt-3 text-center">
+                    <button
+                      onClick={() => setShowReviewForm(true)}
+                      className="px-5 py-2.5 rounded-xl font-bold text-[13px] text-white"
+                      style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}
+                    >
+                      Write a Review
+                    </button>
+                  </div>
+                )}
                 <div className="mt-3 space-y-2.5">
-                  {reviews.map((r: any, i: number) => (
-                    <div key={i} className="bg-[#FFFBFB] rounded-2xl p-3">
+                  {reviews.length > 0 ? reviews.map((r: any, i: number) => (
+                    <div key={r.id || i} className="bg-[#FFFBFB] rounded-2xl p-3">
                       <div className="flex items-center gap-2.5">
-                        <span className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[13px]" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{r.name.charAt(0)}</span>
+                        <span className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[13px]" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{(r.userName || r.name || 'U').charAt(0).toUpperCase()}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[13px] font-bold leading-tight flex items-center gap-1">{r.name} {r.verified && <BadgeCheck size={13} className="text-[#CB202D]" />}</p>
-                          <p className="text-[10.5px] text-[#9CA3AF]">{r.date}</p>
+                          <p className="text-[13px] font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#CB202D]" /></p>
+                          <p className="text-[10.5px] text-[#9CA3AF]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.date}</p>
                         </div>
                         <div className="flex items-center gap-0.5">
                           {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={11} fill={s <= r.rating ? '#F59E0B' : 'none'} className={s <= r.rating ? 'text-[#F59E0B]' : 'text-[#E5E7EB]'} />)}
                         </div>
                       </div>
                       <p className="text-[12.5px] text-[#4B5563] mt-2 leading-snug">{r.comment}</p>
-                      {r.verified && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#CB202D] mt-1.5">Verified Purchase</span>}
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#CB202D] mt-1.5">Verified Purchase</span>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-6">
+                      <p className="text-[12px] text-[#9CA3AF]">No reviews yet. Be the first to review this product!</p>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}

@@ -5,7 +5,7 @@ import PageLayout from '../components/layout/PageLayout'
 import { orderService, type OrderResponse } from '../services/orderService'
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  'delivered': { bg: 'rgba(34,197,94,0.1)', text: '#16a34a', dot: '#22c55e' },
+  'delivered': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A', dot: '#CB202D' },
   'out_for_delivery': { bg: 'rgba(14,165,233,0.1)', text: '#0ea5e9', dot: '#0ea5e9' },
   'shipped': { bg: 'rgba(139,92,246,0.1)', text: '#8b5cf6', dot: '#8b5cf6' },
   'processing': { bg: 'rgba(245,158,11,0.1)', text: '#d97706', dot: '#f59e0b' },
@@ -25,7 +25,7 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const PAYMENT_COLORS: Record<string, { bg: string; text: string }> = {
-  'Paid': { bg: 'rgba(34,197,94,0.1)', text: '#16a34a' },
+  'Paid': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A' },
   'Pending': { bg: 'rgba(245,158,11,0.1)', text: '#d97706' },
   'Refunded': { bg: 'rgba(139,92,246,0.1)', text: '#8b5cf6' },
 }
@@ -168,7 +168,7 @@ export default function AdminOrders() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Orders', value: stats.total, icon: <FiShoppingBag size={18} />, color: '#8b5cf6', glow: 'rgba(139,92,246,0.12)' },
-          { label: 'Delivered', value: stats.delivered, icon: <FiCheck size={18} />, color: '#22c55e', glow: 'rgba(34,197,94,0.12)' },
+          { label: 'Delivered', value: stats.delivered, icon: <FiCheck size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.12)' },
           { label: 'In Transit', value: stats.inTransit, icon: <FiTruck size={18} />, color: '#0ea5e9', glow: 'rgba(14,165,233,0.12)' },
           { label: 'Revenue', value: formatCurrency(stats.revenue), icon: <FiCreditCard size={18} />, color: '#f59e0b', glow: 'rgba(245,158,11,0.12)' },
         ].map(s => (
@@ -490,9 +490,9 @@ export default function AdminOrders() {
                     <div className="bg-white rounded-xl p-3 border border-border/50 space-y-1.5">
                       <p className="text-[11px] text-text-secondary mb-2 font-semibold uppercase">Price Breakdown</p>
                       {selected.subtotal ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Subtotal</span><span className="font-medium text-text-primary">{formatCurrency(selected.subtotal)}</span></div> : null}
-                      {selected.shipping != null ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Shipping</span><span className="font-medium" style={{ color: selected.shipping === 0 ? '#16a34a' : undefined }}>{selected.shipping === 0 ? 'FREE' : formatCurrency(selected.shipping)}</span></div> : null}
+                      {selected.shipping != null ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Shipping</span><span className="font-medium" style={{ color: selected.shipping === 0 ? '#A81D2A' : undefined }}>{selected.shipping === 0 ? 'FREE' : formatCurrency(selected.shipping)}</span></div> : null}
                       {selected.tax ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Tax (GST)</span><span className="font-medium text-text-primary">{formatCurrency(selected.tax)}</span></div> : null}
-                      {selected.discount ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Coupon ({selected.couponCode})</span><span className="font-medium" style={{ color: '#16a34a' }}>-{formatCurrency(selected.discount)}</span></div> : null}
+                      {selected.discount ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Coupon ({selected.couponCode})</span><span className="font-medium" style={{ color: '#A81D2A' }}>-{formatCurrency(selected.discount)}</span></div> : null}
                     </div>
                   ) : null}
                   <div className="grid grid-cols-2 gap-3">

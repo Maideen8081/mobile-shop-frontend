@@ -413,7 +413,7 @@ void main() {
         p += vec2(cos(p.y + t), sin(p.x + t));
         n += (1.0/i) * abs(sin(dot(p, vec2(1.0, 1.0)) + t));
     }
-    vec3 mint = vec3(0.31, 0.89, 0.757);
+    vec3 mint = vec3(0.796, 0.125, 0.176);
     col = mix(col, mint, n * 0.025);
     float dist = length(uv - m);
     col += mint * (0.04 / (dist + 0.6)) * smoothstep(0.4, 0.0, dist);
@@ -485,7 +485,7 @@ void main() {
   const hasActiveFilters = brandFilter.length > 0 || activePriceRange !== null || ratingFilter > 0
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#00ff88]/30 selection:text-[#00391c] overflow-x-hidden">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#FF5A65]/30 selection:text-[#A81D2A] overflow-x-hidden">
       <canvas ref={canvasRef} className="fixed inset-0 w-full h-full -z-10" />
 
       {/* Collection Hero Carousel */}
@@ -531,7 +531,7 @@ void main() {
               key={idx}
               onClick={() => setHeroSlide(idx)}
               className={`h-1.5 rounded-full transition-all duration-500 ${
-                idx === heroSlide ? 'w-8 bg-[#00FF88]' : 'w-1.5 bg-white/40 hover:bg-white/60'
+                idx === heroSlide ? 'w-8 bg-[#FF5A65]' : 'w-1.5 bg-white/40 hover:bg-white/60'
               }`}
             />
           ))}
@@ -539,13 +539,13 @@ void main() {
         <div className="absolute" style={{ left: '10%', top: '55%', transform: 'translateY(-50%)', maxWidth: '700px', zIndex: 5 }}>
           <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.1em] uppercase mb-6`}
             style={{
-              background: 'rgba(0,255,136,0.15)',
-              border: '1px solid rgba(0,255,136,0.3)',
-              color: '#00FF88',
+              background: 'rgba(255,90,101,0.15)',
+              border: '1px solid rgba(255,90,101,0.3)',
+              color: '#FF5A65',
               fontFamily: "'Inter', sans-serif",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#00FF88' }} />
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#FF5A65' }} />
             {categoryName || 'Collection'}
           </div>
           <p className="text-white/85 text-lg md:text-2xl max-w-[650px] mb-10" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -555,7 +555,7 @@ void main() {
             <button
               className="px-8 py-3.5 rounded-full text-sm font-semibold text-black transition-all duration-300 hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, #00FF88, #00D4FF)',
+                background: 'linear-gradient(135deg, #FF5A65, #00D4FF)',
                 fontFamily: "'Inter', sans-serif",
                 fontWeight: 600,
               }}
@@ -696,7 +696,7 @@ void main() {
                           : 'border-glass-border text-on-surface-variant hover:border-mint'
                       }`}
                       style={{
-                        background: activePriceRange === idx ? 'rgba(79,227,193,0.2)' : 'rgba(255,255,255,0.4)',
+                        background: activePriceRange === idx ? 'rgba(203,32,45,0.2)' : 'rgba(255,255,255,0.4)',
                         fontFamily: "'Inter', sans-serif",
                       }}
                     >
@@ -718,7 +718,7 @@ void main() {
                           : 'border-glass-border glass-bg text-on-surface-variant hover:border-mint'
                       }`}
                       style={{
-                        background: brandFilter.includes(brand) ? 'rgba(79,227,193,0.2)' : 'rgba(255,255,255,0.4)',
+                        background: brandFilter.includes(brand) ? 'rgba(203,32,45,0.2)' : 'rgba(255,255,255,0.4)',
                         fontFamily: "'Inter', sans-serif",
                       }}
                     >
@@ -749,7 +749,7 @@ void main() {
           {loading && (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-4">
-                <div className="w-10 h-10 border-2 border-[#4FE3C1] border-t-transparent rounded-full animate-spin" />
+                <div className="w-10 h-10 border-2 border-[#CB202D] border-t-transparent rounded-full animate-spin" />
                 <p className="text-sm text-[#6B7280] font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>Loading collection...</p>
               </div>
             </div>
@@ -794,7 +794,7 @@ void main() {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-8px)'
-                      e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(79,227,193,0.3)'
+                      e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(203,32,45,0.3)'
                       e.currentTarget.style.background = 'rgba(255,255,255,0.6)'
                     }}
                     onMouseLeave={(e) => {
@@ -817,13 +817,13 @@ void main() {
                             background: badge === 'Trending'
                               ? 'linear-gradient(135deg, #FF6B6B, #EE5A24)'
                               : badge === 'New'
-                                ? 'linear-gradient(135deg, #00FF88, #00D4FF)'
+                                ? 'linear-gradient(135deg, #FF5A65, #00D4FF)'
                                 : 'linear-gradient(135deg, #7c3aed, #a78bfa)',
                             color: '#ffffff',
                             boxShadow: badge === 'Trending'
                               ? '0 4px 15px rgba(255,107,107,0.4)'
                               : badge === 'New'
-                                ? '0 4px 15px rgba(0,255,136,0.3)'
+                                ? '0 4px 15px rgba(255,90,101,0.3)'
                                 : '0 4px 15px rgba(124,58,237,0.3)',
                           }}>
                             <span className="material-symbols-outlined !text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -878,7 +878,7 @@ void main() {
                     <Link
                       to={`/product/${product.id}`}
                       className="w-full py-4 rounded-full bg-mint text-primary font-bold shadow-lg shadow-mint/10 transition-all hover:bg-secondary hover:text-white active:scale-95 magnetic-btn text-sm flex items-center justify-center gap-2"
-                      style={{ backgroundColor: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}
+                      style={{ backgroundColor: '#CB202D', fontFamily: "'Inter', sans-serif" }}
                     >
                       <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_shopping_cart</span>
                       View Product
@@ -891,13 +891,13 @@ void main() {
 
           {/* Bento Style Card */}
           {filteredProducts.length > 0 && (
-            <div className="entrance md:col-span-2 glass-card rounded-[2.5rem] p-[2.5rem] flex flex-col md:flex-row gap-8 items-center border-l-4 border-l-mint backdrop-blur-md hover:border-mint/50 shadow-[0_0_40px_rgba(79,227,193,0.1)]" style={{ animationDelay: '500ms',
+            <div className="entrance md:col-span-2 glass-card rounded-[2.5rem] p-[2.5rem] flex flex-col md:flex-row gap-8 items-center border-l-4 border-l-mint backdrop-blur-md hover:border-mint/50 shadow-[0_0_40px_rgba(203,32,45,0.1)]" style={{ animationDelay: '500ms',
               background: 'rgba(255,255,255,0.4)',
               backdropFilter: 'blur(25px)',
               WebkitBackdropFilter: 'blur(25px)',
               border: '1px solid rgba(217,222,229,0.5)',
-              borderLeft: '4px solid #4FE3C1',
-              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 0 40px rgba(79,227,193,0.1)',
+              borderLeft: '4px solid #CB202D',
+              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 0 40px rgba(203,32,45,0.1)',
               transition: 'all 0.5s cubic-bezier(0.23,1,0.32,1)',
             }}>
               <div className="flex-1 space-y-4">
@@ -910,7 +910,7 @@ void main() {
                 </p>
                 <div className="flex gap-6 pt-2">
                   <div className="flex flex-col">
-                    <span className="text-xl font-bold text-mint" style={{ fontFamily: "'Inter', sans-serif", color: '#4FE3C1' }}>95%+</span>
+                    <span className="text-xl font-bold text-mint" style={{ fontFamily: "'Inter', sans-serif", color: '#CB202D' }}>95%+</span>
                     <span className="text-xs tracking-[0.1em] font-bold text-on-surface-variant uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Battery health</span>
                   </div>
                   <div className="flex flex-col">
@@ -930,7 +930,7 @@ void main() {
                   alt=""
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-mint text-4xl animate-pulse" style={{ color: '#4FE3C1' }}>verified_user</span>
+                  <span className="material-symbols-outlined text-mint text-4xl animate-pulse" style={{ color: '#CB202D' }}>verified_user</span>
                 </div>
               </div>
             </div>
@@ -943,7 +943,7 @@ void main() {
                 onClick={handleLoadMore}
                 disabled={loadingMore}
                 className="px-10 py-4 rounded-full bg-mint text-primary font-bold shadow-lg shadow-mint/10 transition-all hover:bg-secondary hover:text-white active:scale-95 disabled:opacity-50 text-sm"
-                style={{ backgroundColor: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}
+                style={{ backgroundColor: '#CB202D', fontFamily: "'Inter', sans-serif" }}
               >
                 {loadingMore ? 'Loading...' : 'Load More'}
               </button>
@@ -986,17 +986,17 @@ void main() {
                       {tags.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mb-3">
                           {tags.map((tag, i) => (
-                            <span key={i} className="text-[9px] tracking-[0.1em] uppercase px-2.5 py-1 text-white bg-mint rounded-full" style={{ backgroundColor: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}>{tag}</span>
+                            <span key={i} className="text-[9px] tracking-[0.1em] uppercase px-2.5 py-1 text-white bg-mint rounded-full" style={{ backgroundColor: '#CB202D', fontFamily: "'Inter', sans-serif" }}>{tag}</span>
                           ))}
                         </div>
                       )}
-                      {brand && <p className="text-[11px] tracking-[0.15em] uppercase text-mint font-medium" style={{ color: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}>{brand}{model && ` | ${model}`}</p>}
+                      {brand && <p className="text-[11px] tracking-[0.15em] uppercase text-mint font-medium" style={{ color: '#CB202D', fontFamily: "'Inter', sans-serif" }}>{brand}{model && ` | ${model}`}</p>}
                       <h3 className="text-base text-on-surface font-semibold mt-1 leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>{getProductName(p)}</h3>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="text-xl font-bold text-on-surface" style={{ fontFamily: "'Inter', sans-serif" }}>₹{price.toLocaleString('en-IN')}</span>
                         {oldPrice && (
                           <><span className="text-xs text-on-surface-variant line-through" style={{ fontFamily: "'Inter', sans-serif" }}>₹{oldPrice.toLocaleString('en-IN')}</span>
-                            <span className="text-[10px] font-medium text-white bg-mint px-1.5 py-0.5 rounded" style={{ backgroundColor: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}>{discount}% OFF</span></>
+                            <span className="text-[10px] font-medium text-white bg-mint px-1.5 py-0.5 rounded" style={{ backgroundColor: '#CB202D', fontFamily: "'Inter', sans-serif" }}>{discount}% OFF</span></>
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 mt-2">
@@ -1025,7 +1025,7 @@ void main() {
                       )}
                       <div className="mt-5 space-y-2">
                         <Link to={`/product/${p.id}`} className="w-full h-11 text-sm font-medium text-primary font-bold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2"
-                          style={{ backgroundColor: '#4FE3C1', fontFamily: "'Inter', sans-serif" }}>
+                          style={{ backgroundColor: '#CB202D', fontFamily: "'Inter', sans-serif" }}>
                           <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_shopping_cart</span>
                           View Product
                         </Link>
@@ -1166,7 +1166,7 @@ void main() {
       <style>{`
         .glass-card:hover {
           transform: translateY(-8px) !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(79,227,193,0.3) !important;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(203,32,45,0.3) !important;
           background: rgba(255,255,255,0.6) !important;
         }
         .floating { animation: float 6s ease-in-out infinite; }

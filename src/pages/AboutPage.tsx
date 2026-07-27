@@ -81,7 +81,7 @@ export default function AboutPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#00ff88]/30 selection:text-[#00391c]">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
       <StorefrontNavbar activeLabel="Contact" absolute />
 
       {/* ─── HERO CAROUSEL ─── */}
@@ -96,15 +96,15 @@ export default function AboutPage() {
             <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(0,255,136,0.06)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(203,32,45,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/25 text-[#00ff88] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#CB202D]/10 border border-[#CB202D]/25 text-[#CB202D] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88] animate-ping" />
-                    <span className="absolute inset-0 rounded-full bg-[#00ff88]" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D] animate-ping" />
+                    <span className="absolute inset-0 rounded-full bg-[#CB202D]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -112,9 +112,9 @@ export default function AboutPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block bg-gradient-to-r from-[#00ff88] via-[#80ffbb] to-[#00ff88] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(0,255,136,0.4)]">
+                  <span className="relative inline-block bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(203,32,45,0.4)]">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00ff88] to-transparent rounded-full opacity-60 animate-pulse" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#CB202D] to-transparent rounded-full opacity-60 animate-pulse" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>
@@ -128,7 +128,7 @@ export default function AboutPage() {
                 }`}>
                   <Link
                     to="/about"
-                    className="group inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_60px_rgba(0,255,136,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
+                    className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
                   >
                     <span>Learn More</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -151,7 +151,7 @@ export default function AboutPage() {
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
-                i === currentSlide ? 'w-16 bg-[#00ff88]' : 'w-6 bg-white/30 hover:bg-white/50'
+                i === currentSlide ? 'w-16 bg-[#CB202D]' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
@@ -170,8 +170,8 @@ export default function AboutPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {stats.map((stat) => (
-              <div key={stat.label} className="glass-card p-8 rounded-2xl text-center group hover:shadow-[0_12px_40px_rgba(0,255,136,0.10)] hover:border-[#00ff88]/20 transition-all duration-500 stagger-item">
-                <div className="text-[clamp(32px,4vw,48px)] font-extrabold text-[#00391c] mb-2">{stat.value}</div>
+              <div key={stat.label} className="glass-card p-8 rounded-2xl text-center group hover:shadow-[0_12px_40px_rgba(203,32,45,0.10)] hover:border-[#CB202D]/20 transition-all duration-500 stagger-item">
+                <div className="text-[clamp(32px,4vw,48px)] font-extrabold text-[#A81D2A] mb-2">{stat.value}</div>
                 <div className="text-sm text-on-surface-variant font-medium">{stat.label}</div>
               </div>
             ))}
@@ -184,7 +184,7 @@ export default function AboutPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Our Story</span>
+              <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Our Story</span>
               <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-6">From a Small Shop to Trusted Repair Network</h2>
               <div className="space-y-4 text-base md:text-lg text-on-surface-variant leading-relaxed">
                 <p>PhoneFix Pro was founded in 2017 with a simple mission: make quality device repairs accessible and affordable for everyone. What started as a small counter-service shop has grown into a trusted repair network with three locations and thousands of satisfied customers.</p>
@@ -203,14 +203,14 @@ export default function AboutPage() {
       <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
           <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#00ff88] tracking-[0.2em] uppercase mb-3">Team</span>
+            <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">Team</span>
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Meet Our Team</h2>
             <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">The people behind the repairs — skilled, certified, and passionate about what they do.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member) => (
-              <div key={member.name} className="glass-card p-6 md:p-8 rounded-2xl text-center group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,255,136,0.10)] hover:border-[#00ff88]/25 hover:-translate-y-1 stagger-item">
-                <div className="w-24 h-24 rounded-full mx-auto mb-5 overflow-hidden ring-2 ring-[#00ff88]/20 group-hover:ring-[#00ff88]/40 transition-all duration-300">
+              <div key={member.name} className="glass-card p-6 md:p-8 rounded-2xl text-center group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(203,32,45,0.10)] hover:border-[#CB202D]/25 hover:-translate-y-1 stagger-item">
+                <div className="w-24 h-24 rounded-full mx-auto mb-5 overflow-hidden ring-2 ring-[#CB202D]/20 group-hover:ring-[#CB202D]/40 transition-all duration-300">
                   <img alt={member.name} className="w-full h-full object-cover" src={member.img} />
                 </div>
                 <h3 className="text-lg font-bold text-on-surface mb-1">{member.name}</h3>
@@ -224,13 +224,13 @@ export default function AboutPage() {
       {/* ─── CTA ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="glass-card rounded-[2.5rem] overflow-hidden border border-[#00ff88]/15 relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00391c] via-[#00391c]/80 to-transparent z-10" />
+          <div className="glass-card rounded-[2.5rem] overflow-hidden border border-[#CB202D]/15 relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#A81D2A] via-[#A81D2A]/80 to-transparent z-10" />
             <div className="relative z-20 flex flex-col md:flex-row items-center justify-between p-10 md:p-16">
               <div className="max-w-xl text-center md:text-left">
                 <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-white mb-4">Ready to Visit Us?</h2>
                 <p className="text-white/70 text-lg mb-8">Stop by any of our locations for a free diagnostic and consultation. No appointment needed.</p>
-                <Link to="/about" className="inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-base px-8 py-3.5 rounded-full shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:shadow-[0_0_50px_rgba(0,255,136,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
+                <Link to="/about" className="inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base px-8 py-3.5 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_50px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
                   Find a Shop
                   <span className="material-symbols-outlined text-lg">storefront</span>
                 </Link>

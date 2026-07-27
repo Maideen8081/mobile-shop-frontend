@@ -107,7 +107,7 @@ function CheckoutStepper({ currentStep }: { currentStep: number }) {
                   initial={{ width: 0 }}
                   animate={{ width: isCompleted ? '100%' : '0%' }}
                   className="h-full bg-mint"
-                  style={{ boxShadow: isCompleted ? '0 0 10px #4FE3C1' : 'none' }}
+                  style={{ boxShadow: isCompleted ? '0 0 10px #CB202D' : 'none' }}
                 />
               </div>
             )}
@@ -291,7 +291,7 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
             <motion.button whileHover={isValid ? { scale: 1.02 } : {}} whileTap={isValid ? { scale: 0.98 } : {}}
               onClick={handleSave} disabled={saving}
               className="flex-1 h-12 rounded-full text-sm font-bold flex items-center justify-center gap-2 text-white transition-all cursor-pointer"
-              style={{ background: saving ? '#4FE3C1/50' : 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+              style={{ background: saving ? '#CB202D/50' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
             >
               {saving ? <FiLoader size={16} className="animate-spin" /> : <FiCheck size={16} />}
               {saving ? 'Saving...' : (initialAddress?.id ? 'Update & Continue' : 'Save & Continue')}
@@ -451,9 +451,9 @@ export default function CheckoutAddress() {
   return (
     <div className="min-h-screen bg-background text-on-surface font-sans">
       <style>{`
-        .mint-glow { box-shadow: 0 0 20px rgba(79,227,193,0.4); }
-        .neon-line { height: 2px; background: linear-gradient(90deg, #4FE3C1 0%, transparent 100%); box-shadow: 0 0 10px #4FE3C1; }
-        @keyframes pulseMint { 0%, 100% { box-shadow: 0 0 0 0 rgba(79, 227, 193, 0.4); } 50% { box-shadow: 0 0 0 12px rgba(79, 227, 193, 0); } }
+        .mint-glow { box-shadow: 0 0 20px rgba(203,32,45,0.4); }
+        .neon-line { height: 2px; background: linear-gradient(90deg, #CB202D 0%, transparent 100%); box-shadow: 0 0 10px #CB202D; }
+        @keyframes pulseMint { 0%, 100% { box-shadow: 0 0 0 0 rgba(203, 32, 45, 0.4); } 50% { box-shadow: 0 0 0 12px rgba(203, 32, 45, 0); } }
       `}</style>
 
       <StorefrontNavbar activeLabel="Home" />
@@ -501,7 +501,7 @@ export default function CheckoutAddress() {
                 <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                   onClick={() => { setEditingAddress(null); setShowForm(true) }}
                   className="flex items-center gap-2 px-8 h-12 rounded-full text-sm font-bold text-white shadow-lg"
-                  style={{ background: 'linear-gradient(135deg, #4FE3C1, #454747)' }}
+                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                 >
                   <FiPlus size={16} /> Add Address
                 </motion.button>
@@ -527,22 +527,22 @@ export default function CheckoutAddress() {
                         }`}
                         style={{
                           background: isSelected
-                            ? 'rgba(79,227,193,0.08)'
+                            ? 'rgba(203,32,45,0.08)'
                             : 'rgba(255,255,255,0.4)',
                           backdropFilter: 'blur(25px)',
                           WebkitBackdropFilter: 'blur(25px)',
                           border: isSelected
-                            ? '1px solid rgba(79,227,193,0.5)'
+                            ? '1px solid rgba(203,32,45,0.5)'
                             : '1px solid rgba(217,222,229,0.5)',
                           boxShadow: isSelected
-                            ? '0 0 0 1px rgba(79,227,193,0.2), 0 10px 30px rgba(0,0,0,0.05)'
+                            ? '0 0 0 1px rgba(203,32,45,0.2), 0 10px 30px rgba(0,0,0,0.05)'
                             : 'inset 0 1px 1px rgba(255,255,255,0.8)',
                           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         }}
                         onMouseEnter={e => {
                           if (!isSelected) {
                             e.currentTarget.style.transform = 'translateY(-4px)'
-                            e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(79,227,193,0.2)'
+                            e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(203,32,45,0.2)'
                           }
                         }}
                         onMouseLeave={e => {
@@ -609,7 +609,7 @@ export default function CheckoutAddress() {
                         {isSelected && (
                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                             className="absolute -inset-px rounded-xl pointer-events-none"
-                            style={{ background: 'linear-gradient(135deg, rgba(79,227,193,0.06), transparent, rgba(79,227,193,0.06))', zIndex: -1 }}
+                            style={{ background: 'linear-gradient(135deg, rgba(203,32,45,0.06), transparent, rgba(203,32,45,0.06))', zIndex: -1 }}
                           />
                         )}
                       </motion.div>
@@ -661,7 +661,7 @@ export default function CheckoutAddress() {
 
           {/* Right: Address Details Form */}
           <div className="lg:col-span-7">
-            <div className="overflow-hidden rounded-2xl border-2" style={{ borderColor: 'rgba(79, 227, 193, 0.2)', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
+            <div className="overflow-hidden rounded-2xl border-2" style={{ borderColor: 'rgba(203, 32, 45, 0.2)', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
               <div className="px-8 py-6 text-white flex items-center gap-3" style={{ background: '#454747' }}>
                 <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>terminal</span>
                 <h2 className="text-lg font-bold">Address Details</h2>
@@ -746,7 +746,7 @@ export default function CheckoutAddress() {
                               ? 'text-white shadow-md'
                               : 'bg-white/80 border border-glass-border text-on-surface-variant hover:border-mint/50'
                           }`}
-                          style={terminalForm.addressType === type ? { background: 'linear-gradient(135deg, #4FE3C1, #454747)' } : {}}
+                          style={terminalForm.addressType === type ? { background: 'linear-gradient(135deg, #CB202D, #A81D2A)' } : {}}
                         >
                           {typeIcons[type]} {type}
                           {terminalForm.addressType === type && <FiCheck size={11} />}
@@ -798,7 +798,7 @@ export default function CheckoutAddress() {
                       className={`w-full py-5 rounded-full text-sm font-bold tracking-tight flex items-center justify-center gap-3 transition-all active:scale-95 group ${
                         !submitting ? 'text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
-                      style={!submitting ? { background: 'linear-gradient(135deg, #4FE3C1 0%, #454747 100%)', boxShadow: '0 0 0 0 rgba(79, 227, 193, 0.4)', animation: 'pulseMint 2s infinite' } : undefined}
+                      style={!submitting ? { background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)', boxShadow: '0 0 0 0 rgba(203, 32, 45, 0.4)', animation: 'pulseMint 2s infinite' } : undefined}
                     >
                       {submitting ? (
                         <FiLoader size={18} className="animate-spin" />

@@ -138,7 +138,7 @@ void main() {
         p += vec2(sin(p.y + t), cos(p.x + t));
         n += (1.0/i) * abs(sin(dot(p, vec2(0.8, 1.2)) + t));
     }
-    vec3 mint = vec3(0.31, 0.89, 0.757);
+    vec3 mint = vec3(0.796, 0.125, 0.176);
     col = mix(col, mint, n * 0.035);
     float dist = length(uv - m);
     col += mint * (0.06 / (dist + 0.3)) * smoothstep(0.4, 0.0, dist);
@@ -293,7 +293,7 @@ void main() {
   const isCartEmpty = items.length === 0 && !processing && !success
 
   return (
-    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#4FE3C1]/30">
+    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#CB202D]/30">
       <style>{`
         .nova-glass {
           background: rgba(255, 255, 255, 0.45);
@@ -315,15 +315,15 @@ void main() {
         .protocol-module:hover {
           transform: translateY(-4px) scale(1.01);
           background: rgba(255, 255, 255, 0.6);
-          border-color: #4FE3C1;
+          border-color: #CB202D;
         }
         .protocol-module.active {
-          border-color: #4FE3C1;
-          box-shadow: 0 0 30px rgba(79, 227, 193, 0.15);
+          border-color: #CB202D;
+          box-shadow: 0 0 30px rgba(203, 32, 45, 0.15);
         }
         .emerald-glow-btn {
-          background: linear-gradient(135deg, #4FE3C1 0%, #006b58 100%);
-          box-shadow: 0 0 25px rgba(79, 227, 193, 0.5);
+          background: linear-gradient(135deg, #CB202D 0%, #A81D2A 100%);
+          box-shadow: 0 0 25px rgba(203, 32, 45, 0.5);
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
@@ -343,7 +343,7 @@ void main() {
           transform: scale(1);
         }
         .emerald-glow-btn:hover {
-          box-shadow: 0 0 45px rgba(79, 227, 193, 0.7);
+          box-shadow: 0 0 45px rgba(203, 32, 45, 0.7);
           transform: translateY(-2px);
         }
         .emerald-glow-btn:active {
@@ -365,7 +365,7 @@ void main() {
           position: absolute;
           width: 100%;
           height: 2px;
-          background: linear-gradient(90deg, transparent, #4FE3C1, transparent);
+          background: linear-gradient(90deg, transparent, #CB202D, transparent);
           top: 0;
           left: -100%;
           animation: scan 3s infinite linear;
@@ -409,27 +409,27 @@ void main() {
             <div className="mb-20 fade-in-up">
               <div className="flex justify-between items-center max-w-4xl mx-auto px-4">
                 <div className="flex flex-col items-center relative group">
-                  <div className="w-12 h-12 rounded-full bg-[#4FE3C1] flex items-center justify-center text-white shadow-[0_0_15px_rgba(79,227,193,0.4)]">
+                  <div className="w-12 h-12 rounded-full bg-[#CB202D] flex items-center justify-center text-white shadow-[0_0_15px_rgba(203,32,45,0.4)]">
                     <span className="material-symbols-outlined text-xl">verified_user</span>
                   </div>
-                  <span className="mt-3 font-bold text-[9px] tracking-[0.2em] text-[#4FE3C1]">CART REVIEW</span>
+                  <span className="mt-3 font-bold text-[9px] tracking-[0.2em] text-[#CB202D]">CART REVIEW</span>
                   <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[8px] bg-white px-2 py-1 rounded border border-[rgba(217,222,229,0.5)]">STEP 1 OF 3</div>
                 </div>
-                <div className="flex-1 mx-4 h-[2px] bg-[#4FE3C1]/30 overflow-hidden">
-                  <div className="h-full bg-[#4FE3C1] w-full" />
+                <div className="flex-1 mx-4 h-[2px] bg-[#CB202D]/30 overflow-hidden">
+                  <div className="h-full bg-[#CB202D] w-full" />
                 </div>
                 <div className="flex flex-col items-center relative group">
-                  <div className="w-12 h-12 rounded-full bg-[#4FE3C1] flex items-center justify-center text-white shadow-[0_0_15px_rgba(79,227,193,0.4)]">
+                  <div className="w-12 h-12 rounded-full bg-[#CB202D] flex items-center justify-center text-white shadow-[0_0_15px_rgba(203,32,45,0.4)]">
                     <span className="material-symbols-outlined text-xl">location_searching</span>
                   </div>
-                  <span className="mt-3 font-bold text-[9px] tracking-[0.2em] text-[#4FE3C1]">DELIVERY ADDRESS</span>
+                  <span className="mt-3 font-bold text-[9px] tracking-[0.2em] text-[#CB202D]">DELIVERY ADDRESS</span>
                   <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-[8px] bg-white px-2 py-1 rounded border border-[rgba(217,222,229,0.5)]">STEP 2 OF 3</div>
                 </div>
                 <div className="flex-1 mx-4 h-[2px] bg-[#e0e3e6] overflow-hidden">
-                  <div className="h-full bg-[#4FE3C1] w-2/3 animate-pulse" />
+                  <div className="h-full bg-[#CB202D] w-2/3 animate-pulse" />
                 </div>
                 <div className="flex flex-col items-center relative group">
-                  <div className="w-12 h-12 rounded-full border-2 border-[#4FE3C1] bg-white/50 flex items-center justify-center text-[#4FE3C1] animate-pulse">
+                  <div className="w-12 h-12 rounded-full border-2 border-[#CB202D] bg-white/50 flex items-center justify-center text-[#CB202D] animate-pulse">
                     <span className="material-symbols-outlined text-xl">payments</span>
                   </div>
                   <span className="mt-3 font-bold text-[9px] tracking-[0.2em] text-[#454747]">PAYMENT</span>
@@ -444,7 +444,7 @@ void main() {
                 <div className="mb-10 fade-in-up delay-1">
                   <h1 className="text-[3.5rem] font-black leading-tight text-[#454747]" style={{ letterSpacing: '-0.02em' }}>Complete Payment</h1>
                   <div className="flex items-center gap-3 mt-4 text-[#434748]/70">
-                    <span className="w-2 h-2 rounded-full bg-[#4FE3C1] animate-ping" />
+                    <span className="w-2 h-2 rounded-full bg-[#CB202D] animate-ping" />
                     <p className="text-sm uppercase tracking-widest">Select your payment method to complete your order</p>
                   </div>
                 </div>
@@ -464,7 +464,7 @@ void main() {
                         onChange={() => setSelectedMethod(pm.id)}
                         disabled={disabled}
                       />
-                      <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-[#ebeef1] flex items-center justify-center text-[#454747] group-hover:text-[#4FE3C1] transition-colors">
+                      <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-[#ebeef1] flex items-center justify-center text-[#454747] group-hover:text-[#CB202D] transition-colors">
                         <span className="material-symbols-outlined text-3xl">{pm.icon}</span>
                       </div>
                       <div className="flex-1 pt-1">
@@ -472,7 +472,7 @@ void main() {
                           <div className="flex items-center gap-2">
                             {pm.comingSoon && <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Coming Soon</span>}
                           </div>
-                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedMethod === pm.id ? 'border-[#4FE3C1] bg-[#4FE3C1]' : 'border-[#747878]'}`}>
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedMethod === pm.id ? 'border-[#CB202D] bg-[#CB202D]' : 'border-[#747878]'}`}>
                             {selectedMethod === pm.id && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                           </div>
                         </div>
@@ -510,7 +510,7 @@ void main() {
                         { icon: 'science', title: '100% Safe', sub: 'TRUSTED BY THOUSANDS' },
                       ].map(b => (
                       <div key={b.title} className="flex flex-col items-center text-center space-y-2 opacity-60 hover:opacity-100 transition-opacity">
-                        <span className="material-symbols-outlined text-[#4FE3C1]">{b.icon}</span>
+                        <span className="material-symbols-outlined text-[#CB202D]">{b.icon}</span>
                         <div>
                           <div className="text-[9px] font-bold tracking-widest uppercase">{b.title}</div>
                           <div className="text-[8px] text-[#434748]">{b.sub}</div>
@@ -526,7 +526,7 @@ void main() {
                 <div className="nova-glass p-8 rounded-[2rem] space-y-8 border border-white/80">
                   <div className="flex justify-between items-center pb-4 border-b border-[rgba(217,222,229,0.5)]">
                     <h3 className="text-lg text-[#454747] flex items-center font-black">
-                      <span className="material-symbols-outlined mr-3 text-[#4FE3C1]">shopping_cart</span>
+                      <span className="material-symbols-outlined mr-3 text-[#CB202D]">shopping_cart</span>
                       Order Summary
                     </h3>
                   </div>
@@ -543,25 +543,25 @@ void main() {
                             <div className="relative flex-shrink-0">
                               {hasImg ? (
                                 <img src={imgUrl} alt={item.name}
-                                  className="w-16 h-16 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-[#4FE3C1] transition-all"
+                                  className="w-16 h-16 rounded-xl object-cover ring-2 ring-transparent group-hover:ring-[#CB202D] transition-all"
                                   onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))}
                                 />
                               ) : (
-                                <div className="w-16 h-16 rounded-xl bg-[#ebeef1] flex items-center justify-center text-2xl ring-2 ring-transparent group-hover:ring-[#4FE3C1] transition-all">
+                                <div className="w-16 h-16 rounded-xl bg-[#ebeef1] flex items-center justify-center text-2xl ring-2 ring-transparent group-hover:ring-[#CB202D] transition-all">
                                   {item.emoji || '📦'}
                                 </div>
                               )}
                               {item.quantity > 1 && (
-                                <div className="absolute -top-1 -right-1 bg-[#4FE3C1] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                                <div className="absolute -top-1 -right-1 bg-[#CB202D] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center">
                                   {item.quantity}
                                 </div>
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h5 className="text-sm font-black text-[#181c1e] group-hover:text-[#4FE3C1] transition-colors truncate">{item.name}</h5>
+                              <h5 className="text-sm font-black text-[#181c1e] group-hover:text-[#CB202D] transition-colors truncate">{item.name}</h5>
                               <div className="flex items-center gap-1 mt-1">
-                                <span className="material-symbols-outlined text-[10px] text-[#4FE3C1]">check_circle</span>
-                                <span className="text-[#4FE3C1] font-bold text-[8px] tracking-widest uppercase">In Stock</span>
+                                <span className="material-symbols-outlined text-[10px] text-[#CB202D]">check_circle</span>
+                                <span className="text-[#CB202D] font-bold text-[8px] tracking-widest uppercase">In Stock</span>
                               </div>
                               {item.storage && <span className="text-[10px] text-[#434748]">{item.storage}</span>}
                             </div>
@@ -586,9 +586,9 @@ void main() {
                       <div className="flex justify-between text-[11px] text-[#181c1e]">
                         <span className="flex items-center gap-2">
                           Shipping
-                          <span className="material-symbols-outlined text-[12px] text-[#4FE3C1]">check_circle</span>
+                          <span className="material-symbols-outlined text-[12px] text-[#CB202D]">check_circle</span>
                         </span>
-                        <span className="text-[#4FE3C1] font-black uppercase tracking-[0.1em]">
+                        <span className="text-[#CB202D] font-black uppercase tracking-[0.1em]">
                           {shipping === 0 ? 'FREE' : formatPrice(shipping)}
                         </span>
                       </div>
@@ -609,8 +609,8 @@ void main() {
                         <span className="text-[1.5rem] font-black text-[#454747] mt-1">{formatPrice(grandTotal)}</span>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="material-symbols-outlined text-[#4FE3C1] text-3xl animate-pulse">verified</span>
-                        <span className="text-[7px] text-[#4FE3C1] font-bold mt-1 tracking-tighter">SECURE</span>
+                        <span className="material-symbols-outlined text-[#CB202D] text-3xl animate-pulse">verified</span>
+                        <span className="text-[7px] text-[#CB202D] font-bold mt-1 tracking-tighter">SECURE</span>
                       </div>
                     </div>
                   </div>
@@ -638,14 +638,14 @@ void main() {
                   }}
                   transition={{ duration: 1.2, delay: 0.2, ease: 'easeOut' }}
                   className="absolute w-2 h-2 rounded-full"
-                  style={{ background: ['#4FE3C1', '#006b58', '#47ddbb', '#67f7d4', '#FF8A00'][i % 5] }}
+                  style={{ background: ['#CB202D', '#A81D2A', '#D94452', '#FF7A85', '#FF8A00'][i % 5] }}
                 />
               ))}
               <motion.div
                 initial={{ scale: 0.85, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-                className="flex flex-col items-center gap-5 p-10 rounded-3xl bg-white border border-[#4FE3C1]/30 shadow-2xl"
+                className="flex flex-col items-center gap-5 p-10 rounded-3xl bg-white border border-[#CB202D]/30 shadow-2xl"
               >
                 <motion.div
                   initial={{ scale: 0 }}
@@ -657,14 +657,14 @@ void main() {
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
                     className="w-20 h-20 rounded-2xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #4FE3C1 0%, #006b58 100%)', boxShadow: '0 0 25px rgba(79,227,193,0.4)' }}
+                    style={{ background: 'linear-gradient(135deg, #CB202D 0%, #A81D2A 100%)', boxShadow: '0 0 25px rgba(203,32,45,0.4)' }}
                   >
                     <FiCheck size={32} className="text-white" />
                   </motion.div>
                   <motion.div
                     animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
                     transition={{ repeat: Infinity, duration: 2.5 }}
-                    className="absolute inset-0 rounded-2xl bg-[#4FE3C1]/20 -z-10"
+                    className="absolute inset-0 rounded-2xl bg-[#CB202D]/20 -z-10"
                   />
                 </motion.div>
                 <motion.div
