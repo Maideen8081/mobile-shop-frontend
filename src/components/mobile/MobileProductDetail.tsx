@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { addressService, type AddressData } from '../../services/addressService'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, Heart, Share2, Plus, Minus, Star, Truck, ShieldCheck, Check, Zap, ChevronDown, BadgeCheck, MapPin, ChevronRight, Search, Award, CreditCard, Repeat, Package, Tag, Flame, Gift, ShoppingBag } from 'lucide-react'
+import { ChevronLeft, Heart, Share2, Plus, Minus, Star, Truck, ShieldCheck, Check, Zap, ChevronDown, BadgeCheck, MapPin, ChevronRight, Search, Award, CreditCard, Repeat, Package, Tag, Flame, Gift, ShoppingBag, Loader2 } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { authService } from '../../services/authService'
+import { cartService } from '../../services/cartService'
 import { reviewService, type Review, type ProductRating } from '../../services/reviewService'
 import ReviewForm from '../ReviewForm'
 import { useMobileToast } from './useMobileToast'
@@ -12,6 +13,7 @@ import { getImageUrl, getProductImage } from './helpers'
 import { FALLBACK_IMG } from './fallback'
 import { VALID_COUPONS } from './cartLogic'
 import MobileCartBarActions from './MobileCartBarActions'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const COLOR_PALETTE: Record<string, string> = {
   black: '#1a1a1a', white: '#f0f0f0', silver: '#c0c0c0', gray: '#808080',
@@ -36,6 +38,7 @@ export default function MobileProductDetail() {
 
   const rateParam = searchParams.get('rate') === 'true'
   const orderIdParam = searchParams.get('order_id') || ''
+  const variantIdParam = searchParams.get('variant_id') || ''
 
   useEffect(() => {
     addressService.list()
@@ -56,14 +59,15 @@ export default function MobileProductDetail() {
   const [selectedRamIdx, setSelectedRamIdx] = useState(0)
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null)
   const [wished, setWished] = useState(false)
-  const [, setAdded] = useState(false)
+  const [added, setAdded] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [isBuying, setIsBuying] = useState(false)
   const [cartError, setCartError] = useState('')
   const [related, setRelated] = useState<any[]>([])
   const [relatedFlash, setRelatedFlash] = useState<Record<number, boolean>>({})
+  const [relatedLoading, setRelatedLoading] = useState<Record<number, boolean>>({})
   const [cartCount, setCartCount] = useState(0)
   const [deliveryPincode, setDeliveryPincode] = useState('600001')
-  const [cartTick, setCartTick] = useState(0)
   const [specsOpen, setSpecsOpen] = useState(false)
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const [descOpen, setDescOpen] = useState(false)
@@ -95,14 +99,20 @@ export default function MobileProductDetail() {
   useEffect(() => {
     if (!resolvedId) return
     const pid = Number(resolvedId)
-    const reviews = reviewService.getByProduct(pid)
-    setProductReviews(reviews)
-    setProductRating(reviewService.getProductRating(pid))
-    setHasReviewed(reviewService.hasUserReviewed(pid))
+    ;(async () => {
+      const [reviews, rating, reviewed] = await Promise.all([
+        reviewService.getByProduct(pid),
+        reviewService.getProductRating(pid),
+        reviewService.hasUserReviewed(pid),
+      ])
+      setProductReviews(reviews)
+      setProductRating(rating)
+      setHasReviewed(reviewed)
+    })()
   }, [resolvedId])
 
   useEffect(() => {
-    if (!resolvedId) return
+    if (!resolvedId) { setCanReview(false); return }
     if (!authService.isAuthenticated()) { setCanReview(false); return }
     const { eligible } = reviewService.hasDeliveredOrder(Number(resolvedId))
     setCanReview(eligible)
@@ -112,15 +122,23 @@ export default function MobileProductDetail() {
       setTimeout(() => {
         document.getElementById('mobile-reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 600)
+    } else {
+      setShowReviewForm(false)
+      setReviewsOpen(false)
     }
-  }, [resolvedId, rateParam])
+  }, [resolvedId, rateParam, product])
 
-  const refreshReviews = () => {
+  const refreshReviews = async () => {
     if (!resolvedId) return
     const pid = Number(resolvedId)
-    setProductReviews(reviewService.getByProduct(pid))
-    setProductRating(reviewService.getProductRating(pid))
-    setHasReviewed(reviewService.hasUserReviewed(pid))
+    const [reviews, rating, reviewed] = await Promise.all([
+      reviewService.getByProduct(pid),
+      reviewService.getProductRating(pid),
+      reviewService.hasUserReviewed(pid),
+    ])
+    setProductReviews(reviews)
+    setProductRating(rating)
+    setHasReviewed(reviewed)
   }
 
   useEffect(() => {
@@ -129,8 +147,7 @@ export default function MobileProductDetail() {
 
   useEffect(() => {
     const update = () => {
-      try { setCartCount((JSON.parse(localStorage.getItem('cart') || '[]') as any[]).reduce((s: number, i: any) => s + (i.quantity || 1), 0)) } catch { setCartCount(0) }
-      setCartTick((t) => t + 1)
+      setCartCount(cartService.getCachedCartCount())
     }
     update()
     window.addEventListener('cart-updated', update)
@@ -155,9 +172,15 @@ export default function MobileProductDetail() {
     setZoomScale(1)
     setZoomOrigin('center center')
     setSpecsOpen(false)
-    setReviewsOpen(false)
     setDescOpen(false)
   }, [product?.id])
+
+  // Auto-select variant from query param
+  useEffect(() => {
+    if (!product?.variants?.length || !variantIdParam) return
+    const match = product.variants.find((v: any) => String(v.id) === variantIdParam)
+    if (match) setSelectedVariantId(String(match.id))
+  }, [product, variantIdParam])
 
   const { colors, storageOptions, ramOptions, variants } = useMemo(() => {
     if (product?.variants?.length > 0) {
@@ -185,11 +208,9 @@ export default function MobileProductDetail() {
 
   const isInCart = useMemo(() => {
     if (!product?.id) return false
-    try {
-      const c = JSON.parse(localStorage.getItem('cart') || '[]')
-      return c.some((i: any) => i.productId === product.id && i.variantId === (activeVariant?.id || null))
-    } catch { return false }
-  }, [product?.id, activeVariant?.id, cartTick])
+    return cartService.isInCart(product.id, activeVariant?.id ?? null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id, activeVariant?.id, added])
 
   useEffect(() => { setSelectedImage(0) }, [activeVariant?.id])
 
@@ -274,110 +295,111 @@ export default function MobileProductDetail() {
   const validateStock = (requestedQty: number): string | null => {
     if (!inStock) return 'This product is currently out of stock'
     if (requestedQty > stockQty) return `Only ${stockQty} units available. You requested ${requestedQty}.`
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existing = cart.find((item: any) => item.productId === product.id && item.variantId === (activeVariant?.id || null))
-    const totalInCart = existing ? existing.quantity + requestedQty : requestedQty
+    const existingQty = cartService.getItemCountInCart(product.id, activeVariant?.id ?? null)
+    const totalInCart = existingQty + requestedQty
     if (totalInCart > stockQty) {
-      const canAdd = stockQty - (existing?.quantity || 0)
-      return canAdd <= 0 ? `${existing.quantity} already in cart — no more stock available.` : `Only ${canAdd} more can be added (${existing.quantity} already in cart, ${stockQty} in stock).`
+      const canAdd = stockQty - existingQty
+      return canAdd <= 0 ? `${existingQty} already in cart — no more stock available.` : `Only ${canAdd} more can be added (${existingQty} already in cart, ${stockQty} in stock).`
     }
     return null
   }
 
-  const addToCart = () => {
+  const handleAddToCart = async () => {
     if (isAdding) return
-    if (!authService.isAuthenticated()) {
-      sessionStorage.setItem('redirect_after_login', window.location.pathname)
-      navigate('/login')
-      return
-    }
-    const error = validateStock(qty)
-    if (error) { setCartError(error); showToast(error, 'error'); return }
-
-    setIsAdding(true)
+    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
     setCartError('')
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-
-    const existingIdx = cart.findIndex((item: any) =>
-      item.productId === product.id && item.variantId === (activeVariant?.id || null)
-    )
-
-    if (existingIdx >= 0) {
-      cart.splice(existingIdx, 1)
-      localStorage.setItem('cart', JSON.stringify(cart))
-      window.dispatchEvent(new Event('cart-updated'))
+    
+    if (isInCart) {
+      await cartService.removeItem(product.id, activeVariant?.id ?? null)
       setAdded(false)
-      setIsAdding(false)
-      showToast('Removed from cart!', 'success')
-    } else {
-      cart.push({
-        productId: product.id, variantId: activeVariant?.id || null, name: productName,
-        brand: productBrand, price: currentPrice, image: images[0] || '', quantity: qty,
-        storage: activeVariant?.storage || '',
-        ram: activeVariant?.ram || '',
-        color: activeVariant?.color || '',
-      })
-      localStorage.setItem('cart', JSON.stringify(cart))
-      window.dispatchEvent(new Event('cart-updated'))
-      setAdded(true)
-      setIsAdding(false)
-      showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
-    }
-  }
-
-  const buyNow = () => {
-    if (isAdding) return
-    if (!authService.isAuthenticated()) {
-      sessionStorage.setItem('redirect_after_login', window.location.pathname)
-      navigate('/login')
+      showToast('Removed from cart!', 'error')
       return
     }
+    
     const error = validateStock(qty)
     if (error) { setCartError(error); showToast(error, 'error'); return }
-
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existingIdx = cart.findIndex((item: any) =>
-      item.productId === product.id && item.variantId === (activeVariant?.id || null)
-    )
-    if (existingIdx >= 0) { cart[existingIdx].quantity += qty }
-    else {
-      cart.push({
-        productId: product.id, variantId: activeVariant?.id || null, name: productName,
-        brand: productBrand, price: currentPrice, image: images[0] || '', quantity: qty,
+    
+    setIsAdding(true)
+    try {
+      await cartService.addItem({
+        productId: product.id,
+        variationId: activeVariant?.id || 0,
+        quantity: qty,
+        name: productName,
+        brand: productBrand,
+        price: currentPrice,
+        image: images[0] || '',
         storage: activeVariant?.storage || '',
         ram: activeVariant?.ram || '',
         color: activeVariant?.color || '',
       })
+      setAdded(true)
+      showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    } finally {
+      setIsAdding(false)
     }
-    localStorage.setItem('cart', JSON.stringify(cart))
-    window.dispatchEvent(new Event('cart-updated'))
-    navigate('/cart')
   }
 
-  const addRelatedToCart = (p: any, e: React.MouseEvent) => {
+  const handleBuyNow = async () => {
+    if (isAdding || isBuying) return
+    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
+    const error = validateStock(qty)
+    if (error) { setCartError(error); showToast(error, 'error'); return }
+    
+    setIsBuying(true)
+    try {
+      await cartService.addItem({
+        productId: product.id,
+        variationId: activeVariant?.id || 0,
+        quantity: qty,
+        name: productName,
+        brand: productBrand,
+        price: currentPrice,
+        image: images[0] || '',
+        storage: activeVariant?.storage || '',
+        ram: activeVariant?.ram || '',
+        color: activeVariant?.color || '',
+      })
+      setAdded(true)
+      showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    } finally {
+      setIsBuying(false)
+    }
+  }
+
+  const addRelatedToCart = async (p: any, e: React.MouseEvent) => {
     e.stopPropagation()
     if (!authService.isAuthenticated()) {
       sessionStorage.setItem('redirect_after_login', window.location.pathname)
       navigate('/login')
       return
     }
-    const v = (p.variants || [])[0]
-    const price = v?.discountPrice || v?.price || p.price || 0
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const idx = cart.findIndex((i: any) => i.productId === p.id && i.variantId === (v?.id || null))
-    if (idx >= 0) { cart[idx].quantity += 1 }
-    else {
-      cart.push({
-        productId: p.id, variantId: v?.id || null, name: p.name,
-        brand: p.brand || '', price, image: getImageUrl(p.image) || getProductImage(p) || '', quantity: 1,
-        storage: v?.storage || '', ram: v?.ram || '', color: v?.color || '',
+    setRelatedLoading((f) => ({ ...f, [p.id]: true }))
+    try {
+      const v = (p.variants || [])[0]
+      const price = v?.discountPrice || v?.price || p.price || 0
+      await cartService.addItem({
+        productId: p.id,
+        variationId: v?.id || 0,
+        quantity: 1,
+        name: p.name,
+        brand: p.brand || '',
+        price,
+        image: getImageUrl(p.image) || getProductImage(p) || '',
+        storage: v?.storage || '',
+        ram: v?.ram || '',
+        color: v?.color || '',
       })
+      showToast('Added to cart!', 'success')
+      setRelatedFlash((f) => ({ ...f, [p.id]: true }))
+      setTimeout(() => setRelatedFlash((f) => ({ ...f, [p.id]: false })), 1500)
+    } finally {
+      setRelatedLoading((f) => ({ ...f, [p.id]: false }))
     }
-    localStorage.setItem('cart', JSON.stringify(cart))
-    window.dispatchEvent(new Event('cart-updated'))
-    showToast('Added to cart!', 'success')
-    setRelatedFlash((f) => ({ ...f, [p.id]: true }))
-    setTimeout(() => setRelatedFlash((f) => ({ ...f, [p.id]: false })), 1500)
   }
 
   const handleShare = async () => {
@@ -460,12 +482,7 @@ export default function MobileProductDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
-        <div className="relative w-16 h-16 mb-5">
-          <div className="absolute inset-0 rounded-full border-[3px] border-[#EEF0F6]" />
-          <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#CB202D] animate-spin" />
-          <div className="absolute inset-2 rounded-full border-[2px] border-transparent border-b-[#A81D2A]/40 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-        </div>
-        <p className="text-[13px] font-semibold text-[#6B7280] tracking-wide">Loading product…</p>
+        <DoubleRingLoader size={56} label="Loading product…" />
       </div>
     )
   }
@@ -519,12 +536,13 @@ export default function MobileProductDetail() {
           <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
             <ChevronLeft size={22} className="text-[#1F2937]" />
           </button>
-          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} className="flex-1 h-11 min-w-0 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition">
+          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
             <Search size={18} className="text-[#9CA3AF] flex-shrink-0" />
             <input
+              readOnly
               placeholder="Search for products"
               aria-label="Search products"
-              className="flex-1 bg-transparent text-[13px] text-[#1F2937] placeholder:text-[#9CA3AF] outline-none min-w-0"
+              className="flex-1 bg-transparent text-[13px] text-[#1F2937] placeholder:text-[#9CA3AF] outline-none min-w-0 cursor-pointer"
             />
           </form>
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
@@ -1163,6 +1181,15 @@ export default function MobileProductDetail() {
                         </div>
                       </div>
                       <p className="text-[12.5px] text-[#4B5563] mt-2 leading-snug">{r.comment}</p>
+                      {r.images?.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {r.images.map((url: string, j: number) => (
+                            <a key={j} href={url} target="_blank" rel="noopener noreferrer">
+                              <img src={url} alt="" className="w-14 h-14 rounded-lg object-cover border border-gray-100" />
+                            </a>
+                          ))}
+                        </div>
+                      )}
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#CB202D] mt-1.5">Verified Purchase</span>
                     </div>
                   )) : (
@@ -1207,8 +1234,9 @@ export default function MobileProductDetail() {
                         <span className="text-[13px] font-black">₹{Number(pPrice).toLocaleString('en-IN')}</span>
                         {pOff > 0 && <span className="text-[10px] text-[#9CA3AF] line-through">₹{Number(pMrp).toLocaleString('en-IN')}</span>}
                       </div>
-                      <button onClick={(e) => addRelatedToCart(p, e)} className={`mt-2 w-full h-9 rounded-xl text-[12px] font-bold active:scale-95 transition flex items-center justify-center gap-1 ${relatedFlash[p.id] ? 'bg-[#ECFDF5] text-[#16A34A]' : 'text-white'}`} style={relatedFlash[p.id] ? { border: '1.5px solid #16A34A' } : { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
-                        {relatedFlash[p.id] ? <><Check size={13} /> Added</> : 'Add to Cart'}
+                      <button onClick={(e) => addRelatedToCart(p, e)} disabled={relatedLoading[p.id]} className={`mt-2 w-full h-9 rounded-xl text-[12px] font-bold active:scale-95 transition flex items-center justify-center gap-1 ${relatedFlash[p.id] ? 'bg-[#ECFDF5] text-[#16A34A]' : 'text-white'}`} style={relatedFlash[p.id] ? { border: '1.5px solid #16A34A' } : { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
+                        {relatedLoading[p.id] ? <Loader2 size={13} className="animate-spin" /> : relatedFlash[p.id] ? <Check size={13} /> : null}
+                        {relatedLoading[p.id] ? 'Adding…' : relatedFlash[p.id] ? 'Added' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>
@@ -1236,22 +1264,28 @@ export default function MobileProductDetail() {
 
         <div className="flex-1 flex items-center gap-2.5">
           <button
-            onClick={addToCart}
-            disabled={!inStock}
+            onClick={handleAddToCart}
+            disabled={!inStock || isAdding}
             className={`flex-1 h-14 rounded-2xl font-bold text-[14px] active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-1.5 border-2 ${isInCart ? 'bg-[#ECFDF5]' : 'bg-white'}`}
             style={isInCart ? { color: SUCCESS, borderColor: SUCCESS } : { color: PURPLE, borderColor: PURPLE }}
           >
-            {isInCart ? <Check size={17} /> : <ShoppingBag size={17} />}
-            {!inStock ? 'Out of Stock' : isInCart ? 'Added ✓' : 'Add to Cart'}
+            {isAdding ? (
+              <Loader2 size={17} className="animate-spin" />
+            ) : isInCart ? (
+              <Check size={17} />
+            ) : (
+              <ShoppingBag size={17} />
+            )}
+            {!inStock ? 'Out of Stock' : isAdding ? 'Adding…' : isInCart ? 'Added ✓' : 'Add to Cart'}
           </button>
           <button
-            onClick={buyNow}
-            disabled={!inStock}
+            onClick={handleBuyNow}
+            disabled={!inStock || isAdding || isBuying}
             className="flex-1 h-14 rounded-2xl font-bold text-[14px] text-white shadow-[0_8px_20px_rgba(203,32,45,0.35)] active:scale-[0.98] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
             style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}
           >
-            <Zap size={17} fill="white" />
-            Buy Now
+            {isBuying ? <Loader2 size={17} className="animate-spin" /> : <Zap size={17} fill="white" />}
+            {isBuying ? 'Processing…' : 'Buy Now'}
           </button>
         </div>
       </div>

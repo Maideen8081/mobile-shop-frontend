@@ -1,4 +1,4 @@
-const REVIEWS_KEY = 'product_reviews'
+import api from './api'
 
 export interface Review {
   id: string
@@ -9,6 +9,8 @@ export interface Review {
   comment: string
   orderId: string
   createdAt: string
+  images: string[]
+  isGuest?: boolean
 }
 
 export interface ProductRating {
@@ -17,79 +19,86 @@ export interface ProductRating {
   distribution: Record<number, number>
 }
 
-function getAll(): Review[] {
-  try {
-    return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]')
-  } catch {
-    return []
-  }
-}
+const REVIEW_URL = '/api/v1/reviews'
 
-function saveAll(reviews: Review[]) {
-  localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews))
-}
-
-function getUserId(): string {
-  try {
-    const profile = JSON.parse(localStorage.getItem('user_profile') || '{}')
-    return profile.email || profile.name || 'anonymous'
-  } catch {
-    return 'anonymous'
-  }
-}
-
-function getUserName(): string {
-  try {
-    const profile = JSON.parse(localStorage.getItem('user_profile') || '{}')
-    return profile.name || profile.email || 'User'
-  } catch {
-    return 'User'
+function mapApiReview(item: any): Review {
+  return {
+    id: String(item.id),
+    productId: item.product,
+    userId: String(item.user),
+    userName: item.user_name,
+    rating: item.star,
+    comment: item.content,
+    orderId: '',
+    createdAt: item.created_at,
+    images: item.images?.map((img: any) => img.image) || [],
   }
 }
 
 export const reviewService = {
-  getByProduct(productId: number): Review[] {
-    return getAll()
-      .filter((r) => r.productId === productId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  async getByProduct(productId: number): Promise<Review[]> {
+    try {
+      const res = await api.get(`${REVIEW_URL}/`, { params: { product: productId } })
+      const body = res.data
+      const items = body.data || []
+      return items.map(mapApiReview)
+    } catch {
+      return []
+    }
   },
 
-  create(productId: number, rating: number, comment: string, orderId: string): Review {
-    const reviews = getAll()
-    const review: Review = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      productId,
-      userId: getUserId(),
-      userName: getUserName(),
-      rating,
-      comment,
-      orderId,
-      createdAt: new Date().toISOString(),
+  async create(productId: number, rating: number, comment: string, _orderId: string, files?: File[]): Promise<Review> {
+    const res = await api.post(`${REVIEW_URL}/create/`, {
+      product: productId,
+      star: rating,
+      content: comment,
+    })
+    const review = mapApiReview(res.data.data)
+    if (files && files.length > 0) {
+      const formData = new FormData()
+      files.forEach((f) => formData.append('images', f))
+      const imgRes = await api.post(`${REVIEW_URL}/${review.id}/images/upload/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      review.images = (imgRes.data.data || []).map((img: any) => img.image)
     }
-    reviews.push(review)
-    saveAll(reviews)
     return review
   },
 
-  hasUserReviewed(productId: number): boolean {
-    const userId = getUserId()
-    return getAll().some((r) => r.productId === productId && r.userId === userId)
+  async hasUserReviewed(productId: number): Promise<boolean> {
+    try {
+      const profile = localStorage.getItem('user_profile')
+      let currentUserName = ''
+      if (profile) {
+        const p = JSON.parse(profile)
+        currentUserName = (p.name || p.email || '').toLowerCase()
+      }
+      if (!currentUserName) return false
+      const res = await api.get(`${REVIEW_URL}/`, { params: { product: productId } })
+      const body = res.data
+      const items = body.data || []
+      return items.some((r: any) => (r.user_name || '').toLowerCase() === currentUserName)
+    } catch {
+      return false
+    }
   },
 
-  getProductRating(productId: number): ProductRating {
-    const reviews = getAll().filter((r) => r.productId === productId)
-    if (reviews.length === 0) {
+  async getProductRating(productId: number): Promise<ProductRating> {
+    try {
+      const res = await api.get(`${REVIEW_URL}/`, { params: { product: productId } })
+      const body = res.data
+      const items = body.data || []
+      const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+      items.forEach((r: any) => {
+        distribution[r.star] = (distribution[r.star] || 0) + 1
+      })
+      const count = items.length
+      const average = count > 0
+        ? Math.round((items.reduce((sum: number, r: any) => sum + r.star, 0) / count) * 10) / 10
+        : 0
+      return { average, count, distribution }
+    } catch {
       return { average: 0, count: 0, distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } }
-    }
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0)
-    const distribution: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-    reviews.forEach((r) => {
-      distribution[r.rating] = (distribution[r.rating] || 0) + 1
-    })
-    return {
-      average: Math.round((total / reviews.length) * 10) / 10,
-      count: reviews.length,
-      distribution,
     }
   },
 

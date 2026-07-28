@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck } from 'react-icons/fi'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import DoubleRingLoader from '../components/ui/DoubleRingLoader'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
@@ -11,6 +12,7 @@ import MobilePayment from '../components/mobile/MobilePayment'
 import { useIsMobile } from '../components/mobile/helpers'
 import { orderService } from '../services/orderService'
 import { authService } from '../services/authService'
+import { cartService } from '../services/cartService'
 
 interface CartItem {
   productId: number
@@ -73,9 +75,8 @@ export default function PaymentPage() {
   if (isMobile) return <MobilePayment />
   const navigate = useNavigate()
   const showToast = useToast().show
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cart') || '[]') } catch { return [] }
-  })
+  const [items, setItems] = useState<CartItem[]>([])
+  const [cartLoading, setCartLoading] = useState(true)
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod')
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -85,8 +86,10 @@ export default function PaymentPage() {
   useLockBodyScroll(success)
 
   useEffect(() => {
+    setCartLoading(true)
+    cartService.getItems().then(setItems).catch(() => setItems([])).finally(() => setCartLoading(false))
     const handler = () => {
-      try { setItems(JSON.parse(localStorage.getItem('cart') || '[]')) } catch { setItems([]) }
+      cartService.getItems().then(setItems)
     }
     window.addEventListener('cart-updated', handler)
     return () => window.removeEventListener('cart-updated', handler)
@@ -278,11 +281,10 @@ void main() {
       const history = JSON.parse(localStorage.getItem('order_history') || '[]')
       history.unshift(lastOrder)
       localStorage.setItem('order_history', JSON.stringify(history.slice(0, 50)))
-      localStorage.removeItem('cart')
+      await cartService.clearCart()
       localStorage.removeItem('checkout_coupon')
       localStorage.removeItem('checkout_address_id')
       localStorage.removeItem('checkout_delivery_tip')
-      window.dispatchEvent(new Event('cart-updated'))
       setTimeout(() => navigate(`/checkout/success?order_id=${apiOrder.id}`), 1500)
     } catch {
       showToast('Payment failed. Please try again.', 'error')
@@ -291,6 +293,20 @@ void main() {
   }
 
   const isCartEmpty = items.length === 0 && !processing && !success
+
+  if (cartLoading) {
+    return (
+      <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#CB202D]/30">
+        <div className="w-full max-w-[720px]">
+          <StorefrontNavbar />
+        </div>
+        <div className="flex-1 w-full max-w-[720px] flex flex-col items-center justify-center px-6">
+          <DoubleRingLoader size={48} />
+          <p className="text-sm text-[#6B7280] mt-4">Loading your cart…</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#CB202D]/30">

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiPlus, FiEdit2, FiTrash2, FiPhone, FiCheck, FiLoader, FiMapPin, FiStar, FiHome, FiTruck } from 'react-icons/fi'
 import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../../services/addressService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 import { useMobileToast } from './useMobileToast'
 import MobileBottomNav from './MobileBottomNav'
 
@@ -163,7 +164,7 @@ export default function MobileAddressManagement() {
 
       <div className="px-3 mt-3 space-y-3">
         {loading ? (
-          <div className="flex justify-center py-16"><FiLoader size={26} className="animate-spin" style={{ color: PURPLE }} /></div>
+          <div className="flex justify-center py-16"><DoubleRingLoader size={40} label="Loading addresses…" /></div>
         ) : addresses.length === 0 ? (
           <div className={`${card} p-6 flex flex-col items-center text-center`}>
             <div className="w-16 h-16 rounded-2xl bg-[#FEE2E6] flex items-center justify-center mb-3" style={{ color: PURPLE }}><FiHome size={26} /></div>

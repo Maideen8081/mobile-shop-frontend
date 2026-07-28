@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Heart, Trash2, ShoppingCart, Loader2, ArrowLeft, Star } from 'lucide-react'
 import { productService } from '../services/productService'
+import { cartService } from '../services/cartService'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileWishlist from '../components/mobile/MobileWishlist'
@@ -66,29 +67,22 @@ export default function WishlistPage() {
     setProducts((prev) => prev.filter((p) => (p.id || p.product_id) !== id))
   }
 
-  const addToCart = (product: any) => {
+  const addToCart = async (product: any) => {
     const id = product.id || product.product_id
     const name = product.product_name || product.name || ''
     const rawPrice = product.variants?.[0]?.discount_price || product.variants?.[0]?.price || product.min_price || product.price || 0
     const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
     const rawImages = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
     const image = resolveImage(rawImages)
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existingIdx = cart.findIndex((item: any) => item.productId === id)
-    if (existingIdx >= 0) {
-      cart[existingIdx].quantity += 1
-    } else {
-      cart.push({
-        productId: id,
-        variantId: null,
-        name,
-        brand: product.brand || '',
-        price,
-        image,
-        quantity: 1,
-      })
-    }
-    localStorage.setItem('cart', JSON.stringify(cart))
+    await cartService.addItem({
+      productId: id,
+      variationId: 0,
+      quantity: 1,
+      name,
+      brand: product.brand || '',
+      price,
+      image,
+    })
     window.dispatchEvent(new Event('cart-updated'))
   }
 
@@ -255,7 +249,7 @@ export default function WishlistPage() {
 
                       {/* Move to Cart */}
                       <button
-                        onClick={() => { addToCart(product); removeFromWishlist(id) }}
+                        onClick={async () => { await addToCart(product); removeFromWishlist(id) }}
                         className="w-full h-11 rounded-full text-xs font-semibold text-white transition-all flex items-center justify-center gap-2"
                         style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
                       >

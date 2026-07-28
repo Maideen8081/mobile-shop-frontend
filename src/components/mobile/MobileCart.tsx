@@ -5,17 +5,17 @@ import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, S
 import { useMobileToast } from './useMobileToast'
 import MobileTopSection from './MobileTopSection'
 import {
-  useCart,
   useStockInfo,
   resolveImage,
   VALID_COUPONS,
   FREE_SHIPPING_THRESHOLD,
   TAX_RATE,
   DELIVERY_CHARGE,
-  type CartItem,
 } from './cartLogic'
 import { productService } from '../../services/productService'
 import { getImageUrl } from './helpers'
+import { cartService, type CartItem } from '../../services/cartService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const PURPLE = '#CB202D'
 const PURPLE2 = '#FF5A65'
@@ -23,24 +23,29 @@ const SUCCESS = '#22C55E'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_24px_rgba(0,0,0,0.08)]'
 const PLATFORM_FEE = 9
 
-function addProductToCart(p: any) {
+async function addProductToCart(p: any) {
   const id = p.id || p.product_id
   const name = p.product_name || p.name || ''
   const rawPrice = p.variants?.[0]?.discount_price || p.variants?.[0]?.price || p.min_price || p.price || 0
   const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
   const img = getImageUrl(p.common_image || p.image || p.images?.[0] || p.thumbnail || '')
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-  const idx = cart.findIndex((i: any) => i.productId === id)
-  if (idx >= 0) cart[idx].quantity += 1
-  else cart.push({ productId: id, variantId: null, name, brand: p.brand || '', price, image: img, quantity: 1 })
-  localStorage.setItem('cart', JSON.stringify(cart))
+  await cartService.addItem({
+    productId: id,
+    variationId: 0,
+    quantity: 1,
+    name,
+    brand: p.brand || '',
+    price,
+    image: img,
+  })
   window.dispatchEvent(new Event('cart-updated'))
 }
 
 export default function MobileCart() {
   const navigate = useNavigate()
   const { show: showToast, Toast } = useMobileToast()
-  const { items, updateQuantity, removeItem, subtotal, totalItems } = useCart()
+  const [items, setItems] = useState<CartItem[]>([])
+  const [cartLoading, setCartLoading] = useState(true)
   const stockMap = useStockInfo(items)
 
   const [couponCode, setCouponCode] = useState('')
@@ -54,6 +59,19 @@ export default function MobileCart() {
   const [tip, setTip] = useState<number | null>(null)
   const [customTip, setCustomTip] = useState('')
   const [instructions, setInstructions] = useState('')
+
+  useEffect(() => {
+    setCartLoading(true)
+    cartService.getItems().then(setItems).catch(() => setItems([])).finally(() => setCartLoading(false))
+    const handler = () => {
+      cartService.getItems().then(setItems).catch(() => setItems([]))
+    }
+    window.addEventListener('cart-updated', handler)
+    return () => window.removeEventListener('cart-updated', handler)
+  }, [])
+
+  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
+  const totalItems = items.reduce((s, i) => s + i.quantity, 0)
 
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
   const shippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100)
@@ -79,7 +97,7 @@ export default function MobileCart() {
     }
   }
 
-  const handleUpdateQty = (item: CartItem, delta: number) => {
+  const handleUpdateQty = async (item: CartItem, delta: number) => {
     const key = `${item.productId}-${item.variantId || 'default'}`
     const stockInfo = stockMap[key]
     const newQty = item.quantity + delta
@@ -87,7 +105,13 @@ export default function MobileCart() {
       showToast(stockInfo.stock === 0 ? `${item.name} is out of stock` : `Only ${stockInfo.stock} available`, 'error')
       return
     }
-    updateQuantity(item.productId, delta)
+    await cartService.updateQuantity(item.productId, item.variantId ?? 0, delta)
+    window.dispatchEvent(new Event('cart-updated'))
+  }
+
+  const handleRemoveItem = async (item: CartItem) => {
+    await cartService.removeItem(item.productId, item.variantId ?? 0)
+    window.dispatchEvent(new Event('cart-updated'))
   }
 
   // Smart recommendations
@@ -95,7 +119,7 @@ export default function MobileCart() {
     let mounted = true
     const controller = new AbortController()
     const brands = items.map((i) => i.brand).filter(Boolean)
-    const cats = items.map((i) => i.category).filter(Boolean)
+    const cats = items.map((i) => (i as any).category).filter(Boolean)
 
     productService.list({ page_size: 40 } as any)
       .then((all: any[]) => {
@@ -156,6 +180,19 @@ export default function MobileCart() {
       window.dispatchEvent(new Event('wishlist-updated'))
       return next
     })
+  }
+
+  if (cartLoading) {
+    return (
+      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <DoubleRingLoader size={48} />
+          <p className="text-[13px] text-[#6B7280] mt-4">Loading your cart…</p>
+        </div>
+        {Toast}
+      </div>
+    )
   }
 
   if (items.length === 0) {
@@ -219,7 +256,7 @@ export default function MobileCart() {
                       {item.color && <span className="text-[9.5px] px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.color}</span>}
                     </div>
                   </button>
-                  <button onClick={() => removeItem(item.productId)} aria-label="Remove" className="text-[#94A3B8] hover:text-[#EF4444] active:scale-90 transition flex-shrink-0 -mr-1">
+                  <button onClick={() => handleRemoveItem(item)} aria-label="Remove" className="text-[#94A3B8] hover:text-[#EF4444] active:scale-90 transition flex-shrink-0 -mr-1">
                     <Trash2 size={16} />
                   </button>
                 </div>
@@ -262,7 +299,7 @@ export default function MobileCart() {
             <RecCarousel
               products={recommended}
               wishlisted={wishlisted}
-              onAdd={(p) => { addProductToCart(p); showToast(`${p.product_name || p.name} added to cart`, 'success') }}
+              onAdd={async (p) => { await addProductToCart(p); showToast(`${p.product_name || p.name} added to cart`, 'success') }}
               onWish={toggleWish}
               onOpen={(id) => navigate(`/product/${id}`)}
             />

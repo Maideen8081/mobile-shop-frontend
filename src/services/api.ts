@@ -22,7 +22,11 @@ let isRedirecting = false
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error?.response?.status === 401 && !isRedirecting) {
+    const status = error?.response?.status
+    const url = error?.config?.url || 'unknown'
+    const method = error?.config?.method?.toUpperCase() || 'unknown'
+
+    if (status === 401 && !isRedirecting) {
       isRedirecting = true
       const AUTH_FLAG = 'is_authenticated'
       const USER_KEY = 'user_profile'
@@ -36,6 +40,11 @@ api.interceptors.response.use(
       window.location.href = '/login'
       setTimeout(() => { isRedirecting = false }, 2000)
     }
+
+    if (status === 500) {
+      console.error(`[api] ${method} ${url} → 500 Internal Server Error`, error?.response?.data || error.message)
+    }
+
     return Promise.reject(error)
   }
 )

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, Bell, ShoppingBag, Heart, Search, Mic, QrCode, Camera } from 'lucide-react'
 import { authService } from '../../services/authService'
+import { cartService } from '../../services/cartService'
 
 export default function MobileHeader() {
   const navigate = useNavigate()
@@ -12,10 +13,9 @@ export default function MobileHeader() {
   const isLoggedIn = authService.isAuthenticated()
 
   useEffect(() => {
-    const update = () => {
-      try { setCartCount((JSON.parse(localStorage.getItem('cart') || '[]') as any[]).reduce((s, i) => s + (i.quantity || 1), 0)) } catch { setCartCount(0) }
+    const updateCart = () => setCartCount(cartService.getCachedCartCount())
+    const updateWishlist = () => {
       try { setWishlistCount((JSON.parse(localStorage.getItem('wishlist') || '[]') as number[]).length) } catch { setWishlistCount(0) }
-      // Pull the real user name from the stored profile (fallback to email/local)
       try {
         const raw = localStorage.getItem('user_profile')
         if (raw) {
@@ -24,12 +24,13 @@ export default function MobileHeader() {
         }
       } catch { /* ignore */ }
     }
-    update()
-    window.addEventListener('cart-updated', update)
-    window.addEventListener('wishlist-updated', update)
+    updateCart()
+    updateWishlist()
+    window.addEventListener('cart-updated', updateCart)
+    window.addEventListener('wishlist-updated', updateWishlist)
     return () => {
-      window.removeEventListener('cart-updated', update)
-      window.removeEventListener('wishlist-updated', update)
+      window.removeEventListener('cart-updated', updateCart)
+      window.removeEventListener('wishlist-updated', updateWishlist)
     }
   }, [])
 

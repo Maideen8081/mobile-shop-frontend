@@ -4,6 +4,8 @@ import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
 import { orderService } from '../../services/orderService'
 import { authService } from '../../services/authService'
+import { cartService } from '../../services/cartService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -55,17 +57,18 @@ const paymentMethods: { id: PaymentMethod; label: string; subtitle: string; icon
 export default function MobilePayment() {
   const navigate = useNavigate()
   const { show: showToast, Toast } = useMobileToast()
-  const [items, setItems] = useState<any[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cart') || '[]') } catch { return [] }
-  })
+  const [items, setItems] = useState<any[]>([])
+  const [cartLoading, setCartLoading] = useState(true)
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod')
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
+    setCartLoading(true)
+    cartService.getItems().then(setItems).catch(() => setItems([])).finally(() => setCartLoading(false))
     const handler = () => {
-      try { setItems(JSON.parse(localStorage.getItem('cart') || '[]')) } catch { setItems([]) }
+      cartService.getItems().then(setItems)
     }
     window.addEventListener('cart-updated', handler)
     return () => window.removeEventListener('cart-updated', handler)
@@ -84,6 +87,27 @@ export default function MobilePayment() {
   const tax = Math.round(subtotal * TAX_RATE)
   const discount = checkoutCoupon?.discount || 0
   const grandTotal = subtotal + shipping + tax - discount
+
+  if (cartLoading) {
+    return (
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+            <FiChevronLeft size={20} style={{ color: PURPLE }} />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-[18px] font-bold text-[#1F2937]">Payment</h1>
+            <p className="text-[11px] text-[#6B7280]">Loading cart…</p>
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <DoubleRingLoader size={48} />
+          <p className="text-[13px] text-[#6B7280] mt-4">Loading your cart…</p>
+        </div>
+        {Toast}
+      </div>
+    )
+  }
 
   const isCartEmpty = items.length === 0 && !processing && !success
 
@@ -144,11 +168,10 @@ export default function MobilePayment() {
       const history = JSON.parse(localStorage.getItem('order_history') || '[]')
       history.unshift(lastOrder)
       localStorage.setItem('order_history', JSON.stringify(history.slice(0, 50)))
-      localStorage.removeItem('cart')
+      await cartService.clearCart()
       localStorage.removeItem('checkout_coupon')
       localStorage.removeItem('checkout_address_id')
       localStorage.removeItem('checkout_delivery_tip')
-      window.dispatchEvent(new Event('cart-updated'))
       setTimeout(() => navigate(`/checkout/success?order_id=${apiOrder.id}`), 1500)
     } catch {
       showToast('Payment failed. Please try again.', 'error')

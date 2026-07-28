@@ -3,17 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiX, FiShoppingCart, FiTrash2, FiMinus, FiPlus } from 'react-icons/fi'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import { Link } from 'react-router-dom'
-
-interface CartItem {
-  productId: number
-  name: string
-  brand?: string
-  price: number
-  quantity: number
-  emoji?: string
-  image?: string
-  storage?: string
-}
+import { cartService, type CartItem } from '../../services/cartService'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
@@ -45,30 +35,18 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('cart') || '[]')
-      setItems(stored)
-    } catch {
-      setItems([])
-    }
+    if (!open) return
+    cartService.getItems().then(setItems)
   }, [open])
 
-  const updateQuantity = (productId: number, delta: number) => {
-    const updated = items.map(item => {
-      if (item.productId !== productId) return item
-      const qty = Math.max(0, item.quantity + delta)
-      return qty === 0 ? null : { ...item, quantity: qty }
-    }).filter(Boolean) as CartItem[]
-    setItems(updated)
-    localStorage.setItem('cart', JSON.stringify(updated))
-    window.dispatchEvent(new Event('cart-updated'))
+  const handleUpdateQuantity = async (productId: number, variantId: number | null | undefined, delta: number) => {
+    await cartService.updateQuantity(productId, variantId, delta)
+    setItems(await cartService.getItems())
   }
 
-  const removeItem = (productId: number) => {
-    const updated = items.filter(item => item.productId !== productId)
-    setItems(updated)
-    localStorage.setItem('cart', JSON.stringify(updated))
-    window.dispatchEvent(new Event('cart-updated'))
+  const handleRemoveItem = async (productId: number, variantId: number | null | undefined) => {
+    await cartService.removeItem(productId, variantId)
+    setItems(await cartService.getItems())
   }
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
@@ -150,20 +128,20 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                       <h4 className="text-sm font-semibold text-white truncate">{item.name}</h4>
                       {item.storage && <p className="text-xs text-white/40 mt-0.5">{item.storage}</p>}
                       <p className="text-sm font-bold text-[#E53E4E] mt-1">${item.price.toFixed(2)}</p>
-                      <div className="flex items-center gap-3 mt-3">
-                        <div className="flex items-center gap-1.5">
-                          <button onClick={() => updateQuantity(item.productId, -1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
-                            <FiMinus size={10} />
-                          </button>
-                          <span className="w-8 text-center text-sm font-semibold text-white">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.productId, 1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
-                            <FiPlus size={10} />
+                        <div className="flex items-center gap-3 mt-3">
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={() => handleUpdateQuantity(item.productId, item.variantId, -1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
+                              <FiMinus size={10} />
+                            </button>
+                            <span className="w-8 text-center text-sm font-semibold text-white">{item.quantity}</span>
+                            <button onClick={() => handleUpdateQuantity(item.productId, item.variantId, 1)} className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-[#CB202D]/30 transition-all cursor-pointer">
+                              <FiPlus size={10} />
+                            </button>
+                          </div>
+                          <button onClick={() => handleRemoveItem(item.productId, item.variantId)} className="ml-auto w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all cursor-pointer">
+                            <FiTrash2 size={12} />
                           </button>
                         </div>
-                        <button onClick={() => removeItem(item.productId)} className="ml-auto w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all cursor-pointer">
-                          <FiTrash2 size={12} />
-                        </button>
-                      </div>
                     </div>
                   </motion.div>
                 )})

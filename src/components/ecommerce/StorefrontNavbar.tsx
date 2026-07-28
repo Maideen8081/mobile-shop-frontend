@@ -5,6 +5,7 @@ import {
   FiSearch, FiHeart, FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut
 } from 'react-icons/fi'
 import { authService } from '../../services/authService'
+import { cartService } from '../../services/cartService'
 import { useToast } from '../../context/ToastContext'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 
@@ -80,16 +81,17 @@ export default function StorefrontNavbar({
   }, [mobileMenuOpen, closeMenu])
 
   useEffect(() => {
-    const update = () => {
-      try { const cart = JSON.parse(localStorage.getItem('cart') || '[]'); setCartCount(cart.reduce((s: number, i: any) => s + (i.quantity || 1), 0)) } catch { setCartCount(0) }
+    const updateCart = () => setCartCount(cartService.getCachedCartCount())
+    const updateWishlist = () => {
       try { const stored = JSON.parse(localStorage.getItem('wishlist') || '[]'); setWishlistCount(stored.length) } catch { setWishlistCount(0) }
     }
-    update()
-    window.addEventListener('cart-updated', update)
-    window.addEventListener('wishlist-updated', update)
+    updateCart()
+    updateWishlist()
+    window.addEventListener('cart-updated', updateCart)
+    window.addEventListener('wishlist-updated', updateWishlist)
     return () => {
-      window.removeEventListener('cart-updated', update)
-      window.removeEventListener('wishlist-updated', update)
+      window.removeEventListener('cart-updated', updateCart)
+      window.removeEventListener('wishlist-updated', updateWishlist)
     }
   }, [])
 

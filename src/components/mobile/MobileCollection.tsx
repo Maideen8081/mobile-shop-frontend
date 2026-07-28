@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Sparkles, Flame, TrendingUp, Star, Trophy } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { categoryService } from '../../services/categoryService'
+import { cartService } from '../../services/cartService'
 import PremiumProductCard from './PremiumProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
@@ -71,16 +72,17 @@ export default function MobileCollection() {
   useEffect(() => { setActiveCategory(categoryName || 'all') }, [categoryName])
 
   useEffect(() => {
-    const update = () => {
-      try { setCartCount((JSON.parse(localStorage.getItem('cart') || '[]') as any[]).length) } catch { setCartCount(0) }
+    const updateCart = () => setCartCount(cartService.getCachedCartCount())
+    const updateWishlist = () => {
       try { setWishlistCount((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).length) } catch { setWishlistCount(0) }
     }
-    update()
-    window.addEventListener('cart-updated', update)
-    window.addEventListener('wishlist-updated', update)
+    updateCart()
+    updateWishlist()
+    window.addEventListener('cart-updated', updateCart)
+    window.addEventListener('wishlist-updated', updateWishlist)
     return () => {
-      window.removeEventListener('cart-updated', update)
-      window.removeEventListener('wishlist-updated', update)
+      window.removeEventListener('cart-updated', updateCart)
+      window.removeEventListener('wishlist-updated', updateWishlist)
     }
   }, [])
 

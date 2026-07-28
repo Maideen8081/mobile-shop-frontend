@@ -16,6 +16,7 @@ import { FaWhatsapp, FaTelegram, FaFacebook, FaEnvelope } from 'react-icons/fa'
 import { productService } from '../services/productService'
 import { authService } from '../services/authService'
 import { reviewService, type Review, type ProductRating } from '../services/reviewService'
+import { cartService } from '../services/cartService'
 import ReviewForm from '../components/ReviewForm'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -151,6 +152,7 @@ function ProductDetailContent() {
 
   const rateParam = searchParams.get('rate') === 'true'
   const orderIdParam = searchParams.get('order_id') || ''
+  const variantIdParam = searchParams.get('variant_id') || ''
 
   const [apiProduct, setApiProduct] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -201,10 +203,16 @@ function ProductDetailContent() {
   useEffect(() => {
     if (!resolvedId) return
     const pid = Number(resolvedId)
-    const reviews = reviewService.getByProduct(pid)
-    setProductReviews(reviews)
-    setProductRating(reviewService.getProductRating(pid))
-    setHasReviewed(reviewService.hasUserReviewed(pid))
+    ;(async () => {
+      const [reviews, rating, reviewed] = await Promise.all([
+        reviewService.getByProduct(pid),
+        reviewService.getProductRating(pid),
+        reviewService.hasUserReviewed(pid),
+      ])
+      setProductReviews(reviews)
+      setProductRating(rating)
+      setHasReviewed(reviewed)
+    })()
   }, [resolvedId])
 
   useEffect(() => {
@@ -217,15 +225,22 @@ function ProductDetailContent() {
       setTimeout(() => {
         reviewSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }, 600)
+    } else {
+      setShowReviewForm(false)
     }
-  }, [resolvedId, rateParam])
+  }, [resolvedId, rateParam, product])
 
-  const refreshReviews = () => {
+  const refreshReviews = async () => {
     if (!resolvedId) return
     const pid = Number(resolvedId)
-    setProductReviews(reviewService.getByProduct(pid))
-    setProductRating(reviewService.getProductRating(pid))
-    setHasReviewed(reviewService.hasUserReviewed(pid))
+    const [reviews, rating, reviewed] = await Promise.all([
+      reviewService.getByProduct(pid),
+      reviewService.getProductRating(pid),
+      reviewService.hasUserReviewed(pid),
+    ])
+    setProductReviews(reviews)
+    setProductRating(rating)
+    setHasReviewed(reviewed)
   }
 
   useEffect(() => {
@@ -252,6 +267,13 @@ function ProductDetailContent() {
   }, [apiProduct, product])
 
   useEffect(() => { if (resolvedVariantId) setSelectedVariantId(resolvedVariantId) }, [resolvedVariantId])
+
+  // Auto-select variant from query param
+  useEffect(() => {
+    if (!product?.variants?.length || !variantIdParam) return
+    const match = product.variants.find((v: any) => String(v.id) === variantIdParam)
+    if (match) setSelectedVariantId(String(match.id))
+  }, [product, variantIdParam])
 
   const activeVariant = useMemo(() => {
     if (variants.length > 0) {
@@ -292,10 +314,7 @@ function ProductDetailContent() {
 
   const isInCart = useMemo(() => {
     if (!product?.id) return false
-    try {
-      const c = JSON.parse(localStorage.getItem('cart') || '[]')
-      return c.some((i: any) => i.productId === product.id && i.variantId === (activeVariant?.id || null))
-    } catch { return false }
+    return cartService.isInCart(product.id, activeVariant?.id ?? null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.id, activeVariant?.id, added])
   const features = product?.features || []
@@ -303,76 +322,80 @@ function ProductDetailContent() {
   const validateStock = (requestedQty: number): string | null => {
     if (!inStock) return 'This product is currently out of stock'
     if (requestedQty > stockQty) return `Only ${stockQty} units available. You requested ${requestedQty}.`
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existing = cart.find((item: any) => item.productId === product.id && item.variantId === (activeVariant?.id || null))
-    const totalInCart = existing ? existing.quantity + requestedQty : requestedQty
+    const existing = cartService.getItemCountInCart(product.id, activeVariant?.id ?? null)
+    const totalInCart = existing + requestedQty
     if (totalInCart > stockQty) {
-      const canAdd = stockQty - (existing?.quantity || 0)
-      return canAdd <= 0 ? `${existing.quantity} already in cart — no more stock available.` : `Only ${canAdd} more can be added (${existing.quantity} already in cart, ${stockQty} in stock).`
+      const canAdd = stockQty - existing
+      return canAdd <= 0 ? `${existing} already in cart — no more stock available.` : `Only ${canAdd} more can be added (${existing} already in cart, ${stockQty} in stock).`
     }
     return null
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (isAdding) return
+    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
+    setCartError('')
+
+    if (isInCart) {
+      await cartService.removeItem(product.id, activeVariant?.id ?? null)
+      setAdded(false)
+      showToast('Removed from cart!', 'error')
+      return
+    }
+
+    const error = validateStock(qty)
+    if (error) { setCartError(error); showToast(error, 'error'); return }
+
+    setIsAdding(true)
+    try {
+      await cartService.addItem({
+        productId: product.id,
+        variationId: activeVariant?.id || 0,
+        quantity: qty,
+        name: productName,
+        brand: productBrand,
+        price: currentPrice,
+        image: images[0] || '',
+        storage: activeVariant?.storage || '',
+        ram: activeVariant?.ram || '',
+        color: activeVariant?.color || '',
+      })
+      setAdded(true)
+      showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    } finally {
+      setIsAdding(false)
+    }
+  }
+
+  const handleBuyNow = async () => {
     if (isAdding) return
     if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
     const error = validateStock(qty)
     if (error) { setCartError(error); showToast(error, 'error'); return }
 
     setIsAdding(true)
-    setCartError('')
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-
-    const existingIdx = cart.findIndex((item: any) =>
-      item.productId === product.id && item.variantId === (activeVariant?.id || null)
-    )
-
-    if (existingIdx >= 0) {
-      cart.splice(existingIdx, 1)
-      localStorage.setItem('cart', JSON.stringify(cart))
-      window.dispatchEvent(new Event('cart-updated'))
-      setAdded(false)
-      setIsAdding(false)
-      showToast('Removed from cart!', 'error')
-    } else {
-      cart.push({
-        productId: product.id, variantId: activeVariant?.id || null, name: productName,
-        brand: productBrand, price: currentPrice, image: images[0] || '', quantity: qty,
+    try {
+      await cartService.addItem({
+        productId: product.id,
+        variationId: activeVariant?.id || 0,
+        quantity: qty,
+        name: productName,
+        brand: productBrand,
+        price: currentPrice,
+        image: images[0] || '',
         storage: activeVariant?.storage || '',
         ram: activeVariant?.ram || '',
         color: activeVariant?.color || '',
       })
-      localStorage.setItem('cart', JSON.stringify(cart))
-      window.dispatchEvent(new Event('cart-updated'))
       setAdded(true)
-      setIsAdding(false)
       showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    } finally {
+      setIsAdding(false)
     }
-  }
-
-  const handleBuyNow = () => {
-    if (isAdding) return
-    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
-    const error = validateStock(qty)
-    if (error) { setCartError(error); showToast(error, 'error'); return }
-
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existingIdx = cart.findIndex((item: any) =>
-      item.productId === product.id && item.variantId === (activeVariant?.id || null)
-    )
-    if (existingIdx >= 0) { cart[existingIdx].quantity += qty }
-    else {
-      cart.push({
-        productId: product.id, variantId: activeVariant?.id || null, name: productName,
-        brand: productBrand, price: currentPrice, image: images[0] || '', quantity: qty,
-        storage: activeVariant?.storage || '',
-        ram: activeVariant?.ram || '',
-        color: activeVariant?.color || '',
-      })
-    }
-    localStorage.setItem('cart', JSON.stringify(cart))
-    window.dispatchEvent(new Event('cart-updated'))
-    navigate('/checkout/address')
   }
 
   const toggleWishlist = (id: number) => {
@@ -1614,6 +1637,15 @@ function ProductDetailContent() {
                     ))}
                   </div>
                   <p className="text-sm leading-relaxed text-outline">&ldquo;{review.comment}&rdquo;</p>
+                  {review.images.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {review.images.map((url, j) => (
+                        <a key={j} href={url} target="_blank" rel="noopener noreferrer">
+                          <img src={url} alt="" className="w-16 h-16 rounded-lg object-cover border border-gray-100 hover:opacity-80 transition" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>

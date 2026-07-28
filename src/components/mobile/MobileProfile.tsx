@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiLogOut, FiEdit3, FiMapPin, FiCreditCard, FiShoppingBag, FiHeart, FiTag, FiBell, FiUser, FiMail, FiPhone, FiCalendar, FiShield, FiLock, FiGlobe, FiMoon, FiSliders, FiSmartphone, FiHelpCircle, FiMessageCircle, FiFileText, FiAlertTriangle, FiStar, FiInfo, FiCheckCircle, FiPhoneCall } from 'react-icons/fi'
 import { authService, type UserProfile } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 
@@ -182,7 +183,7 @@ export default function MobileProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex items-center justify-center">
-        <FiEdit3 size={30} className="animate-spin" style={{ color: PRIMARY }} />
+        <DoubleRingLoader size={48} label="Loading profile…" />
       </div>
     )
   }

@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Heart, Trash2, ShoppingCart, Loader2, Star } from 'lucide-react'
+import { Heart, Trash2, ShoppingCart, Star } from 'lucide-react'
 import { getImageUrl } from './helpers'
 import { productService } from '../../services/productService'
+import { cartService } from '../../services/cartService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 import MobileTopSection from './MobileTopSection'
 
 const PURPLE = '#CB202D'
@@ -57,18 +59,22 @@ export default function MobileWishlist() {
     setProducts((prev) => prev.filter((p) => (p.id || p.product_id) !== id))
   }
 
-  const addToCart = (product: any) => {
+  const addToCart = async (product: any) => {
     const id = product.id || product.product_id
     const name = product.product_name || product.name || ''
     const rawPrice = product.variants?.[0]?.discount_price || product.variants?.[0]?.price || product.min_price || product.price || 0
     const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
     const rawImages = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
     const image = resolveImage(rawImages)
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existingIdx = cart.findIndex((item: any) => item.productId === id)
-    if (existingIdx >= 0) cart[existingIdx].quantity += 1
-    else cart.push({ productId: id, variantId: null, name, brand: product.brand || '', price, image, quantity: 1 })
-    localStorage.setItem('cart', JSON.stringify(cart))
+    await cartService.addItem({
+      productId: id,
+      variationId: 0,
+      quantity: 1,
+      name,
+      brand: product.brand || '',
+      price,
+      image,
+    })
     window.dispatchEvent(new Event('cart-updated'))
   }
 
@@ -87,7 +93,7 @@ export default function MobileWishlist() {
       <div className="px-4 pb-28 pt-4">
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <Loader2 size={32} className="animate-spin" style={{ color: PURPLE }} />
+            <DoubleRingLoader size={48} />
           </div>
         ) : products.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
@@ -103,7 +109,12 @@ export default function MobileWishlist() {
           </div>
         ) : (
           <>
-            <button onClick={() => products.forEach(p => { addToCart(p); removeFromWishlist(p.id || p.product_id) })}
+            <button onClick={async () => {
+              for (const p of products) {
+                await addToCart(p);
+                removeFromWishlist(p.id || p.product_id);
+              }
+            }}
               className={`${card} rounded-[16px] py-3 w-full flex items-center justify-center gap-2 text-[13px] font-semibold mb-3`}
               style={{ color: PURPLE }}>
               <ShoppingCart size={15} /> Move All to Cart ({products.length})
@@ -150,7 +161,7 @@ export default function MobileWishlist() {
                         <Trash2 size={15} />
                       </button>
                     </div>
-                    <button onClick={() => { addToCart(product); removeFromWishlist(id) }}
+                    <button onClick={async () => { await addToCart(product); removeFromWishlist(id) }}
                       className="w-full h-10 mt-3 rounded-2xl text-[13px] font-semibold text-white inline-flex items-center justify-center gap-1.5 active:scale-[0.98] transition"
                       style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
                       <ShoppingCart size={15} /> Move to Cart

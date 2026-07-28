@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Copy, Check, Package, Truck, ShoppingBag, MapPin, Receipt, Star } from 'lucide-react'
 import { orderService } from '../../services/orderService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -181,8 +182,7 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
       <div className="px-4 mt-3">
         {loading && orders.length === 0 ? (
           <div className={`${card} p-8 flex flex-col items-center text-center`}>
-            <div className="w-10 h-10 border-3 border-[#CB202D]/20 border-t-[#CB202D] rounded-full animate-spin mb-4" />
-            <p className="text-[13px] text-[#6B7280] font-medium">Loading orders…</p>
+            <DoubleRingLoader size={40} label="Loading orders…" />
           </div>
         ) : orders.length === 0 ? (
           <div className={`${card} p-8 flex flex-col items-center text-center`}>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiPlus, FiEdit2, FiTrash2, FiPhone, FiCheck, FiLoader, FiMapPin } from 'react-icons/fi'
 import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../../services/addressService'
+import DoubleRingLoader from '../ui/DoubleRingLoader'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
@@ -187,7 +188,7 @@ export default function MobileCheckoutAddress() {
 
       <div className="px-3 mt-3 space-y-3">
         {loading ? (
-          <div className="flex justify-center py-16"><FiLoader size={26} className="animate-spin" style={{ color: PURPLE }} /></div>
+          <div className="flex justify-center py-16"><DoubleRingLoader size={40} label="Loading addresses…" /></div>
         ) : addresses.length === 0 ? (
           <div className={`${card} rounded-[24px] p-8 text-center mt-6`}>
             <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>

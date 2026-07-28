@@ -6,6 +6,7 @@ import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { cartService } from '../services/cartService'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
@@ -341,27 +342,22 @@ export default function CollectionPage() {
     })
   }
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = async (product: any) => {
     const price = getProductPrice(product).current
     const image = getProductImage(product)
     const name = getProductName(product)
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-    const existingIdx = cart.findIndex((item: any) => item.productId === product.id)
-    if (existingIdx >= 0) {
-      cart[existingIdx].quantity += 1
-    } else {
-      cart.push({
-        productId: product.id,
-        variantId: null,
-        name,
-        brand: product.brand || '',
-        price,
-        image,
-        quantity: 1,
-      })
-    }
-    localStorage.setItem('cart', JSON.stringify(cart))
-    window.dispatchEvent(new Event('cart-updated'))
+    await cartService.addItem({
+      productId: product.id,
+      variationId: 0,
+      quantity: 1,
+      name,
+      brand: product.brand || '',
+      price,
+      image,
+      storage: '',
+      ram: '',
+      color: '',
+    })
     showToast(`${name} added to cart`, 'success')
   }
 
