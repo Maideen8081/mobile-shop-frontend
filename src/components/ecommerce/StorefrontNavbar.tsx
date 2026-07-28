@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  FiSearch, FiHeart, FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut
+  FiSearch, FiHeart, FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut, FiBell
 } from 'react-icons/fi'
 import { authService } from '../../services/authService'
 import { cartService } from '../../services/cartService'
+import { repairService } from '../../services/repairService'
 import { useToast } from '../../context/ToastContext'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 
@@ -43,11 +44,12 @@ export default function StorefrontNavbar({
   absolute = false,
   onMenuClick,
 }: StorefrontNavbarProps) {
-  const navigate = useNavigate()
+const navigate = useNavigate()
   const showToast = useToast().show
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
+  const [notificationCount, setNotificationCount] = useState(0)
   const [navVisible, setNavVisible] = useState(true)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -57,8 +59,6 @@ export default function StorefrontNavbar({
 
   useLockBodyScroll(showLogoutModal)
 
-  const closeMenu = useCallback(() => setMobileMenuOpen(false), [])
-
   useEffect(() => {
     const update = () => setIsLoggedIn(authService.isAuthenticated())
     update()
@@ -67,10 +67,24 @@ export default function StorefrontNavbar({
   }, [])
 
   useEffect(() => {
+    if (!isLoggedIn) return
+    const fetchNotifications = async () => {
+      try {
+        const notifications = await repairService.getNotifications()
+        const unread = notifications.filter((n: any) => !n.is_read).length
+        setNotificationCount(unread)
+      } catch {}
+    }
+    fetchNotifications()
+    window.addEventListener('auth-changed', fetchNotifications)
+    return () => window.removeEventListener('auth-changed', fetchNotifications)
+  }, [isLoggedIn])
+
+  useEffect(() => {
     if (!mobileMenuOpen) return
-    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') closeMenu() }
+    const onKeyDown = () => { setMobileMenuOpen(false) }
     const onClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) closeMenu()
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMobileMenuOpen(false)
     }
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('mousedown', onClickOutside)
@@ -78,7 +92,7 @@ export default function StorefrontNavbar({
       document.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('mousedown', onClickOutside)
     }
-  }, [mobileMenuOpen, closeMenu])
+  }, [mobileMenuOpen])
 
   useEffect(() => {
     const updateCart = () => setCartCount(cartService.getCachedCartCount())
@@ -271,6 +285,10 @@ export default function StorefrontNavbar({
             <Link to="/wishlist" className="nav-icon-btn relative">
               <FiHeart size={16} />
               {wishlistCount > 0 && <span className="badge-count">{wishlistCount > 99 ? '99+' : wishlistCount}</span>}
+            </Link>
+            <Link to="/notifications" className="nav-icon-btn relative">
+              <FiBell size={16} />
+              {notificationCount > 0 && <span className="badge-count">{notificationCount > 99 ? '99+' : notificationCount}</span>}
             </Link>
             <Link to="/profile" className="nav-icon-btn hidden sm:flex">
               <FiUser size={16} />

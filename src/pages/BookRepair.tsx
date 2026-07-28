@@ -6,7 +6,7 @@ import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { deviceBrands } from '../data/repairData'
-import { repairService } from '../services/repairService'
+import { repairService, type RepairService } from '../services/repairService'
 import MobileBookRepair from '../components/mobile/MobileBookRepair'
 import { useIsMobile } from '../components/mobile/helpers'
 
@@ -47,9 +47,19 @@ export default function BookRepair() {
   const [result, setResult] = useState<{ repairId: string; ticketId: number } | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [services, setServices] = useState<RepairService[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   const totalSteps = questions.length + 4
+
+  useEffect(() => {
+    repairService.getServices().then(setServices).catch(() => {})
+  }, [])
+
+  const matchedService = services.find(s =>
+    s.slug.toLowerCase() === decodedIssue.toLowerCase() ||
+    s.name.toLowerCase() === decodedIssue.toLowerCase()
+  )
 
   const validateName = (v: string) => v.trim().length < 2 ? 'Name must be at least 2 characters' : ''
   const validateMobile = (v: string) => !/^\d{10}$/.test(v.replace(/\D/g, '')) ? 'Enter a valid 10-digit mobile number' : ''
@@ -119,21 +129,34 @@ export default function BookRepair() {
     setSubmitError('')
     try {
       const fd = new FormData()
+      if (matchedService) {
+        fd.append('service_id', String(matchedService.id))
+      }
       fd.append('customer_name', name.trim())
       fd.append('customer_mobile', mobile.trim())
-      if (email.trim()) fd.append('email', email.trim())
+      fd.append('customer_email', email.trim())
       fd.append('device_category', decodedIssue || 'Other')
       fd.append('device_brand', brand)
       fd.append('device_model', model.trim())
-      if (imei.trim()) fd.append('imei_number', imei.trim())
+      fd.append('imei_number', imei.trim())
       fd.append('issue_category', decodedIssue || 'Other')
       fd.append('problem_description', buildDescription())
       fd.append('priority', 'medium')
-      fd.append('estimated_completion_days', '3')
+      fd.append('source', 'online')
       imageFiles.forEach((file) => fd.append('photos', file))
+      console.log('[BookRepair] Submitting booking:', {
+        name: name.trim(),
+        mobile: mobile.trim(),
+        email: email.trim(),
+        device: `${brand} ${model.trim()}`,
+        issue: decodedIssue || 'Other',
+        description: buildDescription(),
+      })
       const created = await repairService.create(fd)
+      console.log('[BookRepair] Booking created:', created.repairId)
       setResult({ repairId: created.repairId, ticketId: created.id })
     } catch (err: any) {
+      console.error('[BookRepair] Booking error:', err)
       const resp = err?.response?.data
       if (resp && typeof resp === 'object' && !resp.message) {
         const msgs = Object.entries(resp).map(([, v]) => Array.isArray(v) ? v[0] : v).filter(Boolean)

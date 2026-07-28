@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { FiPlus, FiFilter } from 'react-icons/fi'
+import { FiFilter, FiCheck, FiX } from 'react-icons/fi'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts'
 import PageLayout from '../components/layout/PageLayout'
 import RepairCard from '../components/repair/RepairCard'
@@ -9,7 +9,8 @@ import RepairActivityFeed from '../components/repair/RepairActivityFeed'
 import StatusUpdateModal from '../components/repair/StatusUpdateModal'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { WorkflowTracker, RepairStatusBadge } from '../components/repair/WorkflowTracker'
-import { repairKPIs, repairTickets, repairTechnicians, repairAnalytics, repairStatuses } from '../data/repairData'
+import { repairTechnicians, repairAnalytics, repairStatuses } from '../data/repairData'
+import { repairService } from '../services/repairService'
 import type { RepairTicket } from '../data/repairData'
 
 interface KPI { id: number; title: string; value: number; prefix?: string; suffix?: string; growth: number; trend: 'up' | 'down'; subtitle: string; color: string; bgGlow: string; icon: string; sparkline: number[] }
@@ -127,16 +128,73 @@ function DonutChartCard({ title, subtitle, data, delay = 0 }: { title: string; s
 }
 
 export default function RepairDashboard() {
+  const [tickets, setTickets] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [statusModal, setStatusModal] = useState<{ open: boolean; ticket: RepairTicket | null }>({ open: false, ticket: null })
   const [selectedTicket, setSelectedTicket] = useState<RepairTicket | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   useLockBodyScroll(selectedTicket !== null)
 
-  const filteredTickets = filterStatus === 'all' ? repairTickets : repairTickets.filter((t) => t.status === filterStatus)
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const data = await repairService.list()
+        setTickets(data as any[])
+      } catch {
+        setTickets([])
+      }
+      setLoading(false)
+    }
+    fetchTickets()
+  }, [])
+
+  const kpis = useMemo(() => {
+    const total = tickets.length
+    const submitted = tickets.filter((t: any) => t.status === 'Submitted').length
+    const accepted = tickets.filter((t: any) => t.status === 'Accepted').length
+    const received = tickets.filter((t: any) => t.status === 'Received').length
+    const delivered = tickets.filter((t: any) => t.status === 'Delivered').length
+    return [
+      { id: 1, title: 'Total Bookings', value: total, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'All time', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)', icon: 'FiPackage', sparkline: [3, 5, 4, 7, 6, 8, total] },
+      { id: 2, title: 'Pending Review', value: submitted, suffix: '', growth: 0, trend: submitted > 0 ? 'up' as const : 'down' as const, subtitle: 'Awaiting acceptance', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiLoader', sparkline: submitted > 0 ? [1, 2, 1, 3, 2, submitted] : [0] },
+      { id: 3, title: 'In Progress', value: accepted + received, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Active repairs', color: '#2563eb', bgGlow: 'rgba(37,99,235,0.12)', icon: 'FiTool', sparkline: [1, 2, 3, 2, 3, accepted + received] },
+      { id: 4, title: 'Completed', value: delivered, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Delivered', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)', icon: 'FiCheck', sparkline: delivered > 0 ? [0, 1, 2, 2, 3, delivered] : [0] },
+    ]
+  }, [tickets])
+
+  const filteredTickets = filterStatus === 'all' ? tickets : tickets.filter((t) => t.status === filterStatus)
+
+  const handleAccept = async (ticket: RepairTicket) => {
+    setActionLoading(ticket.repairId)
+    try {
+      await repairService.acceptTicket(ticket.id, 'Ticket accepted by admin')
+      setTickets((prev) => prev.map((t) => (t.id === ticket.id ? { ...t, status: 'Accepted' as const } : t)))
+      setToast({ message: `Ticket ${ticket.repairId} accepted`, type: 'success' })
+    } catch { setToast({ message: 'Failed to accept ticket', type: 'error' }) }
+    setActionLoading(null)
+  }
+
+  const handleReject = async (ticket: RepairTicket) => {
+    const reason = window.prompt('Enter rejection reason:') || 'Not accepted'
+    setActionLoading(ticket.repairId)
+    try {
+      await repairService.rejectTicket(ticket.id, reason)
+      setTickets((prev) => prev.map((t) => (t.id === ticket.id ? { ...t, status: 'Rejected' as const } : t)))
+      setToast({ message: `Ticket ${ticket.repairId} rejected`, type: 'success' })
+    } catch { setToast({ message: 'Failed to reject ticket', type: 'error' }) }
+    setActionLoading(null)
+  }
 
   return (
     <PageLayout title="Repair Service Dashboard">
+      {toast !== null && (
+        <div className="fixed top-4 right-4 z-[9999] bg-white border border-border rounded-xl shadow-xl p-4 flex items-center gap-3 animate-admin-in">
+          <span className={`text-sm font-medium ${toast.type === 'success' ? 'text-success' : 'text-danger'}`}>{toast.message}</span>
+        </div>
+      )}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
@@ -146,21 +204,18 @@ export default function RepairDashboard() {
               <span className="text-text-secondary font-medium">Dashboard</span>
             </div>
             <h1 className="text-xl lg:text-2xl font-bold text-text-primary tracking-tight">Repair Service Dashboard</h1>
-            <p className="text-sm text-text-muted mt-0.5">Monitor repair workflow, technician performance, and device service status in real-time.</p>
+            <p className="text-sm text-text-muted mt-0.5">Monitor customer repair bookings, manage workflow, and track device service status.</p>
           </div>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-card border border-border text-xs font-semibold text-text-secondary hover:bg-primary/10 transition-all cursor-pointer">
               <FiFilter size={13} /> Filter
-            </button>
-            <button className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold cursor-pointer">
-              <FiPlus size={14} /> New Ticket
             </button>
           </div>
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {repairKPIs.slice(0, 8).map((card, i) => (
+        {kpis.map((card, i) => (
           <StatCard key={card.id} {...card} delay={i * 0.05} />
         ))}
       </div>
@@ -213,11 +268,21 @@ export default function RepairDashboard() {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {filteredTickets.filter((t) => !['Delivered'].includes(t.status)).slice(0, 6).map((ticket, i) => (
-                <RepairCard key={ticket.id} ticket={ticket} index={i} onClick={setSelectedTicket} compact />
-              ))}
-            </div>
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="h-24 rounded-2xl bg-surface-lighter animate-pulse" />
+                ))}
+              </div>
+            ) : tickets.length === 0 ? (
+              <div className="text-center py-8 text-text-muted text-sm">No repair bookings yet</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {filteredTickets.filter((t) => !['Delivered', 'Rejected'].includes(t.status)).slice(0, 6).map((ticket, i) => (
+                  <RepairCard key={ticket.id} ticket={ticket} index={i} onClick={setSelectedTicket} compact />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -242,38 +307,58 @@ export default function RepairDashboard() {
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-sm font-bold text-text-primary tracking-tight">All Repair Tickets</h3>
-            <p className="text-xs text-text-muted mt-0.5">{repairTickets.length} total tickets</p>
+            <h3 className="text-sm font-bold text-text-primary tracking-tight">All Repair Bookings</h3>
+            <p className="text-xs text-text-muted mt-0.5">{tickets.length} total bookings · <span className="text-warning font-semibold">{tickets.filter(t => t.status === 'Submitted').length} pending review</span></p>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[800px]">
-            <thead>
-              <tr className="border-b border-primary/20">
-                {['ID', 'Customer', 'Device', 'Issue', 'Status', 'Technician', 'Cost', 'Date'].map((h) => (
-                  <th key={h} className="text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider pb-3 px-2">{h}</th>
+        {loading ? (
+          <div className="h-48 rounded-xl bg-surface-lighter animate-pulse" />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[800px]">
+              <thead>
+                <tr className="border-b border-primary/20">
+                  {['ID', 'Customer', 'Device', 'Issue', 'Status', 'Cost', 'Date', 'Actions'].map((h) => (
+                    <th key={h} className="text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider pb-3 px-2">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.slice(0, 20).map((ticket, i) => (
+                  <motion.tr key={ticket.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
+                    className="border-b border-border hover:bg-primary/10 transition-colors cursor-pointer"
+                    onClick={() => setSelectedTicket(selectedTicket?.id === ticket.id ? null : ticket)}
+                  >
+                    <td className="py-3 px-2"><span className="text-xs font-mono font-semibold text-primary">{ticket.repairId}</span></td>
+                    <td className="py-3 px-2"><span className="text-sm font-medium text-text-secondary">{ticket.customerName}</span></td>
+                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.deviceModel}</span></td>
+                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.issueCategory}</span></td>
+                    <td className="py-3 px-2"><RepairStatusBadge status={ticket.status} size="sm" /></td>
+                    <td className="py-3 px-2"><span className="text-xs font-semibold text-text-secondary">₹{(ticket.estimatedCost || ticket.actualCost).toLocaleString('en-IN')}</span></td>
+                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.createdAt}</span></td>
+                    <td className="py-3 px-2" onClick={(e) => e.stopPropagation()}>
+                      {ticket.status === 'Submitted' && (
+                        <div className="flex gap-1">
+                          <button onClick={() => handleAccept(ticket)} disabled={actionLoading === ticket.repairId}
+                            className="px-2 py-1 rounded-lg bg-success/20 text-success text-[10px] font-semibold hover:bg-success/30 transition-all cursor-pointer disabled:opacity-50">
+                            <FiCheck size={10} /> Accept
+                          </button>
+                          <button onClick={() => handleReject(ticket)} disabled={actionLoading === ticket.repairId}
+                            className="px-2 py-1 rounded-lg bg-danger/20 text-danger text-[10px] font-semibold hover:bg-danger/30 transition-all cursor-pointer disabled:opacity-50">
+                            <FiX size={10} /> Reject
+                          </button>
+                        </div>
+                      )}
+                      {ticket.status !== 'Submitted' && (
+                        <span className="text-[10px] text-text-muted">{ticket.status}</span>
+                      )}
+                    </td>
+                  </motion.tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {repairTickets.slice(0, 8).map((ticket, i) => (
-                <motion.tr key={ticket.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                  className="border-b border-border hover:bg-primary/10 transition-colors cursor-pointer"
-                  onClick={() => setSelectedTicket(selectedTicket?.id === ticket.id ? null : ticket)}
-                >
-                  <td className="py-3 px-2"><span className="text-xs font-mono font-semibold text-primary">{ticket.repairId}</span></td>
-                  <td className="py-3 px-2"><span className="text-sm font-medium text-text-secondary">{ticket.customerName}</span></td>
-                  <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.deviceModel}</span></td>
-                  <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.issueCategory}</span></td>
-                  <td className="py-3 px-2"><RepairStatusBadge status={ticket.status} size="sm" /></td>
-                  <td className="py-3 px-2"><span className="text-xs text-text-muted">{repairTechnicians.find((t) => t.id === ticket.technicianId)?.name || '—'}</span></td>
-                  <td className="py-3 px-2"><span className="text-xs font-semibold text-text-secondary">₹{(ticket.estimatedCost || ticket.actualCost).toLocaleString('en-IN')}</span></td>
-                  <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.createdAt}</span></td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        )}
       </motion.div>
 
       {selectedTicket && (
@@ -299,11 +384,23 @@ export default function RepairDashboard() {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><p className="text-[10px] font-semibold text-text-muted uppercase">Customer</p><p className="font-medium text-text-primary">{selectedTicket.customerName}</p></div>
                 <div><p className="text-[10px] font-semibold text-text-muted uppercase">Mobile</p><p className="text-text-secondary">{selectedTicket.customerMobile}</p></div>
+                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Email</p><p className="text-text-secondary text-xs truncate">{selectedTicket.customerEmail || '—'}</p></div>
                 <div><p className="text-[10px] font-semibold text-text-muted uppercase">IMEI</p><p className="font-mono text-xs text-text-secondary">{selectedTicket.imei}</p></div>
                 <div><p className="text-[10px] font-semibold text-text-muted uppercase">Issue</p><p className="text-text-secondary">{selectedTicket.issueCategory}</p></div>
                 <div><p className="text-[10px] font-semibold text-text-muted uppercase">Est. Cost</p><p className="font-bold text-text-primary">₹{selectedTicket.estimatedCost.toLocaleString('en-IN')}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Technician</p><p className="text-text-secondary">{repairTechnicians.find((t) => t.id === selectedTicket.technicianId)?.name || '—'}</p></div>
               </div>
+              {(selectedTicket.status as string) === 'Submitted' && (
+                <div className="mt-4 flex gap-2">
+                  <button onClick={() => handleAccept(selectedTicket)} disabled={actionLoading === selectedTicket.repairId}
+                    className="flex-1 py-2.5 rounded-xl bg-success text-white text-sm font-semibold cursor-pointer hover:bg-success/90 transition-all disabled:opacity-50">
+                    Accept Booking
+                  </button>
+                  <button onClick={() => handleReject(selectedTicket)} disabled={actionLoading === selectedTicket.repairId}
+                    className="flex-1 py-2.5 rounded-xl bg-danger text-white text-sm font-semibold cursor-pointer hover:bg-danger/90 transition-all disabled:opacity-50">
+                    Reject Booking
+                  </button>
+                </div>
+              )}
             </div>
             <div className="p-4 flex gap-2">
               <button onClick={() => { setStatusModal({ open: true, ticket: selectedTicket }) }}

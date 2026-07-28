@@ -210,7 +210,7 @@ export default function NewRepairTicket() {
 
       imageFiles.forEach((file) => fd.append('photos', file))
 
-      const created = await repairService.create(fd)
+      const created = await repairService.adminCreate(fd)
 
       if (form.userQuestions.trim()) {
         try {

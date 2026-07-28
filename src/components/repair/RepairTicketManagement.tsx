@@ -4,7 +4,7 @@ import {
   FiSearch, FiGrid, FiList, FiEye, FiEdit2, FiTrash2, FiX, FiClock, FiCheckCircle,
   FiAlertTriangle, FiTool, FiSmartphone, FiDollarSign, FiUser, FiCalendar, FiChevronDown,
   FiRefreshCw, FiPhone, FiMail, FiStar, FiTrendingUp, FiBarChart2, FiPackage, FiSave,
-  FiMapPin, FiCamera, FiImage,
+  FiMapPin, FiCamera, FiImage, FiSend,
 } from 'react-icons/fi'
 import { repairService, type RepairTicket } from '../../services/repairService'
 import { deviceCategories, deviceBrands, issueCategories, repairTechnicians } from '../../data/repairData'
@@ -12,6 +12,9 @@ import CreatableSelect from '../ui/CreatableSelect'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 
 const statusConfig: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ReactNode }> = {
+  Submitted: { label: 'Submitted', color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', icon: <FiClock size={12} /> },
+  Accepted: { label: 'Accepted', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: <FiCheckCircle size={12} /> },
+  Rejected: { label: 'Rejected', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', icon: <FiX size={12} /> },
   Received: { label: 'Received', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: <FiClock size={12} /> },
   Diagnosing: { label: 'Diagnosing', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: <FiSearch size={12} /> },
   'Waiting for Parts': { label: 'Waiting for Parts', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: <FiPackage size={12} /> },
@@ -34,14 +37,17 @@ const getTechName = (id: number | null): string => {
 
 const statCards = [
   { key: 'total', label: 'Total Tickets', icon: FiBarChart2, color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)' },
+  { key: 'Submitted', label: 'Submitted', icon: FiSend, color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
+  { key: 'Accepted', label: 'Accepted', icon: FiCheckCircle, color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
   { key: 'Received', label: 'Pending', icon: FiClock, color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
   { key: 'Repair In Progress', label: 'In Progress', icon: FiTool, color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
   { key: 'Delivered', label: 'Delivered', icon: FiCheckCircle, color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
   { key: 'completed', label: 'Completed', icon: FiTrendingUp, color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+  { key: 'Rejected', label: 'Rejected', icon: FiX, color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
   { key: 'Cancelled', label: 'Cancelled', icon: FiAlertTriangle, color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
 ]
 
-const timelineSteps = ['Received', 'Diagnosing', 'Repair In Progress', 'Quality Check', 'Ready for Delivery', 'Delivered']
+const timelineSteps = ['Submitted', 'Accepted', 'Received', 'Diagnosing', 'Repair In Progress', 'Quality Check', 'Ready for Delivery', 'Delivered']
 
 function StatCard({ label, value, icon: Icon, color, bg, index }: { label: string; value: number; icon: any; color: string; bg: string; index: number }) {
   const [display, setDisplay] = useState(0)
@@ -177,14 +183,17 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
     return result
   }, [tickets, search, filterStatus, sortOrder])
 
-  const counts = useMemo(() => {
+const counts = useMemo(() => {
     const total = tickets.length
+    const submitted = tickets.filter((t) => t.status === 'Submitted').length
+    const accepted = tickets.filter((t) => t.status === 'Accepted').length
     const received = tickets.filter((t) => t.status === 'Received').length
     const inProgress = tickets.filter((t) => ['Repair In Progress', 'Diagnosing', 'Waiting for Parts', 'Quality Check'].includes(t.status)).length
     const delivered = tickets.filter((t) => t.status === 'Delivered').length
     const cancelled = tickets.filter((t) => t.status === 'Cancelled').length
+    const rejected = tickets.filter((t) => t.status === 'Rejected').length
     const completed = tickets.filter((t) => ['Ready for Delivery', 'Delivered'].includes(t.status)).length
-    return { total, Received: received, 'Repair In Progress': inProgress, Delivered: delivered, Cancelled: cancelled, completed }
+    return { total, Submitted: submitted, Accepted: accepted, Received: received, 'Repair In Progress': inProgress, Delivered: delivered, Cancelled: cancelled, completed, Rejected: rejected }
   }, [tickets])
 
   const openView = async (ticket: RepairTicket) => {
@@ -227,6 +236,35 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
   }
 
   const openDelete = (ticket: RepairTicket) => { setSelectedTicket(ticket); setDeleteModalOpen(true) }
+
+  const handleAccept = async (ticket: RepairTicket) => {
+    try {
+      const updated = await repairService.acceptTicket(ticket.id, 'Ticket accepted by admin')
+      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
+      setToast({ message: `Ticket ${ticket.repairId} accepted`, type: 'success' })
+      onRefresh()
+    } catch { setToast({ message: 'Failed to accept ticket', type: 'error' }) }
+  }
+
+  const handleReject = async (ticket: RepairTicket) => {
+    const reason = prompt('Enter rejection reason:')
+    if (!reason) return
+    try {
+      const updated = await repairService.rejectTicket(ticket.id, reason)
+      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
+      setToast({ message: `Ticket ${ticket.repairId} rejected`, type: 'success' })
+      onRefresh()
+    } catch { setToast({ message: 'Failed to reject ticket', type: 'error' }) }
+  }
+
+  const handleReceived = async (ticket: RepairTicket) => {
+    try {
+      const updated = await repairService.markReceived(ticket.id, 'Device received by admin')
+      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
+      setToast({ message: `Ticket ${ticket.repairId} marked as received`, type: 'success' })
+      onRefresh()
+    } catch { setToast({ message: 'Failed to mark as received', type: 'error' }) }
+  }
 
   const handleDelete = async () => {
     if (!selectedTicket) return
@@ -426,6 +464,24 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
                     </td>
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-0.5">
+                        {ticket.status === 'Submitted' && (
+                          <>
+                            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                              onClick={() => handleAccept(ticket)}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-emerald-400 hover:bg-emerald-500/10 transition-all" title="Accept"
+                            ><FiCheckCircle size={15} /></motion.button>
+                            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                              onClick={() => handleReject(ticket)}
+                              className="p-1.5 rounded-lg text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-all" title="Reject"
+                            ><FiX size={15} /></motion.button>
+                          </>
+                        )}
+                        {ticket.status === 'Accepted' && (
+                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                            onClick={() => handleReceived(ticket)}
+                            className="p-1.5 rounded-lg text-text-muted hover:text-blue-400 hover:bg-blue-500/10 transition-all" title="Mark Received"
+                          ><FiPackage size={15} /></motion.button>
+                        )}
                         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                           onClick={() => openView(ticket)}
                           className="p-1.5 rounded-lg text-text-muted hover:text-blue-400 hover:bg-blue-500/10 transition-all" title="View"
@@ -486,6 +542,24 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
                     </div>
                   </div>
                   <div className="flex items-center gap-2 pt-3 border-t border-white/[0.06]">
+                    {ticket.status === 'Submitted' && (
+                      <>
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          onClick={() => handleAccept(ticket)}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition-all"
+                        ><FiCheckCircle size={13} /> Accept</motion.button>
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                          onClick={() => handleReject(ticket)}
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-all"
+                        ><FiX size={13} /> Reject</motion.button>
+                      </>
+                    )}
+                    {ticket.status === 'Accepted' && (
+                      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                        onClick={() => handleReceived(ticket)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold hover:bg-blue-500/20 transition-all"
+                      ><FiPackage size={13} /> Received</motion.button>
+                    )}
                     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                       onClick={() => openView(ticket)}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold hover:bg-blue-500/20 transition-all"
@@ -623,6 +697,68 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
                     Created: {selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString('en-IN') : '—'}
                   </div>
                 </div>
+
+                {/* ADMIN ACTIONS */}
+                {(() => {
+                  const status = selectedTicket.status
+                  if (status === 'Submitted') {
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className="flex gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10"
+                      >
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                          onClick={async () => {
+                            try {
+                              await repairService.acceptTicket(selectedTicket.id)
+                              setToast({ message: `Ticket ${selectedTicket.repairId} accepted`, type: 'success' })
+                              await fetchTickets(); onRefresh()
+                              setViewModalOpen(false)
+                            } catch { setToast({ message: 'Failed to accept ticket', type: 'error' }) }
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/20 transition-all"
+                        ><FiCheckCircle size={14} /> Accept</motion.button>
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                          onClick={async () => {
+                            const reason = prompt('Rejection reason:')
+                            if (!reason) return
+                            try {
+                              await repairService.rejectTicket(selectedTicket.id, reason)
+                              setToast({ message: `Ticket ${selectedTicket.repairId} rejected`, type: 'success' })
+                              await fetchTickets(); onRefresh()
+                              setViewModalOpen(false)
+                            } catch { setToast({ message: 'Failed to reject ticket', type: 'error' }) }
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-semibold hover:bg-red-500/20 transition-all"
+                        ><FiX size={14} /> Reject</motion.button>
+                      </motion.div>
+                    )
+                  }
+                  if (status === 'Accepted') {
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className="flex gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10"
+                      >
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                          onClick={async () => {
+                            try {
+                              await repairService.markReceived(selectedTicket.id)
+                              setToast({ message: `Ticket ${selectedTicket.repairId} marked as received`, type: 'success' })
+                              await fetchTickets(); onRefresh()
+                              setViewModalOpen(false)
+                            } catch { setToast({ message: 'Failed to mark received', type: 'error' }) }
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm font-semibold hover:bg-amber-500/20 transition-all"
+                        ><FiPackage size={14} /> Mark Received</motion.button>
+                        {selectedTicket.courier && (
+                          <div className="flex items-center gap-2 px-3 py-2 text-xs text-amber-400 bg-amber-500/5 rounded-lg border border-amber-500/10">
+                            Courier: {selectedTicket.courier.courier_name} — {selectedTicket.courier.tracking_number}
+                          </div>
+                        )}
+                      </motion.div>
+                    )
+                  }
+                  return null
+                })()}
               </div>
             </motion.div>
           </motion.div>

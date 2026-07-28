@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FiChevronLeft, FiUser, FiSmartphone, FiImage, FiX, FiAlertCircle, FiCheckCircle, FiSend, FiArrowRight } from 'react-icons/fi'
-import { repairService } from '../../services/repairService'
+import { repairService, type RepairService } from '../../services/repairService'
 import { deviceBrands } from '../../data/repairData'
 import MobileTopSection from './MobileTopSection'
 
@@ -41,12 +41,22 @@ export default function MobileBookRepair() {
   const [submitError, setSubmitError] = useState('')
   const [result, setResult] = useState<{ repairId: string; ticketId: number } | null>(null)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [services, setServices] = useState<RepairService[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   const totalSteps = questions.length + 4
   const progressLabel = step <= questions.length
     ? `Question ${step} of ${questions.length}`
     : ['', '', 'Your Details', 'Device Info', 'Photos'][step - questions.length]
+
+  useEffect(() => {
+    repairService.getServices().then(setServices).catch(() => {})
+  }, [])
+
+  const matchedService = services.find(s =>
+    s.slug.toLowerCase() === decodedIssue.toLowerCase() ||
+    s.name.toLowerCase() === decodedIssue.toLowerCase()
+  )
 
   useEffect(() => {
     setAnswers(questions.map(() => '')); setStep(1); setErrors({}); setResult(null)
@@ -107,21 +117,33 @@ export default function MobileBookRepair() {
     setSubmitting(true); setSubmitError('')
     try {
       const fd = new FormData()
+      if (matchedService) {
+        fd.append('service_id', String(matchedService.id))
+      }
       fd.append('customer_name', name.trim())
       fd.append('customer_mobile', mobile.trim())
-      if (email.trim()) fd.append('email', email.trim())
+      fd.append('customer_email', email.trim())
       fd.append('device_category', decodedIssue || 'Other')
       fd.append('device_brand', brand)
       fd.append('device_model', model.trim())
-      if (imei.trim()) fd.append('imei_number', imei.trim())
+      fd.append('imei_number', imei.trim())
       fd.append('issue_category', decodedIssue || 'Other')
       fd.append('problem_description', buildDescription())
       fd.append('priority', 'medium')
-      fd.append('estimated_completion_days', '3')
+      fd.append('source', 'online')
       imageFiles.forEach((file) => fd.append('photos', file))
+      console.log('[MobileBookRepair] Submitting booking:', {
+        name: name.trim(),
+        mobile: mobile.trim(),
+        email: email.trim(),
+        device: `${brand} ${model.trim()}`,
+        issue: decodedIssue || 'Other',
+      })
       const created = await repairService.create(fd)
+      console.log('[MobileBookRepair] Booking created:', created.repairId)
       setResult({ repairId: created.repairId, ticketId: created.id })
     } catch (err: any) {
+      console.error('[MobileBookRepair] Booking error:', err)
       const resp = err?.response?.data
       if (resp && typeof resp === 'object' && !resp.message) {
         const msgs = Object.entries(resp).map(([, v]) => Array.isArray(v) ? v[0] : v).filter(Boolean)

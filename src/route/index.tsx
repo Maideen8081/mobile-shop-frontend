@@ -5,9 +5,8 @@ import Dashboard from '../pages/Dashboard'
 import CategoryManagement from '../pages/CategoryManagement'
 import ProductManagement from '../pages/ProductManagement'
 import RepairDashboard from '../pages/RepairDashboard'
-import RepairHistory from '../pages/RepairHistory'
-import RepairAnalytics from '../pages/RepairAnalytics'
 import NewRepairTicket from '../pages/NewRepairTicket'
+import UserBookings from '../pages/UserBookings'
 import TechnicianPanel from '../pages/TechnicianPanel'
 import DeviceTracking from '../pages/DeviceTracking'
 import CustomerDashboard from '../pages/CustomerDashboard'
@@ -71,9 +70,8 @@ export default function AppRoutes() {
       <Route path="/categories" element={<CategoryManagement />} />
       <Route path="/products" element={<ProductManagement />} />
       <Route path="/repair-dashboard" element={<RepairDashboard />} />
-      <Route path="/repair-history" element={<RepairHistory />} />
-      <Route path="/repair-analytics" element={<RepairAnalytics />} />
       <Route path="/new-repair" element={<NewRepairTicket />} />
+      <Route path="/user-bookings" element={<UserBookings />} />
       <Route path="/technician-panel" element={<TechnicianPanel />} />
       <Route path="/device-tracking" element={<DeviceTracking />} />
       <Route path="/customer-dashboard" element={<CustomerDashboard />} />

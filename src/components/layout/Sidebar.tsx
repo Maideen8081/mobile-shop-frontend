@@ -30,8 +30,8 @@ const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: 'Repairs',
     items: [
+      { id: 'user-bookings', label: 'User Bookings', icon: 'FiPackage', path: '/user-bookings' },
       { id: 'new-repair', label: 'New Repair Ticket', icon: 'FiPlus', path: '/new-repair' },
-      { id: 'repair-history', label: 'Repair History', icon: 'FiTool', path: '/repair-history' },
     ],
   },
   {

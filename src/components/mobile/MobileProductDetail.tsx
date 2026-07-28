@@ -364,6 +364,7 @@ export default function MobileProductDetail() {
       })
       setAdded(true)
       showToast(`Added ${qty} item${qty > 1 ? 's' : ''} to cart!`, 'success')
+      navigate('/cart')
     } catch (err: any) {
       showToast(err?.message || 'Failed to add to cart', 'error')
     } finally {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, Component } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiLoader } from 'react-icons/fi'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
@@ -33,9 +33,12 @@ const PRIORITY_BG: Record<string, string> = {
 }
 
 const STATUS_BADGES: Record<string, { label: string; color: string }> = {
-  Received: { label: 'Pending', color: '#f59e0b' },
+  Submitted: { label: 'Submitted', color: '#6366f1' },
+  Accepted: { label: 'Accepted', color: '#22c55e' },
+  Rejected: { label: 'Rejected', color: '#ef4444' },
+  Received: { label: 'Device Received', color: '#f59e0b' },
   Diagnosing: { label: 'Under Inspection', color: '#3b82f6' },
-  'Waiting for Parts': { label: 'Waiting Approval', color: '#f97316' },
+  'Waiting for Parts': { label: 'Waiting for Parts', color: '#f97316' },
   'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
   'Quality Check': { label: 'Quality Check', color: '#06b6d4' },
   'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
@@ -43,7 +46,7 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   Cancelled: { label: 'Cancelled', color: '#6b7280' },
 }
 
-const FILTER_OPTIONS = ['All', 'Pending', 'In Progress', 'Completed', 'Cancelled'] as const
+const FILTER_OPTIONS = ['All', 'Pending', 'In Progress', 'Completed', 'Rejected'] as const
 
 function getAuthEmail(): string | null {
   try {
@@ -58,30 +61,43 @@ function getAuthEmail(): string | null {
 
 async function fetchMyRepairs(): Promise<RepairTicket[]> {
   try {
-    const data = await repairService.myRepairs()
+    const data = await repairService.myTickets()
+    console.log('[CustomerRepairTracking] myTickets response:', data)
     if (data.length > 0) return data
-  } catch {}
-  const all = await repairService.list()
-  const email = getAuthEmail()
-  if (email) return all.filter(t => t.customerEmail?.toLowerCase() === email.toLowerCase())
-  return all
+  } catch (e) {
+    console.error('[CustomerRepairTracking] myTickets failed:', e)
+  }
+  try {
+    const all = await repairService.list()
+    const email = getAuthEmail()
+    if (email) return all.filter(t => t.customerEmail?.toLowerCase() === email.toLowerCase())
+    return all
+  } catch (e) {
+    console.error('[CustomerRepairTracking] list fallback failed:', e)
+    return []
+  }
 }
 
 const PIPELINE_STEPS = [
-  { key: 'intake', label: 'Intake Diagnostics', icon: 'phonelink_setup' },
-  { key: 'repair', label: 'Hardware Calibration', icon: 'precision_manufacturing' },
-  { key: 'quality', label: 'Quality Assurance', icon: 'verified' },
-  { key: 'ready', label: 'Deployment', icon: 'rocket_launch' },
+  { key: 'submitted', label: 'Submitted', icon: 'send' },
+  { key: 'accepted', label: 'Accepted', icon: 'check_circle' },
+  { key: 'received', label: 'Device Received', icon: 'inventory_2' },
+  { key: 'repair', label: 'Repair In Progress', icon: 'precision_manufacturing' },
+  { key: 'quality', label: 'Quality Check', icon: 'verified' },
+  { key: 'ready', label: 'Ready for Pickup', icon: 'rocket_launch' },
 ] as const
 
 const TICKET_TO_PIPELINE: Record<string, number> = {
-  Received: 0,
-  Diagnosing: 0,
-  'Waiting for Parts': 0,
-  'Repair In Progress': 1,
-  'Quality Check': 2,
-  'Ready for Delivery': 3,
-  Delivered: 3,
+  Submitted: 0,
+  Accepted: 1,
+  Received: 2,
+  Diagnosing: 2,
+  'Waiting for Parts': 2,
+  'Repair In Progress': 3,
+  'Quality Check': 4,
+  'Ready for Delivery': 5,
+  Delivered: 5,
+  Rejected: -1,
   Cancelled: -1,
 }
 
@@ -378,15 +394,24 @@ function RepairDetailModal({
   ticket: initialTicket,
   onClose,
   onApprove,
+  onNotify,
 }: {
   ticket: RepairTicket
   onClose: () => void
   onApprove: (approved: boolean) => void
+  onNotify: (msg: string, type: 'success' | 'error') => void
 }) {
   const [ticket, setTicket] = useState(initialTicket)
   const [message, setMessage] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
+  const [courierName, setCourierName] = useState('')
+  const [trackingNumber, setTrackingNumber] = useState('')
+  const [courierDate, setCourierDate] = useState('')
+  const [courierNotes, setCourierNotes] = useState('')
+  const [submittingCourier, setSubmittingCourier] = useState(false)
   const needsApproval = ['Diagnosing', 'Waiting for Parts'].includes(ticket.status) && ticket.estimatedCost > 0
+  const canSendCourier = ticket.status === 'Accepted' && !ticket.courier
+  const courierSent = ticket.status === 'Accepted' && ticket.courier
 
   const sendMessage = async () => {
     const text = message.trim()
@@ -399,6 +424,29 @@ function RepairDetailModal({
       setTicket(updated)
     } catch { /* ignore */ }
     setSendingMsg(false)
+  }
+
+  const handleSendCourier = async () => {
+    if (!courierName.trim() || !trackingNumber.trim()) {
+      onNotify('Please fill courier name and tracking number', 'error')
+      return
+    }
+    setSubmittingCourier(true)
+    try {
+      await repairService.submitCourier(ticket.id, {
+        courier_name: courierName.trim(),
+        tracking_number: trackingNumber.trim(),
+        courier_date: courierDate || new Date().toISOString().split('T')[0],
+        courier_notes: courierNotes.trim(),
+      })
+      await repairService.updateStatus(ticket.id, 'Received', `Courier received: ${courierName.trim()} - ${trackingNumber.trim()}`)
+      const updated = await repairService.getById(ticket.id)
+      setTicket(updated)
+      onNotify('Courier details submitted successfully!', 'success')
+    } catch {
+      onNotify('Failed to submit courier details', 'error')
+    }
+    setSubmittingCourier(false)
   }
 
   return (
@@ -558,6 +606,113 @@ function RepairDetailModal({
             </div>
           </div>
 
+          {canSendCourier && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-5 rounded-xl"
+              style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="material-symbols-outlined text-xl" style={{ color: '#6366f1' }}>local_shipping</span>
+                <div>
+                  <h3 className="text-sm font-bold text-[#191c1d]">Send Device via Courier</h3>
+                  <p className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>Your repair has been accepted. Please send the device and share courier details.</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Courier Name *</label>
+                    <input value={courierName} onChange={(e) => setCourierName(e.target.value)}
+                      placeholder="e.g. DTDC, Blue Dart"
+                      className="w-full h-9 px-3 rounded-lg text-xs outline-none"
+                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Tracking Number *</label>
+                    <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)}
+                      placeholder="e.g. DTDC123456789"
+                      className="w-full h-9 px-3 rounded-lg text-xs outline-none"
+                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Shipment Date</label>
+                  <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg text-xs outline-none"
+                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Additional Notes</label>
+                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2}
+                    placeholder="Any special instructions for the courier..."
+                    className="w-full px-3 py-2 rounded-lg text-xs outline-none resize-none"
+                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                  />
+                </div>
+                <button onClick={handleSendCourier} disabled={submittingCourier}
+                  className="w-full py-2.5 rounded-lg text-sm font-bold text-white transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50"
+                  style={{ background: '#6366f1' }}
+                >
+                  {submittingCourier ? 'Submitting...' : 'Submit Courier Details'}
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {courierSent && (
+            <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
+                <h3 className="text-sm font-bold text-[#191c1d]">Courier Sent</h3>
+              </div>
+              <div className="space-y-1">
+                <InfoRow label="Courier" value={ticket.courier?.courier_name || '—'} />
+                <InfoRow label="Tracking" value={ticket.courier?.tracking_number || '—'} />
+                <InfoRow label="Date" value={ticket.courier?.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
+                {ticket.courier?.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
+              </div>
+            </div>
+          )}
+
+          {ticket.statusHistory && ticket.statusHistory.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Status History</h3>
+              <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
+                <div className="relative">
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.15)' }} />
+                  <div className="space-y-0">
+                    {ticket.statusHistory.map((h, idx) => {
+                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
+                      return (
+                        <div key={h.id || idx} className="flex items-start gap-3 py-2">
+                          <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                            style={{ background: `${badge.color}20` }}
+                          >
+                            <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
+                              <span className="text-[10px]" style={{ color: 'rgba(59,75,61,0.4)' }}>
+                                {h.created_at ? formatDate(h.created_at) : ''}
+                              </span>
+                            </div>
+                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>{h.notes}</p>}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {needsApproval && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -614,11 +769,40 @@ function RepairDetailModal({
   )
 }
 
+function ErrorFallback({ error, resetError }: { error: Error; resetError: () => void }) {
+  return (
+    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-8">
+      <div className="bg-white rounded-xl p-8 max-w-md mx-auto text-center">
+        <h2 className="text-xl font-bold text-red-600 mb-4">Component Error</h2>
+        <pre className="text-left text-sm text-red-600 p-4 bg-red-50 rounded overflow-auto">{error.message}</pre>
+        <div className="mt-4 flex gap-3 justify-center">
+          <button onClick={resetError} className="px-6 py-2 bg-[#CB202D] text-white rounded">Retry</button>
+          <button onClick={() => window.location.reload()} className="px-6 py-2 bg-gray-600 text-white rounded">Reload Page</button>
+        </div>
+</div>
+    </div>
+  )
+}
+
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error: Error) { return { hasError: true, error } }
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback error={this.state.error!} resetError={() => this.setState({ hasError: false, error: null })} />
+    }
+    return this.props.children
+  }
+}
+
 function InfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex justify-between items-start gap-2">
       <span className="text-[9px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: 'rgba(59,75,61,0.5)' }}>{label}</span>
-      <span className="text-sm text-right font-medium" style={{ color: highlight ? '#A81D2A' : '#191c1d', fontWeight: highlight ? 700 : 500 }}>{value || '—'}</span>
+      <span className="text-sm text-right font-medium" style={{ color: highlight ? '#006d37' : '#191c1d', fontWeight: highlight ? 700 : 500 }}>{value || '—'}</span>
     </div>
   )
 }
@@ -636,7 +820,8 @@ export default function CustomerRepairTracking() {
       try {
         const data = await fetchMyRepairs()
         setTickets(data)
-      } catch {
+      } catch (e) {
+        console.error('[CustomerRepairTracking] fetchTickets error:', e)
         setTickets([])
       }
       setLoading(false)
@@ -661,10 +846,10 @@ export default function CustomerRepairTracking() {
       )
     }
     if (statusFilter !== 'All') {
-      if (statusFilter === 'Pending') result = result.filter(t => ['Received'].includes(t.status))
+      if (statusFilter === 'Pending') result = result.filter(t => ['Submitted', 'Accepted', 'Received'].includes(t.status))
       else if (statusFilter === 'In Progress') result = result.filter(t => ['Diagnosing', 'Waiting for Parts', 'Repair In Progress', 'Quality Check', 'Ready for Delivery'].includes(t.status))
       else if (statusFilter === 'Completed') result = result.filter(t => t.status === 'Delivered')
-      else if (statusFilter === 'Cancelled') result = result.filter(t => t.status === 'Cancelled')
+      else if (statusFilter === 'Rejected') result = result.filter(t => ['Rejected', 'Cancelled'].includes(t.status))
     }
     return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   }, [tickets, searchQuery, statusFilter])
@@ -696,7 +881,8 @@ export default function CustomerRepairTracking() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
+    <ErrorBoundary>
+      <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
       <style>{`
         @keyframes pulse-mint {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -850,7 +1036,7 @@ export default function CustomerRepairTracking() {
 
       <AnimatePresence>
         {selectedTicket && (
-          <RepairDetailModal ticket={selectedTicket} onClose={() => setSelectedTicket(null)} onApprove={handleApprove} />
+          <RepairDetailModal ticket={selectedTicket} onClose={() => setSelectedTicket(null)} onApprove={handleApprove} onNotify={showNotification} />
         )}
       </AnimatePresence>
 
@@ -872,7 +1058,8 @@ export default function CustomerRepairTracking() {
         )}
       </AnimatePresence>
 
-      <EcommerceFooter />
-    </div>
+<EcommerceFooter />
+      </div>
+    </ErrorBoundary>
   )
 }
