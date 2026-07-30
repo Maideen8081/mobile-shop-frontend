@@ -1317,24 +1317,26 @@ export default function CustomerRepairTracking() {
     return { total, active, completed }
   }, [tickets])
 
-  const handleApprove = async (approved: boolean) => {
-    if (!selectedTicket) return
-    try {
-      if (approved) {
-        await repairService.customerApprove(selectedTicket.id)
-        showNotification('Repair approved! Work will begin shortly.', 'success')
-      } else {
-        await repairService.customerDecline(selectedTicket.id)
-        showNotification('Repair estimate declined. A representative will contact you.', 'error')
-      }
-      const detail = await repairService.getById(selectedTicket.id)
-      setSelectedTicket(detail)
-      const updated = await fetchMyRepairs()
-      setTickets(updated.map(t => t.id === detail.id ? detail : t))
-    } catch {
-      showNotification('Failed to update. Please try again.', 'error')
-    }
-  }
+   const handleApprove = async (approved: boolean) => {
+     if (!selectedTicket) return
+     try {
+       if (approved) {
+         await repairService.customerApprove(selectedTicket.id)
+         showNotification('Repair approved! Work will begin shortly.', 'success')
+       } else {
+         await repairService.customerDecline(selectedTicket.id)
+         showNotification('Repair estimate declined. A representative will contact you.', 'error')
+       }
+       try {
+         const detail = await repairService.getById(selectedTicket.id)
+         setSelectedTicket(detail)
+         const updated = await fetchMyRepairs()
+         setTickets(updated.map(t => t.id === detail.id ? detail : t))
+       } catch { /* refresh non-critical */ }
+     } catch {
+       showNotification('Failed to update. Please try again.', 'error')
+     }
+   }
 
   return (
     <ErrorBoundary>
