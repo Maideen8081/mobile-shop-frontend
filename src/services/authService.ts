@@ -122,6 +122,7 @@ function normalizeProfile(raw: any): UserProfile {
 
 export const authService = {
   login: async (data: LoginData) => {
+    ['phonehub_addresses', 'wishlist', 'last_order', 'order_history', 'user_profile'].forEach(k => localStorage.removeItem(k))
     const payload = { email: data.email, password: data.password }
     const r = await api.post(`${BASE}/login/`, payload)
     const tokens = extractTokens(r.data)
@@ -135,6 +136,7 @@ export const authService = {
   },
 
   register: async (data: RegisterData) => {
+    ['phonehub_addresses', 'wishlist', 'last_order', 'order_history', 'user_profile'].forEach(k => localStorage.removeItem(k))
     const payload = {
       full_name: data.fullName,
       email: data.email,

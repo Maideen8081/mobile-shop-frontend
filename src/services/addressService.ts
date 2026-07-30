@@ -95,16 +95,8 @@ export const addressService = {
       const raw = extractItems(r.data)
       if (raw.length > 0) {
         const apiAddrs = raw.map(i => normalize(i))
-        const local = lsRead()
-        const localIds = new Set(local.map(a => a.id))
-        for (const apiAddr of apiAddrs) {
-          if (apiAddr.id && !localIds.has(apiAddr.id)) {
-            local.push(apiAddr)
-          }
-        }
-        if (local.length > 0) lsWrite(local)
-        else lsWrite(apiAddrs)
-        return local.length > 0 ? local : apiAddrs
+        lsWrite(apiAddrs)
+        return apiAddrs
       }
       return lsRead()
     } catch {
