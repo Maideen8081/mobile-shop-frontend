@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, useCallback, Component } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiLoader } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { repairService, type RepairTicket } from '../services/repairService'
+import { useIsMobile } from '../components/mobile/helpers'
+import { BRAND, C } from '../components/mobile/theme'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
@@ -37,6 +40,7 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   Accepted: { label: 'Accepted', color: '#22c55e' },
   Rejected: { label: 'Rejected', color: '#ef4444' },
   Received: { label: 'Device Received', color: '#f59e0b' },
+  'Awaiting Approval': { label: 'Awaiting Approval', color: '#CB202D' },
   Diagnosing: { label: 'Under Inspection', color: '#3b82f6' },
   'Waiting for Parts': { label: 'Waiting for Parts', color: '#f97316' },
   'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
@@ -81,22 +85,26 @@ async function fetchMyRepairs(): Promise<RepairTicket[]> {
 const PIPELINE_STEPS = [
   { key: 'submitted', label: 'Submitted', icon: 'send' },
   { key: 'accepted', label: 'Accepted', icon: 'check_circle' },
-  { key: 'received', label: 'Device Received', icon: 'inventory_2' },
+  { key: 'received', label: 'Received', icon: 'inventory_2' },
+  { key: 'awaiting_approval', label: 'Awaiting Approval', icon: 'handshake' },
+  { key: 'diagnosing', label: 'Diagnosing', icon: 'search' },
   { key: 'repair', label: 'Repair In Progress', icon: 'precision_manufacturing' },
   { key: 'quality', label: 'Quality Check', icon: 'verified' },
-  { key: 'ready', label: 'Ready for Pickup', icon: 'rocket_launch' },
+  { key: 'ready', label: 'Ready for Delivery', icon: 'rocket_launch' },
+  { key: 'delivered', label: 'Delivered', icon: 'done_all' },
 ] as const
 
 const TICKET_TO_PIPELINE: Record<string, number> = {
   Submitted: 0,
   Accepted: 1,
   Received: 2,
-  Diagnosing: 2,
-  'Waiting for Parts': 2,
-  'Repair In Progress': 3,
-  'Quality Check': 4,
-  'Ready for Delivery': 5,
-  Delivered: 5,
+  'Awaiting Approval': 3,
+  Diagnosing: 4,
+  'Waiting for Parts': 4,
+  'Repair In Progress': 5,
+  'Quality Check': 6,
+  'Ready for Delivery': 7,
+  Delivered: 8,
   Rejected: -1,
   Cancelled: -1,
 }
@@ -187,7 +195,7 @@ function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
       border: '1px solid rgba(168,29,42,0.05)',
       boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
     }}>
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         {PIPELINE_STEPS.map((s, idx) => {
           const isActive = !isCancelled && idx <= stepIdx
           const isCurrent = idx === stepIdx && !isCancelled
@@ -235,88 +243,129 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
   const progressPct = isDelivered ? 100 : stepIdx >= 0 ? Math.round((stepIdx / (PIPELINE_STEPS.length - 1)) * 100) : 0
 
   return (
-    <div
-      onClick={() => onSelect(ticket)}
-      className="p-5 rounded-xl flex flex-col md:flex-row gap-5 cursor-pointer group transition-all"
-      style={{
-        background: 'rgba(255,255,255,0.7)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(168,29,42,0.05)',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.3)'; e.currentTarget.style.boxShadow = '0 4px 25px rgba(0,0,0,0.07)' }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(168,29,42,0.05)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.04)' }}
-    >
-      <div className="w-full md:w-48 h-36 rounded-lg overflow-hidden shrink-0 relative" style={{ background: 'rgba(237,238,239,0.5)' }}>
-        <div className="w-full h-full flex items-center justify-center text-5xl opacity-60">
+    <>
+      {/* Mobile card */}
+      <motion.div
+        onClick={() => onSelect(ticket)}
+        whileTap={{ scale: 0.97 }}
+        className="md:hidden flex gap-3 p-3 rounded-2xl cursor-pointer active:scale-[0.97] transition-all"
+        style={{
+          background: '#ffffff',
+          border: `1px solid ${BRAND.line}`,
+          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+        }}
+      >
+        <div className="relative w-[80px] h-[80px] rounded-xl overflow-hidden shrink-0 self-center" style={{ background: '#FFFBFB', border: `1px solid ${BRAND.line}` }}>
           {ticket.images && ticket.images.length > 0 ? (
             <img
               src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
               alt={ticket.deviceModel}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain p-1.5"
+              loading="lazy"
               onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '📱' }}
             />
           ) : (
-            <span>📱</span>
+            <div className="w-full h-full flex items-center justify-center text-2xl">📱</div>
           )}
+          <span className="absolute top-1 left-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: isDelivered ? '#059669' : BRAND.primary }}>{isDelivered ? 'Done' : 'Active'}</span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#A81D2A]/30 to-transparent" />
-        <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}>
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDelivered ? '#CB202D' : '#A81D2A' }} />
-          <span className="text-[9px] font-bold uppercase" style={{ color: '#A81D2A' }}>{isDelivered ? 'Completed' : 'Active'}</span>
-        </div>
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Ticket</span>
-              <span className="text-sm font-bold" style={{ color: '#A81D2A' }}>{ticket.repairId}</span>
+        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+          <div className="flex items-start justify-between gap-1">
+            <div className="min-w-0">
+              <h3 className="text-[13px] font-bold leading-snug truncate" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</h3>
+              <p className="text-[10px] font-semibold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</p>
             </div>
-            <h3 className="text-base font-bold text-[#191c1d] truncate">{ticket.deviceBrand} {ticket.deviceModel}</h3>
-            <span className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>{ticket.deviceColor} | {formatDate(ticket.createdAt)}</span>
           </div>
-          <StatusBadge status={ticket.status} />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[9.5px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: 'rgba(203,32,45,0.08)', color: BRAND.primary }}>{ticket.issueCategory}</span>
+            <PriorityBadge priority={ticket.priority} />
+            {ticket.estimatedCost > 0 && (
+              <span className="text-[11px] font-extrabold" style={{ color: BRAND.primary }}>{formatPrice(ticket.estimatedCost)}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
+            <StatusBadge status={ticket.status} />
+            <span className="text-[9px]" style={{ color: BRAND.muted }}>{formatDate(ticket.createdAt)}</span>
+          </div>
+          <div className="mt-1 w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
+            <div className="h-full rounded-full transition-all duration-700" style={{
+              width: `${progressPct}%`,
+              background: 'linear-gradient(90deg, #CB202D, #A81D2A)',
+            }} />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Desktop card */}
+      <motion.div
+        onClick={() => onSelect(ticket)}
+        whileTap={{ scale: 0.98 }}
+        className={`hidden md:flex ${C.card} p-5 gap-5 cursor-pointer active:scale-[0.98] transition-all`}
+      >
+        <div className={`w-44 h-36 rounded-xl overflow-hidden shrink-0 relative ${C.card.replace('bg-white', '')}`} style={{ background: 'rgba(237,238,239,0.5)' }}>
+          <div className="w-full h-full flex items-center justify-center text-5xl opacity-60">
+            {ticket.images && ticket.images.length > 0 ? (
+              <img
+                src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
+                alt={ticket.deviceModel}
+                className="w-full h-full object-cover"
+                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '📱' }}
+              />
+            ) : (
+              <span>📱</span>
+            )}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#A81D2A]/30 to-transparent" />
+          <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDelivered ? BRAND.primary : BRAND.primaryDark }} />
+            <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.primaryDark }}>{isDelivered ? 'Completed' : 'Active'}</span>
+          </div>
         </div>
 
-        <div className="mb-3 mt-3">
-          <div className="flex justify-between text-[10px] mb-1" style={{ color: 'rgba(59,75,61,0.6)' }}>
-            <span>Hardware Integrity Protocol</span>
-            <span style={{ color: progressPct >= 100 ? '#CB202D' : '#A81D2A' }}>{progressPct}%</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start gap-2 mb-2">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Ticket</span>
+                <span className="text-sm font-bold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</span>
+              </div>
+              <h3 className="text-base font-bold truncate" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</h3>
+              <span className="text-[11px]" style={{ color: BRAND.muted }}>{ticket.deviceColor} | {formatDate(ticket.createdAt)}</span>
+            </div>
+            <StatusBadge status={ticket.status} />
           </div>
-          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{
+
+          <div className="mb-3">
+            <div className="flex justify-between text-[10px] mb-1" style={{ color: BRAND.muted }}>
+              <span>Hardware Integrity Protocol</span>
+              <span style={{ color: progressPct >= 100 ? BRAND.primary : BRAND.primaryDark }}>{progressPct}%</span>
+            </div>
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
+              <div className="h-full rounded-full transition-all duration-700" style={{
                 width: `${progressPct}%`,
                 background: progressPct >= 100 ? 'linear-gradient(90deg, #CB202D, #CB202D)' : 'linear-gradient(90deg, #CB202D, #A81D2A)',
                 boxShadow: '0 0 8px rgba(168,29,42,0.3)',
-              }}
-            />
+              }} />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-[10px]">
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: 'rgba(237,238,239,0.6)' }}>
+              <span className="material-symbols-outlined text-xs" style={{ color: BRAND.primaryDark }}>build_circle</span>
+              <span style={{ color: 'rgba(59,75,61,0.8)' }}>{ticket.issueCategory}</span>
+            </div>
+            <PriorityBadge priority={ticket.priority} />
+            <div className="font-bold" style={{ color: BRAND.primaryDark }}>{formatPrice(ticket.estimatedCost)}</div>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 text-[10px]">
-          <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: 'rgba(237,238,239,0.6)' }}>
-            <span className="material-symbols-outlined text-xs" style={{ color: '#A81D2A' }}>build_circle</span>
-            <span style={{ color: 'rgba(59,75,61,0.8)' }}>{ticket.issueCategory}</span>
-          </div>
-          <PriorityBadge priority={ticket.priority} />
-          <div className="font-bold" style={{ color: '#A81D2A' }}>{formatPrice(ticket.estimatedCost)}</div>
+        <div className="flex flex-col items-center justify-center">
+          <motion.div whileHover={{ x: 3 }} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+            <span className="material-symbols-outlined text-sm" style={{ color: BRAND.primaryDark }}>chevron_right</span>
+          </motion.div>
         </div>
-      </div>
-
-      <div className="hidden md:flex flex-col items-center justify-center">
-        <motion.div
-          whileHover={{ x: 3 }}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(203,32,45,0.1)' }}
-        >
-          <span className="material-symbols-outlined text-sm" style={{ color: '#A81D2A' }}>chevron_right</span>
-        </motion.div>
-      </div>
-    </div>
+      </motion.div>
+    </>
   )
 }
 
@@ -409,7 +458,10 @@ function RepairDetailModal({
   const [courierDate, setCourierDate] = useState('')
   const [courierNotes, setCourierNotes] = useState('')
   const [submittingCourier, setSubmittingCourier] = useState(false)
-  const needsApproval = ['Diagnosing', 'Waiting for Parts'].includes(ticket.status) && ticket.estimatedCost > 0
+  const [showFullDetail, setShowFullDetail] = useState(false)
+  const [approving, setApproving] = useState(false)
+  const navigate = useNavigate()
+  const needsApproval = ticket.status === 'Awaiting Approval'
   const canSendCourier = ticket.status === 'Accepted' && !ticket.courier
   const courierSent = ticket.status === 'Accepted' && ticket.courier
 
@@ -447,6 +499,438 @@ function RepairDetailModal({
       onNotify('Failed to submit courier details', 'error')
     }
     setSubmittingCourier(false)
+  }
+
+  const isMobileDetail = useIsMobile()
+
+  if (isMobileDetail) {
+    const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
+    const isCancelled = ticket.status === 'Cancelled'
+    const isFailed = ticket.status === 'Rejected' || isCancelled
+    if (showFullDetail) {
+      return (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] bg-white overflow-y-auto"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          <div className="sticky top-0 z-10 w-full" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)' }}>
+            <div className="flex items-center gap-2 px-3.5 h-12">
+              <button onClick={() => setShowFullDetail(false)} aria-label="Back" className="w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
+                <span className="material-symbols-outlined text-lg text-white">arrow_back</span>
+              </button>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-[15px] font-bold text-white truncate">Full Details</h1>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3.5 mt-3 space-y-3 pb-24">
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Ticket Summary</span>
+                <span className="text-[10px]" style={{ color: BRAND.muted }}>{formatDate(ticket.createdAt)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <p className="text-[17px] font-extrabold" style={{ color: BRAND.primary }}>{ticket.repairId}</p>
+                  <p className="text-[12px] font-medium" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</p>
+                </div>
+                <PriorityBadge priority={ticket.priority} />
+              </div>
+              {ticket.estimatedCost > 0 && (
+                <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: `1px solid ${BRAND.line}` }}>
+                  <span className="text-[11px] font-semibold" style={{ color: BRAND.muted }}>Estimated Cost</span>
+                  <span className="text-[15px] font-extrabold" style={{ color: BRAND.primary }}>{formatPrice(ticket.estimatedCost)}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>person</span>
+                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Customer</h3>
+              </div>
+              <div className="space-y-2">
+                <MobileInfoRow label="Name" value={ticket.customerName} />
+                <MobileInfoRow label="Mobile" value={ticket.customerMobile} />
+                <MobileInfoRow label="Email" value={ticket.customerEmail} />
+                <MobileInfoRow label="Address" value={ticket.customerAddress} />
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>devices</span>
+                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Device</h3>
+              </div>
+              <div className="space-y-2">
+                <MobileInfoRow label="Brand" value={ticket.deviceBrand} />
+                <MobileInfoRow label="Model" value={ticket.deviceModel} />
+                <MobileInfoRow label="Category" value={ticket.deviceCategory} />
+                <MobileInfoRow label="IMEI" value={ticket.imei || '—'} />
+                <MobileInfoRow label="Color" value={ticket.deviceColor} />
+                <MobileInfoRow label="Warranty" value={ticket.warranty} />
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>build</span>
+                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Issue</h3>
+              </div>
+              <div className="space-y-2">
+                <MobileInfoRow label="Category" value={ticket.issueCategory} />
+                {ticket.description && (
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Description</span>
+                    <div className="mt-1 space-y-2">
+                      {ticket.description.split(/\n(?=Q:)/).map((block, i) => {
+                        const parts = block.split(/\nA:\s*/)
+                        if (parts.length === 2) {
+                          return (
+                            <div key={i} className="rounded-xl p-3" style={{ background: '#F8FAFC', border: `1px solid ${BRAND.line}` }}>
+                              <p className="text-[11px] font-bold" style={{ color: BRAND.primaryDark }}>{parts[0]}</p>
+                              <p className="text-[12.5px] mt-1 leading-relaxed" style={{ color: BRAND.ink }}>{parts[1]}</p>
+                            </div>
+                          )
+                        }
+                        return <p key={i} className="text-[12.5px] leading-relaxed whitespace-pre-wrap" style={{ color: BRAND.ink }}>{block}</p>
+                      })}
+                    </div>
+                  </div>
+                )}
+                <MobileInfoRow label="Priority" value={ticket.priority} />
+                <MobileInfoRow label="Accessories" value={ticket.accessories || 'None'} />
+                <MobileInfoRow label="Password" value={ticket.password || 'Not required'} />
+              </div>
+            </div>
+
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>receipt_long</span>
+                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Estimation</h3>
+              </div>
+              <div className="space-y-2">
+                <MobileInfoRow label="Estimated Cost" value={formatPrice(ticket.estimatedCost)} highlight />
+                <MobileInfoRow label="Est. Completion" value={ticket.estimatedDays ? `${ticket.estimatedDays} day${ticket.estimatedDays > 1 ? 's' : ''}` : '—'} />
+                <MobileInfoRow label="Technician" value={ticket.technicianId ? `Technician #${ticket.technicianId}` : 'Not assigned'} />
+              </div>
+            </div>
+
+            {needsApproval && (
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(203,32,45,0.05)', border: '1px solid rgba(203,32,45,0.18)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>handshake</span>
+                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Repair Estimate</h3>
+                </div>
+                <div className="space-y-3 p-3 rounded-xl mb-3" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: BRAND.muted }}>Reason</p>
+                    <p className="text-[13px] font-medium" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
+                  </div>
+                  <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid ${BRAND.line}` }}>
+                    <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Charge</p>
+                    <p className="text-[17px] font-extrabold" style={{ color: BRAND.primary }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2.5">
+                  <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
+                    disabled={approving}
+                    className="flex-1 h-11 rounded-xl text-[12.5px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
+                    style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                  >{approving ? 'Processing...' : 'Approve'} ✅</button>
+                  <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
+                    disabled={approving}
+                    className="flex-1 h-11 rounded-xl text-[12.5px] font-semibold active:scale-[0.97] transition disabled:opacity-50"
+                    style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
+                  >{approving ? 'Processing...' : 'Decline'} ❌</button>
+                </div>
+              </div>
+            )}
+
+            {ticket.images && ticket.images.length > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>photo_camera</span>
+                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Photos</h3>
+                </div>
+                <ImageGallery images={ticket.images} />
+              </div>
+            )}
+
+            {canSendCourier && (
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="material-symbols-outlined text-lg" style={{ color: '#6366f1' }}>local_shipping</span>
+                  <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Send via Courier</h3>
+                </div>
+                <p className="text-[11px] mb-3" style={{ color: BRAND.muted }}>Your repair has been accepted. Share your courier details below.</p>
+                <div className="space-y-2.5">
+                  <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="Courier name (e.g. DTDC)" className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
+                  <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="Tracking number" className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
+                  <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)} className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
+                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Additional notes..." className="w-full px-3.5 py-2.5 rounded-xl text-[12.5px] outline-none resize-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
+                  <button onClick={handleSendCourier} disabled={submittingCourier} className="w-full h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50" style={{ background: '#6366f1' }}>
+                    {submittingCourier ? 'Submitting...' : 'Submit Courier Details'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {courierSent && ticket.courier && (
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
+                  <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Courier Sent</h3>
+                </div>
+                <div className="space-y-1.5">
+                  <MobileInfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
+                  <MobileInfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
+                  <MobileInfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
+                  {ticket.courier.courier_notes && <MobileInfoRow label="Notes" value={ticket.courier.courier_notes} />}
+                </div>
+              </div>
+            )}
+
+            {ticket.statusHistory && ticket.statusHistory.length > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>history</span>
+                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Status History</h3>
+                </div>
+                <div className="relative">
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.12)' }} />
+                  <div className="space-y-0">
+                    {ticket.statusHistory.map((h, idx) => {
+                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
+                      return (
+                        <div key={h.id || idx} className="flex items-start gap-3 py-2">
+                          <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}18` }}>
+                            <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[12px] font-bold" style={{ color: badge.color }}>{badge.label}</span>
+                              <span className="text-[10px]" style={{ color: BRAND.muted }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
+                            </div>
+                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: BRAND.muted }}>{h.notes}</p>}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="flex items-center gap-1.5 mb-3">
+                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>chat</span>
+                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Messages</h3>
+              </div>
+              {ticket.notes && ticket.notes.length > 0 ? (
+                <div className="space-y-3 max-h-52 overflow-y-auto mb-3">
+                  {ticket.notes.map((note) => (
+                    <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
+                        style={{ background: note.is_admin ? '#F1F5F9' : BRAND.primary, color: note.is_admin ? BRAND.ink : '#fff' }}
+                      >
+                        <p className="text-[10px] font-bold mb-0.5 opacity-70">{note.is_admin ? 'Admin' : 'You'}</p>
+                        <p className="text-[12.5px] leading-relaxed whitespace-pre-wrap">{note.message}</p>
+                        <p className="text-[9px] mt-1 opacity-50 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[12px] text-center py-3" style={{ color: BRAND.muted }}>No messages yet.</p>
+              )}
+              <div className="flex gap-2 items-end">
+                <input value={message} onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
+                  placeholder="Type a message..." className="flex-1 h-10 px-3.5 rounded-xl text-[12.5px] outline-none"
+                  style={{ background: '#F8FAFC', border: `1px solid ${BRAND.line}`, color: BRAND.ink }}
+                />
+                <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 active:scale-90 flex-shrink-0"
+                  style={{ background: BRAND.primary }}
+                >
+                  {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] bg-[#FFFBFB] flex flex-col font-sans"
+        style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}
+      >
+        {/* Fixed header */}
+        <div className="flex-shrink-0 w-full px-4 h-14 flex items-center gap-3" style={{ background: C.grad }}>
+          <button onClick={onClose} aria-label="Back" className="w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <span className="material-symbols-outlined text-lg text-white">arrow_back</span>
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-bold text-white truncate">{ticket.repairId}</p>
+            <p className="text-[9px] text-white/70 truncate -mt-0.5">{ticket.deviceBrand} {ticket.deviceModel}</p>
+          </div>
+          <span className="flex-shrink-0"><StatusBadge status={ticket.status} /></span>
+        </div>
+
+        {/* Main tracking area */}
+        <div className="flex-1 flex flex-col px-4 min-h-0" style={{ paddingTop: '12px', paddingBottom: '12px' }}>
+
+          {/* Current status hero */}
+          <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'linear-gradient(135deg, rgba(203,32,45,0.08), rgba(168,29,42,0.04))', border: '1px solid rgba(203,32,45,0.15)' }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.primary }}>Current Status</p>
+                <p className="text-[18px] font-extrabold mt-0.5" style={{ color: BRAND.ink }}>
+                  {STATUS_BADGES[ticket.status]?.label || ticket.status}
+                </p>
+              </div>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: BRAND.primarySoft }}>
+                <span className="material-symbols-outlined text-2xl" style={{ color: BRAND.primary, fontVariationSettings: "'FILL' 1" }}>
+                  {stepIdx >= PIPELINE_STEPS.length - 1 ? 'check_circle' : PIPELINE_STEPS[Math.max(0, stepIdx)]?.icon || 'precision_manufacturing'}
+                </span>
+              </div>
+            </div>
+            <div className="mt-3 w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(203,32,45,0.12)' }}>
+              <div className="h-full rounded-full transition-all duration-700" style={{
+                width: isFailed ? '0%' : `${Math.round(((stepIdx + 1) / PIPELINE_STEPS.length) * 100)}%`,
+                background: 'linear-gradient(90deg, #CB202D, #FF5A65)',
+              }} />
+            </div>
+            <p className="text-[10px] font-semibold mt-1.5 text-right" style={{ color: BRAND.muted }}>
+              {isFailed ? ticket.status : `Step ${stepIdx + 1} of ${PIPELINE_STEPS.length}`}
+            </p>
+          </div>
+
+          {/* Repair Estimate — shown inline on mobile when awaiting approval */}
+          {needsApproval && (
+            <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.15)' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-lg" style={{ color: '#CB202D' }}>handshake</span>
+                <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
+              </div>
+              <p className="text-[10px] mb-2.5" style={{ color: BRAND.muted }}>Please review the diagnosis and estimated cost below.</p>
+              <div className="space-y-2 p-3 rounded-xl mb-3" style={{ background: 'rgba(255,255,255,0.6)' }}>
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: BRAND.muted }}>Repair Reason</p>
+                  <p className="text-[12.5px] font-medium leading-snug" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
+                </div>
+                <div className="flex items-center justify-between pt-1.5" style={{ borderTop: `1px solid ${BRAND.line}` }}>
+                  <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
+                  <p className="text-base font-extrabold" style={{ color: '#CB202D' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
+                  disabled={approving}
+                  className="flex-1 h-10 rounded-xl text-[12px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                >{approving ? 'Processing...' : 'Approve'} ✅</button>
+                <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
+                  disabled={approving}
+                  className="flex-1 h-10 rounded-xl text-[12px] font-semibold active:scale-[0.97] transition disabled:opacity-50"
+                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
+                >{approving ? 'Processing...' : 'Decline'} ❌</button>
+              </div>
+            </div>
+          )}
+
+          {/* Timeline steps */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="flex flex-col">
+              {PIPELINE_STEPS.map((s, idx) => {
+                const active = !isFailed && idx <= stepIdx
+                const current = idx === stepIdx && !isFailed
+                const past = idx < stepIdx && !isFailed
+
+                return (
+                  <div key={s.key} className="flex items-center gap-3 py-2.5">
+                    <div className="flex flex-col items-center">
+                      <div
+                        className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-500"
+                        style={{
+                          background: active ? (past ? '#059669' : BRAND.primary) : '#F1F5F9',
+                          boxShadow: current ? `0 0 0 3px ${BRAND.primarySoft}` : 'none',
+                        }}
+                      >
+                        {past || (active && idx === PIPELINE_STEPS.length - 1) ? (
+                          <span className="material-symbols-outlined text-xs text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
+                            check
+                          </span>
+                        ) : current ? (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        ) : (
+                          <span className="material-symbols-outlined text-xs" style={{ color: BRAND.muted }}>
+                            {s.icon}
+                          </span>
+                        )}
+                      </div>
+                      {idx < PIPELINE_STEPS.length - 1 && (
+                        <div className="w-[2px] flex-1 min-h-[6px]" style={{ background: past ? '#059669' : BRAND.line }} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0 flex items-center justify-between">
+                      <div>
+                        <p className="text-[13px] font-semibold leading-tight" style={{ color: active ? BRAND.ink : BRAND.muted }}>
+                          {s.label}
+                        </p>
+                        <p className="text-[9px] font-medium mt-0.5" style={{ color: current ? BRAND.primary : past ? '#059669' : BRAND.muted }}>
+                          {past ? 'Completed' : current ? 'In Progress' : isFailed && idx === 0 ? ticket.status : ''}
+                        </p>
+                      </div>
+                      {current && (
+                        <div className="flex-shrink-0 ml-2">
+                          <div className="px-2 py-0.5 rounded-full text-[8px] font-bold text-white" style={{ background: BRAND.primary }}>
+                            NOW
+                          </div>
+                        </div>
+                      )}
+                      {past && (
+                        <span className="material-symbols-outlined text-base flex-shrink-0" style={{ color: '#059669', fontVariationSettings: "'FILL' 1" }}>
+                          check_circle
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="flex-shrink-0 flex items-center gap-2 pt-3" style={{ borderTop: '1px solid rgba(203,32,45,0.08)' }}>
+            <button
+              onClick={() => setShowFullDetail(true)}
+              className="flex-1 h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition shadow-lg shadow-[rgba(203,32,45,0.25)]"
+              style={{ background: C.grad }}
+            >
+              Full Details
+            </button>
+            <button
+              onClick={() => navigate('/repairs')}
+              className="flex-1 h-11 rounded-xl text-[13px] font-semibold active:scale-[0.97] transition"
+              style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }}
+            >
+              Book New
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    )
   }
 
   return (
@@ -543,9 +1027,45 @@ function RepairDetailModal({
             </div>
           </div>
 
+          {needsApproval && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
+              style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.15)' }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="material-symbols-outlined text-xl" style={{ color: '#CB202D' }}>handshake</span>
+                <div>
+                  <h3 className="text-sm font-bold text-[#191c1d]">Repair Estimate — Awaiting Your Approval</h3>
+                  <p className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>Please review the diagnosis and estimated cost below.</p>
+                </div>
+              </div>
+              <div className="space-y-3 p-4 rounded-lg mb-4" style={{ background: 'rgba(255,255,255,0.6)' }}>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Repair Reason</p>
+                  <p className="text-sm font-medium text-[#191c1d]">{ticket.repairReason || 'No diagnosis provided'}</p>
+                </div>
+                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
+                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Estimated Charge</p>
+                  <p className="text-xl font-extrabold" style={{ color: '#CB202D' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
+                  disabled={approving}
+                  className="flex-1 h-11 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                >{approving ? 'Processing...' : '✅ Approve & Start Repair'}</button>
+                <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
+                  disabled={approving}
+                  className="flex-1 h-11 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
+                >{approving ? 'Processing...' : '❌ Decline'}</button>
+              </div>
+            </motion.div>
+          )}
+
           {ticket.images && ticket.images.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Device Photos</h3>
+              <h3 className="text-[10px] font-bold uppercase mb-3" style={{ color: '#A81D2A' }}>Device Photos</h3>
               <ImageGallery images={ticket.images} />
             </div>
           )}
@@ -557,60 +1077,37 @@ function RepairDetailModal({
                 <div className="space-y-3 max-h-48 overflow-y-auto mb-3 pr-1">
                   {ticket.notes.map((note) => (
                     <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[85%] rounded-xl px-3 py-2 ${
-                        note.is_admin
-                          ? 'rounded-bl-sm'
-                          : 'rounded-br-sm'
-                      }`}
-                        style={{
-                          background: note.is_admin ? 'rgba(168,29,42,0.1)' : '#A81D2A',
-                          color: note.is_admin ? '#191c1d' : '#ffffff',
-                        }}
+                      <div className={`max-w-[85%] rounded-xl px-3 py-2 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
+                        style={{ background: note.is_admin ? 'rgba(168,29,42,0.1)' : '#A81D2A', color: note.is_admin ? '#191c1d' : '#ffffff' }}
                       >
-                        <p className="text-xs font-semibold mb-0.5 opacity-70">
-                          {note.is_admin ? 'Admin' : 'You'}
-                        </p>
+                        <p className="text-xs font-semibold mb-0.5 opacity-70">{note.is_admin ? 'Admin' : 'You'}</p>
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
-                        <p className="text-[10px] mt-1 opacity-50 text-right">
-                          {note.created_at ? formatDate(note.created_at) : ''}
-                        </p>
+                        <p className="text-[10px] mt-1 opacity-50 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-center py-3" style={{ color: 'rgba(59,75,61,0.5)' }}>
-                  No messages yet. Send a message to the admin team.
-                </p>
+                <p className="text-xs text-center py-3" style={{ color: 'rgba(59,75,61,0.5)' }}>No messages yet. Send a message to the admin team.</p>
               )}
               <div className="flex gap-2">
-                <input
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                <input value={message} onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Type your message..."
-                  className="flex-1 h-10 px-3 rounded-lg text-xs outline-none"
+                  placeholder="Type your message..." className="flex-1 h-10 px-3 rounded-lg text-xs outline-none"
                   style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
                 />
                 <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
                   className="w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all disabled:opacity-40 cursor-pointer"
                   style={{ background: '#A81D2A' }}
                 >
-                  {sendingMsg ? (
-                    <FiLoader size={14} className="animate-spin" />
-                  ) : (
-                    <span className="material-symbols-outlined text-lg">send</span>
-                  )}
+                  {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
                 </button>
               </div>
             </div>
           </div>
 
           {canSendCourier && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-5 rounded-xl"
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
               style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}
             >
               <div className="flex items-center gap-2 mb-3">
@@ -624,16 +1121,14 @@ function RepairDetailModal({
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Courier Name *</label>
-                    <input value={courierName} onChange={(e) => setCourierName(e.target.value)}
-                      placeholder="e.g. DTDC, Blue Dart"
+                    <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="e.g. DTDC, Blue Dart"
                       className="w-full h-9 px-3 rounded-lg text-xs outline-none"
                       style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Tracking Number *</label>
-                    <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)}
-                      placeholder="e.g. DTDC123456789"
+                    <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="e.g. DTDC123456789"
                       className="w-full h-9 px-3 rounded-lg text-xs outline-none"
                       style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
                     />
@@ -648,8 +1143,7 @@ function RepairDetailModal({
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Additional Notes</label>
-                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2}
-                    placeholder="Any special instructions for the courier..."
+                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Any special instructions for the courier..."
                     className="w-full px-3 py-2 rounded-lg text-xs outline-none resize-none"
                     style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
                   />
@@ -664,106 +1158,57 @@ function RepairDetailModal({
             </motion.div>
           )}
 
-          {courierSent && (
-            <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
-                <h3 className="text-sm font-bold text-[#191c1d]">Courier Sent</h3>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
+            style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}
+          >
+            {courierSent && ticket.courier && (
+              <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
+                  <h3 className="text-sm font-bold text-[#191c1d]">Courier Sent</h3>
+                </div>
+                <div className="space-y-1">
+                  <InfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
+                  <InfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
+                  <InfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
+                  {ticket.courier.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
+                </div>
               </div>
-              <div className="space-y-1">
-                <InfoRow label="Courier" value={ticket.courier?.courier_name || '—'} />
-                <InfoRow label="Tracking" value={ticket.courier?.tracking_number || '—'} />
-                <InfoRow label="Date" value={ticket.courier?.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
-                {ticket.courier?.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
-              </div>
-            </div>
-          )}
+            )}
 
-          {ticket.statusHistory && ticket.statusHistory.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Status History</h3>
-              <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
-                <div className="relative">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.15)' }} />
-                  <div className="space-y-0">
-                    {ticket.statusHistory.map((h, idx) => {
-                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
-                      return (
-                        <div key={h.id || idx} className="flex items-start gap-3 py-2">
-                          <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                            style={{ background: `${badge.color}20` }}
-                          >
-                            <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
-                              <span className="text-[10px]" style={{ color: 'rgba(59,75,61,0.4)' }}>
-                                {h.created_at ? formatDate(h.created_at) : ''}
-                              </span>
+            {ticket.statusHistory && ticket.statusHistory.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Status History</h3>
+                <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
+                  <div className="relative">
+                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.15)' }} />
+                    <div className="space-y-0">
+                      {ticket.statusHistory.map((h, idx) => {
+                        const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
+                        return (
+                          <div key={h.id || idx} className="flex items-start gap-3 py-2">
+                            <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}20` }}>
+                              <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
                             </div>
-                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>{h.notes}</p>}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
+                                <span className="text-[10px]" style={{ color: 'rgba(59,75,61,0.4)' }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
+                              </div>
+                              {h.notes && <p className="text-[11px] mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>{h.notes}</p>}
+                            </div>
                           </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-
-          {needsApproval && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-5 p-5 rounded-xl"
-              style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="material-symbols-outlined text-xl" style={{ color: '#f59e0b' }}>handshake</span>
-                <div>
-                  <h3 className="text-sm font-bold text-[#191c1d]">Customer Approval Required</h3>
-                  <p className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>Please review the repair estimate below</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg mb-3" style={{ background: 'rgba(255,255,255,0.6)' }}>
-                <span className="text-sm" style={{ color: 'rgba(59,75,61,0.8)' }}>Estimated Cost</span>
-                <span className="text-lg font-extrabold" style={{ color: '#A81D2A' }}>{formatPrice(ticket.estimatedCost)}</span>
-              </div>
-              <p className="text-xs mb-3" style={{ color: 'rgba(59,75,61,0.6)' }}>Do you approve the repair work to proceed at the estimated cost?</p>
-              <div className="flex gap-2">
-                <button onClick={() => onApprove(true)}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-bold text-white transition-all active:scale-[0.98] cursor-pointer"
-                  style={{
-                    background: '#A81D2A',
-                    boxShadow: '0 4px 15px rgba(168,29,42,0.3)',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#C22535'}
-                  onMouseLeave={e => e.currentTarget.style.background = '#A81D2A'}
-                >Approve</button>
-                <button onClick={() => onApprove(false)}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all active:scale-[0.98] cursor-pointer"
-                  style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)' }}
-                >Reject</button>
-              </div>
-            </motion.div>
-          )}
-
-          <div className="flex gap-2 pt-4" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
-            <button onClick={() => navigator.clipboard.writeText(ticket.repairId)}
-              className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer"
-              style={{ background: 'rgba(203,32,45,0.1)', color: '#A81D2A', border: '1px solid rgba(203,32,45,0.2)' }}
-            >
-              <span className="material-symbols-outlined text-xs">content_copy</span>
-              Copy Ticket ID
-            </button>
-            <button onClick={onClose}
-              className="flex-1 py-2.5 rounded-lg text-xs font-bold text-white transition-all cursor-pointer"
-              style={{ background: '#A81D2A' }}
-            >Close</button>
-          </div>
+            )}
+          </motion.div>
         </div>
+
+        <div className="hidden lg:block"><EcommerceFooter /></div>
       </motion.div>
     </motion.div>
   )
@@ -807,7 +1252,18 @@ function InfoRow({ label, value, highlight }: { label: string; value: string; hi
   )
 }
 
+function MobileInfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-[11px] font-medium flex-shrink-0" style={{ color: BRAND.muted }}>{label}</span>
+      <span className="text-[12.5px] text-right font-semibold truncate max-w-[60%]" style={{ color: highlight ? '#059669' : BRAND.ink }}>{value || '—'}</span>
+    </div>
+  )
+}
+
 export default function CustomerRepairTracking() {
+  const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const [tickets, setTickets] = useState<RepairTicket[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -865,11 +1321,11 @@ export default function CustomerRepairTracking() {
     if (!selectedTicket) return
     try {
       if (approved) {
-        await repairService.updateStatus(selectedTicket.id, 'Repair In Progress')
+        await repairService.customerApprove(selectedTicket.id)
         showNotification('Repair approved! Work will begin shortly.', 'success')
       } else {
-        await repairService.updateStatus(selectedTicket.id, 'Received')
-        showNotification('Repair estimate rejected. A representative will contact you.', 'error')
+        await repairService.customerDecline(selectedTicket.id)
+        showNotification('Repair estimate declined. A representative will contact you.', 'error')
       }
       const detail = await repairService.getById(selectedTicket.id)
       setSelectedTicket(detail)
@@ -882,7 +1338,7 @@ export default function CustomerRepairTracking() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
+      <div className="min-h-screen bg-[#f9f9f9]" style={{ background: 'linear-gradient(180deg, #fefefe 0%, #f8f9fa 100%)' }}>
       <style>{`
         @keyframes pulse-mint {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -890,148 +1346,178 @@ export default function CustomerRepairTracking() {
         }
       `}</style>
 
-      <StorefrontNavbar activeLabel="Repairs" />
-      <div className="pt-24"><BackBar label="Back to Home" to="/" /></div>
+      <div className="hidden lg:block"><StorefrontNavbar activeLabel="Repairs" /></div>
+      <div className="hidden lg:block pt-20 sm:pt-24"><BackBar label="Back to Home" to="/" /></div>
 
-      <main className="max-w-[1440px] mx-auto px-4 md:px-8 pt-4 pb-16">
-        <header className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="flex h-2 w-2 rounded-full" style={{ background: '#CB202D' }} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#A81D2A' }}>
-                {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
-              </span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>
-              Diagnostics Protocol Manifest
-            </h1>
-          </div>
-          <div className="flex gap-2">
-            <div className="px-3 py-2 rounded-lg flex items-center gap-2" style={{
-              background: 'rgba(255,255,255,0.7)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(168,29,42,0.05)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-            }}>
-              <span className="material-symbols-outlined text-base" style={{ color: '#A81D2A' }}>terminal</span>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-bold" style={{ color: 'rgba(59,75,61,0.5)' }}>Repair ID</span>
-                <span className="text-xs font-bold text-[#191c1d]">{dashboardStats.total} Tickets</span>
-              </div>
-            </div>
-            <div className="px-3 py-2 rounded-lg flex items-center gap-2" style={{
-              background: 'rgba(255,255,255,0.7)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(168,29,42,0.05)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-            }}>
-              <span className="material-symbols-outlined text-base" style={{ color: 'rgba(59,75,61,0.5)' }}>update</span>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-bold" style={{ color: 'rgba(59,75,61,0.5)' }}>Completed</span>
-                <span className="text-xs font-bold text-[#191c1d]">{dashboardStats.completed}</span>
-              </div>
+      {/* Mobile header */}
+      <div className="lg:hidden relative z-30 w-full">
+        <header className="relative w-full px-4 pt-3 pb-5 text-white overflow-hidden" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)', borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
+              <span className="material-symbols-outlined text-lg">arrow_back</span>
+            </button>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-[17px] font-bold leading-tight truncate">My Repairs</h1>
+              <p className="text-[11px] text-white/80 mt-0.5 truncate">{loading ? '' : `${dashboardStats.active} active`}</p>
             </div>
           </div>
         </header>
+      </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-8">
-          {[
-            { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: '#A81D2A' },
-            { label: 'Active Repairs', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#3b82f6' },
-            { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#CB202D' },
-          ].map((stat, idx) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.06 }}
-              className="rounded-xl p-4 cursor-default"
-              style={{
-                background: 'rgba(255,255,255,0.7)',
-                backdropFilter: 'blur(20px)',
-                border: `1px solid ${stat.color}10`,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-              }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="material-symbols-outlined text-lg" style={{ color: stat.color }}>{stat.icon}</span>
-                <motion.span key={stat.value} initial={{ scale: 1.3 }} animate={{ scale: 1 }}
-                  className="text-2xl font-extrabold" style={{ color: stat.color }}>{stat.value}</motion.span>
+      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-8 lg:pb-24" style={isMobile ? { paddingTop: '0.75rem' } : {}}>
+        <div className="max-w-[1600px] mx-auto">
+          <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="flex h-1.5 w-1.5 rounded-full" style={{ background: BRAND.primary }} />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: BRAND.primaryDark }}>
+                  {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
+                </span>
               </div>
-              <p className="text-[10px] font-bold tracking-wider uppercase" style={{ color: `${stat.color}cc` }}>{stat.label}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="rounded-xl p-5 mb-8" style={{
-          background: 'rgba(255,255,255,0.7)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(168,29,42,0.05)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-        }}>
-          <div className="flex flex-col md:flex-row gap-3 mb-4">
-            <div className="flex-1 relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg" style={{ color: 'rgba(59,75,61,0.3)' }}>search</span>
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by Ticket ID, Device, or IMEI..."
-                className="w-full pl-9 pr-3 py-2.5 rounded-lg text-sm border outline-none transition-all"
-                style={{
-                  background: 'rgba(237,238,239,0.5)',
-                  borderColor: 'rgba(185,203,185,0.3)',
-                  color: '#191c1d',
-                }}
-                onFocus={e => e.currentTarget.style.borderColor = '#A81D2A'}
-                onBlur={e => e.currentTarget.style.borderColor = 'rgba(185,203,185,0.3)'}
-              />
+              <h1 className="font-extrabold tracking-tight" style={{ fontFamily: 'Manrope, sans-serif', fontSize: 'clamp(1.35rem, 5vw, 2.5rem)', color: BRAND.ink }}>
+                Diagnostics Protocol Manifest
+              </h1>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {FILTER_OPTIONS.map(opt => (
-              <button key={opt} onClick={() => setStatusFilter(opt)}
-                className="px-3.5 py-1.5 rounded-lg text-[10px] font-bold tracking-wider transition-all cursor-pointer"
-                style={{
-                  background: statusFilter === opt ? '#A81D2A' : 'rgba(237,238,239,0.6)',
-                  color: statusFilter === opt ? '#fff' : 'rgba(59,75,61,0.7)',
-                }}
-              >{opt}</button>
-            ))}
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="rounded-xl p-5 animate-pulse" style={{ background: 'rgba(255,255,255,0.3)' }}>
-                <div className="flex gap-5">
-                  <div className="w-48 h-36 rounded-lg" style={{ background: 'rgba(237,238,239,0.5)' }} />
-                  <div className="flex-1 space-y-3">
-                    <div className="h-4 w-32 rounded" style={{ background: 'rgba(237,238,239,0.5)' }} />
-                    <div className="h-3 w-48 rounded" style={{ background: 'rgba(237,238,239,0.5)' }} />
-                    <div className="h-2 w-full rounded" style={{ background: 'rgba(237,238,239,0.5)' }} />
-                    <div className="h-3 w-24 rounded" style={{ background: 'rgba(237,238,239,0.5)' }} />
-                  </div>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <div className={`px-3 py-2 rounded-xl flex items-center gap-2 ${C.card} flex-1 sm:flex-none`}>
+                <span className="material-symbols-outlined text-sm" style={{ color: BRAND.primary }}>terminal</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.muted }}>Total Tickets</span>
+                  <span className="text-xs font-bold" style={{ color: BRAND.ink }}>{dashboardStats.total}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : filteredTickets.length === 0 ? (
-          <div className="rounded-xl p-8" style={{
-            background: 'rgba(255,255,255,0.7)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(168,29,42,0.05)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-          }}>
-            <EmptyState onBrowse={() => window.location.href = '/repairs'} />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {filteredTickets.map((ticket, idx) => (
-              <motion.div key={ticket.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
-                <RepairCard ticket={ticket} onSelect={setSelectedTicket} />
+              <div className={`px-3 py-2 rounded-xl flex items-center gap-2 ${C.card} flex-1 sm:flex-none`}>
+                <span className="material-symbols-outlined text-sm" style={{ color: BRAND.muted }}>check_circle</span>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.muted }}>Completed</span>
+                  <span className="text-xs font-bold" style={{ color: BRAND.ink }}>{dashboardStats.completed}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-6">
+            {[
+              { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: BRAND.primary },
+              { label: 'Active', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#0EA5E9' },
+              { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#059669' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+                className={`${C.card} p-3 sm:p-3.5 cursor-default`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="material-symbols-outlined text-base sm:text-lg" style={{ color: s.color }}>{s.icon}</span>
+                  <motion.span initial={{ scale: 1.3 }} animate={{ scale: 1 }}
+                    className="text-lg sm:text-xl font-extrabold" style={{ color: s.color }}>{s.value}</motion.span>
+                </div>
+                <p className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase truncate" style={{ color: BRAND.muted }}>{s.label}</p>
               </motion.div>
             ))}
           </div>
-        )}
+
+          <div className={C.card + ' p-3 sm:p-3.5 mb-6'}>
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              <div className="flex-1 relative">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base" style={{ color: BRAND.muted }}>search</span>
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search by Ticket ID, Device, or IMEI..."
+                  className="w-full pl-9 pr-3 h-10 rounded-xl text-sm font-medium outline-none transition-all"
+                  style={{
+                    background: 'rgba(237,238,239,0.6)',
+                    border: `1.5px solid ${BRAND.line}`,
+                    color: BRAND.ink,
+                  }}
+                  onFocus={e => e.currentTarget.style.borderColor = BRAND.primary}
+                  onBlur={e => e.currentTarget.style.borderColor = BRAND.line}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {FILTER_OPTIONS.map(opt => (
+                <button key={opt} onClick={() => setStatusFilter(opt)}
+                  className="px-3.5 h-8 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-wider transition-all active:scale-95 cursor-pointer"
+                  style={{
+                    background: statusFilter === opt ? BRAND.primary : 'rgba(237,238,239,0.6)',
+                    color: statusFilter === opt ? '#fff' : BRAND.muted,
+                  }}
+                >{opt}</button>
+              ))}
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className={`${C.card} p-4 sm:p-5 animate-pulse`}>
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                    <div className="w-full sm:w-44 h-28 sm:h-36 rounded-xl" style={{ background: 'rgba(237,238,239,0.7)' }} />
+                    <div className="flex-1 space-y-3">
+                      <div className="h-4 w-32 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
+                      <div className="h-3 w-48 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
+                      <div className="h-2 w-full rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
+                      <div className="h-3 w-24 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredTickets.length === 0 ? (
+            <div className={C.card + ' p-6 sm:p-8'}>
+              <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center">
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                  className="w-20 sm:w-24 h-20 sm:h-24 rounded-[2rem] flex items-center justify-center mb-6 sm:mb-8"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
+                    border: '1px solid rgba(203,32,45,0.25)',
+                  }}
+                >
+                  <span className="material-symbols-outlined text-4xl sm:text-5xl" style={{ color: BRAND.primaryDark }}>build</span>
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="text-xl sm:text-2xl font-bold mb-2" style={{ color: BRAND.ink }}
+                >
+                  No Repair Requests Found
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 }}
+                  className="text-[13px] sm:text-sm mb-6 sm:mb-8 max-w-xs sm:max-w-sm px-4"
+                  style={{ color: BRAND.muted }}
+                >
+                  You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
+                </motion.p>
+                <motion.button
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 }}
+                  onClick={() => navigate('/repairs')}
+                  className={C.primaryBtn + ' px-8 h-11 sm:h-12 rounded-xl text-sm font-bold'}
+                >
+                  Book a Repair
+                </motion.button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {filteredTickets.map((ticket, idx) => (
+                <motion.div key={ticket.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
+                  <RepairCard ticket={ticket} onSelect={setSelectedTicket} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
 
       <AnimatePresence>
@@ -1046,20 +1532,34 @@ export default function CustomerRepairTracking() {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-8 left-1/2 z-[150] px-5 py-3 rounded-xl shadow-xl flex items-center gap-2"
-            style={{
-              background: notification.type === 'success' ? '#A81D2A' : '#dc2626',
-              color: '#fff',
-            }}
+            className="fixed bottom-8 left-1/2 z-[150] px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 bg-white/90 backdrop-blur-md border border-[#A81D2A]/10"
           >
-            <span className="material-symbols-outlined text-sm">{notification.type === 'success' ? 'check_circle' : 'error'}</span>
-            <span className="text-sm font-bold">{notification.message}</span>
+            <span className="material-symbols-outlined text-sm" style={{ color: notification.type === 'success' ? '#A81D2A' : '#dc2626' }}>{notification.type === 'success' ? 'check_circle' : 'error'}</span>
+            <span className="text-sm font-bold" style={{ color: '#191c1d' }}>{notification.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-<EcommerceFooter />
+      <div className="hidden lg:block"><EcommerceFooter /></div>
       </div>
+
+      {/* Mobile sticky bottom bar — hidden on desktop */}
+      <motion.div
+        initial={{ y: 80 }}
+        animate={{ y: 0 }}
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderTop: `1px solid ${BRAND.line}` }}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/repairs')}
+            className={C.primaryBtn + ' flex-1 h-12 rounded-xl text-[13px] font-bold flex items-center justify-center gap-2'}
+          >
+            <span className="material-symbols-outlined text-lg">add_circle</span>
+            Book a Repair
+          </button>
+        </div>
+      </motion.div>
     </ErrorBoundary>
   )
 }
