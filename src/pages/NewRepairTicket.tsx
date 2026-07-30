@@ -169,6 +169,9 @@ export default function NewRepairTicket() {
       if (!form.issueCategory) errs.issueCategory = 'Please select issue category'
       if (!form.description.trim()) errs.description = 'Problem description is required'
     }
+    if (s >= 4) {
+      if (!form.userQuestions.trim()) errs.userQuestions = 'Questions are required'
+    }
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -212,11 +215,7 @@ export default function NewRepairTicket() {
 
       const created = await repairService.adminCreate(fd)
 
-      if (form.userQuestions.trim()) {
-        try {
-          await repairService.createNote(created.id, form.userQuestions.trim(), form.customerName.trim(), false)
-        } catch { /* note creation is best-effort */ }
-      }
+      await repairService.createNote(created.id, form.userQuestions.trim(), form.customerName.trim(), false)
 
       setForm({ ...initialForm })
       setImageFiles([])
@@ -376,7 +375,7 @@ export default function NewRepairTicket() {
                         </p>
                         <p className="text-[10px] text-text-muted mt-1">Have any questions about the repair process, cost, parts, or timeline? Let us know below and our team will respond to you.</p>
                       </div>
-                      <AnimatedInput label="Your Questions (Optional)" value={form.userQuestions} onChange={(v) => update('userQuestions', v)} placeholder="e.g. How long will the repair take? Do you use original parts? Is there a warranty on the repair?" rows={3} />
+                      <AnimatedInput label="Your Questions" value={form.userQuestions} onChange={(v) => update('userQuestions', v)} placeholder="e.g. How long will the repair take? Do you use original parts? Is there a warranty on the repair?" rows={3} error={errors.userQuestions} />
                     </div>
                     <CreatableSelect label="Priority" options={allPriorities} value={form.priority} onChange={(v) => update('priority', v)}
                       onCreate={(v) => setCustomPriorities((p) => [...p, v])} />

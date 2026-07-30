@@ -158,6 +158,8 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
     else if (!/^\d{10}$/.test(form.mobile)) e.mobile = 'Phone number must be exactly 10 digits'
     if (!form.addressLine1.trim()) e.addressLine1 = 'Please enter complete address'
     else if (form.addressLine1.trim().length < 10) e.addressLine1 = 'Address must be at least 10 characters'
+    if (!form.addressLine2.trim()) e.addressLine2 = 'Address line 2 is required'
+    if (!form.landmark.trim()) e.landmark = 'Landmark is required'
     if (!form.city.trim()) e.city = 'City is required'
     if (!form.state.trim()) e.state = 'State is required'
     if (!form.zipCode.trim()) e.zipCode = 'Please enter a valid pincode'
@@ -235,8 +237,8 @@ function QuickAddressForm({ onSaved, onCancel, initialAddress }: {
           <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
             className="grid sm:grid-cols-2 gap-4"
           >
-            <FloatingInput label="Address Line 2 (optional)" value={form.addressLine2} onChange={v => set('addressLine2', v)} />
-            <FloatingInput label="Landmark (optional)" value={form.landmark} onChange={v => set('landmark', v)} />
+            <FloatingInput label="Address Line 2" value={form.addressLine2} onChange={v => set('addressLine2', v)} error={errors.addressLine2} />
+            <FloatingInput label="Landmark" value={form.landmark} onChange={v => set('landmark', v)} error={errors.landmark} />
           </motion.div>
           <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
             className="grid sm:grid-cols-3 gap-4"

@@ -95,6 +95,7 @@ export default function MobileBookRepair() {
     const ne = validateName(name); if (ne) e.name = ne
     const me = validateMobile(mobile); if (me) e.mobile = me
     const ee = validateEmail(email); if (ee) e.email = ee
+    if (!address.trim()) e.address = 'Address is required'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -103,6 +104,9 @@ export default function MobileBookRepair() {
     const be = validateBrand(brand); if (be) e.brand = be
     const me = validateModel(model); if (me) e.model = me
     const ie = validateImei(imei); if (ie) e.imei = ie
+    if (!serialNumber.trim()) e.serialNumber = 'Serial number is required'
+    if (!deviceColor.trim()) e.deviceColor = 'Color is required'
+    if (warranty === 'unknown') e.warranty = 'Please select warranty status'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -282,7 +286,7 @@ export default function MobileBookRepair() {
                   <input value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} placeholder="email@example.com" type="email" />
                 </div>
                 <div>
-                  {field('Address (Optional)', false, errors.address)}
+                  {field('Address', true, errors.address)}
                   <textarea value={address} onChange={(e) => setAddress(e.target.value)} className={`${inputCls} min-h-[60px] resize-none py-2`} placeholder="Your address for pickup/delivery" rows={2} />
                 </div>
               </div>
@@ -306,19 +310,19 @@ export default function MobileBookRepair() {
                   <input value={model} onChange={(e) => setModel(e.target.value)} className={inputCls} placeholder="e.g. iPhone 15 Pro Max" />
                 </div>
                 <div>
-                  {field('IMEI Number (Optional)', false, errors.imei)}
+                  {field('IMEI Number', true, errors.imei)}
                   <input value={imei} onChange={(e) => setImei(e.target.value.replace(/\D/g, '').slice(0, 15))} className={inputCls} placeholder="15 digit IMEI" inputMode="numeric" />
                 </div>
                 <div>
-                  {field('Serial No. (Optional)', false, errors.serialNumber)}
+                  {field('Serial No.', true, errors.serialNumber)}
                   <input value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} className={inputCls} placeholder="Device serial number" />
                 </div>
                 <div>
-                  {field('Color (Optional)', false, errors.deviceColor)}
+                  {field('Color', true, errors.deviceColor)}
                   <input value={deviceColor} onChange={(e) => setDeviceColor(e.target.value)} className={inputCls} placeholder="e.g. Space Black, Silver" />
                 </div>
                 <div>
-                  {field('Warranty Status', false, errors.warranty)}
+                  {field('Warranty Status', true, errors.warranty)}
                   <select value={warranty} onChange={(e) => setWarranty(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
                     <option value="unknown">Unknown</option>
                     <option value="in_warranty">In Warranty</option>
@@ -332,7 +336,7 @@ export default function MobileBookRepair() {
             <>
               <div className="flex items-center gap-2 mb-3">
                 <FiImage size={16} style={{ color: PURPLE }} />
-                <span className="text-[14px] font-bold text-[#1F2937]">Device Photos (Optional)</span>
+                <span className="text-[14px] font-bold text-[#1F2937]">Device Photos</span>
               </div>
               <div onClick={() => inputRef.current?.click()} className="rounded-2xl border-2 border-dashed border-[#C4B5FD] p-6 text-center cursor-pointer active:scale-[0.99] transition bg-[#F7F8FC]">
                 <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) setImageFiles((prev) => [...prev, ...Array.from(e.target.files!)]) }} />

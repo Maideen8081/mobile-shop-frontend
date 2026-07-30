@@ -497,11 +497,11 @@ function validateForm(form: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'>)
   if (!form.fullName.trim()) errs.fullName = 'Required'
   const mobileErr = validateMobile(form.mobile)
   if (mobileErr) errs.mobile = mobileErr
-  if (form.alternateMobile && form.alternateMobile.replace(/\D/g, '').length > 0) {
-    const altErr = validateMobile(form.alternateMobile)
-    if (altErr) errs.alternateMobile = 'Enter exactly 10 digits'
-  }
+  const altMobileErr = validateMobile(form.alternateMobile)
+  if (altMobileErr) errs.alternateMobile = altMobileErr
   if (!form.addressLine1.trim()) errs.addressLine1 = 'Required'
+  if (!form.addressLine2.trim()) errs.addressLine2 = 'Required'
+  if (!form.landmark.trim()) errs.landmark = 'Required'
   if (!form.city.trim()) errs.city = 'Required'
   if (!form.state.trim()) errs.state = 'Required'
   if (!form.zipCode.trim()) errs.zipCode = 'Required'
@@ -625,7 +625,7 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
           <motion.div
             variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
           >
-            <FormField label="Alternate Mobile (optional)" value={form.alternateMobile || ''} onChange={v => update('alternateMobile', v)} placeholder="9876543210" type="tel" error={errors.alternateMobile} />
+            <FormField label="Alternate Mobile" value={form.alternateMobile || ''} onChange={v => update('alternateMobile', v)} placeholder="9876543210" type="tel" error={errors.alternateMobile} />
           </motion.div>
 
           {/* Address Line 1 */}
@@ -639,14 +639,14 @@ function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
           <motion.div
             variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
           >
-            <FormField label="Apartment / Suite (optional)" value={form.addressLine2 || ''} onChange={v => update('addressLine2', v)} placeholder="Building name, floor, etc." />
+            <FormField label="Apartment / Suite" value={form.addressLine2 || ''} onChange={v => update('addressLine2', v)} placeholder="Building name, floor, etc." error={errors.addressLine2} />
           </motion.div>
 
           {/* Landmark */}
           <motion.div
             variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
           >
-            <FormField label="Landmark (optional)" value={form.landmark || ''} onChange={v => update('landmark', v)} placeholder="Near school, mall, station..." />
+            <FormField label="Landmark" value={form.landmark || ''} onChange={v => update('landmark', v)} placeholder="Near school, mall, station..." error={errors.landmark} />
           </motion.div>
 
           {/* Country + State + City */}

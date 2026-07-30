@@ -90,6 +90,8 @@ export default function MobileAddressManagement() {
     if (!form.fullName.trim()) e.fullName = 'Name is required'
     if (!/^\d{10}$/.test(form.mobile)) e.mobile = '10-digit mobile required'
     if (!form.addressLine1.trim()) e.addressLine1 = 'Address is required'
+    if (!form.addressLine2.trim()) e.addressLine2 = 'Address line 2 is required'
+    if (!form.landmark.trim()) e.landmark = 'Landmark is required'
     if (!form.city.trim()) e.city = 'City is required'
     if (!form.state.trim()) e.state = 'State is required'
     if (!/^\d{5,6}$/.test(form.zipCode)) e.zipCode = 'Pincode required'
@@ -226,8 +228,8 @@ export default function MobileAddressManagement() {
                 <Field label="Full Name" value={form.fullName} onChange={v => set('fullName', v)} error={errors.fullName} />
                 <Field label="Phone Number" value={form.mobile} onChange={v => set('mobile', v)} error={errors.mobile} type="tel" maxLength={10} />
                 <Field label="Address Line 1" value={form.addressLine1} onChange={v => set('addressLine1', v)} error={errors.addressLine1} />
-                <Field label="Address Line 2 (optional)" value={form.addressLine2} onChange={v => set('addressLine2', v)} />
-                <Field label="Landmark (optional)" value={form.landmark} onChange={v => set('landmark', v)} />
+                <Field label="Address Line 2" value={form.addressLine2} onChange={v => set('addressLine2', v)} error={errors.addressLine2} />
+                <Field label="Landmark" value={form.landmark} onChange={v => set('landmark', v)} error={errors.landmark} />
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="City" value={form.city} onChange={v => set('city', v)} error={errors.city} />
                   <Field label="State" value={form.state} onChange={v => set('state', v)} error={errors.state} />

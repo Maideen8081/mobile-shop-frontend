@@ -88,8 +88,9 @@ export default function BookRepair() {
     const ne = validateName(name); if (ne) e.name = ne
     const me = validateMobile(mobile); if (me) e.mobile = me
     const ee = validateEmail(email); if (ee) e.email = ee
+    if (!address.trim()) e.address = 'Address is required'
     setErrors(e)
-    setTouched({ name: true, mobile: true, email: true })
+    setTouched({ name: true, mobile: true, email: true, address: true })
     return Object.keys(e).length === 0
   }
 
@@ -98,8 +99,11 @@ export default function BookRepair() {
     const be = validateBrand(brand); if (be) e.brand = be
     const me = validateModel(model); if (me) e.model = me
     const ie = validateImei(imei); if (ie) e.imei = ie
+    if (!serialNumber.trim()) e.serialNumber = 'Serial number is required'
+    if (!deviceColor.trim()) e.deviceColor = 'Color is required'
+    if (warranty === 'unknown') e.warranty = 'Please select warranty status'
     setErrors(e)
-    setTouched({ brand: true, model: true, imei: true })
+    setTouched({ brand: true, model: true, imei: true, serialNumber: true, deviceColor: true, warranty: true })
     return Object.keys(e).length === 0
   }
 
@@ -320,8 +324,9 @@ export default function BookRepair() {
                   {touched.email && errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Address (Optional)</label>
-                  <textarea value={address} onChange={(e) => setAddress(e.target.value)} className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border min-h-[60px] resize-none`} placeholder="Your address for pickup/delivery" rows={2} />
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Address <span className="text-red-500">*</span></label>
+                  <textarea value={address} onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(prev => ({ ...prev, address: 'Address is required' })) }} onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(prev => ({ ...prev, address: !e.target.value.trim() ? 'Address is required' : '' })) }} className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border min-h-[60px] resize-none ${touched.address && errors.address ? 'border-red-400' : 'border-glass-border'}`} placeholder="Your address for pickup/delivery" rows={2} />
+                  {touched.address && errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
                 </div>
               </div>
               <div className="flex items-center justify-between mt-5">
@@ -360,27 +365,29 @@ export default function BookRepair() {
                   {touched.model && errors.model && <p className="text-xs text-red-500 mt-1">{errors.model}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">IMEI Number (Optional)</label>
-                  <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.imei && errors.imei ? 'border-red-400' : 'border-glass-border'}`} placeholder="15 digit IMEI" />
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">IMEI Number <span className="text-red-500">*</span></label>
+                  <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.imei && errors.imei ? 'border-red-400' : 'border-glass-border'}`} placeholder="15 digit IMEI" />
                   {touched.imei && errors.imei && <p className="text-xs text-red-500 mt-1">{errors.imei}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Serial No. (Optional)</label>
-                  <input value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border" placeholder="Device serial number" />
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Serial No. <span className="text-red-500">*</span></label>
+                  <input value={serialNumber} onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(prev => ({ ...prev, serialNumber: 'Serial number is required' })) }} onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(prev => ({ ...prev, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border ${touched.serialNumber && errors.serialNumber ? 'border-red-400' : 'border-glass-border'}`} placeholder="Device serial number" />
+                  {touched.serialNumber && errors.serialNumber && <p className="text-xs text-red-500 mt-1">{errors.serialNumber}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Color (Optional)</label>
-                  <input value={deviceColor} onChange={(e) => setDeviceColor(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border" placeholder="e.g. Space Black, Silver" />
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Color <span className="text-red-500">*</span></label>
+                  <input value={deviceColor} onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(prev => ({ ...prev, deviceColor: 'Color is required' })) }} onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(prev => ({ ...prev, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border ${touched.deviceColor && errors.deviceColor ? 'border-red-400' : 'border-glass-border'}`} placeholder="e.g. Space Black, Silver" />
+                  {touched.deviceColor && errors.deviceColor && <p className="text-xs text-red-500 mt-1">{errors.deviceColor}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Warranty Status</label>
-                  <select value={warranty} onChange={(e) => setWarranty(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-mint/50 transition-all border-glass-border">
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Warranty Status <span className="text-red-500">*</span></label>
+                  <select value={warranty} onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(prev => ({ ...prev, warranty: 'Please select warranty status' })) }} onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(prev => ({ ...prev, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-mint/50 transition-all border-glass-border ${touched.warranty && errors.warranty ? 'border-red-400' : 'border-glass-border'}`}>
                     <option value="unknown">Unknown</option>
                     <option value="in_warranty">In Warranty</option>
                     <option value="out_of_warranty">Out of Warranty</option>
                     <option value="expired">Expired</option>
                   </select>
+                  {touched.warranty && errors.warranty && <p className="text-xs text-red-500 mt-1">{errors.warranty}</p>}
                 </div>
               </div>
               <div className="flex items-center justify-between mt-5">
@@ -399,7 +406,7 @@ export default function BookRepair() {
             >
               <div className="flex items-center gap-2 mb-4">
                 <FiImage size={14} className="text-mint" />
-                <span className="text-sm font-bold text-[#181c1e]">Device Photos (Optional)</span>
+                <span className="text-sm font-bold text-[#181c1e]">Device Photos</span>
               </div>
               <div onClick={() => inputRef.current?.click()}
                 className="rounded-xl border-2 border-dashed border-mint/20 p-6 text-center cursor-pointer hover:border-mint/40 transition-all bg-white/80"
