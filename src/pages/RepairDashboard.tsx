@@ -321,7 +321,7 @@ export default function RepairDashboard() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {filteredTickets.filter((t) => !['Delivered', 'Rejected'].includes(t.status)).slice(0, 6).map((ticket, i) => (
-                  <RepairCard key={ticket.id} ticket={ticket} index={i} onClick={(t) => setSelectedTicket(t)} compact />
+                  <RepairCard key={ticket.id} ticket={ticket} index={i} onClick={(t) => setSelectedTicket(t as any)} compact />
                 ))}
               </div>
             )}
@@ -464,6 +464,8 @@ export default function RepairDashboard() {
                   <p className="text-[10px] text-text-muted mt-0.5">Est. Completion: {selectedTicket.estimatedDays} day{selectedTicket.estimatedDays > 1 ? 's' : ''}</p>
                       <p className="text-[10px] text-text-muted flex items-center gap-1.5 mt-0.5"><FiUser size={10} />Technician: {(selectedTicket as any).technicianName || 'Auto Assign'}</p>
                    <div className="mt-2"><RepairStatusBadge status={selectedTicket.status as RepairStatus} /></div>
+                 </div>
+               </div>
                  </div>
                </div>
 
