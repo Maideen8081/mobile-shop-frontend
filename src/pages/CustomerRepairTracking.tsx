@@ -135,55 +135,6 @@ function PriorityBadge({ priority }: { priority: string }) {
   )
 }
 
-function EmptyState({ onBrowse }: { onBrowse: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <motion.div
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-8"
-        style={{
-          background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
-          border: '1px solid rgba(203,32,45,0.25)',
-        }}
-      >
-        <span className="material-symbols-outlined text-5xl" style={{ color: '#A81D2A' }}>build</span>
-      </motion.div>
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-        className="text-2xl font-bold text-[#191c1d] mb-2"
-      >
-        No Repair Requests Found
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
-        className="text-sm mb-8 max-w-sm"
-        style={{ color: 'rgba(59,75,61,0.7)' }}
-      >
-        You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
-      </motion.p>
-      <motion.button
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-        onClick={onBrowse}
-        className="px-8 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-300 active:scale-[0.98]"
-        style={{
-          background: '#A81D2A',
-          boxShadow: '0 4px 15px rgba(168,29,42,0.3)',
-        }}
-      >
-        Book a Repair
-      </motion.button>
-    </div>
-  )
-}
-
 function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
   const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
   const isCancelled = ticket.status === 'Cancelled'

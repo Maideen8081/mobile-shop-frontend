@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Wrench, Smartphone, BatteryCharging, Droplets, Camera, Plug, Volume2, Lock, Cpu, Check, ShieldCheck, Clock, Star } from 'lucide-react'
-import { BRAND, C } from './theme'
+import { BRAND } from './theme'
 
 const services = [
   { icon: Smartphone, title: 'Screen Repair', desc: 'Cracked or shattered screen? We replace it with premium OEM-grade glass in under 60 minutes.' },

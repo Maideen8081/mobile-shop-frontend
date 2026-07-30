@@ -239,82 +239,6 @@ const counts = useMemo(() => {
     return { total, Submitted: submitted, Accepted: accepted, Received: received, 'Repair In Progress': inProgress, Delivered: delivered, Cancelled: cancelled, completed, Rejected: rejected }
   }, [tickets])
 
-  const openView = async (ticket: RepairTicket) => {
-    try { const full = await repairService.getById(ticket.id); setSelectedTicket(full) }
-    catch { setSelectedTicket(ticket) }
-    setViewModalOpen(true)
-  }
-
-  const openEdit = async (ticket: RepairTicket) => {
-    let full = ticket
-    try { full = await repairService.getById(ticket.id) } catch { /* use ticket data */ }
-    setSelectedTicket(full)
-    setEditForm({
-      customerName: full.customerName,
-      customerMobile: full.customerMobile,
-      customerAlt: full.customerAlt || '',
-      customerEmail: full.customerEmail || '',
-      customerAddress: full.customerAddress || '',
-      deviceCategory: full.deviceCategory || full.deviceBrand,
-      deviceBrand: full.deviceBrand,
-      deviceModel: full.deviceModel,
-      imei: full.imei || '',
-      serial: full.serialNumber || '',
-      deviceColor: full.deviceColor || '',
-      deviceCondition: full.deviceCondition || '',
-      warranty: full.warranty || '',
-      issueCategory: full.issueCategory,
-      description: full.description,
-      priority: full.priority,
-      accessories: full.accessories || '',
-      password: full.password || '',
-      status: full.status,
-      estimatedCost: full.estimatedCost,
-      estimatedDays: full.estimatedDays,
-      technician: full.technicianId || 0,
-    })
-    setEditImageFiles([])
-    setEditImagePreviews([])
-    setEditModalOpen(true)
-  }
-
-  const openDelete = (ticket: RepairTicket) => { setSelectedTicket(ticket); setDeleteModalOpen(true) }
-
-  const handleAccept = async (ticket: RepairTicket) => {
-    try {
-      const updated = await repairService.acceptTicket(ticket.id, 'Ticket accepted by admin')
-      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
-      setToast({ message: `Ticket ${ticket.repairId} accepted`, type: 'success' })
-      onRefresh()
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to accept ticket'
-      setToast({ message: msg, type: 'error' })
-    }
-  }
-
-  const handleReject = async (ticket: RepairTicket) => {
-    const reason = prompt('Enter rejection reason:')
-    if (!reason) return
-    try {
-      const updated = await repairService.rejectTicket(ticket.id, reason)
-      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
-      setToast({ message: `Ticket ${ticket.repairId} rejected`, type: 'success' })
-      onRefresh()
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to reject ticket'
-      setToast({ message: msg, type: 'error' })
-    }
-  }
-
-  const handleReceived = async (ticket: RepairTicket) => {
-    try {
-      const updated = await repairService.markReceived(ticket.id, 'Device received by admin')
-      setTickets((prev) => prev.map(t => t.id === ticket.id ? updated : t))
-      setToast({ message: `Ticket ${ticket.repairId} marked as received`, type: 'success' })
-      onRefresh()
-    } catch { setToast({ message: 'Failed to mark as received', type: 'error' }) }
-  }
-
   const handleDelete = async () => {
     if (!selectedTicket) return
     setDeleting(true)
@@ -325,21 +249,6 @@ const counts = useMemo(() => {
       await fetchTickets(); onRefresh()
     } catch { setToast({ message: 'Failed to delete ticket', type: 'error' }) }
     finally { setDeleting(false) }
-  }
-
-  const handleStatusUpdate = async () => {
-    if (!selectedTicket || !newStatus || newStatus === selectedTicket.status) return
-    setStatusUpdating(true)
-    try {
-      const fd = new FormData()
-      fd.append('status', newStatus)
-      await repairService.update(selectedTicket.id, fd)
-      setSelectedTicket({ ...selectedTicket, status: newStatus })
-      setTickets((prev) => prev.map(t => t.id === selectedTicket.id ? { ...t, status: newStatus } : t))
-      setToast({ message: `Status updated to "${statusConfig[newStatus]?.label || newStatus}"`, type: 'success' })
-      onRefresh()
-    } catch { setToast({ message: 'Failed to update status', type: 'error' }) }
-    finally { setStatusUpdating(false) }
   }
 
   const handleEditImageFiles = (fileList: FileList | null) => {
