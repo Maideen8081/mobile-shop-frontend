@@ -466,8 +466,6 @@ export default function RepairDashboard() {
                    <div className="mt-2"><RepairStatusBadge status={selectedTicket.status as RepairStatus} /></div>
                  </div>
                </div>
-                 </div>
-               </div>
 
                {((selectedTicket as any).deviceCondition || (selectedTicket as any).warranty || (selectedTicket as any).password) && (
                  <div className="mt-4 pt-3 border-t border-border">
