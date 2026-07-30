@@ -309,8 +309,8 @@ const counts = useMemo(() => {
   const tableHeaders = ['Ticket', 'Customer', 'Mobile', 'Category', 'Device', 'Issue', 'Technician', 'Cost', 'Status', 'Created', 'Actions']
 
   const openViewModal = async (ticket: RepairTicket) => {
-    try { const full = await repairService.getById(ticket.id); setSelectedTicket(full); setNewStatus(full.status) }
-    catch { setSelectedTicket(ticket); setNewStatus(ticket.status) }
+    try { const full = await repairService.getById(ticket.id); setSelectedTicket(full) }
+    catch { setSelectedTicket(ticket) }
     setViewModalOpen(true)
   }
 
