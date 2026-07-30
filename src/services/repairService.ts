@@ -50,6 +50,9 @@ export interface RepairTicket {
   deviceColor: string
   deviceCondition: string
   warranty: string
+  repairReason: string
+  repairCharge: number | null
+  customerApproved: boolean
   issueCategory: string
   description: string
   priority: string
@@ -91,13 +94,20 @@ function mapBackendStatus(status: string, statusLabel: string): string {
     pending: 'Submitted',
     accepted: 'Accepted',
     rejected: 'Rejected',
+    device_received: 'Received',
     received: 'Received',
+    awaiting_approval: 'Awaiting Approval',
+    inspection: 'Diagnosing',
     diagnosing: 'Diagnosing',
+    waiting_parts: 'Waiting for Parts',
     waiting_for_parts: 'Waiting for Parts',
     repair_in_progress: 'Repair In Progress',
     quality_check: 'Quality Check',
+    ready_for_pickup: 'Ready for Delivery',
     ready_for_delivery: 'Ready for Delivery',
+    shipped: 'Delivered',
     delivered: 'Delivered',
+    completed: 'Delivered',
     cancelled: 'Cancelled',
   }
   if (map[status.toLowerCase()] !== undefined) return map[status.toLowerCase()]
@@ -121,6 +131,9 @@ function normalizeTicket(raw: any): RepairTicket {
     deviceColor: raw.device_color ?? raw.deviceColor ?? '',
     deviceCondition: raw.device_condition ?? raw.deviceCondition ?? '',
     warranty: raw.warranty_status ?? raw.warranty ?? '',
+    repairReason: raw.repair_reason ?? raw.repairReason ?? '',
+    repairCharge: raw.repair_charge !== undefined && raw.repair_charge !== null ? Number(raw.repair_charge) : null,
+    customerApproved: raw.customer_approved ?? raw.customerApproved ?? false,
     issueCategory: raw.issue_category ?? raw.issueCategory ?? '',
     description: raw.problem_description ?? raw.description ?? '',
     priority: raw.priority ? (raw.priority.charAt(0).toUpperCase() + raw.priority.slice(1)) : 'Medium',
@@ -231,8 +244,8 @@ export const repairService = {
       unwrapData<RepairDashboardCounts>(r as any),
     ),
 
-  updateStatus: (id: number, status: string, notes?: string) =>
-    api.put(`${REPAIRS_URL}/${id}/status/`, { status, notes }).then((r) =>
+  updateStatus: (id: number, status: string, notes?: string, repairReason?: string, repairCharge?: number) =>
+    api.put(`${REPAIRS_URL}/${id}/status/`, { status, notes, repair_reason: repairReason, repair_charge: repairCharge }).then((r) =>
       normalizeTicket(unwrapData<any>(r as any)),
     ),
 
@@ -274,27 +287,29 @@ export const repairService = {
       normalizeTicket(unwrapData<any>(r as any)),
     ),
 
-  acceptTicket: (ticketId: number, notes?: string) =>
-    api.put(`${REPAIRS_URL}/${ticketId}/status/`, {
-      status: 'accepted',
-      notes: notes || 'Ticket accepted by admin',
-    }).then((r) =>
-      normalizeTicket(unwrapData<any>(r as any)),
-    ),
+  acceptTicket: async (ticketId: number, notes?: string) => {
+    return api.put(`${REPAIRS_URL}/${ticketId}/status/`, { status: 'accepted', notes: notes || 'Ticket accepted by admin' }).then((r) => normalizeTicket(unwrapData<any>(r as any)))
+  },
 
-  rejectTicket: (ticketId: number, reason: string) =>
-    api.put(`${REPAIRS_URL}/${ticketId}/status/`, {
-      status: 'rejected',
-      notes: reason,
-    }).then((r) =>
-      normalizeTicket(unwrapData<any>(r as any)),
-    ),
+  rejectTicket: async (ticketId: number, reason: string) => {
+    return api.put(`${REPAIRS_URL}/${ticketId}/status/`, { status: 'rejected', notes: reason }).then((r) => normalizeTicket(unwrapData<any>(r as any)))
+  },
 
   markReceived: (ticketId: number, notes?: string) =>
     api.put(`${REPAIRS_URL}/${ticketId}/status/`, {
       status: 'received',
       notes: notes || 'Device received by admin',
     }).then((r) =>
+      normalizeTicket(unwrapData<any>(r as any)),
+    ),
+
+  customerApprove: (ticketId: number, notes?: string) =>
+    api.post(`${REPAIRS_URL}/${ticketId}/customer-approve/`, { action: 'approve', notes: notes || 'Customer approved the repair estimate' }).then((r) =>
+      normalizeTicket(unwrapData<any>(r as any)),
+    ),
+
+  customerDecline: (ticketId: number, notes?: string) =>
+    api.post(`${REPAIRS_URL}/${ticketId}/customer-approve/`, { action: 'decline', notes: notes || 'Customer declined the repair estimate' }).then((r) =>
       normalizeTicket(unwrapData<any>(r as any)),
     ),
 

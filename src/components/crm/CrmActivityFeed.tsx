@@ -3,14 +3,14 @@ import { FiStar, FiMessageSquare, FiShoppingCart, FiTool, FiUserPlus, FiGift, Fi
 import { customerActivityFeed } from '../../data/crmData'
 
 const typeConfig: Record<string, { icon: any; color: string; bg: string }> = {
-  purchase: { icon: FiShoppingCart, color: 'text-primary', bg: 'bg-purple-100' },
-  redeem: { icon: FiRefreshCw, color: 'text-info', bg: 'bg-blue-100' },
-  new: { icon: FiUserPlus, color: 'text-success', bg: 'bg-emerald-100' },
+  purchase: { icon: FiShoppingCart, color: 'text-primary', bg: 'bg-primary/10' },
+  redeem: { icon: FiRefreshCw, color: 'text-primary', bg: 'bg-primary/10' },
+  new: { icon: FiUserPlus, color: 'text-success', bg: 'bg-success/10' },
   review: { icon: FiStar, color: 'text-warning', bg: 'bg-warning/10' },
-  repair: { icon: FiTool, color: 'text-orange-600', bg: 'bg-orange-100' },
-  tier: { icon: FiAward, color: 'text-cyan-600', bg: 'bg-cyan-100' },
-  birthday: { icon: FiGift, color: 'text-rose-600', bg: 'bg-rose-100' },
-  referral: { icon: FiUserPlus, color: 'text-teal-600', bg: 'bg-teal-100' },
+  repair: { icon: FiTool, color: 'text-primary', bg: 'bg-primary/10' },
+  tier: { icon: FiAward, color: 'text-primary', bg: 'bg-primary/10' },
+  birthday: { icon: FiGift, color: 'text-primary', bg: 'bg-primary/10' },
+  referral: { icon: FiUserPlus, color: 'text-primary', bg: 'bg-primary/10' },
 }
 
 export default function CrmActivityFeed() {

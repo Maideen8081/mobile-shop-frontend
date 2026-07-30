@@ -4,9 +4,9 @@ import type { Customer } from '../../data/crmData'
 
 const tierColors: Record<string, { bg: string; text: string; border: string }> = {
   Platinum: { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/20' },
-  Gold: { bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-300/30' },
+  Gold: { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/20' },
   Silver: { bg: 'bg-gray-100', text: 'text-text-secondary', border: 'border-gray-300/30' },
-  Bronze: { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-300/30' },
+  Bronze: { bg: 'bg-primary/5', text: 'text-primary', border: 'border-primary/10' },
 }
 
 export default function CustomerCard({ customer, index = 0, onClick }: { customer: Customer; index?: number; onClick?: (c: Customer) => void }) {
@@ -41,19 +41,19 @@ export default function CustomerCard({ customer, index = 0, onClick }: { custome
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="flex items-center gap-1.5 text-text-muted">
-            <FiShoppingBag size={11} className="text-purple-400" />
+            <FiShoppingBag size={11} className="text-primary" />
             <span>{customer.totalPurchases} purchases</span>
           </div>
           <div className="flex items-center gap-1.5 text-text-muted">
-            <FiTool size={11} className="text-blue-400" />
+            <FiTool size={11} className="text-primary" />
             <span>{customer.repairCount} repairs</span>
           </div>
           <div className="flex items-center gap-1.5 text-text-muted">
-            <FiStar size={11} className="text-amber-400" />
+            <FiStar size={11} className="text-primary" />
             <span>{customer.loyaltyPoints} pts</span>
           </div>
           <div className="flex items-center gap-1.5 text-text-muted">
-            <FiUser size={11} className="text-emerald-400" />
+            <FiUser size={11} className="text-primary" />
             <span>{customer.city}</span>
           </div>
         </div>

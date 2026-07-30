@@ -66,11 +66,11 @@ export default function UserBookings() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             {[
               { label: 'Total Bookings', value: summary.total, color: '#CB202D', icon: FiLoader },
-              { label: 'Pending Review', value: summary.submitted, color: '#f59e0b', icon: FiLoader },
-              { label: 'Accepted', value: summary.accepted, color: '#2563eb', icon: FiCheck },
-              { label: 'Delivered', value: summary.delivered, color: '#22c55e', icon: FiCheck },
+              { label: 'Pending Review', value: summary.submitted, color: '#CB202D', icon: FiLoader },
+              { label: 'Accepted', value: summary.accepted, color: '#A81D2A', icon: FiCheck },
+              { label: 'Delivered', value: summary.delivered, color: '#CB202D', icon: FiCheck },
             ].map((s) => (
-              <div key={s.label} className="rounded-2xl bg-bg-card border border-border p-4">
+              <div key={s.label} className="rounded-2xl bg-white border border-border p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <s.icon size={14} style={{ color: s.color }} />
                   <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{s.label}</p>
@@ -83,7 +83,7 @@ export default function UserBookings() {
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-xs text-text-muted">Live bookings from the repair booking form</p>
-          <button onClick={handleRefresh} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-card border border-border text-xs font-semibold text-text-secondary hover:bg-primary/10 transition-all cursor-pointer">
+          <button onClick={handleRefresh} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-border text-xs font-semibold text-text-secondary hover:bg-gray-50 transition-all cursor-pointer shadow-sm">
             <FiRefreshCw size={12} /> Refresh
           </button>
         </div>

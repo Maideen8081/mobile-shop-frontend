@@ -22,8 +22,8 @@ export default function CustomerGrowthChart() {
               wrapperStyle={{ fontSize: 11, fontWeight: 500, paddingTop: 8 }}
               formatter={(value) => <span className="text-text-muted capitalize">{value}</span>}
             />
-            <Bar dataKey="new" fill="#7c3aed" radius={[6, 6, 0, 0]} barSize={12} />
-            <Bar dataKey="returning" fill="#6366f1" radius={[6, 6, 0, 0]} barSize={12} />
+            <Bar dataKey="new" fill="#CB202D" radius={[6, 6, 0, 0]} barSize={12} />
+            <Bar dataKey="returning" fill="#A81D2A" radius={[6, 6, 0, 0]} barSize={12} />
           </BarChart>
         </ResponsiveContainer>
       </div>

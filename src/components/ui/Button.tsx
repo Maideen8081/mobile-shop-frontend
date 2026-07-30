@@ -12,9 +12,9 @@ const variantClasses = {
   primary: 'bg-primary hover:bg-primary-hover text-white shadow-sm',
   secondary: 'bg-white border border-primary/40 hover:bg-primary/5 text-primary',
   danger: 'bg-danger hover:bg-danger-hover text-white shadow-sm',
-  warning: 'bg-warning hover:brightness-95 text-white shadow-sm',
+  warning: 'bg-danger hover:bg-danger-hover text-white shadow-sm',
   success: 'bg-success hover:bg-primary-hover text-white shadow-sm',
-  ghost: 'hover:bg-surface-hover text-text-muted',
+  ghost: 'hover:bg-primary/5 text-text-muted',
 }
 
 const sizeClasses = {

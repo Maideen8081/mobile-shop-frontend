@@ -30,10 +30,8 @@ export default function BookRepair() {
   if (isMobile) return <MobileBookRepair />
   const { issue } = useParams()
   const decodedIssue = issue ? decodeURIComponent(issue) : ''
-  const questions = issueQuestions[decodedIssue] || defaultQuestions
 
   const [step, setStep] = useState(1)
-  const [answers, setAnswers] = useState<string[]>(questions.map(() => ''))
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [email, setEmail] = useState('')
@@ -48,7 +46,16 @@ export default function BookRepair() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [services, setServices] = useState<RepairService[]>([])
+  const [selectedIssue, setSelectedIssue] = useState(decodedIssue)
+  const [showServicePicker, setShowServicePicker] = useState(false)
+  const [address, setAddress] = useState('')
+  const [serialNumber, setSerialNumber] = useState('')
+  const [deviceColor, setDeviceColor] = useState('')
+  const [warranty, setWarranty] = useState('unknown')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const questions = issueQuestions[selectedIssue] || defaultQuestions
+  const [answers, setAnswers] = useState<string[]>(questions.map(() => ''))
 
   const totalSteps = questions.length + 4
 
@@ -56,14 +63,22 @@ export default function BookRepair() {
     repairService.getServices().then(setServices).catch(() => {})
   }, [])
 
+  useEffect(() => {
+    setSelectedIssue(decodedIssue)
+  }, [decodedIssue])
+
+  useEffect(() => {
+    setAnswers(questions.map(() => '')); setStep(1); setErrors({}); setTouched({})
+  }, [selectedIssue])
+
   const matchedService = services.find(s =>
-    s.slug.toLowerCase() === decodedIssue.toLowerCase() ||
-    s.name.toLowerCase() === decodedIssue.toLowerCase()
+    s.slug.toLowerCase() === selectedIssue.toLowerCase() ||
+    s.name.toLowerCase() === selectedIssue.toLowerCase()
   )
 
   const validateName = (v: string) => v.trim().length < 2 ? 'Name must be at least 2 characters' : ''
   const validateMobile = (v: string) => !/^\d{10}$/.test(v.replace(/\D/g, '')) ? 'Enter a valid 10-digit mobile number' : ''
-  const validateEmail = (v: string) => v.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email address' : ''
+  const validateEmail = (v: string) => !v.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email address' : ''
   const validateBrand = (v: string) => !v ? 'Please select a brand' : ''
   const validateModel = (v: string) => !v.trim() ? 'Model is required' : ''
   const validateImei = (v: string) => v.trim() && !/^\d{15}$/.test(v.trim()) ? 'IMEI must be exactly 15 digits' : ''
@@ -87,10 +102,6 @@ export default function BookRepair() {
     setTouched({ brand: true, model: true, imei: true })
     return Object.keys(e).length === 0
   }
-
-  useEffect(() => {
-    setAnswers(questions.map(() => '')); setStep(1); setErrors({}); setTouched({})
-  }, [decodedIssue])
 
   useEffect(() => {
     const urls = imageFiles.map((f) => URL.createObjectURL(f))
@@ -135,11 +146,15 @@ export default function BookRepair() {
       fd.append('customer_name', name.trim())
       fd.append('customer_mobile', mobile.trim())
       fd.append('customer_email', email.trim())
-      fd.append('device_category', decodedIssue || 'Other')
+      fd.append('customer_address', address.trim())
+      fd.append('device_category', selectedIssue || 'Other')
       fd.append('device_brand', brand)
       fd.append('device_model', model.trim())
       fd.append('imei_number', imei.trim())
-      fd.append('issue_category', decodedIssue || 'Other')
+      fd.append('serial_number', serialNumber.trim())
+      fd.append('device_color', deviceColor.trim())
+      fd.append('warranty_status', warranty)
+      fd.append('issue_category', selectedIssue || 'Other')
       fd.append('problem_description', buildDescription())
       fd.append('priority', 'medium')
       fd.append('source', 'online')
@@ -149,7 +164,11 @@ export default function BookRepair() {
         mobile: mobile.trim(),
         email: email.trim(),
         device: `${brand} ${model.trim()}`,
-        issue: decodedIssue || 'Other',
+        issue: selectedIssue || 'Other',
+        address: address.trim(),
+        serialNumber: serialNumber.trim(),
+        deviceColor: deviceColor.trim(),
+        warranty,
         description: buildDescription(),
       })
       const created = await repairService.create(fd)
@@ -216,15 +235,29 @@ export default function BookRepair() {
       <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
 
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-12">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-mint/10 flex items-center justify-center">
-            <FiEdit3 size={18} className="text-mint" />
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-mint/10 flex items-center justify-center shrink-0">
+              <FiEdit3 size={18} className="text-mint" />
+            </div>
+            <div className="flex-1 relative">
+              <h1 className="text-xl lg:text-2xl font-extrabold text-[#181c1e]">Book a Repair</h1>
+              <div onClick={() => setShowServicePicker(!showServicePicker)} className="inline-flex items-center gap-1.5 cursor-pointer group mt-0.5">
+                <p className="text-[#434748] text-sm group-hover:text-mint transition-colors">{selectedIssue || 'Select a service'}</p>
+                <svg className={`w-3.5 h-3.5 text-[#434748] transition-transform ${showServicePicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </div>
+              {showServicePicker && (
+                <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl shadow-lg border border-glass-border min-w-[220px] max-h-56 overflow-y-auto py-1">
+                  {services.filter(s => s.is_active).map(s => (
+                    <button key={s.id} type="button" onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
+                      className={`w-full text-left px-4 py-2 text-sm transition ${selectedIssue === s.name ? 'text-white' : 'text-[#181c1e] hover:bg-[#f7fafd]'}`}
+                      style={selectedIssue === s.name ? { background: 'linear-gradient(135deg, #CB202D, #A81D2A)' } : {}}
+                    >{s.name}</button>
+                  ))}
+                  {services.filter(s => s.is_active).length === 0 && <p className="px-4 py-2 text-sm text-[#434748]/60">No services available</p>}
+                </div>
+              )}
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl lg:text-2xl font-extrabold text-[#181c1e]">Book a Repair</h1>
-            {decodedIssue && <p className="text-[#434748] text-sm">{decodedIssue}</p>}
-          </div>
-        </div>
         <p className="text-[#434748] text-sm mb-6">Complete the steps below to book your repair.</p>
 
         {/* Progress Bar */}
@@ -281,10 +314,14 @@ export default function BookRepair() {
                   {touched.mobile && errors.mobile && <p className="text-xs text-red-500 mt-1">{errors.mobile}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Email (Optional)</label>
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Email Address <span className="text-red-500">*</span></label>
                   <input value={email} onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }} onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
                     className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.email && errors.email ? 'border-red-400' : 'border-glass-border'}`} placeholder="email@example.com" type="email" />
                   {touched.email && errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Address (Optional)</label>
+                  <textarea value={address} onChange={(e) => setAddress(e.target.value)} className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border min-h-[60px] resize-none`} placeholder="Your address for pickup/delivery" rows={2} />
                 </div>
               </div>
               <div className="flex items-center justify-between mt-5">
@@ -327,6 +364,23 @@ export default function BookRepair() {
                   <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
                     className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.imei && errors.imei ? 'border-red-400' : 'border-glass-border'}`} placeholder="15 digit IMEI" />
                   {touched.imei && errors.imei && <p className="text-xs text-red-500 mt-1">{errors.imei}</p>}
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Serial No. (Optional)</label>
+                  <input value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border" placeholder="Device serial number" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Color (Optional)</label>
+                  <input value={deviceColor} onChange={(e) => setDeviceColor(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border" placeholder="e.g. Space Black, Silver" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#434748] mb-1">Warranty Status</label>
+                  <select value={warranty} onChange={(e) => setWarranty(e.target.value)} className="w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-mint/50 transition-all border-glass-border">
+                    <option value="unknown">Unknown</option>
+                    <option value="in_warranty">In Warranty</option>
+                    <option value="out_of_warranty">Out of Warranty</option>
+                    <option value="expired">Expired</option>
+                  </select>
                 </div>
               </div>
               <div className="flex items-center justify-between mt-5">

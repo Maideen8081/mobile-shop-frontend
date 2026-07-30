@@ -68,7 +68,9 @@ function toArray(data: any): any[] {
 export const categoryService = {
   list: () =>
     api.get(`${CATEGORIES_URL}/`).then((r) =>
-      toArray(unwrapData<any>(r as any)).map(normalizeCategory),
+      toArray(unwrapData<any>(r as any))
+        .map(normalizeCategory)
+        .sort((a, b) => a.id - b.id),
     ),
 
   create: (data: FormData) =>

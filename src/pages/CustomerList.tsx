@@ -9,8 +9,8 @@ import { customers } from '../data/crmData'
 const ITEMS_PER_PAGE = 6
 
 const tierColors: Record<string, string> = {
-  Platinum: 'text-purple-700 bg-purple-100',
-  Gold: 'text-amber-700 bg-amber-100',
+  Platinum: 'text-primary bg-primary/10',
+  Gold: 'text-primary bg-primary/10',
   Silver: 'text-text-secondary bg-gray-100',
   Bronze: 'text-orange-700 bg-orange-100',
 }
@@ -94,7 +94,7 @@ export default function CustomerList() {
             <tbody>
               {paged.map((c, i) => (
                 <motion.tr key={c.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                  className="border-b border-purple-50/50 hover:bg-primary/5 transition-colors group cursor-pointer"
+                  className="border-b border-primary/20 hover:bg-primary/5 transition-colors group cursor-pointer"
                   onClick={() => navigate(`/customer-profile?id=${c.id}`)}
                 >
                   <td className="px-4 py-3.5">
@@ -109,7 +109,7 @@ export default function CustomerList() {
                   <td className="px-4 py-3.5"><span className="text-xs text-text-muted">{c.mobile}</span></td>
                   <td className="px-4 py-3.5"><span className="text-sm font-semibold text-text-secondary">{c.totalPurchases}</span></td>
                   <td className="px-4 py-3.5"><span className="text-sm text-text-secondary">{c.repairCount}</span></td>
-                  <td className="px-4 py-3.5"><span className="text-sm font-semibold text-amber-600">{c.loyaltyPoints.toLocaleString()}</span></td>
+                  <td className="px-4 py-3.5"><span className="text-sm font-semibold text-primary">{c.loyaltyPoints.toLocaleString()}</span></td>
                   <td className="px-4 py-3.5">
                     <span className={`px-2 py-0.5 rounded-lg text-[9px] font-semibold ${tierColors[c.loyaltyTier] || tierColors.Bronze}`}>
                       {c.loyaltyTier}
@@ -117,7 +117,7 @@ export default function CustomerList() {
                   </td>
                   <td className="px-4 py-3.5"><span className="text-xs text-text-muted">{c.lastVisit}</span></td>
                   <td className="px-4 py-3.5">
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold ${c.status === 'active' ? 'bg-emerald-100 text-emerald-700' : c.status === 'inactive' ? 'bg-gray-100 text-text-muted' : 'bg-red-100 text-red-700'}`}>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold ${c.status === 'active' ? 'bg-primary/10 text-primary' : c.status === 'inactive' ? 'bg-gray-100 text-text-muted' : 'bg-red-100 text-red-700'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${c.status === 'active' ? 'bg-success/100' : c.status === 'inactive' ? 'bg-gray-400' : 'bg-danger/100'}`} />
                       {c.status}
                     </span>
@@ -125,9 +125,9 @@ export default function CustomerList() {
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {[
-                        { icon: FiEye, label: 'View', color: 'text-info bg-blue-100' },
-                        { icon: FiEdit2, label: 'Edit', color: 'text-primary bg-purple-100' },
-                        { icon: FiMessageCircle, label: 'WhatsApp', color: 'text-success bg-emerald-100' },
+                        { icon: FiEye, label: 'View', color: 'text-info bg-info/10' },
+                        { icon: FiEdit2, label: 'Edit', color: 'text-primary bg-primary/10' },
+                        { icon: FiMessageCircle, label: 'WhatsApp', color: 'text-success bg-success/10' },
                         { icon: FiStar, label: 'Loyalty', color: 'text-warning bg-warning/10' },
                         { icon: FiShoppingBag, label: 'Purchases', color: 'text-info bg-info/10' },
                       ].map((btn) => (
@@ -151,7 +151,7 @@ export default function CustomerList() {
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button key={p} onClick={() => setPage(p)}
-                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-purple-100'}`}>
+                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-primary/10'}`}>
                   {p}
                 </button>
               ))}
@@ -178,7 +178,7 @@ export default function CustomerList() {
               </button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button key={p} onClick={() => setPage(p)}
-                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-purple-100'}`}>
+                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-primary/10'}`}>
                   {p}
                 </button>
               ))}

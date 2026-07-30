@@ -13,12 +13,12 @@ export default function ProductTable({ data, onEdit, onDelete }: ProductTablePro
   if (data.length === 0) return null
 
   return (
-    <div className="overflow-x-auto rounded-xl bg-bg-card border border-border">
+    <div className="overflow-x-auto rounded-xl bg-white border border-border shadow-sm">
       <table className="w-full min-w-[1000px]">
         <thead>
-          <tr className="border-b border-border">
+          <tr className="border-b border-border bg-gray-50/80">
             {['S.No', 'Product', 'Category', 'Variants', 'Stock', 'Price', 'Status', 'Actions'].map((h) => (
-              <th key={h} className="text-left text-[11px] font-semibold text-text-muted uppercase tracking-wider px-5 py-4">{h}</th>
+              <th key={h} className="text-left text-[11px] font-bold text-text-muted uppercase tracking-wider px-5 py-4">{h}</th>
             ))}
           </tr>
         </thead>
@@ -33,12 +33,12 @@ export default function ProductTable({ data, onEdit, onDelete }: ProductTablePro
 
             return (
               <motion.tr key={p.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: i * 0.04 }}
-                className="border-b border-border hover:bg-primary/[0.03] transition-colors"
+                className="border-b border-border hover:bg-gray-50/70 transition-colors"
               >
                 <td className="px-5 py-4 text-sm text-text-muted font-medium">{String(i + 1).padStart(2, '0')}</td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#0F172A] flex items-center justify-center text-xl shadow-sm border border-border overflow-hidden relative">
+                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-xl shadow-sm border border-border overflow-hidden relative">
                       <FiImage size={16} className="text-text-muted" />
                       {thumb.startsWith('http') || thumb.startsWith('data:') || thumb.startsWith('blob:') ? (
                         <img src={thumb} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />

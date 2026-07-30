@@ -35,7 +35,7 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
       whileHover={{ y: -4, boxShadow: '0 24px 60px rgba(0,0,0,0.06)' }}
       className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
     >
-      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#ef4444' : isWarning ? '#f59e0b' : '#22c55e'}, transparent)` }} />
+      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#CB202D' : isWarning ? '#CB202D' : '#A81D2A'}, transparent)` }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
@@ -75,7 +75,7 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
               initial={{ width: 0 }}
               animate={{ width: `${Math.min((days / 365) * 100, 100)}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
-              className={`h-full rounded-full ${isCritical ? 'bg-gradient-to-r from-red-400 to-red-500' : isWarning ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'}`}
+              className={`h-full rounded-full ${isCritical ? 'bg-gradient-to-r from-red-400 to-red-500' : isWarning ? 'bg-gradient-to-r from-primary to-primary-hover' : 'bg-gradient-to-r from-primary to-primary-hover'}`}
             />
           </div>
         </div>

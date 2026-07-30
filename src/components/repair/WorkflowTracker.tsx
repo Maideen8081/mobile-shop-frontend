@@ -3,12 +3,12 @@ import { repairStatuses, type RepairStatus } from '../../data/repairData'
 import { FiCheckCircle, FiClock, FiTool, FiSearch, FiPackage, FiShield, FiTruck } from 'react-icons/fi'
 
 const statusConfig: Record<RepairStatus, { icon: React.ComponentType<{ size?: number }>; color: string; bg: string; gradient: string }> = {
-  'Received': { icon: FiClock, color: 'text-info', bg: 'bg-info/10', gradient: 'from-blue-500 to-blue-400' },
+  'Received': { icon: FiClock, color: 'text-info', bg: 'bg-info/10', gradient: 'from-primary to-primary-hover' },
   'Diagnosing': { icon: FiSearch, color: 'text-primary', bg: 'bg-primary/10', gradient: 'bg-primary' },
-  'Waiting for Parts': { icon: FiPackage, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-amber-500 to-amber-400' },
+  'Waiting for Parts': { icon: FiPackage, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-primary to-primary-hover' },
   'Repair In Progress': { icon: FiTool, color: 'text-orange-600', bg: 'bg-orange-100', gradient: 'from-orange-500 to-orange-400' },
   'Quality Check': { icon: FiShield, color: 'text-cyan-600', bg: 'bg-cyan-100', gradient: 'from-cyan-500 to-cyan-400' },
-  'Ready for Delivery': { icon: FiCheckCircle, color: 'text-success', bg: 'bg-success/10', gradient: 'from-emerald-500 to-emerald-400' },
+  'Ready for Delivery': { icon: FiCheckCircle, color: 'text-success', bg: 'bg-success/10', gradient: 'from-primary to-primary-hover' },
   'Delivered': { icon: FiTruck, color: 'text-teal-600', bg: 'bg-teal-100', gradient: 'from-teal-500 to-teal-400' },
 }
 

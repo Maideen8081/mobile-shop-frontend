@@ -27,7 +27,7 @@ export default function TechnicianCard({ tech, delay = 0, compact = false }: Tec
             >
               <span className={compact ? 'text-xs' : 'text-sm'}>{initials}</span>
             </div>
-            <span className={`absolute -top-0.5 -right-0.5 ${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} rounded-full border-2 border-white ${tech.online ? 'bg-emerald-500' : 'bg-gray-300'}`} />
+            <span className={`absolute -top-0.5 -right-0.5 ${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} rounded-full border-2 border-white ${tech.online ? 'bg-primary' : 'bg-gray-300'}`} />
           </div>
           <div className="flex-1 min-w-0">
             <p className={`font-bold text-text-primary ${compact ? 'text-xs' : 'text-sm'} truncate`}>{tech.name}</p>

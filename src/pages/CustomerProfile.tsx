@@ -6,8 +6,8 @@ import { customers, customerPurchaseHistory, customerRepairHistory } from '../da
 import { RepairStatusBadge } from '../components/repair/WorkflowTracker'
 
 const tierColors: Record<string, string> = {
-  Platinum: 'text-purple-700 bg-purple-100 border-purple-300/30',
-  Gold: 'text-amber-700 bg-amber-100 border-amber-300/30',
+  Platinum: 'text-primary bg-primary/10 border-primary/20',
+  Gold: 'text-primary bg-primary/10 border-primary/20',
   Silver: 'text-text-secondary bg-gray-100 border-gray-300/30',
   Bronze: 'text-orange-700 bg-orange-100 border-orange-300/30',
 }
@@ -43,7 +43,7 @@ export default function CustomerProfile() {
             </div>
             <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${customer.status === 'active' ? 'bg-success/100' : 'bg-gray-300'}`} />
             {customer.vip && (
-              <span className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-[10px] shadow-md">
+              <span className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full bg-primary border-2 border-white flex items-center justify-center text-[10px] shadow-md">
                 ⭐
               </span>
             )}
@@ -78,7 +78,7 @@ export default function CustomerProfile() {
           <div className="flex flex-col items-end gap-1">
             <p className="text-2xl font-bold text-text-primary">₹{(customer.totalSpent / 1000).toFixed(0)}k</p>
             <p className="text-[10px] text-text-muted">Total Spent</p>
-            <div className="flex items-center gap-1 text-xs text-amber-600">
+            <div className="flex items-center gap-1 text-xs text-primary">
               <FiStar size={12} /> {customer.satisfactionScore}%
             </div>
           </div>
@@ -87,12 +87,12 @@ export default function CustomerProfile() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Total Spent', value: `₹${customer.totalSpent.toLocaleString('en-IN')}`, icon: FiDollarSign, color: '#8b5cf6' },
-          { label: 'Repairs', value: customer.repairCount.toString(), icon: FiTool, color: '#4f6bff' },
-          { label: 'Loyalty Pts', value: customer.loyaltyPoints.toLocaleString(), icon: FiStar, color: '#f59e0b' },
+          { label: 'Total Spent', value: `₹${customer.totalSpent.toLocaleString('en-IN')}`, icon: FiDollarSign, color: '#CB202D' },
+          { label: 'Repairs', value: customer.repairCount.toString(), icon: FiTool, color: '#A81D2A' },
+          { label: 'Loyalty Pts', value: customer.loyaltyPoints.toLocaleString(), icon: FiStar, color: '#CB202D' },
           { label: 'Pending Repairs', value: customer.pendingRepairs.toString(), icon: FiClock, color: '#ef4444' },
-          { label: 'Last Purchase', value: customer.lastPurchaseDate, icon: FiShoppingBag, color: '#22c55e' },
-          { label: 'Sat. Score', value: `${customer.satisfactionScore}%`, icon: FiAward, color: '#06b6d4' },
+          { label: 'Last Purchase', value: customer.lastPurchaseDate, icon: FiShoppingBag, color: '#A81D2A' },
+          { label: 'Sat. Score', value: `${customer.satisfactionScore}%`, icon: FiAward, color: '#CB202D' },
         ].map((card, i) => (
           <motion.div key={card.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.04 }}
             className="rounded-xl bg-bg-card border border-border shadow-sm p-3 text-center"

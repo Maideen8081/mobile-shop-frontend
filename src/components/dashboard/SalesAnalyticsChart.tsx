@@ -32,12 +32,12 @@ export default function SalesAnalyticsChart() {
           <AreaChart data={salesChartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
             <defs>
               <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                <stop offset="0%" stopColor="#CB202D" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#CB202D" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#6366f1" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+                <stop offset="0%" stopColor="#A81D2A" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#A81D2A" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -48,8 +48,8 @@ export default function SalesAnalyticsChart() {
               formatter={(v) => [`₹${Number(v).toLocaleString('en-IN')}`, '']}
               labelStyle={{ fontWeight: 600, color: '#f8fafc', marginBottom: 4 }}
             />
-            <Area type="monotone" dataKey="sales" stroke="#7c3aed" strokeWidth={2} fill="url(#salesGradient)" dot={false} activeDot={{ r: 5, fill: '#7c3aed', stroke: '#111827', strokeWidth: 2 }} />
-            <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#revGradient)" dot={false} activeDot={{ r: 5, fill: '#6366f1', stroke: '#111827', strokeWidth: 2 }} />
+            <Area type="monotone" dataKey="sales" stroke="#CB202D" strokeWidth={2} fill="url(#salesGradient)" dot={false} activeDot={{ r: 5, fill: '#CB202D', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Area type="monotone" dataKey="revenue" stroke="#A81D2A" strokeWidth={2} fill="url(#revGradient)" dot={false} activeDot={{ r: 5, fill: '#A81D2A', stroke: '#ffffff', strokeWidth: 2 }} />
           </AreaChart>
         </ResponsiveContainer>
       </div>

@@ -291,8 +291,8 @@ export default function VariantCard({ variant, index, onChange, onDelete, onDupl
                 {variant.stock > 0 && (
                   <div className={`mt-3 px-4 py-2.5 rounded-xl text-xs font-semibold ${
                     variant.stock === 0 ? 'bg-rose-50 text-rose-600' :
-                    variant.lowStockAlert && variant.stock <= variant.lowStockAlert ? 'bg-amber-50 text-amber-600' :
-                    'bg-emerald-50 text-emerald-700'
+                    variant.lowStockAlert && variant.stock <= variant.lowStockAlert ? 'bg-primary/10 text-primary' :
+                    'bg-primary/10 text-primary'
                   }`}>
                     {variant.stock === 0 ? 'Out of Stock' :
                      variant.lowStockAlert && variant.stock <= variant.lowStockAlert ? 'Low Stock' : 'In Stock'}

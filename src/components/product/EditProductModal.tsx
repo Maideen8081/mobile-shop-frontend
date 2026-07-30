@@ -70,9 +70,9 @@ export default function EditProductModal({ open, product, onClose, onSave }: Edi
               <div className="flex items-center gap-3">
                 <label className="text-xs font-semibold text-text-secondary">Status</label>
                 <button type="button" onClick={() => setStatus(!status)}
-                  className={`relative w-20 h-8 rounded-xl border transition-all cursor-pointer ${status ? 'bg-emerald-50 border-emerald-200/50' : 'bg-rose-50 border-rose-200/50'}`}
+                  className={`relative w-20 h-8 rounded-xl border transition-all cursor-pointer ${status ? 'bg-primary/10 border-primary/20' : 'bg-rose-50 border-rose-200/50'}`}
                 >
-                  <span className={`text-[10px] font-semibold ${status ? 'text-emerald-700' : 'text-rose-600'}`}>{status ? 'Active' : 'Inactive'}</span>
+                  <span className={`text-[10px] font-semibold ${status ? 'text-primary' : 'text-rose-600'}`}>{status ? 'Active' : 'Inactive'}</span>
                   <span className={`absolute top-1 bottom-1 w-4 rounded-lg bg-white shadow-sm transition-all duration-200 ${status ? 'right-1' : 'left-1'}`} />
                 </button>
               </div>

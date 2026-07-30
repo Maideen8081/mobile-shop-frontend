@@ -20,8 +20,8 @@ export default function TechnicianBarChart() {
             <Tooltip
               contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', backgroundColor: '#172033', color: '#f8fafc', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
             />
-            <Bar dataKey="efficiency" fill="#7c3aed" radius={[6, 6, 0, 0]} barSize={28} />
-            <Bar dataKey="repairs" fill="#6366f1" radius={[6, 6, 0, 0]} barSize={28} />
+            <Bar dataKey="efficiency" fill="#CB202D" radius={[6, 6, 0, 0]} barSize={28} />
+            <Bar dataKey="repairs" fill="#A81D2A" radius={[6, 6, 0, 0]} barSize={28} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -45,7 +45,7 @@ function AnimatedInput({ label, value, onChange, placeholder, type = 'text', req
         placeholder={placeholder}
         className={`w-full ${rows ? 'px-4 py-3 resize-none' : 'h-11 px-4'} rounded-xl border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 ${
           error ? 'border-danger shadow-[0_0_0_3px_rgba(239,68,68,0.15)]' : 'border-border hover:border-primary/30'
-        } bg-[rgba(15,23,42,0.8)]`}
+        } bg-white shadow-sm`}
       />
       {error && <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-danger mt-1 flex items-center gap-1"><FiAlertCircle size={10} />{error}</motion.p>}
     </motion.div>
@@ -83,7 +83,7 @@ function PhotoUpload({ files, setFiles }: { files: File[]; setFiles: (f: File[])
         onClick={() => inputRef.current?.click()}
         className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${
           dragOver ? 'border-primary bg-primary/10' : 'border-primary/20 hover:border-primary/40'
-        } bg-[rgba(15,23,42,0.8)]`}
+        } bg-white shadow-sm`}
       >
         <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) handleFiles(e.target.files); e.target.value = '' }} />
         <motion.div animate={{ y: dragOver ? -4 : 0 }} className="flex flex-col items-center gap-2">
@@ -99,7 +99,7 @@ function PhotoUpload({ files, setFiles }: { files: File[]; setFiles: (f: File[])
           <AnimatePresence>
             {files.map((_, i) => (
               <motion.div key={`${i}-${files[i].name}`} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                className="relative group aspect-square rounded-xl bg-[#0F172A] border border-border overflow-hidden"
+                className="relative group aspect-square rounded-xl bg-gray-100 border border-border overflow-hidden"
               >
                 <img src={previews[i] || ''} alt="" className="w-full h-full object-cover" />
                 <button type="button" onClick={() => removeFile(i)}
@@ -109,7 +109,7 @@ function PhotoUpload({ files, setFiles }: { files: File[]; setFiles: (f: File[])
             ))}
           </AnimatePresence>
           {files.length < 10 && (
-            <button type="button" onClick={() => inputRef.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 bg-[rgba(15,23,42,0.5)] flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/40 transition-all cursor-pointer">
+            <button type="button" onClick={() => inputRef.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 bg-white flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/40 transition-all cursor-pointer shadow-sm">
               <FiImage size={20} />
             </button>
           )}
@@ -275,7 +275,7 @@ export default function NewRepairTicket() {
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-0 p-1 rounded-xl bg-[rgba(15,23,42,0.6)] border border-border shadow-sm overflow-x-auto mb-5">
+          <div className="flex items-center gap-0 p-1 rounded-xl bg-white border border-border shadow-sm overflow-x-auto mb-5">
             {steps.map((s, i) => {
               const Icon = s.icon
               const isActive = step === s.id
@@ -311,7 +311,7 @@ export default function NewRepairTicket() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-2xl bg-bg-card border border-border p-5 lg:p-6"
+              className="rounded-2xl bg-white border border-border p-5 lg:p-6 shadow-sm"
             >
               {step === 1 && (
                 <div>
@@ -421,7 +421,7 @@ export default function NewRepairTicket() {
                     </div>
                     <div className="flex items-center pt-2">
                       <label className="flex items-center gap-2.5 text-xs font-semibold text-text-secondary cursor-pointer">
-                        <input type="checkbox" checked={customerApproval} onChange={(e) => setCustomerApproval(e.target.checked)} className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary bg-[rgba(15,23,42,0.8)]" />
+                        <input type="checkbox" checked={customerApproval} onChange={(e) => setCustomerApproval(e.target.checked)} className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary bg-white" />
                         Customer Approval Required
                       </label>
                     </div>
@@ -450,7 +450,7 @@ export default function NewRepairTicket() {
                       ...(form.userQuestions.trim() ? [['Questions', form.userQuestions.trim()]] : []),
                     ].map(([label, val], i) => (
                       <motion.div key={label} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                        className="flex justify-between items-center px-4 py-2.5 rounded-xl bg-[rgba(15,23,42,0.8)] border border-border text-sm"
+                        className="flex justify-between items-center px-4 py-2.5 rounded-xl bg-white border border-border text-sm shadow-sm"
                       >
                         <span className="text-text-muted">{label}</span>
                         <span className="font-semibold text-text-primary text-right truncate ml-4">{val || '—'}</span>

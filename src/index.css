@@ -530,16 +530,16 @@
    resolve to the CSS variables defined below.
    ============================================================ */
 .admin-theme {
-  --color-bg: #f6f8f7;
+  --color-bg: #ffffff;
   --color-bg-card: #ffffff;
-  --color-bg-card-hover: #f3fbf6;
-  --color-surface: #f6f8f7;
+  --color-bg-card-hover: #fff5f5;
+  --color-surface: #ffffff;
   --color-surface-light: #ffffff;
-  --color-surface-lighter: #f3f5f4;
-  --color-surface-hover: #eef6f1;
-  --color-border: #e4e9e7;
-  --color-border-light: #eef1f0;
-  --color-border-dark: #d6dcd9;
+  --color-surface-lighter: #fef2f2;
+  --color-surface-hover: #fef2f2;
+  --color-border: #f0e6e6;
+  --color-border-light: #f5efef;
+  --color-border-dark: #e8d8d8;
 
   --color-primary: #CB202D;
   --color-primary-hover: #A81D2A;
@@ -551,22 +551,22 @@
   --color-on-secondary: #ffffff;
   --color-secondary-container: #FEE2E6;
 
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-label: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-text-label: #666666;
+  --color-text-muted: #999999;
 
-  --color-danger: #ef4444;
-  --color-danger-hover: #dc2626;
+  --color-danger: #CB202D;
+  --color-danger-hover: #A81D2A;
   --color-on-danger-container: #7f1d1d;
 
   --color-success: #CB202D;
-  --color-warning: #f59e0b;
-  --color-info: #3b82f6;
+  --color-warning: #CB202D;
+  --color-info: #CB202D;
 
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.10);
-  --shadow-pop: 0 12px 40px rgba(15, 23, 42, 0.14);
+  --shadow-card: 0 1px 3px rgba(203, 32, 45, 0.06), 0 1px 2px rgba(203, 32, 45, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(203, 32, 45, 0.10);
+  --shadow-pop: 0 12px 40px rgba(203, 32, 45, 0.14);
 
   background-color: var(--color-bg);
   color: var(--color-text-secondary);
@@ -607,15 +607,15 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: #f8faf9;
-  color: var(--color-text-label);
-  font-weight: 600;
+  background: #f8f9fa;
+  color: #6b7280;
+  font-weight: 700;
   text-align: left;
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 14px 18px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid #e5e7eb;
   white-space: nowrap;
 }
 .admin-theme tbody td {
@@ -627,10 +627,10 @@
   transition: background-color 0.15s ease;
 }
 .admin-theme tbody tr:nth-child(even) {
-  background: #fafcfb;
+  background: #f8f9fa;
 }
 .admin-theme tbody tr:hover {
-  background: var(--color-surface-hover);
+  background: #f0f1f3;
 }
 .admin-theme tbody tr:last-child td {
   border-bottom: none;
@@ -653,7 +653,7 @@
 .admin-theme select:focus,
 .admin-theme textarea:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  box-shadow: 0 0 0 3px rgba(203, 32, 45, 0.15);
   outline: none;
 }
 
@@ -665,7 +665,7 @@
 }
 .admin-theme .scrollbar-thin::-webkit-scrollbar-thumb,
 .admin-theme ::-webkit-scrollbar-thumb {
-  background-color: #d3dcd8;
+  background-color: #f0c4c8;
   border-radius: 8px;
 }
 .admin-theme ::-webkit-scrollbar-track {

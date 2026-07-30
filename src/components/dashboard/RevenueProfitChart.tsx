@@ -24,8 +24,8 @@ export default function RevenueProfitChart() {
               wrapperStyle={{ fontSize: 11, fontWeight: 500, paddingTop: 12 }}
               formatter={(value) => <span className="text-text-muted capitalize">{value}</span>}
             />
-            <Line type="monotone" dataKey="revenue" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3, fill: '#7c3aed', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#7c3aed', stroke: '#111827', strokeWidth: 2 }} />
-            <Line type="monotone" dataKey="profit" stroke="#22c55e" strokeWidth={2} dot={{ r: 3, fill: '#22c55e', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#22c55e', stroke: '#111827', strokeWidth: 2 }} />
+            <Line type="monotone" dataKey="revenue" stroke="#CB202D" strokeWidth={2} dot={{ r: 3, fill: '#CB202D', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#CB202D', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Line type="monotone" dataKey="profit" stroke="#A81D2A" strokeWidth={2} dot={{ r: 3, fill: '#A81D2A', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#A81D2A', stroke: '#ffffff', strokeWidth: 2 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

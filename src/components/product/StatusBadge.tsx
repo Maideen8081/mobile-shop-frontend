@@ -9,10 +9,10 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
     <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold ${
-        isActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-rose-50 text-rose-600 border border-rose-200/50'
+        isActive ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-white text-text-secondary border border-border'
       }`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-primary' : 'bg-text-muted'}`} />
       {isActive ? 'Active' : 'Inactive'}
     </motion.span>
   )
@@ -25,10 +25,10 @@ interface TagBadgeProps {
 
 export function TagBadge({ label, color }: TagBadgeProps) {
   const colors: Record<string, string> = {
-    trending: 'bg-rose-50 text-rose-600 border-rose-200/50',
-    new: 'bg-blue-50 text-blue-600 border-blue-200/50',
-    bestseller: 'bg-amber-50 text-amber-600 border-amber-200/50',
-    featured: 'bg-primary/10 text-primary border-primary/20',
+    trending: 'bg-primary/10 text-primary border-primary/20',
+    new: 'bg-primary/10 text-primary border-primary/20',
+    bestseller: 'bg-primary/10 text-primary border-primary/20',
+    featured: 'bg-primary text-white border-primary',
   }
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider border ${colors[color ?? ''] || 'bg-bg text-text-secondary border-border'}`}>

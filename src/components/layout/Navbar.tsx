@@ -18,7 +18,7 @@ const notifications = [
   { id: 1, type: 'order', text: 'New order #ORD-2026-0428', time: '2 min ago', unread: true, icon: FiShoppingBag, color: 'text-primary', bg: 'bg-primary/10' },
   { id: 2, type: 'repair', text: 'iPhone 15 Pro repair completed', time: '15 min ago', unread: true, icon: FiTool, color: 'text-secondary', bg: 'bg-secondary/10' },
   { id: 3, type: 'stock', text: 'Samsung S25 Ultra low stock (3 left)', time: '1 hr ago', unread: false, icon: FiAlertTriangle, color: 'text-warning', bg: 'bg-warning/10' },
-  { id: 4, type: 'warranty', text: '5 warranties expiring this week', time: '3 hrs ago', unread: false, icon: FiClock, color: 'text-accent', bg: 'bg-accent/10' },
+  { id: 4, type: 'warranty', text: '5 warranties expiring this week', time: '3 hrs ago', unread: false, icon: FiClock, color: 'text-primary', bg: 'bg-primary/10' },
   { id: 5, type: 'customer', text: 'New customer registered: Priya K', time: '5 hrs ago', unread: false, icon: FiUserPlus, color: 'text-success', bg: 'bg-success/10' },
 ]
 
@@ -64,7 +64,7 @@ export default function Navbar({ setMobileOpen, title = 'Dashboard' }: NavbarPro
     { label: 'Add Repair Ticket', icon: FiTool, color: 'text-secondary', bg: 'bg-secondary/10' },
     { label: 'Add Customer', icon: FiUserPlus, color: 'text-success', bg: 'bg-success/10' },
     { label: 'Create Invoice', icon: FiFileText, color: 'text-warning', bg: 'bg-warning/10' },
-    { label: 'Add Category', icon: FiFolder, color: 'text-accent', bg: 'bg-accent/10' },
+    { label: 'Add Category', icon: FiFolder, color: 'text-primary', bg: 'bg-primary/10' },
   ]
 
   const unreadCount = notifications.filter(n => n.unread).length

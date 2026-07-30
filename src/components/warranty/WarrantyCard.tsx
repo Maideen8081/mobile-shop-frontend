@@ -33,7 +33,7 @@ export default function WarrantyCard({ warranty }: WarrantyCardProps) {
       whileHover={{ y: -6, boxShadow: '0 32px 80px rgba(0,0,0,0.08)' }}
       className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
     >
-      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-30" style={{ background: `radial-gradient(circle, ${days < 0 ? '#64748b' : isUrgent ? '#f59e0b' : '#4f6bff'}, transparent)` }} />
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-30" style={{ background: `radial-gradient(circle, ${days < 0 ? '#64748b' : isUrgent ? '#CB202D' : '#A81D2A'}, transparent)` }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">

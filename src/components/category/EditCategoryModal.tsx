@@ -417,7 +417,7 @@ export default function EditCategoryModal({ open, category, onClose, onSave, loa
                 onClick={handleSave}
                 disabled={loading}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                style={{ backgroundColor: '#22c55e' }}
+                style={{ backgroundColor: '#CB202D' }}
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

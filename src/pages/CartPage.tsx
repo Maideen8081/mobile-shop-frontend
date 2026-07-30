@@ -309,7 +309,7 @@ void main() {
             <div className="lg:col-span-4 sticky top-28 space-y-5"
               style={{ opacity: 0, transform: 'translateY(30px)', animation: 'revealUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards', animationDelay: '0.3s' }}>
               {/* Diagnostic Summary */}
-              <div className="rounded-[2rem] overflow-hidden border-2" style={{ borderColor: 'rgba(203, 32, 45, 0.2)', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
+              <div className="rounded-[2rem] overflow-hidden border" style={{ borderColor: '#e5e7eb', background: '#ffffff', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)' }}>
                 <div className="px-8 py-6 text-white" style={{ background: '#454747' }}>
                   <h2 className="text-xl font-bold">Diagnostic Summary</h2>
                   <p className="text-xs opacity-70 mt-1 font-mono uppercase tracking-widest">
@@ -443,10 +443,9 @@ void main() {
 
               {/* Laboratory Shield */}
               <div className="rounded-2xl p-6 flex items-start gap-4" style={{
-                background: 'rgba(255,255,255,0.4)',
-                backdropFilter: 'blur(25px)',
-                border: '1px solid rgba(217,222,229,0.5)',
-                boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)'
+                background: '#ffffff',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)'
               }}>
                 <span className="material-symbols-outlined" style={{ color: '#A81D2A', fontVariationSettings: "'FILL' 1" }}>shield</span>
                 <div>
@@ -465,7 +464,7 @@ void main() {
       {items.length > 0 && (
         <motion.div initial={{ y: 100 }} animate={{ y: 0 }}
           className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4"
-          style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(217,222,229,0.5)', boxShadow: '0 -4px 20px rgba(0,0,0,0.06)' }}>
+          style={{ background: '#ffffff', borderTop: '1px solid #e5e7eb', boxShadow: '0 -4px 20px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="text-xs" style={{ color: '#434748' }}>Total Settlement</p>
@@ -549,10 +548,9 @@ function CartItemCard({
       className="rounded-2xl flex flex-col md:flex-row gap-5 transition-all duration-500 cursor-pointer"
       style={{
         padding: '1.25rem',
-        background: 'rgba(255,255,255,0.4)',
-        backdropFilter: 'blur(25px)',
-        border: '1px solid rgba(217,222,229,0.5)',
-        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)',
+        background: '#ffffff',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
       }}
     >
       {/* Image */}

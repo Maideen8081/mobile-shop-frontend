@@ -16,8 +16,8 @@ import { categoryService, subCategoryService, type Category, type SubCategory, t
 type ViewMode = 'table' | 'cards'
 
 const statConfig = [
-  { label: 'Total Categories', icon: 'FiFolder', color: '#8b5cf6' },
-  { label: 'Sub Categories', icon: 'FiGrid', color: '#4f6bff' },
+  { label: 'Total Categories', icon: 'FiFolder', color: '#CB202D' },
+  { label: 'Sub Categories', icon: 'FiGrid', color: '#A81D2A' },
   { label: 'Active Categories', icon: 'FiCheckCircle', color: '#CB202D' },
   { label: 'Inactive', icon: 'FiXCircle', color: '#ef4444' },
 ]

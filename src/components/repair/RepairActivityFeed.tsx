@@ -26,7 +26,7 @@ export default function RepairActivityFeed() {
           <p className="text-xs text-text-muted mt-0.5">Real-time repair updates</p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-success/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           <span className="text-[10px] font-semibold text-success">Live</span>
         </div>
       </div>

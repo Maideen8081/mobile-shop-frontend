@@ -43,7 +43,7 @@ export default function DashboardCard({
         <div className="flex items-start justify-between mb-3">
           <p className="text-[11px] font-semibold text-text-label uppercase tracking-wider">{title}</p>
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center`} style={{ background: `${color.replace('from-', '').split(' ')[0] || '#7c3aed'}20` }}>
-            <Icon size={16} style={{ color: color.includes('blue') ? '#3b82f6' : color.includes('purple') ? '#7c3aed' : color.includes('amber') ? '#f59e0b' : color.includes('emerald') ? '#CB202D' : '#7c3aed' }} />
+            <Icon size={16} style={{ color: '#CB202D' }} />
           </div>
         </div>
 

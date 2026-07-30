@@ -142,6 +142,13 @@ export default function RepairsPage() {
                     <span className="material-symbols-outlined text-lg md:text-xl">build</span>
                     Get a Quote
                   </Link>
+                  <Link
+                    to="/my-repairs"
+                    className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full hover:bg-white/20 hover:border-white/40 transition-all duration-300"
+                  >
+                    <span className="material-symbols-outlined text-lg md:text-xl">history</span>
+                    My Repairs
+                  </Link>
                 </div>
               </div>
             </div>

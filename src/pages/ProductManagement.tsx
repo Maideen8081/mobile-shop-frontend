@@ -20,12 +20,12 @@ import type { Product } from '../data/productData'
 type ViewMode = 'table' | 'cards'
 
 const statConfig = [
-  { label: 'Total Products', icon: 'FiPackage', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)' },
+  { label: 'Total Products', icon: 'FiPackage', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)' },
   { label: 'Active Products', icon: 'FiCheckCircle', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)' },
-  { label: 'Trending', icon: 'FiTrendingUp', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)' },
-  { label: 'Best Selling', icon: 'FiAward', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)' },
+  { label: 'Trending', icon: 'FiTrendingUp', color: '#A81D2A', bgGlow: 'rgba(203,32,45,0.10)' },
+  { label: 'Best Selling', icon: 'FiAward', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.08)' },
   { label: 'Low Stock', icon: 'FiAlertTriangle', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)' },
-  { label: 'Total Variants', icon: 'FiLayers', color: '#06b6d4', bgGlow: 'rgba(6,182,212,0.12)' },
+  { label: 'Total Variants', icon: 'FiLayers', color: '#A81D2A', bgGlow: 'rgba(203,32,45,0.06)' },
 ]
 
 function safeStats(s: any): ProductStats | null {

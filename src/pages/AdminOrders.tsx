@@ -6,12 +6,12 @@ import { orderService, type OrderResponse } from '../services/orderService'
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
   'delivered': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A', dot: '#CB202D' },
-  'out_for_delivery': { bg: 'rgba(14,165,233,0.1)', text: '#0ea5e9', dot: '#0ea5e9' },
-  'shipped': { bg: 'rgba(139,92,246,0.1)', text: '#8b5cf6', dot: '#8b5cf6' },
-  'processing': { bg: 'rgba(245,158,11,0.1)', text: '#d97706', dot: '#f59e0b' },
-  'accepted': { bg: 'rgba(6,182,212,0.1)', text: '#0891b2', dot: '#06b6d4' },
-  'order_placed': { bg: 'rgba(107,114,128,0.1)', text: '#6b7280', dot: '#9ca3af' },
-  'cancelled': { bg: 'rgba(239,68,68,0.1)', text: '#ef4444', dot: '#ef4444' },
+  'out_for_delivery': { bg: 'rgba(203,32,45,0.08)', text: '#CB202D', dot: '#CB202D' },
+  'shipped': { bg: 'rgba(203,32,45,0.06)', text: '#CB202D', dot: '#CB202D' },
+  'processing': { bg: 'rgba(203,32,45,0.04)', text: '#CB202D', dot: '#CB202D' },
+  'accepted': { bg: 'rgba(203,32,45,0.03)', text: '#CB202D', dot: '#CB202D' },
+  'order_placed': { bg: 'rgba(203,32,45,0.02)', text: '#666666', dot: '#666666' },
+  'cancelled': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A', dot: '#CB202D' },
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -26,8 +26,8 @@ const STATUS_LABELS: Record<string, string> = {
 
 const PAYMENT_COLORS: Record<string, { bg: string; text: string }> = {
   'Paid': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A' },
-  'Pending': { bg: 'rgba(245,158,11,0.1)', text: '#d97706' },
-  'Refunded': { bg: 'rgba(139,92,246,0.1)', text: '#8b5cf6' },
+  'Pending': { bg: 'rgba(203,32,45,0.05)', text: '#666666' },
+  'Refunded': { bg: 'rgba(203,32,45,0.08)', text: '#CB202D' },
 }
 
 const DELIVERY_STEPS = ['order_placed', 'accepted', 'processing', 'shipped', 'out_for_delivery', 'delivered']
@@ -167,10 +167,10 @@ export default function AdminOrders() {
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total Orders', value: stats.total, icon: <FiShoppingBag size={18} />, color: '#8b5cf6', glow: 'rgba(139,92,246,0.12)' },
-          { label: 'Delivered', value: stats.delivered, icon: <FiCheck size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.12)' },
-          { label: 'In Transit', value: stats.inTransit, icon: <FiTruck size={18} />, color: '#0ea5e9', glow: 'rgba(14,165,233,0.12)' },
-          { label: 'Revenue', value: formatCurrency(stats.revenue), icon: <FiCreditCard size={18} />, color: '#f59e0b', glow: 'rgba(245,158,11,0.12)' },
+          { label: 'Total Orders', value: stats.total, icon: <FiShoppingBag size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.12)' },
+          { label: 'Delivered', value: stats.delivered, icon: <FiCheck size={18} />, color: '#A81D2A', glow: 'rgba(203,32,45,0.12)' },
+          { label: 'In Transit', value: stats.inTransit, icon: <FiTruck size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.08)' },
+          { label: 'Revenue', value: formatCurrency(stats.revenue), icon: <FiCreditCard size={18} />, color: '#A81D2A', glow: 'rgba(203,32,45,0.06)' },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-2xl border border-border p-4 flex items-center gap-3 shadow-sm">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: s.glow, color: s.color }}>{s.icon}</div>
@@ -424,7 +424,7 @@ export default function AdminOrders() {
                     })}
                   </div>
                   {selected.deliveredAt && (
-                    <div className="mt-2 p-2.5 bg-green-50 rounded-xl text-xs text-green-700 font-medium flex items-center gap-1.5">
+                    <div className="mt-2 p-2.5 bg-primary/10 rounded-xl text-xs text-primary font-medium flex items-center gap-1.5">
                       <FiCheck size={13} /> Delivered on {selected.deliveredAt}
                     </div>
                   )}

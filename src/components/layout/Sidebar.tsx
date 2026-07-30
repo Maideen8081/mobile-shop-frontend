@@ -72,7 +72,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const sidebarContent = (
     <div className="flex flex-col h-full w-64 bg-white border-r border-border">
       <div className="flex items-center gap-3 px-5 h-16 border-b border-border flex-shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-sm" style={{ boxShadow: '0 4px 12px rgba(34,197,94,0.35)' }}>
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-sm" style={{ boxShadow: '0 4px 12px rgba(203,32,45,0.35)' }}>
           <FiSmartphone size={18} className="text-white" />
         </div>
         <div>

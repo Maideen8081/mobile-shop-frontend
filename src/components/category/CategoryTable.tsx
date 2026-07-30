@@ -18,12 +18,12 @@ export default function CategoryTable({ data, onEdit, onDelete }: CategoryTableP
   if (data.length === 0) return null
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[rgba(255,255,255,0.06)] bg-bg-card shadow-card">
+    <div className="overflow-x-auto rounded-xl border border-border bg-white shadow-sm">
       <table className="w-full min-w-[780px]">
         <thead>
-          <tr className="border-b border-[rgba(255,255,255,0.06)]">
+          <tr className="border-b border-border bg-gray-50/80">
             {['S.No', 'Category', 'Sub Categories', 'Products', 'Status', 'Created', 'Actions'].map((h) => (
-              <th key={h} className="text-left text-[11px] font-semibold text-text-muted uppercase tracking-wider px-5 py-4">{h}</th>
+              <th key={h} className="text-left text-[11px] font-bold text-text-muted uppercase tracking-wider px-5 py-4">{h}</th>
             ))}
           </tr>
         </thead>
@@ -34,7 +34,7 @@ export default function CategoryTable({ data, onEdit, onDelete }: CategoryTableP
               initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25, delay: i * 0.03 }}
-              className="border-b border-[rgba(255,255,255,0.06)] hover:bg-[rgba(255,255,255,0.015)] transition-colors"
+              className="border-b border-border hover:bg-gray-50/70 transition-colors"
             >
               <td className="px-5 py-4 text-sm text-text-muted font-medium">{String(i + 1).padStart(2, '0')}</td>
               <td className="px-5 py-4">

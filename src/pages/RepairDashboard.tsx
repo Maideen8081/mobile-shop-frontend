@@ -1,17 +1,54 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { FiFilter, FiCheck, FiX } from 'react-icons/fi'
+import { FiFilter, FiCheck, FiX, FiAlertTriangle, FiDollarSign, FiUser, FiPackage } from 'react-icons/fi'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts'
 import PageLayout from '../components/layout/PageLayout'
 import RepairCard from '../components/repair/RepairCard'
 import TechnicianCard from '../components/repair/TechnicianCard'
 import RepairActivityFeed from '../components/repair/RepairActivityFeed'
-import StatusUpdateModal from '../components/repair/StatusUpdateModal'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { WorkflowTracker, RepairStatusBadge } from '../components/repair/WorkflowTracker'
 import { repairTechnicians, repairAnalytics, repairStatuses } from '../data/repairData'
-import { repairService } from '../services/repairService'
-import type { RepairTicket } from '../data/repairData'
+import { repairService, type RepairTicket } from '../services/repairService'
+
+const priorityColors: Record<string, string> = { Low: 'text-text-muted', Medium: 'text-primary', High: 'text-primary', Urgent: 'text-danger' }
+
+const STATUS_TRANSITIONS: Record<string, string[]> = {
+  Submitted: ['Accepted', 'Rejected'],
+  Accepted: ['Received'],
+  Received: ['Diagnosing'],
+  Diagnosing: ['Repair In Progress'],
+  'Waiting for Parts': ['Repair In Progress'],
+  'Repair In Progress': ['Quality Check'],
+  'Quality Check': ['Ready for Delivery'],
+  'Ready for Delivery': ['Delivered'],
+}
+
+const STATUS_TO_BACKEND: Record<string, string> = {
+  Submitted: 'pending',
+  Accepted: 'accepted',
+  Rejected: 'rejected',
+  Received: 'device_received',
+  Diagnosing: 'inspection',
+  'Waiting for Parts': 'waiting_parts',
+  'Repair In Progress': 'repair_in_progress',
+  'Quality Check': 'quality_check',
+  'Ready for Delivery': 'ready_for_pickup',
+  Delivered: 'completed',
+  Cancelled: 'cancelled',
+}
+
+function parseQAPairs(text: string): { question: string; answer: string }[] {
+  if (!text) return []
+  const qaRegex = /Q:\s*(.+?)\s*A:\s*(.+?)(?=\s*Q:|$)/gs
+  const matches = text.match(qaRegex)
+  if (!matches) return []
+  return matches.map((m) => {
+    const q = m.replace(/^Q:\s*/, '').replace(/\s*A:[\s\S]*$/, '').trim()
+    const a = m.replace(/^Q:[\s\S]*?A:\s*/, '').trim()
+    return { question: q, answer: a }
+  })
+}
 
 interface KPI { id: number; title: string; value: number; prefix?: string; suffix?: string; growth: number; trend: 'up' | 'down'; subtitle: string; color: string; bgGlow: string; icon: string; sparkline: number[] }
 
@@ -131,7 +168,6 @@ export default function RepairDashboard() {
   const [tickets, setTickets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [statusModal, setStatusModal] = useState<{ open: boolean; ticket: RepairTicket | null }>({ open: false, ticket: null })
   const [selectedTicket, setSelectedTicket] = useState<RepairTicket | null>(null)
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
@@ -159,9 +195,9 @@ export default function RepairDashboard() {
     const delivered = tickets.filter((t: any) => t.status === 'Delivered').length
     return [
       { id: 1, title: 'Total Bookings', value: total, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'All time', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)', icon: 'FiPackage', sparkline: [3, 5, 4, 7, 6, 8, total] },
-      { id: 2, title: 'Pending Review', value: submitted, suffix: '', growth: 0, trend: submitted > 0 ? 'up' as const : 'down' as const, subtitle: 'Awaiting acceptance', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiLoader', sparkline: submitted > 0 ? [1, 2, 1, 3, 2, submitted] : [0] },
-      { id: 3, title: 'In Progress', value: accepted + received, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Active repairs', color: '#2563eb', bgGlow: 'rgba(37,99,235,0.12)', icon: 'FiTool', sparkline: [1, 2, 3, 2, 3, accepted + received] },
-      { id: 4, title: 'Completed', value: delivered, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Delivered', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)', icon: 'FiCheck', sparkline: delivered > 0 ? [0, 1, 2, 2, 3, delivered] : [0] },
+      { id: 2, title: 'Pending Review', value: submitted, suffix: '', growth: 0, trend: submitted > 0 ? 'up' as const : 'down' as const, subtitle: 'Awaiting acceptance', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)', icon: 'FiLoader', sparkline: submitted > 0 ? [1, 2, 1, 3, 2, submitted] : [0] },
+      { id: 3, title: 'In Progress', value: accepted + received, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Active repairs', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.10)', icon: 'FiTool', sparkline: [1, 2, 3, 2, 3, accepted + received] },
+      { id: 4, title: 'Completed', value: delivered, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Delivered', color: '#A81D2A', bgGlow: 'rgba(203,32,45,0.08)', icon: 'FiCheck', sparkline: delivered > 0 ? [0, 1, 2, 2, 3, delivered] : [0] },
     ]
   }, [tickets])
 
@@ -173,7 +209,10 @@ export default function RepairDashboard() {
       await repairService.acceptTicket(ticket.id, 'Ticket accepted by admin')
       setTickets((prev) => prev.map((t) => (t.id === ticket.id ? { ...t, status: 'Accepted' as const } : t)))
       setToast({ message: `Ticket ${ticket.repairId} accepted`, type: 'success' })
-    } catch { setToast({ message: 'Failed to accept ticket', type: 'error' }) }
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to accept ticket'
+      setToast({ message: msg, type: 'error' })
+    }
     setActionLoading(null)
   }
 
@@ -184,7 +223,10 @@ export default function RepairDashboard() {
       await repairService.rejectTicket(ticket.id, reason)
       setTickets((prev) => prev.map((t) => (t.id === ticket.id ? { ...t, status: 'Rejected' as const } : t)))
       setToast({ message: `Ticket ${ticket.repairId} rejected`, type: 'success' })
-    } catch { setToast({ message: 'Failed to reject ticket', type: 'error' }) }
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to reject ticket'
+      setToast({ message: msg, type: 'error' })
+    }
     setActionLoading(null)
   }
 
@@ -240,8 +282,8 @@ export default function RepairDashboard() {
               subtitle="Completed vs Received"
               data={repairAnalytics.monthlyRepairs}
               dataKeys={[
-                { key: 'completed', color: '#22c55e', name: 'Completed' },
-                { key: 'received', color: '#8b5cf6', name: 'Received' },
+                { key: 'completed', color: '#A81D2A', name: 'Completed' },
+                { key: 'received', color: '#CB202D', name: 'Received' },
               ]}
               delay={0.2}
             />
@@ -381,43 +423,115 @@ export default function RepairDashboard() {
                 </div>
                 <RepairStatusBadge status={selectedTicket.status} />
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Customer</p><p className="font-medium text-text-primary">{selectedTicket.customerName}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Mobile</p><p className="text-text-secondary">{selectedTicket.customerMobile}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Email</p><p className="text-text-secondary text-xs truncate">{selectedTicket.customerEmail || '—'}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">IMEI</p><p className="font-mono text-xs text-text-secondary">{selectedTicket.imei}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Issue</p><p className="text-text-secondary">{selectedTicket.issueCategory}</p></div>
-                <div><p className="text-[10px] font-semibold text-text-muted uppercase">Est. Cost</p><p className="font-bold text-text-primary">₹{selectedTicket.estimatedCost.toLocaleString('en-IN')}</p></div>
-              </div>
-              {(selectedTicket.status as string) === 'Submitted' && (
-                <div className="mt-4 flex gap-2">
-                  <button onClick={() => handleAccept(selectedTicket)} disabled={actionLoading === selectedTicket.repairId}
-                    className="flex-1 py-2.5 rounded-xl bg-success text-white text-sm font-semibold cursor-pointer hover:bg-success/90 transition-all disabled:opacity-50">
-                    Accept Booking
-                  </button>
-                  <button onClick={() => handleReject(selectedTicket)} disabled={actionLoading === selectedTicket.repairId}
-                    className="flex-1 py-2.5 rounded-xl bg-danger text-white text-sm font-semibold cursor-pointer hover:bg-danger/90 transition-all disabled:opacity-50">
-                    Reject Booking
-                  </button>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div><p className="text-[10px] font-semibold text-text-muted uppercase">Customer</p><p className="font-medium text-text-primary text-sm">{selectedTicket.customerName}</p></div>
+                  <div><p className="text-[10px] font-semibold text-text-muted uppercase">Mobile</p><p className="text-text-secondary text-sm">{selectedTicket.customerMobile}</p></div>
+                  {selectedTicket.customerEmail && <div><p className="text-[10px] font-semibold text-text-muted uppercase">Email</p><p className="text-text-secondary text-xs truncate">{selectedTicket.customerEmail}</p></div>}
+                  <div><p className="text-[10px] font-semibold text-text-muted uppercase">IMEI</p><p className="font-mono text-xs text-text-secondary">{selectedTicket.imei}</p></div>
                 </div>
-              )}
-            </div>
-            <div className="p-4 flex gap-2">
-              <button onClick={() => { setStatusModal({ open: true, ticket: selectedTicket }) }}
-                className="flex-1 py-2.5 rounded-2xl bg-primary text-sm font-semibold text-white shadow-md cursor-pointer"
-              >Update Status</button>
-              <button className="flex-1 py-2.5 rounded-2xl bg-primary/10 text-sm font-semibold text-primary hover:bg-primary/10 cursor-pointer">View Full Details</button>
+
+                {(((selectedTicket as any).customerAlt) || ((selectedTicket as any).customerAddress)) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-border">
+                    {(selectedTicket as any).customerAlt && <div><p className="text-[10px] font-semibold text-text-muted uppercase">Alt. Mobile</p><p className="text-xs text-text-primary">{(selectedTicket as any).customerAlt}</p></div>}
+                    {(selectedTicket as any).customerAddress && <div className="sm:col-span-2"><p className="text-[10px] font-semibold text-text-muted uppercase">Address</p><p className="text-xs text-text-primary">{(selectedTicket as any).customerAddress}</p></div>}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="rounded-xl bg-gray-50/60 border border-border p-3">
+                  <h4 className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5"><FiAlertTriangle size={10} /> Issue</h4>
+                  <p className="text-sm font-semibold text-text-primary">{selectedTicket.issueCategory}</p>
+                  {parseQAPairs(selectedTicket.description).length > 0 ? (
+                    <div className="mt-2 space-y-1.5">
+                      {parseQAPairs(selectedTicket.description).map((qa, i) => (
+                        <div key={i} className="space-y-0.5">
+                          <p className="text-[10px] font-semibold text-text-muted">Q: {qa.question}</p>
+                          <p className="text-[10px] text-text-secondary pl-2 border-l-2 border-primary/20">A: {qa.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-text-muted leading-relaxed mt-1">{selectedTicket.description}</p>
+                  )}
+                  <p className={`text-[10px] font-semibold mt-1.5 ${priorityColors[selectedTicket.priority] || 'text-slate-400'}`}>Priority: {selectedTicket.priority}</p>
+                </div>
+                <div className="rounded-xl bg-gray-50/60 border border-border p-3">
+                  <h4 className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5"><FiDollarSign size={10} /> Repair</h4>
+                  <p className="text-lg font-bold text-primary">₹{selectedTicket.estimatedCost.toLocaleString('en-IN')}</p>
+                  <p className="text-[10px] text-text-muted mt-0.5">Est. Completion: {selectedTicket.estimatedDays} day{selectedTicket.estimatedDays > 1 ? 's' : ''}</p>
+                      <p className="text-[10px] text-text-muted flex items-center gap-1.5 mt-0.5"><FiUser size={10} />Technician: {(selectedTicket as any).technicianName || 'Auto Assign'}</p>
+                   <div className="mt-2"><RepairStatusBadge status={selectedTicket.status} /></div>
+                 </div>
+               </div>
+
+               {((selectedTicket as any).deviceCondition || (selectedTicket as any).warranty || (selectedTicket as any).password) && (
+                 <div className="mt-4 pt-3 border-t border-border">
+                   <h4 className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5"><FiPackage size={10} /> Other Details</h4>
+                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                     {(selectedTicket as any).deviceCondition && <div><p className="text-[10px] font-semibold text-text-muted">Device Condition</p><p className="text-xs text-text-primary">{(selectedTicket as any).deviceCondition}</p></div>}
+                     {(selectedTicket as any).warranty && <div><p className="text-[10px] font-semibold text-text-muted">Warranty</p><p className="text-xs text-text-primary">{(selectedTicket as any).warranty}</p></div>}
+                     {(selectedTicket as any).password && <div><p className="text-[10px] font-semibold text-text-muted">Password</p><p className="text-xs text-text-primary">{(selectedTicket as any).password}</p></div>}
+                   </div>
+                 </div>
+               )}
+
+              {(() => {
+                const s = selectedTicket.status as string
+                const next = STATUS_TRANSITIONS[s]
+                if (!next || next.length === 0) return null
+                return (
+                  <div className="mt-4 flex gap-2 flex-wrap">
+                    {next.map((ns) => (
+                      <button key={ns}
+                        onClick={async () => {
+                          if (ns === 'Rejected') {
+                            const reason = window.prompt('Rejection reason:') || 'Not accepted'
+                            setActionLoading(selectedTicket.repairId)
+                            try {
+                              await repairService.rejectTicket(selectedTicket.id, reason)
+                              setTickets((prev) => prev.map((t) => (t.id === selectedTicket.id ? { ...t, status: 'Rejected' as const } : t)))
+                              setToast({ message: `Ticket ${selectedTicket.repairId} rejected`, type: 'success' })
+                              setSelectedTicket(null)
+                            } catch (err: any) {
+                              const msg = err?.response?.data?.message || err?.message || 'Failed to reject'
+                              setToast({ message: msg, type: 'error' })
+                            }
+                            setActionLoading(null)
+                            return
+                          }
+                          setActionLoading(selectedTicket.repairId)
+                          try {
+                            const backendStatus = STATUS_TO_BACKEND[ns]
+                            await repairService.updateStatus(selectedTicket.id, backendStatus, `Status updated to ${ns}`)
+                            setTickets((prev) => prev.map((t) => (t.id === selectedTicket.id ? { ...t, status: ns as any } : t)))
+                            setToast({ message: `Status updated to "${ns}"`, type: 'success' })
+                            setSelectedTicket(null)
+                          } catch (err: any) {
+                            const msg = err?.response?.data?.message || err?.message || 'Failed to update status'
+                            setToast({ message: msg, type: 'error' })
+                          }
+                          setActionLoading(null)
+                        }}
+                        disabled={actionLoading === selectedTicket.repairId}
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-semibold cursor-pointer transition-all disabled:opacity-50 ${
+                          ns === 'Rejected'
+                            ? 'bg-danger text-white hover:bg-danger/90'
+                            : 'bg-primary text-white hover:bg-primary/90'
+                        }`}
+                      >
+                        {actionLoading === selectedTicket.repairId ? 'Updating...' : ns === 'Accepted' ? 'Accept Booking' : `Mark ${ns}`}
+                      </button>
+                    ))}
+                  </div>
+                )
+              })()}
             </div>
           </motion.div>
         </div>
       )}
-
-      <StatusUpdateModal
-        open={statusModal.open}
-        currentStatus={statusModal.ticket?.status || 'Received'}
-        onClose={() => setStatusModal({ open: false, ticket: null })}
-        onUpdate={(status) => console.log('Status updated:', statusModal.ticket?.repairId, '→', status)}
-      />
     </PageLayout>
   )
 }

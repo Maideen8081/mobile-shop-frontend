@@ -24,7 +24,7 @@ export default function Toast({ message, type, visible, onClose }: ToastProps) {
           }}
         >
           {type === 'success' ? (
-            <FiCheckCircle size={18} className="text-emerald-400 shrink-0" />
+            <FiCheckCircle size={18} className="text-primary shrink-0" />
           ) : (
             <FiAlertCircle size={18} className="text-red-400 shrink-0" />
           )}

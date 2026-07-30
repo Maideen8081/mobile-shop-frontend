@@ -220,7 +220,7 @@ export default function CategoryCreateForm({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#22c55e' }}
+            style={{ backgroundColor: '#CB202D' }}
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

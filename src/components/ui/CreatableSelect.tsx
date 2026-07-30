@@ -69,9 +69,9 @@ export default function CreatableSelect({ options, value, onChange, onCreate, pl
         </label>
       )}
       <button type="button" onClick={() => setOpen(!open)}
-        className={`w-full h-11 px-4 rounded-xl border text-sm text-left flex items-center justify-between gap-2 transition-all cursor-pointer ${
+        className={`w-full h-11 px-4 rounded-xl border text-sm text-left flex items-center justify-between gap-2 transition-all cursor-pointer shadow-sm ${
           error ? 'border-danger shadow-[0_0_0_3px_rgba(239,68,68,0.15)]' : 'border-border hover:border-primary/30 focus:border-primary/50'
-        } ${value ? 'bg-[rgba(15,23,42,0.8)] text-text-primary' : 'bg-[rgba(15,23,42,0.8)] text-text-muted'}`}
+        } ${value ? 'bg-white text-text-primary' : 'bg-white text-text-muted'}`}
       >
         <span className={`truncate ${value ? 'text-text-primary' : 'text-text-muted'}`}>{value || placeholder || 'Select...'}</span>
         <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -82,9 +82,9 @@ export default function CreatableSelect({ options, value, onChange, onCreate, pl
         {open && (
           <motion.div initial={{ opacity: 0, y: -8, scaleY: 0.95 }} animate={{ opacity: 1, y: 0, scaleY: 1 }}
             exit={{ opacity: 0, y: -8, scaleY: 0.95 }} transition={{ duration: 0.15 }}
-            className="absolute z-50 top-full mt-1 left-0 right-0 rounded-xl bg-[#0F172A] border border-border shadow-2xl overflow-hidden origin-top"
+            className="absolute z-50 top-full mt-1 left-0 right-0 rounded-xl bg-white border border-border shadow-2xl overflow-hidden origin-top"
           >
-            <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border bg-surface-lighter">
+            <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border bg-gray-50">
               <FiSearch size={14} className="text-text-muted flex-shrink-0" />
               <input ref={inputRef} type="text" value={search} onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..." className="w-full bg-transparent text-xs text-text-primary outline-none placeholder-text-muted"
@@ -93,7 +93,7 @@ export default function CreatableSelect({ options, value, onChange, onCreate, pl
             <div className="max-h-48 overflow-y-auto">
               {showCreate ? (
                 <button type="button" onClick={handleCreate}
-                  className="w-full flex items-center gap-2.5 px-4 py-3 text-xs text-left text-primary hover:bg-[#1E293B] transition-all cursor-pointer border-b border-border"
+                  className="w-full flex items-center gap-2.5 px-4 py-3 text-xs text-left text-primary hover:bg-gray-100 transition-all cursor-pointer border-b border-border"
                 >
                   <span className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center"><FiPlus size={13} /></span>
                   <span>Add &quot;{search.trim()}&quot;</span>
@@ -105,7 +105,7 @@ export default function CreatableSelect({ options, value, onChange, onCreate, pl
                 <button key={opt} type="button" onClick={() => select(opt)}
                   onMouseEnter={() => setFocusedIdx(i)}
                   className={`w-full flex items-center justify-between px-4 py-2.5 text-xs text-left transition-all cursor-pointer ${
-                    focusedIdx === i ? 'bg-[#1E293B] text-primary' : 'text-text-secondary hover:bg-[#1E293B]'
+                    focusedIdx === i ? 'bg-gray-100 text-primary' : 'text-text-secondary hover:bg-gray-100'
                   } ${opt === value ? 'font-semibold text-primary' : ''}`}
                 >
                   <span>{opt}</span>
