@@ -20,6 +20,7 @@ import MobileCartBarActions from './MobileCartBarActions'
 import MobileHomeLoader from './MobileHomeLoader'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
+import { productsData } from '../../data/productData'
 
 type Slide = { id?: number; title?: string; subtitle?: string; image?: string; link?: string }
 
@@ -34,7 +35,7 @@ const HERO_SLIDES: Slide[] = [
 
 // Module-level cache: persists across re-mounts (navigating back from product detail).
 // On first load → fetch from API and cache. On subsequent mounts → use cache instantly.
-let cachedData: {
+let sharedCachedData: {
   categories: Category[]
   flashSale: any[]
   trending: any[]
@@ -45,20 +46,29 @@ let cachedData: {
   recommended: any[]
 } | null = null
 
+const fallbackCategories: Category[] = [
+  { id: 1, name: 'Smartphones', image: null, status: 'active', products: 20, sub_category_count: 0, created: '', subcategories: [] },
+  { id: 2, name: 'Accessories', image: null, status: 'active', products: 15, sub_category_count: 0, created: '', subcategories: [] },
+  { id: 3, name: 'Tablets', image: null, status: 'active', products: 8, sub_category_count: 0, created: '', subcategories: [] },
+  { id: 4, name: 'Audio', image: null, status: 'active', products: 12, sub_category_count: 0, created: '', subcategories: [] },
+  { id: 5, name: 'Wearables', image: null, status: 'active', products: 10, sub_category_count: 0, created: '', subcategories: [] },
+  { id: 6, name: 'Chargers', image: null, status: 'active', products: 7, sub_category_count: 0, created: '', subcategories: [] },
+]
+
 export default function MobileHome() {
-  const [categories, setCategories] = useState<Category[]>(() => cachedData?.categories ?? [])
+  const [categories, setCategories] = useState<Category[]>(() => sharedCachedData?.categories ?? fallbackCategories)
   const [heroSlides] = useState<Slide[]>(HERO_SLIDES)
-  const [flashSale, setFlashSale] = useState<any[]>(() => cachedData?.flashSale ?? [])
-  const [trending, setTrending] = useState<any[]>(() => cachedData?.trending ?? [])
-  const [bestSellers, setBestSellers] = useState<any[]>(() => cachedData?.bestSellers ?? [])
-  const [newArrivals, setNewArrivals] = useState<any[]>(() => cachedData?.newArrivals ?? [])
-  const [featured, setFeatured] = useState<any[]>(() => cachedData?.featured ?? [])
-  const [refurbished, setRefurbished] = useState<any[]>(() => cachedData?.refurbished ?? [])
-  const [recommended, setRecommended] = useState<any[]>(() => cachedData?.recommended ?? [])
-  const [loading, setLoading] = useState(!cachedData)
+  const [flashSale, setFlashSale] = useState<any[]>(() => sharedCachedData?.flashSale ?? [])
+  const [trending, setTrending] = useState<any[]>(() => sharedCachedData?.trending ?? [])
+  const [bestSellers, setBestSellers] = useState<any[]>(() => sharedCachedData?.bestSellers ?? [])
+  const [newArrivals, setNewArrivals] = useState<any[]>(() => sharedCachedData?.newArrivals ?? [])
+  const [featured, setFeatured] = useState<any[]>(() => sharedCachedData?.featured ?? [])
+  const [refurbished, setRefurbished] = useState<any[]>(() => sharedCachedData?.refurbished ?? [])
+  const [recommended, setRecommended] = useState<any[]>(() => sharedCachedData?.recommended ?? [])
+  const [loading, setLoading] = useState(!sharedCachedData)
 
   useEffect(() => {
-    if (cachedData) return
+    if (sharedCachedData) return
     let cancelled = false
     const load = async () => {
       const [cats, trend, best, fresh, feat, refurb, all] = await Promise.all([
@@ -79,25 +89,36 @@ export default function MobileHome() {
         return v && v.discountPrice > 0 && v.discountPrice < v.price
       })
 
-      cachedData = {
-        categories: activeCats,
-        flashSale: deals.slice(0, 10),
-        trending: trend.slice(0, 10),
-        bestSellers: best.slice(0, 10),
-        newArrivals: fresh.slice(0, 10),
-        featured: feat.slice(0, 10),
-        refurbished: refurb.slice(0, 10),
-        recommended: all.slice(0, 10),
+      const finalCategories = activeCats.length > 0 ? activeCats : fallbackCategories
+      const finalTrending = trend.length > 0 ? trend.slice(0, 10) : productsData.filter((p) => p.trending).slice(0, 10)
+      const finalBestSellers = best.length > 0 ? best.slice(0, 10) : productsData.filter((p) => p.bestSelling).slice(0, 10)
+      const finalNewArrivals = fresh.length > 0 ? fresh.slice(0, 10) : productsData.filter((p) => p.newArrival).slice(0, 10)
+      const finalFeatured = feat.length > 0 ? feat.slice(0, 10) : productsData.filter((p) => p.featured).slice(0, 10)
+      const finalRefurbished = refurb.length > 0 ? refurb.slice(0, 10) : productsData.filter((p) => p.refurbished).slice(0, 10)
+      const finalRecommended = all.length > 0 ? all.slice(0, 10) : productsData.slice(0, 10)
+
+      sharedCachedData = {
+        categories: finalCategories,
+        flashSale: deals.length > 0 ? deals.slice(0, 10) : productsData.filter((p) => {
+          const v = (p.variants || [])[0]
+          return v && v.discountPrice > 0 && v.discountPrice < v.price
+        }).slice(0, 10),
+        trending: finalTrending,
+        bestSellers: finalBestSellers,
+        newArrivals: finalNewArrivals,
+        featured: finalFeatured,
+        refurbished: finalRefurbished,
+        recommended: finalRecommended,
       }
 
-      setCategories(cachedData.categories)
-      setFlashSale(cachedData.flashSale)
-      setTrending(cachedData.trending)
-      setBestSellers(cachedData.bestSellers)
-      setNewArrivals(cachedData.newArrivals)
-      setFeatured(cachedData.featured)
-      setRefurbished(cachedData.refurbished)
-      setRecommended(cachedData.recommended)
+      setCategories(sharedCachedData.categories)
+      setFlashSale(sharedCachedData.flashSale)
+      setTrending(sharedCachedData.trending)
+      setBestSellers(sharedCachedData.bestSellers)
+      setNewArrivals(sharedCachedData.newArrivals)
+      setFeatured(sharedCachedData.featured)
+      setRefurbished(sharedCachedData.refurbished)
+      setRecommended(sharedCachedData.recommended)
       setLoading(false)
     }
     load()
