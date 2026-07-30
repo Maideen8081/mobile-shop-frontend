@@ -74,8 +74,8 @@ async function fetchMyRepairs(): Promise<RepairTicket[]> {
   try {
     const all = await repairService.list()
     const email = getAuthEmail()
-    if (email) return all.filter(t => t.customerEmail?.toLowerCase() === email.toLowerCase())
-    return all
+    if (!email) return []
+    return all.filter(t => t.customerEmail?.toLowerCase() === email.toLowerCase())
   } catch (e) {
     console.error('[CustomerRepairTracking] list fallback failed:', e)
     return []
