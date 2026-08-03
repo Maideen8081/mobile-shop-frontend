@@ -63,8 +63,8 @@ export default function AddressCreatePage() {
     if (!digits) errs.mobile = 'Mobile number is required'
     else if (digits.length < 10) errs.mobile = 'Enter exactly 10 digits'
     if (!form.addressLine1.trim()) errs.addressLine1 = 'Address is required'
-    if (!form.addressLine2.trim()) errs.addressLine2 = 'Address line 2 is required'
-    if (!form.landmark.trim()) errs.landmark = 'Landmark is required'
+    if (!form.addressLine2?.trim()) errs.addressLine2 = 'Address line 2 is required'
+    if (!form.landmark?.trim()) errs.landmark = 'Landmark is required'
     if (!form.city.trim()) errs.city = 'City is required'
     if (!form.state.trim()) errs.state = 'State is required'
     const zip = form.zipCode.replace(/\D/g, '')
@@ -98,8 +98,8 @@ export default function AddressCreatePage() {
     form.fullName.trim() &&
     /^\d{10}$/.test(form.mobile.replace(/\D/g, '')) &&
     form.addressLine1.trim() &&
-    form.addressLine2.trim() &&
-    form.landmark.trim() &&
+    form.addressLine2?.trim() &&
+    form.landmark?.trim() &&
     form.city.trim() &&
     form.state.trim() &&
     /^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))

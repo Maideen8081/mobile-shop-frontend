@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 
 const team = [
@@ -82,7 +83,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Contact" absolute />
+      <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
       <section className="hero-section relative h-screen overflow-hidden bg-black">

@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileTradeIn from '../components/mobile/MobileTradeIn'
-import { useIsMobile } from '../components/mobile/helpers'
 
 const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
 
@@ -168,7 +169,7 @@ export default function TradeInPage() {
 
   return (
     <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Trade-In" absolute />
+      <SiteTopNav />
 
       <main>
         {/* ─── HERO CAROUSEL ─── */}

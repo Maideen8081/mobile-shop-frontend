@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -74,12 +75,15 @@ function getProductTags(product: any): string[] {
   return tags
 }
 
+let cachedAccessoryCategoryNames: string[] | null = null
+let cachedAccessories: Record<string, any[]> = {}
+
 export default function AccessoriesPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('all')
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [accessoryCategoryNames, setAccessoryCategoryNames] = useState<string[]>([])
+  const [products, setProducts] = useState<any[]>(() => cachedAccessories['all'] || [])
+  const [loading, setLoading] = useState(() => !cachedAccessories['all'])
+  const [accessoryCategoryNames, setAccessoryCategoryNames] = useState<string[]>(() => cachedAccessoryCategoryNames || [])
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
@@ -90,25 +94,35 @@ export default function AccessoriesPage() {
   }, [])
 
   useEffect(() => {
+    if (cachedAccessoryCategoryNames) return
     categoryService.list().then((cats) => {
       const accessoryCats = cats
         .filter((c) => c.status === 'active')
         .filter((c) => /accessor|case|cable|charger|audio|headphone|earphone|wearable|watch|band|screen.protec|power.bank|holder|mount|adapter/i.test(c.name))
         .map((c) => c.name)
-      setAccessoryCategoryNames(accessoryCats.length > 0 ? accessoryCats : [])
+      cachedAccessoryCategoryNames = accessoryCats.length > 0 ? accessoryCats : []
+      setAccessoryCategoryNames(cachedAccessoryCategoryNames)
     }).catch(() => {})
   }, [])
 
   useEffect(() => {
+    const cached = cachedAccessories[activeTab]
+    if (cached) {
+      setProducts(cached)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const params: Record<string, any> = { page_size: 50 }
     if (activeTab === 'new') params.is_new_arrival = true
     else if (activeTab === 'trending') params.is_trending = true
     else if (activeTab === 'popular') params.is_featured = true
     productService.list(params).then((data) => {
-      const filtered = accessoryCategoryNames.length > 0
-        ? data.filter((p: any) => accessoryCategoryNames.includes(p.category))
+      const cats = cachedAccessoryCategoryNames || []
+      const filtered = cats.length > 0
+        ? data.filter((p: any) => cats.includes(p.category))
         : data
+      cachedAccessories[activeTab] = filtered
       setProducts(filtered)
       setLoading(false)
     }).catch(() => setLoading(false))
@@ -136,7 +150,7 @@ export default function AccessoriesPage() {
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Accessories" absolute />
+      <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
       <section className="hero-section relative h-screen overflow-hidden bg-black">

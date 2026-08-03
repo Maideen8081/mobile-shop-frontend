@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobilePhones from '../components/mobile/MobilePhones'
-import { useIsMobile } from '../components/mobile/helpers'
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 480%22 fill=%22%23f1eeeb%22%3E%3Crect width=%22400%22 height=%22480%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2218%22 fill=%22%2322C55E%22%3EProduct%3C/text%3E%3C/svg%3E'
 
@@ -76,14 +76,17 @@ function getProductTags(product: any): string[] {
   return tags
 }
 
+let cachedPhoneCategoryNames: string[] | null = null
+let cachedPhones: Record<string, any[]> = {}
+
 export default function PhonesPage() {
   const isMobile = useIsMobile()
   if (isMobile) return <MobilePhones />
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('all')
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [phoneCategoryNames, setPhoneCategoryNames] = useState<string[]>([])
+  const [products, setProducts] = useState<any[]>(() => cachedPhones['all'] || [])
+  const [loading, setLoading] = useState(() => !cachedPhones['all'])
+  const [phoneCategoryNames, setPhoneCategoryNames] = useState<string[]>(() => cachedPhoneCategoryNames || [])
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
@@ -94,25 +97,35 @@ export default function PhonesPage() {
   }, [])
 
   useEffect(() => {
+    if (cachedPhoneCategoryNames) return
     categoryService.list().then((cats) => {
       const phoneCats = cats
         .filter((c) => c.status === 'active')
         .filter((c) => /phone|smartphone|mobile/i.test(c.name))
         .map((c) => c.name)
-      setPhoneCategoryNames(phoneCats.length > 0 ? phoneCats : [])
+      cachedPhoneCategoryNames = phoneCats.length > 0 ? phoneCats : []
+      setPhoneCategoryNames(cachedPhoneCategoryNames)
     }).catch(() => {})
   }, [])
 
   useEffect(() => {
+    const cached = cachedPhones[activeTab]
+    if (cached) {
+      setProducts(cached)
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const params: Record<string, any> = { page_size: 50 }
     if (activeTab === 'new') params.is_new_arrival = true
     else if (activeTab === 'trending') params.is_trending = true
     else if (activeTab === 'popular') params.is_featured = true
     productService.list(params).then((data) => {
-      const filtered = phoneCategoryNames.length > 0
-        ? data.filter((p: any) => phoneCategoryNames.includes(p.category))
+      const cats = cachedPhoneCategoryNames || []
+      const filtered = cats.length > 0
+        ? data.filter((p: any) => cats.includes(p.category))
         : data
+      cachedPhones[activeTab] = filtered
       setProducts(filtered)
       setLoading(false)
     }).catch(() => setLoading(false))
@@ -140,7 +153,7 @@ export default function PhonesPage() {
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Phones" absolute />
+      <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
       <section className="hero-section relative h-screen overflow-hidden bg-black">

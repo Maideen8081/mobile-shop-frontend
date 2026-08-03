@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileRepairs from '../components/mobile/MobileRepairs'
-import { useIsMobile } from '../components/mobile/helpers'
 
 const services = [
   { icon: 'phone_iphone', title: 'Screen Repair', desc: 'Cracked or shattered screen? We replace it with premium OEM-grade glass in under 60 minutes.' },
@@ -85,7 +86,7 @@ export default function RepairsPage() {
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Repairs" absolute />
+      <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
       <section className="hero-section relative h-screen overflow-hidden bg-black">

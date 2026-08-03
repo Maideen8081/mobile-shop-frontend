@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FiUser, FiMail, FiPhone, FiCalendar, FiTrash2, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { authService, type UserProfile } from '../services/authService'
 import { useToast } from '../context/ToastContext'
 import MobileProfile from '../components/mobile/MobileProfile'
 import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 
 export default function ProfilePage() {
   const isMobile = useIsMobile()
@@ -54,7 +55,7 @@ export default function ProfilePage() {
   if (!authService.isAuthenticated()) {
     return (
       <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
-        <StorefrontNavbar />
+        <SiteTopNav />
         <div className="flex flex-col items-center justify-center pt-40 pb-20 text-center px-4">
           <span className="material-symbols-outlined text-6xl mb-4" style={{ color: 'rgba(59,75,61,0.3)' }}>person_off</span>
           <h2 className="text-2xl font-bold text-[#191c1d] mb-2">Not Logged In</h2>
@@ -78,7 +79,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
-        <StorefrontNavbar />
+        <SiteTopNav />
         <div className="flex items-center justify-center pt-40 pb-20">
           <FiLoader className="animate-spin" size={32} style={{ color: '#A81D2A' }} />
         </div>
@@ -91,7 +92,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
 
       <div className="max-w-2xl mx-auto px-4 pt-28 pb-20">
         <motion.div

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { orderService } from '../services/orderService'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
-import { orderService } from '../services/orderService'
 
 interface OrderItem {
   productId: number
@@ -584,7 +585,7 @@ export default function OrderTracking() {
   if (selectedOrder) {
     return (
       <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
-        <StorefrontNavbar activeLabel="Home" />
+        <SiteTopNav />
         <div className="pt-24"><BackBar label="Back to Orders" to="/orders" /></div>
         <OrderDetailView order={selectedOrder} onBack={() => setSelectedOrder(null)} />
         <EcommerceFooter />
@@ -602,7 +603,7 @@ export default function OrderTracking() {
         }
       `}</style>
 
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Home" to="/" /></div>
 
       <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-4 pb-16">

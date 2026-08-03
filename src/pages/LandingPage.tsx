@@ -7,9 +7,12 @@ import { productsData } from '../data/productData'
 import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
+import SectionLoader from '../components/ecommerce/SectionLoader'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 480%22 fill=%22%23f1eeeb%22%3E%3Crect width=%22400%22 height=%22480%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2218%22 fill=%22%2322C55E%22%3EProduct%3C/text%3E%3C/svg%3E'
+
+let cachedHomeData: { categories?: Category[]; trending?: any[]; newArrivals?: any[]; refurbished?: any[] } | null = null
 
 const fallbackCategories: Category[] = [
   { id: 1, name: 'Smartphones', image: null, status: 'active', products: 20, sub_category_count: 0, created: '', subcategories: [] },
@@ -116,35 +119,38 @@ const categoryIconMap: Record<string, string> = {
 }
 
 export default function LandingPage() {
-  const navigate = useNavigate()
-  const { show: showToast } = useToast()
+   const navigate = useNavigate()
+   const { show: showToast } = useToast()
   const [wishlist, setWishlist] = useState<Set<number>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('wishlist') || '[]')) } catch { return new Set() }
   })
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [countdown, setCountdown] = useState({ hours: '02', mins: '40', secs: '28' })
-  const [categories, setCategories] = useState<Category[]>([])
-  const categoryScrollRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
+const [countdown, setCountdown] = useState({ hours: '02', mins: '40', secs: '28' })
+   const [categories, setCategories] = useState<Category[]>(cachedHomeData?.categories ?? [])
+   const [categoriesLoading, setCategoriesLoading] = useState(() => !cachedHomeData)
+   const categoryScrollRef = useRef<HTMLDivElement>(null)
+   const [canScrollLeft, setCanScrollLeft] = useState(false)
+   const [canScrollRight, setCanScrollRight] = useState(false)
 
-  const updateCategoryArrows = () => {
-    const el = categoryScrollRef.current
-    if (!el) return
-    setCanScrollLeft(el.scrollLeft > 4)
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
-  }
+   const updateCategoryArrows = () => {
+     const el = categoryScrollRef.current
+     if (!el) return
+     setCanScrollLeft(el.scrollLeft > 4)
+     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+   }
 
-  const scrollCategories = (dir: 'left' | 'right') => {
-    const el = categoryScrollRef.current
-    if (!el) return
-    const amount = el.clientWidth * 0.8
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' })
-  }
-  const [trendingProducts, setTrendingProducts] = useState<any[]>([])
-  const [newArrivals, setNewArrivals] = useState<any[]>([])
-  const [refurbishedPhones, setRefurbishedPhones] = useState<any[]>([])
-  const [refurbishedLoading, setRefurbishedLoading] = useState(true)
+   const scrollCategories = (dir: 'left' | 'right') => {
+     const el = categoryScrollRef.current
+     if (!el) return
+     const amount = el.clientWidth * 0.8
+     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' })
+   }
+   const [trendingProducts, setTrendingProducts] = useState<any[]>(cachedHomeData?.trending ?? [])
+   const [trendingLoading, setTrendingLoading] = useState(() => !cachedHomeData)
+   const [newArrivals, setNewArrivals] = useState<any[]>(cachedHomeData?.newArrivals ?? [])
+   const [newArrivalsLoading, setNewArrivalsLoading] = useState(() => !cachedHomeData)
+   const [refurbishedPhones, setRefurbishedPhones] = useState<any[]>(cachedHomeData?.refurbished ?? [])
+   const [refurbishedLoading, setRefurbishedLoading] = useState(() => !cachedHomeData)
 
   const toggleWishlist = (id: number, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -185,6 +191,11 @@ export default function LandingPage() {
   useEffect(() => {
     let cancelled = false
     const fetchData = async () => {
+      const catFallback = () => {
+        setCategories(fallbackCategories)
+        setTrendingProducts(productsData.filter((p) => p.trending))
+        setNewArrivals(productsData.filter((p) => p.newArrival).slice(0, 4))
+      }
       try {
         const [cats, trending, arrivals] = await Promise.all([
           categoryService.list(),
@@ -193,23 +204,45 @@ export default function LandingPage() {
         ])
         if (cancelled) return
         const activeCats = cats.filter((c) => c.status === 'active')
-        setCategories(activeCats.length > 0 ? activeCats : fallbackCategories)
-        setTrendingProducts(trending.length > 0 ? trending : productsData.filter((p) => p.trending))
-        setNewArrivals(arrivals.length > 0 ? arrivals : productsData.filter((p) => p.newArrival).slice(0, 4))
+        const cat = activeCats.length > 0 ? activeCats : fallbackCategories
+        const tr = trending.length > 0 ? trending : productsData.filter((p) => p.trending)
+        const na = arrivals.length > 0 ? arrivals : productsData.filter((p) => p.newArrival).slice(0, 4)
+        setCategories(cat)
+        setTrendingProducts(tr)
+        setNewArrivals(na)
+        if (cachedHomeData) cachedHomeData.categories = cat
+        if (cachedHomeData) cachedHomeData.trending = tr
+        if (cachedHomeData) cachedHomeData.newArrivals = na
       } catch {
-        if (!cancelled) {
-          setCategories(fallbackCategories)
-          setTrendingProducts(productsData.filter((p) => p.trending))
-          setNewArrivals(productsData.filter((p) => p.newArrival).slice(0, 4))
-        }
+        if (!cancelled) catFallback()
       }
       try {
         const refurbished = await productService.list({ is_refurbished: true, page_size: 8 })
-        if (!cancelled) setRefurbishedPhones(refurbished)
+        if (!cancelled) {
+          setRefurbishedPhones(refurbished)
+          if (cachedHomeData) cachedHomeData.refurbished = refurbished
+        }
       } catch {
-        if (!cancelled) setRefurbishedPhones(productsData.filter((p) => p.refurbished).slice(0, 8))
+        if (!cancelled) {
+          const fb = productsData.filter((p) => p.refurbished).slice(0, 8)
+          setRefurbishedPhones(fb)
+          if (cachedHomeData) cachedHomeData.refurbished = fb
+        }
       }
-      if (!cancelled) setRefurbishedLoading(false)
+      if (!cancelled) {
+        setCategoriesLoading(false)
+        setTrendingLoading(false)
+        setNewArrivalsLoading(false)
+        setRefurbishedLoading(false)
+      }
+    }
+    if (cachedHomeData) {
+      setCategories(cachedHomeData.categories ?? [])
+      setTrendingProducts(cachedHomeData.trending ?? [])
+      setNewArrivals(cachedHomeData.newArrivals ?? [])
+      setRefurbishedPhones(cachedHomeData.refurbished ?? [])
+      fetchData()
+      return () => { cancelled = true }
     }
     fetchData()
     return () => { cancelled = true }
@@ -223,17 +256,17 @@ export default function LandingPage() {
             entry.target.classList.add('visible')
             const staggers = entry.target.querySelectorAll('.stagger-item')
             staggers.forEach((el, i) => {
-              setTimeout(() => el.classList.add('visible'), i * 120)
+              setTimeout(() => el.classList.add('visible'), i * 80)
             })
             observer.unobserve(entry.target)
           }
         })
       },
-      { threshold: 0.08 }
+      { threshold: 0.06, rootMargin: '0px 0px -40px 0px' }
     )
     document.querySelectorAll('.scroll-reveal').forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [categories, trendingProducts, newArrivals, refurbishedPhones])
+  }, [categories, trendingProducts, newArrivals, refurbishedPhones, categoriesLoading, trendingLoading, newArrivalsLoading, refurbishedLoading])
 
   useEffect(() => {
     updateCategoryArrows()
@@ -333,7 +366,7 @@ export default function LandingPage() {
                 }`}>
                   <Link
                     to="/phones"
-                    className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
+                    className="group inline-flex items-center gap-2 bg-[#CB202D] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
                   >
                     <span>Shop Now</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -380,6 +413,10 @@ export default function LandingPage() {
             <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">Browse by Category</h2>
           </div>
 
+          {categoriesLoading ? (
+            <SectionLoader type="categories" count={6} />
+          ) : (
+            <>
           <div className="relative">
             {/* Left arrow */}
             <button
@@ -456,6 +493,8 @@ export default function LandingPage() {
               <span className="material-symbols-outlined text-xl">chevron_right</span>
             </button>
           </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -516,6 +555,9 @@ export default function LandingPage() {
               Explore All <span className="material-symbols-outlined text-lg">arrow_forward</span>
             </Link>
           </div>
+          {trendingLoading ? (
+            <SectionLoader type="products" count={8} />
+          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {trending.slice(0, 8).map((product) => (
               <div
@@ -538,7 +580,7 @@ export default function LandingPage() {
                   )}
                   <Link
                     to={`/product/${product.id}`}
-                    className="absolute bottom-4 right-4 bg-[#CB202D] text-[#A81D2A] w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(203,32,45,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
+                    className="absolute bottom-4 right-4 bg-[#CB202D] text-white w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(203,32,45,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
                   >
                     <span className="material-symbols-outlined text-xl">visibility</span>
                   </Link>
@@ -560,6 +602,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -593,7 +636,21 @@ export default function LandingPage() {
       </section>
 
       {/* ─── NEW ARRIVALS ─── */}
-      {arrivals.length > 0 && (
+      {newArrivalsLoading ? (
+        <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
+          <div className="max-w-[1440px] mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+              <div>
+                <span className="inline-block text-xs font-bold text-[#CB202D] tracking-[0.2em] uppercase mb-3">New</span>
+                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">New Arrivals</h2>
+                <p className="text-base md:text-lg text-on-surface-variant mt-1">Discover the latest cutting-edge technology.</p>
+              </div>
+            </div>
+            <SectionLoader type="products" count={4} />
+          </div>
+        </section>
+      ) : (
+        arrivals.length > 0 && (
         <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
           <div className="max-w-[1440px] mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
@@ -614,7 +671,7 @@ export default function LandingPage() {
                   className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#CB202D]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                 >
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#CB202D] text-[#A81D2A] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">New</span>
+                    <span className="bg-[#CB202D] text-white text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">New</span>
                   </div>
                   <div className="bg-white rounded-xl overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
                     {getProductImage(product) ? (
@@ -650,6 +707,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+        )
       )}
 
       {/* ─── CERTIFIED REFURBISHED ─── */}
@@ -669,7 +727,7 @@ export default function LandingPage() {
                 <div key={i} className="glass-card p-4 rounded-2xl">
                   <div className="bg-gray-200 rounded-xl h-[210px] mb-4 animate-pulse" />
                   <div className="h-4 w-28 bg-gray-200 rounded animate-pulse mb-2" />
-                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
                 </div>
               ))}
             </div>
@@ -682,7 +740,7 @@ export default function LandingPage() {
                   className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-[#CB202D]/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                 >
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-[#A81D2A] text-[#CB202D] text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">Certified Refurbished</span>
+                    <span className="bg-[#A81D2A] text-white text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">Certified Refurbished</span>
                   </div>
                   <div className="bg-white rounded-xl overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
                     {getProductImage(product) ? (

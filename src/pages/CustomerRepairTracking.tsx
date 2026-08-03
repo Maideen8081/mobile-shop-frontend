@@ -2,11 +2,12 @@ import { useState, useEffect, useMemo, useCallback, Component } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiLoader } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { repairService, type RepairTicket } from '../services/repairService'
-import { useIsMobile } from '../components/mobile/helpers'
 import { BRAND, C } from '../components/mobile/theme'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -1299,7 +1300,7 @@ export default function CustomerRepairTracking() {
         }
       `}</style>
 
-      <div className="hidden lg:block"><StorefrontNavbar activeLabel="Repairs" /></div>
+      <div className="hidden lg:block"><SiteTopNav /></div>
       <div className="hidden lg:block pt-20 sm:pt-24"><BackBar label="Back to Home" to="/" /></div>
 
       {/* Mobile header */}

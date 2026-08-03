@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileOrderSuccess from '../components/mobile/MobileOrderSuccess'
 import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 
 interface OrderItem {
   productId: number
@@ -114,7 +115,7 @@ export default function OrderSuccess() {
         }}
       />
 
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
       <div className="pt-24"><BackBar label="Continue Shopping" to="/collection/all" /></div>
 
       <main className="max-w-4xl mx-auto px-4 pt-8 pb-12 flex flex-col items-center">

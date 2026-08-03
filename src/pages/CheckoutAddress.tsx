@@ -6,11 +6,12 @@ import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
 import { useToast } from '../context/ToastContext'
 import { authService } from '../services/authService'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileCheckoutAddress from '../components/mobile/MobileCheckoutAddress'
-import { useIsMobile } from '../components/mobile/helpers'
 
 type AddressType = AddressData['addressType']
 
@@ -458,7 +459,7 @@ export default function CheckoutAddress() {
         @keyframes pulseMint { 0%, 100% { box-shadow: 0 0 0 0 rgba(203, 32, 45, 0.4); } 50% { box-shadow: 0 0 0 12px rgba(203, 32, 45, 0); } }
       `}</style>
 
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Cart" to="/cart" /></div>
 
       <main className="pt-8 pb-24 px-4 md:px-8 max-w-[1200px] mx-auto">

@@ -130,6 +130,7 @@ export const cartService = {
       cachedCartItems = items
       cachedCartTotals = totals
       cartCacheTimestamp = Date.now()
+      setLocalCart(items)
       return { items, totals }
     } catch (err: any) {
       const status = err?.response?.status
@@ -148,17 +149,15 @@ export const cartService = {
 
   async getCartCount(): Promise<number> {
     if (cachedCartItems) {
-      if (cachedCartTotals) return cachedCartTotals.quantity
       return cachedCartItems.reduce((s, i) => s + i.quantity, 0)
     }
     const { items, totals } = await this.getCart()
-    if (totals) return totals.quantity
-    return items.reduce((s, i) => s + i.quantity, 0)
+    if (items && items.length > 0) return items.reduce((s, i) => s + i.quantity, 0)
+    return totals?.quantity || 0
   },
 
   getCachedCartCount(): number {
     if (cachedCartItems) {
-      if (cachedCartTotals) return cachedCartTotals.quantity
       return cachedCartItems.reduce((s, i) => s + i.quantity, 0)
     }
     return getLocalCart().reduce((s, i) => s + i.quantity, 0)
@@ -346,6 +345,7 @@ export const cartService = {
       try {
         await api.delete('/api/v1/cart/clear/')
         notifyCartErrorListeners(null)
+        localStorage.removeItem(CART_KEY)
         dispatchCartUpdated()
         return
       } catch (err: any) {

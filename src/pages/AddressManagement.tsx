@@ -7,10 +7,11 @@ import {
 } from 'react-icons/fi'
 import { Home, Briefcase, MapPin } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
-import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 
 const emptyForm: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'> = {
   fullName: '',
@@ -115,7 +116,7 @@ export default function AddressManagement() {
 
   return (
       <div className="min-h-screen bg-[#F8F6F2] pt-28">
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
 
       <div className="relative pt-6 pb-20">
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -497,11 +498,11 @@ function validateForm(form: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'>)
   if (!form.fullName.trim()) errs.fullName = 'Required'
   const mobileErr = validateMobile(form.mobile)
   if (mobileErr) errs.mobile = mobileErr
-  const altMobileErr = validateMobile(form.alternateMobile)
+  const altMobileErr = validateMobile(form.alternateMobile ?? '')
   if (altMobileErr) errs.alternateMobile = altMobileErr
   if (!form.addressLine1.trim()) errs.addressLine1 = 'Required'
-  if (!form.addressLine2.trim()) errs.addressLine2 = 'Required'
-  if (!form.landmark.trim()) errs.landmark = 'Required'
+  if (!form.addressLine2?.trim()) errs.addressLine2 = 'Required'
+  if (!form.landmark?.trim()) errs.landmark = 'Required'
   if (!form.city.trim()) errs.city = 'Required'
   if (!form.state.trim()) errs.state = 'Required'
   if (!form.zipCode.trim()) errs.zipCode = 'Required'

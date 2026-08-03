@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiUser, FiSmartphone, FiAlertCircle, FiCheckCircle, FiArrowRight, FiArrowLeft, FiSend, FiX, FiImage, FiEdit3 } from 'react-icons/fi'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { deviceBrands } from '../data/repairData'
 import { repairService, type RepairService } from '../services/repairService'
 import MobileBookRepair from '../components/mobile/MobileBookRepair'
 import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 
 const issueQuestions: Record<string, string[]> = {
   'Screen Repair': ['Is the glass only cracked or is the display also affected?', 'Is the touch functionality working?', 'Do you have a screen protector installed?', 'Any dead pixels or discoloration?'],
@@ -199,7 +200,7 @@ export default function BookRepair() {
   if (result) {
     return (
       <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans">
-        <StorefrontNavbar activeLabel="Repairs" />
+        <SiteTopNav />
         <div className="pt-24"><BackBar label="Back to Services" to="/repairs" /></div>
         <main className="max-w-lg mx-auto px-4 py-8">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
@@ -235,7 +236,7 @@ export default function BookRepair() {
 
   return (
     <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-mint/30 selection:text-[#A81D2A]">
-      <StorefrontNavbar activeLabel="Repairs" />
+      <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
 
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-12">

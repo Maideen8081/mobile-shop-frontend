@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck } from 'react-icons/fi'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
 import DoubleRingLoader from '../components/ui/DoubleRingLoader'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -13,6 +12,8 @@ import { useIsMobile } from '../components/mobile/helpers'
 import { orderService } from '../services/orderService'
 import { authService } from '../services/authService'
 import { cartService } from '../services/cartService'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 
 interface CartItem {
   productId: number
@@ -298,7 +299,7 @@ void main() {
     return (
       <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#CB202D]/30">
         <div className="w-full max-w-[720px]">
-          <StorefrontNavbar />
+          <SiteTopNav />
         </div>
         <div className="flex-1 w-full max-w-[720px] flex flex-col items-center justify-center px-6">
           <DoubleRingLoader size={48} />
@@ -402,7 +403,7 @@ void main() {
         <canvas ref={canvasRef} className="w-full h-full" style={{ display: 'block' }} />
       </div>
 
-      <StorefrontNavbar activeLabel="Home" />
+      <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Address" to="/checkout/address" /></div>
 
       {isCartEmpty ? (
