@@ -254,7 +254,7 @@ export default function RepairsPage() {
         </div>
       </section>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

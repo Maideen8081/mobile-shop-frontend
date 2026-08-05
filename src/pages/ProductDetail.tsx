@@ -10,6 +10,7 @@ import ReviewForm from '../components/ReviewForm'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { getImageUrl, getProductImage } from '../components/mobile/helpers'
 import { FALLBACK_IMG } from '../components/mobile/fallback'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import '../pages/CollectionPage.css'
@@ -719,24 +720,7 @@ function ProductDetailContent() {
       <div className="axpd min-h-screen bg-[#faf9f7]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
-        <div className="max-w-[1500px] mx-auto px-5">
-          <div className="animate-pulse space-y-6 py-8">
-            <div className="h-4 w-64 rounded bg-[#ececea]" />
-            <div className="h-16 rounded-[14px] bg-gradient-to-r from-[#a81510] to-[#ff5b4f] opacity-40" />
-            <div className="grid grid-cols-[minmax(320px,460px)_1fr] gap-11">
-              <div className="h-[460px] rounded-[14px] bg-white border border-[#ececea]" />
-              <div className="space-y-5">
-                <div className="h-4 w-24 rounded bg-[#ececea]" />
-                <div className="h-9 w-3/4 rounded bg-[#ececea]" />
-                <div className="h-5 w-1/2 rounded bg-[#ececea]" />
-                <div className="h-40 rounded-[14px] bg-white border border-[#ececea]" />
-                <div className="h-12 rounded-[10px] bg-[#ececea]" />
-                <div className="h-12 rounded-[10px] bg-[#ececea]" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <EcommerceFooter />
+        <DesktopPageLoader text="Loading product details..." />
       </div>
     )
   }
@@ -761,7 +745,7 @@ function ProductDetailContent() {
             </div>
           </div>
         </div>
-        <EcommerceFooter />
+        <EcommerceFooter compact />
       </div>
     )
   }
@@ -1547,7 +1531,7 @@ function ProductDetailContent() {
         </main>
 
       {/* ===== FOOTER ===== */}
-      <EcommerceFooter />
+      <EcommerceFooter compact />
 
       {/* ===== STICKY BUY BAR ===== */}
       <div className={`ax-sticky-bar ${stickyVisible ? 'show' : ''}`}>

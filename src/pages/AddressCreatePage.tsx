@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   FiMapPin, FiHome, FiBriefcase, FiCheck, FiArrowLeft,
   FiUser, FiPhone,
@@ -8,6 +8,8 @@ import { addressService, type AddressData } from '../services/addressService'
 import { authService } from '../services/authService'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 
 const emptyForm: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'> = {
   fullName: '',
@@ -106,25 +108,9 @@ export default function AddressCreatePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-      <header
-        className="sticky top-0 z-50 w-full shadow-sm flex justify-between items-center"
-        style={{ backgroundColor: '#6e7487', padding: '16px 64px', maxWidth: '1440px', margin: '0 auto' }}
-      >
-        <div className="text-[28px] font-bold text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
-          PhonePremium
-        </div>
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-          <Link to="/" className="text-[#c0c6db] hover:text-white transition-colors">Home</Link>
-          <Link to="/profile/addresses" className="text-[#c0c6db] hover:text-white transition-colors">My Addresses</Link>
-        </nav>
-        <div className="flex items-center gap-4">
-          <button className="text-white transition-transform active:scale-90" onClick={() => navigate('/profile/addresses')}>
-            <FiArrowLeft size={20} />
-          </button>
-        </div>
-      </header>
+      <SiteTopNav />
 
-      <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '80px 64px' }}>
+      <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '40px 64px' }}>
         <div className="absolute inset-0 pointer-events-none opacity-10 overflow-hidden">
           <div className="absolute rounded-full" style={{ top: '-12rem', right: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#85f8c4', filter: 'blur(120px)' }} />
           <div className="absolute rounded-full" style={{ bottom: '-12rem', left: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#00855d', filter: 'blur(120px)' }} />
@@ -287,30 +273,6 @@ export default function AddressCreatePage() {
           </div>
         </div>
       </main>
-
-      <footer
-        className="w-full flex flex-col md:flex-row justify-between items-center gap-6 border-t"
-        style={{
-          padding: '48px 64px',
-          maxWidth: '1440px',
-          margin: '0 auto',
-          backgroundColor: '#ffffff',
-          borderTop: '1px solid #bccac0',
-        }}
-      >
-        <div className="text-xl font-semibold" style={{ color: '#006948', fontFamily: "'Inter', sans-serif" }}>
-          PhonePremium
-        </div>
-        <div className="flex flex-wrap justify-center gap-4 text-base" style={{ fontFamily: "'Inter', sans-serif", color: '#5d5f5f' }}>
-          <Link to="#" className="hover:underline opacity-80 hover:opacity-100">Privacy Policy</Link>
-          <Link to="#" className="hover:underline opacity-80 hover:opacity-100">Terms of Service</Link>
-          <Link to="#" className="hover:underline opacity-80 hover:opacity-100">Shipping Info</Link>
-          <Link to="#" className="hover:underline opacity-80 hover:opacity-100">Contact Us</Link>
-        </div>
-        <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
-          &copy; 2024 PhonePremium. Engineering Excellence.
-        </p>
-      </footer>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  FiSearch, FiHeart, FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut, FiBell
+  FiSearch, FiHeart, FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut, FiBell, FiHome, FiGrid, FiSmartphone, FiTool, FiHeadphones, FiPackage, FiPhoneCall
 } from 'react-icons/fi'
 import { authService } from '../../services/authService'
 import { cartService } from '../../services/cartService'
@@ -13,6 +13,7 @@ import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 export interface NavItem {
   label: string
   to: string
+  icon?: React.ReactNode
 }
 
 interface StorefrontNavbarProps {
@@ -30,12 +31,14 @@ interface StorefrontNavbarProps {
 export default function StorefrontNavbar({
   brand = 'PhoneFix',
   navItems = [
-    { label: 'Home', to: '/' },
-    { label: 'Products', to: '/collection/all' },
-    { label: 'Phones', to: '/phones' },
-    { label: 'Repairs', to: '/repairs' },
-    { label: 'Accessories', to: '/accessories' },
-    { label: 'Contact', to: '/about' },
+    { label: 'Home', to: '/', icon: <FiHome size={15} /> },
+    { label: 'Products', to: '/collection/all', icon: <FiGrid size={15} /> },
+    { label: 'Phones', to: '/phones', icon: <FiSmartphone size={15} /> },
+    { label: 'Repairs', to: '/repairs', icon: <FiTool size={15} /> },
+    { label: 'Accessories', to: '/accessories', icon: <FiHeadphones size={15} /> },
+    { label: 'My Orders', to: '/orders', icon: <FiPackage size={15} /> },
+    { label: 'My Repairs', to: '/my-repairs', icon: <FiTool size={15} /> },
+    { label: 'Contact', to: '/about', icon: <FiPhoneCall size={15} /> },
   ],
   activeLabel,
   showSearch = true,
@@ -214,7 +217,7 @@ const navigate = useNavigate()
           </Link>
 
           {/* Center: Menu */}
-          <nav className="hidden md:flex items-center justify-center gap-8">
+          <nav className="hidden md:flex items-center justify-center gap-6">
             {navItems.map((item) => {
               const isActive = activeLabel
                 ? item.label.toLowerCase() === activeLabel.toLowerCase()
@@ -223,31 +226,33 @@ const navigate = useNavigate()
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="nav-active-glow font-medium relative"
+                  className="nav-active-glow font-medium relative flex items-center gap-1.5"
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 600,
-                    fontSize: '15px',
+                    fontSize: '14px',
                     background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
                     borderRadius: '999px',
-                    padding: '12px 28px',
+                    padding: '10px 22px',
                     color: '#000000',
                   }}
                 >
+                  {item.icon}
                   {item.label}
                 </Link>
               ) : (
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="transition-all duration-300 hover:text-[#CB202D]"
+                  className="transition-all duration-300 hover:text-[#CB202D] flex items-center gap-1.5"
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 500,
-                    fontSize: '15px',
+                    fontSize: '14px',
                     color: 'rgba(255,255,255,0.75)',
                   }}
                 >
+                  {item.icon}
                   {item.label}
                 </Link>
               )

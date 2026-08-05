@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { FiUser, FiMail, FiPhone, FiCalendar, FiTrash2, FiAlertCircle, FiLoader } from 'react-icons/fi'
+import { FiUser, FiMail, FiPhone, FiCalendar, FiTrash2, FiAlertCircle } from 'react-icons/fi'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { authService, type UserProfile } from '../services/authService'
 import { useToast } from '../context/ToastContext'
 import MobileProfile from '../components/mobile/MobileProfile'
 import { useIsMobile } from '../components/mobile/helpers'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 
@@ -71,20 +72,17 @@ export default function ProfilePage() {
             Go to Login
           </button>
         </div>
-        <EcommerceFooter />
+        <EcommerceFooter compact />
       </div>
     )
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
+      <>
         <SiteTopNav />
-        <div className="flex items-center justify-center pt-40 pb-20">
-          <FiLoader className="animate-spin" size={32} style={{ color: '#A81D2A' }} />
-        </div>
-        <EcommerceFooter />
-      </div>
+        <DesktopPageLoader text="Loading your profile..." />
+      </>
     )
   }
 
@@ -240,7 +238,7 @@ export default function ProfilePage() {
         </motion.div>
       </div>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

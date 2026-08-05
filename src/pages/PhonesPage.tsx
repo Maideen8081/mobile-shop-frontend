@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
 import { useIsMobile } from '../components/mobile/helpers'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -151,6 +152,16 @@ export default function PhonesPage() {
     return () => observer.disconnect()
   }, [products])
 
+  if (loading) {
+    return (
+      <>
+        <SiteTopNav />
+        <DesktopPageLoader text="Loading phones..." />
+        <EcommerceFooter compact />
+      </>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
       <SiteTopNav />
@@ -255,11 +266,7 @@ export default function PhonesPage() {
             ))}
           </div>
 
-          {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-8 h-8 border-2 border-[#CB202D] border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : products.length === 0 ? (
+          {products.length === 0 ? (
             <div className="text-center py-20">
               <span className="material-symbols-outlined text-5xl text-on-surface-variant mb-4 block">smartphone</span>
               <p className="text-on-surface-variant">No phones found in this category.</p>
@@ -353,7 +360,7 @@ export default function PhonesPage() {
         </div>
       </section>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

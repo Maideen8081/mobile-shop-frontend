@@ -5,6 +5,7 @@ import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileTradeIn from '../components/mobile/MobileTradeIn'
+import { tradeInService, type TradeInSubmission } from '../services/tradeInService'
 
 const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
 
@@ -93,7 +94,6 @@ function calculateAnalysis(brand: string, condition: string, storage: string): A
 
 export default function TradeInPage() {
   const isMobile = useIsMobile()
-  if (isMobile) return <MobileTradeIn />
   const navigate = useNavigate()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [selectedBrand, setSelectedBrand] = useState('')
@@ -107,10 +107,13 @@ export default function TradeInPage() {
   const [formEmail, setFormEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submittedTrade, setSubmittedTrade] = useState<TradeInSubmission | null>(null)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
   const revealRefs = useRef<Set<HTMLElement>>(new Set())
   const formRef = useRef<HTMLDivElement>(null)
+
+  if (isMobile) return <MobileTradeIn />
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -158,10 +161,24 @@ export default function TradeInPage() {
   const handleFormSubmit = async () => {
     if (!validateForm()) return
     setSubmitting(true)
-    await new Promise(r => setTimeout(r, 1200))
+    try {
+      const trade = await tradeInService.create({
+        customer_name: formName.trim(),
+        customer_mobile: formMobile.trim(),
+        customer_email: formEmail.trim() || undefined,
+        device_brand: formBrand,
+        device_model: formModel.trim(),
+        device_storage: formStorage || undefined,
+        device_condition: formCondition,
+        estimated_value: analysis?.finalValue || 0,
+      })
+      setSubmittedTrade(trade)
+      setSubmitted(true)
+      setShowForm(false)
+    } catch (err: any) {
+      setFormErrors({ submit: err?.response?.data?.message || 'Failed to submit. Please try again.' })
+    }
     setSubmitting(false)
-    setSubmitted(true)
-    setShowForm(false)
   }
 
   const inputClass = (field: string) =>
@@ -214,7 +231,7 @@ export default function TradeInPage() {
                   <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-500 ${
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}>
-                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
+                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#CB202D] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(203,32,45,0.3)] hover:shadow-[0_0_60px_rgba(203,32,45,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
                       Get Your Quote <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
                     <a href="#how-it-works" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full hover:bg-white/20 hover:border-white/40 transition-all duration-300">
@@ -280,7 +297,7 @@ export default function TradeInPage() {
                 <div className="flex flex-wrap gap-3 mb-8">
                   {brands.map((brand) => (
                     <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                      className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#CB202D] text-[#A81D2A] border-[#CB202D] shadow-lg shadow-[#CB202D]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#CB202D]/50'}`}
+                      className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#CB202D] text-white border-[#CB202D] shadow-lg shadow-[#CB202D]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#CB202D]/50'}`}
                     >{brand}</button>
                   ))}
                 </div>
@@ -316,7 +333,7 @@ export default function TradeInPage() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#CB202D] text-[#A81D2A] font-bold py-3.5 rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#CB202D]/20 cursor-pointer flex items-center justify-center gap-2">
+                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#CB202D] text-white font-bold py-3.5 rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#CB202D]/20 cursor-pointer flex items-center justify-center gap-2">
                   Start Trade-In <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </button>
               </div>
@@ -392,6 +409,11 @@ export default function TradeInPage() {
                       </div>
                     </div>
                   </div>
+                  {formErrors.submit && (
+                    <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-200">
+                      <p className="text-xs text-red-600">{formErrors.submit}</p>
+                    </div>
+                  )}
                   <button onClick={handleFormSubmit} disabled={submitting || !analysis}
                     className="mt-8 w-full py-3.5 rounded-full text-sm font-bold shadow-lg shadow-[#CB202D]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
                     style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
@@ -461,23 +483,50 @@ export default function TradeInPage() {
         )}
 
         {/* Success Section */}
-        {submitted && (
+        {submitted && submittedTrade && (
           <section className="py-24 px-4 md:px-8 bg-[#f0f3f5]">
             <div className="max-w-lg mx-auto text-center glass-card p-12 rounded-[2rem]">
               <div className="w-20 h-20 rounded-3xl bg-[#CB202D]/10 flex items-center justify-center mx-auto mb-6">
                 <span className="material-symbols-outlined text-4xl text-[#CB202D]">check_circle</span>
               </div>
               <h2 className="text-2xl font-extrabold text-[#181c1e] mb-2">Trade-In Submitted!</h2>
-              <p className="text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
-              <button onClick={() => { setSubmitted(false); navigate('/') }}
-                className="inline-flex items-center gap-2 bg-[#CB202D] text-[#A81D2A] font-bold px-8 py-3.5 rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer"
-              >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
+              <p className="text-[#434748] mb-4">Your submission has been recorded successfully.</p>
+              <div className="bg-[#f7fafd] rounded-xl p-4 mb-6 text-left space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#434748]">Trade ID</span>
+                  <span className="font-bold text-[#CB202D]">{submittedTrade.tradeId}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#434748]">Device</span>
+                  <span className="font-semibold text-[#181c1e]">{submittedTrade.deviceBrand} {submittedTrade.deviceModel}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#434748]">Estimated Value</span>
+                  <span className="font-bold text-[#CB202D]">₹{submittedTrade.estimatedValue.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#434748]">Status</span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                    Pending Review
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
+              <div className="flex gap-3 justify-center">
+                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null); navigate('/') }}
+                  className="inline-flex items-center gap-2 bg-[#CB202D] text-white font-bold px-8 py-3.5 rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
+                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null) }}
+                  className="inline-flex items-center gap-2 bg-white border border-[#CB202D]/20 text-[#CB202D] font-bold px-8 py-3.5 rounded-full hover:bg-[#CB202D]/5 transition-all cursor-pointer"
+                >Submit Another</button>
+              </div>
             </div>
           </section>
         )}
       </main>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

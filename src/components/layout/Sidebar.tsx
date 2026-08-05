@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 import {
   FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck,
-  FiShoppingBag, FiSearch, FiSmartphone, FiX,
+  FiShoppingBag, FiSearch, FiSmartphone, FiX, FiRefreshCw,
 } from 'react-icons/fi'
 
 interface NavItem {
@@ -15,7 +15,7 @@ interface NavItem {
 }
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
-  FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck, FiShoppingBag, FiSmartphone,
+  FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck, FiShoppingBag, FiSmartphone, FiRefreshCw,
 }
 
 const navSections: { label: string; items: NavItem[] }[] = [
@@ -44,6 +44,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
     label: 'Orders',
     items: [
       { id: 'online-orders', label: 'Online Orders', icon: 'FiShoppingBag', path: '/online-orders' },
+      { id: 'trade-in-management', label: 'Trade-In Management', icon: 'FiRefreshCw', path: '/trade-in-management' },
     ],
   },
 ]

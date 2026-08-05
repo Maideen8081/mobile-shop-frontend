@@ -1,17 +1,16 @@
-import { useState, useEffect, type ReactNode } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  FiPlus, FiEdit2, FiTrash2, FiChevronRight, FiHome,
-  FiMapPin, FiPhone, FiStar, FiX, FiCheck, FiLoader, FiAlertCircle,
-} from 'react-icons/fi'
-import { Home, Briefcase, MapPin } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
-import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
+
+const typeIcons: Record<string, React.ReactNode> = {
+  Home: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>,
+  Office: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>,
+  Other: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s7-6.2 7-11.2A7 7 0 105 9.8C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>,
+}
 
 const emptyForm: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'> = {
   fullName: '',
@@ -28,24 +27,25 @@ const emptyForm: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'> = {
   isDefault: false,
 }
 
-const typeIcons: Record<string, ReactNode> = {
-  Home: <Home size={14} />,
-  Office: <Briefcase size={14} />,
-  Other: <MapPin size={14} />,
+function formatPhone(p: string) {
+  const d = p.replace(/\D/g, '')
+  if (d.length === 10) return `${d.slice(0,5)} ${d.slice(5)}`
+  return p
 }
 
 export default function AddressManagement() {
   const isMobile = useIsMobile()
   if (isMobile) return <MobileAddressManagement />
+
   const [addresses, setAddresses] = useState<AddressData[]>([])
   const [loading, setLoading] = useState(true)
-  const [modalOpen, setModalOpen] = useState(false)
+  const [formOpen, setFormOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [editing, setEditing] = useState<AddressData | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState<number | null>(null)
-
-  useLockBodyScroll(modalOpen)
+  const [toast, setToast] = useState('')
 
   useEffect(() => {
     let mounted = true
@@ -56,11 +56,12 @@ export default function AddressManagement() {
     return () => { mounted = false }
   }, [])
 
-  const openAdd = () => {
-    setEditing(null)
-    setForm(emptyForm)
-    setModalOpen(true)
+  const showToast = (msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(''), 2200)
   }
+
+  const openAdd = () => { setEditing(null); setForm(emptyForm); setFormOpen(true) }
 
   const openEdit = (addr: AddressData) => {
     setEditing(addr)
@@ -78,31 +79,42 @@ export default function AddressManagement() {
       addressType: addr.addressType,
       isDefault: addr.isDefault,
     })
-    setModalOpen(true)
+    setFormOpen(true)
   }
 
   const handleSave = async () => {
+    if (!form.fullName.trim() || !form.mobile.trim() || !form.addressLine1.trim() || !form.city.trim() || !form.state.trim() || !form.zipCode.trim()) return
     setSaving(true)
     try {
       if (editing && editing.id) {
         const updated = await addressService.update(editing.id, form)
         setAddresses(prev => prev.map(a => a.id === editing.id ? updated : a))
+        showToast('Address updated')
       } else {
         const created = await addressService.create(form)
         setAddresses(prev => [...prev, created])
+        showToast('Address added')
       }
-      setModalOpen(false)
-    } catch { /* ignore */ }
+      setFormOpen(false)
+    } catch { showToast('Failed to save address') }
     setSaving(false)
   }
 
-  const handleDelete = async (id: number | undefined) => {
-    if (id == null) return
-    const numId = Number(id)
-    setDeleting(numId)
-    await addressService.delete(numId)
-    setAddresses(prev => prev.filter(a => Number(a.id) !== numId))
-    setDeleting(null)
+  const handleDelete = async () => {
+    if (deletingId == null) return
+    const numId = Number(deletingId)
+    try {
+      await addressService.delete(numId)
+      const wasDefault = addresses.find(a => Number(a.id) === numId)?.isDefault
+      setAddresses(prev => {
+        const next = prev.filter(a => Number(a.id) !== numId)
+        if (wasDefault && next.length > 0) next[0].isDefault = true
+        return next
+      })
+      showToast('Address removed')
+    } catch { showToast('Failed to delete address') }
+    setConfirmOpen(false)
+    setDeletingId(null)
   }
 
   const handleSetDefault = async (id: number | undefined) => {
@@ -111,693 +123,330 @@ export default function AddressManagement() {
     try {
       const updated = await addressService.setDefault(numId)
       setAddresses(prev => prev.map(a => Number(a.id) === numId ? updated : { ...a, isDefault: false }))
+      showToast('Default address updated')
     } catch { /* ignore */ }
   }
 
+  if (loading) {
+    return (
+      <>
+        <SiteTopNav />
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#FCFAFA' }}>
+          <div className="text-center">
+            <div className="w-10 h-10 rounded-full border-3 border-t-transparent animate-spin mx-auto mb-3" style={{ borderColor: '#EAE5E6', borderTopColor: '#D2172E' }} />
+            <p className="text-sm" style={{ color: '#837E88' }}>Loading your addresses...</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
-      <div className="min-h-screen bg-[#F8F6F2] pt-28">
+    <div className="min-h-screen" style={{ background: '#FCFAFA' }}>
+      <style>{`
+        .addr-pulse-rail{height:5px;width:100%;background:linear-gradient(90deg,#9C0F22,#F03049 45%,#D2172E 55%,#9C0F22);background-size:220% 100%;animation:railmove 6s ease-in-out infinite;position:sticky;top:0;z-index:60;}
+        @keyframes railmove{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
+        .addr-bg-wash{position:fixed;inset:0;z-index:-1;background:radial-gradient(700px 340px at 88% -8%,#FCEDEE 0%,transparent 65%),radial-gradient(500px 280px at 4% 30%,#FBF0F1 0%,transparent 60%),#FCFAFA;}
+        .addr-shell{max-width:1180px;margin:0 auto;padding:0 32px;}
+        .addr-crumb{display:flex;align-items:center;gap:8px;padding:28px 0 0;font-size:13px;color:#837E88;font-weight:500;}
+        .addr-crumb a{color:#837E88;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s;}
+        .addr-crumb a:hover{color:#9C0F22;}
+        .addr-crumb svg{width:14px;height:14px;}
+        .addr-crumb .sep{color:#D8D2D5;}
+        .addr-crumb .current{color:#17151A;font-weight:600;}
+        .addr-page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding:14px 0 30px;border-bottom:1px solid #EAE5E6;margin-bottom:30px;}
+        .addr-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(30px,4vw,42px);letter-spacing:-0.01em;text-transform:uppercase;margin:0 0 6px;}
+        .addr-sub{margin:0;color:#4A4750;font-size:14.5px;}
+        .addr-btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:14px;padding:13px 22px;border-radius:11px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;}
+        .addr-btn svg{width:16px;height:16px;}
+        .addr-btn-primary{background:linear-gradient(180deg,#F03049,#D2172E);color:#fff;box-shadow:0 10px 22px -10px rgba(210,23,46,0.55);}
+        .addr-btn-primary:hover{transform:translateY(-1px);box-shadow:0 14px 26px -10px rgba(210,23,46,0.62);}
+        .addr-btn-ghost{background:#fff;color:#4A4750;border:1px solid #EAE5E6;}
+        .addr-btn-ghost:hover{border-color:#D2172E;color:#9C0F22;}
+        .addr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding-bottom:80px;}
+        .addr-card{position:relative;background:#fff;border:1px solid #EAE5E6;border-radius:16px;padding:22px 22px 18px;box-shadow:0 1px 2px rgba(23,21,26,0.04),0 12px 28px -14px rgba(23,21,26,0.18);transition:transform .18s,box-shadow .18s,border-color .18s;}
+        .addr-card:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(23,21,26,0.05),0 20px 38px -18px rgba(210,23,46,0.24);}
+        .addr-card.is-default{background:linear-gradient(155deg,#FCEDEE 0%,#FDF6F6 55%);border-color:#F0DEE0;}
+        .addr-card.is-default::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:3px;background:#D2172E;border-radius:0 3px 3px 0;}
+        .addr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:16px;}
+        .addr-who{display:flex;align-items:center;gap:12px;min-width:0;}
+        .addr-icon{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#F8DFE2;color:#9C0F22;}
+        .addr-card.is-default .addr-icon{background:#D2172E;color:#fff;}
+        .addr-icon svg{width:20px;height:20px;}
+        .addr-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+        .addr-name{font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;}
+        .addr-badge-default{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:#D2172E;color:#fff;padding:3px 8px;border-radius:999px;}
+        .addr-phone{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#4A4750;margin-top:3px;}
+        .addr-phone svg{width:12px;height:12px;color:#837E88;}
+        .type-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;white-space:nowrap;border:1px solid #F0DEE0;color:#9C0F22;background:#fff;}
+        .type-pill svg{width:11px;height:11px;}
+        .type-pill.work{color:#2E6FBF;border-color:#D3E1F4;}
+        .type-pill.other{color:#B87A12;border-color:#F1DCB2;}
+        .addr-body{font-size:13.8px;line-height:1.65;color:#4A4750;padding:2px 0 16px 54px;}
+        .addr-body .pin{font-family:'JetBrains Mono',monospace;color:#17151A;font-weight:600;}
+        .addr-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px dashed #EAE5E6;}
+        .icon-btn{width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;}
+        .icon-btn svg{width:15px;height:15px;}
+        .icon-btn.edit{background:#E7F0FB;color:#2E6FBF;}
+        .icon-btn.edit:hover{background:#2E6FBF;color:#fff;}
+        .icon-btn.del{background:#FCEDEE;color:#D2172E;}
+        .icon-btn.del:hover{background:#D2172E;color:#fff;}
+        .icon-btn.star{background:#FCF6E9;color:#B87A12;}
+        .icon-btn.star:hover{background:#B87A12;color:#fff;}
+        .icon-btn:active{transform:scale(.92);}
+        .set-default-link{margin-right:auto;font-size:12px;font-weight:700;color:#837E88;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:8px 4px;}
+        .set-default-link:hover{color:#9C0F22;}
+        .set-default-link svg{width:13px;height:13px;}
+        .add-card{border:1.5px dashed #E3B9BF;border-radius:16px;background:repeating-linear-gradient(135deg,#FEFBFB,#FEFBFB 10px,#FDF5F6 10px,#FDF5F6 11px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:210px;cursor:pointer;transition:border-color .15s,background .15s;}
+        .add-card:hover{border-color:#D2172E;}
+        .add-card .plus{width:50px;height:50px;border-radius:50%;background:#F8DFE2;color:#D2172E;display:flex;align-items:center;justify-content:center;transition:transform .18s,background .18s;}
+        .add-card:hover .plus{background:#D2172E;color:#fff;transform:rotate(90deg) scale(1.06);}
+        .add-card .plus svg{width:22px;height:22px;}
+        .add-card span{font-weight:700;color:#4A4750;font-size:14.5px;}
+        .modal-overlay{position:fixed;inset:0;background:rgba(23,21,26,0.5);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:10001;padding:20px;}
+        .modal-overlay.show{display:flex;}
+        .modal{background:#fff;border-radius:20px;width:100%;max-width:560px;box-shadow:0 30px 60px -20px rgba(23,21,26,0.35);max-height:88vh;overflow-y:auto;animation:modal-pop .18s ease;}
+        @keyframes modal-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+        .modal-head{display:flex;justify-content:space-between;align-items:center;padding:24px 28px 20px;border-bottom:1px solid #EAE5E6;}
+        .modal-head h2{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0;text-transform:uppercase;color:#17151A;}
+        .modal-close{width:36px;height:36px;border-radius:10px;border:none;background:#FCFAFA;color:#4A4750;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+        .modal-close:hover{background:#FCEDEE;color:#D2172E;}
+        .modal-close svg{width:16px;height:16px;}
+        .modal-body{padding:24px 28px;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+        .field{display:flex;flex-direction:column;gap:7px;}
+        .field.full{grid-column:1 / -1;}
+        .field label{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#4A4750;}
+        .field input{border:1.5px solid #EAE5E6;border-radius:10px;padding:13px 14px;font-size:14px;font-family:'Inter',sans-serif;color:#17151A;outline:none;background:#FCFAFA;transition:border-color .15s,background .15s,box-shadow .15s;}
+        .field input:focus{border-color:#D2172E;background:#fff;box-shadow:0 0 0 3px rgba(210,23,46,0.08);}
+        .field input::placeholder{color:#B2ADB4;}
+        .type-select-row{display:flex;gap:10px;margin-bottom:16px;}
+        .type-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 8px;border:1.5px solid #EAE5E6;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;color:#4A4750;transition:all .15s;background:#fff;}
+        .type-opt svg{width:20px;height:20px;}
+        .type-opt:hover{border-color:#D2172E;color:#9C0F22;}
+        .type-opt.selected{border-color:#D2172E;background:#FCEDEE;color:#9C0F22;}
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#FCFAFA;border:1.5px solid #EAE5E6;border-radius:12px;margin-bottom:8px;}
+        .toggle-row .lbl{font-size:14px;font-weight:600;color:#17151A;}
+        .toggle-row .lbl small{display:block;font-weight:400;color:#837E88;font-size:12px;margin-top:3px;}
+        .switch{width:44px;height:25px;border-radius:999px;background:#DCD7D9;position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;border:none;}
+        .switch::after{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,0.25);}
+        .switch.on{background:#D2172E;}
+        .switch.on::after{transform:translateX(19px);}
+        .modal-foot{display:flex;justify-content:flex-end;gap:12px;padding:20px 28px 24px;border-top:1px solid #EAE5E6;}
+        .confirm-modal{max-width:400px;text-align:center;padding:36px 28px 28px;}
+        .confirm-modal .warn-icon{width:56px;height:56px;border-radius:50%;background:#FCEDEE;color:#D2172E;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+        .confirm-modal .warn-icon svg{width:26px;height:26px;}
+        .confirm-modal h3{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0 0 10px;text-transform:uppercase;color:#17151A;}
+        .confirm-modal p{font-size:14px;color:#4A4750;margin:0 0 24px;line-height:1.6;}
+        .confirm-actions{display:flex;gap:12px;}
+        .confirm-actions .addr-btn{flex:1;justify-content:center;}
+        .addr-btn-danger{background:#D2172E;color:#fff;}
+        .addr-btn-danger:hover{background:#9C0F22;}
+        .addr-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:#17151A;color:#fff;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 14px 30px -10px rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:all .25s ease;z-index:10002;display:flex;align-items:center;gap:10px;}
+        .addr-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+        .addr-toast svg{width:16px;height:16px;color:#6FE39A;}
+        @media(max-width:760px){.addr-shell{padding:0 18px;}.addr-grid{grid-template-columns:1fr;}.field-row{grid-template-columns:1fr;}.addr-body{padding-left:0;}}
+        @media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
+        :focus-visible{outline:2px solid #D2172E;outline-offset:2px;}
+      `}</style>
+
+      <div className="addr-pulse-rail" />
+      <div className="addr-bg-wash" />
       <SiteTopNav />
 
-      <div className="relative pt-6 pb-20">
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-60 -right-60 w-[500px] h-[500px] rounded-full opacity-10"
-            style={{ background: 'radial-gradient(circle, #CB202D 0%, transparent 70%)' }} />
-          <div className="absolute -bottom-60 -left-60 w-[400px] h-[400px] rounded-full opacity-10"
-            style={{ background: 'radial-gradient(circle, #A81D2A 0%, transparent 70%)' }} />
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.05, 0.1, 0.05] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
-            style={{ background: 'radial-gradient(circle, #CB202D 0%, transparent 70%)' }}
-          />
+      <div className="addr-shell">
+        <nav className="addr-crumb" aria-label="Breadcrumb">
+          <Link to="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</Link>
+          <span className="sep">&#8250;</span>
+          <Link to="/profile">Profile</Link>
+          <span className="sep">&#8250;</span>
+          <span className="current">Addresses</span>
+        </nav>
+
+        <div className="addr-page-head">
+          <div>
+            <h1 className="addr-title">Manage Addresses</h1>
+            <p className="addr-sub">Manage your saved delivery addresses</p>
+          </div>
+          <button className="addr-btn addr-btn-primary" onClick={openAdd}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add New Address
+          </button>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 lg:px-6">
-          {/* Breadcrumb */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-xs mb-6 pt-4 text-[#6B7280]"
-          >
-            <Link to="/" className="hover:text-[#A81D2A] transition-colors">
-              <FiHome size={12} className="inline mr-1" />Home
-            </Link>
-            <FiChevronRight size={10} />
-            <span className="hover:text-[#A81D2A] transition-colors">Profile</span>
-            <FiChevronRight size={10} />
-            <span className="text-[#2D2118]">Addresses</span>
-          </motion.div>
-
-          {/* Header */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-            className="flex items-center justify-between mb-8"
-          >
-            <motion.div
-              variants={{ hidden: { opacity: 0, x: -16 }, visible: { opacity: 1, x: 0 } }}
-            >
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-[#2D2118] flex items-center gap-3">
-                Manage Addresses
-              </h1>
-              <p className="text-sm mt-1 text-[#6B7280]">
-                Manage your saved delivery addresses
-              </p>
-            </motion.div>
-            <motion.button
-              variants={{ hidden: { opacity: 0, x: 16, scale: 0.95 }, visible: { opacity: 1, x: 0, scale: 1 } }}
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={openAdd}
-              className="flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
-                color: 'white',
-                boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
-              }}
-            >
-              <FiPlus size={16} /> Add New Address
-            </motion.button>
-          </motion.div>
-
-          {/* Content */}
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <FiLoader size={32} className="animate-spin" style={{ color: '#A81D2A' }} />
+        {addresses.length === 0 ? (
+          <div className="text-center" style={{ padding: '60px 20px 90px', color: '#837E88' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: 44, height: 44, color: '#D2172E', marginBottom: 14 }}><path d="M12 21s7-6.2 7-11.2A7 7 0 105 9.8C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+            <h3 style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontSize: 24, color: '#17151A', margin: '0 0 6px', textTransform: 'uppercase' }}>No saved addresses yet</h3>
+            <p style={{ fontSize: 13.5, margin: '0 0 18px' }}>Add a delivery address to speed up checkout next time.</p>
+            <button className="addr-btn addr-btn-primary" onClick={openAdd}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add New Address
+            </button>
+          </div>
+        ) : (
+          <div className="addr-grid">
+            {addresses.map(addr => {
+              const typeLower = addr.addressType?.toLowerCase() || 'home'
+              return (
+                <article key={addr.id} className={`addr-card${addr.isDefault ? ' is-default' : ''}`}>
+                  <div className="addr-top">
+                    <div className="addr-who">
+                      <div className="addr-icon">{typeIcons[addr.addressType] || typeIcons.Other}</div>
+                      <div>
+                        <div className="addr-name-row">
+                          <span className="addr-name">{addr.fullName}</span>
+                          {addr.isDefault && <span className="addr-badge-default">Default</span>}
+                        </div>
+                        <div className="addr-phone">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.4 2.1L8 9.8a16 16 0 006.2 6.2l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg>
+                          {formatPhone(addr.mobile)}
+                        </div>
+                      </div>
+                    </div>
+                    <span className={`type-pill ${typeLower === 'home' ? '' : typeLower}`}>
+                      {typeIcons[addr.addressType] || typeIcons.Other}
+                      {addr.addressType}
+                    </span>
+                  </div>
+                  <div className="addr-body">
+                    {addr.addressLine1}<br/>
+                    {addr.addressLine2 && <>{addr.addressLine2}<br/></>}
+                    {addr.city}, {addr.state} - <span className="pin">{addr.zipCode}</span><br/>
+                    {addr.country}
+                  </div>
+                  <div className="addr-actions">
+                    {!addr.isDefault && (
+                      <button className="set-default-link" onClick={() => handleSetDefault(addr.id)}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 16.9l-6.2 3.4 1.6-6.8L2.2 8.9l6.9-.6z"/></svg>
+                        Set as default
+                      </button>
+                    ) || <span style={{ marginRight: 'auto' }} />}
+                    <button className="icon-btn edit" title="Edit" onClick={() => openEdit(addr)}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+                    </button>
+                    <button className="icon-btn del" title="Delete" onClick={() => { setDeletingId(Number(addr.id)); setConfirmOpen(true) }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                    </button>
+                  </div>
+                </article>
+              )
+            })}
+            <div className="add-card" onClick={openAdd}>
+              <div className="plus">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <span>Add New Address</span>
             </div>
-          ) : addresses.length === 0 ? (
-            <EmptyAddressState onAdd={openAdd} />
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              <AnimatePresence mode="popLayout">
-                {addresses.map((addr, i) => (
-                  <AddressCard
-                    key={addr.id}
-                    addr={addr}
-                    index={i}
-                    onEdit={() => openEdit(addr)}
-                    onDelete={() => handleDelete(addr.id)}
-                    onSetDefault={() => addr.id && handleSetDefault(addr.id)}
-                    deleting={deleting === addr.id}
-                  />
-                ))}
-              </AnimatePresence>
-              {/* Add card */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.93, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: addresses.length * 0.05 + 0.15, type: 'spring', stiffness: 200, damping: 22 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={openAdd}
-                className="group rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-3 h-64 transition-all duration-300 cursor-pointer"
-                style={{
-                  borderColor: 'rgba(203,32,45,0.2)',
-                  background: '#F9FAFB',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.5)'; e.currentTarget.style.background = 'rgba(203,32,45,0.05)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(203,32,45,0.2)'; e.currentTarget.style.background = '#F9FAFB' }}
-              >
-                <motion.div
-                  whileHover={{ rotate: 90, scale: 1.1 }}
-                  transition={{ type: 'spring', stiffness: 200 }}
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ background: 'rgba(203,32,45,0.15)' }}
-                >
-                  <FiPlus size={22} style={{ color: '#A81D2A' }} />
-                </motion.div>
-                <span className="text-sm font-semibold text-[#6B7280] group-hover:text-emerald-600 transition-colors">
-                  Add New Address
-                </span>
-              </motion.button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Address Form Modal */}
-      <AnimatePresence>
-        {modalOpen && (
-          <AddressFormModal
-            form={form}
-            setForm={setForm}
-            editing={editing}
-            saving={saving}
-            onSave={handleSave}
-            onClose={() => setModalOpen(false)}
-          />
+          </div>
         )}
-      </AnimatePresence>
-    </div>
-  )
-}
+      </div>
 
-function EmptyAddressState({ onAdd }: { onAdd: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center py-20 text-center"
-    >
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 300, delay: 0.2 }}
-        className="relative w-32 h-32 rounded-3xl mb-8 flex items-center justify-center overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, rgba(203,32,45,0.1), rgba(168,29,42,0.1))',
-          border: '1px solid rgba(203,32,45,0.15)',
-        }}
-      >
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(circle at 50% 50%, rgba(203,32,45,0.15), transparent 70%)' }}
-        />
-        <FiMapPin size={48} style={{ color: 'rgba(168,29,42,0.4)' }} />
-      </motion.div>
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="text-2xl font-bold text-[#2D2118] mb-3"
-      >
-        No saved addresses
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="text-sm mb-8 text-[#6B7280]"
-      >
-        Add your first delivery address to get started
-      </motion.p>
-      <motion.button
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={onAdd}
-        className="flex items-center gap-2 px-8 h-12 rounded-2xl text-sm font-bold transition-all cursor-pointer"
-        style={{
-          background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
-          color: 'white',
-          boxShadow: '0 8px 32px rgba(203,32,45,0.3)',
-        }}
-      >
-        <FiPlus size={18} /> Add New Address
-      </motion.button>
-    </motion.div>
-  )
-}
-
-function AddressCard({ addr, index, onEdit, onDelete, onSetDefault, deleting }: {
-  addr: AddressData; index: number; onEdit: () => void; onDelete: () => void; onSetDefault: () => void; deleting: boolean
-}) {
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9, y: -10 }}
-      transition={{ delay: index * 0.05, type: 'spring', stiffness: 250, damping: 24 }}
-      whileHover={{ y: -3 }}
-      className="group relative rounded-3xl overflow-hidden transition-all duration-500 cursor-pointer"
-      style={{
-        background: addr.isDefault
-          ? 'linear-gradient(135deg, rgba(203,32,45,0.08), rgba(168,29,42,0.05))'
-          : '#ffffff',
-        border: addr.isDefault
-          ? '1px solid rgba(203,32,45,0.3)'
-          : '1px solid #E5E7EB',
-        boxShadow: addr.isDefault
-          ? '0 8px 24px rgba(203,32,45,0.12)'
-          : '0 2px 12px rgba(0,0,0,0.05)',
-      }}
-      onMouseEnter={(e) => {
-        if (!addr.isDefault) {
-          e.currentTarget.style.borderColor = 'rgba(203,32,45,0.3)'
-          e.currentTarget.style.background = '#F9FAFB'
-          e.currentTarget.style.boxShadow = '0 8px 24px rgba(203,32,45,0.08)'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!addr.isDefault) {
-          e.currentTarget.style.borderColor = '#E5E7EB'
-          e.currentTarget.style.background = '#ffffff'
-          e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)'
-        }
-      }}
-    >
-      {addr.isDefault && (
-        <motion.div
-          animate={{ scale: [1, 1.02, 1], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-          className="absolute inset-0 rounded-3xl pointer-events-none"
-          style={{
-            background: 'linear-gradient(135deg, rgba(203,32,45,0.04), transparent, rgba(168,29,42,0.04))',
-            zIndex: 0,
-          }}
-        />
-      )}
-      <div className="p-5 relative z-10">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{
-                background: addr.addressType === 'Home'
-                  ? 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(168,29,42,0.2))'
-                  : addr.addressType === 'Office'
-                    ? 'linear-gradient(135deg, rgba(6,182,212,0.2), rgba(14,165,233,0.2))'
-                    : 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(16,185,129,0.2))',
-              }}
-            >
-              {typeIcons[addr.addressType] || <MapPin size={14} style={{ color: '#A81D2A' }} />}
-            </motion.div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-[#2D2118]">{addr.fullName}</h3>
-                {addr.isDefault && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                    className="text-[9px] font-bold px-2 py-0.5 rounded-full"
-                    style={{
-                      background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
-                      color: 'white',
-                    }}
-                  >DEFAULT</motion.span>
-                )}
+      {/* Add/Edit Modal */}
+      <div className={`modal-overlay${formOpen ? ' show' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) setFormOpen(false) }}>
+        <div className="modal">
+          <div className="modal-head" style={{ background: 'linear-gradient(135deg, #FCEDEE 0%, #FDF6F6 100%)', borderBottom: '1px solid #F0DEE0' }}>
+            <div className="flex items-center gap-3">
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: '#D2172E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 20, height: 20 }}><path d="M12 21s7-6.2 7-11.2A7 7 0 105 9.8C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
               </div>
-              <div className="flex items-center gap-1 mt-0.5">
-                <FiPhone size={10} className="text-[#6B7280]" />
-                <span className="text-xs text-[#6B7280]">{addr.mobile}</span>
+              <h2>{editing ? 'Edit Address' : 'Add New Address'}</h2>
+            </div>
+            <button className="modal-close" onClick={() => setFormOpen(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+          <div className="modal-body">
+            <div className="field-row">
+              <div className="field">
+                <label>Full Name *</label>
+                <input type="text" value={form.fullName} onChange={e => setForm(p => ({ ...p, fullName: e.target.value }))} placeholder="e.g. Maideen" />
+              </div>
+              <div className="field">
+                <label>Phone Number *</label>
+                <input type="tel" value={form.mobile} onChange={e => setForm(p => ({ ...p, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) }))} placeholder="e.g. 9080575858" />
               </div>
             </div>
+            <div className="field-row">
+              <div className="field full">
+                <label>Address Line 1 *</label>
+                <input type="text" value={form.addressLine1} onChange={e => setForm(p => ({ ...p, addressLine1: e.target.value }))} placeholder="House no., street, area" />
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field full">
+                <label>Address Line 2 / Landmark</label>
+                <input type="text" value={form.addressLine2 || ''} onChange={e => setForm(p => ({ ...p, addressLine2: e.target.value }))} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field">
+                <label>City *</label>
+                <input type="text" value={form.city} onChange={e => setForm(p => ({ ...p, city: e.target.value }))} placeholder="e.g. Virudhunagar" />
+              </div>
+              <div className="field">
+                <label>State *</label>
+                <input type="text" value={form.state} onChange={e => setForm(p => ({ ...p, state: e.target.value }))} placeholder="e.g. Tamil Nadu" />
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field">
+                <label>Pincode *</label>
+                <input type="text" value={form.zipCode} onChange={e => setForm(p => ({ ...p, zipCode: e.target.value.replace(/\D/g, '').slice(0, 6) }))} placeholder="e.g. 626149" />
+              </div>
+              <div className="field">
+                <label>Country</label>
+                <input type="text" value={form.country} onChange={e => setForm(p => ({ ...p, country: e.target.value }))} placeholder="e.g. India" />
+              </div>
+            </div>
+            <div className="field" style={{ marginBottom: 16 }}>
+              <label>Address Type</label>
+              <div className="type-select-row">
+                {(['Home', 'Office', 'Other'] as const).map(t => (
+                  <div key={t} className={`type-opt${form.addressType === t ? ' selected' : ''}`} onClick={() => setForm(p => ({ ...p, addressType: t }))}>
+                    {typeIcons[t]}
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="toggle-row">
+              <div className="lbl">
+                Set as default address
+                <small>Used automatically at checkout</small>
+              </div>
+              <button className={`switch${form.isDefault ? ' on' : ''}`} type="button" onClick={() => setForm(p => ({ ...p, isDefault: !p.isDefault }))} aria-pressed={form.isDefault} />
+            </div>
           </div>
-          <motion.span
-            whileHover={{ scale: 1.05 }}
-            className="text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0"
-            style={{
-              background: addr.addressType === 'Home'
-                ? 'rgba(203,32,45,0.15)'
-                : addr.addressType === 'Office'
-                  ? 'rgba(6,182,212,0.15)'
-                  : 'rgba(203,32,45,0.15)',
-              color: addr.addressType === 'Home'
-                ? '#A81D2A'
-                : addr.addressType === 'Office'
-                  ? '#22d3ee'
-                  : '#34d399',
-            }}
-          >
-            {addr.addressType}
-          </motion.span>
-        </div>
-
-        <div className="space-y-1 mb-4 text-[#6B7280]">
-          <p className="text-sm leading-relaxed">{addr.addressLine1}</p>
-          {addr.addressLine2 && <p className="text-sm">{addr.addressLine2}</p>}
-          {addr.landmark && <p className="text-sm">Landmark: {addr.landmark}</p>}
-          <p className="text-sm">
-            {addr.city}, {addr.state} - {addr.zipCode}
-          </p>
-          <p className="text-sm">{addr.country}</p>
-        </div>
-
-        <div className="flex items-center justify-between pt-3 border-t border-[#E5E7EB]">
-          <div className="flex items-center gap-2">
-            {!addr.isDefault && (
-              <motion.button
-                whileHover={{ scale: 1.03, y: -1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onSetDefault}
-                className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
-                style={{
-                  background: 'rgba(203,32,45,0.1)',
-                  color: 'rgba(168,29,42,0.7)',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(203,32,45,0.2)'; e.currentTarget.style.color = 'rgba(168,29,42,0.9)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(203,32,45,0.1)'; e.currentTarget.style.color = 'rgba(168,29,42,0.7)' }}
-              >
-                <FiStar size={11} /> Set Default
-              </motion.button>
-            )}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <motion.button
-              whileHover={{ scale: 1.1, y: -1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onEdit}
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer"
-              style={{
-                background: 'rgba(6,182,212,0.1)',
-                color: 'rgba(6,182,212,0.6)',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(6,182,212,0.2)'; e.currentTarget.style.color = 'rgba(6,182,212,0.9)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(6,182,212,0.1)'; e.currentTarget.style.color = 'rgba(6,182,212,0.6)' }}
-            >
-              <FiEdit2 size={12} />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.1, y: -1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={onDelete}
-              disabled={deleting}
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer"
-              style={{
-                background: 'rgba(239,68,68,0.1)',
-                color: deleting ? 'rgba(239,68,68,0.3)' : 'rgba(239,68,68,0.6)',
-              }}
-              onMouseEnter={(e) => { if (!deleting) { e.currentTarget.style.background = 'rgba(239,68,68,0.2)'; e.currentTarget.style.color = 'rgba(239,68,68,0.9)' } }}
-              onMouseLeave={(e) => { if (!deleting) { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; e.currentTarget.style.color = 'rgba(239,68,68,0.6)' } }}
-            >
-              {deleting ? <FiLoader size={12} className="animate-spin" /> : <FiTrash2 size={12} />}
-            </motion.button>
+          <div className="modal-foot">
+            <button className="addr-btn addr-btn-ghost" onClick={() => setFormOpen(false)} style={{ borderRadius: 12 }}>Cancel</button>
+            <button className="addr-btn addr-btn-primary" onClick={handleSave} disabled={saving} style={{ borderRadius: 12, minWidth: 140 }}>
+              {saving ? 'Saving...' : 'Save Address'}
+            </button>
           </div>
         </div>
       </div>
-    </motion.div>
-  )
-}
 
-function validateMobile(v: string): string {
-  const digits = v.replace(/\D/g, '').slice(0, 10)
-  if (digits.length < 10) return 'Enter exactly 10 digits'
-  return ''
-}
-
-function validateForm(form: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'>): Record<string, string> {
-  const errs: Record<string, string> = {}
-  if (!form.fullName.trim()) errs.fullName = 'Required'
-  const mobileErr = validateMobile(form.mobile)
-  if (mobileErr) errs.mobile = mobileErr
-  const altMobileErr = validateMobile(form.alternateMobile ?? '')
-  if (altMobileErr) errs.alternateMobile = altMobileErr
-  if (!form.addressLine1.trim()) errs.addressLine1 = 'Required'
-  if (!form.addressLine2?.trim()) errs.addressLine2 = 'Required'
-  if (!form.landmark?.trim()) errs.landmark = 'Required'
-  if (!form.city.trim()) errs.city = 'Required'
-  if (!form.state.trim()) errs.state = 'Required'
-  if (!form.zipCode.trim()) errs.zipCode = 'Required'
-  else if (!/^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))) errs.zipCode = 'Enter 5-6 digits'
-  return errs
-}
-
-function AddressFormModal({ form, setForm, editing, saving, onSave, onClose }: {
-  form: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'>
-  setForm: React.Dispatch<React.SetStateAction<typeof form>>
-  editing: AddressData | null
-  saving: boolean
-  onSave: () => void
-  onClose: () => void
-}) {
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
-  const update = (k: keyof typeof form, v: string | boolean) => {
-    if (k === 'mobile' || k === 'alternateMobile') {
-      v = (v as string).replace(/\D/g, '').slice(0, 10)
-    }
-    if (k === 'zipCode') {
-      v = (v as string).replace(/\D/g, '').slice(0, 6)
-    }
-    setForm(prev => ({ ...prev, [k]: v }))
-    if (errors[k]) {
-      setErrors(prev => {
-        const next = { ...prev }
-        delete next[k]
-        return next
-      })
-    }
-  }
-
-  const handleSave = () => {
-    const errs = validateForm(form)
-    setErrors(errs)
-    if (Object.keys(errs).length === 0) onSave()
-  }
-
-  const isValid = Object.keys(errors).length === 0
-    && form.fullName.trim()
-    && /^\d{10}$/.test(form.mobile.replace(/\D/g, ''))
-    && form.addressLine1.trim()
-    && form.city.trim()
-    && form.state.trim()
-    && /^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.7)' }}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 30 }}
-        transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl"
-        style={{
-          background: '#ffffff',
-          border: '1px solid #E5E7EB',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.15), 0 0 60px rgba(203,32,45,0.04)',
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="sticky top-0 z-10 flex items-center justify-between p-5 border-b"
-          style={{
-            background: '#ffffff',
-            borderColor: '#E5E7EB',
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 400, delay: 0.15 }}
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, rgba(203,32,45,0.2), rgba(168,29,42,0.2))' }}
-            >
-              <FiMapPin size={16} style={{ color: '#A81D2A' }} />
-            </motion.div>
-            <h2 className="text-lg font-bold text-[#2D2118]">
-              {editing ? 'Edit Address' : 'Add New Address'}
-            </h2>
+      {/* Delete Confirm Modal */}
+      <div className={`modal-overlay${confirmOpen ? ' show' : ''}`} onClick={(e) => { if (e.target === e.currentTarget) { setConfirmOpen(false); setDeletingId(null) } }}>
+        <div className="modal confirm-modal">
+          <div className="warn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={onClose}
-            className="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer"
-            style={{ background: '#F3F4F6', color: '#6B7280' }}
-          >
-            <FiX size={18} />
-          </motion.button>
-        </motion.div>
+          <h3>Remove this address?</h3>
+          <p>This will permanently delete the saved address. You can't undo this.</p>
+          <div className="confirm-actions">
+            <button className="addr-btn addr-btn-ghost" onClick={() => { setConfirmOpen(false); setDeletingId(null) }}>Keep it</button>
+            <button className="addr-btn addr-btn-danger" onClick={handleDelete}>Delete</button>
+          </div>
+        </div>
+      </div>
 
-        <motion.div
-          className="p-5 space-y-4"
-          initial="hidden"
-          animate="visible"
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.03 } } }}
-        >
-          {/* Name + Mobile */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-            className="grid sm:grid-cols-2 gap-4"
-          >
-            <FormField label="Full Name" value={form.fullName} onChange={v => update('fullName', v)} placeholder="John Doe" error={errors.fullName} />
-            <FormField label="Mobile Number" value={form.mobile} onChange={v => update('mobile', v)} placeholder="9876543210" type="tel" error={errors.mobile} />
-          </motion.div>
-
-          {/* Alternate Mobile */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-            <FormField label="Alternate Mobile" value={form.alternateMobile || ''} onChange={v => update('alternateMobile', v)} placeholder="9876543210" type="tel" error={errors.alternateMobile} />
-          </motion.div>
-
-          {/* Address Line 1 */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-            <FormField label="Address Line 1" value={form.addressLine1} onChange={v => update('addressLine1', v)} placeholder="House/Flat No., Street, Area" error={errors.addressLine1} />
-          </motion.div>
-
-          {/* Address Line 2 */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-            <FormField label="Apartment / Suite" value={form.addressLine2 || ''} onChange={v => update('addressLine2', v)} placeholder="Building name, floor, etc." error={errors.addressLine2} />
-          </motion.div>
-
-          {/* Landmark */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-            <FormField label="Landmark" value={form.landmark || ''} onChange={v => update('landmark', v)} placeholder="Near school, mall, station..." error={errors.landmark} />
-          </motion.div>
-
-          {/* Country + State + City */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-            className="grid sm:grid-cols-3 gap-4"
-          >
-            <FormField label="Country" value={form.country} onChange={v => update('country', v)} placeholder="India" />
-            <FormField label="State" value={form.state} onChange={v => update('state', v)} placeholder="Karnataka" error={errors.state} />
-            <FormField label="City" value={form.city} onChange={v => update('city', v)} placeholder="Bangalore" error={errors.city} />
-          </motion.div>
-
-          {/* ZIP */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-            className="grid sm:grid-cols-2 gap-4"
-          >
-            <FormField label="ZIP Code" value={form.zipCode} onChange={v => update('zipCode', v)} placeholder="560001" error={errors.zipCode} />
-          </motion.div>
-
-          {/* Address Type */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-            <label className="block text-xs font-semibold mb-2 text-[#6B7280]">
-              Address Type
-            </label>
-            <div className="flex gap-2">
-              {(['Home', 'Office', 'Other'] as const).map(type => (
-                <motion.button
-                  key={type}
-                  whileHover={{ scale: 1.03, y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => update('addressType', type)}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer"
-                  style={{
-                    background: form.addressType === type
-                      ? 'linear-gradient(135deg, #CB202D, #A81D2A)'
-                      : '#F3F4F6',
-                    border: form.addressType === type
-                      ? '1px solid transparent'
-                      : '1px solid #E5E7EB',
-                    color: form.addressType === type ? 'white' : '#6B7280',
-                    boxShadow: form.addressType === type ? '0 4px 12px rgba(203,32,45,0.25)' : 'none',
-                  }}
-                >
-                  {typeIcons[type]}
-                  {type}
-                  {form.addressType === type && <FiCheck size={12} />}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Default checkbox */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-          >
-          <label className="flex items-center gap-3 cursor-pointer">
-            <div
-              className="w-5 h-5 rounded-md flex items-center justify-center transition-all"
-              style={{
-                background: form.isDefault ? 'linear-gradient(135deg, #CB202D, #A81D2A)' : '#ffffff',
-                border: form.isDefault ? '1px solid transparent' : '1px solid #D1D5DB',
-              }}
-              onClick={() => update('isDefault', !form.isDefault)}
-            >
-              {form.isDefault && <FiCheck size={12} className="text-white" />}
-            </div>
-            <span className="text-sm text-[#6B7280]">Set as default address</span>
-          </label>
-        </motion.div>
-        </motion.div>
-
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-center gap-3 p-5 border-t"
-          style={{ borderColor: '#E5E7EB' }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onClose}
-            className="flex-1 h-12 rounded-xl text-sm font-semibold transition-all cursor-pointer"
-            style={{
-              background: '#F3F4F6',
-              border: '1px solid #E5E7EB',
-              color: '#6B7280',
-            }}
-          >
-            Cancel
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleSave}
-            disabled={saving || !isValid}
-            className="flex-1 h-12 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
-            style={{
-              background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
-              color: 'white',
-              boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
-              opacity: saving || !isValid ? 0.5 : 1,
-            }}
-          >
-            {saving ? <FiLoader size={16} className="animate-spin" /> : <FiCheck size={16} />}
-            {saving ? 'Saving...' : 'Save Address'}
-          </motion.button>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  )
-}
-
-function FormField({ label, value, onChange, placeholder, type = 'text', error }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; error?: string
-}) {
-  return (
-    <div>
-      <label className="block text-xs font-semibold mb-1.5 text-[#6B7280]">
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full h-11 px-4 rounded-xl text-sm outline-none transition-all"
-        style={{
-          background: '#ffffff',
-          border: `1px solid ${error ? '#EF4444' : '#D1D5DB'}`,
-          color: '#2D2118',
-          boxShadow: error ? '0 0 12px rgba(239,68,68,0.1)' : 'none',
-        }}
-        onFocus={(e) => { e.target.style.borderColor = error ? '#EF4444' : '#CB202D'; e.target.style.boxShadow = error ? '0 0 20px rgba(239,68,68,0.12)' : '0 0 20px rgba(203,32,45,0.08)' }}
-        onBlur={(e) => { e.target.style.borderColor = error ? '#EF4444' : '#D1D5DB'; e.target.style.boxShadow = error ? '0 0 12px rgba(239,68,68,0.1)' : 'none' }}
-      />
-      {error && (
-        <motion.p
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-[10px] mt-1 flex items-center gap-1"
-          style={{ color: 'rgba(239,68,68,0.7)' }}
-        >
-          <FiAlertCircle size={10} /> {error}
-        </motion.p>
-      )}
+      {/* Toast */}
+      <div className={`addr-toast${toast ? ' show' : ''}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>{toast}</span>
+      </div>
     </div>
   )
 }

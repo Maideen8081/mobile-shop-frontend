@@ -245,6 +245,47 @@
   flex-shrink: 0;
 }
 
+/* ── Quick nav links near search ── */
+.pfn-quick-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+.pfn-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: var(--pf-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s, color .15s, box-shadow .15s;
+  border: 1px solid transparent;
+}
+.pfn-quick-link svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--pf-icon);
+  fill: none;
+  stroke-width: 2;
+  flex-shrink: 0;
+  transition: stroke .15s;
+}
+.pfn-quick-link:hover {
+  background: var(--pf-red-tint);
+  color: var(--pf-red);
+  border-color: rgba(203,32,45,.15);
+}
+.pfn-quick-link:hover svg {
+  stroke: var(--pf-red);
+}
+
 /* Circular icon button — BLACK icon, white bg */
 .pfn-icon-btn {
   position: relative;
@@ -483,7 +524,6 @@
   display: flex;
   align-items: center;
   gap: 0;
-  overflow: hidden;
 }
 
 /* Nav link items */
@@ -517,10 +557,11 @@
 .pfn-nav-link:hover::after,
 .pfn-nav-link.pfn-active::after { transform: scaleX(1); }
 .pfn-nav-link svg {
-  width: 13px; height: 13px;
+  width: 14px; height: 14px;
   stroke: rgba(255,255,255,.8); fill: none;
   transition: transform .2s, stroke .18s;
   stroke-width: 2.5;
+  flex-shrink: 0;
 }
 .pfn-nav-link:hover svg { transform: rotate(180deg); stroke: #fff; }
 
@@ -641,6 +682,8 @@
   .pfn-main-inner { padding: 0 18px; gap: 12px; }
   .pfn-mega-inner { padding: 0 18px; }
   .pfn-search-btn .pfn-btn-label { display: none; }
+  .pfn-quick-link span { display: none; }
+  .pfn-quick-link { padding: 7px 8px; }
 }
 @media (max-width: 768px) {
   .pfn-util-bar  { display: none; }
@@ -653,6 +696,7 @@
   .pfn-acc-chevron { display: none; }
   .pfn-icon-cluster { gap: 4px; }
   .pfn-icon-btn  { width: 40px; height: 40px; }
+  .pfn-quick-nav { display: none; }
 }
 
 /* Suppress old header so it doesn't interfere */

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
-import { cartService } from '../services/cartService'
+import { addToCartWithAuth } from '../utils/cartAuth'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import MobileWishlist from '../components/mobile/MobileWishlist'
 import { useIsMobile } from '../components/mobile/helpers'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import './CollectionPage.css'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
@@ -145,7 +146,7 @@ export default function WishlistPage() {
     const price = getProductPrice(product).current
     const image = getProductImage(product)
     try {
-      await cartService.addItem({
+      const added = await addToCartWithAuth({
         productId: id,
         variationId: 0,
         quantity: 1,
@@ -157,7 +158,7 @@ export default function WishlistPage() {
         ram: '',
         color: '',
       })
-      showToast(`${name} added to cart`, 'success')
+      if (added) showToast(`${name} added to cart`, 'success')
     } catch (err: any) {
       showToast(err?.message || 'Failed to add to cart', 'error')
     }
@@ -165,10 +166,20 @@ export default function WishlistPage() {
 
   const totalValue = products.reduce((sum, p) => sum + getProductPrice(p).current, 0)
 
+  if (loading) {
+    return (
+      <>
+        <SiteTopNav />
+        <DesktopPageLoader text="Loading your wishlist..." />
+        <EcommerceFooter compact />
+      </>
+    )
+  }
+
   return (
     <>
-       <div className="wx-page min-h-screen">
-          <SiteTopNav />
+      <SiteTopNav />
+      <div className="wx-page min-h-screen">
 
           <div className="wx-wishlist-head">
           <button className="wx-back-btn" onClick={() => navigate(-1)} aria-label="Go back">
@@ -185,12 +196,7 @@ export default function WishlistPage() {
         </div>
 
         <main className="wx-wishlist-main">
-          {loading ? (
-            <div className="wx-loading-box">
-              <div className="wx-spinner" />
-              <div className="wx-loading-text">Loading your wishlist...</div>
-            </div>
-          ) : products.length === 0 ? (
+          {products.length === 0 ? (
             <div className="wx-wishlist-empty">
               <div className="wx-wishlist-empty-icon">
                 <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
@@ -229,7 +235,7 @@ export default function WishlistPage() {
         </main>
       </div>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </>
   )
 }

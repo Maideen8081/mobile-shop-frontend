@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck } from 'react-icons/fi'
-import DoubleRingLoader from '../components/ui/DoubleRingLoader'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
@@ -297,15 +297,10 @@ void main() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans relative flex flex-col items-center selection:bg-[#CB202D]/30">
-        <div className="w-full max-w-[720px]">
-          <SiteTopNav />
-        </div>
-        <div className="flex-1 w-full max-w-[720px] flex flex-col items-center justify-center px-6">
-          <DoubleRingLoader size={48} />
-          <p className="text-sm text-[#6B7280] mt-4">Loading your cart…</p>
-        </div>
-      </div>
+      <>
+        <SiteTopNav />
+        <DesktopPageLoader text="Loading your cart..." />
+      </>
     )
   }
 
@@ -709,7 +704,7 @@ void main() {
       )}
 
       {/* Footer */}
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

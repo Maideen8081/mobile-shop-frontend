@@ -4,7 +4,8 @@ import { categoryService } from '../services/categoryService'
 import { productService } from '../services/productService'
 import type { Category } from '../services/categoryService'
 import { productsData } from '../data/productData'
-import StorefrontNavbar from '../components/ecommerce/StorefrontNavbar'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import SectionLoader from '../components/ecommerce/SectionLoader'
@@ -303,9 +304,9 @@ const [countdown, setCountdown] = useState({ hours: '02', mins: '40', secs: '28'
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#CB202D]/30 selection:text-[#A81D2A]">
+      <SiteTopNav />
       {/* ─── HERO CAROUSEL (Video Background) ─── */}
-      <section className="hero-section relative h-screen min-h-[800px] overflow-hidden bg-black" style={{ marginTop: 0, paddingTop: 0 }}>
-        <StorefrontNavbar activeLabel="Home" absolute />
+      <section className="hero-section relative h-screen min-h-[800px] overflow-hidden bg-black">
         {heroSlides.map((slide, i) => (
           <div
             key={i}

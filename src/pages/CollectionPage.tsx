@@ -5,7 +5,8 @@ import { productService } from '../services/productService'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
-import { cartService } from '../services/cartService'
+import { addToCartWithAuth } from '../utils/cartAuth'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import './CollectionPage.css'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
@@ -327,7 +328,7 @@ export default function CollectionPage() {
     const price = getProductPrice(product).current
     const image = getProductImage(product)
     const name = getProductName(product)
-    await cartService.addItem({
+    const added = await addToCartWithAuth({
       productId: product.id,
       variationId: 0,
       quantity: 1,
@@ -339,7 +340,7 @@ export default function CollectionPage() {
       ram: '',
       color: '',
     })
-    showToast(`${name} added to cart`, 'success')
+    if (added) showToast(`${name} added to cart`, 'success')
   }
 
    const scrollToGrid = () => {
@@ -354,10 +355,19 @@ export default function CollectionPage() {
    const title = categoryName === 'all' || !categoryName ? 'All Products' : categoryName
    const shownCount = allProducts.length
 
+   if (loading) {
+     return (
+       <>
+         <SiteTopNav />
+         <DesktopPageLoader text="Loading products..." />
+       </>
+     )
+   }
+
    return (
        <>
+       <SiteTopNav />
        <div className="wx-page">
-         <SiteTopNav />
 
       <div className="wx-page-head">
         <div className="wx-breadcrumb">
@@ -512,12 +522,7 @@ export default function CollectionPage() {
           </div>
 
           <div ref={gridRef}>
-            {loading ? (
-              <div className="wx-loading-box">
-                <div className="wx-spinner" />
-                <div className="wx-loading-text">Loading products...</div>
-              </div>
-            ) : allProducts.length === 0 ? (
+            {allProducts.length === 0 ? (
               <div className="wx-empty">
                 <h3>No products found</h3>
                 <p>Try adjusting your filters or search</p>
@@ -547,7 +552,7 @@ export default function CollectionPage() {
       </div>
       </div>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </>
   )
 }

@@ -3,11 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiLoader } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import { useIsMobile } from '../components/mobile/helpers'
-import SiteTopNav from '../components/ecommerce/SiteTopNav'
-import '../components/ecommerce/SiteTopNav.css'
-import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { repairService, type RepairTicket } from '../services/repairService'
+import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import '../components/ecommerce/SiteTopNav.css'
 import { BRAND, C } from '../components/mobile/theme'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -114,8 +113,8 @@ function StatusBadge({ status }: { status: string }) {
   const badge = STATUS_BADGES[status] || { label: status, color: '#6b7280' }
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase"
-      style={{ background: `${badge.color}15`, color: badge.color }}
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase"
+      style={{ background: `${badge.color}12`, color: badge.color, border: `1px solid ${badge.color}20` }}
     >
       <span className="w-1.5 h-1.5 rounded-full" style={{ background: badge.color }} />
       {badge.label}
@@ -129,7 +128,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   return (
     <span
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider uppercase"
-      style={{ background: bg, color }}
+      style={{ background: bg, color, border: `1px solid ${color}15` }}
     >
       {priority}
     </span>
@@ -141,11 +140,10 @@ function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
   const isCancelled = ticket.status === 'Cancelled'
 
   return (
-    <section className="p-5 rounded-xl" style={{
+    <section className="p-6 rounded-2xl" style={{
       background: 'rgba(255,255,255,0.7)',
       backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(168,29,42,0.05)',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
+      border: '1px solid rgba(229,231,235,0.8)',
     }}>
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         {PIPELINE_STEPS.map((s, idx) => {
@@ -155,31 +153,31 @@ function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
           return (
             <div key={s.key} className="flex flex-col items-center text-center group cursor-default flex-1">
               <div
-                className="w-14 h-14 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-2.5 transition-all duration-500"
                 style={{
-                  background: isActive ? 'rgba(203,32,45,0.2)' : 'rgba(237,238,239,0.8)',
-                  border: `2px solid ${isActive ? '#A81D2A' : 'rgba(185,203,185,0.3)'}`,
-                  boxShadow: isActive ? '0 0 15px rgba(203,32,45,0.2)' : 'none',
+                  background: isActive ? (isPast ? 'rgba(5,150,105,0.12)' : 'rgba(203,32,45,0.12)') : 'rgba(241,245,249,0.8)',
+                  border: `2px solid ${isActive ? (isPast ? '#059669' : '#A81D2A') : 'rgba(229,231,235,0.8)'}`,
+                  boxShadow: isCurrent ? '0 0 0 4px rgba(203,32,45,0.08)' : 'none',
                 }}
               >
                 {isPast ? (
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#A81D2A', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <span className="material-symbols-outlined text-lg" style={{ color: '#059669', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 ) : isCurrent ? (
                   <div className="relative">
-                    <div className="w-4 h-4 rounded-full" style={{ background: '#CB202D' }} />
-                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#CB202D] animate-ping opacity-50" />
+                    <div className="w-3.5 h-3.5 rounded-full" style={{ background: '#CB202D' }} />
+                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#CB202D] animate-ping opacity-40" />
                   </div>
                 ) : (
-                  <span className="material-symbols-outlined text-xl" style={{ color: isCancelled && idx === 0 ? '#6b7280' : isActive ? '#A81D2A' : 'rgba(59,75,61,0.3)' }}>{s.icon}</span>
+                  <span className="material-symbols-outlined text-lg" style={{ color: isCancelled && idx === 0 ? BRAND.muted : isActive ? BRAND.primaryDark : 'rgba(148,163,184,0.5)' }}>{s.icon}</span>
                 )}
               </div>
-              <span className="text-xs font-bold text-center" style={{
-                color: isActive ? '#191c1d' : isCancelled ? 'rgba(107,114,128,0.5)' : 'rgba(59,75,61,0.4)',
+              <span className="text-[10px] font-bold text-center leading-tight" style={{
+                color: isActive ? BRAND.ink : isCancelled ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.6)',
               }}>{s.label}</span>
-              <span className="text-[10px] mt-0.5" style={{
-                color: isPast ? '#A81D2A' : isCurrent ? '#A81D2A' : isCancelled ? 'rgba(107,114,128,0.4)' : 'rgba(185,203,185,0.6)',
+              <span className="text-[9px] mt-0.5 font-medium" style={{
+                color: isPast ? '#059669' : isCurrent ? BRAND.primary : isCancelled ? 'rgba(148,163,184,0.4)' : 'rgba(148,163,184,0.5)',
               }}>
-                {isPast ? 'Completed' : isCurrent ? 'In Progress' : isCancelled ? 'Cancelled' : 'Queue'}
+                {isPast ? 'Done' : isCurrent ? 'Current' : isCancelled ? 'Cancelled' : 'Pending'}
               </span>
             </div>
           )
@@ -193,6 +191,7 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
   const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
   const isDelivered = ticket.status === 'Delivered'
   const progressPct = isDelivered ? 100 : stepIdx >= 0 ? Math.round((stepIdx / (PIPELINE_STEPS.length - 1)) * 100) : 0
+  const navigate = useNavigate()
 
   return (
     <>
@@ -249,74 +248,61 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
       </motion.div>
 
       {/* Desktop card */}
-      <motion.div
-        onClick={() => onSelect(ticket)}
-        whileTap={{ scale: 0.98 }}
-        className={`hidden md:flex ${C.card} p-5 gap-5 cursor-pointer active:scale-[0.98] transition-all`}
+      <div
+        onClick={() => navigate(`/my-repairs/${ticket.id}`)}
+        className={`hidden md:grid ticket-card ${isDelivered ? 'st-completed' : progressPct <= 0 ? 'st-pending' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'st-rejected' : 'st-progress'}`}
       >
-        <div className={`w-44 h-36 rounded-xl overflow-hidden shrink-0 relative ${C.card.replace('bg-white', '')}`} style={{ background: 'rgba(237,238,239,0.5)' }}>
-          <div className="w-full h-full flex items-center justify-center text-5xl opacity-60">
-            {ticket.images && ticket.images.length > 0 ? (
-              <img
-                src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
-                alt={ticket.deviceModel}
-                className="w-full h-full object-cover"
-                onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '📱' }}
-              />
-            ) : (
-              <span>📱</span>
-            )}
+        <div className="device-thumb">
+          {ticket.images && ticket.images.length > 0 ? (
+            <img
+              src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
+              alt={ticket.deviceModel}
+              className="w-full h-full object-contain p-3"
+              style={{ opacity: 0.85 }}
+              loading="lazy"
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:40px;height:40px;color:var(--red-dark);opacity:.85"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 5.2h4" stroke-linecap="round"/></svg>' }}
+            />
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 40, height: 40, color: '#9C0F22', opacity: 0.85 }}><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M10 5.2h4" strokeLinecap="round" /></svg>
+          )}
+          <span className={`state-tag ${isDelivered ? 'completed' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'rejected' : progressPct <= 0 ? 'pending' : 'active'}`}>
+            <span className="d" />
+            {isDelivered ? 'Delivered' : ticket.status === 'Rejected' ? 'Rejected' : ticket.status === 'Cancelled' ? 'Cancelled' : progressPct <= 0 ? 'Queued' : 'Active'}
+          </span>
+        </div>
+
+        <div className="ticket-mid">
+          <div className="ticket-topline">
+            <span className="ticket-id-label">Ticket</span>
+            <span className="ticket-id mono">{ticket.repairId}</span>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#A81D2A]/30 to-transparent" />
-          <div className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full flex items-center gap-1.5" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: isDelivered ? BRAND.primary : BRAND.primaryDark }} />
-            <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.primaryDark }}>{isDelivered ? 'Completed' : 'Active'}</span>
+          <h3 className="device-name">{ticket.deviceBrand} {ticket.deviceModel}</h3>
+          <div className="ticket-date">Logged {formatDate(ticket.createdAt)}</div>
+          <div className="vitals-label"><span>Hardware Integrity Protocol</span></div>
+          <div className="vitals-track">
+            <div className="vitals-fill" style={{ width: `${progressPct}%` }} />
+            <span className="vitals-pct">{progressPct >= 100 ? '100%' : stepIdx < 0 ? (ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'Halted' : 'Awaiting') : `${progressPct}%`}</span>
+          </div>
+          <div className="tag-row">
+            <span className="tag">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 12, height: 12 }}><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M9 22v-4h6v4" /></svg>
+              {ticket.issueCategory}
+            </span>
+            <span className={`tag priority-${ticket.priority === 'Urgent' ? 'critical' : ticket.priority.toLowerCase()}`}>{ticket.priority}</span>
+            <span className="tag price">{ticket.estimatedCost > 0 ? formatPrice(ticket.estimatedCost) : 'Quote pending'}</span>
           </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start gap-2 mb-2">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Ticket</span>
-                <span className="text-sm font-bold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</span>
-              </div>
-              <h3 className="text-base font-bold truncate" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</h3>
-              <span className="text-[11px]" style={{ color: BRAND.muted }}>{ticket.deviceColor} | {formatDate(ticket.createdAt)}</span>
-            </div>
-            <StatusBadge status={ticket.status} />
-          </div>
-
-          <div className="mb-3">
-            <div className="flex justify-between text-[10px] mb-1" style={{ color: BRAND.muted }}>
-              <span>Hardware Integrity Protocol</span>
-              <span style={{ color: progressPct >= 100 ? BRAND.primary : BRAND.primaryDark }}>{progressPct}%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
-              <div className="h-full rounded-full transition-all duration-700" style={{
-                width: `${progressPct}%`,
-                background: progressPct >= 100 ? 'linear-gradient(90deg, #CB202D, #CB202D)' : 'linear-gradient(90deg, #CB202D, #A81D2A)',
-                boxShadow: '0 0 8px rgba(168,29,42,0.3)',
-              }} />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 text-[10px]">
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: 'rgba(237,238,239,0.6)' }}>
-              <span className="material-symbols-outlined text-xs" style={{ color: BRAND.primaryDark }}>build_circle</span>
-              <span style={{ color: 'rgba(59,75,61,0.8)' }}>{ticket.issueCategory}</span>
-            </div>
-            <PriorityBadge priority={ticket.priority} />
-            <div className="font-bold" style={{ color: BRAND.primaryDark }}>{formatPrice(ticket.estimatedCost)}</div>
-          </div>
+        <div className="ticket-right">
+          <span className={`status-pill ${isDelivered ? 'completed' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'rejected' : progressPct <= 0 ? 'pending' : 'progress'}`}>
+            <span className="d" />
+            {STATUS_BADGES[ticket.status]?.label || ticket.status}
+          </span>
+          <span className="chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}><path d="M9 6l6 6-6 6" /></svg>
+          </span>
         </div>
-
-        <div className="flex flex-col items-center justify-center">
-          <motion.div whileHover={{ x: 3 }} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
-            <span className="material-symbols-outlined text-sm" style={{ color: BRAND.primaryDark }}>chevron_right</span>
-          </motion.div>
-        </div>
-      </motion.div>
+      </div>
     </>
   )
 }
@@ -372,13 +358,13 @@ function ImageGallery({ images }: { images: string[] }) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-3 gap-2.5">
       {resolvedImages.slice(0, 6).map((url, idx) => (
-        <motion.button key={idx} whileHover={{ scale: 1.05 }}
+        <motion.button key={idx} whileHover={{ scale: 1.03 }}
           onClick={() => setSelectedIndex(idx)}
-          className="aspect-square rounded-lg overflow-hidden cursor-pointer group relative"
-          style={{ background: 'rgba(237,238,239,0.3)', border: '1px solid rgba(185,203,185,0.2)' }}>
-          <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover"
+          className="aspect-square rounded-xl overflow-hidden cursor-pointer group relative"
+          style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
+          <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
           {idx === 5 && resolvedImages.length > 6 && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -891,8 +877,8 @@ function RepairDetailModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto pt-20 pb-20 px-4"
-      style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto pt-16 pb-16 px-4"
+      style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <motion.div
@@ -900,41 +886,47 @@ function RepairDetailModal({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 30, scale: 0.97 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-3xl rounded-2xl overflow-hidden relative"
+        className="w-full max-w-4xl rounded-2xl overflow-hidden relative"
         style={{
-          background: 'rgba(255,255,255,0.9)',
+          background: 'rgba(255,255,255,0.92)',
           backdropFilter: 'blur(40px)',
           border: '1px solid rgba(255,255,255,0.7)',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+          boxShadow: '0 25px 80px rgba(0,0,0,0.2)',
         }}
       >
-        <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-full flex items-center justify-center z-10 cursor-pointer" style={{ background: 'rgba(255,255,255,0.7)' }}>
-          <span className="material-symbols-outlined text-base text-[#3b4b3d]">close</span>
+        <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-full flex items-center justify-center z-10 cursor-pointer transition-all duration-200 hover:bg-black/5" style={{ background: 'rgba(255,255,255,0.7)' }}>
+          <span className="material-symbols-outlined text-base" style={{ color: BRAND.muted }}>close</span>
         </button>
 
-        <div className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+        {/* Modal Header */}
+        <div className="px-8 pt-8 pb-6" style={{ borderBottom: '1px solid rgba(229,231,235,0.5)' }}>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Ticket</span>
-                <span className="text-base font-extrabold" style={{ color: '#A81D2A' }}>{ticket.repairId}</span>
+              <div className="flex items-center gap-2.5 mb-1">
+                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: BRAND.muted }}>Ticket</span>
+                <span className="text-xl font-extrabold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</span>
               </div>
-              <p className="text-xs" style={{ color: 'rgba(59,75,61,0.6)' }}>Created on {formatDate(ticket.createdAt)}</p>
+              <p className="text-sm" style={{ color: BRAND.muted }}>{ticket.deviceBrand} {ticket.deviceModel} · Created {formatDate(ticket.createdAt)}</p>
             </div>
             <div className="flex items-center gap-2">
               <StatusBadge status={ticket.status} />
               <PriorityBadge priority={ticket.priority} />
             </div>
           </div>
+        </div>
 
-          <div className="mb-6">
+        <div className="p-8">
+          <div className="mb-8">
             <PipelineProgress ticket={ticket} />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Customer Information</h3>
-              <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">person</span>
+                Customer Information
+              </h3>
+              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <InfoRow label="Name" value={ticket.customerName} />
                 <InfoRow label="Mobile" value={ticket.customerMobile} />
                 <InfoRow label="Email" value={ticket.customerEmail} />
@@ -942,8 +934,11 @@ function RepairDetailModal({
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Device Information</h3>
-              <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">devices</span>
+                Device Information
+              </h3>
+              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <InfoRow label="Category" value={ticket.deviceCategory} />
                 <InfoRow label="Brand" value={ticket.deviceBrand} />
                 <InfoRow label="Model" value={ticket.deviceModel} />
@@ -955,14 +950,17 @@ function RepairDetailModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Issue Details</h3>
-              <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">build</span>
+                Issue Details
+              </h3>
+              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <InfoRow label="Category" value={ticket.issueCategory} />
                 <div>
-                  <p className="text-[9px] tracking-wider font-bold uppercase mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Description</p>
-                  <p className="text-sm text-[#191c1d] leading-relaxed">{ticket.description}</p>
+                  <p className="text-[9px] tracking-wider font-bold uppercase mb-1" style={{ color: BRAND.muted }}>Description</p>
+                  <p className="text-sm leading-relaxed" style={{ color: BRAND.ink }}>{ticket.description}</p>
                 </div>
                 <InfoRow label="Priority" value={ticket.priority} />
                 <InfoRow label="Accessories" value={ticket.accessories || 'None'} />
@@ -970,8 +968,11 @@ function RepairDetailModal({
               </div>
             </div>
             <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase" style={{ color: '#A81D2A' }}>Repair Estimation</h3>
-              <div className="space-y-2 p-3 rounded-lg" style={{ background: 'rgba(237,238,239,0.4)' }}>
+              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">receipt_long</span>
+                Repair Estimation
+              </h3>
+              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <InfoRow label="Estimated Cost" value={formatPrice(ticket.estimatedCost)} highlight />
                 <InfoRow label="Est. Completion" value={ticket.estimatedDays ? `${ticket.estimatedDays} day${ticket.estimatedDays > 1 ? 's' : ''}` : '—'} />
                 <InfoRow label="Technician" value={ticket.technicianId ? `Technician #${ticket.technicianId}` : 'Not assigned'} />
@@ -980,77 +981,85 @@ function RepairDetailModal({
           </div>
 
           {needsApproval && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
-              style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.15)' }}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 rounded-2xl"
+              style={{ background: 'rgba(203,32,45,0.04)', border: '1.5px solid rgba(203,32,45,0.12)' }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="material-symbols-outlined text-xl" style={{ color: '#CB202D' }}>handshake</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#CB202D' }}>handshake</span>
+                </div>
                 <div>
-                  <h3 className="text-sm font-bold text-[#191c1d]">Repair Estimate — Awaiting Your Approval</h3>
-                  <p className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>Please review the diagnosis and estimated cost below.</p>
+                  <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
+                  <p className="text-[11px]" style={{ color: BRAND.muted }}>Please review the diagnosis and estimated cost below.</p>
                 </div>
               </div>
-              <div className="space-y-3 p-4 rounded-lg mb-4" style={{ background: 'rgba(255,255,255,0.6)' }}>
+              <div className="space-y-3 p-4 rounded-xl mb-4" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Repair Reason</p>
-                  <p className="text-sm font-medium text-[#191c1d]">{ticket.repairReason || 'No diagnosis provided'}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: BRAND.muted }}>Repair Reason</p>
+                  <p className="text-sm font-medium" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
                 </div>
-                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
-                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Estimated Charge</p>
+                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(229,231,235,0.5)' }}>
+                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
                   <p className="text-xl font-extrabold" style={{ color: '#CB202D' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
                   disabled={approving}
-                  className="flex-1 h-11 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
-                >{approving ? 'Processing...' : '✅ Approve & Start Repair'}</button>
+                  className="flex-1 h-12 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer hover:shadow-lg"
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)', boxShadow: '0 6px 20px rgba(203,32,45,0.3)' }}
+                >{approving ? 'Processing...' : 'Approve & Start Repair'}</button>
                 <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
                   disabled={approving}
-                  className="flex-1 h-11 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
-                >{approving ? 'Processing...' : '❌ Decline'}</button>
+                  className="flex-1 h-12 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#EF4444' }}
+                >{approving ? 'Processing...' : 'Decline'}</button>
               </div>
             </motion.div>
           )}
 
           {ticket.images && ticket.images.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-[10px] font-bold uppercase mb-3" style={{ color: '#A81D2A' }}>Device Photos</h3>
+            <div className="mb-8">
+              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">photo_camera</span>
+                Device Photos
+              </h3>
               <ImageGallery images={ticket.images} />
             </div>
           )}
 
-          <div className="mb-6">
-            <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Conversation with Admin</h3>
-            <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
+          <div className="mb-8">
+            <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+              <span className="material-symbols-outlined text-sm">chat</span>
+              Conversation with Admin
+            </h3>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
               {ticket.notes && ticket.notes.length > 0 ? (
-                <div className="space-y-3 max-h-48 overflow-y-auto mb-3 pr-1">
+                <div className="space-y-3 max-h-52 overflow-y-auto mb-4 pr-1">
                   {ticket.notes.map((note) => (
                     <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[85%] rounded-xl px-3 py-2 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                        style={{ background: note.is_admin ? 'rgba(168,29,42,0.1)' : '#A81D2A', color: note.is_admin ? '#191c1d' : '#ffffff' }}
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
+                        style={{ background: note.is_admin ? 'rgba(255,255,255,0.9)' : 'linear-gradient(135deg, #A81D2A, #CB202D)', color: note.is_admin ? BRAND.ink : '#ffffff', border: note.is_admin ? '1px solid rgba(229,231,235,0.5)' : 'none' }}
                       >
-                        <p className="text-xs font-semibold mb-0.5 opacity-70">{note.is_admin ? 'Admin' : 'You'}</p>
+                        <p className="text-[10px] font-bold mb-0.5 opacity-60">{note.is_admin ? 'Admin' : 'You'}</p>
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
-                        <p className="text-[10px] mt-1 opacity-50 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
+                        <p className="text-[9px] mt-1.5 opacity-40 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-center py-3" style={{ color: 'rgba(59,75,61,0.5)' }}>No messages yet. Send a message to the admin team.</p>
+                <p className="text-xs text-center py-4" style={{ color: BRAND.muted }}>No messages yet. Send a message to the admin team.</p>
               )}
               <div className="flex gap-2">
                 <input value={message} onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Type your message..." className="flex-1 h-10 px-3 rounded-lg text-xs outline-none"
-                  style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                  placeholder="Type your message..." className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(203,32,45,0.1)]"
+                  style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                 />
                 <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all disabled:opacity-40 cursor-pointer"
-                  style={{ background: '#A81D2A' }}
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white transition-all duration-200 disabled:opacity-40 cursor-pointer hover:shadow-lg active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, #A81D2A, #CB202D)', boxShadow: '0 4px 12px rgba(203,32,45,0.25)' }}
                 >
                   {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
                 </button>
@@ -1059,50 +1068,52 @@ function RepairDetailModal({
           </div>
 
           {canSendCourier && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
-              style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 rounded-2xl"
+              style={{ background: 'rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.15)' }}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="material-symbols-outlined text-xl" style={{ color: '#6366f1' }}>local_shipping</span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.1)' }}>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#6366f1' }}>local_shipping</span>
+                </div>
                 <div>
-                  <h3 className="text-sm font-bold text-[#191c1d]">Send Device via Courier</h3>
-                  <p className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>Your repair has been accepted. Please send the device and share courier details.</p>
+                  <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Send Device via Courier</h3>
+                  <p className="text-[11px]" style={{ color: BRAND.muted }}>Your repair has been accepted. Please send the device and share courier details.</p>
                 </div>
               </div>
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Courier Name *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Courier Name *</label>
                     <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="e.g. DTDC, Blue Dart"
-                      className="w-full h-9 px-3 rounded-lg text-xs outline-none"
-                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                      className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
+                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Tracking Number *</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Tracking Number *</label>
                     <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="e.g. DTDC123456789"
-                      className="w-full h-9 px-3 rounded-lg text-xs outline-none"
-                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                      className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
+                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Shipment Date</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Shipment Date</label>
                   <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg text-xs outline-none"
-                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
+                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(59,75,61,0.5)' }}>Additional Notes</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Additional Notes</label>
                   <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Any special instructions for the courier..."
-                    className="w-full px-3 py-2 rounded-lg text-xs outline-none resize-none"
-                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(185,203,185,0.3)', color: '#191c1d' }}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none resize-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
+                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                   />
                 </div>
                 <button onClick={handleSendCourier} disabled={submittingCourier}
-                  className="w-full py-2.5 rounded-lg text-sm font-bold text-white transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50"
-                  style={{ background: '#6366f1' }}
+                  className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-50 hover:shadow-lg"
+                  style={{ background: '#6366f1', boxShadow: '0 6px 20px rgba(99,102,241,0.25)' }}
                 >
                   {submittingCourier ? 'Submitting...' : 'Submit Courier Details'}
                 </button>
@@ -1110,57 +1121,58 @@ function RepairDetailModal({
             </motion.div>
           )}
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-5 rounded-xl"
-            style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}
-          >
-            {courierSent && ticket.courier && (
-              <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
-                  <h3 className="text-sm font-bold text-[#191c1d]">Courier Sent</h3>
+          {courierSent && ticket.courier && (
+            <div className="mb-8 p-6 rounded-2xl" style={{ background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.15)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34,197,94,0.1)' }}>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#22c55e' }}>check_circle</span>
                 </div>
-                <div className="space-y-1">
-                  <InfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
-                  <InfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
-                  <InfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
-                  {ticket.courier.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
-                </div>
+                <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Courier Sent</h3>
               </div>
-            )}
+              <div className="space-y-1.5 ml-[52px]">
+                <InfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
+                <InfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
+                <InfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
+                {ticket.courier.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
+              </div>
+            </div>
+          )}
 
-            {ticket.statusHistory && ticket.statusHistory.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3" style={{ color: '#A81D2A' }}>Status History</h3>
-                <div className="rounded-xl p-4" style={{ background: 'rgba(237,238,239,0.4)', border: '1px solid rgba(185,203,185,0.2)' }}>
-                  <div className="relative">
-                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.15)' }} />
-                    <div className="space-y-0">
-                      {ticket.statusHistory.map((h, idx) => {
-                        const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
-                        return (
-                          <div key={h.id || idx} className="flex items-start gap-3 py-2">
-                            <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}20` }}>
-                              <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
-                                <span className="text-[10px]" style={{ color: 'rgba(59,75,61,0.4)' }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
-                              </div>
-                              {h.notes && <p className="text-[11px] mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>{h.notes}</p>}
-                            </div>
+          {ticket.statusHistory && ticket.statusHistory.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
+                <span className="material-symbols-outlined text-sm">history</span>
+                Status History
+              </h3>
+              <div className="rounded-2xl p-5" style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
+                <div className="relative">
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(203,32,45,0.1)' }} />
+                  <div className="space-y-0">
+                    {ticket.statusHistory.map((h, idx) => {
+                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
+                      return (
+                        <div key={h.id || idx} className="flex items-start gap-3 py-2.5">
+                          <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}15` }}>
+                            <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
                           </div>
-                        )
-                      })}
-                    </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
+                              <span className="text-[10px]" style={{ color: BRAND.muted }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
+                            </div>
+                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: BRAND.muted }}>{h.notes}</p>}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
-            )}
-          </motion.div>
+            </div>
+          )}
         </div>
 
-        <div className="hidden lg:block"><EcommerceFooter /></div>
+      <div className="lg:hidden"><EcommerceFooter compact /></div>
       </motion.div>
     </motion.div>
   )
@@ -1197,9 +1209,9 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
 
 function InfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex justify-between items-start gap-2">
-      <span className="text-[9px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: 'rgba(59,75,61,0.5)' }}>{label}</span>
-      <span className="text-sm text-right font-medium" style={{ color: highlight ? '#006d37' : '#191c1d', fontWeight: highlight ? 700 : 500 }}>{value || '—'}</span>
+    <div className="flex justify-between items-start gap-3">
+      <span className="text-[10px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: BRAND.muted }}>{label}</span>
+      <span className="text-[13px] text-right font-semibold" style={{ color: highlight ? '#059669' : BRAND.ink, fontWeight: highlight ? 700 : 600 }}>{value || '—'}</span>
     </div>
   )
 }
@@ -1292,16 +1304,174 @@ export default function CustomerRepairTracking() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-[#f9f9f9]" style={{ background: 'linear-gradient(180deg, #fefefe 0%, #f8f9fa 100%)' }}>
+      <div className="min-h-screen" style={{ background: '#FCFAFA' }}>
       <style>{`
         @keyframes pulse-mint {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: .7; transform: scale(0.95); }
         }
+        .pulse-rail {
+          height: 5px; width: 100%;
+          background: linear-gradient(90deg, #9C0F22, #F03049 45%, #D2172E 55%, #9C0F22);
+          background-size: 220% 100%;
+          animation: railmove 6s ease-in-out infinite;
+          position: sticky; top: 0; z-index: 50;
+        }
+        @keyframes railmove {
+          0%, 100% { background-position: 0% 0; }
+          50% { background-position: 100% 0; }
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .shell { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+        header.hero {
+          position: relative; padding: 56px 0 40px; overflow: hidden;
+          border-bottom: 1px solid #EAE5E6;
+          background: radial-gradient(560px 260px at 88% -10%, #FCEDEE 0%, transparent 70%), #FFFFFF;
+        }
+        .hero-inner { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+        .eyebrow {
+          display: inline-flex; align-items: center; gap: 8px;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 12.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase;
+          color: #9C0F22; margin-bottom: 14px;
+        }
+        .eyebrow .dot {
+          width: 7px; height: 7px; border-radius: 50%; background: #D2172E;
+          box-shadow: 0 0 0 4px rgba(210,23,46,0.14);
+          animation: blip 1.8s ease-in-out infinite;
+        }
+        @keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+        h1.title {
+          font-family: 'Big Shoulders Display', sans-serif;
+          font-weight: 800; font-size: clamp(40px, 6vw, 68px);
+          line-height: 0.94; letter-spacing: -0.01em; margin: 0; text-transform: uppercase;
+        }
+        h1.title em { font-style: normal; color: #D2172E; }
+        .subline { margin: 14px 0 0; max-width: 460px; color: #4A4750; font-size: 15px; line-height: 1.55; }
+        .stat-chip-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .stat-chip {
+          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 12px;
+          padding: 12px 18px; min-width: 128px;
+          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+        }
+        .stat-chip .label { font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #837E88; font-weight: 600; margin-bottom: 4px; }
+        .stat-chip .num { font-family: 'Big Shoulders Display', sans-serif; font-size: 30px; font-weight: 800; color: #17151A; line-height: 1; }
+        .stat-chip.accent .num { color: #D2172E; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 36px 0 28px; }
+        .stat-card {
+          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px;
+          padding: 22px 22px 20px;
+          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+          position: relative; overflow: hidden;
+        }
+        .stat-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #D2172E; opacity: 0; transition: opacity .2s; }
+        .stat-card:hover::before { opacity: 1; }
+        .stat-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FCEDEE; color: #D2172E; }
+        .stat-card .value { font-family: 'Big Shoulders Display', sans-serif; font-size: 38px; font-weight: 800; margin-top: 14px; line-height: 1; }
+        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #837E88; }
+        .stat-card.total .value { color: #17151A; }
+        .stat-card.active .value { color: #D2172E; }
+        .stat-card.completed .value { color: #1C8A4F; }
+        .stat-card.rejected .value { color: #4A4750; }
+        .control-panel { background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px; box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18); padding: 18px 20px; margin-bottom: 28px; }
+        .search-row { display: flex; align-items: center; gap: 10px; background: #FCFAFA; border: 1px solid #EAE5E6; border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; }
+        .search-row input { border: none; background: transparent; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; width: 100%; color: #17151A; }
+        .search-row input::placeholder { color: #B2ADB4; }
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-pill { border: 1px solid #EAE5E6; background: #FFFFFF; color: #4A4750; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all .15s ease; }
+        .filter-pill:hover { border-color: #D2172E; color: #D2172E; }
+        .filter-pill.is-active { background: #D2172E; border-color: #D2172E; color: #fff; }
+        .ticket-list { display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
+        .ticket-card {
+          display: grid; grid-template-columns: 104px 1fr auto; gap: 22px; align-items: center;
+          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px; padding: 18px 20px;
+          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+          cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+        .ticket-card:hover { transform: translateY(-2px); border-color: #EFC7CC; box-shadow: 0 4px 10px rgba(23,21,26,0.05), 0 20px 38px -18px rgba(210,23,46,0.28); }
+        .device-thumb {
+          width: 104px; height: 104px; border-radius: 12px;
+          background: linear-gradient(155deg, #FCEDEE, #F7DEE1 70%);
+          display: flex; align-items: center; justify-content: center;
+          position: relative; overflow: hidden; flex-shrink: 0;
+        }
+        .device-thumb .state-tag {
+          position: absolute; left: 8px; bottom: 8px;
+          font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+          padding: 3px 8px; border-radius: 999px;
+          background: rgba(23,21,26,0.72); color: #fff;
+          display: flex; align-items: center; gap: 4px;
+        }
+        .device-thumb .state-tag .d { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+        .device-thumb .state-tag.active .d { background: #FF6B7C; animation: blip 1.6s infinite; }
+        .device-thumb .state-tag.completed .d { background: #6FE39A; }
+        .device-thumb .state-tag.rejected .d { background: #C9C4CB; }
+        .device-thumb .state-tag.pending .d { background: #FFD28A; }
+        .ticket-mid { min-width: 0; }
+        .ticket-topline { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
+        .ticket-id-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #837E88; }
+        .ticket-id { font-size: 13px; font-weight: 700; color: #9C0F22; }
+        .device-name { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 22px; margin: 0 0 4px; text-transform: uppercase; letter-spacing: .01em; }
+        .ticket-date { font-size: 12.5px; color: #837E88; margin-bottom: 12px; }
+        .vitals-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #837E88; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+        .vitals-track {
+          position: relative; height: 26px; border-radius: 6px;
+          background-color: #F2EEEF;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23D7D2D5' stroke-width='2'/></svg>");
+          background-repeat: repeat-x; background-position: left center; overflow: hidden;
+        }
+        .vitals-fill {
+          position: absolute; inset: 0; height: 100%;
+          background-color: #FCEDEE;
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23D2172E' stroke-width='2.4'/></svg>");
+          background-repeat: repeat-x; background-position: left center; overflow: hidden;
+        }
+        .ticket-card.st-completed .vitals-fill { background-color: #E5F4EB; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%231C8A4F' stroke-width='2.4'/></svg>"); }
+        .ticket-card.st-rejected .vitals-fill { background-color: #EFEDEE; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23837E88' stroke-width='2.4'/></svg>"); }
+        .vitals-pct { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: #4A4750; }
+        .tag-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+        .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 8px; border: 1px solid #EAE5E6; color: #4A4750; }
+        .tag.priority-low { color: #4B8A63; border-color: #CFE8D8; background: #F3FAF5; }
+        .tag.priority-medium { color: #B87A12; border-color: #F1DCB2; background: #FCF6E9; }
+        .tag.priority-high { color: #9C0F22; border-color: #F2C6CC; background: #FCEDEE; }
+        .tag.priority-critical { color: #fff; background: #D2172E; border-color: #D2172E; }
+        .tag.price { font-family: 'JetBrains Mono', monospace; color: #17151A; }
+        .ticket-right { display: flex; align-items: center; gap: 18px; flex-direction: column; align-self: stretch; justify-content: space-between; padding: 2px 0; }
+        .status-pill { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 6px 13px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .status-pill .d { width: 6px; height: 6px; border-radius: 50%; }
+        .status-pill.pending { background: #FDF3E3; color: #B87A12; }
+        .status-pill.pending .d { background: #B87A12; }
+        .status-pill.progress { background: #FCEDEE; color: #9C0F22; }
+        .status-pill.progress .d { background: #D2172E; animation: blip 1.6s infinite; }
+        .status-pill.completed { background: #E5F4EB; color: #1C8A4F; }
+        .status-pill.completed .d { background: #1C8A4F; }
+        .status-pill.rejected { background: #EFEDEE; color: #4A4750; }
+        .status-pill.rejected .d { background: #837E88; }
+        .chevron { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #EAE5E6; display: flex; align-items: center; justify-content: center; color: #9C0F22; transition: background .15s, transform .15s, border-color .15s; }
+        .ticket-card:hover .chevron { background: #D2172E; border-color: #D2172E; color: #fff; transform: translateX(3px); }
+        .empty-state { text-align: center; padding: 70px 20px; color: #837E88; }
+        .empty-state h3 { font-family: 'Big Shoulders Display', sans-serif; font-size: 22px; color: #17151A; margin: 0 0 6px; text-transform: uppercase; }
+        .empty-state p { font-size: 13.5px; margin: 0; }
+        footer { border-top: 1px solid #EAE5E6; padding: 22px 0 40px; text-align: center; color: #837E88; font-size: 12px; }
+        footer .mono { color: #9C0F22; }
+        @media (max-width: 880px) {
+          .shell { padding: 0 18px; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
+          .hero-inner { flex-direction: column; align-items: flex-start; }
+          .ticket-card { grid-template-columns: 76px 1fr; }
+          .device-thumb { width: 76px; height: 76px; }
+          .device-name { font-size: 18px; }
+          .ticket-right { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; padding-top: 10px; border-top: 1px dashed #EAE5E6; margin-top: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+        :focus-visible { outline: 2px solid #D2172E; outline-offset: 2px; }
       `}</style>
 
-      <div className="hidden lg:block"><SiteTopNav /></div>
-      <div className="hidden lg:block pt-20 sm:pt-24"><BackBar label="Back to Home" to="/" /></div>
+      {/* SiteTopNav for desktop */}
+      <div className="hidden lg:block">
+        <SiteTopNav />
+      </div>
 
       {/* Mobile header */}
       <div className="lg:hidden relative z-30 w-full">
@@ -1318,159 +1488,285 @@ export default function CustomerRepairTracking() {
         </header>
       </div>
 
-      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-8 lg:pb-24" style={isMobile ? { paddingTop: '0.75rem' } : {}}>
-        <div className="max-w-[1600px] mx-auto">
-          <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex h-1.5 w-1.5 rounded-full" style={{ background: BRAND.primary }} />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: BRAND.primaryDark }}>
-                  {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
-                </span>
-              </div>
-              <h1 className="font-extrabold tracking-tight" style={{ fontFamily: 'Manrope, sans-serif', fontSize: 'clamp(1.35rem, 5vw, 2.5rem)', color: BRAND.ink }}>
-                Diagnostics Protocol Manifest
-              </h1>
-            </div>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              <div className={`px-3 py-2 rounded-xl flex items-center gap-2 ${C.card} flex-1 sm:flex-none`}>
-                <span className="material-symbols-outlined text-sm" style={{ color: BRAND.primary }}>terminal</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.muted }}>Total Tickets</span>
-                  <span className="text-xs font-bold" style={{ color: BRAND.ink }}>{dashboardStats.total}</span>
-                </div>
-              </div>
-              <div className={`px-3 py-2 rounded-xl flex items-center gap-2 ${C.card} flex-1 sm:flex-none`}>
-                <span className="material-symbols-outlined text-sm" style={{ color: BRAND.muted }}>check_circle</span>
-                <div className="flex flex-col">
-                  <span className="text-[9px] font-bold uppercase" style={{ color: BRAND.muted }}>Completed</span>
-                  <span className="text-xs font-bold" style={{ color: BRAND.ink }}>{dashboardStats.completed}</span>
-                </div>
-              </div>
-            </div>
-          </header>
+      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-0 lg:pb-0" style={isMobile ? { paddingTop: '0.75rem' } : {}}>
+        <div className="max-w-[1180px] mx-auto" style={isMobile ? {} : { padding: '0 32px' }}>
 
-          <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-6">
-            {[
-              { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: BRAND.primary },
-              { label: 'Active', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#0EA5E9' },
-              { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#059669' },
-            ].map((s, i) => (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06 }}
-                className={`${C.card} p-3 sm:p-3.5 cursor-default`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="material-symbols-outlined text-base sm:text-lg" style={{ color: s.color }}>{s.icon}</span>
-                  <motion.span initial={{ scale: 1.3 }} animate={{ scale: 1 }}
-                    className="text-lg sm:text-xl font-extrabold" style={{ color: s.color }}>{s.value}</motion.span>
-                </div>
-                <p className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase truncate" style={{ color: BRAND.muted }}>{s.label}</p>
-              </motion.div>
-            ))}
-          </div>
+          {/* ========== DESKTOP UI (lg+) ========== */}
+          {!isMobile && (
+            <>
+              {/* Pulse Rail */}
+              <div className="pulse-rail" aria-hidden="true" />
 
-          <div className={C.card + ' p-3 sm:p-3.5 mb-6'}>
-            <div className="flex flex-col sm:flex-row gap-3 mb-3">
-              <div className="flex-1 relative">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base" style={{ color: BRAND.muted }}>search</span>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by Ticket ID, Device, or IMEI..."
-                  className="w-full pl-9 pr-3 h-10 rounded-xl text-sm font-medium outline-none transition-all"
-                  style={{
-                    background: 'rgba(237,238,239,0.6)',
-                    border: `1.5px solid ${BRAND.line}`,
-                    color: BRAND.ink,
-                  }}
-                  onFocus={e => e.currentTarget.style.borderColor = BRAND.primary}
-                  onBlur={e => e.currentTarget.style.borderColor = BRAND.line}
-                />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {FILTER_OPTIONS.map(opt => (
-                <button key={opt} onClick={() => setStatusFilter(opt)}
-                  className="px-3.5 h-8 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-wider transition-all active:scale-95 cursor-pointer"
-                  style={{
-                    background: statusFilter === opt ? BRAND.primary : 'rgba(237,238,239,0.6)',
-                    color: statusFilter === opt ? '#fff' : BRAND.muted,
-                  }}
-                >{opt}</button>
-              ))}
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={`${C.card} p-4 sm:p-5 animate-pulse`}>
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-                    <div className="w-full sm:w-44 h-28 sm:h-36 rounded-xl" style={{ background: 'rgba(237,238,239,0.7)' }} />
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 w-32 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
-                      <div className="h-3 w-48 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
-                      <div className="h-2 w-full rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
-                      <div className="h-3 w-24 rounded-lg" style={{ background: 'rgba(237,238,239,0.7)' }} />
+              {/* Hero */}
+              <header className="hero">
+                <div className="shell hero-inner">
+                  <div>
+                    <div className="eyebrow">
+                      <span className="dot" />
+                      {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`} · Live Manifest
+                    </div>
+                    <h1 className="title">
+                      Diagnostics<br /><em>Protocol</em> Manifest
+                    </h1>
+                    <p className="subline">
+                      Every device on the bench, tracked like a vital sign — intake to delivery, one pulse line at a time.
+                    </p>
+                  </div>
+                  <div className="stat-chip-row">
+                    <div className="stat-chip">
+                      <div className="label">Total Tickets</div>
+                      <div className="num">{String(dashboardStats.total).padStart(2, '0')}</div>
+                    </div>
+                    <div className="stat-chip accent">
+                      <div className="label">Completed</div>
+                      <div className="num">{String(dashboardStats.completed).padStart(2, '0')}</div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : filteredTickets.length === 0 ? (
-            <div className={C.card + ' p-6 sm:p-8'}>
-              <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center">
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                  className="w-20 sm:w-24 h-20 sm:h-24 rounded-[2rem] flex items-center justify-center mb-6 sm:mb-8"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
-                    border: '1px solid rgba(203,32,45,0.25)',
-                  }}
-                >
-                  <span className="material-symbols-outlined text-4xl sm:text-5xl" style={{ color: BRAND.primaryDark }}>build</span>
-                </motion.div>
-                <motion.h2
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="text-xl sm:text-2xl font-bold mb-2" style={{ color: BRAND.ink }}
-                >
-                  No Repair Requests Found
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
-                  className="text-[13px] sm:text-sm mb-6 sm:mb-8 max-w-xs sm:max-w-sm px-4"
-                  style={{ color: BRAND.muted }}
-                >
-                  You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
-                </motion.p>
-                <motion.button
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 }}
-                  onClick={() => navigate('/repairs')}
-                  className={C.primaryBtn + ' px-8 h-11 sm:h-12 rounded-xl text-sm font-bold'}
-                >
-                  Book a Repair
-                </motion.button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {filteredTickets.map((ticket, idx) => (
-                <motion.div key={ticket.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}>
-                  <RepairCard ticket={ticket} onSelect={setSelectedTicket} />
-                </motion.div>
-              ))}
-            </div>
+              </header>
+
+              <main className="shell">
+                {/* Stats Grid */}
+                <section className="stats-grid" aria-label="Repair summary">
+                  {[
+                    { label: 'Total Repairs', value: dashboardStats.total, cls: 'total', svg: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h16"/></> },
+                    { label: 'Active', value: dashboardStats.active, cls: 'active', svg: <><path d="M2 12h5l2-7 4 14 2-7h7"/></> },
+                    { label: 'Completed', value: dashboardStats.completed, cls: 'completed', svg: <><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></> },
+                    { label: 'Rejected', value: tickets.filter(t => ['Rejected', 'Cancelled'].includes(t.status)).length, cls: 'rejected', svg: <><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5l5 5m0-5l-5 5"/></> },
+                  ].map((s) => (
+                    <div key={s.label} className={`stat-card ${s.cls}`}>
+                      <div className="top-row">
+                        <div className="icon">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 19, height: 19 }}>{s.svg}</svg>
+                        </div>
+                      </div>
+                      <div className="value">{s.value}</div>
+                      <div className="caption">{s.label}</div>
+                    </div>
+                  ))}
+                </section>
+
+                {/* Control Panel */}
+                <section className="control-panel" aria-label="Search and filter">
+                  <div className="search-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 17, height: 17, color: '#837E88', flexShrink: 0 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+                    <input
+                      id="searchInput"
+                      type="text"
+                      placeholder="Search by ticket ID, device, or IMEI…"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div className="filter-row" id="filterRow">
+                    {(['all', 'pending', 'progress', 'completed', 'rejected'] as const).map(f => {
+                      const label = f === 'all' ? 'All' : f === 'pending' ? 'Pending' : f === 'progress' ? 'In Progress' : f === 'completed' ? 'Completed' : 'Rejected'
+                      const isActive = (f === 'all' && statusFilter === 'All') ||
+                        (f === 'pending' && statusFilter === 'Pending') ||
+                        (f === 'progress' && statusFilter === 'In Progress') ||
+                        (f === 'completed' && statusFilter === 'Completed') ||
+                        (f === 'rejected' && statusFilter === 'Rejected')
+                      return (
+                        <button
+                          key={f}
+                          className={`filter-pill${isActive ? ' is-active' : ''}`}
+                          data-filter={f}
+                          onClick={() => {
+                            const map: Record<string, string> = { all: 'All', pending: 'Pending', progress: 'In Progress', completed: 'Completed', rejected: 'Rejected' }
+                            setStatusFilter(map[f])
+                          }}
+                        >
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </section>
+
+                {/* Ticket List */}
+                {loading ? (
+                  <section className="ticket-list" aria-label="Repair tickets">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="ticket-card" style={{ animation: 'none', cursor: 'default' }}>
+                        <div className="device-thumb" style={{ background: '#F2EEEF' }} />
+                        <div className="ticket-mid">
+                          <div className="h-3 w-24 rounded" style={{ background: '#EAE5E6', marginBottom: 8 }} />
+                          <div className="h-5 w-40 rounded" style={{ background: '#EAE5E6', marginBottom: 8 }} />
+                          <div className="h-3 w-32 rounded" style={{ background: '#EAE5E6', marginBottom: 12 }} />
+                          <div className="vitals-track"><div className="vitals-fill" style={{ width: '30%' }} /></div>
+                        </div>
+                        <div className="ticket-right">
+                          <div className="h-6 w-24 rounded-full" style={{ background: '#EAE5E6' }} />
+                          <div className="chevron" style={{ borderColor: '#EAE5E6' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                ) : filteredTickets.length === 0 ? (
+                  <>
+                    <section className="ticket-list" aria-label="Repair tickets" style={{ display: 'none' }} />
+                    <div className="empty-state show">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 40, height: 40, color: '#D2172E', marginBottom: 12 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+                      <h3>No matching tickets</h3>
+                      <p>Try a different ticket ID, device name, or filter.</p>
+                    </div>
+                  </>
+                ) : (
+                  <section className="ticket-list" aria-label="Repair tickets">
+                    {filteredTickets.map((ticket) => (
+                      <RepairCard key={ticket.id} ticket={ticket} onSelect={setSelectedTicket} />
+                    ))}
+                  </section>
+                )}
+
+                <footer>
+                  <span className="mono">MANIFEST//</span> updated automatically as repairs move through the bench.
+                </footer>
+              </main>
+            </>
           )}
+
+          {/* ========== MOBILE UI (below lg) ========== */}
+          {isMobile && (
+            <>
+              {/* Mobile header */}
+              <header className="mb-5">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex h-1.5 w-1.5 rounded-full" style={{ background: BRAND.primary }} />
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: BRAND.primaryDark }}>
+                    {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
+                  </span>
+                </div>
+                <h1 className="text-xl font-extrabold tracking-tight" style={{ fontFamily: 'Manrope, sans-serif', color: BRAND.ink }}>
+                  My Repairs
+                </h1>
+              </header>
+
+              {/* Stats Cards - Mobile */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-6">
+                {[
+                  { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: BRAND.primary },
+                  { label: 'Active', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#0EA5E9' },
+                  { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#059669' },
+                ].map((s, i) => (
+                  <motion.div
+                    key={s.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.06 }}
+                    className={`${C.card} p-3 sm:p-3.5 cursor-default`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="material-symbols-outlined text-base sm:text-lg" style={{ color: s.color }}>{s.icon}</span>
+                      <motion.span initial={{ scale: 1.3 }} animate={{ scale: 1 }}
+                        className="text-lg sm:text-xl font-extrabold" style={{ color: s.color }}>{s.value}</motion.span>
+                    </div>
+                    <p className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase truncate" style={{ color: BRAND.muted }}>{s.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Search & Filter - Mobile */}
+              <div className="mb-5">
+                <div className={`${C.card} p-3 sm:p-3.5`}>
+                  <div className="flex flex-col sm:flex-row gap-3 mb-3">
+                    <div className="flex-1 relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base" style={{ color: BRAND.muted }}>search</span>
+                      <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search by Ticket ID, Device, or IMEI..."
+                        className="w-full pl-9 pr-3 h-10 rounded-xl text-sm font-medium outline-none transition-all"
+                        style={{
+                          background: 'rgba(237,238,239,0.6)',
+                          border: `1.5px solid ${BRAND.line}`,
+                          color: BRAND.ink,
+                        }}
+                        onFocus={e => e.currentTarget.style.borderColor = BRAND.primary}
+                        onBlur={e => e.currentTarget.style.borderColor = BRAND.line}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {FILTER_OPTIONS.map(opt => (
+                      <button key={opt} onClick={() => setStatusFilter(opt)}
+                        className="px-3.5 h-8 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-wider transition-all active:scale-95 cursor-pointer"
+                        style={{
+                          background: statusFilter === opt ? BRAND.primary : 'rgba(237,238,239,0.6)',
+                          color: statusFilter === opt ? '#fff' : BRAND.muted,
+                        }}
+                      >{opt}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                      <div className="flex gap-5">
+                        <div className="w-20 h-20 rounded-xl" style={{ background: '#F2EEEF' }} />
+                        <div className="flex-1 space-y-3">
+                          <div className="h-4 w-32 rounded-lg" style={{ background: '#EAE5E6' }} />
+                          <div className="h-3.5 w-48 rounded-lg" style={{ background: '#EAE5E6' }} />
+                          <div className="h-2 w-full rounded-full" style={{ background: '#EAE5E6' }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredTickets.length === 0 ? (
+                <div className="rounded-2xl p-8" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                      className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-6"
+                      style={{ background: '#FCEDEE', border: '1px solid #F0DEE0' }}
+                    >
+                      <span className="material-symbols-outlined text-5xl" style={{ color: '#9C0F22' }}>build</span>
+                    </motion.div>
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 }}
+                      className="text-2xl font-bold mb-2" style={{ color: '#17151A' }}
+                    >
+                      No Repair Requests Found
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 }}
+                      className="text-sm mb-8 max-w-sm"
+                      style={{ color: '#837E88' }}
+                    >
+                      You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
+                    </motion.p>
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                      onClick={() => navigate('/repairs')}
+                      className="px-8 h-12 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+                      style={{ background: 'linear-gradient(135deg, #D2172E, #9C0F22)', boxShadow: '0 6px 20px rgba(210,23,46,0.3)' }}
+                    >
+                      Book a Repair
+                    </motion.button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {filteredTickets.map((ticket, idx) => (
+                    <motion.div key={ticket.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04, duration: 0.4 }}>
+                      <RepairCard ticket={ticket} onSelect={setSelectedTicket} />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
         </div>
       </main>
 
@@ -1486,15 +1782,16 @@ export default function CustomerRepairTracking() {
             initial={{ opacity: 0, y: 50, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-8 left-1/2 z-[150] px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 bg-white/90 backdrop-blur-md border border-[#A81D2A]/10"
+            className="fixed bottom-8 left-1/2 z-[150] px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5"
+            style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(229,231,235,0.5)', boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}
           >
-            <span className="material-symbols-outlined text-sm" style={{ color: notification.type === 'success' ? '#A81D2A' : '#dc2626' }}>{notification.type === 'success' ? 'check_circle' : 'error'}</span>
-            <span className="text-sm font-bold" style={{ color: '#191c1d' }}>{notification.message}</span>
+            <span className="material-symbols-outlined text-base" style={{ color: notification.type === 'success' ? '#059669' : '#EF4444' }}>{notification.type === 'success' ? 'check_circle' : 'error'}</span>
+            <span className="text-sm font-bold" style={{ color: BRAND.ink }}>{notification.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="hidden lg:block"><EcommerceFooter /></div>
+      <div className="hidden lg:block"><EcommerceFooter compact /></div>
       </div>
 
       {/* Mobile sticky bottom bar — hidden on desktop */}

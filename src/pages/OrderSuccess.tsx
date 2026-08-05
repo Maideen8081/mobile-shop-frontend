@@ -263,7 +263,7 @@ export default function OrderSuccess() {
         </div>
       </footer>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

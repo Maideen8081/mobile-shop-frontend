@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Heart, Trash2, ShoppingCart, Star } from 'lucide-react'
 import { getImageUrl } from './helpers'
 import { productService } from '../../services/productService'
-import { cartService } from '../../services/cartService'
+import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 import MobileTopSection from './MobileTopSection'
 
@@ -66,7 +66,7 @@ export default function MobileWishlist() {
     const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
     const rawImages = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
     const image = resolveImage(rawImages)
-    await cartService.addItem({
+    const added = await addToCartWithAuth({
       productId: id,
       variationId: 0,
       quantity: 1,
@@ -75,7 +75,7 @@ export default function MobileWishlist() {
       price,
       image,
     })
-    window.dispatchEvent(new Event('cart-updated'))
+    if (added) window.dispatchEvent(new Event('cart-updated'))
   }
 
   const totalValue = useMemo(() => {

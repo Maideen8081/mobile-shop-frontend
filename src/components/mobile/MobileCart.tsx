@@ -15,6 +15,7 @@ import {
 import { productService } from '../../services/productService'
 import { getImageUrl } from './helpers'
 import { cartService, type CartItem } from '../../services/cartService'
+import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const PURPLE = '#CB202D'
@@ -29,7 +30,7 @@ async function addProductToCart(p: any) {
   const rawPrice = p.variants?.[0]?.discount_price || p.variants?.[0]?.price || p.min_price || p.price || 0
   const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
   const img = getImageUrl(p.common_image || p.image || p.images?.[0] || p.thumbnail || '')
-  await cartService.addItem({
+  await addToCartWithAuth({
     productId: id,
     variationId: 0,
     quantity: 1,

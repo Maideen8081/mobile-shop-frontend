@@ -470,14 +470,14 @@ export default function CartPage() {
           --ink:#181513;
           --ink-2:#2A2624;
           --ink-soft:#54504C;
-          --paper:#FAF7F1;
-          --paper-2:#F1EBE1;
-          --line:#E4DCCC;
+          --paper:#ffffff;
+          --paper-2:#F8F8F8;
+          --line:#E7E7EA;
           --line-soft:#EEE8DC;
           --red:#A8172A;
           --red-bright:#C41E2F;
           --red-tint:#F6E4E1;
-          --cream:#FFFDF9;
+          --cream:#F9F9F9;
           --white:#ffffff;
           --gold:#B08A4E;
           --radius-sm:10px;

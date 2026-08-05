@@ -229,7 +229,7 @@ export default function BookRepair() {
             </div>
           </motion.div>
         </main>
-        <EcommerceFooter />
+        <EcommerceFooter compact />
       </div>
     )
   }
@@ -450,7 +450,7 @@ export default function BookRepair() {
         </AnimatePresence>
       </main>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

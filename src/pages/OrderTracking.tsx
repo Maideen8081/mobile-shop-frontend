@@ -586,9 +586,9 @@ export default function OrderTracking() {
     return (
       <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
         <SiteTopNav />
-        <div className="pt-24"><BackBar label="Back to Orders" to="/orders" /></div>
+        <BackBar label="Back to Orders" to="/orders" />
         <OrderDetailView order={selectedOrder} onBack={() => setSelectedOrder(null)} />
-        <EcommerceFooter />
+        <EcommerceFooter compact />
       </div>
     )
   }
@@ -604,7 +604,7 @@ export default function OrderTracking() {
       `}</style>
 
       <SiteTopNav />
-      <div className="pt-24"><BackBar label="Back to Home" to="/" /></div>
+      <BackBar label="Back to Home" to="/" />
 
       <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-4 pb-16">
         <div className="rounded-xl p-6 md:p-8" style={{
@@ -699,7 +699,7 @@ export default function OrderTracking() {
         </div>
       </main>
 
-      <EcommerceFooter />
+      <EcommerceFooter compact />
     </div>
   )
 }

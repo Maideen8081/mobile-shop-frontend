@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import LandingGate from '../pages/LandingGate'
-import MobileSearch from '../components/mobile/MobileSearch'
+import SearchPageGate from '../pages/SearchPageGate'
+import AuthGuard from '../components/AuthGuard'
 import Dashboard from '../pages/Dashboard'
 import CategoryManagement from '../pages/CategoryManagement'
 import ProductManagement from '../pages/ProductManagement'
@@ -33,6 +34,7 @@ import PaymentPage from '../pages/PaymentPage'
 import OrderSuccess from '../pages/OrderSuccess'
 import OrderTrackingGate from '../pages/OrderTrackingGate'
 import CustomerRepairTracking from '../pages/CustomerRepairTracking'
+import RepairDetailPage from '../pages/RepairDetailPage'
 import BookRepair from '../pages/BookRepair'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
@@ -40,20 +42,22 @@ import AddressCreatePage from '../pages/AddressCreatePage'
 import ProfilePage from '../pages/ProfilePage'
 import MobileNotifications from '../components/mobile/MobileNotifications'
 import AdminOrders from '../pages/AdminOrders'
+import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingGate />} />
-      <Route path="/search" element={<MobileSearch />} />
-      <Route path="/cart" element={<CartGate />} />
-      <Route path="/wishlist" element={<WishlistPage />} />
-      <Route path="/profile/addresses" element={<AddressManagement />} />
-      <Route path="/checkout/address" element={<CheckoutAddress />} />
-      <Route path="/checkout/payment" element={<PaymentPage />} />
-      <Route path="/checkout/success" element={<OrderSuccess />} />
-      <Route path="/orders" element={<OrderTrackingGate />} />
-      <Route path="/my-repairs" element={<CustomerRepairTracking />} />
+      <Route path="/search" element={<SearchPageGate />} />
+      <Route path="/cart" element={<AuthGuard><CartGate /></AuthGuard>} />
+      <Route path="/wishlist" element={<AuthGuard><WishlistPage /></AuthGuard>} />
+      <Route path="/profile/addresses" element={<AuthGuard><AddressManagement /></AuthGuard>} />
+      <Route path="/checkout/address" element={<AuthGuard><CheckoutAddress /></AuthGuard>} />
+      <Route path="/checkout/payment" element={<AuthGuard><PaymentPage /></AuthGuard>} />
+      <Route path="/checkout/success" element={<AuthGuard><OrderSuccess /></AuthGuard>} />
+      <Route path="/orders" element={<AuthGuard><OrderTrackingGate /></AuthGuard>} />
+      <Route path="/my-repairs" element={<AuthGuard><CustomerRepairTracking /></AuthGuard>} />
+      <Route path="/my-repairs/:id" element={<AuthGuard><RepairDetailPage /></AuthGuard>} />
       <Route path="/book-repair" element={<BookRepair />} />
       <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/home" element={<LandingPage />} />
@@ -84,10 +88,11 @@ export default function AppRoutes() {
       <Route path="/brand-warranty" element={<BrandWarrantyRecords />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<RegisterPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
       <Route path="/notifications" element={<MobileNotifications />} />
-      <Route path="/address/create" element={<AddressCreatePage />} />
+      <Route path="/address/create" element={<AuthGuard><AddressCreatePage /></AuthGuard>} />
       <Route path="/online-orders" element={<AdminOrders />} />
+      <Route path="/trade-in-management" element={<AdminTradeInDashboard />} />
       <Route path="*" element={<LandingGate />} />
     </Routes>
   )

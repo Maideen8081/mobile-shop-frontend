@@ -124,7 +124,11 @@ export default function SiteTopNav() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    if (q.trim()) navigate(`/collection/all?search=${encodeURIComponent(q.trim())}`)
+    if (q.trim()) {
+      navigate(`/search?q=${encodeURIComponent(q.trim())}`)
+    } else {
+      navigate('/search')
+    }
   }
 
   const handleLogout = () => {
@@ -208,16 +212,47 @@ export default function SiteTopNav() {
                   type="text"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
+                  onFocus={() => {
+                    if (window.location.pathname !== '/search') navigate('/search')
+                  }}
                   placeholder="Search phones, earbuds, accessories…"
                   aria-label="Search products"
                 />
-                <button type="submit" className="pfn-search-btn">
+                <button type="submit" className="pfn-search-btn" onClick={() => navigate('/search')}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/>
                   </svg>
                   <span className="pfn-btn-label">Search</span>
                 </button>
               </form>
+            </div>
+
+            {/* Quick nav links near search */}
+            <div className="pfn-quick-nav">
+              <Link to="/" className="pfn-quick-link" title="Home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2h-4.5v-6h-5v6H5a2 2 0 0 1-2-2V9.5z"/>
+                </svg>
+                <span>Home</span>
+              </Link>
+              <Link to="/collection/all" className="pfn-quick-link" title="Products">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                <span>Products</span>
+              </Link>
+              <Link to="/orders" className="pfn-quick-link" title="My Orders">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                <span>My Orders</span>
+              </Link>
+              <Link to="/my-repairs" className="pfn-quick-link" title="My Repairs">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z"/>
+                </svg>
+                <span>My Repairs</span>
+              </Link>
             </div>
 
             {/* Icon cluster */}
