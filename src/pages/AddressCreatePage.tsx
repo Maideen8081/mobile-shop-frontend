@@ -107,7 +107,7 @@ export default function AddressCreatePage() {
     /^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FBF8F6' }}>
       <SiteTopNav />
 
       <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '40px 64px' }}>

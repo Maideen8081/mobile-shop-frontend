@@ -124,8 +124,8 @@ const navigate = useNavigate()
 
   const baseStyles = `
     @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 30px rgba(203,32,45,0.4), 0 0 60px rgba(203,32,45,0.1); }
-      50% { box-shadow: 0 0 60px rgba(203,32,45,0.7), 0 0 100px rgba(203,32,45,0.2), 0 0 140px rgba(203,32,45,0.1); }
+      0%, 100% { box-shadow: 0 0 30px rgba(217,30,54,0.4), 0 0 60px rgba(217,30,54,0.1); }
+      50% { box-shadow: 0 0 60px rgba(217,30,54,0.7), 0 0 100px rgba(217,30,54,0.2), 0 0 140px rgba(217,30,54,0.1); }
     }
     @keyframes navShine {
       0% { transform: translateX(-100%) skewX(-15deg); }
@@ -149,7 +149,7 @@ const navigate = useNavigate()
       color: rgba(255,255,255,0.8);
     }
     .nav-icon-btn:hover {
-      background: rgba(203,32,45,0.15);
+      background: rgba(217,30,54,0.15);
       transform: scale(1.1);
       color: #ffffff;
     }
@@ -206,11 +206,11 @@ const navigate = useNavigate()
           {/* Left: Logo */}
           <Link
             to="/"
-            className="text-2xl font-bold truncate max-w-[200px] bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient"
+            className="text-2xl font-bold truncate max-w-[200px] bg-gradient-to-r from-[#D91E36] via-[#E53E4E] to-[#D91E36] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient"
             style={{
               fontFamily: "'Playfair Display', serif",
               fontWeight: 700,
-              filter: 'drop-shadow(0 0 40px rgba(203,32,45,0.4))',
+              filter: 'drop-shadow(0 0 40px rgba(217,30,54,0.4))',
             }}
           >
             {brand}
@@ -231,7 +231,7 @@ const navigate = useNavigate()
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 600,
                     fontSize: '14px',
-                    background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                    background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                     borderRadius: '999px',
                     padding: '10px 22px',
                     color: '#000000',
@@ -244,7 +244,7 @@ const navigate = useNavigate()
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="transition-all duration-300 hover:text-[#CB202D] flex items-center gap-1.5"
+                  className="transition-all duration-300 hover:text-[#D91E36] flex items-center gap-1.5"
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 500,
@@ -305,9 +305,9 @@ const navigate = useNavigate()
                     onClick={() => setShowLogoutModal(true)}
                     className="hidden sm:inline-flex items-center gap-2 px-7 py-3 text-sm font-semibold rounded-full transition-all duration-300 hover:scale-105 cursor-pointer"
                     style={{
-                      background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                      background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                       borderRadius: '999px',
-                      boxShadow: '0 0 30px rgba(203,32,45,0.35)',
+                      boxShadow: '0 0 30px rgba(217,30,54,0.35)',
                       fontFamily: "'Inter', sans-serif",
                       fontWeight: 600,
                       color: '#ffffff',
@@ -323,9 +323,9 @@ const navigate = useNavigate()
                       to="/signup"
                       className="hidden sm:inline-flex items-center px-7 py-3 text-sm font-semibold text-black rounded-full transition-all duration-300 hover:scale-105"
                       style={{
-                        background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                        background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                         borderRadius: '999px',
-                        boxShadow: '0 0 40px rgba(203,32,45,0.35)',
+                        boxShadow: '0 0 40px rgba(217,30,54,0.35)',
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                       }}
@@ -456,7 +456,7 @@ const navigate = useNavigate()
                 background: 'linear-gradient(145deg, rgba(25,25,25,0.98), rgba(18,18,18,0.95))',
                 backdropFilter: 'blur(32px)',
                 border: '1px solid rgba(255,255,255,0.06)',
-                boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(203,32,45,0.06)',
+                boxShadow: '0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(217,30,54,0.06)',
               }}
             >
               {/* subtle gradient orbs */}
@@ -470,7 +470,7 @@ const navigate = useNavigate()
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 350, damping: 20, delay: 0.05 }}
                   className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center mx-auto mb-5"
-                  style={{ boxShadow: '0 0 40px rgba(203,32,45,0.15)' }}
+                  style={{ boxShadow: '0 0 40px rgba(217,30,54,0.15)' }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.08, 1] }}
@@ -523,14 +523,14 @@ const navigate = useNavigate()
                     Cancel
                   </motion.button>
                   <motion.button
-                    whileHover={{ scale: 1.03, y: -2, boxShadow: '0 12px 40px rgba(203,32,45,0.35)' }}
+                    whileHover={{ scale: 1.03, y: -2, boxShadow: '0 12px 40px rgba(217,30,54,0.35)' }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => { setShowLogoutModal(false); authService.logout(); showToast('Logged out successfully!', 'success'); navigate('/') }}
                     className="flex-1 px-5 py-3.5 rounded-xl text-sm font-semibold text-white cursor-pointer relative overflow-hidden"
                     style={{
-                      background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                      background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                       fontFamily: "'Inter', sans-serif",
-                      boxShadow: '0 4px 20px rgba(203,32,45,0.25)',
+                      boxShadow: '0 4px 20px rgba(217,30,54,0.25)',
                     }}
                   >
                     <span className="relative z-10">Logout</span>

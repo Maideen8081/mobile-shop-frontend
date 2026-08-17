@@ -5,7 +5,7 @@ interface DoubleRingLoaderProps {
   label?: string
 }
 
-export default function DoubleRingLoader({ size = 48, color = '#CB202D', className = '', label }: DoubleRingLoaderProps) {
+export default function DoubleRingLoader({ size = 48, color = '#D91E36', className = '', label }: DoubleRingLoaderProps) {
   const stroke = Math.max(3, size * 0.07)
   const r1 = (size - stroke) / 2
   const r2 = r1 * 0.55

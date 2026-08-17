@@ -65,10 +65,10 @@ export default function UserBookings() {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             {[
-              { label: 'Total Bookings', value: summary.total, color: '#CB202D', icon: FiLoader },
-              { label: 'Pending Review', value: summary.submitted, color: '#CB202D', icon: FiLoader },
-              { label: 'Accepted', value: summary.accepted, color: '#A81D2A', icon: FiCheck },
-              { label: 'Delivered', value: summary.delivered, color: '#CB202D', icon: FiCheck },
+              { label: 'Total Bookings', value: summary.total, color: '#D91E36', icon: FiLoader },
+              { label: 'Pending Review', value: summary.submitted, color: '#D91E36', icon: FiLoader },
+              { label: 'Accepted', value: summary.accepted, color: '#A3122A', icon: FiCheck },
+              { label: 'Delivered', value: summary.delivered, color: '#D91E36', icon: FiCheck },
             ].map((s) => (
               <div key={s.label} className="rounded-2xl bg-white border border-border p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">

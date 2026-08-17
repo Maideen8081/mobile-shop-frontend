@@ -15,13 +15,13 @@ export default function ProductCard({ product, index = 0, layout = 'grid' }: { p
       viewport={{ once: true, margin: '-50px' }}
       transition={{ delay: index * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300, damping: 15 } }}
-      className={`group relative bg-[#111827]/80 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#CB202D]/10 border border-white/5 hover:border-[#CB202D]/20 backdrop-blur-sm ${
+      className={`group relative bg-[#111827]/80 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#D91E36]/10 border border-white/5 hover:border-[#D91E36]/20 backdrop-blur-sm ${
         layout === 'list' ? 'flex' : ''
       }`}
     >
-      <div className="absolute -inset-0.5 bg-gradient-to-br from-[#CB202D]/0 via-transparent to-[#E53E4E]/0 opacity-0 group-hover:opacity-100 rounded-2xl blur transition-all duration-700 pointer-events-none" />
+      <div className="absolute -inset-0.5 bg-gradient-to-br from-[#D91E36]/0 via-transparent to-[#E53E4E]/0 opacity-0 group-hover:opacity-100 rounded-2xl blur transition-all duration-700 pointer-events-none" />
 
-      <div className={`relative ${layout === 'list' ? 'w-48 shrink-0' : ''} bg-gradient-to-br from-[#CB202D]/10 to-[#E53E4E]/10 ${layout === 'grid' || layout === 'compact' ? 'h-48' : 'h-full'} flex items-center justify-center overflow-hidden`}>
+      <div className={`relative ${layout === 'list' ? 'w-48 shrink-0' : ''} bg-gradient-to-br from-[#D91E36]/10 to-[#E53E4E]/10 ${layout === 'grid' || layout === 'compact' ? 'h-48' : 'h-full'} flex items-center justify-center overflow-hidden`}>
         {product.image && !imgError && (product.image.startsWith('http') || product.image.startsWith('data:')) ? (
           <img src={product.image} alt={product.name} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" onError={() => setImgError(true)} />
         ) : null}
@@ -30,7 +30,7 @@ export default function ProductCard({ product, index = 0, layout = 'grid' }: { p
         >{product.emoji}</motion.span>
 
         {product.badge && (
-          <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-[#CB202D] to-[#E53E4E] text-white shadow-lg shadow-[#CB202D]/20">
+          <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full bg-gradient-to-r from-[#D91E36] to-[#E53E4E] text-white shadow-lg shadow-[#D91E36]/20">
             {product.badge}
           </span>
         )}
@@ -40,17 +40,17 @@ export default function ProductCard({ product, index = 0, layout = 'grid' }: { p
           </span>
         )}
         {product.isNew && (
-          <span className="absolute bottom-3 left-3 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#CB202D]/20 text-[#E53E4E] border border-[#CB202D]/30">
+          <span className="absolute bottom-3 left-3 text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#D91E36]/20 text-[#E53E4E] border border-[#D91E36]/30">
             New
           </span>
         )}
 
         <div className="absolute inset-0 bg-[#0f172a]/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm">
           <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}
-            className="w-10 h-10 rounded-xl bg-[#0f172a]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/60 hover:text-[#E53E4E] hover:border-[#CB202D]/30 transition-all"
+            className="w-10 h-10 rounded-xl bg-[#0f172a]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/60 hover:text-[#E53E4E] hover:border-[#D91E36]/30 transition-all"
           ><FiHeart size={16} /></motion.button>
           <Link to={`/product/${product.id}`}
-            className="w-10 h-10 rounded-xl bg-[#0f172a]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/60 hover:text-[#CB202D] hover:border-[#CB202D]/30 transition-all"
+            className="w-10 h-10 rounded-xl bg-[#0f172a]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/60 hover:text-[#D91E36] hover:border-[#D91E36]/30 transition-all"
           ><FiEye size={16} /></Link>
         </div>
       </div>
@@ -85,13 +85,13 @@ export default function ProductCard({ product, index = 0, layout = 'grid' }: { p
 
         {layout !== 'compact' && (product.emi || product.exchange) && (
           <div className="flex items-center gap-2 mt-1.5 mb-3 flex-wrap">
-            {product.emi && <span className="text-[10px] text-[#E53E4E] bg-[#CB202D]/10 px-2 py-0.5 rounded-full">{product.emi}</span>}
+            {product.emi && <span className="text-[10px] text-[#E53E4E] bg-[#D91E36]/10 px-2 py-0.5 rounded-full">{product.emi}</span>}
             {product.exchange && <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">{product.exchange}</span>}
           </div>
         )}
 
         <Link to={`/product/${product.id}`}
-          className={`w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#CB202D] to-[#E53E4E] text-white font-semibold hover:shadow-lg hover:shadow-[#CB202D]/20 transition-all ${
+          className={`w-full mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#D91E36] to-[#E53E4E] text-white font-semibold hover:shadow-lg hover:shadow-[#D91E36]/20 transition-all ${
             layout === 'compact' ? 'py-2 text-xs' : 'py-2.5 text-sm'
           }`}
         >

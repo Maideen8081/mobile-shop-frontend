@@ -87,7 +87,7 @@ const STATUS_BADGE: Record<string, { label: string; color: string }> = {
   processing: { label: 'Processing', color: '#f59e0b' },
   shipped: { label: 'Shipped', color: '#3b82f6' },
   out_for_delivery: { label: 'Out for Delivery', color: '#8b5cf6' },
-  delivered: { label: 'Delivered', color: '#A81D2A' },
+  delivered: { label: 'Delivered', color: '#A3122A' },
   cancelled: { label: 'Cancelled', color: '#ef4444' },
 }
 
@@ -95,18 +95,18 @@ function emptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-8" style={{
-        background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
-        border: '1px solid rgba(203,32,45,0.25)',
+        background: 'linear-gradient(135deg, rgba(217,30,54,0.15), rgba(163,18,42,0.08))',
+        border: '1px solid rgba(217,30,54,0.25)',
       }}>
-        <span className="material-symbols-outlined text-5xl" style={{ color: '#A81D2A' }}>inventory_2</span>
+        <span className="material-symbols-outlined text-5xl" style={{ color: '#A3122A' }}>inventory_2</span>
       </div>
       <h2 className="text-2xl font-bold text-[#191c1d] mb-2">No orders yet</h2>
       <p className="text-sm text-[#3b4b3d]/70 mb-8">Complete your first purchase to see orders here.</p>
       <a href="/collection/all"
         className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
         style={{
-          background: '#A81D2A',
-          boxShadow: '0 4px 15px rgba(168,29,42,0.3)',
+          background: '#A3122A',
+          boxShadow: '0 4px 15px rgba(163,18,42,0.3)',
         }}
       >
         <span className="material-symbols-outlined">shopping_cart</span>
@@ -145,20 +145,20 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center mb-3 transition-all duration-500"
                 style={{
-                  background: isActive ? 'rgba(203,32,45,0.2)' : 'rgba(237,238,239,0.8)',
-                  border: `2px solid ${isActive ? '#A81D2A' : 'rgba(185,203,185,0.3)'}`,
-                  boxShadow: isActive ? '0 0 20px rgba(203,32,45,0.2)' : 'none',
+                  background: isActive ? 'rgba(217,30,54,0.2)' : 'rgba(237,238,239,0.8)',
+                  border: `2px solid ${isActive ? '#A3122A' : 'rgba(185,203,185,0.3)'}`,
+                  boxShadow: isActive ? '0 0 20px rgba(217,30,54,0.2)' : 'none',
                 }}
               >
                 {idx < currentStepIndex ? (
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#A81D2A', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#A3122A', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 ) : isCurrent ? (
                   <div className="relative">
-                    <div className="w-4 h-4 rounded-full" style={{ background: '#CB202D' }} />
-                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#CB202D] animate-ping opacity-50" />
+                    <div className="w-4 h-4 rounded-full" style={{ background: '#D91E36' }} />
+                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#D91E36] animate-ping opacity-50" />
                   </div>
                 ) : (
-                  <span className="material-symbols-outlined text-xl" style={{ color: isActive ? '#A81D2A' : 'rgba(59,75,61,0.3)' }}>{step.icon}</span>
+                  <span className="material-symbols-outlined text-xl" style={{ color: isActive ? '#A3122A' : 'rgba(59,75,61,0.3)' }}>{step.icon}</span>
                 )}
               </div>
               <h3 className="text-xs font-bold text-center" style={{
@@ -167,7 +167,7 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
               }}>{step.label}</h3>
               <p className="text-[10px] mt-1" style={{
                 fontFamily: 'Manrope, sans-serif',
-                color: isActive ? '#A81D2A' : 'rgba(59,75,61,0.3)',
+                color: isActive ? '#A3122A' : 'rgba(59,75,61,0.3)',
               }}>
                 {statusLabel()}
               </p>
@@ -184,18 +184,18 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
   const currentStepIndex = STATUS_INDEX[order.status] ?? 0
   const isDelivered = order.status === 'delivered'
-  const badge = STATUS_BADGE[order.status] || { label: 'Confirmed', color: '#A81D2A' }
+  const badge = STATUS_BADGE[order.status] || { label: 'Confirmed', color: '#A3122A' }
   const items = order.items
   const firstItem = items[0]
 
   return (
-    <main className="relative min-h-screen pb-16 overflow-hidden" style={{ background: '#f8f9fa' }}>
+    <main className="relative min-h-screen pb-16 overflow-hidden" style={{ background: '#FBF8F6' }}>
       <div className="relative z-10 max-w-[1200px] mx-auto px-4 md:px-8 pt-6">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-xs font-semibold mb-6 transition-colors cursor-pointer"
           style={{ color: 'rgba(59,75,61,0.6)' }}
-          onMouseEnter={e => e.currentTarget.style.color = '#A81D2A'}
+          onMouseEnter={e => e.currentTarget.style.color = '#A3122A'}
           onMouseLeave={e => e.currentTarget.style.color = 'rgba(59,75,61,0.6)'}
         >
           <span className="material-symbols-outlined text-sm">arrow_back</span>
@@ -205,7 +205,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>
-              Order <span style={{ color: '#A81D2A' }}>#{order.displayOrderId || order.orderId}</span>
+              Order <span style={{ color: '#A3122A' }}>#{order.displayOrderId || order.orderId}</span>
             </h1>
             <p className="text-sm mt-1" style={{ color: 'rgba(59,75,61,0.7)' }}>Placed on {order.orderDate}</p>
           </div>
@@ -231,9 +231,9 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
             }}>
               <div className="absolute top-4 right-4">
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold" style={{
-                  background: 'rgba(203,32,45,0.1)',
-                  border: '1px solid rgba(203,32,45,0.2)',
-                  color: '#A81D2A',
+                  background: 'rgba(217,30,54,0.1)',
+                  border: '1px solid rgba(217,30,54,0.2)',
+                  color: '#A3122A',
                 }}>
                   <span className="material-symbols-outlined text-xs">check_circle</span>
                   PAYMENT CONFIRMED
@@ -261,9 +261,9 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                   <div className="absolute -bottom-3 -right-3 px-3 py-2 rounded-lg" style={{
                     background: 'rgba(255,255,255,0.7)',
                     backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(203,32,45,0.3)',
+                    border: '1px solid rgba(217,30,54,0.3)',
                   }}>
-                    <div className="text-[8px] font-bold mb-0.5" style={{ color: '#A81D2A' }}>ORDER ID</div>
+                    <div className="text-[8px] font-bold mb-0.5" style={{ color: '#A3122A' }}>ORDER ID</div>
                     <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>{order.displayOrderId || order.orderId}</div>
                   </div>
                 </div>
@@ -284,7 +284,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                     <div>
                       <div className="flex justify-between items-end mb-1">
                         <span className="text-xs font-semibold" style={{ color: 'rgba(59,75,61,0.7)' }}>Order Progress</span>
-                        <span className="text-sm font-bold" style={{ color: '#A81D2A' }}>{isDelivered ? '100%' : `${(currentStepIndex / (STEPS.length - 1)) * 100}%`}</span>
+                        <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{isDelivered ? '100%' : `${(currentStepIndex / (STEPS.length - 1)) * 100}%`}</span>
                       </div>
                       <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
                         <motion.div
@@ -292,7 +292,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                           animate={{ width: isDelivered ? '100%' : `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }}
                           transition={{ duration: 1, ease: 'easeOut' }}
                           className="h-full rounded-full"
-                          style={{ background: 'linear-gradient(90deg, #CB202D, #A81D2A)' }}
+                          style={{ background: 'linear-gradient(90deg, #D91E36, #A3122A)' }}
                         />
                       </div>
                     </div>
@@ -305,7 +305,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                     </div>
                     <div className="p-2.5 rounded-lg" style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}>
                       <div className="text-[9px] uppercase font-bold mb-0.5" style={{ color: 'rgba(59,75,61,0.7)' }}>Total Value</div>
-                      <div className="text-sm font-bold" style={{ color: '#A81D2A' }}>{formatPrice(order.total)}</div>
+                      <div className="text-sm font-bold" style={{ color: '#A3122A' }}>{formatPrice(order.total)}</div>
                     </div>
                   </div>
                 </div>
@@ -346,8 +346,8 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                             {item.color && ` | ${item.color}`}
                           </p>
                         </div>
-                        <span className="text-sm font-bold" style={{ color: '#A81D2A' }}>{formatPrice(item.price)}</span>
-                        <span className="material-symbols-outlined text-sm" style={{ color: '#A81D2A' }}>check_circle</span>
+                        <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{formatPrice(item.price)}</span>
+                        <span className="material-symbols-outlined text-sm" style={{ color: '#A3122A' }}>check_circle</span>
                       </div>
                     </div>
                   )
@@ -360,7 +360,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
             <section className="rounded-xl p-6" style={{
               background: 'rgba(255,255,255,0.7)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(203,32,45,0.1)',
+              border: '1px solid rgba(217,30,54,0.1)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             }}>
               <h3 className="text-xs font-bold mb-4 flex items-center gap-2 uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.7)' }}>
@@ -375,23 +375,23 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Shipping Method</span>
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg" style={{ color: '#A81D2A' }}>speed</span>
+                    <span className="material-symbols-outlined text-lg" style={{ color: '#A3122A' }}>speed</span>
                     <span className="text-sm font-bold text-[#191c1d]">{order.shipping === 0 ? 'Free Shipping' : 'Express Delivery'}</span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Order Date</span>
-                  <span className="text-xs font-mono px-2 py-1 rounded" style={{ background: 'rgba(203,32,45,0.05)', color: '#A81D2A' }}>{order.orderDate}</span>
+                  <span className="text-xs font-mono px-2 py-1 rounded" style={{ background: 'rgba(217,30,54,0.05)', color: '#A3122A' }}>{order.orderDate}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Payment Status</span>
-                  <span className="text-xs italic" style={{ color: '#A81D2A' }}>Completed ✓</span>
+                  <span className="text-xs italic" style={{ color: '#A3122A' }}>Completed ✓</span>
                 </div>
               </div>
 
               <div className="mt-5 pt-5" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
                 <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(248,249,250,0.8)', border: '1px solid rgba(185,203,185,0.1)' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: '#A81D2A' }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: '#A3122A' }}>
                     PF
                   </div>
                   <div>
@@ -416,7 +416,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                 </div>
                 <div className="flex justify-between text-xs" style={{ color: 'rgba(59,75,61,0.8)' }}>
                   <span>Shipping</span>
-                  <span className="font-semibold" style={{ color: order.shipping === 0 ? '#A81D2A' : '#191c1d' }}>
+                  <span className="font-semibold" style={{ color: order.shipping === 0 ? '#A3122A' : '#191c1d' }}>
                     {order.shipping === 0 ? 'FREE' : formatPrice(order.shipping)}
                   </span>
                 </div>
@@ -427,13 +427,13 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                 {order.discount ? (
                   <div className="flex justify-between text-xs" style={{ color: 'rgba(59,75,61,0.8)' }}>
                     <span>Coupon ({order.couponCode})</span>
-                    <span className="font-semibold" style={{ color: '#A81D2A' }}>-{formatPrice(order.discount)}</span>
+                    <span className="font-semibold" style={{ color: '#A3122A' }}>-{formatPrice(order.discount)}</span>
                   </div>
                 ) : null}
                 <div className="h-px" style={{ background: 'rgba(185,203,185,0.3)' }} />
                 <div className="flex justify-between text-sm font-bold text-[#191c1d] pt-1">
                   <span>Total</span>
-                  <span style={{ color: '#A81D2A' }}>{formatPrice(order.total)}</span>
+                  <span style={{ color: '#A3122A' }}>{formatPrice(order.total)}</span>
                 </div>
               </div>
             </section>
@@ -463,12 +463,12 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                 onClick={() => navigate('/collection/all')}
                 className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
                 style={{
-                  background: '#A81D2A',
+                  background: '#A3122A',
                   color: '#fff',
-                  boxShadow: '0 4px 15px rgba(168,29,42,0.25)',
+                  boxShadow: '0 4px 15px rgba(163,18,42,0.25)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#C0232E'; e.currentTarget.style.boxShadow = '0 6px 25px rgba(168,29,42,0.35)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#A81D2A'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(168,29,42,0.25)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#C0232E'; e.currentTarget.style.boxShadow = '0 6px 25px rgba(163,18,42,0.35)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#A3122A'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(163,18,42,0.25)' }}
               >
                 <span className="material-symbols-outlined">dashboard_customize</span>
                 Continue Shopping
@@ -506,7 +506,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const badge = STATUS_BADGE[status] || { label: 'Confirmed', color: '#A81D2A' }
+  const badge = STATUS_BADGE[status] || { label: 'Confirmed', color: '#A3122A' }
   return (
     <span
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase"
@@ -584,7 +584,7 @@ export default function OrderTracking() {
 
   if (selectedOrder) {
     return (
-      <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
+      <div className="min-h-screen" style={{ background: '#FBF8F6' }}>
         <SiteTopNav />
         <BackBar label="Back to Orders" to="/orders" />
         <OrderDetailView order={selectedOrder} onBack={() => setSelectedOrder(null)} />
@@ -594,7 +594,7 @@ export default function OrderTracking() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#f8f9fa' }}>
+    <div className="min-h-screen" style={{ background: '#FBF8F6' }}>
       <style>{`
         @keyframes pulse-ring {
           0% { transform: scale(0.9); opacity: 0; }
@@ -615,10 +615,10 @@ export default function OrderTracking() {
         }}>
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{
-              background: 'linear-gradient(135deg, rgba(203,32,45,0.15), rgba(168,29,42,0.08))',
-              border: '1px solid rgba(203,32,45,0.25)',
+              background: 'linear-gradient(135deg, rgba(217,30,54,0.15), rgba(163,18,42,0.08))',
+              border: '1px solid rgba(217,30,54,0.25)',
             }}>
-              <span className="material-symbols-outlined text-2xl" style={{ color: '#A81D2A' }}>inventory_2</span>
+              <span className="material-symbols-outlined text-2xl" style={{ color: '#A3122A' }}>inventory_2</span>
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>My Orders</h1>
@@ -645,14 +645,14 @@ export default function OrderTracking() {
                       background: 'rgba(255,255,255,0.5)',
                       border: '1px solid rgba(185,203,185,0.3)',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.borderColor = 'rgba(203,32,45,0.3)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; e.currentTarget.style.borderColor = 'rgba(217,30,54,0.3)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)' }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; e.currentTarget.style.borderColor = 'rgba(185,203,185,0.3)'; e.currentTarget.style.boxShadow = 'none' }}
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Order</span>
-                          <span className="text-sm font-bold" style={{ color: '#A81D2A' }}>{order.displayOrderId || order.orderId}</span>
+                          <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{order.displayOrderId || order.orderId}</span>
                           <StatusBadge status={order.status} />
                         </div>
                         <p className="text-xs mb-2" style={{ color: 'rgba(59,75,61,0.6)' }}>{order.orderDate}</p>
@@ -667,7 +667,7 @@ export default function OrderTracking() {
                                 className="h-1.5 flex-1 rounded-full transition-all"
                                 style={{
                                   background: i <= currentStepIndex
-                                    ? 'linear-gradient(90deg, #CB202D, #A81D2A)'
+                                    ? 'linear-gradient(90deg, #D91E36, #A3122A)'
                                     : 'rgba(185,203,185,0.3)',
                                 }}
                               />
@@ -677,7 +677,7 @@ export default function OrderTracking() {
                       </div>
                       <div className="text-right flex-shrink-0 flex items-center gap-4">
                         <div>
-                          <p className="text-base font-extrabold" style={{ color: '#A81D2A' }}>{formatPrice(order.total)}</p>
+                          <p className="text-base font-extrabold" style={{ color: '#A3122A' }}>{formatPrice(order.total)}</p>
                           <p className="text-[10px]" style={{ color: 'rgba(59,75,61,0.5)' }}>
                             {STEPS[Math.min(currentStepIndex, STEPS.length - 1)]?.label || 'Confirmed'}
                           </p>
@@ -685,9 +685,9 @@ export default function OrderTracking() {
                         <motion.div
                           whileHover={{ x: 3 }}
                           className="w-8 h-8 rounded-full flex items-center justify-center"
-                          style={{ background: 'rgba(203,32,45,0.1)' }}
+                          style={{ background: 'rgba(217,30,54,0.1)' }}
                         >
-                          <span className="material-symbols-outlined text-sm" style={{ color: '#A81D2A' }}>chevron_right</span>
+                          <span className="material-symbols-outlined text-sm" style={{ color: '#A3122A' }}>chevron_right</span>
                         </motion.div>
                       </div>
                     </div>

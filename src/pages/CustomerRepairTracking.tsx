@@ -40,13 +40,13 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   Accepted: { label: 'Accepted', color: '#22c55e' },
   Rejected: { label: 'Rejected', color: '#ef4444' },
   Received: { label: 'Device Received', color: '#f59e0b' },
-  'Awaiting Approval': { label: 'Awaiting Approval', color: '#CB202D' },
+  'Awaiting Approval': { label: 'Awaiting Approval', color: '#D91E36' },
   Diagnosing: { label: 'Under Inspection', color: '#3b82f6' },
   'Waiting for Parts': { label: 'Waiting for Parts', color: '#f97316' },
   'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
   'Quality Check': { label: 'Quality Check', color: '#06b6d4' },
   'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
-  Delivered: { label: 'Delivered', color: '#CB202D' },
+  Delivered: { label: 'Delivered', color: '#D91E36' },
   Cancelled: { label: 'Cancelled', color: '#6b7280' },
 }
 
@@ -138,47 +138,62 @@ function PriorityBadge({ priority }: { priority: string }) {
 function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
   const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
   const isCancelled = ticket.status === 'Cancelled'
+  const isRejected = ticket.status === 'Rejected'
+  const isFailed = isCancelled || isRejected
+  const progressPct = isFailed ? 0 : stepIdx >= 0 ? Math.round(((stepIdx + 1) / PIPELINE_STEPS.length) * 100) : 0
 
   return (
-    <section className="p-6 rounded-2xl" style={{
-      background: 'rgba(255,255,255,0.7)',
-      backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(229,231,235,0.8)',
-    }}>
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+    <section className="pp-pipeline-wrap">
+      {/* Header bar */}
+      <div className="pp-pipeline-header">
+        <div className="pp-pipeline-header-left">
+          <span className="pp-pipeline-dot" style={{ background: isFailed ? '#9CA3AF' : '#22C55E' }} />
+          <span className="pp-pipeline-label">
+            {isFailed ? ticket.status : stepIdx >= PIPELINE_STEPS.length - 1 ? 'Repair Complete' : 'Repair In Progress'}
+          </span>
+        </div>
+        <span className="pp-pipeline-pct">
+          {isFailed ? '—' : `${progressPct}%`}
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="pp-pipeline-bar-track">
+        <div
+          className="pp-pipeline-bar-fill"
+          style={{
+            width: `${progressPct}%`,
+            background: isFailed
+              ? 'linear-gradient(90deg, #9CA3AF, #D1D5DB)'
+              : 'linear-gradient(90deg, #22C55E, #16A34A)',
+          }}
+        />
+      </div>
+
+      {/* Step indicators */}
+      <div className="pp-pipeline-steps">
         {PIPELINE_STEPS.map((s, idx) => {
-          const isActive = !isCancelled && idx <= stepIdx
-          const isCurrent = idx === stepIdx && !isCancelled
-          const isPast = idx < stepIdx && !isCancelled
+          const isPast = !isFailed && idx < stepIdx
+          const isCurrent = !isFailed && idx === stepIdx
+          const isFuture = isFailed || idx > stepIdx
+
           return (
-            <div key={s.key} className="flex flex-col items-center text-center group cursor-default flex-1">
+            <div key={s.key} className="pp-pipeline-step">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-2.5 transition-all duration-500"
-                style={{
-                  background: isActive ? (isPast ? 'rgba(5,150,105,0.12)' : 'rgba(203,32,45,0.12)') : 'rgba(241,245,249,0.8)',
-                  border: `2px solid ${isActive ? (isPast ? '#059669' : '#A81D2A') : 'rgba(229,231,235,0.8)'}`,
-                  boxShadow: isCurrent ? '0 0 0 4px rgba(203,32,45,0.08)' : 'none',
-                }}
+                className={`pp-step-circle ${isPast ? 'done' : ''} ${isCurrent ? 'current' : ''} ${isFuture ? 'future' : ''}`}
               >
                 {isPast ? (
-                  <span className="material-symbols-outlined text-lg" style={{ color: '#059669', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}>check</span>
                 ) : isCurrent ? (
-                  <div className="relative">
-                    <div className="w-3.5 h-3.5 rounded-full" style={{ background: '#CB202D' }} />
-                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#CB202D] animate-ping opacity-40" />
-                  </div>
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{s.icon}</span>
                 ) : (
-                  <span className="material-symbols-outlined text-lg" style={{ color: isCancelled && idx === 0 ? BRAND.muted : isActive ? BRAND.primaryDark : 'rgba(148,163,184,0.5)' }}>{s.icon}</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{s.icon}</span>
                 )}
               </div>
-              <span className="text-[10px] font-bold text-center leading-tight" style={{
-                color: isActive ? BRAND.ink : isCancelled ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.6)',
-              }}>{s.label}</span>
-              <span className="text-[9px] mt-0.5 font-medium" style={{
-                color: isPast ? '#059669' : isCurrent ? BRAND.primary : isCancelled ? 'rgba(148,163,184,0.4)' : 'rgba(148,163,184,0.5)',
-              }}>
-                {isPast ? 'Done' : isCurrent ? 'Current' : isCancelled ? 'Cancelled' : 'Pending'}
+              <span className={`pp-step-label ${isPast ? 'done' : ''} ${isCurrent ? 'current' : ''}`}>
+                {s.label}
               </span>
+              {isCurrent && <span className="pp-step-now-badge">NOW</span>}
             </div>
           )
         })}
@@ -228,7 +243,7 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
             </div>
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[9.5px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: 'rgba(203,32,45,0.08)', color: BRAND.primary }}>{ticket.issueCategory}</span>
+            <span className="text-[9.5px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: 'rgba(217,30,54,0.08)', color: BRAND.primary }}>{ticket.issueCategory}</span>
             <PriorityBadge priority={ticket.priority} />
             {ticket.estimatedCost > 0 && (
               <span className="text-[11px] font-extrabold" style={{ color: BRAND.primary }}>{formatPrice(ticket.estimatedCost)}</span>
@@ -238,10 +253,10 @@ function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: 
             <StatusBadge status={ticket.status} />
             <span className="text-[9px]" style={{ color: BRAND.muted }}>{formatDate(ticket.createdAt)}</span>
           </div>
-          <div className="mt-1 w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
+          <div className="mt-1 w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
             <div className="h-full rounded-full transition-all duration-700" style={{
               width: `${progressPct}%`,
-              background: 'linear-gradient(90deg, #CB202D, #A81D2A)',
+              background: isDelivered ? 'linear-gradient(90deg, #22C55E, #16A34A)' : 'linear-gradient(90deg, #D2172E, #FF5A65)',
             }} />
           </div>
         </div>
@@ -454,7 +469,7 @@ function RepairDetailModal({
           className="fixed inset-0 z-[100] bg-white overflow-y-auto"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          <div className="sticky top-0 z-10 w-full" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)' }}>
+          <div className="sticky top-0 z-10 w-full" style={{ background: 'linear-gradient(135deg,#D91E36 0%,#A3122A 100%)' }}>
             <div className="flex items-center gap-2 px-3.5 h-12">
               <button onClick={() => setShowFullDetail(false)} aria-label="Back" className="w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
                 <span className="material-symbols-outlined text-lg text-white">arrow_back</span>
@@ -559,7 +574,7 @@ function RepairDetailModal({
             </div>
 
             {needsApproval && (
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(203,32,45,0.05)', border: '1px solid rgba(203,32,45,0.18)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(217,30,54,0.05)', border: '1px solid rgba(217,30,54,0.18)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
                 <div className="flex items-center gap-1.5 mb-3">
                   <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>handshake</span>
                   <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Repair Estimate</h3>
@@ -578,7 +593,7 @@ function RepairDetailModal({
                   <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
                     disabled={approving}
                     className="flex-1 h-11 rounded-xl text-[12.5px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
-                    style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                    style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
                   >{approving ? 'Processing...' : 'Approve'} ✅</button>
                   <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
                     disabled={approving}
@@ -640,7 +655,7 @@ function RepairDetailModal({
                   <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Status History</h3>
                 </div>
                 <div className="relative">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(168,29,42,0.12)' }} />
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(163,18,42,0.12)' }} />
                   <div className="space-y-0">
                     {ticket.statusHistory.map((h, idx) => {
                       const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
@@ -729,7 +744,7 @@ function RepairDetailModal({
         <div className="flex-1 flex flex-col px-4 min-h-0" style={{ paddingTop: '12px', paddingBottom: '12px' }}>
 
           {/* Current status hero */}
-          <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'linear-gradient(135deg, rgba(203,32,45,0.08), rgba(168,29,42,0.04))', border: '1px solid rgba(203,32,45,0.15)' }}>
+          <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'linear-gradient(135deg, rgba(217,30,54,0.08), rgba(163,18,42,0.04))', border: '1px solid rgba(217,30,54,0.15)' }}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.primary }}>Current Status</p>
@@ -743,10 +758,10 @@ function RepairDetailModal({
                 </span>
               </div>
             </div>
-            <div className="mt-3 w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(203,32,45,0.12)' }}>
+            <div className="mt-3 w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(217,30,54,0.12)' }}>
               <div className="h-full rounded-full transition-all duration-700" style={{
                 width: isFailed ? '0%' : `${Math.round(((stepIdx + 1) / PIPELINE_STEPS.length) * 100)}%`,
-                background: 'linear-gradient(90deg, #CB202D, #FF5A65)',
+                background: isFailed ? 'linear-gradient(90deg, #9CA3AF, #D1D5DB)' : 'linear-gradient(90deg, #22C55E, #16A34A)',
               }} />
             </div>
             <p className="text-[10px] font-semibold mt-1.5 text-right" style={{ color: BRAND.muted }}>
@@ -756,9 +771,9 @@ function RepairDetailModal({
 
           {/* Repair Estimate — shown inline on mobile when awaiting approval */}
           {needsApproval && (
-            <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.15)' }}>
+            <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'rgba(217,30,54,0.06)', border: '1.5px solid rgba(217,30,54,0.15)' }}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-lg" style={{ color: '#CB202D' }}>handshake</span>
+                <span className="material-symbols-outlined text-lg" style={{ color: '#D91E36' }}>handshake</span>
                 <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
               </div>
               <p className="text-[10px] mb-2.5" style={{ color: BRAND.muted }}>Please review the diagnosis and estimated cost below.</p>
@@ -769,14 +784,14 @@ function RepairDetailModal({
                 </div>
                 <div className="flex items-center justify-between pt-1.5" style={{ borderTop: `1px solid ${BRAND.line}` }}>
                   <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
-                  <p className="text-base font-extrabold" style={{ color: '#CB202D' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                  <p className="text-base font-extrabold" style={{ color: '#D91E36' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
                   disabled={approving}
                   className="flex-1 h-10 rounded-xl text-[12px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
                 >{approving ? 'Processing...' : 'Approve'} ✅</button>
                 <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
                   disabled={approving}
@@ -850,10 +865,10 @@ function RepairDetailModal({
           </div>
 
           {/* Bottom bar */}
-          <div className="flex-shrink-0 flex items-center gap-2 pt-3" style={{ borderTop: '1px solid rgba(203,32,45,0.08)' }}>
+          <div className="flex-shrink-0 flex items-center gap-2 pt-3" style={{ borderTop: '1px solid rgba(217,30,54,0.08)' }}>
             <button
               onClick={() => setShowFullDetail(true)}
-              className="flex-1 h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition shadow-lg shadow-[rgba(203,32,45,0.25)]"
+              className="flex-1 h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition shadow-lg shadow-[rgba(217,30,54,0.25)]"
               style={{ background: C.grad }}
             >
               Full Details
@@ -982,11 +997,11 @@ function RepairDetailModal({
 
           {needsApproval && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 rounded-2xl"
-              style={{ background: 'rgba(203,32,45,0.04)', border: '1.5px solid rgba(203,32,45,0.12)' }}
+              style={{ background: 'rgba(217,30,54,0.04)', border: '1.5px solid rgba(217,30,54,0.12)' }}
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#CB202D' }}>handshake</span>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(217,30,54,0.1)' }}>
+                  <span className="material-symbols-outlined text-xl" style={{ color: '#D91E36' }}>handshake</span>
                 </div>
                 <div>
                   <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
@@ -1000,14 +1015,14 @@ function RepairDetailModal({
                 </div>
                 <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(229,231,235,0.5)' }}>
                   <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
-                  <p className="text-xl font-extrabold" style={{ color: '#CB202D' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                  <p className="text-xl font-extrabold" style={{ color: '#D91E36' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
                   disabled={approving}
                   className="flex-1 h-12 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer hover:shadow-lg"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)', boxShadow: '0 6px 20px rgba(203,32,45,0.3)' }}
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 6px 20px rgba(217,30,54,0.3)' }}
                 >{approving ? 'Processing...' : 'Approve & Start Repair'}</button>
                 <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
                   disabled={approving}
@@ -1039,7 +1054,7 @@ function RepairDetailModal({
                   {ticket.notes.map((note) => (
                     <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
                       <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                        style={{ background: note.is_admin ? 'rgba(255,255,255,0.9)' : 'linear-gradient(135deg, #A81D2A, #CB202D)', color: note.is_admin ? BRAND.ink : '#ffffff', border: note.is_admin ? '1px solid rgba(229,231,235,0.5)' : 'none' }}
+                        style={{ background: note.is_admin ? 'rgba(255,255,255,0.9)' : 'linear-gradient(135deg, #A3122A, #D91E36)', color: note.is_admin ? BRAND.ink : '#ffffff', border: note.is_admin ? '1px solid rgba(229,231,235,0.5)' : 'none' }}
                       >
                         <p className="text-[10px] font-bold mb-0.5 opacity-60">{note.is_admin ? 'Admin' : 'You'}</p>
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
@@ -1054,12 +1069,12 @@ function RepairDetailModal({
               <div className="flex gap-2">
                 <input value={message} onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Type your message..." className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(203,32,45,0.1)]"
+                  placeholder="Type your message..." className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(217,30,54,0.1)]"
                   style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
                 />
                 <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
                   className="w-11 h-11 rounded-xl flex items-center justify-center text-white transition-all duration-200 disabled:opacity-40 cursor-pointer hover:shadow-lg active:scale-95"
-                  style={{ background: 'linear-gradient(135deg, #A81D2A, #CB202D)', boxShadow: '0 4px 12px rgba(203,32,45,0.25)' }}
+                  style={{ background: 'linear-gradient(135deg, #A3122A, #D91E36)', boxShadow: '0 4px 12px rgba(217,30,54,0.25)' }}
                 >
                   {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
                 </button>
@@ -1146,7 +1161,7 @@ function RepairDetailModal({
               </h3>
               <div className="rounded-2xl p-5" style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
                 <div className="relative">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(203,32,45,0.1)' }} />
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(217,30,54,0.1)' }} />
                   <div className="space-y-0">
                     {ticket.statusHistory.map((h, idx) => {
                       const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
@@ -1185,7 +1200,7 @@ function ErrorFallback({ error, resetError }: { error: Error; resetError: () => 
         <h2 className="text-xl font-bold text-red-600 mb-4">Component Error</h2>
         <pre className="text-left text-sm text-red-600 p-4 bg-red-50 rounded overflow-auto">{error.message}</pre>
         <div className="mt-4 flex gap-3 justify-center">
-          <button onClick={resetError} className="px-6 py-2 bg-[#CB202D] text-white rounded">Retry</button>
+          <button onClick={resetError} className="px-6 py-2 bg-[#D91E36] text-white rounded">Retry</button>
           <button onClick={() => window.location.reload()} className="px-6 py-2 bg-gray-600 text-white rounded">Reload Page</button>
         </div>
 </div>
@@ -1304,15 +1319,11 @@ export default function CustomerRepairTracking() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen" style={{ background: '#FCFAFA' }}>
+      <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
       <style>{`
-        @keyframes pulse-mint {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: .7; transform: scale(0.95); }
-        }
         .pulse-rail {
-          height: 5px; width: 100%;
-          background: linear-gradient(90deg, #9C0F22, #F03049 45%, #D2172E 55%, #9C0F22);
+          height: 4px; width: 100%;
+          background: linear-gradient(90deg, #A3122A, #D91E36 45%, #E8304A 55%, #A3122A);
           background-size: 220% 100%;
           animation: railmove 6s ease-in-out infinite;
           position: sticky; top: 0; z-index: 50;
@@ -1321,78 +1332,76 @@ export default function CustomerRepairTracking() {
           0%, 100% { background-position: 0% 0; }
           50% { background-position: 100% 0; }
         }
-        .mono { font-family: 'JetBrains Mono', monospace; }
         .shell { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
         header.hero {
           position: relative; padding: 56px 0 40px; overflow: hidden;
-          border-bottom: 1px solid #EAE5E6;
-          background: radial-gradient(560px 260px at 88% -10%, #FCEDEE 0%, transparent 70%), #FFFFFF;
+          border-bottom: 1px solid #ECE4E0;
+          background: radial-gradient(560px 260px at 88% -10%, rgba(217,30,54,0.04) 0%, transparent 70%), #FBF8F6;
         }
         .hero-inner { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
         .eyebrow {
           display: inline-flex; align-items: center; gap: 8px;
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 12.5px; font-weight: 600; letter-spacing: .11em; text-transform: uppercase;
-          color: #9C0F22; margin-bottom: 14px;
+          font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+          color: #A3122A; margin-bottom: 14px;
         }
         .eyebrow .dot {
-          width: 7px; height: 7px; border-radius: 50%; background: #D2172E;
-          box-shadow: 0 0 0 4px rgba(210,23,46,0.14);
+          width: 7px; height: 7px; border-radius: 50%; background: #D91E36;
+          box-shadow: 0 0 0 4px rgba(217,30,54,0.12);
           animation: blip 1.8s ease-in-out infinite;
         }
         @keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
         h1.title {
-          font-family: 'Big Shoulders Display', sans-serif;
-          font-weight: 800; font-size: clamp(40px, 6vw, 68px);
-          line-height: 0.94; letter-spacing: -0.01em; margin: 0; text-transform: uppercase;
+          font-family: 'Fraunces', serif;
+          font-weight: 700; font-size: clamp(36px, 5vw, 52px);
+          line-height: 1.05; letter-spacing: -0.01em; margin: 0;
         }
-        h1.title em { font-style: normal; color: #D2172E; }
-        .subline { margin: 14px 0 0; max-width: 460px; color: #4A4750; font-size: 15px; line-height: 1.55; }
+        h1.title em { font-style: normal; color: #D91E36; }
+        .subline { margin: 14px 0 0; max-width: 460px; color: #857D79; font-size: 15px; line-height: 1.6; }
         .stat-chip-row { display: flex; gap: 12px; flex-wrap: wrap; }
         .stat-chip {
-          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 12px;
-          padding: 12px 18px; min-width: 128px;
-          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 16px;
+          padding: 14px 20px; min-width: 128px;
+          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
         }
-        .stat-chip .label { font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #837E88; font-weight: 600; margin-bottom: 4px; }
-        .stat-chip .num { font-family: 'Big Shoulders Display', sans-serif; font-size: 30px; font-weight: 800; color: #17151A; line-height: 1; }
-        .stat-chip.accent .num { color: #D2172E; }
+        .stat-chip .label { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #857D79; font-weight: 600; margin-bottom: 4px; }
+        .stat-chip .num { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; color: #1B1210; line-height: 1; }
+        .stat-chip.accent .num { color: #D91E36; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 36px 0 28px; }
         .stat-card {
-          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px;
+          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px;
           padding: 22px 22px 20px;
-          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
           position: relative; overflow: hidden;
         }
-        .stat-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #D2172E; opacity: 0; transition: opacity .2s; }
+        .stat-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #D91E36; opacity: 0; transition: opacity .2s; }
         .stat-card:hover::before { opacity: 1; }
         .stat-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
-        .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #FCEDEE; color: #D2172E; }
-        .stat-card .value { font-family: 'Big Shoulders Display', sans-serif; font-size: 38px; font-weight: 800; margin-top: 14px; line-height: 1; }
-        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #837E88; }
-        .stat-card.total .value { color: #17151A; }
-        .stat-card.active .value { color: #D2172E; }
-        .stat-card.completed .value { color: #1C8A4F; }
-        .stat-card.rejected .value { color: #4A4750; }
-        .control-panel { background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px; box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18); padding: 18px 20px; margin-bottom: 28px; }
-        .search-row { display: flex; align-items: center; gap: 10px; background: #FCFAFA; border: 1px solid #EAE5E6; border-radius: 10px; padding: 11px 14px; margin-bottom: 14px; }
-        .search-row input { border: none; background: transparent; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; width: 100%; color: #17151A; }
-        .search-row input::placeholder { color: #B2ADB4; }
+        .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(217,30,54,0.06); color: #D91E36; }
+        .stat-card .value { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
+        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #857D79; }
+        .stat-card.total .value { color: #1B1210; }
+        .stat-card.active .value { color: #D91E36; }
+        .stat-card.completed .value { color: #059669; }
+        .stat-card.rejected .value { color: #857D79; }
+        .control-panel { background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08); padding: 18px 20px; margin-bottom: 28px; }
+        .search-row { display: flex; align-items: center; gap: 10px; background: #FBF8F6; border: 1px solid #ECE4E0; border-radius: 12px; padding: 11px 14px; margin-bottom: 14px; }
+        .search-row input { border: none; background: transparent; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; width: 100%; color: #1B1210; }
+        .search-row input::placeholder { color: #857D79; }
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .filter-pill { border: 1px solid #EAE5E6; background: #FFFFFF; color: #4A4750; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all .15s ease; }
-        .filter-pill:hover { border-color: #D2172E; color: #D2172E; }
-        .filter-pill.is-active { background: #D2172E; border-color: #D2172E; color: #fff; }
+        .filter-pill { border: 1px solid #ECE4E0; background: #FFFFFF; color: #4A403D; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all .15s ease; }
+        .filter-pill:hover { border-color: #D91E36; color: #D91E36; }
+        .filter-pill.is-active { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; }
         .ticket-list { display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
         .ticket-card {
           display: grid; grid-template-columns: 104px 1fr auto; gap: 22px; align-items: center;
-          background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px; padding: 18px 20px;
-          box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18);
+          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; padding: 18px 20px;
+          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
           cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
         }
-        .ticket-card:hover { transform: translateY(-2px); border-color: #EFC7CC; box-shadow: 0 4px 10px rgba(23,21,26,0.05), 0 20px 38px -18px rgba(210,23,46,0.28); }
+        .ticket-card:hover { transform: translateY(-2px); border-color: rgba(217,30,54,0.2); box-shadow: 0 8px 24px -12px rgba(217,30,54,0.15); }
         .device-thumb {
-          width: 104px; height: 104px; border-radius: 12px;
-          background: linear-gradient(155deg, #FCEDEE, #F7DEE1 70%);
+          width: 104px; height: 104px; border-radius: 14px;
+          background: rgba(217,30,54,0.04);
           display: flex; align-items: center; justify-content: center;
           position: relative; overflow: hidden; flex-shrink: 0;
         }
@@ -1400,7 +1409,7 @@ export default function CustomerRepairTracking() {
           position: absolute; left: 8px; bottom: 8px;
           font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
           padding: 3px 8px; border-radius: 999px;
-          background: rgba(23,21,26,0.72); color: #fff;
+          background: rgba(27,18,16,0.72); color: #fff;
           display: flex; align-items: center; gap: 4px;
         }
         .device-thumb .state-tag .d { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
@@ -1410,62 +1419,150 @@ export default function CustomerRepairTracking() {
         .device-thumb .state-tag.pending .d { background: #FFD28A; }
         .ticket-mid { min-width: 0; }
         .ticket-topline { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
-        .ticket-id-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #837E88; }
-        .ticket-id { font-size: 13px; font-weight: 700; color: #9C0F22; }
-        .device-name { font-family: 'Big Shoulders Display', sans-serif; font-weight: 700; font-size: 22px; margin: 0 0 4px; text-transform: uppercase; letter-spacing: .01em; }
-        .ticket-date { font-size: 12.5px; color: #837E88; margin-bottom: 12px; }
-        .vitals-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #837E88; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+        .ticket-id-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #857D79; }
+        .ticket-id { font-size: 13px; font-weight: 700; color: #A3122A; }
+        .device-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; margin: 0 0 4px; }
+        .ticket-date { font-size: 12.5px; color: #857D79; margin-bottom: 12px; }
+        .vitals-label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #857D79; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
         .vitals-track {
-          position: relative; height: 26px; border-radius: 6px;
-          background-color: #F2EEEF;
-          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23D7D2D5' stroke-width='2'/></svg>");
-          background-repeat: repeat-x; background-position: left center; overflow: hidden;
+          position: relative; height: 22px; border-radius: 999px;
+          background: #F5F0EC; overflow: hidden;
+          border: 1px solid rgba(236,228,224,0.6);
         }
         .vitals-fill {
-          position: absolute; inset: 0; height: 100%;
-          background-color: #FCEDEE;
-          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23D2172E' stroke-width='2.4'/></svg>");
-          background-repeat: repeat-x; background-position: left center; overflow: hidden;
+          position: absolute; inset: 0; height: 100%; border-radius: 999px;
+          background: linear-gradient(90deg, #D91E36, #E8304A);
+          transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
         }
-        .ticket-card.st-completed .vitals-fill { background-color: #E5F4EB; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%231C8A4F' stroke-width='2.4'/></svg>"); }
-        .ticket-card.st-rejected .vitals-fill { background-color: #EFEDEE; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='26'><path d='M0,13 L16,13 L21,4 L27,22 L33,13 L64,13' fill='none' stroke='%23837E88' stroke-width='2.4'/></svg>"); }
-        .vitals-pct { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: #4A4750; }
+        .vitals-fill::after {
+          content: ''; position: absolute; inset: 0;
+          background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+          border-radius: 999px;
+        }
+        .ticket-card.st-completed .vitals-fill {
+          background: linear-gradient(90deg, #16A34A, #22C55E);
+        }
+        .ticket-card.st-completed .vitals-fill::after {
+          background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%);
+        }
+        .ticket-card.st-rejected .vitals-fill {
+          background: linear-gradient(90deg, #9CA3AF, #D1D5DB);
+        }
+        .vitals-pct {
+          position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+          font-size: 10px; font-weight: 700; color: #fff;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .ticket-card.st-completed .vitals-pct { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+        .ticket-card.st-rejected .vitals-pct { color: #4A403D; text-shadow: none; }
         .tag-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-        .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 8px; border: 1px solid #EAE5E6; color: #4A4750; }
-        .tag.priority-low { color: #4B8A63; border-color: #CFE8D8; background: #F3FAF5; }
-        .tag.priority-medium { color: #B87A12; border-color: #F1DCB2; background: #FCF6E9; }
-        .tag.priority-high { color: #9C0F22; border-color: #F2C6CC; background: #FCEDEE; }
-        .tag.priority-critical { color: #fff; background: #D2172E; border-color: #D2172E; }
-        .tag.price { font-family: 'JetBrains Mono', monospace; color: #17151A; }
+        .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 8px; border: 1px solid #ECE4E0; color: #4A403D; }
+        .tag.priority-low { color: #059669; border-color: #D1FAE5; background: #ECFDF5; }
+        .tag.priority-medium { color: #D97706; border-color: #FEF3C7; background: #FFFBEB; }
+        .tag.priority-high { color: #A3122A; border-color: #FECDD3; background: rgba(217,30,54,0.04); }
+        .tag.priority-critical { color: #fff; background: #D91E36; border-color: #D91E36; }
+        .tag.price { font-family: 'Inter', sans-serif; color: #1B1210; }
         .ticket-right { display: flex; align-items: center; gap: 18px; flex-direction: column; align-self: stretch; justify-content: space-between; padding: 2px 0; }
         .status-pill { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 6px 13px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
         .status-pill .d { width: 6px; height: 6px; border-radius: 50%; }
-        .status-pill.pending { background: #FDF3E3; color: #B87A12; }
-        .status-pill.pending .d { background: #B87A12; }
-        .status-pill.progress { background: #FCEDEE; color: #9C0F22; }
-        .status-pill.progress .d { background: #D2172E; animation: blip 1.6s infinite; }
-        .status-pill.completed { background: #E5F4EB; color: #1C8A4F; }
-        .status-pill.completed .d { background: #1C8A4F; }
-        .status-pill.rejected { background: #EFEDEE; color: #4A4750; }
-        .status-pill.rejected .d { background: #837E88; }
-        .chevron { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #EAE5E6; display: flex; align-items: center; justify-content: center; color: #9C0F22; transition: background .15s, transform .15s, border-color .15s; }
-        .ticket-card:hover .chevron { background: #D2172E; border-color: #D2172E; color: #fff; transform: translateX(3px); }
-        .empty-state { text-align: center; padding: 70px 20px; color: #837E88; }
-        .empty-state h3 { font-family: 'Big Shoulders Display', sans-serif; font-size: 22px; color: #17151A; margin: 0 0 6px; text-transform: uppercase; }
+        .status-pill.pending { background: #FFFBEB; color: #D97706; }
+        .status-pill.pending .d { background: #D97706; }
+        .status-pill.progress { background: rgba(217,30,54,0.06); color: #A3122A; }
+        .status-pill.progress .d { background: #D91E36; animation: blip 1.6s infinite; }
+        .status-pill.completed { background: #ECFDF5; color: #059669; }
+        .status-pill.completed .d { background: #059669; }
+        .status-pill.rejected { background: #F5F0EC; color: #857D79; }
+        .status-pill.rejected .d { background: #857D79; }
+        .chevron { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ECE4E0; display: flex; align-items: center; justify-content: center; color: #A3122A; transition: background .15s, transform .15s, border-color .15s; }
+        .ticket-card:hover .chevron { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; transform: translateX(3px); }
+        .empty-state { text-align: center; padding: 70px 20px; color: #857D79; }
+        .empty-state h3 { font-family: 'Fraunces', serif; font-size: 22px; color: #1B1210; margin: 0 0 6px; }
         .empty-state p { font-size: 13.5px; margin: 0; }
-        footer { border-top: 1px solid #EAE5E6; padding: 22px 0 40px; text-align: center; color: #837E88; font-size: 12px; }
-        footer .mono { color: #9C0F22; }
+        footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #857D79; font-size: 12px; }
+        footer .mono { color: #D91E36; font-weight: 600; }
         @media (max-width: 880px) {
           .shell { padding: 0 18px; }
           .stats-grid { grid-template-columns: repeat(2, 1fr); }
           .hero-inner { flex-direction: column; align-items: flex-start; }
           .ticket-card { grid-template-columns: 76px 1fr; }
           .device-thumb { width: 76px; height: 76px; }
-          .device-name { font-size: 18px; }
-          .ticket-right { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; padding-top: 10px; border-top: 1px dashed #EAE5E6; margin-top: 10px; }
+          .device-name { font-size: 17px; }
+          .ticket-right { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; padding-top: 10px; border-top: 1px dashed #ECE4E0; margin-top: 10px; }
         }
         @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
-        :focus-visible { outline: 2px solid #D2172E; outline-offset: 2px; }
+        :focus-visible { outline: 2px solid #D91E36; outline-offset: 2px; }
+
+        /* ===== Pipeline Progress ===== */
+        .pp-pipeline-wrap {
+          background: #fff; border: 1px solid #ECE4E0; border-radius: 20px;
+          padding: 24px 28px 20px; position: relative; overflow: hidden;
+          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
+        }
+        .pp-pipeline-wrap::before {
+          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+          background: linear-gradient(90deg, #22C55E, #16A34A);
+          opacity: 0.15;
+        }
+        .pp-pipeline-header {
+          display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+        }
+        .pp-pipeline-header-left { display: flex; align-items: center; gap: 8px; }
+        .pp-pipeline-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .pp-pipeline-label { font-size: 13px; font-weight: 700; color: #1B1210; letter-spacing: 0.01em; }
+        .pp-pipeline-pct { font-size: 13px; font-weight: 600; color: #22C55E; }
+
+        .pp-pipeline-bar-track {
+          height: 6px; border-radius: 999px; background: #F5F0EC; overflow: hidden; margin-bottom: 24px;
+        }
+        .pp-pipeline-bar-fill {
+          height: 100%; border-radius: 999px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .pp-pipeline-steps {
+          display: flex; justify-content: space-between; gap: 4px;
+        }
+        .pp-pipeline-step {
+          display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; position: relative;
+        }
+        .pp-step-circle {
+          width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          transition: all 0.3s ease; margin-bottom: 8px; flex-shrink: 0;
+        }
+        .pp-step-circle.done {
+          background: #22C55E; color: #fff;
+          box-shadow: 0 2px 8px rgba(34,197,94,0.25);
+        }
+        .pp-step-circle.current {
+          background: #D91E36; color: #fff;
+          box-shadow: 0 0 0 4px rgba(217,30,54,0.12), 0 2px 8px rgba(217,30,54,0.25);
+          animation: pp-pulse 2s ease-in-out infinite;
+        }
+        @keyframes pp-pulse {
+          0%, 100% { box-shadow: 0 0 0 4px rgba(217,30,54,0.12), 0 2px 8px rgba(217,30,54,0.25); }
+          50% { box-shadow: 0 0 0 8px rgba(217,30,54,0.06), 0 2px 12px rgba(217,30,54,0.3); }
+        }
+        .pp-step-circle.future {
+          background: #F5F0EC; color: #857D79;
+          border: 1px solid #ECE4E0;
+        }
+        .pp-step-label {
+          font-size: 9.5px; font-weight: 600; color: #857D79; line-height: 1.2; max-width: 80px;
+        }
+        .pp-step-label.done { color: #16A34A; }
+        .pp-step-label.current { color: #D91E36; font-weight: 700; }
+        .pp-step-now-badge {
+          position: absolute; top: -2px; right: 4px;
+          font-size: 7px; font-weight: 800; letter-spacing: 0.08em; color: #fff;
+          background: #D91E36; padding: 2px 5px; border-radius: 999px;
+          line-height: 1;
+        }
+
+        @media (max-width: 768px) {
+          .pp-pipeline-wrap { padding: 18px 16px 16px; }
+          .pp-step-circle { width: 26px; height: 26px; }
+          .pp-step-label { font-size: 8px; max-width: 56px; }
+          .pp-step-now-badge { font-size: 6px; padding: 1.5px 4px; top: -4px; }
+        }
       `}</style>
 
       {/* SiteTopNav for desktop */}
@@ -1475,7 +1572,7 @@ export default function CustomerRepairTracking() {
 
       {/* Mobile header */}
       <div className="lg:hidden relative z-30 w-full">
-        <header className="relative w-full px-4 pt-3 pb-5 text-white overflow-hidden" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)', borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
+        <header className="relative w-full px-4 pt-3 pb-5 text-white overflow-hidden" style={{ background: 'linear-gradient(135deg,#D91E36 0%,#A3122A 100%)', borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
           <div className="flex items-center gap-3">
             <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
               <span className="material-symbols-outlined text-lg">arrow_back</span>
@@ -1549,7 +1646,7 @@ export default function CustomerRepairTracking() {
                 {/* Control Panel */}
                 <section className="control-panel" aria-label="Search and filter">
                   <div className="search-row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 17, height: 17, color: '#837E88', flexShrink: 0 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 17, height: 17, color: '#857D79', flexShrink: 0 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
                     <input
                       id="searchInput"
                       type="text"
@@ -1588,16 +1685,16 @@ export default function CustomerRepairTracking() {
                   <section className="ticket-list" aria-label="Repair tickets">
                     {[1, 2, 3].map(i => (
                       <div key={i} className="ticket-card" style={{ animation: 'none', cursor: 'default' }}>
-                        <div className="device-thumb" style={{ background: '#F2EEEF' }} />
+                        <div className="device-thumb" style={{ background: '#F5F0EC' }} />
                         <div className="ticket-mid">
-                          <div className="h-3 w-24 rounded" style={{ background: '#EAE5E6', marginBottom: 8 }} />
-                          <div className="h-5 w-40 rounded" style={{ background: '#EAE5E6', marginBottom: 8 }} />
-                          <div className="h-3 w-32 rounded" style={{ background: '#EAE5E6', marginBottom: 12 }} />
+                          <div className="h-3 w-24 rounded" style={{ background: '#ECE4E0', marginBottom: 8 }} />
+                          <div className="h-5 w-40 rounded" style={{ background: '#ECE4E0', marginBottom: 8 }} />
+                          <div className="h-3 w-32 rounded" style={{ background: '#ECE4E0', marginBottom: 12 }} />
                           <div className="vitals-track"><div className="vitals-fill" style={{ width: '30%' }} /></div>
                         </div>
                         <div className="ticket-right">
                           <div className="h-6 w-24 rounded-full" style={{ background: '#EAE5E6' }} />
-                          <div className="chevron" style={{ borderColor: '#EAE5E6' }} />
+                          <div className="chevron" style={{ borderColor: '#ECE4E0' }} />
                         </div>
                       </div>
                     ))}
@@ -1606,7 +1703,7 @@ export default function CustomerRepairTracking() {
                   <>
                     <section className="ticket-list" aria-label="Repair tickets" style={{ display: 'none' }} />
                     <div className="empty-state show">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 40, height: 40, color: '#D2172E', marginBottom: 12 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 40, height: 40, color: '#D91E36', marginBottom: 12 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
                       <h3>No matching tickets</h3>
                       <p>Try a different ticket ID, device name, or filter.</p>
                     </div>
@@ -1702,35 +1799,35 @@ export default function CustomerRepairTracking() {
               {loading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                    <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: '#fff', border: '1px solid #ECE4E0' }}>
                       <div className="flex gap-5">
-                        <div className="w-20 h-20 rounded-xl" style={{ background: '#F2EEEF' }} />
+                        <div className="w-20 h-20 rounded-xl" style={{ background: '#F5F0EC' }} />
                         <div className="flex-1 space-y-3">
-                          <div className="h-4 w-32 rounded-lg" style={{ background: '#EAE5E6' }} />
-                          <div className="h-3.5 w-48 rounded-lg" style={{ background: '#EAE5E6' }} />
-                          <div className="h-2 w-full rounded-full" style={{ background: '#EAE5E6' }} />
+                          <div className="h-4 w-32 rounded-lg" style={{ background: '#ECE4E0' }} />
+                          <div className="h-3.5 w-48 rounded-lg" style={{ background: '#ECE4E0' }} />
+                          <div className="h-2 w-full rounded-full" style={{ background: '#ECE4E0' }} />
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : filteredTickets.length === 0 ? (
-                <div className="rounded-2xl p-8" style={{ background: '#fff', border: '1px solid #E5E7EB' }}>
+                <div className="rounded-2xl p-8" style={{ background: '#fff', border: '1px solid #ECE4E0' }}>
                   <div className="flex flex-col items-center justify-center py-16 text-center">
                     <motion.div
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                       className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-6"
-                      style={{ background: '#FCEDEE', border: '1px solid #F0DEE0' }}
+                      style={{ background: 'rgba(217,30,54,0.06)', border: '1px solid rgba(217,30,54,0.1)' }}
                     >
-                      <span className="material-symbols-outlined text-5xl" style={{ color: '#9C0F22' }}>build</span>
+                      <span className="material-symbols-outlined text-5xl" style={{ color: '#D91E36' }}>build</span>
                     </motion.div>
                     <motion.h2
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 }}
-                      className="text-2xl font-bold mb-2" style={{ color: '#17151A' }}
+                      className="text-2xl font-bold mb-2" style={{ color: '#1B1210', fontFamily: "'Fraunces', serif" }}
                     >
                       No Repair Requests Found
                     </motion.h2>
@@ -1739,7 +1836,7 @@ export default function CustomerRepairTracking() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.25 }}
                       className="text-sm mb-8 max-w-sm"
-                      style={{ color: '#837E88' }}
+                      style={{ color: '#857D79' }}
                     >
                       You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
                     </motion.p>
@@ -1749,7 +1846,7 @@ export default function CustomerRepairTracking() {
                       transition={{ delay: 0.35 }}
                       onClick={() => navigate('/repairs')}
                       className="px-8 h-12 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
-                      style={{ background: 'linear-gradient(135deg, #D2172E, #9C0F22)', boxShadow: '0 6px 20px rgba(210,23,46,0.3)' }}
+                      style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 6px 20px rgba(217,30,54,0.3)' }}
                     >
                       Book a Repair
                     </motion.button>

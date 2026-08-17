@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import { productService } from '../services/productService'
+import { cartService } from '../services/cartService'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'https://picsum.photos/seed/product/300/300'
@@ -18,6 +19,7 @@ interface WinkCartItem {
   stock: 'in' | 'low' | 'out'
   stockText: string
   img: string
+  cartItemId?: number
 }
 
 interface RecProduct {
@@ -27,19 +29,6 @@ interface RecProduct {
   img: string
   brand?: string
 }
-
-const DEFAULT_CART_ITEMS: WinkCartItem[] = [
-  { id: 1, name: "Aalto Sofa", meta: "Oat Boucle, Walnut Legs", sku: "LL-SF-AAL-OAT", price: 2480, qty: 1, stock: "in", stockText: "In Stock", img: "https://picsum.photos/seed/sofa/300/300" },
-  { id: 2, name: "Hearth Dining Table", meta: "Solid Oak, Seats 6", sku: "LL-TB-HRT-OAK", price: 1860, qty: 1, stock: "in", stockText: "In Stock", img: "https://picsum.photos/seed/table/300/300" },
-  { id: 3, name: "Hue Wall Sconce", meta: "Brushed Brass, Set of 2", sku: "LL-LT-HUE-BRS", price: 210, qty: 2, stock: "low", stockText: "Only 3 left", img: "https://picsum.photos/seed/lamp/300/300" },
-]
-
-const DEFAULT_RECOMMENDATIONS: RecProduct[] = [
-  { id: 101, name: "Pebble Side Table", price: 480, img: "https://picsum.photos/seed/pebble/300/300", brand: "PhoneFix" },
-  { id: 102, name: "Wisp Floor Lamp", price: 260, img: "https://picsum.photos/seed/wisp/300/300", brand: "PhoneFix" },
-  { id: 103, name: "Folio Coffee Table", price: 540, img: "https://picsum.photos/seed/folio/300/300", brand: "PhoneFix" },
-  { id: 104, name: "Bramble Armchair", price: 920, img: "https://picsum.photos/seed/bramble/300/300", brand: "PhoneFix" },
-]
 
 function getProductImage(product: any): string {
   const raw = product.common_image || product.image || product.images?.[0] || product.thumbnail || product.variants?.[0]?.images?.[0] || ''
@@ -58,30 +47,61 @@ function getProductPrice(product: any): number {
   return isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
 }
 
+function mapCartItemsToWink(items: any[]): WinkCartItem[] {
+  return items.map((item) => ({
+    id: item.productId || item.id,
+    variantId: item.variantId ?? item.variationId ?? null,
+    name: item.name || 'Item',
+    meta: [item.brand, item.storage, item.ram, item.color].filter(Boolean).join(', ') || 'Standard Edition',
+    sku: item.sku || `SKU-MOB-${item.productId || item.id}`,
+    price: item.price || 0,
+    qty: item.quantity || item.qty || 1,
+    stock: 'in',
+    stockText: 'In Stock',
+    img: item.image || item.img || FALLBACK_IMG,
+    cartItemId: item.cartItemId || null,
+  }))
+}
+
 export default function CartPage() {
   const navigate = useNavigate()
-  const [cart, setCart] = useState<WinkCartItem[]>(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('cart') || '[]')
-      if (Array.isArray(stored) && stored.length > 0) {
-        return stored.map((item: any) => ({
-          id: item.productId || item.id,
-          variantId: item.variantId,
-          name: item.name || 'Item',
-          meta: [item.brand, item.storage, item.ram, item.color].filter(Boolean).join(', ') || 'Standard Edition',
-          sku: item.sku || `SKU-MOB-${item.productId || item.id}`,
-          price: item.price || 0,
-          qty: item.quantity || item.qty || 1,
-          stock: 'in',
-          stockText: 'In Stock',
-          img: item.image || item.img || FALLBACK_IMG,
-        }))
-      }
-    } catch {}
-    return DEFAULT_CART_ITEMS
-  })
+  const [cart, setCart] = useState<WinkCartItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [recommendations, setRecommendations] = useState<RecProduct[]>(DEFAULT_RECOMMENDATIONS)
+  const fetchCart = useCallback(async () => {
+    try {
+      const { items } = await cartService.getCart(true)
+      setCart(mapCartItemsToWink(items))
+    } catch {
+      setCart([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const { items } = await cartService.getCart(true)
+        if (!cancelled) setCart(mapCartItemsToWink(items))
+      } catch {
+        if (!cancelled) setCart([])
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    const onCartUpdated = () => fetchCart()
+    window.addEventListener('cart-updated', onCartUpdated)
+    return () => window.removeEventListener('cart-updated', onCartUpdated)
+  }, [fetchCart])
+
+  const [recommendations, setRecommendations] = useState<RecProduct[]>([])
   const [removingIds, setRemovingIds] = useState<number[]>([])
   const [promoInput, setPromoInput] = useState('')
   const [discountRate, setDiscountRate] = useState(0)
@@ -89,7 +109,6 @@ export default function CartPage() {
   const [addedRecIds, setAddedRecIds] = useState<Record<number, boolean>>({})
   const [checkoutLoading, setCheckoutLoading] = useState(false)
 
-  // Fetch real API products for recommendations
   useEffect(() => {
     productService
       .list({ page_size: 4 })
@@ -108,23 +127,6 @@ export default function CartPage() {
       .catch(() => {})
   }, [])
 
-  // Sync back to cartService/localStorage when cart state changes
-  useEffect(() => {
-    try {
-      const mapped = cart.map((i) => ({
-        productId: i.id,
-        variantId: i.variantId || null,
-        name: i.name,
-        brand: i.meta.split(', ')[0] || '',
-        price: i.price,
-        image: i.img,
-        quantity: i.qty,
-      }))
-      localStorage.setItem('cart', JSON.stringify(mapped))
-      window.dispatchEvent(new Event('cart-updated'))
-    } catch {}
-  }, [cart])
-
   function fmt(n: number) {
     return '₹' + Math.round(n).toLocaleString('en-IN')
   }
@@ -135,22 +137,23 @@ export default function CartPage() {
   const tax = (subtotal - discount) * 0.065
   const total = subtotal - discount + tax
 
-  const handleQtyChange = (id: number, delta: number) => {
+  const handleQtyChange = async (item: WinkCartItem, delta: number) => {
+    const newQty = item.qty + delta
+    if (newQty < 1) return
     setCart((prev) =>
-      prev.map((item) => {
-        if (item.id !== id) return item
-        const newQty = item.qty + delta
-        if (newQty < 1) return item
-        return { ...item, qty: newQty }
-      })
+      prev.map((i) => (i.id === item.id ? { ...i, qty: newQty } : i))
     )
+    await cartService.updateQuantity(item.id, item.variantId, delta)
+    await fetchCart()
   }
 
-  const handleRemove = (id: number) => {
-    setRemovingIds((prev) => [...prev, id])
+  const handleRemove = async (item: WinkCartItem) => {
+    setRemovingIds((prev) => [...prev, item.id])
+    await cartService.removeItem(item.id, item.variantId)
     setTimeout(() => {
-      setCart((prev) => prev.filter((i) => i.id !== id))
-      setRemovingIds((prev) => prev.filter((x) => x !== id))
+      setCart((prev) => prev.filter((i) => i.id !== item.id))
+      setRemovingIds((prev) => prev.filter((x) => x !== item.id))
+      fetchCart()
     }, 280)
   }
 
@@ -176,29 +179,18 @@ export default function CartPage() {
     }, 1200)
   }
 
-  const handleAddRec = (rec: RecProduct) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.id === rec.id)
-      if (existing) {
-        return prev.map((i) => (i.id === rec.id ? { ...i, qty: i.qty + 1 } : i))
-      } else {
-        return [
-          ...prev,
-          {
-            id: rec.id,
-            name: rec.name,
-            meta: rec.brand || 'Standard Edition',
-            sku: `LL-REC-${rec.id}`,
-            price: rec.price,
-            qty: 1,
-            stock: 'in',
-            stockText: 'In Stock',
-            img: rec.img,
-          },
-        ]
-      }
+  const handleAddRec = async (rec: RecProduct) => {
+    await cartService.addItem({
+      productId: rec.id,
+      variationId: 0,
+      quantity: 1,
+      name: rec.name,
+      brand: rec.brand || 'PhoneFix',
+      price: rec.price,
+      image: rec.img,
     })
     setAddedRecIds((prev) => ({ ...prev, [rec.id]: true }))
+    await fetchCart()
     setTimeout(() => {
       setAddedRecIds((prev) => ({ ...prev, [rec.id]: false }))
     }, 1200)
@@ -255,7 +247,11 @@ export default function CartPage() {
               </span>
             </div>
 
-            {cart.length > 0 ? (
+            {loading ? (
+              <div className="empty-state show">
+                <p className="serif">Loading cart...</p>
+              </div>
+            ) : cart.length > 0 ? (
               <div className="cart-items">
                 {cart.map((item) => {
                   const isRemoving = removingIds.includes(item.id)
@@ -298,7 +294,7 @@ export default function CartPage() {
                             <button
                               className="qty-dec"
                               aria-label="Decrease quantity"
-                              onClick={() => handleQtyChange(item.id, -1)}
+                              onClick={() => handleQtyChange(item, -1)}
                             >
                               –
                             </button>
@@ -306,16 +302,16 @@ export default function CartPage() {
                             <button
                               className="qty-inc"
                               aria-label="Increase quantity"
-                              onClick={() => handleQtyChange(item.id, 1)}
+                              onClick={() => handleQtyChange(item, 1)}
                             >
                               +
                             </button>
                           </div>
                           <div className="card-links">
-                            <button className="remove" onClick={() => handleRemove(item.id)}>
+                            <button className="remove" onClick={() => handleRemove(item)}>
                               Remove
                             </button>
-                            <button className="save" onClick={() => handleRemove(item.id)}>
+                            <button className="save" onClick={() => handleRemove(item)}>
                               Save for later
                             </button>
                           </div>
@@ -470,7 +466,7 @@ export default function CartPage() {
           --ink:#181513;
           --ink-2:#2A2624;
           --ink-soft:#54504C;
-          --paper:#ffffff;
+          --paper:#FBF8F6;
           --paper-2:#F8F8F8;
           --line:#E7E7EA;
           --line-soft:#EEE8DC;

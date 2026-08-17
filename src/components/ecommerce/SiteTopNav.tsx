@@ -75,6 +75,7 @@ export default function SiteTopNav() {
   useEffect(() => {
     const update = () => setCartCount(cartService.getCachedCartCount())
     update()
+    cartService.getCartCount().then((count) => setCartCount(count)).catch(() => {})
     window.addEventListener('cart-updated', update)
     return () => window.removeEventListener('cart-updated', update)
   }, [])

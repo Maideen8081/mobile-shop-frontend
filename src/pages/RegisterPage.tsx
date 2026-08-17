@@ -103,7 +103,7 @@ export default function RegisterPage() {
   }, [nextSlide])
 
   return (
-    <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#FBF8F6' }}>
       <main className="flex-grow flex items-center justify-center relative overflow-hidden" style={{ padding: '80px 64px' }}>
         <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
           <div
@@ -124,7 +124,7 @@ export default function RegisterPage() {
               right: '-12rem',
               width: '24rem',
               height: '24rem',
-              backgroundColor: '#A81D2A',
+              backgroundColor: '#A3122A',
               filter: 'blur(120px)',
             }}
           />
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                     style={{
                       width: index === activeSlide ? '28px' : '8px',
                       height: '8px',
-                      backgroundColor: index === activeSlide ? '#CB202D' : 'rgba(255,255,255,0.4)',
+                      backgroundColor: index === activeSlide ? '#D91E36' : 'rgba(255,255,255,0.4)',
                     }}
                   />
                 ))}
@@ -217,7 +217,7 @@ export default function RegisterPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.fullName ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -248,7 +248,7 @@ export default function RegisterPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.email ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -279,7 +279,7 @@ export default function RegisterPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.password ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -310,7 +310,7 @@ export default function RegisterPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.confirmPassword ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -326,7 +326,7 @@ export default function RegisterPage() {
                     <div
                       className="w-4 h-4 rounded flex items-center justify-center cursor-pointer transition-all"
                       style={{
-                        backgroundColor: formData.agreeTerms ? '#CB202D' : 'transparent',
+                        backgroundColor: formData.agreeTerms ? '#D91E36' : 'transparent',
                         border: formData.agreeTerms ? '1px solid transparent' : `1px solid ${errors.agreeTerms ? '#ba1a1a' : '#bccac0'}`,
                       }}
                       onClick={() => setField('agreeTerms', !formData.agreeTerms)}
@@ -335,7 +335,7 @@ export default function RegisterPage() {
                     </div>
                     <label className="text-sm cursor-pointer" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }} onClick={() => setField('agreeTerms', !formData.agreeTerms)}>
                       I agree to the{' '}
-                      <Link to="#" className="font-semibold hover:underline" style={{ color: '#CB202D' }}>
+                      <Link to="#" className="font-semibold hover:underline" style={{ color: '#D91E36' }}>
                         Terms &amp; Conditions
                       </Link>
                     </label>
@@ -352,11 +352,11 @@ export default function RegisterPage() {
                   disabled={loading}
                   className="w-full py-4 px-6 rounded-lg font-semibold text-white uppercase tracking-wider transition-all active:scale-[0.98] shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
-                    background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                    background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                     fontSize: '14px',
                     fontFamily: "'Inter', sans-serif",
                     fontWeight: 700,
-                    boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
+                    boxShadow: '0 4px 16px rgba(217,30,54,0.3)',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(0.9)' }}
                   onMouseLeave={e => { e.currentTarget.style.filter = 'none' }}
@@ -368,7 +368,7 @@ export default function RegisterPage() {
               <div className="mt-8 pt-6 border-t text-center" style={{ borderTop: '1px solid #bccac0' }}>
                 <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
                   Already have an account?{' '}
-                  <Link to="/login" className="font-bold hover:underline ml-1" style={{ color: '#CB202D' }}>
+                  <Link to="/login" className="font-bold hover:underline ml-1" style={{ color: '#D91E36' }}>
                     Login
                   </Link>
                 </p>

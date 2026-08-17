@@ -1,14 +1,18 @@
 .wx-page{
-  --red:#CB202D;
-  --red-dark:#A81823;
-  --red-light:#FDEBEC;
-  --black:#151515;
-  --gray-900:#1C1C1E;
-  --gray-600:#6B6B70;
-  --gray-400:#9A9AA0;
-  --gray-200:#E7E7EA;
-  --gray-100:#F4F4F6;
-  --white:#ffffff;
+  --red:#D91E36;
+  --red-dark:#A3122A;
+  --red-light:rgba(217,30,54,0.06);
+  --black:#1B1210;
+  --gray-900:#1B1210;
+  --gray-600:#4A403D;
+  --gray-400:#857D79;
+  --gray-200:#ECE4E0;
+  --gray-100:#F5F0EC;
+  --white:#FBF8F6;
+  --paper:#FBF8F6;
+  --line:#ECE4E0;
+  --ink:#1B1210;
+  --ink-soft:#4A403D;
   --radius-sm:8px;
   --radius-md:14px;
   --radius-lg:20px;

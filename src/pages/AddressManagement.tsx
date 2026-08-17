@@ -131,7 +131,7 @@ export default function AddressManagement() {
     return (
       <>
         <SiteTopNav />
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#FCFAFA' }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#FBF8F6' }}>
           <div className="text-center">
             <div className="w-10 h-10 rounded-full border-3 border-t-transparent animate-spin mx-auto mb-3" style={{ borderColor: '#EAE5E6', borderTopColor: '#D2172E' }} />
             <p className="text-sm" style={{ color: '#837E88' }}>Loading your addresses...</p>
@@ -142,11 +142,11 @@ export default function AddressManagement() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#FCFAFA' }}>
+    <div className="min-h-screen" style={{ background: '#FBF8F6' }}>
       <style>{`
         .addr-pulse-rail{height:5px;width:100%;background:linear-gradient(90deg,#9C0F22,#F03049 45%,#D2172E 55%,#9C0F22);background-size:220% 100%;animation:railmove 6s ease-in-out infinite;position:sticky;top:0;z-index:60;}
         @keyframes railmove{0%,100%{background-position:0% 0}50%{background-position:100% 0}}
-        .addr-bg-wash{position:fixed;inset:0;z-index:-1;background:radial-gradient(700px 340px at 88% -8%,#FCEDEE 0%,transparent 65%),radial-gradient(500px 280px at 4% 30%,#FBF0F1 0%,transparent 60%),#FCFAFA;}
+        .addr-bg-wash{position:fixed;inset:0;z-index:-1;background:radial-gradient(700px 340px at 88% -8%,#FCEDEE 0%,transparent 65%),radial-gradient(500px 280px at 4% 30%,#FBF0F1 0%,transparent 60%),#FBF8F6;}
         .addr-shell{max-width:1180px;margin:0 auto;padding:0 32px;}
         .addr-crumb{display:flex;align-items:center;gap:8px;padding:28px 0 0;font-size:13px;color:#837E88;font-weight:500;}
         .addr-crumb a{color:#837E88;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s;}
@@ -209,7 +209,7 @@ export default function AddressManagement() {
         @keyframes modal-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
         .modal-head{display:flex;justify-content:space-between;align-items:center;padding:24px 28px 20px;border-bottom:1px solid #EAE5E6;}
         .modal-head h2{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0;text-transform:uppercase;color:#17151A;}
-        .modal-close{width:36px;height:36px;border-radius:10px;border:none;background:#FCFAFA;color:#4A4750;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+        .modal-close{width:36px;height:36px;border-radius:10px;border:none;background:#FBF8F6;color:#4A4750;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
         .modal-close:hover{background:#FCEDEE;color:#D2172E;}
         .modal-close svg{width:16px;height:16px;}
         .modal-body{padding:24px 28px;}
@@ -217,7 +217,7 @@ export default function AddressManagement() {
         .field{display:flex;flex-direction:column;gap:7px;}
         .field.full{grid-column:1 / -1;}
         .field label{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#4A4750;}
-        .field input{border:1.5px solid #EAE5E6;border-radius:10px;padding:13px 14px;font-size:14px;font-family:'Inter',sans-serif;color:#17151A;outline:none;background:#FCFAFA;transition:border-color .15s,background .15s,box-shadow .15s;}
+        .field input{border:1.5px solid #EAE5E6;border-radius:10px;padding:13px 14px;font-size:14px;font-family:'Inter',sans-serif;color:#17151A;outline:none;background:#FBF8F6;transition:border-color .15s,background .15s,box-shadow .15s;}
         .field input:focus{border-color:#D2172E;background:#fff;box-shadow:0 0 0 3px rgba(210,23,46,0.08);}
         .field input::placeholder{color:#B2ADB4;}
         .type-select-row{display:flex;gap:10px;margin-bottom:16px;}
@@ -225,7 +225,7 @@ export default function AddressManagement() {
         .type-opt svg{width:20px;height:20px;}
         .type-opt:hover{border-color:#D2172E;color:#9C0F22;}
         .type-opt.selected{border-color:#D2172E;background:#FCEDEE;color:#9C0F22;}
-        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#FCFAFA;border:1.5px solid #EAE5E6;border-radius:12px;margin-bottom:8px;}
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#FBF8F6;border:1.5px solid #EAE5E6;border-radius:12px;margin-bottom:8px;}
         .toggle-row .lbl{font-size:14px;font-weight:600;color:#17151A;}
         .toggle-row .lbl small{display:block;font-weight:400;color:#837E88;font-size:12px;margin-top:3px;}
         .switch{width:44px;height:25px;border-radius:999px;background:#DCD7D9;position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;border:none;}

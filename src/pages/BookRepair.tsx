@@ -199,30 +199,29 @@ export default function BookRepair() {
 
   if (result) {
     return (
-      <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans">
+      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <SiteTopNav />
         <div className="pt-24"><BackBar label="Back to Services" to="/repairs" /></div>
         <main className="max-w-lg mx-auto px-4 py-8">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-            <div className="w-20 h-20 rounded-3xl bg-mint/10 flex items-center justify-center mx-auto mb-6">
-              <FiCheckCircle size={40} className="text-mint" />
+            <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(217,30,54,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+              <FiCheckCircle size={40} style={{ color: '#D91E36' }} />
             </div>
-            <h1 className="text-3xl font-extrabold text-[#181c1e] mb-2">Booking Confirmed!</h1>
-            <p className="text-[#434748] mb-8">Your repair has been submitted successfully.</p>
-            <div className="rounded-2xl p-6 mb-8" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}>
-              <p className="text-xs text-[#434748] mb-2">Your Tracking ID</p>
-              <p className="text-3xl font-mono font-bold text-mint tracking-wider">{result.repairId}</p>
-              <p className="text-xs text-[#434748] mt-3">Save this ID to track your repair.</p>
+            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 30, fontWeight: 600, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
+            <p style={{ fontSize: 14, color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully.</p>
+            <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 24, marginBottom: 32, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: '#857D79', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8 }}>Your Tracking ID</p>
+              <p style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
+              <p style={{ fontSize: 12, color: '#857D79', marginTop: 12 }}>Save this ID to track your repair.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/my-repairs"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all text-white"
-                style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 28px', borderRadius: 12, fontSize: 13.5, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg, #D91E36, #A3122A)', transition: 'transform .16s ease, box-shadow .16s ease' }}
               >
                 Track My Repair <FiArrowRight size={16} />
               </Link>
               <Link to="/repairs"
-                className="inline-flex items-center justify-center gap-2 bg-white/80 border border-glass-border text-[#434748] font-semibold px-8 py-3.5 rounded-full hover:border-mint/50 transition-all"
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 28px', borderRadius: 12, fontSize: 13.5, fontWeight: 600, color: '#4A403D', background: '#F5F0EC', border: '1.5px solid #ECE4E0', transition: 'all .16s ease' }}
               >
                 Back to Services
               </Link>
@@ -234,215 +233,308 @@ export default function BookRepair() {
     )
   }
 
+  const cardStyle: React.CSSProperties = {
+    background: '#fff',
+    border: '1px solid #ECE4E0',
+    borderRadius: 20,
+    padding: '24px 28px',
+    boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)',
+  }
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: 44,
+    padding: '0 15px',
+    borderRadius: 11,
+    border: '1.5px solid #ECE4E0',
+    fontSize: 14,
+    color: '#1B1210',
+    background: '#FBF8F6',
+    outline: 'none',
+    transition: 'border-color .16s ease, background .16s ease',
+    fontFamily: "'Inter', sans-serif",
+  }
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: 12.5,
+    fontWeight: 600,
+    color: '#4A403D',
+    marginBottom: 6,
+    letterSpacing: '0.01em',
+  }
+
+  const btnPrimary: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '10px 20px',
+    borderRadius: 12,
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#fff',
+    background: 'linear-gradient(135deg, #D91E36, #A3122A)',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'transform .16s ease, box-shadow .16s ease',
+    boxShadow: '0 4px 12px rgba(217,30,54,0.3)',
+  }
+
+  const btnGhost: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '10px 20px',
+    borderRadius: 12,
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#4A403D',
+    background: '#F5F0EC',
+    border: '1px solid #ECE4E0',
+    cursor: 'pointer',
+    transition: 'all .16s ease',
+  }
+
   return (
-    <div className="min-h-screen bg-[#f7fafd] text-[#181c1e] font-sans selection:bg-mint/30 selection:text-[#A81D2A]">
+    <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
       <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
 
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-12">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-mint/10 flex items-center justify-center shrink-0">
-              <FiEdit3 size={18} className="text-mint" />
-            </div>
-            <div className="flex-1 relative">
-              <h1 className="text-xl lg:text-2xl font-extrabold text-[#181c1e]">Book a Repair</h1>
-              <div onClick={() => setShowServicePicker(!showServicePicker)} className="inline-flex items-center gap-1.5 cursor-pointer group mt-0.5">
-                <p className="text-[#434748] text-sm group-hover:text-mint transition-colors">{selectedIssue || 'Select a service'}</p>
-                <svg className={`w-3.5 h-3.5 text-[#434748] transition-transform ${showServicePicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </div>
-              {showServicePicker && (
-                <div className="absolute top-full left-0 mt-1 z-20 bg-white rounded-xl shadow-lg border border-glass-border min-w-[220px] max-h-56 overflow-y-auto py-1">
-                  {services.filter(s => s.is_active).map(s => (
-                    <button key={s.id} type="button" onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
-                      className={`w-full text-left px-4 py-2 text-sm transition ${selectedIssue === s.name ? 'text-white' : 'text-[#181c1e] hover:bg-[#f7fafd]'}`}
-                      style={selectedIssue === s.name ? { background: 'linear-gradient(135deg, #CB202D, #A81D2A)' } : {}}
-                    >{s.name}</button>
-                  ))}
-                  {services.filter(s => s.is_active).length === 0 && <p className="px-4 py-2 text-sm text-[#434748]/60">No services available</p>}
-                </div>
-              )}
-            </div>
+        <div className="flex items-center gap-3 mb-2">
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(217,30,54,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <FiEdit3 size={18} style={{ color: '#D91E36' }} />
           </div>
-        <p className="text-[#434748] text-sm mb-6">Complete the steps below to book your repair.</p>
+          <div className="flex-1 relative">
+            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: '#1B1210' }}>Book a Repair</h1>
+            <div onClick={() => setShowServicePicker(!showServicePicker)} className="inline-flex items-center gap-1.5 cursor-pointer group mt-0.5">
+              <p style={{ fontSize: 13.5, color: '#857D79', transition: 'color .16s' }} className="group-hover:text-[#D91E36]">{selectedIssue || 'Select a service'}</p>
+              <svg className={`w-3.5 h-3.5 transition-transform ${showServicePicker ? 'rotate-180' : ''}`} style={{ color: '#857D79' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </div>
+            {showServicePicker && (
+              <div className="absolute top-full left-0 mt-1 z-20" style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 14, boxShadow: '0 20px 50px -20px rgba(92,10,28,0.18)', minWidth: 220, maxHeight: 224, overflowY: 'auto', padding: '4px' }}>
+                {services.filter(s => s.is_active).map(s => (
+                  <button key={s.id} type="button" onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '10px 14px',
+                      fontSize: 13.5,
+                      fontWeight: 500,
+                      borderRadius: 10,
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'background .16s ease',
+                      background: selectedIssue === s.name ? 'linear-gradient(135deg, #D91E36, #A3122A)' : 'transparent',
+                      color: selectedIssue === s.name ? '#fff' : '#1B1210',
+                    }}
+                    onMouseEnter={(e) => { if (selectedIssue !== s.name) e.currentTarget.style.background = 'rgba(217,30,54,0.06)' }}
+                    onMouseLeave={(e) => { if (selectedIssue !== s.name) e.currentTarget.style.background = 'transparent' }}
+                  >{s.name}</button>
+                ))}
+                {services.filter(s => s.is_active).length === 0 && <p style={{ padding: '10px 14px', fontSize: 13, color: '#857D79' }}>No services available</p>}
+              </div>
+            )}
+          </div>
+        </div>
+        <p style={{ fontSize: 13.5, color: '#857D79', marginBottom: 24 }}>Complete the steps below to book your repair.</p>
 
         {/* Progress Bar */}
-        <div className="flex items-center gap-1 mb-6">
+        <div className="flex items-center gap-1 mb-3">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-mint' : 'bg-[#e0e3e6]'}`} />
+            <div key={i} style={{ height: 4, flex: 1, borderRadius: 10, transition: 'all .3s ease', background: i + 1 <= step ? '#D91E36' : '#ECE4E0' }} />
           ))}
         </div>
-        <p className="text-xs text-[#434748] font-medium mb-6">{progressLabel}</p>
+        <p style={{ fontSize: 12, color: '#857D79', fontWeight: 500, marginBottom: 24 }}>{progressLabel}</p>
 
         <AnimatePresence mode="wait">
           {step <= questions.length ? (
-            <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
-            >
+            <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
               <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined text-lg text-mint">help</span>
-                <span className="text-[10px] font-bold text-mint uppercase tracking-wider">Question {step} of {questions.length}</span>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#D91E36' }}>help</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Question {step} of {questions.length}</span>
               </div>
-              <p className="text-base font-semibold text-[#181c1e] mb-4 mt-2">{questions[step - 1]}</p>
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#1B1210', marginBottom: 16, marginTop: 8 }}>{questions[step - 1]}</p>
               <textarea value={answers[step - 1]} onChange={(e) => { const v = e.target.value; updateAnswer(step - 1, v); if (qErrors[step - 1] && v.trim()) setQErrors(p => { const n = { ...p }; delete n[step - 1]; return n }) }}
-                rows={3} className={`w-full px-4 py-3 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all resize-none ${qErrors[step - 1] ? 'border-red-400' : 'border-glass-border'}`} placeholder="Type your answer..." autoFocus
+                rows={3} style={{ ...inputStyle, height: 'auto', padding: '12px 15px', resize: 'none', borderColor: qErrors[step - 1] ? '#ef4444' : '#ECE4E0' }} placeholder="Type your answer..." autoFocus
+                onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = qErrors[step - 1] ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
               />
-              {qErrors[step - 1] && <p className="text-xs text-red-500 mt-1">{qErrors[step - 1]}</p>}
-              <div className="flex items-center justify-between mt-5">
-                <button onClick={goPrev} disabled={step === 1}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/80 border border-glass-border text-xs font-semibold text-[#434748] hover:border-mint/50 disabled:opacity-40 transition-all cursor-pointer"
-                ><FiArrowLeft size={13} /> Back</button>
-                <button onClick={goNext}
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
-                >{step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={13} /></button>
+              {qErrors[step - 1] && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{qErrors[step - 1]}</p>}
+              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
+                <button onClick={goPrev} disabled={step === 1} style={{ ...btnGhost, opacity: step === 1 ? 0.4 : 1, cursor: step === 1 ? 'not-allowed' : 'pointer' }}>
+                  <FiArrowLeft size={13} /> Back
+                </button>
+                <button onClick={goNext} style={btnPrimary}>
+                  {step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={13} />
+                </button>
               </div>
             </motion.div>
           ) : step === questions.length + 1 ? (
-            <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
-            >
+            <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
               <div className="flex items-center gap-2 mb-4">
-                <FiUser size={14} className="text-mint" />
-                <span className="text-sm font-bold text-[#181c1e]">Your Details</span>
+                <FiUser size={14} style={{ color: '#D91E36' }} />
+                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Your Details</span>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Full Name <span className="text-red-500">*</span></label>
+                  <label style={labelStyle}>Full Name <span style={{ color: '#ef4444' }}>*</span></label>
                   <input value={name} onBlur={() => { setTouched(p => ({ ...p, name: true })); setErrors(p => ({ ...p, name: validateName(name) })) }} onChange={(e) => { setName(e.target.value); if (touched.name) setErrors(p => ({ ...p, name: validateName(e.target.value) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.name && errors.name ? 'border-red-400' : 'border-glass-border'}`} placeholder="Your name" autoFocus />
-                  {touched.name && errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+                    style={{ ...inputStyle, borderColor: touched.name && errors.name ? '#ef4444' : '#ECE4E0' }} placeholder="Your name" autoFocus
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.name && errors.name ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.name && errors.name && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.name}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Mobile Number <span className="text-red-500">*</span></label>
+                  <label style={labelStyle}>Mobile Number <span style={{ color: '#ef4444' }}>*</span></label>
                   <input value={mobile} onBlur={() => { setTouched(p => ({ ...p, mobile: true })); setErrors(p => ({ ...p, mobile: validateMobile(mobile) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setMobile(v); if (touched.mobile) setErrors(p => ({ ...p, mobile: validateMobile(v) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.mobile && errors.mobile ? 'border-red-400' : 'border-glass-border'}`} placeholder="+91 98765 43210" />
-                  {touched.mobile && errors.mobile && <p className="text-xs text-red-500 mt-1">{errors.mobile}</p>}
+                    style={{ ...inputStyle, borderColor: touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0' }} placeholder="+91 98765 43210"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.mobile && errors.mobile && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.mobile}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Email Address <span className="text-red-500">*</span></label>
+                  <label style={labelStyle}>Email Address <span style={{ color: '#ef4444' }}>*</span></label>
                   <input value={email} onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }} onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.email && errors.email ? 'border-red-400' : 'border-glass-border'}`} placeholder="email@example.com" type="email" />
-                  {touched.email && errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+                    style={{ ...inputStyle, borderColor: touched.email && errors.email ? '#ef4444' : '#ECE4E0' }} placeholder="email@example.com" type="email"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.email && errors.email ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.email && errors.email && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Address <span className="text-red-500">*</span></label>
-                  <textarea value={address} onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(prev => ({ ...prev, address: 'Address is required' })) }} onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(prev => ({ ...prev, address: !e.target.value.trim() ? 'Address is required' : '' })) }} className={`w-full px-4 py-2.5 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border min-h-[60px] resize-none ${touched.address && errors.address ? 'border-red-400' : 'border-glass-border'}`} placeholder="Your address for pickup/delivery" rows={2} />
-                  {touched.address && errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
+                  <label style={labelStyle}>Address <span style={{ color: '#ef4444' }}>*</span></label>
+                  <textarea value={address} onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(prev => ({ ...prev, address: 'Address is required' })) }} onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(prev => ({ ...prev, address: !e.target.value.trim() ? 'Address is required' : '' })) }}
+                    style={{ ...inputStyle, height: 'auto', padding: '10px 15px', minHeight: 60, resize: 'none', borderColor: touched.address && errors.address ? '#ef4444' : '#ECE4E0' }} placeholder="Your address for pickup/delivery" rows={2}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.address && errors.address ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.address && errors.address && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.address}</p>}
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-5">
-                <button onClick={goPrev} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/80 border border-glass-border text-xs font-semibold text-[#434748] hover:border-mint/50 transition-all cursor-pointer">
-                  <FiArrowLeft size={13} /> Back
-                </button>
-                <button onClick={goNext}
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
-                >Next <FiArrowRight size={13} /></button>
+              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
+                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={13} /></button>
               </div>
             </motion.div>
           ) : step === questions.length + 2 ? (
-            <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
-            >
+            <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
               <div className="flex items-center gap-2 mb-4">
-                <FiSmartphone size={14} className="text-mint" />
-                <span className="text-sm font-bold text-[#181c1e]">Device Information</span>
+                <FiSmartphone size={14} style={{ color: '#D91E36' }} />
+                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Device Information</span>
               </div>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Brand <span className="text-red-500">*</span></label>
+                  <label style={labelStyle}>Brand <span style={{ color: '#ef4444' }}>*</span></label>
                   <select value={brand} onBlur={() => { setTouched(p => ({ ...p, brand: true })); setErrors(p => ({ ...p, brand: validateBrand(brand) })) }} onChange={(e) => { setBrand(e.target.value); if (touched.brand) setErrors(p => ({ ...p, brand: validateBrand(e.target.value) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-mint/50 transition-all ${touched.brand && errors.brand ? 'border-red-400' : 'border-glass-border'}`}
+                    style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.brand && errors.brand ? '#ef4444' : '#ECE4E0' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.brand && errors.brand ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
                   >
                     <option value="">Select brand</option>
                     {deviceBrands.map((b) => <option key={b} value={b}>{b}</option>)}
                   </select>
-                  {touched.brand && errors.brand && <p className="text-xs text-red-500 mt-1">{errors.brand}</p>}
+                  {touched.brand && errors.brand && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.brand}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Model <span className="text-red-500">*</span></label>
+                  <label style={labelStyle}>Model <span style={{ color: '#ef4444' }}>*</span></label>
                   <input value={model} onBlur={() => { setTouched(p => ({ ...p, model: true })); setErrors(p => ({ ...p, model: validateModel(model) })) }} onChange={(e) => { setModel(e.target.value); if (touched.model) setErrors(p => ({ ...p, model: validateModel(e.target.value) })) }}
-                    className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.model && errors.model ? 'border-red-400' : 'border-glass-border'}`} placeholder="e.g. iPhone 15 Pro Max" autoFocus />
-                  {touched.model && errors.model && <p className="text-xs text-red-500 mt-1">{errors.model}</p>}
+                    style={{ ...inputStyle, borderColor: touched.model && errors.model ? '#ef4444' : '#ECE4E0' }} placeholder="e.g. iPhone 15 Pro Max" autoFocus
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.model && errors.model ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.model && errors.model && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.model}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">IMEI Number <span className="text-red-500">*</span></label>
-                  <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all ${touched.imei && errors.imei ? 'border-red-400' : 'border-glass-border'}`} placeholder="15 digit IMEI" />
-                  {touched.imei && errors.imei && <p className="text-xs text-red-500 mt-1">{errors.imei}</p>}
+                  <label style={labelStyle}>IMEI Number <span style={{ color: '#ef4444' }}>*</span></label>
+                  <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
+                    style={{ ...inputStyle, borderColor: touched.imei && errors.imei ? '#ef4444' : '#ECE4E0' }} placeholder="15 digit IMEI"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.imei && errors.imei ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.imei && errors.imei && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.imei}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Serial No. <span className="text-red-500">*</span></label>
-                  <input value={serialNumber} onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(prev => ({ ...prev, serialNumber: 'Serial number is required' })) }} onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(prev => ({ ...prev, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border ${touched.serialNumber && errors.serialNumber ? 'border-red-400' : 'border-glass-border'}`} placeholder="Device serial number" />
-                  {touched.serialNumber && errors.serialNumber && <p className="text-xs text-red-500 mt-1">{errors.serialNumber}</p>}
+                  <label style={labelStyle}>Serial No. <span style={{ color: '#ef4444' }}>*</span></label>
+                  <input value={serialNumber} onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(prev => ({ ...prev, serialNumber: 'Serial number is required' })) }} onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(prev => ({ ...prev, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }}
+                    style={{ ...inputStyle, borderColor: touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0' }} placeholder="Device serial number"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.serialNumber && errors.serialNumber && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.serialNumber}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Color <span className="text-red-500">*</span></label>
-                  <input value={deviceColor} onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(prev => ({ ...prev, deviceColor: 'Color is required' })) }} onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(prev => ({ ...prev, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-mint/50 transition-all border-glass-border ${touched.deviceColor && errors.deviceColor ? 'border-red-400' : 'border-glass-border'}`} placeholder="e.g. Space Black, Silver" />
-                  {touched.deviceColor && errors.deviceColor && <p className="text-xs text-red-500 mt-1">{errors.deviceColor}</p>}
+                  <label style={labelStyle}>Color <span style={{ color: '#ef4444' }}>*</span></label>
+                  <input value={deviceColor} onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(prev => ({ ...prev, deviceColor: 'Color is required' })) }} onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(prev => ({ ...prev, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }}
+                    style={{ ...inputStyle, borderColor: touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0' }} placeholder="e.g. Space Black, Silver"
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  />
+                  {touched.deviceColor && errors.deviceColor && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.deviceColor}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[#434748] mb-1">Warranty Status <span className="text-red-500">*</span></label>
-                  <select value={warranty} onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(prev => ({ ...prev, warranty: 'Please select warranty status' })) }} onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(prev => ({ ...prev, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }} className={`w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-mint/50 transition-all border-glass-border ${touched.warranty && errors.warranty ? 'border-red-400' : 'border-glass-border'}`}>
+                  <label style={labelStyle}>Warranty Status <span style={{ color: '#ef4444' }}>*</span></label>
+                  <select value={warranty} onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(prev => ({ ...prev, warranty: 'Please select warranty status' })) }} onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(prev => ({ ...prev, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }}
+                    style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                  >
                     <option value="unknown">Unknown</option>
                     <option value="in_warranty">In Warranty</option>
                     <option value="out_of_warranty">Out of Warranty</option>
                     <option value="expired">Expired</option>
                   </select>
-                  {touched.warranty && errors.warranty && <p className="text-xs text-red-500 mt-1">{errors.warranty}</p>}
+                  {touched.warranty && errors.warranty && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.warranty}</p>}
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-5">
-                <button onClick={goPrev} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/80 border border-glass-border text-xs font-semibold text-[#434748] hover:border-mint/50 transition-all cursor-pointer">
-                  <FiArrowLeft size={13} /> Back
-                </button>
-                <button onClick={goNext}
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 transition-all cursor-pointer text-white"
-                  style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
-                >Next <FiArrowRight size={13} /></button>
+              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
+                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={13} /></button>
               </div>
             </motion.div>
           ) : (
-            <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-              className="rounded-2xl p-5 lg:p-6" style={{ background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(25px)', border: '1.5px solid rgba(203,32,45,0.2)', boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.8), 0 10px 30px rgba(0,0,0,0.05)' }}
-            >
+            <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
               <div className="flex items-center gap-2 mb-4">
-                <FiImage size={14} className="text-mint" />
-                <span className="text-sm font-bold text-[#181c1e]">Device Photos</span>
+                <FiImage size={14} style={{ color: '#D91E36' }} />
+                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
               </div>
               <div onClick={() => inputRef.current?.click()}
-                className="rounded-xl border-2 border-dashed border-mint/20 p-6 text-center cursor-pointer hover:border-mint/40 transition-all bg-white/80"
+                style={{ borderRadius: 11, border: '1.5px dashed rgba(217,30,54,0.2)', padding: 24, textAlign: 'center', cursor: 'pointer', background: '#FBF8F6', transition: 'border-color .16s ease' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.4)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.2)' }}
               >
                 <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) setImageFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
-                <p className="text-sm text-[#434748]">Tap to upload photos</p>
-                <p className="text-xs text-[#434748]/60 mt-1">Show the damage area for faster diagnosis</p>
+                <p style={{ fontSize: 13.5, color: '#4A403D' }}>Tap to upload photos</p>
+                <p style={{ fontSize: 12, color: '#857D79', marginTop: 4 }}>Show the damage area for faster diagnosis</p>
               </div>
               {previews.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 mt-3">
+                <div className="grid grid-cols-4 gap-2" style={{ marginTop: 12 }}>
                   {previews.map((url, i) => (
-                    <div key={i} className="relative aspect-square rounded-lg bg-white border border-glass-border overflow-hidden group">
-                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    <div key={i} className="relative" style={{ aspectRatio: '1/1', borderRadius: 10, background: '#fff', border: '1px solid #ECE4E0', overflow: 'hidden' }}>
+                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <button onClick={() => {
                         URL.revokeObjectURL(url)
                         setImageFiles(f => f.filter((_, j) => j !== i))
                       }}
-                        className="absolute top-1 right-1 w-5 h-5 rounded-md bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: 6, background: 'rgba(239,68,68,0.8)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', opacity: 0, transition: 'opacity .15s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0' }}
                       ><FiX size={10} /></button>
                     </div>
                   ))}
                 </div>
               )}
               {submitError && (
-                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-500 mt-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', fontSize: 12, color: '#ef4444', marginTop: 12 }}>
                   <FiAlertCircle size={12} /> {submitError}
                 </div>
               )}
-              <div className="flex items-center justify-between mt-5">
-                <button onClick={goPrev} className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/80 border border-glass-border text-xs font-semibold text-[#434748] hover:border-mint/50 transition-all cursor-pointer">
-                  <FiArrowLeft size={13} /> Back
-                </button>
+              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
                 <button onClick={handleSubmit} disabled={submitting}
-                  className="flex items-center gap-1.5 px-6 py-2.5 rounded-full text-xs font-bold shadow-lg shadow-mint/30 hover:shadow-xl hover:shadow-mint/40 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all cursor-pointer text-white"
-                  style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                  style={{ ...btnPrimary, padding: '10px 24px', opacity: submitting ? 0.5 : 1, cursor: submitting ? 'not-allowed' : 'pointer', background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
                 ><FiSend size={13} /> {submitting ? 'Booking...' : 'Book Now'}</button>
               </div>
             </motion.div>

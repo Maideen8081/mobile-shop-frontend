@@ -48,13 +48,13 @@ interface EcommerceFooterProps {
 export default function EcommerceFooter({ compact = false }: EcommerceFooterProps) {
   return (
     <footer className="bg-[#141414] text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
-      <div className="h-1 w-full bg-gradient-to-r from-[#CB202D] via-[#E53E4E] to-[#CB202D]" />
+      <div className="h-1 w-full bg-gradient-to-r from-[#D91E36] via-[#E8304A] to-[#D91E36]" />
 
       <div className={`max-w-[1440px] mx-auto px-6 md:px-12 ${compact ? 'pt-6 pb-4' : 'pt-10 pb-6'}`}>
         <div className={`grid grid-cols-2 md:grid-cols-5 ${compact ? 'gap-5 md:gap-4' : 'gap-8 md:gap-6'}`}>
           <div className={`col-span-2 flex flex-col ${compact ? 'gap-3' : 'gap-5'}`}>
             <div className="flex items-center gap-3">
-              <span className={`font-extrabold text-white bg-[#CB202D] px-3 py-1.5 rounded-xl ${compact ? 'text-base' : 'text-lg'}`}>PF</span>
+              <span className={`font-extrabold text-white bg-[#D91E36] px-3 py-1.5 rounded-xl ${compact ? 'text-base' : 'text-lg'}`}>PF</span>
               <span className={`font-extrabold text-white ${compact ? 'text-base' : 'text-lg'}`}>PhoneFix Pro</span>
             </div>
             <p className={`text-white/60 leading-relaxed max-w-xs ${compact ? 'text-xs' : 'text-sm'}`}>
@@ -62,15 +62,15 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
             </p>
             <div className={`flex flex-col ${compact ? 'gap-1 text-xs' : 'gap-2 text-sm'} text-white/60`}>
               <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[#CB202D]" style={{ fontSize: compact ? '14px' : '16px' }}>call</span>
+                <span className="material-symbols-outlined text-[#D91E36]" style={{ fontSize: compact ? '14px' : '16px' }}>call</span>
                 +91 98765 43210
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[#CB202D]" style={{ fontSize: compact ? '14px' : '16px' }}>mail</span>
+                <span className="material-symbols-outlined text-[#D91E36]" style={{ fontSize: compact ? '14px' : '16px' }}>mail</span>
                 support@phonefixpro.com
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[#CB202D]" style={{ fontSize: compact ? '14px' : '16px' }}>location_on</span>
+                <span className="material-symbols-outlined text-[#D91E36]" style={{ fontSize: compact ? '14px' : '16px' }}>location_on</span>
                 Bengaluru, Karnataka, India
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
               {socialIcons.map((icon) => (
                 <span
                   key={icon}
-                  className={`rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-[#CB202D] hover:text-white hover:border-[#CB202D] transition-all cursor-pointer ${compact ? 'w-8 h-8' : 'w-10 h-10'}`}
+                  className={`rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-[#D91E36] hover:text-white hover:border-[#D91E36] transition-all cursor-pointer ${compact ? 'w-8 h-8' : 'w-10 h-10'}`}
                 >
                   <span className="material-symbols-outlined" style={{ fontSize: compact ? '16px' : '18px' }}>{icon}</span>
                 </span>
@@ -89,12 +89,12 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
           {linkColumns.map((col) => (
             <div key={col.title} className={`flex flex-col ${compact ? 'gap-2' : 'gap-3.5'}`}>
               <h4 className={`font-bold text-white uppercase tracking-widest ${compact ? 'text-[10px]' : 'text-xs'}`}>{col.title}</h4>
-              <div className={`bg-[#CB202D] rounded-full ${compact ? 'w-6 h-0.5' : 'w-8 h-0.5'}`} />
+              <div className={`bg-[#D91E36] rounded-full ${compact ? 'w-6 h-0.5' : 'w-8 h-0.5'}`} />
               {col.links.map((link) => (
                 <Link
                   key={link.label}
                   to={link.to}
-                  className={`text-white/60 hover:text-[#E53E4E] hover:translate-x-1 transition-all w-fit ${compact ? 'text-xs' : 'text-sm'}`}
+                  className={`text-white/60 hover:text-[#E8304A] hover:translate-x-1 transition-all w-fit ${compact ? 'text-xs' : 'text-sm'}`}
                 >
                   {link.label}
                 </Link>
@@ -112,9 +112,9 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
             <input
               type="email"
               placeholder="Enter your email"
-              className={`flex-1 md:w-72 px-3.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 outline-none focus:border-[#CB202D] ${compact ? 'py-2 text-xs' : 'py-3 text-sm'}`}
+              className={`flex-1 md:w-72 px-3.5 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 outline-none focus:border-[#D91E36] ${compact ? 'py-2 text-xs' : 'py-3 text-sm'}`}
             />
-            <button className={`rounded-xl bg-[#CB202D] text-white font-bold hover:bg-[#A81D2A] transition-colors cursor-pointer ${compact ? 'px-4 py-2 text-xs' : 'px-6 py-3 text-sm'}`}>
+            <button className={`rounded-xl bg-[#D91E36] text-white font-bold hover:bg-[#A3122A] transition-colors cursor-pointer ${compact ? 'px-4 py-2 text-xs' : 'px-6 py-3 text-sm'}`}>
               Subscribe
             </button>
           </form>
@@ -125,9 +125,9 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
         <div className={`max-w-[1440px] mx-auto px-6 md:px-12 ${compact ? 'py-3' : 'py-4'} flex flex-col sm:flex-row items-center justify-between gap-3`}>
           <p className="text-xs text-white/40">&copy; {new Date().getFullYear()} PhoneFix Pro. All rights reserved. Luminous Precision.</p>
           <div className="flex items-center gap-5 text-xs text-white/40">
-            <Link to="#" className="hover:text-[#CB202D] transition-colors">Privacy</Link>
-            <Link to="#" className="hover:text-[#CB202D] transition-colors">Terms</Link>
-            <Link to="#" className="hover:text-[#CB202D] transition-colors">Cookies</Link>
+            <Link to="#" className="hover:text-[#D91E36] transition-colors">Privacy</Link>
+            <Link to="#" className="hover:text-[#D91E36] transition-colors">Terms</Link>
+            <Link to="#" className="hover:text-[#D91E36] transition-colors">Cookies</Link>
           </div>
         </div>
       </div>

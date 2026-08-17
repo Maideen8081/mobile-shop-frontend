@@ -123,7 +123,7 @@ export default function PremiumProductCard({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleAddToCart}
-                className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(203,32,45,0.3)] hover:shadow-[0_6px_16px_rgba(203,32,45,0.4)] transition-all"
+                className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white flex items-center justify-center shadow-[0_4px_12px_rgba(217,30,54,0.3)] hover:shadow-[0_6px_16px_rgba(217,30,54,0.4)] transition-all"
                 aria-label="Add to cart"
               >
                 <ShoppingBag size={18} />

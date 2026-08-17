@@ -86,7 +86,7 @@ export default function LoginPage() {
   }, [nextSlide])
 
   return (
-    <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+    <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#FBF8F6' }}>
       <main className="flex-grow flex flex-col md:flex-row w-full gap-0 md:gap-20" style={{ maxWidth: '1440px', margin: '0 auto', padding: '48px 64px' }}>
         <div className="hidden md:flex flex-1 relative rounded-xl overflow-hidden">
           {carouselSlides.map((slide, index) => (
@@ -125,7 +125,7 @@ export default function LoginPage() {
                   style={{
                     width: index === activeSlide ? '28px' : '8px',
                     height: '8px',
-                    backgroundColor: index === activeSlide ? '#CB202D' : 'rgba(255,255,255,0.4)',
+                    backgroundColor: index === activeSlide ? '#D91E36' : 'rgba(255,255,255,0.4)',
                   }}
                 />
               ))}
@@ -166,7 +166,7 @@ export default function LoginPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.email ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -182,7 +182,7 @@ export default function LoginPage() {
                     <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
                       PASSWORD
                     </label>
-                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#CB202D', fontFamily: "'Inter', sans-serif" }}>
+                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#D91E36', fontFamily: "'Inter', sans-serif" }}>
                       Forgot Password?
                     </Link>
                   </div>
@@ -202,7 +202,7 @@ export default function LoginPage() {
                         color: '#191c1d',
                         outline: 'none',
                       }}
-                      onFocus={e => { e.target.style.borderBottomColor = '#CB202D' }}
+                      onFocus={e => { e.target.style.borderBottomColor = '#D91E36' }}
                       onBlur={e => { if (!e.target.value) e.target.style.borderBottomColor = errors.password ? '#ba1a1a' : '#bccac0' }}
                     />
                   </div>
@@ -219,10 +219,10 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full py-4 px-6 rounded-lg font-semibold text-white transition-all active:scale-95 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
-                  background: 'linear-gradient(135deg, #CB202D, #A81D2A)',
+                  background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                   fontSize: '20px',
                   fontFamily: "'Inter', sans-serif",
-                  boxShadow: '0 4px 16px rgba(203,32,45,0.3)',
+                  boxShadow: '0 4px 16px rgba(217,30,54,0.3)',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(0.9)' }}
                 onMouseLeave={e => { e.currentTarget.style.filter = 'none' }}
@@ -234,7 +234,7 @@ export default function LoginPage() {
             <div className="pt-6 border-t text-center space-y-4" style={{ borderTop: '1px solid #bccac0' }}>
               <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
                 Don't have an account?{' '}
-                <Link to="/signup" className="font-semibold hover:underline" style={{ color: '#CB202D' }}>
+                <Link to="/signup" className="font-semibold hover:underline" style={{ color: '#D91E36' }}>
                   Register
                 </Link>
               </p>

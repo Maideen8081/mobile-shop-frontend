@@ -8,7 +8,7 @@ import {
 import PageLayout from '../components/layout/PageLayout'
 import { repairAnalytics, repairTickets, repairTechnicians } from '../data/repairData'
 
-const COLORS = ['#CB202D', '#A81D2A', '#CB202D', '#A81D2A', '#CB202D', '#A81D2A', '#CB202D', '#A81D2A']
+const COLORS = ['#D91E36', '#A3122A', '#D91E36', '#A3122A', '#D91E36', '#A3122A', '#D91E36', '#A3122A']
 
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
@@ -128,10 +128,10 @@ export default function RepairAnalytics() {
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        <OverviewCard title="Total Repairs" value={totalRepairs.toString()} subtitle={`${completedRepairs} completed`} icon={FiTool} color="#CB202D" delay={0.05} />
-        <OverviewCard title="Avg Turnaround" value={`${avgTurnaround.toFixed(1)}d`} subtitle="Average repair time" icon={FiClock} color="#A81D2A" delay={0.1} />
-        <OverviewCard title="Total Revenue" value={`₹${(totalRevenue / 1000).toFixed(0)}k`} subtitle="From all repairs" icon={FiDollarSign} color="#CB202D" delay={0.15} />
-        <OverviewCard title="Tech Efficiency" value={`${avgEfficiency}%`} subtitle={`${repairTechnicians.length} technicians`} icon={FiUsers} color="#A81D2A" delay={0.2} />
+        <OverviewCard title="Total Repairs" value={totalRepairs.toString()} subtitle={`${completedRepairs} completed`} icon={FiTool} color="#D91E36" delay={0.05} />
+        <OverviewCard title="Avg Turnaround" value={`${avgTurnaround.toFixed(1)}d`} subtitle="Average repair time" icon={FiClock} color="#A3122A" delay={0.1} />
+        <OverviewCard title="Total Revenue" value={`₹${(totalRevenue / 1000).toFixed(0)}k`} subtitle="From all repairs" icon={FiDollarSign} color="#D91E36" delay={0.15} />
+        <OverviewCard title="Tech Efficiency" value={`${avgEfficiency}%`} subtitle={`${repairTechnicians.length} technicians`} icon={FiUsers} color="#A3122A" delay={0.2} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
@@ -145,20 +145,20 @@ export default function RepairAnalytics() {
               <AreaChart data={monthlyData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <defs>
                   <linearGradient id="gradient-completed" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#CB202D" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#CB202D" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#D91E36" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#D91E36" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gradient-received" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#CB202D" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#CB202D" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#D91E36" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#D91E36" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e8ecf1" strokeOpacity={0.5} />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<ChartTooltip />} />
-                <Area type="monotone" dataKey="completed" stroke="#CB202D" fill="url(#gradient-completed)" strokeWidth={2.5} name="Completed" />
-                <Area type="monotone" dataKey="received" stroke="#CB202D" fill="url(#gradient-received)" strokeWidth={2.5} name="Received" />
+                <Area type="monotone" dataKey="completed" stroke="#D91E36" fill="url(#gradient-completed)" strokeWidth={2.5} name="Completed" />
+                <Area type="monotone" dataKey="received" stroke="#D91E36" fill="url(#gradient-received)" strokeWidth={2.5} name="Received" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -207,7 +207,7 @@ export default function RepairAnalytics() {
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Bar>
-                <Bar dataKey="pending" name="Pending" radius={[0, 6, 6, 0]} barSize={16} fill="#CB202D" />
+                <Bar dataKey="pending" name="Pending" radius={[0, 6, 6, 0]} barSize={16} fill="#D91E36" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -216,7 +216,7 @@ export default function RepairAnalytics() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
         <DonutChartCard title="Brand Distribution" subtitle="Devices by manufacturer" data={brandData} colors={COLORS} delay={0.25} />
-        <DonutChartCard title="Priority Breakdown" subtitle="Tickets by urgency level" data={priorityDist} colors={['#CB202D', '#A81D2A', '#CB202D', '#666666']} delay={0.3} />
+        <DonutChartCard title="Priority Breakdown" subtitle="Tickets by urgency level" data={priorityDist} colors={['#D91E36', '#A3122A', '#D91E36', '#666666']} delay={0.3} />
         <DonutChartCard title="Status Overview" subtitle="Tickets by current status" data={statusDist} colors={COLORS} delay={0.35} />
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative rounded-3xl bg-bg-card border border-border p-5 lg:p-6"

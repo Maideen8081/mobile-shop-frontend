@@ -15,8 +15,8 @@ import MobileCheckoutAddress from '../components/mobile/MobileCheckoutAddress'
 
 type AddressType = AddressData['addressType']
 
-const RED = '#CB202D'
-const RED_DEEP = '#A81D2A'
+const RED = '#D91E36'
+const RED_DEEP = '#A3122A'
 const RED_LIGHT = '#FFF5F5'
 
 const steps = [
@@ -313,7 +313,7 @@ export default function CheckoutAddress() {
   }
 
   return (
-    <div className="min-h-screen text-gray-900 font-sans" style={{ background: 'linear-gradient(180deg, #F8F9FA 0%, #FFFFFF 100%)' }}>
+    <div className="min-h-screen text-gray-900 font-sans" style={{ background: 'linear-gradient(180deg, #FBF8F6 0%, #FFFFFF 100%)' }}>
       <SiteTopNav />
       <BackBar label="Back to Cart" to="/cart" />
 

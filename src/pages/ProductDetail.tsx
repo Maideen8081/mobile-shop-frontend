@@ -717,7 +717,7 @@ function ProductDetailContent() {
 
   if (loading) {
     return (
-      <div className="axpd min-h-screen bg-[#faf9f7]">
+      <div className="axpd min-h-screen bg-[#FBF8F6]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <DesktopPageLoader text="Loading product details..." />
@@ -727,7 +727,7 @@ function ProductDetailContent() {
 
   if (fetchError || !apiProduct) {
     return (
-      <div className="axpd min-h-screen bg-[#faf9f7]">
+      <div className="axpd min-h-screen bg-[#FBF8F6]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <div className="min-h-[60vh] flex items-center justify-center p-6">
@@ -1580,7 +1580,7 @@ const AXPD_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
 .axpd{
   --white:#ffffff;
-  --off-white:#faf9f7;
+  --off-white:#FBF8F6;
   --ink:#1c1c1e;
   --slate:#6b6b70;
   --border:#ececea;
@@ -1641,7 +1641,7 @@ const AXPD_CSS = `
 .axpd .ax-cat-chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
 .axpd .ax-cat-chip{
   display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
-  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(203,32,45,.18);
+  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(217,30,54,.18);
   padding:6px 12px; border-radius:999px; text-transform:capitalize; transition:all .2s;
 }
 .axpd .ax-cat-chip svg{width:13px; height:13px;}
@@ -1657,13 +1657,13 @@ const AXPD_CSS = `
 }
 .axpd .ax-deal-inner::before{
   content:''; position:absolute; top:-60px; right:-40px; width:240px; height:240px; border-radius:50%;
-  background:radial-gradient(circle, rgba(203,32,45,.28), transparent 70%); pointer-events:none;
+  background:radial-gradient(circle, rgba(217,30,54,.28), transparent 70%); pointer-events:none;
 }
 .axpd .ax-deal-left{display:flex; align-items:center; gap:14px; position:relative;}
 .axpd .ax-deal-bolt{
   width:46px; height:46px; border-radius:12px; flex-shrink:0;
   background:linear-gradient(135deg, #ff5b2e, var(--red));
-  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(203,32,45,.4);
+  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(217,30,54,.4);
 }
 .axpd .ax-deal-bolt svg{width:24px; height:24px; color:#fff;}
 .axpd .ax-deal-copy{display:flex; flex-direction:column; gap:5px;}
@@ -1724,7 +1724,7 @@ const AXPD_CSS = `
   transition:border-color .2s, transform .2s, box-shadow .2s;
 }
 .axpd .ax-thumb:hover{transform:translateY(-2px); border-color:var(--red);}
-.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(203,32,45,.12);}
+.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(217,30,54,.12);}
 .axpd .ax-thumb.active::before{
   content:''; position:absolute; left:-14px; top:8px; bottom:8px; width:3px;
   background:var(--red); border-radius:3px; animation:ax-rail-in .25s ease;
@@ -1840,7 +1840,7 @@ const AXPD_CSS = `
   padding:12px 14px; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
 }
 .axpd .ax-variant-card:hover{border-color:var(--red); transform:translateY(-1px); box-shadow:var(--shadow-sm);}
-.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(203,32,45,.08);}
+.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(217,30,54,.08);}
 .axpd .ax-vc-img{
   width:52px; height:52px; border-radius:10px; background:var(--white);
   border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;

@@ -2,16 +2,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --sp-red: #D2172E;
-  --sp-red-dark: #9C0F22;
-  --sp-red-bright: #F03049;
-  --sp-ink: #17151A;
-  --sp-gray: #837E88;
-  --sp-paper: #FCFAFA;
-  --sp-paper-warm: #F5F2EE;
-  --sp-line: #EAE5E6;
-  --sp-ok: #1C8A4F;
-  --sp-amber: #B87A12;
+  --sp-red: #D91E36;
+  --sp-red-dark: #A3122A;
+  --sp-red-bright: #E8304A;
+  --sp-ink: #1B1210;
+  --sp-gray: #857D79;
+  --sp-paper: #FBF8F6;
+  --sp-paper-warm: #F5F0EC;
+  --sp-line: #ECE4E0;
+  --sp-ok: #1A8A4B;
+  --sp-amber: #B4740E;
 }
 
 /* ── Root ── */

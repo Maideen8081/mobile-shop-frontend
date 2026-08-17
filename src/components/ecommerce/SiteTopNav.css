@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    PHONEFIX PRO — PREMIUM SITE TOP NAV  v2
-   Colors: Red #CB202D · White #ffffff · Black #111
+   Colors: Red #D91E36 · White #ffffff · Black #111
    Icons: black only.  Accents: red.  Backgrounds: white / red.
    Desktop only — mobile handled separately.
    ═══════════════════════════════════════════════════════════ */
@@ -8,21 +8,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
 
 :root {
-  --pf-red:       #CB202D;
-  --pf-red-dark:  #A81823;
-  --pf-red-deep:  #8b0000;
-  --pf-red-glow:  rgba(203,32,45,.18);
-  --pf-red-tint:  #fff0f1;
-  --pf-black:     #111111;
-  --pf-ink:       #111111;
-  --pf-icon:      #111111;   /* ALL icons → black */
-  --pf-muted:     #777777;
-  --pf-border:    #e2e2e2;
-  --pf-soft:      #f5f5f5;
+  --pf-red:       #D91E36;
+  --pf-red-dark:  #A3122A;
+  --pf-red-deep:  #5C0A1C;
+  --pf-red-glow:  rgba(217,30,54,.18);
+  --pf-red-tint:  rgba(217,30,54,0.06);
+  --pf-black:     #1B1210;
+  --pf-ink:       #1B1210;
+  --pf-icon:      #1B1210;
+  --pf-muted:     #857D79;
+  --pf-border:    #ECE4E0;
+  --pf-soft:      #F5F0EC;
   --pf-white:     #ffffff;
-  --pf-gold:      #c9952a;
-  --pf-shadow:    0 4px 24px rgba(0,0,0,.08);
-  --pf-shadow-lg: 0 16px 48px rgba(0,0,0,.13);
+  --pf-gold:      #B08D57;
+  --pf-shadow:    0 4px 24px rgba(27,18,16,.08);
+  --pf-shadow-lg: 0 16px 48px rgba(27,18,16,.13);
 }
 
 /* ─── OUTER WRAPPER ─── */
@@ -196,7 +196,7 @@
 .pfn-search-form:focus-within {
   border-color: var(--pf-red);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(203,32,45,.09);
+  box-shadow: 0 0 0 3px rgba(217,30,54,.09);
 }
 .pfn-search-icon {
   width: 16px; height: 16px;
@@ -280,7 +280,7 @@
 .pfn-quick-link:hover {
   background: var(--pf-red-tint);
   color: var(--pf-red);
-  border-color: rgba(203,32,45,.15);
+  border-color: rgba(217,30,54,.15);
 }
 .pfn-quick-link:hover svg {
   stroke: var(--pf-red);
@@ -514,7 +514,7 @@
   display: flex;
   align-items: center;
   position: relative;
-  box-shadow: 0 4px 16px rgba(203,32,45,.35);
+  box-shadow: 0 4px 16px rgba(217,30,54,.35);
 }
 .pfn-mega-inner {
   max-width: 1440px;

@@ -43,13 +43,13 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   Accepted: { label: 'Accepted', color: '#22c55e' },
   Rejected: { label: 'Rejected', color: '#ef4444' },
   Received: { label: 'Device Received', color: '#f59e0b' },
-  'Awaiting Approval': { label: 'Awaiting Approval', color: '#CB202D' },
+  'Awaiting Approval': { label: 'Awaiting Approval', color: '#D91E36' },
   Diagnosing: { label: 'Under Inspection', color: '#3b82f6' },
   'Waiting for Parts': { label: 'Waiting for Parts', color: '#f97316' },
   'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
   'Quality Check': { label: 'Quality Check', color: '#06b6d4' },
   'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
-  Delivered: { label: 'Delivered', color: '#CB202D' },
+  Delivered: { label: 'Delivered', color: '#D91E36' },
   Cancelled: { label: 'Cancelled', color: '#6b7280' },
 }
 
@@ -82,9 +82,9 @@ function PriorityBadge({ priority }: { priority: string }) {
 
 function InfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex justify-between items-start gap-3 py-1.5" style={{ borderBottom: '1px solid rgba(229,231,235,0.4)' }}>
-      <span className="text-[11px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: '#837E88' }}>{label}</span>
-      <span className="text-[13px] text-right font-semibold" style={{ color: highlight ? '#1C8A4F' : '#17151A', fontWeight: highlight ? 700 : 600 }}>{value || '—'}</span>
+    <div className="flex justify-between items-start gap-3 py-1.5" style={{ borderBottom: '1px solid rgba(236,228,224,0.4)' }}>
+      <span className="text-[11px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: '#857D79' }}>{label}</span>
+      <span className="text-[13px] text-right font-semibold" style={{ color: highlight ? '#059669' : '#1B1210', fontWeight: highlight ? 700 : 600 }}>{value || '—'}</span>
     </div>
   )
 }
@@ -125,8 +125,8 @@ function ImageGallery({ images }: { images: string[] }) {
 
   if (resolvedImages.length === 0) {
     return (
-      <div className="flex items-center justify-center h-28 rounded-xl" style={{ background: '#F2EEEF', border: '1px dashed #D7D2D5' }}>
-        <p className="text-xs" style={{ color: '#837E88' }}>No photos available</p>
+      <div className="flex items-center justify-center h-28 rounded-xl" style={{ background: '#F5F0EC', border: '1px dashed #ECE4E0' }}>
+        <p className="text-xs" style={{ color: '#857D79' }}>No photos available</p>
       </div>
     )
   }
@@ -137,7 +137,7 @@ function ImageGallery({ images }: { images: string[] }) {
         <motion.button key={idx} whileHover={{ scale: 1.03 }}
           onClick={() => setSelectedIndex(idx)}
           className="aspect-square rounded-xl overflow-hidden cursor-pointer group relative"
-          style={{ background: '#F2EEEF', border: '1px solid #EAE5E6' }}>
+          style={{ background: '#F5F0EC', border: '1px solid #ECE4E0' }}>
           <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
           {idx === 5 && resolvedImages.length > 6 && (
@@ -243,13 +243,13 @@ export default function RepairDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ background: '#FCFAFA', minHeight: '100vh' }}>
+      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <div className="pulse-rail" />
         <div className="shell" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 32px' }}>
           <div style={{ padding: '40px 0' }}>
-            <div className="h-4 w-32 rounded" style={{ background: '#EAE5E6', marginBottom: 16 }} />
-            <div className="h-8 w-64 rounded" style={{ background: '#EAE5E6', marginBottom: 24 }} />
-            <div className="h-40 w-full rounded-xl" style={{ background: '#EAE5E6' }} />
+            <div className="h-4 w-32 rounded" style={{ background: '#ECE4E0', marginBottom: 16 }} />
+            <div className="h-8 w-64 rounded" style={{ background: '#ECE4E0', marginBottom: 24 }} />
+            <div className="h-40 w-full rounded-xl" style={{ background: '#ECE4E0' }} />
           </div>
         </div>
       </div>
@@ -258,12 +258,12 @@ export default function RepairDetailPage() {
 
   if (error || !ticket) {
     return (
-      <div style={{ background: '#FCFAFA', minHeight: '100vh' }}>
+      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <div className="pulse-rail" />
         <div className="shell" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 32px', textAlign: 'center', paddingTop: 80 }}>
-          <h2 style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontSize: 28, color: '#17151A', marginBottom: 12 }}>Ticket Not Found</h2>
-          <p style={{ color: '#837E88', marginBottom: 24 }}>The repair ticket you're looking for doesn't exist or has been removed.</p>
-          <button onClick={() => navigate('/my-repairs')} style={{ background: '#D2172E', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+          <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: '#1B1210', marginBottom: 12 }}>Ticket Not Found</h2>
+          <p style={{ color: '#857D79', marginBottom: 24 }}>The repair ticket you're looking for doesn't exist or has been removed.</p>
+          <button onClick={() => navigate('/my-repairs')} style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: 12, fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: '0 4px 12px rgba(217,30,54,0.3)' }}>
             Back to My Repairs
           </button>
         </div>
@@ -279,25 +279,24 @@ export default function RepairDetailPage() {
   const courierSent = ticket.status === 'Accepted' && ticket.courier
 
   return (
-    <div style={{ background: '#FCFAFA', minHeight: '100vh' }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
       <style>{`
-        .pulse-rail { height: 5px; width: 100%; background: linear-gradient(90deg, #9C0F22, #F03049 45%, #D2172E 55%, #9C0F22); background-size: 220% 100%; animation: railmove 6s ease-in-out infinite; position: sticky; top: 0; z-index: 50; }
+        .pulse-rail { height: 4px; width: 100%; background: linear-gradient(90deg, #A3122A, #D91E36 45%, #E8304A 55%, #A3122A); background-size: 220% 100%; animation: railmove 6s ease-in-out infinite; position: sticky; top: 0; z-index: 50; }
         @keyframes railmove { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
         .shell { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .detail-card { background: #FFFFFF; border: 1px solid #EAE5E6; border-radius: 14px; box-shadow: 0 1px 2px rgba(23,21,26,0.04), 0 12px 28px -14px rgba(23,21,26,0.18); }
+        .detail-card { background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08); }
         .detail-section { padding: 24px; }
-        .detail-section + .detail-section { border-top: 1px solid #EAE5E6; }
-        .section-title { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9C0F22; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .detail-section + .detail-section { border-top: 1px solid #ECE4E0; }
+        .section-title { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #A3122A; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
         .section-title .material-symbols-outlined { font-size: 16px; }
-        .vitals-track { position: relative; height: 28px; border-radius: 6px; background-color: #F2EEEF; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23D7D2D5' stroke-width='2'/></svg>"); background-repeat: repeat-x; background-position: left center; overflow: hidden; }
-        .vitals-fill { position: absolute; inset: 0; height: 100%; background-color: #FCEDEE; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23D2172E' stroke-width='2.4'/></svg>"); background-repeat: repeat-x; background-position: left center; }
-        .vitals-fill.done { background-color: #E5F4EB; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%231C8A4F' stroke-width='2.4'/></svg>"); }
-        .vitals-fill.rejected { background-color: #EFEDEE; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23837E88' stroke-width='2.4'/></svg>"); }
-        .vitals-pct { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: #4A4750; }
-        footer { border-top: 1px solid #EAE5E6; padding: 22px 0 40px; text-align: center; color: #837E88; font-size: 12px; }
-        footer .mono { color: #9C0F22; }
-        :focus-visible { outline: 2px solid #D2172E; outline-offset: 2px; }
+        .vitals-track { position: relative; height: 28px; border-radius: 6px; background-color: #F5F0EC; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23ECE4E0' stroke-width='2'/></svg>"); background-repeat: repeat-x; background-position: left center; overflow: hidden; }
+        .vitals-fill { position: absolute; inset: 0; height: 100%; background-color: rgba(217,30,54,0.08); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23D91E36' stroke-width='2.4'/></svg>"); background-repeat: repeat-x; background-position: left center; }
+        .vitals-fill.done { background-color: #ECFDF5; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23059669' stroke-width='2.4'/></svg>"); }
+        .vitals-fill.rejected { background-color: #F5F0EC; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='28'><path d='M0,14 L16,14 L21,4 L27,24 L33,14 L64,14' fill='none' stroke='%23857D79' stroke-width='2.4'/></svg>"); }
+        .vitals-pct { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #4A403D; }
+        footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #857D79; font-size: 12px; }
+        footer .mono { color: #D91E36; font-weight: 600; }
+        :focus-visible { outline: 2px solid #D91E36; outline-offset: 2px; }
       `}</style>
 
       {/* SiteTopNav for desktop */}
@@ -309,11 +308,11 @@ export default function RepairDetailPage() {
       <div className="pulse-rail" />
 
       {/* Back Navigation */}
-      <div style={{ borderBottom: '1px solid #EAE5E6', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)' }}>
+      <div style={{ borderBottom: '1px solid #ECE4E0', background: 'rgba(251,248,246,0.8)', backdropFilter: 'blur(8px)' }}>
         <div className="shell">
           <button onClick={() => navigate('/my-repairs')}
-            className="flex items-center gap-2 h-12 text-sm font-medium cursor-pointer transition-colors hover:text-[#17151A]"
-            style={{ color: '#837E88', background: 'none', border: 'none' }}>
+            className="flex items-center gap-2 h-12 text-sm font-medium cursor-pointer transition-colors hover:text-[#1B1210]"
+            style={{ color: '#857D79', background: 'none', border: 'none' }}>
             <FiArrowLeft size={16} />
             Back to My Repairs
           </button>
@@ -321,18 +320,18 @@ export default function RepairDetailPage() {
       </div>
 
       {/* Page Header */}
-      <header style={{ borderBottom: '1px solid #EAE5E6', background: '#FFFFFF' }}>
+      <header style={{ borderBottom: '1px solid #ECE4E0', background: '#FFFFFF' }}>
         <div className="shell" style={{ padding: '32px 32px 28px' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2.5 mb-2">
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: '#837E88' }}>Ticket</span>
-                <span style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontSize: 28, fontWeight: 800, color: '#9C0F22' }}>{ticket.repairId}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#857D79' }}>Ticket</span>
+                <span style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, color: '#A3122A' }}>{ticket.repairId}</span>
               </div>
-              <h1 style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontWeight: 800, fontSize: 'clamp(24px, 4vw, 36px)', margin: 0, textTransform: 'uppercase', color: '#17151A' }}>
+              <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 'clamp(22px, 3.5vw, 32px)', margin: 0, color: '#1B1210' }}>
                 {ticket.deviceBrand} {ticket.deviceModel}
               </h1>
-              <p style={{ fontSize: 14, color: '#837E88', marginTop: 6 }}>
+              <p style={{ fontSize: 14, color: '#857D79', marginTop: 6 }}>
                 {ticket.deviceColor} · Logged {formatDate(ticket.createdAt)}
               </p>
             </div>
@@ -348,9 +347,9 @@ export default function RepairDetailPage() {
         {/* Progress Bar */}
         <div className="detail-card" style={{ marginBottom: 24 }}>
           <div className="detail-section">
-            <div className="vitals-label" style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: '#837E88', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
+            <div className="vitals-label" style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: '#857D79', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>
               <span>Hardware Integrity Protocol</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", color: progressPct >= 100 ? '#1C8A4F' : '#9C0F22' }}>
+              <span style={{ color: progressPct >= 100 ? '#059669' : '#A3122A' }}>
                 {progressPct >= 100 ? '100%' : stepIdx < 0 ? (ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'Halted' : 'Awaiting') : `${progressPct}%`}
               </span>
             </div>
@@ -404,8 +403,8 @@ export default function RepairDetailPage() {
               </h3>
               <InfoRow label="Category" value={ticket.issueCategory} />
               <div style={{ padding: '12px 0' }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 6 }}>Description</p>
-                <p style={{ fontSize: 13, lineHeight: 1.6, color: '#17151A', whiteSpace: 'pre-wrap' }}>{ticket.description}</p>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 6 }}>Description</p>
+                <p style={{ fontSize: 13, lineHeight: 1.6, color: '#1B1210', whiteSpace: 'pre-wrap' }}>{ticket.description}</p>
               </div>
               <InfoRow label="Priority" value={ticket.priority} />
               <InfoRow label="Accessories" value={ticket.accessories || 'None'} />
@@ -427,27 +426,27 @@ export default function RepairDetailPage() {
 
         {/* Approval Section */}
         {needsApproval && (
-          <div className="detail-card" style={{ marginBottom: 24, border: '1.5px solid rgba(210,23,46,0.15)' }}>
-            <div className="detail-section" style={{ background: 'rgba(252,237,238,0.3)' }}>
+          <div className="detail-card" style={{ marginBottom: 24, border: '1.5px solid rgba(217,30,54,0.12)' }}>
+            <div className="detail-section" style={{ background: 'rgba(217,30,54,0.03)' }}>
               <h3 className="section-title">
                 <span className="material-symbols-outlined">handshake</span>
                 Repair Estimate — Awaiting Your Approval
               </h3>
-              <p style={{ fontSize: 13, color: '#837E88', marginBottom: 16 }}>Please review the diagnosis and estimated cost below.</p>
-              <div style={{ padding: '16px', borderRadius: 10, background: '#FFFFFF', border: '1px solid #EAE5E6', marginBottom: 16 }}>
+              <p style={{ fontSize: 13, color: '#857D79', marginBottom: 16 }}>Please review the diagnosis and estimated cost below.</p>
+              <div style={{ padding: '16px', borderRadius: 12, background: '#FFFFFF', border: '1px solid #ECE4E0', marginBottom: 16 }}>
                 <div style={{ marginBottom: 12 }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 4 }}>Repair Reason</p>
-                  <p style={{ fontSize: 14, fontWeight: 500, color: '#17151A' }}>{ticket.repairReason || 'No diagnosis provided'}</p>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 4 }}>Repair Reason</p>
+                  <p style={{ fontSize: 14, fontWeight: 500, color: '#1B1210' }}>{ticket.repairReason || 'No diagnosis provided'}</p>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid #EAE5E6' }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88' }}>Estimated Charge</p>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: '#D2172E' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid #ECE4E0' }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79' }}>Estimated Charge</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: '#D91E36' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <button onClick={() => handleApprove(true)} disabled={approving}
                   className="flex-1 h-12 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer hover:shadow-lg"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D2172E, #9C0F22)', boxShadow: '0 6px 20px rgba(210,23,46,0.3)' }}>
+                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 6px 20px rgba(217,30,54,0.3)' }}>
                   {approving ? 'Processing...' : 'Approve & Start Repair'}
                 </button>
                 <button onClick={() => handleApprove(false)} disabled={approving}
@@ -483,9 +482,9 @@ export default function RepairDetailPage() {
             {ticket.notes && ticket.notes.length > 0 ? (
               <div className="space-y-3 max-h-64 overflow-y-auto mb-4 pr-1">
                 {ticket.notes.map((note) => (
-                  <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                      style={{ background: note.is_admin ? '#F2EEEF' : 'linear-gradient(135deg, #9C0F22, #D2172E)', color: note.is_admin ? '#17151A' : '#ffffff' }}>
+                    <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
+                        style={{ background: note.is_admin ? '#F5F0EC' : 'linear-gradient(135deg, #A3122A, #D91E36)', color: note.is_admin ? '#1B1210' : '#ffffff' }}>
                       <p style={{ fontSize: 10, fontWeight: 700, marginBottom: 2, opacity: 0.6 }}>{note.is_admin ? 'Admin' : 'You'}</p>
                       <p style={{ fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{note.message}</p>
                       <p style={{ fontSize: 9, marginTop: 6, opacity: 0.4, textAlign: 'right' }}>{note.created_at ? formatDate(note.created_at) : ''}</p>
@@ -494,17 +493,17 @@ export default function RepairDetailPage() {
                 ))}
               </div>
             ) : (
-              <p style={{ fontSize: 13, textAlign: 'center', padding: '16px 0', color: '#837E88' }}>No messages yet. Send a message to the admin team.</p>
+              <p style={{ fontSize: 13, textAlign: 'center', padding: '16px 0', color: '#857D79' }}>No messages yet. Send a message to the admin team.</p>
             )}
             <div className="flex gap-2">
               <input value={message} onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                 placeholder="Type your message..."
-                className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(210,23,46,0.1)]"
-                style={{ background: '#FCFAFA', border: '1px solid #EAE5E6', color: '#17151A' }} />
+                className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(217,30,54,0.1)]"
+                style={{ background: '#FBF8F6', border: '1px solid #ECE4E0', color: '#1B1210' }} />
               <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
                 className="w-11 h-11 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 cursor-pointer hover:shadow-lg active:scale-95"
-                style={{ background: '#D2172E' }}>
+                style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)' }}>
                 {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
               </button>
             </div>
@@ -519,28 +518,28 @@ export default function RepairDetailPage() {
                 <span className="material-symbols-outlined">local_shipping</span>
                 Send Device via Courier
               </h3>
-              <p style={{ fontSize: 13, color: '#837E88', marginBottom: 16 }}>Your repair has been accepted. Please send the device and share courier details.</p>
+              <p style={{ fontSize: 13, color: '#857D79', marginBottom: 16 }}>Your repair has been accepted. Please send the device and share courier details.</p>
               <div className="grid grid-cols-2 gap-3" style={{ marginBottom: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 6 }}>Courier Name *</label>
+                  <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 6 }}>Courier Name *</label>
                   <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="e.g. DTDC, Blue Dart"
-                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #EAE5E6', color: '#17151A' }} />
+                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #ECE4E0', color: '#1B1210' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 6 }}>Tracking Number *</label>
+                  <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 6 }}>Tracking Number *</label>
                   <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="e.g. DTDC123456789"
-                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #EAE5E6', color: '#17151A' }} />
+                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #ECE4E0', color: '#1B1210' }} />
                 </div>
               </div>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 6 }}>Shipment Date</label>
+                <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 6 }}>Shipment Date</label>
                 <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)}
-                  className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #EAE5E6', color: '#17151A' }} />
+                  className="w-full h-10 px-3.5 rounded-xl text-sm outline-none" style={{ background: '#fff', border: '1px solid #ECE4E0', color: '#1B1210' }} />
               </div>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#837E88', marginBottom: 6 }}>Additional Notes</label>
+                <label style={{ display: 'block', fontSize: 10, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', color: '#857D79', marginBottom: 6 }}>Additional Notes</label>
                 <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Any special instructions..."
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none resize-none" style={{ background: '#fff', border: '1px solid #EAE5E6', color: '#17151A' }} />
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none resize-none" style={{ background: '#fff', border: '1px solid #ECE4E0', color: '#1B1210' }} />
               </div>
               <button onClick={handleSendCourier} disabled={submittingCourier}
                 className="w-full h-11 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50 hover:shadow-lg"
@@ -555,7 +554,7 @@ export default function RepairDetailPage() {
         {courierSent && ticket.courier && (
           <div className="detail-card" style={{ marginBottom: 24, border: '1px solid rgba(34,197,94,0.2)' }}>
             <div className="detail-section" style={{ background: 'rgba(34,197,94,0.03)' }}>
-              <h3 className="section-title" style={{ color: '#1C8A4F' }}>
+              <h3 className="section-title" style={{ color: '#059669' }}>
                 <span className="material-symbols-outlined">check_circle</span>
                 Courier Sent
               </h3>
@@ -576,7 +575,7 @@ export default function RepairDetailPage() {
                 Status History
               </h3>
               <div className="relative">
-                <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(210,23,46,0.1)' }} />
+                <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(217,30,54,0.1)' }} />
                 <div className="space-y-0">
                   {ticket.statusHistory.map((h, idx) => {
                     const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
@@ -588,7 +587,7 @@ export default function RepairDetailPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
-                            <span className="text-[10px]" style={{ color: '#837E88' }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
+                              <span className="text-[10px]" style={{ color: '#857D79' }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
                           </div>
                           {h.notes && <p className="text-[11px] mt-0.5" style={{ color: '#837E88' }}>{h.notes}</p>}
                         </div>
@@ -611,11 +610,11 @@ export default function RepairDetailPage() {
       {/* Notification Toast */}
       {notification && (
         <div className="fixed bottom-8 left-1/2 z-[150] px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 -translate-x-1/2"
-          style={{ background: '#FFFFFF', border: '1px solid #EAE5E6', boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}>
-          <span className="material-symbols-outlined text-base" style={{ color: notification.type === 'success' ? '#1C8A4F' : '#EF4444' }}>
+          style={{ background: '#FFFFFF', border: '1px solid #ECE4E0', boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}>
+          <span className="material-symbols-outlined text-base" style={{ color: notification.type === 'success' ? '#059669' : '#EF4444' }}>
             {notification.type === 'success' ? 'check_circle' : 'error'}
           </span>
-          <span className="text-sm font-bold" style={{ color: '#17151A' }}>{notification.message}</span>
+          <span className="text-sm font-bold" style={{ color: '#1B1210' }}>{notification.message}</span>
         </div>
       )}
     </div>

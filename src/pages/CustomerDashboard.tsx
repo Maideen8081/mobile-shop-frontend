@@ -94,20 +94,20 @@ export default function CustomerDashboard() {
                 <AreaChart data={growthData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                   <defs>
                     <linearGradient id="crm-new-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#CB202D" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#CB202D" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#D91E36" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#D91E36" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="crm-returning-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#A81D2A" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#A81D2A" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#A3122A" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#A3122A" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e8ecf1" strokeOpacity={0.5} />
                   <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<ChartTooltip />} />
-                  <Area type="monotone" dataKey="new" stroke="#CB202D" fill="url(#crm-new-grad)" strokeWidth={2.5} name="New Customers" />
-                  <Area type="monotone" dataKey="returning" stroke="#A81D2A" fill="url(#crm-returning-grad)" strokeWidth={2.5} name="Returning" />
+                  <Area type="monotone" dataKey="new" stroke="#D91E36" fill="url(#crm-new-grad)" strokeWidth={2.5} name="New Customers" />
+                  <Area type="monotone" dataKey="returning" stroke="#A3122A" fill="url(#crm-returning-grad)" strokeWidth={2.5} name="Returning" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
