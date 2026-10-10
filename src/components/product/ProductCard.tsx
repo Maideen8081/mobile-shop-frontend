@@ -27,7 +27,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
       whileHover={{ y: -6, boxShadow: '0 24px 80px rgba(0,0,0,0.3)' }}
       className="relative rounded-xl bg-bg-card border border-border/50 p-5 overflow-hidden group cursor-pointer hover:border-primary/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.08)] transition-all duration-300"
     >
-      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-primary/8 to-blue-500/8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-[8px] bg-gradient-to-br from-primary/8 to-blue-500/8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 pointer-events-none" />
 
       <div className="relative z-10">

@@ -133,7 +133,7 @@ export default function AddressManagement() {
         <SiteTopNav />
         <div className="min-h-screen flex items-center justify-center" style={{ background: '#FBF8F6' }}>
           <div className="text-center">
-            <div className="w-10 h-10 rounded-full border-3 border-t-transparent animate-spin mx-auto mb-3" style={{ borderColor: '#EAE5E6', borderTopColor: '#D2172E' }} />
+            <div className="w-10 h-10 rounded-[8px] border-3 border-t-transparent animate-spin mx-auto mb-3" style={{ borderColor: '#EAE5E6', borderTopColor: '#D2172E' }} />
             <p className="text-sm" style={{ color: '#837E88' }}>Loading your addresses...</p>
           </div>
         </div>
@@ -175,10 +175,10 @@ export default function AddressManagement() {
         .addr-icon svg{width:20px;height:20px;}
         .addr-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
         .addr-name{font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;}
-        .addr-badge-default{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:#D2172E;color:#fff;padding:3px 8px;border-radius:999px;}
+        .addr-badge-default{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:#D2172E;color:#fff;padding:3px 8px;border-radius: 8px;}
         .addr-phone{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#4A4750;margin-top:3px;}
         .addr-phone svg{width:12px;height:12px;color:#837E88;}
-        .type-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px;white-space:nowrap;border:1px solid #F0DEE0;color:#9C0F22;background:#fff;}
+        .type-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius: 8px;white-space:nowrap;border:1px solid #F0DEE0;color:#9C0F22;background:#fff;}
         .type-pill svg{width:11px;height:11px;}
         .type-pill.work{color:#2E6FBF;border-color:#D3E1F4;}
         .type-pill.other{color:#B87A12;border-color:#F1DCB2;}
@@ -199,7 +199,7 @@ export default function AddressManagement() {
         .set-default-link svg{width:13px;height:13px;}
         .add-card{border:1.5px dashed #E3B9BF;border-radius:16px;background:repeating-linear-gradient(135deg,#FEFBFB,#FEFBFB 10px,#FDF5F6 10px,#FDF5F6 11px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:210px;cursor:pointer;transition:border-color .15s,background .15s;}
         .add-card:hover{border-color:#D2172E;}
-        .add-card .plus{width:50px;height:50px;border-radius:50%;background:#F8DFE2;color:#D2172E;display:flex;align-items:center;justify-content:center;transition:transform .18s,background .18s;}
+        .add-card .plus{width:50px;height:50px;border-radius: 8px;background:#F8DFE2;color:#D2172E;display:flex;align-items:center;justify-content:center;transition:transform .18s,background .18s;}
         .add-card:hover .plus{background:#D2172E;color:#fff;transform:rotate(90deg) scale(1.06);}
         .add-card .plus svg{width:22px;height:22px;}
         .add-card span{font-weight:700;color:#4A4750;font-size:14.5px;}
@@ -228,13 +228,13 @@ export default function AddressManagement() {
         .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#FBF8F6;border:1.5px solid #EAE5E6;border-radius:12px;margin-bottom:8px;}
         .toggle-row .lbl{font-size:14px;font-weight:600;color:#17151A;}
         .toggle-row .lbl small{display:block;font-weight:400;color:#837E88;font-size:12px;margin-top:3px;}
-        .switch{width:44px;height:25px;border-radius:999px;background:#DCD7D9;position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;border:none;}
-        .switch::after{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,0.25);}
+        .switch{width:44px;height:25px;border-radius: 8px;background:#DCD7D9;position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;border:none;}
+        .switch::after{content:"";position:absolute;width:19px;height:19px;border-radius: 8px;background:#fff;top:3px;left:3px;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,0.25);}
         .switch.on{background:#D2172E;}
         .switch.on::after{transform:translateX(19px);}
         .modal-foot{display:flex;justify-content:flex-end;gap:12px;padding:20px 28px 24px;border-top:1px solid #EAE5E6;}
         .confirm-modal{max-width:400px;text-align:center;padding:36px 28px 28px;}
-        .confirm-modal .warn-icon{width:56px;height:56px;border-radius:50%;background:#FCEDEE;color:#D2172E;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+        .confirm-modal .warn-icon{width:56px;height:56px;border-radius: 8px;background:#FCEDEE;color:#D2172E;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
         .confirm-modal .warn-icon svg{width:26px;height:26px;}
         .confirm-modal h3{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0 0 10px;text-transform:uppercase;color:#17151A;}
         .confirm-modal p{font-size:14px;color:#4A4750;margin:0 0 24px;line-height:1.6;}

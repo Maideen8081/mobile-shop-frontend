@@ -528,7 +528,7 @@ export default function CartPage() {
         .wink-cart-root .stepper { display:flex; align-items:center; gap:0; }
         .wink-cart-root .step { display:flex; align-items:center; gap:10px; }
         .wink-cart-root .step-num {
-          width:30px; height:30px; border-radius:50%;
+          width:30px; height:30px; border-radius: 8px;
           display:flex; align-items:center; justify-content:center;
           font-size:12px; font-weight:600; font-family:'Fraunces', serif;
           background:transparent; color:var(--ink-soft); border:1px solid var(--line);
@@ -584,12 +584,12 @@ export default function CartPage() {
         }
         .wink-cart-root .stock.in { color:#4C7A54; }
         .wink-cart-root .stock.low { color:var(--red); }
-        .wink-cart-root .stock .dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+        .wink-cart-root .stock .dot { width:5px; height:5px; border-radius: 8px; background:currentColor; }
 
         .wink-cart-root .cart-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:16px; flex-wrap:wrap; gap:14px; }
         .wink-cart-root .qty-stepper {
           display:flex; align-items:center; gap:0;
-          border:1px solid var(--line); border-radius:999px; overflow:hidden;
+          border:1px solid var(--line); border-radius: 8px; overflow:hidden;
           background:var(--cream);
         }
         .wink-cart-root .qty-stepper button {
@@ -646,13 +646,13 @@ export default function CartPage() {
         .wink-cart-root .promo-row { display:flex; gap:8px; margin:18px 0 4px; }
         .wink-cart-root .promo-row input {
           flex:1; border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.04); color:#fff;
-          border-radius:999px; padding:12px 16px; font-size:12.5px; outline:none;
+          border-radius: 8px; padding:12px 16px; font-size:12.5px; outline:none;
         }
         .wink-cart-root .promo-row input::placeholder { color:#8D877C; }
         .wink-cart-root .promo-row input:focus { border-color:var(--red); }
         .wink-cart-root .promo-row button {
           background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.14);
-          padding:0 20px; border-radius:999px; font-size:12px; font-weight:600;
+          padding:0 20px; border-radius: 8px; font-size:12px; font-weight:600;
         }
         .wink-cart-root .promo-row button:hover { background:var(--red); border-color:var(--red); }
         .wink-cart-root .promo-msg { font-size:11.5px; margin:2px 0 8px; font-weight:600; min-height:14px; }
@@ -668,7 +668,7 @@ export default function CartPage() {
 
         .wink-cart-root .checkout-btn {
           width:100%; background:var(--red); color:var(--white); border:none;
-          padding:17px; border-radius:999px; font-size:13.5px; font-weight:700; letter-spacing:.02em;
+          padding:17px; border-radius: 8px; font-size:13.5px; font-weight:700; letter-spacing:.02em;
           box-shadow:0 14px 26px -8px rgba(196,30,47,0.55);
           transition:background .2s ease, transform .15s ease;
           display:flex; align-items:center; justify-content:center; gap:8px;
@@ -703,7 +703,7 @@ export default function CartPage() {
         .wink-cart-root .rec-bottom { display:flex; align-items:center; justify-content:flex-end; margin-top:10px; }
         .wink-cart-root .add-btn {
           background:transparent; color:var(--ink); border:1px solid var(--line);
-          padding:8px 15px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.03em;
+          padding:8px 15px; border-radius: 8px; font-size:11px; font-weight:700; letter-spacing:.03em;
           transition:all .2s ease;
         }
         .wink-cart-root .add-btn:hover { background:var(--ink); color:var(--white); border-color:var(--ink); }
@@ -717,7 +717,7 @@ export default function CartPage() {
         .wink-cart-root .empty-state p { color:var(--ink-soft); font-size:14px; margin-bottom:18px; font-family:'Fraunces', serif; font-size:17px; }
         .wink-cart-root .empty-state a {
           display:inline-block; background:var(--red); color:var(--white); padding:12px 26px;
-          border-radius:999px; font-size:12.5px; font-weight:700; text-decoration:none;
+          border-radius: 8px; font-size:12.5px; font-weight:700; text-decoration:none;
         }
 
         /* ===== Responsive ===== */

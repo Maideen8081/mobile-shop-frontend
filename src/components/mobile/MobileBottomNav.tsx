@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
               className="flex flex-col items-center gap-0.5 py-1 px-1.5 min-w-[42px] active:scale-90 transition relative"
             >
               <span
-                className={`w-12 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#CB202D] text-white shadow-[0_6px_16px_rgba(203,32,45,0.45)]' : 'text-[#9CA3AF]'}`}
+                className={`w-12 h-8 rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#CB202D] text-white shadow-[0_6px_16px_rgba(203,32,45,0.45)]' : 'text-[#9CA3AF]'}`}
               >
                 <Icon size={19} />
               </span>

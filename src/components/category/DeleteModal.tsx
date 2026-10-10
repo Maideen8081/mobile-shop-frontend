@@ -58,7 +58,7 @@ export default function DeleteModal({ open, category, onClose, onConfirm, loadin
                 className="flex-1 py-2.5 rounded-xl bg-danger text-white text-sm font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-[8px] animate-spin mx-auto" />
                 ) : 'Delete'}
               </motion.button>
               <button

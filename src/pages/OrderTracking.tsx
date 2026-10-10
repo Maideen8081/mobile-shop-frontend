@@ -39,7 +39,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000
 const emojiToImage: Record<string, string> = {
   '📱': 'https://pngimg.com/d/iphone16_PNG37.png',
   '📲': 'https://pngimg.com/d/samsung_PNG2.png',
-  '🎧': 'https://pngimg.com/d/headphones_PNGC7645.png',
+  '🎧': 'https://pngimg.com/d/headphones_PNG7645.png',
   '⌚': 'https://pngimg.com/d/apple_watch_PNG19558.png',
   '📟': 'https://pngimg.com/d/ipad_PNG2133.png',
   '💻': 'https://pngimg.com/d/laptop_PNG101814.png',
@@ -103,7 +103,7 @@ function emptyState() {
       <h2 className="text-2xl font-bold text-[#191c1d] mb-2">No orders yet</h2>
       <p className="text-sm text-[#3b4b3d]/70 mb-8">Complete your first purchase to see orders here.</p>
       <a href="/collection/all"
-        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
+        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-[8px] text-sm font-bold text-white transition-all duration-300 hover:shadow-lg active:scale-[0.98]"
         style={{
           background: '#A3122A',
           boxShadow: '0 4px 15px rgba(163,18,42,0.3)',
@@ -143,7 +143,7 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
           return (
             <div key={step.key} className="relative z-10 flex flex-col items-center text-center md:w-1/5">
               <div
-                className="w-14 h-14 rounded-full flex items-center justify-center mb-3 transition-all duration-500"
+                className="w-14 h-14 rounded-[8px] flex items-center justify-center mb-3 transition-all duration-500"
                 style={{
                   background: isActive ? 'rgba(217,30,54,0.2)' : 'rgba(237,238,239,0.8)',
                   border: `2px solid ${isActive ? '#A3122A' : 'rgba(185,203,185,0.3)'}`,
@@ -154,8 +154,8 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
                   <span className="material-symbols-outlined text-xl" style={{ color: '#A3122A', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                 ) : isCurrent ? (
                   <div className="relative">
-                    <div className="w-4 h-4 rounded-full" style={{ background: '#D91E36' }} />
-                    <div className="absolute inset-[-4px] rounded-full border-2 border-[#D91E36] animate-ping opacity-50" />
+                    <div className="w-4 h-4 rounded-[8px]" style={{ background: '#D91E36' }} />
+                    <div className="absolute inset-[-4px] rounded-[8px] border-2 border-[#D91E36] animate-ping opacity-50" />
                   </div>
                 ) : (
                   <span className="material-symbols-outlined text-xl" style={{ color: isActive ? '#A3122A' : 'rgba(59,75,61,0.3)' }}>{step.icon}</span>
@@ -209,12 +209,12 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
             </h1>
             <p className="text-sm mt-1" style={{ color: 'rgba(59,75,61,0.7)' }}>Placed on {order.orderDate}</p>
           </div>
-          <div className="flex items-center gap-3 px-4 py-2 rounded-full" style={{
+          <div className="flex items-center gap-3 px-4 py-2 rounded-[8px]" style={{
             background: 'rgba(255,255,255,0.7)',
             backdropFilter: 'blur(20px)',
             border: `1px solid ${badge.color}20`,
           }}>
-            <div className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: badge.color }} />
+            <div className="w-2.5 h-2.5 rounded-[8px] animate-pulse" style={{ background: badge.color }} />
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: badge.color, fontFamily: 'Manrope, sans-serif' }}>{badge.label}</span>
           </div>
         </div>
@@ -230,7 +230,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             }}>
               <div className="absolute top-4 right-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold" style={{
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[10px] font-bold" style={{
                   background: 'rgba(217,30,54,0.1)',
                   border: '1px solid rgba(217,30,54,0.2)',
                   color: '#A3122A',
@@ -286,12 +286,12 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                         <span className="text-xs font-semibold" style={{ color: 'rgba(59,75,61,0.7)' }}>Order Progress</span>
                         <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{isDelivered ? '100%' : `${(currentStepIndex / (STEPS.length - 1)) * 100}%`}</span>
                       </div>
-                      <div className="h-2 w-full rounded-full overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
+                      <div className="h-2 w-full rounded-[8px] overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: isDelivered ? '100%' : `${(currentStepIndex / (STEPS.length - 1)) * 100}%` }}
                           transition={{ duration: 1, ease: 'easeOut' }}
-                          className="h-full rounded-full"
+                          className="h-full rounded-[8px]"
                           style={{ background: 'linear-gradient(90deg, #D91E36, #A3122A)' }}
                         />
                       </div>
@@ -391,7 +391,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
 
               <div className="mt-5 pt-5" style={{ borderTop: '1px solid rgba(185,203,185,0.3)' }}>
                 <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(248,249,250,0.8)', border: '1px solid rgba(185,203,185,0.1)' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style={{ background: '#A3122A' }}>
+                  <div className="w-10 h-10 rounded-[8px] flex items-center justify-center text-sm font-bold text-white" style={{ background: '#A3122A' }}>
                     PF
                   </div>
                   <div>
@@ -509,10 +509,10 @@ function StatusBadge({ status }: { status: string }) {
   const badge = STATUS_BADGE[status] || { label: 'Confirmed', color: '#A3122A' }
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[10px] font-bold tracking-wider uppercase"
       style={{ background: `${badge.color}15`, color: badge.color }}
     >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: badge.color }} />
+      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: badge.color }} />
       {badge.label}
     </span>
   )
@@ -664,7 +664,7 @@ export default function OrderTracking() {
                             {[0, 1, 2, 3, 4].map(i => (
                               <div
                                 key={i}
-                                className="h-1.5 flex-1 rounded-full transition-all"
+                                className="h-1.5 flex-1 rounded-[8px] transition-all"
                                 style={{
                                   background: i <= currentStepIndex
                                     ? 'linear-gradient(90deg, #D91E36, #A3122A)'
@@ -684,7 +684,7 @@ export default function OrderTracking() {
                         </div>
                         <motion.div
                           whileHover={{ x: 3 }}
-                          className="w-8 h-8 rounded-full flex items-center justify-center"
+                          className="w-8 h-8 rounded-[8px] flex items-center justify-center"
                           style={{ background: 'rgba(217,30,54,0.1)' }}
                         >
                           <span className="material-symbols-outlined text-sm" style={{ color: '#A3122A' }}>chevron_right</span>

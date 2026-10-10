@@ -137,10 +137,10 @@ export default function MobileAddressManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-40" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-40" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] px-3 py-3 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div>
@@ -151,8 +151,8 @@ export default function MobileAddressManagement() {
 
       {/* Zepto/Zomato style hero banner */}
       <div className="relative mx-3 mt-3 rounded-[22px] overflow-hidden p-4 text-white" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
-        <div className="absolute -top-8 -right-6 w-28 h-28 rounded-full bg-white/10 blur-xl" />
-        <div className="absolute -bottom-10 -left-6 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -top-8 -right-6 w-28 h-28 rounded-[8px] bg-white/10 blur-xl" />
+        <div className="absolute -bottom-10 -left-6 w-32 h-32 rounded-[8px] bg-white/10 blur-2xl" />
         <div className="relative flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center flex-shrink-0">
             <FiTruck size={20} />
@@ -184,8 +184,8 @@ export default function MobileAddressManagement() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-[14px] font-bold">{addr.fullName}</p>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
-                    {addr.isDefault && <span className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-[8px] bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
+                    {addr.isDefault && <span className="text-[9px] font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
                   </div>
                   <p className="text-[12px] text-[#6B7280] flex items-center gap-1 mt-0.5"><FiPhone size={11} /> {addr.mobile}</p>
                   <p className="text-[12px] text-[#4B5563] mt-1 leading-snug">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
@@ -221,7 +221,7 @@ export default function MobileAddressManagement() {
             <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowForm(false)} />
             <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
               <div className="px-4 pt-4 pb-2 flex-shrink-0">
-                <div className="w-10 h-1 rounded-full bg-[#D9D9E3] mx-auto mb-3" />
+                <div className="w-10 h-1 rounded-[8px] bg-[#D9D9E3] mx-auto mb-3" />
                 <p className="text-[15px] font-extrabold">{editing ? 'Edit Address' : 'Add New Address'}</p>
               </div>
               <div className="px-4 overflow-y-auto flex-1 space-y-3">
@@ -244,12 +244,12 @@ export default function MobileAddressManagement() {
                         <button key={t} onClick={() => set('addressType', t)}
                           className={`relative flex flex-col items-center justify-center gap-1.5 h-[68px] rounded-2xl border-2 transition active:scale-95 ${active ? 'text-white border-transparent' : 'bg-white border-[#E5E7EB] text-[#6B7280]'}`}
                           style={active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
-                          <span className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? 'bg-white/20' : 'bg-[#FEE2E6]'}`} style={active ? undefined : { color: PURPLE }}>
+                          <span className={`w-8 h-8 rounded-[8px] flex items-center justify-center ${active ? 'bg-white/20' : 'bg-[#FEE2E6]'}`} style={active ? undefined : { color: PURPLE }}>
                             {typeIcons[t]}
                           </span>
                           <span className="text-[12px] font-bold">{t}</span>
                           {active && (
-                            <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-white flex items-center justify-center" style={{ color: PURPLE }}>
+                            <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-[8px] bg-white flex items-center justify-center" style={{ color: PURPLE }}>
                               <FiCheck size={10} />
                             </span>
                           )}

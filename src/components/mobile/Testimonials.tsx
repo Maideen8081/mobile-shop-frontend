@@ -23,7 +23,7 @@ export default function Testimonials() {
             </div>
             <p className="text-[12.5px] text-[#0F172A] italic leading-relaxed">“{t.quote}”</p>
             <div className="mt-3 flex items-center gap-2 border-t border-[#EEF1F4] pt-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#16A34A] text-white flex items-center justify-center text-[11px] font-bold">✓</span>
+              <span className="w-5 h-5 rounded-[8px] bg-[#16A34A] text-white flex items-center justify-center text-[11px] font-bold">✓</span>
               <div>
                 <h4 className="text-[12.5px] font-bold text-[#0F172A]">{t.name}</h4>
                 <span className="text-[10px] font-bold text-[#CB202D] uppercase tracking-widest">{t.badge}</span>

@@ -12,7 +12,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
         isActive ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-white text-text-secondary border border-border'
       }`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-primary' : 'bg-text-muted'}`} />
+      <span className={`w-1.5 h-1.5 rounded-[8px] ${isActive ? 'bg-primary' : 'bg-text-muted'}`} />
       {isActive ? 'Active' : 'Inactive'}
     </motion.span>
   )

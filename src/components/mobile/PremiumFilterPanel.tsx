@@ -166,7 +166,7 @@ export default function PremiumFilterPanel({
         .handle-bar {
           width: 36px;
           height: 4px;
-          border-radius: 999px;
+          border-radius: 8px;
           background: #D1D5DB;
         }
         .filter-chip {
@@ -229,7 +229,7 @@ export default function PremiumFilterPanel({
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 rounded-full active:scale-95 transition-all"
+                  className="px-3 py-1.5 text-xs font-semibold text-rose-600 bg-rose-50 rounded-[8px] active:scale-95 transition-all"
                 >
                   Clear All
                 </button>
@@ -258,7 +258,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={cat.value}
                     onClick={() => toggleFilter('categories', cat.value)}
-                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
                       filters.categories.includes(cat.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -289,7 +289,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={brand.value}
                     onClick={() => toggleFilter('brands', brand.value)}
-                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
                       filters.brands.includes(brand.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -370,7 +370,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={tag.value}
                     onClick={() => toggleFilter('tags', tag.value)}
-                    className={`filter-chip inline-flex items-center px-4 py-2 rounded-full text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
                       filters.tags.includes(tag.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'

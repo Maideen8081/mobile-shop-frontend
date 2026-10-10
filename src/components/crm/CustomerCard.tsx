@@ -20,7 +20,7 @@ export default function CustomerCard({ customer, index = 0, onClick }: { custome
       onClick={() => onClick?.(customer)}
       className="relative rounded-xl bg-bg-card border border-border shadow-sm p-4 cursor-pointer overflow-hidden group"
     >
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-primary/5 blur-2xl group-hover:scale-150 transition-transform duration-700" />
+      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-[8px] bg-primary/5 blur-2xl group-hover:scale-150 transition-transform duration-700" />
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
@@ -28,7 +28,7 @@ export default function CustomerCard({ customer, index = 0, onClick }: { custome
               <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-sm font-bold text-white shadow-md">
                 {customer.avatar}
               </div>
-              <span className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${customer.status === 'active' ? 'bg-success/100' : 'bg-gray-300'}`} />
+              <span className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-[8px] border-2 border-white ${customer.status === 'active' ? 'bg-success/100' : 'bg-gray-300'}`} />
             </div>
             <div>
               <p className="text-sm font-bold text-text-primary">{customer.name}</p>

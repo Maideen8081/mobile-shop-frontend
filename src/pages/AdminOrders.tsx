@@ -238,7 +238,7 @@ export default function AdminOrders() {
               {loading ? (
                 <tr>
                   <td colSpan={7} className="text-center py-12 text-text-secondary">
-                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
+                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-[8px] animate-spin mx-auto mb-3" />
                     <p className="font-medium text-sm">Loading orders from server…</p>
                   </td>
                 </tr>
@@ -281,13 +281,13 @@ export default function AdminOrders() {
                     </td>
                     <td className="px-4 py-3 text-right font-bold text-text-primary text-sm">{formatCurrency(order.total)}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: sc.dot }} />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
+                        <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
                         {STATUS_LABELS[order.deliveryStatus] || order.deliveryStatus}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center hidden lg:table-cell">
-                      <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold" style={{ background: pc.bg, color: pc.text }}>
+                      <span className="inline-flex px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: pc.bg, color: pc.text }}>
                         {order.paymentStatus}
                       </span>
                     </td>
@@ -341,8 +341,8 @@ export default function AdminOrders() {
                 {(() => {
                   const sc = STATUS_COLORS[selected.deliveryStatus] || STATUS_COLORS['order_placed']
                   return (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: sc.dot }} />
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
+                      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
                       {STATUS_LABELS[selected.deliveryStatus] || selected.deliveryStatus}
                     </span>
                   )
@@ -402,7 +402,7 @@ export default function AdminOrders() {
                       return (
                         <div key={step} className="flex items-start gap-3">
                           <div className="flex flex-col items-center">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                            <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-xs font-bold transition-all ${
                               isCancelled ? 'bg-red-50 text-red-400 border-2 border-red-200' :
                               isDone ? 'bg-primary text-white shadow-md' : 'bg-white text-text-secondary border-2 border-border'
                             }`}>
@@ -476,7 +476,7 @@ export default function AdminOrders() {
                       <div className="flex items-center gap-1.5 mt-1">
                         {(() => {
                           const pc = PAYMENT_COLORS[selected.paymentStatus] || PAYMENT_COLORS['Pending']
-                          return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: pc.bg, color: pc.text }}>{selected.paymentStatus}</span>
+                          return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-[8px]" style={{ background: pc.bg, color: pc.text }}>{selected.paymentStatus}</span>
                         })()}
                       </div>
                     </div>

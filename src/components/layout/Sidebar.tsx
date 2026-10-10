@@ -2,9 +2,10 @@ import { useState, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
+import { useAuth } from '../../context/AuthContext'
 import {
   FiHome, FiPackage, FiFolder, FiTool, FiPlus, FiUserCheck,
-  FiShoppingBag, FiSearch, FiSmartphone, FiX, FiRefreshCw,
+  FiShoppingBag, FiSearch, FiSmartphone, FiX, FiRefreshCw, FiLogOut, FiArrowLeft,
 } from 'react-icons/fi'
 
 interface NavItem {
@@ -22,29 +23,30 @@ const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: 'Main',
     items: [
-      { id: 'dashboard', label: 'Dashboard', icon: 'FiHome', path: '/dashboard' },
-      { id: 'products', label: 'Products', icon: 'FiPackage', path: '/products' },
-      { id: 'categories', label: 'Categories', icon: 'FiFolder', path: '/categories' },
+      { id: 'dashboard', label: 'Dashboard', icon: 'FiHome', path: '/admin/dashboard' },
+      { id: 'products', label: 'Products', icon: 'FiPackage', path: '/admin/products' },
+      { id: 'categories', label: 'Categories', icon: 'FiFolder', path: '/admin/categories' },
     ],
   },
   {
     label: 'Repairs',
     items: [
-      { id: 'user-bookings', label: 'User Bookings', icon: 'FiPackage', path: '/user-bookings' },
-      { id: 'new-repair', label: 'New Repair Ticket', icon: 'FiPlus', path: '/new-repair' },
+      { id: 'user-bookings', label: 'User Bookings', icon: 'FiPackage', path: '/admin/user-bookings' },
+      { id: 'new-repair', label: 'New Repair Ticket', icon: 'FiPlus', path: '/admin/new-repair' },
+      { id: 'repair-dashboard', label: 'Repairs', icon: 'FiTool', path: '/admin/repair-dashboard' },
     ],
   },
   {
     label: 'Customers',
     items: [
-      { id: 'customer-list', label: 'Customers', icon: 'FiUserCheck', path: '/customer-list' },
+      { id: 'customer-list', label: 'Customers', icon: 'FiUserCheck', path: '/admin/customer-list' },
     ],
   },
   {
     label: 'Orders',
     items: [
-      { id: 'online-orders', label: 'Online Orders', icon: 'FiShoppingBag', path: '/online-orders' },
-      { id: 'trade-in-management', label: 'Trade-In Management', icon: 'FiRefreshCw', path: '/trade-in-management' },
+      { id: 'online-orders', label: 'Online Orders', icon: 'FiShoppingBag', path: '/admin/online-orders' },
+      { id: 'trade-in-management', label: 'Trade-In Management', icon: 'FiRefreshCw', path: '/admin/trade-in-management' },
     ],
   },
 ]
@@ -59,6 +61,9 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const location = useLocation()
   const navigate = useNavigate()
+  const { user, adminLogout } = useAuth()
+  const adminName = user?.fullName?.trim() || user?.email || 'Administrator'
+  const initial = adminName.charAt(0).toUpperCase()
 
   const filteredSections = useMemo(() => {
     if (!searchQuery.trim()) return navSections
@@ -125,7 +130,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   </span>
                   <span className="truncate">{item.label}</span>
                   {active && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
+                    <span className="ml-auto w-1.5 h-1.5 rounded-[8px] bg-primary" />
                   )}
                 </button>
               )
@@ -135,14 +140,29 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       </div>
 
       <div className="border-t border-border pt-3 pb-4 px-3">
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-9 h-9 rounded-full bg-primary/10 text-primary text-sm font-bold flex-shrink-0 flex items-center justify-center">
-            M
+        <div className="flex items-center gap-3 px-3 py-2 mb-1">
+          <div className="w-9 h-9 rounded-[8px] bg-primary/10 text-primary text-sm font-bold flex-shrink-0 flex items-center justify-center">
+            {initial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-text-primary truncate">Maideen</p>
-            <p className="text-[11px] text-text-label truncate">Administrator</p>
+            <p className="text-sm font-medium text-text-primary truncate">{adminName}</p>
+            <p className="text-[11px] text-text-label truncate">{user ? user.email : 'Administrator'}</p>
           </div>
+        </div>
+        <div className="flex items-center gap-2 px-3">
+          <button
+            onClick={async () => { await adminLogout(); navigate('/admin/login', { replace: true }) }}
+            className="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-surface-lighter border border-border text-sm font-medium text-text-secondary hover:text-primary hover:border-primary/40 transition-colors"
+          >
+            <FiLogOut size={14} /> Logout
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center gap-2 h-9 px-3 rounded-lg bg-surface-lighter border border-border text-sm font-medium text-text-secondary hover:text-text-primary hover:border-primary/40 transition-colors"
+            title="Back to storefront"
+          >
+            <FiArrowLeft size={14} /> Store
+          </button>
         </div>
       </div>
     </div>

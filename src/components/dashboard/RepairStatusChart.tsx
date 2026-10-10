@@ -38,7 +38,7 @@ export default function RepairStatusChart() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-2 mt-3">
           {repairStatusData.map((item) => (
             <div key={item.name} className="flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+              <span className="w-3 h-3 rounded-[8px]" style={{ backgroundColor: item.color }} />
               <span className="text-xs text-text-muted whitespace-nowrap">{item.name}</span>
               <span className="text-xs font-bold text-text-primary">{item.value}</span>
             </div>

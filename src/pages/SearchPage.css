@@ -62,7 +62,7 @@
   padding: 6px 16px;
   background: rgba(210, 23, 46, 0.12);
   border: 1px solid rgba(210, 23, 46, 0.25);
-  border-radius: 100px;
+  border-radius: 8px;
 }
 
 .sp-hero-title {
@@ -140,7 +140,7 @@
   background: transparent;
   color: var(--sp-gray);
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 8px;
   transition: all 0.2s;
 }
 
@@ -264,7 +264,7 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: transparent;
   color: var(--sp-gray);
   transition: all 0.15s;
@@ -526,7 +526,7 @@
   height: 28px;
   border: 3px solid var(--sp-line);
   border-top-color: var(--sp-red);
-  border-radius: 50%;
+  border-radius: 8px;
   animation: spSpin 0.8s linear infinite;
 }
 

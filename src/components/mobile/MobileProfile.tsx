@@ -121,15 +121,15 @@ export default function MobileProfile() {
 
   if (!authService.isAuthenticated()) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         {/* Header */}
         <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
-          <span className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/20 blur-2xl" />
-          <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-full bg-white/10 blur-2xl" />
-          <span className="absolute top-1/3 right-10 w-20 h-20 rounded-full border border-white/20" />
+          <span className="absolute -top-10 -right-8 w-40 h-40 rounded-[8px] bg-white/20 blur-2xl" />
+          <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-[8px] bg-white/10 blur-2xl" />
+          <span className="absolute top-1/3 right-10 w-20 h-20 rounded-[8px] border border-white/20" />
           <div className="relative z-10 px-5 pt-4 pb-6">
             <div className="flex items-center justify-between">
-              <button onClick={() => navigate('/')} aria-label="Home" className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+              <button onClick={() => navigate('/')} aria-label="Home" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               </button>
               <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
@@ -140,7 +140,7 @@ export default function MobileProfile() {
 
         {/* Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 -mt-4">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)', boxShadow: '0 8px 30px rgba(203,32,45,0.12)' }}>
+          <div className="w-24 h-24 rounded-[8px] flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)', boxShadow: '0 8px 30px rgba(203,32,45,0.12)' }}>
             <FiUser size={40} style={{ color: PRIMARY }} />
           </div>
 
@@ -151,7 +151,7 @@ export default function MobileProfile() {
 
           <button
             onClick={() => navigate('/login')}
-            className="w-full h-13 rounded-full text-[15px] font-semibold text-white flex items-center justify-center gap-2 mb-3"
+            className="w-full h-13 rounded-[8px] text-[15px] font-semibold text-white flex items-center justify-center gap-2 mb-3"
             style={{ background: grad, boxShadow: '0 6px 20px rgba(203,32,45,0.3)' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -160,7 +160,7 @@ export default function MobileProfile() {
 
           <button
             onClick={() => navigate('/signup')}
-            className="w-full h-13 rounded-full text-[15px] font-semibold text-[#CB202D] flex items-center justify-center gap-2"
+            className="w-full h-13 rounded-[8px] text-[15px] font-semibold text-[#CB202D] flex items-center justify-center gap-2"
             style={{ background: 'rgba(203,32,45,0.08)', border: '1.5px solid rgba(203,32,45,0.2)' }}
           >
             Create Account
@@ -236,35 +236,35 @@ export default function MobileProfile() {
   const press = 'active:scale-[0.98] transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* ── Premium compact header ── */}
       <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
         {/* decorative blurred circles */}
-        <span className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/20 blur-2xl" />
-        <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-full bg-white/10 blur-2xl" />
-        <span className="absolute top-1/3 right-10 w-20 h-20 rounded-full border border-white/20" />
+        <span className="absolute -top-10 -right-8 w-40 h-40 rounded-[8px] bg-white/20 blur-2xl" />
+        <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-[8px] bg-white/10 blur-2xl" />
+        <span className="absolute top-1/3 right-10 w-20 h-20 rounded-[8px] border border-white/20" />
 
         <div className="relative z-10 px-5 pt-4 flex items-center justify-between">
-          <button onClick={goBack} aria-label="Back" className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+          <button onClick={goBack} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
             <FiChevronLeft size={20} className="text-white" />
           </button>
           <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
-          <button onClick={openEdit} aria-label="Edit Profile" className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+          <button onClick={openEdit} aria-label="Edit Profile" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
             <FiEdit3 size={17} className="text-white" />
           </button>
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center pt-4 pb-8">
           <div className="relative">
-            <div className="w-[90px] h-[90px] rounded-full flex items-center justify-center text-[30px] font-bold text-white border-[3px] border-white shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
+            <div className="w-[90px] h-[90px] rounded-[8px] flex items-center justify-center text-[30px] font-bold text-white border-[3px] border-white shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
               style={{ background: 'rgba(255,255,255,0.18)' }}>
               {initials}
             </div>
-            <span className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-[#22C55E] border-2 border-white" />
+            <span className="absolute bottom-1 right-1 w-5 h-5 rounded-[8px] bg-[#22C55E] border-2 border-white" />
           </div>
           <h2 className="text-[20px] font-bold text-white mt-3 leading-tight tracking-tight px-4">{user.fullName || 'User'}</h2>
           {user.email && <p className="text-[14px] text-white/70 mt-0.5 truncate max-w-[280px] px-4">{user.email}</p>}
-          <div className="flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur">
+          <div className="flex items-center gap-1.5 mt-2 px-3 py-1 rounded-[8px] bg-white/15 backdrop-blur">
             <FiCheckCircle size={13} className="text-[#FCD34D]" />
             <span className="text-[11px] font-semibold text-white/90">Verified User</span>
           </div>
@@ -278,10 +278,10 @@ export default function MobileProfile() {
             <p className="text-[13px] font-semibold" style={{ color: INK }}>Profile Completion</p>
             <span className="text-[13px] font-bold" style={{ color: PRIMARY }}>{completion}%</span>
           </div>
-          <div className="h-2 w-full rounded-full bg-[#EEF1F4] overflow-hidden">
-            <div className="h-full rounded-full transition-all duration-700" style={{ width: `${completion}%`, background: grad }} />
+          <div className="h-2 w-full rounded-[8px] bg-[#EEF1F4] overflow-hidden">
+            <div className="h-full rounded-[8px] transition-all duration-700" style={{ width: `${completion}%`, background: grad }} />
           </div>
-          <button onClick={openEdit} className={`w-full mt-3 h-10 rounded-full text-[13px] font-semibold text-white ${press}`} style={{ background: grad }}>
+          <button onClick={openEdit} className={`w-full mt-3 h-10 rounded-[8px] text-[13px] font-semibold text-white ${press}`} style={{ background: grad }}>
             Complete Profile
           </button>
         </div>
@@ -309,7 +309,7 @@ export default function MobileProfile() {
             const Icon = r.icon
             return (
               <button key={r.label} onClick={openEdit} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < infoRows.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -332,7 +332,7 @@ export default function MobileProfile() {
               : () => setDetail({ title: s.label, body: DETAILS[s.label] || 'Details coming soon.' })
             return (
               <button key={s.label} onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < settings.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.08)', color: PRIMARY }}>
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
@@ -390,7 +390,7 @@ export default function MobileProfile() {
             <p className="text-[13px] font-semibold" style={{ color: DANGER }}>Delete Account</p>
           </div>
           <p className="text-[12px] mb-3" style={{ color: '#B91C1C' }}>Permanently remove your account and all associated data.</p>
-          <button onClick={() => setShowDelete(true)} className="w-full h-11 rounded-full text-[13px] font-semibold text-white" style={{ background: DANGER }}>
+          <button onClick={() => setShowDelete(true)} className="w-full h-11 rounded-[8px] text-[13px] font-semibold text-white" style={{ background: DANGER }}>
             Delete Account
           </button>
         </div>
@@ -400,36 +400,36 @@ export default function MobileProfile() {
 
       {/* ── Logout bottom sheet ── */}
       <Sheet open={showLogout} onClose={() => setShowLogout(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
         <h3 className="text-[18px] font-bold text-center" style={{ color: INK }}>Logout?</h3>
         <p className="text-[13px] text-center mt-1 mb-5" style={{ color: MUTED }}>You'll need to sign in again to access your account.</p>
-        <button onClick={() => setShowLogout(false)} className="w-full h-12 rounded-full text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <button onClick={() => setShowLogout(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleLogout} className="w-full h-12 rounded-full text-[14px] font-semibold text-white" style={{ background: grad }}>
+        <button onClick={handleLogout} className="w-full h-12 rounded-[8px] text-[14px] font-semibold text-white" style={{ background: grad }}>
           Yes, Logout
         </button>
       </Sheet>
 
       {/* ── Delete bottom sheet ── */}
       <Sheet open={showDelete} onClose={() => setShowDelete(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
         <div className="flex items-center gap-2 justify-center mb-2">
           <FiAlertTriangle size={18} style={{ color: DANGER }} />
           <h3 className="text-[18px] font-bold" style={{ color: DANGER }}>Delete Account</h3>
         </div>
         <p className="text-[13px] text-center mt-1 mb-5" style={{ color: MUTED }}>This action is permanent and cannot be undone.</p>
-        <button onClick={() => setShowDelete(false)} className="w-full h-12 rounded-full text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <button onClick={() => setShowDelete(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleDelete} disabled={deleting} className="w-full h-12 rounded-full text-[14px] font-semibold text-white disabled:opacity-60" style={{ background: DANGER }}>
+        <button onClick={handleDelete} disabled={deleting} className="w-full h-12 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-60" style={{ background: DANGER }}>
           {deleting ? 'Deleting…' : 'Delete Permanently'}
         </button>
       </Sheet>
 
       {/* ── Edit profile sheet ── */}
       <Sheet open={editing} onClose={() => setEditing(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
         <h3 className="text-[18px] font-bold mb-4" style={{ color: INK }}>Edit Profile</h3>
         <div className="space-y-3">
           <Field label="Full Name">
@@ -457,20 +457,20 @@ export default function MobileProfile() {
             />
           </Field>
         </div>
-        <button onClick={() => setEditing(false)} className="w-full h-12 rounded-full text-[14px] font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <button onClick={() => setEditing(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleSaveProfile} disabled={saving} className={`w-full h-12 rounded-full text-[14px] font-semibold text-white disabled:opacity-60 ${press}`} style={{ background: grad }}>
+        <button onClick={handleSaveProfile} disabled={saving} className={`w-full h-12 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-60 ${press}`} style={{ background: grad }}>
           {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </Sheet>
 
       {/* ── Detail sheet ── */}
       <Sheet open={detail !== null} onClose={() => setDetail(null)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
         <h3 className="text-[18px] font-bold mb-3" style={{ color: INK }}>{detail?.title}</h3>
         <p className="text-[14px] leading-relaxed" style={{ color: MUTED }}>{detail?.body}</p>
-        <button onClick={() => setDetail(null)} className="w-full h-12 rounded-full text-[14px] font-semibold mt-5" style={{ background: grad, color: '#fff' }}>
+        <button onClick={() => setDetail(null)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mt-5" style={{ background: grad, color: '#fff' }}>
           Close
         </button>
       </Sheet>

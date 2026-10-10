@@ -192,7 +192,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn-red relative">
               <Heart size={18} className="text-white" />
               {wishlistCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -201,7 +201,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn-red relative">
               <ShoppingBag size={18} className="text-white" />
               {cartCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -242,13 +242,13 @@ export default function PremiumMobileHeader({
                   className="snap-start flex-shrink-0 w-[76px] flex flex-col items-center gap-1.5 active:scale-95 transition"
                 >
                   <div
-                    className={`w-[64px] h-[64px] rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : ''}`}
+                    className={`w-[64px] h-[64px] rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : ''}`}
                     style={active
                       ? { background: 'linear-gradient(135deg,#CB202D,#A81D2A)', boxShadow: '0 8px 20px rgba(203,32,45,0.35)' }
                       : { background: '#FFFFFF', boxShadow: '0 4px 14px rgba(31,41,55,0.07)' }}
                   >
                     {img ? (
-                      <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-full" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                      <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-[8px]" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                     ) : (
                       <span className="text-[24px] leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                     )}

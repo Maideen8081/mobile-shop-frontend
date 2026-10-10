@@ -90,9 +90,9 @@ export default function MobilePayment() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
@@ -181,9 +181,9 @@ export default function MobilePayment() {
 
   if (isCartEmpty) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <h1 className="text-[18px] font-bold text-[#1F2937]">Payment</h1>
@@ -192,7 +192,7 @@ export default function MobilePayment() {
           <div className={`${card} w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl`}>🛒</div>
           <h2 className="text-[18px] font-bold text-[#1F2937] mb-1">No items to settle</h2>
           <p className="text-[13px] text-[#6B7280] mb-6">Add items to cart before checkout</p>
-          <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-full text-[14px] font-semibold text-white"
+          <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-[14px] font-semibold text-white"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
             Continue Shopping
           </button>
@@ -203,9 +203,9 @@ export default function MobilePayment() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="flex-1">
@@ -223,13 +223,13 @@ export default function MobilePayment() {
           return (
             <div key={label} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition ${done ? 'text-white' : active ? 'text-white' : 'bg-white text-[#9CA3AF] border border-[#E5E7EB]'}`}
+                <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-[11px] font-bold transition ${done ? 'text-white' : active ? 'text-white' : 'bg-white text-[#9CA3AF] border border-[#E5E7EB]'}`}
                   style={done || active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                   {done ? <FiCheck size={14} /> : step}
                 </div>
                 <span className={`text-[10px] mt-1 font-semibold ${active ? '' : 'text-[#9CA3AF]'}`} style={active ? { color: PURPLE } : undefined}>{label}</span>
               </div>
-              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-full ${done ? '' : 'bg-[#E5E7EB]'}`} style={done ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined} />}
+              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-[#E5E7EB]'}`} style={done ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined} />}
             </div>
           )
         })}
@@ -253,7 +253,7 @@ export default function MobilePayment() {
                       <span className="text-2xl">{item.emoji || '📦'}</span>
                     )}
                     {item.quantity > 1 && (
-                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center" style={{ background: PURPLE }}>{item.quantity}</span>
+                      <span className="absolute -top-1 -right-1 w-4 h-4 rounded-[8px] text-white text-[9px] font-bold flex items-center justify-center" style={{ background: PURPLE }}>{item.quantity}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -298,13 +298,13 @@ export default function MobilePayment() {
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-[13px] font-semibold text-[#1F2937]">{pm.label}</p>
-                      {pm.comingSoon && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Coming Soon</span>}
+                      {pm.comingSoon && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[8px] bg-amber-100 text-amber-700">Coming Soon</span>}
                     </div>
                     <p className="text-[11px] text-[#6B7280]">{pm.subtitle}</p>
                   </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${active ? 'border-[#4FE3C1]' : 'border-[#D1D5DB]'}`}
+                  <div className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center ${active ? 'border-[#4FE3C1]' : 'border-[#D1D5DB]'}`}
                     style={active ? { background: SUCCESS } : undefined}>
-                    {active && <div className="w-2 h-2 rounded-full bg-white" />}
+                    {active && <div className="w-2 h-2 rounded-[8px] bg-white" />}
                   </div>
                 </button>
               )
@@ -360,7 +360,7 @@ export default function MobilePayment() {
       {/* Fixed pay button */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3">
         <button onClick={handlePayment} disabled={processing}
-          className="w-full h-12 rounded-full text-[14px] font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
+          className="w-full h-12 rounded-[8px] text-[14px] font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           {processing ? <><FiLoader size={18} className="animate-spin" /> PAYING…</> : <>Pay {formatPrice(grandTotal)}</>}
         </button>

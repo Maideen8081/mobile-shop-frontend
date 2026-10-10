@@ -655,15 +655,15 @@ export default function ProfilePage() {
 }
 
 const NOT_AUTHED_CSS = `
-.dp-not-authed {
+.pp-not-authed {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 60vh; text-align: center; padding: 40px 20px;
 }
-.dp-not-authed svg { color: #A39C8E; margin-bottom: 16px; }
-.dp-not-authed h2 { font-family: 'Fraunces', serif; font-size: 24px; color: #1B1414; margin-bottom: 8px; }
-.dp-not-authed p { font-size: 14px; color: #6E5C5C; margin-bottom: 24px; }
+.pp-not-authed svg { color: #A39C8E; margin-bottom: 16px; }
+.pp-not-authed h2 { font-family: 'Fraunces', serif; font-size: 24px; color: #1B1414; margin-bottom: 8px; }
+.pp-not-authed p { font-size: 14px; color: #6E5C5C; margin-bottom: 24px; }
 .pp-login-btn {
-  padding: 14px 32px; border-radius: 999px; border: none; cursor: pointer;
+  padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer;
   font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.02em;
   background: linear-gradient(135deg, #D6001C, #8C0016);
   box-shadow: 0 4px 15px rgba(214,0,28,0.35);
@@ -745,7 +745,7 @@ const DP_CSS = `
 .dp-member-card::after{
   content:"";
   position:absolute; right:-40px; bottom:-50px;
-  width:160px; height:160px; border-radius:50%;
+  width:160px; height:160px; border-radius: 8px;
   background:rgba(255,255,255,0.06);
 }
 .dp-member-card-top{
@@ -811,14 +811,14 @@ const DP_CSS = `
 }
 .dp-profile-id{ display:flex; align-items:center; gap:22px; }
 .dp-avatar-ring{
-  width:96px; height:96px; border-radius:50%;
+  width:96px; height:96px; border-radius: 8px;
   padding:4px;
   background:linear-gradient(135deg, #B08D57, #F3D9A4);
   display:flex; align-items:center; justify-content:center;
   flex-shrink:0;
 }
 .dp-avatar{
-  width:100%; height:100%; border-radius:50%;
+  width:100%; height:100%; border-radius: 8px;
   background:linear-gradient(135deg,#7A1B2B,#3A0410);
   display:flex; align-items:center; justify-content:center;
   font-family:'Fraunces', serif; font-size:32px; font-weight:600;
@@ -1031,7 +1031,7 @@ const DP_CSS = `
 .dp-wish-thumb img{ width:100%; height:100%; object-fit:cover; }
 .dp-wish-heart{
   position:absolute; top:10px; right:10px;
-  width:30px; height:30px; border-radius:50%;
+  width:30px; height:30px; border-radius: 8px;
   background:rgba(255,255,255,0.9);
   display:flex; align-items:center; justify-content:center;
   color:var(--color-mint, #D6001C);
@@ -1066,7 +1066,7 @@ const DP_CSS = `
 }
 .dp-modal-header h2{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; }
 .dp-modal-close{
-  width:32px; height:32px; border-radius:50%; border:none;
+  width:32px; height:32px; border-radius: 8px; border:none;
   background:var(--color-paper, #FBF8F6); font-size:20px; color:var(--color-gray, #857D79);
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; transition:all .15s;

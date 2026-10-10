@@ -204,12 +204,12 @@ export default function TradeInPage() {
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
               <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
                 <div className="max-w-3xl">
-                  <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                  <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                   }`}>
                     <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-full bg-[#D91E36] animate-ping" />
-                      <span className="absolute inset-0 rounded-full bg-[#D91E36]" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#D91E36] animate-ping" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#D91E36]" />
                     </span>
                     {slide.tag}
                   </div>
@@ -219,7 +219,7 @@ export default function TradeInPage() {
                     {slide.title[0]}<br />
                     <span className="relative inline-block bg-gradient-to-r from-[#D91E36] via-[#E53E4E] to-[#D91E36] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(217,30,54,0.4)]">
                       {slide.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D91E36] to-transparent rounded-full opacity-60 animate-pulse" />
+                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D91E36] to-transparent rounded-[8px] opacity-60 animate-pulse" />
                     </span>{' '}
                     <span className="text-white/90">{slide.title[2]}</span>
                   </h1>
@@ -231,10 +231,10 @@ export default function TradeInPage() {
                   <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-500 ${
                     i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                   }`}>
-                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full shadow-[0_0_30px_rgba(217,30,54,0.3)] hover:shadow-[0_0_60px_rgba(217,30,54,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
+                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(217,30,54,0.3)] hover:shadow-[0_0_60px_rgba(217,30,54,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
                       Get Your Quote <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
                     </button>
-                    <a href="#how-it-works" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-full hover:bg-white/20 hover:border-white/40 transition-all duration-300">
+                    <a href="#how-it-works" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] hover:bg-white/20 hover:border-white/40 transition-all duration-300">
                       How It Works
                     </a>
                   </div>
@@ -252,12 +252,12 @@ export default function TradeInPage() {
               <button
                 key={i}
                 onClick={() => setCurrentSlide(i)}
-                className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
+                className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
                   i === currentSlide ? 'w-16 bg-[#D91E36]' : 'w-6 bg-white/30 hover:bg-white/50'
                 }`}
               >
                 {i === currentSlide && (
-                  <span className="absolute inset-0 bg-white/40 rounded-full animate-pulse" />
+                  <span className="absolute inset-0 bg-white/40 rounded-[8px] animate-pulse" />
                 )}
               </button>
             ))}
@@ -276,7 +276,7 @@ export default function TradeInPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, idx) => (
               <div key={step.title} className="glass-card p-8 rounded-[1.75rem] text-center group hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:border-[#D91E36]/25 hover:-translate-y-1 transition-all duration-500" style={{ transitionDelay: `${idx * 100}ms` }}>
-                <div className="w-16 h-16 rounded-full bg-[#D91E36]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#D91E36]/20 transition-colors">
+                <div className="w-16 h-16 rounded-[8px] bg-[#D91E36]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#D91E36]/20 transition-colors">
                   <span className="material-symbols-outlined text-3xl text-[#D91E36]">{step.icon}</span>
                 </div>
                 <span className="text-[#D91E36] font-bold text-sm">Step {idx + 1}</span>
@@ -297,7 +297,7 @@ export default function TradeInPage() {
                 <div className="flex flex-wrap gap-3 mb-8">
                   {brands.map((brand) => (
                     <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                      className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#D91E36] text-white border-[#D91E36] shadow-lg shadow-[#D91E36]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#D91E36]/50'}`}
+                      className={`px-5 py-2.5 rounded-[8px] text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#D91E36] text-white border-[#D91E36] shadow-lg shadow-[#D91E36]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#D91E36]/50'}`}
                     >{brand}</button>
                   ))}
                 </div>
@@ -333,7 +333,7 @@ export default function TradeInPage() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#D91E36] text-white font-bold py-3.5 rounded-full hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#D91E36]/20 cursor-pointer flex items-center justify-center gap-2">
+                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#D91E36] text-white font-bold py-3.5 rounded-[8px] hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#D91E36]/20 cursor-pointer flex items-center justify-center gap-2">
                   Start Trade-In <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </button>
               </div>
@@ -415,7 +415,7 @@ export default function TradeInPage() {
                     </div>
                   )}
                   <button onClick={handleFormSubmit} disabled={submitting || !analysis}
-                    className="mt-8 w-full py-3.5 rounded-full text-sm font-bold shadow-lg shadow-[#D91E36]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
+                    className="mt-8 w-full py-3.5 rounded-[8px] text-sm font-bold shadow-lg shadow-[#D91E36]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
                     style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
                   >
                     {submitting ? <span className="material-symbols-outlined animate-spin text-lg">refresh</span> : null}
@@ -506,8 +506,8 @@ export default function TradeInPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[#434748]">Status</span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[8px] text-xs font-semibold bg-yellow-100 text-yellow-700">
+                    <span className="w-1.5 h-1.5 rounded-[8px] bg-yellow-500" />
                     Pending Review
                   </span>
                 </div>
@@ -515,10 +515,10 @@ export default function TradeInPage() {
               <p className="text-xs text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
               <div className="flex gap-3 justify-center">
                 <button onClick={() => { setSubmitted(false); setSubmittedTrade(null); navigate('/') }}
-                  className="inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold px-8 py-3.5 rounded-full hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold px-8 py-3.5 rounded-[8px] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
                 <button onClick={() => { setSubmitted(false); setSubmittedTrade(null) }}
-                  className="inline-flex items-center gap-2 bg-white border border-[#D91E36]/20 text-[#D91E36] font-bold px-8 py-3.5 rounded-full hover:bg-[#D91E36]/5 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-white border border-[#D91E36]/20 text-[#D91E36] font-bold px-8 py-3.5 rounded-[8px] hover:bg-[#D91E36]/5 transition-all cursor-pointer"
                 >Submit Another</button>
               </div>
             </div>

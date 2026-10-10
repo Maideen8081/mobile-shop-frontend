@@ -65,13 +65,13 @@ export default function HeroCarousel() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#A81D2A]/80 via-[#CB202D]/45 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4">
-                <span className="self-start mb-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-[10px] font-semibold tracking-wide uppercase text-white">{b.tag}</span>
+                <span className="self-start mb-2 px-3 py-1 rounded-[8px] bg-white/20 backdrop-blur text-[10px] font-semibold tracking-wide uppercase text-white">{b.tag}</span>
                 <p className="text-[11px] font-medium text-white/85">{b.brand}</p>
                 <h3 className="text-white text-[19px] font-extrabold leading-tight drop-shadow-sm">{b.title}</h3>
                 <p className="text-white/90 text-[12px] mt-0.5 font-medium line-clamp-1">{b.desc}</p>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#CB202D] text-[12px] font-bold px-4 py-2 rounded-full active:scale-95 transition"
+                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#CB202D] text-[12px] font-bold px-4 py-2 rounded-[8px] active:scale-95 transition"
                 >
                   Shop Now
                 </button>
@@ -86,7 +86,7 @@ export default function HeroCarousel() {
               key={i}
               onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/50'}`}
+              className={`h-1.5 rounded-[8px] transition-all ${i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/50'}`}
             />
           ))}
         </div>

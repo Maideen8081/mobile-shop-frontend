@@ -32,7 +32,7 @@ export default function MobileTopSection({
           <button
             onClick={handleBack}
             aria-label="Back"
-            className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
+            className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
           >
             <ArrowLeft size={18} />
           </button>
@@ -41,11 +41,11 @@ export default function MobileTopSection({
             {subtitle && <p className="text-[11px] text-white/80 mt-0.5 truncate">{subtitle}</p>}
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+            <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
               <Bell size={17} />
-              <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-full ring-2 ring-[#A81D2A]" />
+              <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#A81D2A]" />
             </button>
-            <div className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center">
+            <div className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center">
               <Icon size={17} fill="white" />
             </div>
           </div>

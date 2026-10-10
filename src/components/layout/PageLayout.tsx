@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import Sidebar from './Sidebar'
 
 interface PageLayoutProps {
@@ -10,6 +11,9 @@ interface PageLayoutProps {
 export default function PageLayout({ children, title }: PageLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
+  const { user } = useAuth()
+  const adminName = user?.fullName?.trim() || user?.email || 'A'
+  const initial = adminName.charAt(0).toUpperCase()
 
   const pageTitle = title
     || location.pathname
@@ -40,8 +44,8 @@ export default function PageLayout({ children, title }: PageLayoutProps) {
               <h1 className="text-lg font-semibold text-text-primary truncate">{pageTitle || 'Dashboard'}</h1>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                A
+              <div className="w-9 h-9 rounded-[8px] bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                {initial}
               </div>
             </div>
           </div>

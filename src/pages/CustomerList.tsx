@@ -118,7 +118,7 @@ export default function CustomerList() {
                   <td className="px-4 py-3.5"><span className="text-xs text-text-muted">{c.lastVisit}</span></td>
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold ${c.status === 'active' ? 'bg-primary/10 text-primary' : c.status === 'inactive' ? 'bg-gray-100 text-text-muted' : 'bg-red-100 text-red-700'}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${c.status === 'active' ? 'bg-success/100' : c.status === 'inactive' ? 'bg-gray-400' : 'bg-danger/100'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-[8px] ${c.status === 'active' ? 'bg-success/100' : c.status === 'inactive' ? 'bg-gray-400' : 'bg-danger/100'}`} />
                       {c.status}
                     </span>
                   </td>

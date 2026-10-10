@@ -112,8 +112,8 @@ export default function AddressCreatePage() {
 
       <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '40px 64px' }}>
         <div className="absolute inset-0 pointer-events-none opacity-10 overflow-hidden">
-          <div className="absolute rounded-full" style={{ top: '-12rem', right: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#85f8c4', filter: 'blur(120px)' }} />
-          <div className="absolute rounded-full" style={{ bottom: '-12rem', left: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#00855d', filter: 'blur(120px)' }} />
+          <div className="absolute rounded-[8px]" style={{ top: '-12rem', right: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#85f8c4', filter: 'blur(120px)' }} />
+          <div className="absolute rounded-[8px]" style={{ bottom: '-12rem', left: '-12rem', width: '24rem', height: '24rem', backgroundColor: '#00855d', filter: 'blur(120px)' }} />
         </div>
 
         <div className="w-full max-w-2xl relative z-10">

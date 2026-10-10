@@ -128,7 +128,7 @@ export default function WarrantyDashboard() {
                           <span className="text-xs font-bold text-text-primary">{claim.claimId}</span>
                           <span className="text-[10px] text-text-muted">· {claim.productName}</span>
                         </div>
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${claim.priority === 'Critical' ? 'bg-danger/10 text-danger' : claim.priority === 'High' ? 'bg-warning/10 text-warning' : claim.priority === 'Medium' ? 'bg-info/10 text-info' : 'bg-bg text-text-muted'}`}>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-[8px] ${claim.priority === 'Critical' ? 'bg-danger/10 text-danger' : claim.priority === 'High' ? 'bg-warning/10 text-warning' : claim.priority === 'Medium' ? 'bg-info/10 text-info' : 'bg-bg text-text-muted'}`}>
                           {claim.priority}
                         </span>
                       </div>

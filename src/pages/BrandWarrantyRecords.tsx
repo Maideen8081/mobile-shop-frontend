@@ -34,7 +34,7 @@ export default function BrandWarrantyRecords() {
                 className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
               >
                 <div
-                  className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"
+                  className="absolute -top-16 -right-16 w-40 h-40 rounded-[8px] blur-3xl group-hover:scale-150 transition-transform duration-700"
                   style={{ background: `${brand.color}15` }}
                 />
 

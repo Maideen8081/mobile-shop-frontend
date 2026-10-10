@@ -48,7 +48,7 @@ export default function KPIStatCard({ title, value, prefix = '', suffix = '', gr
       className="bg-bg-card border border-border shadow-card rounded-xl p-5 overflow-hidden group cursor-pointer"
     >
       <div
-        className="absolute -top-12 -right-12 w-36 h-36 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"
+        className="absolute -top-12 -right-12 w-36 h-36 rounded-[8px] blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"
         style={{ background: bgGlow }}
       />
 

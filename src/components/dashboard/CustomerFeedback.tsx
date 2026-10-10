@@ -31,12 +31,12 @@ export default function CustomerFeedback() {
             <span className="text-text-muted">Satisfaction</span>
             <span className="font-semibold text-text-primary">{positive}/{feedbackData.length}</span>
           </div>
-          <div className="h-2 rounded-full bg-warning/10 overflow-hidden">
+          <div className="h-2 rounded-[8px] bg-warning/10 overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${(positive / feedbackData.length) * 100}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
-              className="h-full rounded-full bg-warning"
+              className="h-full rounded-[8px] bg-warning"
             />
           </div>
           <div className="flex items-center gap-1 mt-1.5">
@@ -71,7 +71,7 @@ export default function CustomerFeedback() {
                 <p className="text-xs text-text-secondary mt-0.5 leading-relaxed">{feedback.text}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] text-text-muted">{feedback.product}</span>
-                  <span className="w-1 h-1 rounded-full bg-text-label" />
+                  <span className="w-1 h-1 rounded-[8px] bg-text-label" />
                   <span className="text-[10px] text-text-muted">{feedback.time}</span>
                 </div>
               </div>

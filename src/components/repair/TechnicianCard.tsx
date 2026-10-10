@@ -18,7 +18,7 @@ export default function TechnicianCard({ tech, delay = 0, compact = false }: Tec
       whileHover={{ y: -4 }}
       className="relative rounded-2xl bg-bg-card border border-border shadow-sm overflow-hidden group"
     >
-      <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-gradient-to-br from-primary/5 to-secondary/5 blur-2xl" />
+      <div className="absolute top-0 right-0 w-20 h-20 rounded-[8px] bg-gradient-to-br from-primary/5 to-secondary/5 blur-2xl" />
       <div className={`relative z-10 ${compact ? 'p-3' : 'p-4'}`}>
         <div className="flex items-center gap-3">
           <div className={`relative ${compact ? 'w-9 h-9' : 'w-12 h-12'}`}>
@@ -27,7 +27,7 @@ export default function TechnicianCard({ tech, delay = 0, compact = false }: Tec
             >
               <span className={compact ? 'text-xs' : 'text-sm'}>{initials}</span>
             </div>
-            <span className={`absolute -top-0.5 -right-0.5 ${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} rounded-full border-2 border-white ${tech.online ? 'bg-primary' : 'bg-gray-300'}`} />
+            <span className={`absolute -top-0.5 -right-0.5 ${compact ? 'w-2.5 h-2.5' : 'w-3 h-3'} rounded-[8px] border-2 border-white ${tech.online ? 'bg-primary' : 'bg-gray-300'}`} />
           </div>
           <div className="flex-1 min-w-0">
             <p className={`font-bold text-text-primary ${compact ? 'text-xs' : 'text-sm'} truncate`}>{tech.name}</p>

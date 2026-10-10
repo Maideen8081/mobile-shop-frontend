@@ -153,7 +153,7 @@ export default function MobileCheckoutAddress() {
     <div className="min-h-screen bg-white max-w-[480px] mx-auto font-sans text-gray-900 pb-28">
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-gray-100 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center active:scale-90 transition border border-gray-200">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-gray-50 flex items-center justify-center active:scale-90 transition border border-gray-200">
           <FiChevronLeft size={18} className="text-gray-600" />
         </button>
         <div>
@@ -171,14 +171,14 @@ export default function MobileCheckoutAddress() {
           return (
             <div key={label} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition ${
+                <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-[10px] font-bold transition ${
                   done || active ? 'text-white' : 'bg-white text-gray-400 border border-gray-200'
                 }`} style={done || active ? { background: `linear-gradient(135deg,${RED},${RED_DEEP})` } : undefined}>
                   {done ? <FiCheck size={13} /> : step}
                 </div>
                 <span className={`text-[9px] mt-1 font-semibold ${active ? '' : 'text-gray-400'}`} style={active ? { color: RED } : undefined}>{label}</span>
               </div>
-              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-full ${done ? '' : 'bg-gray-200'}`} style={done ? { background: `linear-gradient(135deg,${RED},${RED_DEEP})` } : undefined} />}
+              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-gray-200'}`} style={done ? { background: `linear-gradient(135deg,${RED},${RED_DEEP})` } : undefined} />}
             </div>
           )
         })}
@@ -190,7 +190,7 @@ export default function MobileCheckoutAddress() {
           <div className="flex justify-center py-16"><DoubleRingLoader size={36} label="Loading addresses..." /></div>
         ) : addresses.length === 0 && !showForm ? (
           <div className="rounded-2xl p-8 text-center border border-gray-100" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-            <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#FEE2E2]">
+            <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#FEE2E2]">
               <FiMapPin size={28} className="text-[#CB202D]" />
             </div>
             <h2 className="text-[16px] font-bold text-gray-900 mb-1">No saved addresses</h2>
@@ -220,8 +220,8 @@ export default function MobileCheckoutAddress() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <p className="text-[14px] font-bold text-gray-900">{addr.fullName}</p>
-                        <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">{addr.addressType}</span>
-                        {addr.isDefault && <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
+                        <span className="text-[9px] font-semibold px-2 py-0.5 rounded-[8px] bg-gray-100 text-gray-500">{addr.addressType}</span>
+                        {addr.isDefault && <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
                       </div>
                       <p className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5"><FiPhone size={10} /> {addr.mobile}</p>
                       <p className="text-[12px] text-gray-600 mt-1 leading-snug">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
@@ -329,7 +329,7 @@ export default function MobileCheckoutAddress() {
             className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ background: 'rgba(0,0,0,0.5)' }}>
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               className="bg-white rounded-2xl p-6 w-full max-w-[320px] shadow-2xl">
-              <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-[8px] bg-red-50 flex items-center justify-center mx-auto mb-3">
                 <FiTrash2 size={20} className="text-red-500" />
               </div>
               <h3 className="text-[16px] font-bold text-center text-gray-900 mb-1">Delete Address?</h3>

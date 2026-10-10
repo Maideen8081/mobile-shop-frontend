@@ -22,7 +22,7 @@ function TopProduct({ product, index = 0 }: { product: any; index?: number }) {
       className="group relative flex flex-col h-full cursor-pointer overflow-hidden rounded-2xl bg-white shadow-[0_6px_18px_rgba(203,32,45,0.10)]"
     >
       {discountPct > 0 && (
-        <span className="absolute top-1.5 left-1.5 z-10 text-[9px] font-extrabold text-white px-1.5 py-0.5 rounded-full bg-[#EF4444] shadow-sm">
+        <span className="absolute top-1.5 left-1.5 z-10 text-[9px] font-extrabold text-white px-1.5 py-0.5 rounded-[8px] bg-[#EF4444] shadow-sm">
           −{discountPct}%
         </span>
       )}
@@ -86,13 +86,13 @@ function Banner({ slide }: { slide: Slide | undefined }) {
       {/* Floating glow orbs */}
       <motion.div
         aria-hidden
-        className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/20 blur-2xl"
+        className="absolute -top-6 -right-6 w-28 h-28 rounded-[8px] bg-white/20 blur-2xl"
         animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0.8, 0.5] }}
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         aria-hidden
-        className="absolute -bottom-8 -left-4 w-24 h-24 rounded-full bg-[#00FF88]/25 blur-2xl"
+        className="absolute -bottom-8 -left-4 w-24 h-24 rounded-[8px] bg-[#00FF88]/25 blur-2xl"
         animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
       />
@@ -122,13 +122,13 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
       {/* Soft animated background blobs */}
       <motion.div
         aria-hidden
-        className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#C7D2FE]/50 blur-3xl"
+        className="absolute -top-10 -right-10 w-40 h-40 rounded-[8px] bg-[#C7D2FE]/50 blur-3xl"
         animate={{ scale: [1, 1.15, 1], x: [0, -10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         aria-hidden
-        className="absolute -bottom-12 -left-8 w-36 h-36 rounded-full bg-[#DDD6FE]/50 blur-3xl"
+        className="absolute -bottom-12 -left-8 w-36 h-36 rounded-[8px] bg-[#DDD6FE]/50 blur-3xl"
         animate={{ scale: [1, 1.2, 1], y: [0, -8, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       />
@@ -145,7 +145,7 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
             </motion.span>
             <h2 className="text-[17px] font-extrabold text-[#A81D2A] tracking-tight">Top Sales</h2>
             <motion.span
-              className="text-[10px] font-bold text-white px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm"
+              className="text-[10px] font-bold text-white px-2 py-0.5 rounded-[8px] flex items-center gap-1 shadow-sm"
               style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
               animate={{ scale: [1, 1.06, 1] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
@@ -167,7 +167,7 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         </div>
 
         {/* Animated deal marquee */}
-        <div className="relative mb-3 overflow-hidden rounded-full bg-white/70 border border-[#E0E7FF] py-1.5 px-3">
+        <div className="relative mb-3 overflow-hidden rounded-[8px] bg-white/70 border border-[#E0E7FF] py-1.5 px-3">
           <motion.div
             className="flex items-center gap-4 whitespace-nowrap text-[10.5px] font-bold text-[#A81D2A]"
             animate={{ x: ['0%', '-50%'] }}

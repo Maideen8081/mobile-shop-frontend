@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock, FiChevronLeft } from 'react-icons/fi'
 import { useAuthForm } from '../../hooks/useAuthForm'
 import { createValidator, required, email } from '../../utils/validation'
-import { authService } from '../../services/authService'
+import { useAuth } from '../../context/AuthContext'
 import { useMobileToast } from './useMobileToast'
 
 const PURPLE = '#CB202D'
@@ -28,6 +28,7 @@ function getFriendlyLoginError(msg: string): string {
 export default function MobileLogin() {
   const navigate = useNavigate()
   const { show: showToast, Toast } = useMobileToast()
+  const { login } = useAuth()
   const [activeSlide, setActiveSlide] = useState(0)
 
   const { formData, errors, loading, handleChange, handleSubmit } = useAuthForm<LoginFormData>({
@@ -35,7 +36,7 @@ export default function MobileLogin() {
     validate: validateLogin,
     onSubmit: async (data) => {
       try {
-        await authService.login(data)
+        await login(data)
         showToast('Logged in successfully!', 'success')
         const redirect = sessionStorage.getItem('redirect_after_login')
         sessionStorage.removeItem('redirect_after_login')
@@ -66,10 +67,10 @@ export default function MobileLogin() {
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Brand header */}
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>P</div>
@@ -89,7 +90,7 @@ export default function MobileLogin() {
         </div>
         <div className="absolute top-3 right-3 flex gap-1.5">
           {slides.map((_, i) => (
-            <span key={i} className="h-1.5 rounded-full transition-all" style={{ width: i === activeSlide ? '18px' : '6px', background: i === activeSlide ? '#fff' : 'rgba(255,255,255,0.5)' }} />
+            <span key={i} className="h-1.5 rounded-[8px] transition-all" style={{ width: i === activeSlide ? '18px' : '6px', background: i === activeSlide ? '#fff' : 'rgba(255,255,255,0.5)' }} />
           ))}
         </div>
       </div>

@@ -289,7 +289,7 @@ export default function CategoryManagement() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-[8px] animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState onAction={() => setShowForm(true)} />

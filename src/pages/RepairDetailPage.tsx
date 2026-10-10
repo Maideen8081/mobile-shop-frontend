@@ -56,9 +56,9 @@ const STATUS_BADGES: Record<string, { label: string; color: string }> = {
 function StatusBadge({ status }: { status: string }) {
   const badge = STATUS_BADGES[status] || { label: status, color: '#6b7280' }
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[8px] text-[11px] font-bold tracking-wider uppercase"
       style={{ background: `${badge.color}12`, color: badge.color, border: `1px solid ${badge.color}20` }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: badge.color }} />
+      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: badge.color }} />
       {badge.label}
     </span>
   )
@@ -581,8 +581,8 @@ export default function RepairDetailPage() {
                     const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
                     return (
                       <div key={h.id || idx} className="flex items-start gap-3 py-2.5">
-                        <div className="relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}15` }}>
-                          <div className="w-2 h-2 rounded-full" style={{ background: badge.color }} />
+                        <div className="relative z-10 w-6 h-6 rounded-[8px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}15` }}>
+                          <div className="w-2 h-2 rounded-[8px]" style={{ background: badge.color }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">

@@ -126,7 +126,7 @@ export default function MobileHome() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Full-screen animated loading overlay — Zepto/Blinkit style */}
       <AnimatePresence>
         {loading && (

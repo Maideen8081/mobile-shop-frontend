@@ -26,7 +26,7 @@ export default function RepairActivityFeed() {
           <p className="text-xs text-text-muted mt-0.5">Real-time repair updates</p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-success/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-[8px] bg-primary animate-pulse" />
           <span className="text-[10px] font-semibold text-success">Live</span>
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function RepairActivityFeed() {
                 <p className="text-sm text-text-secondary leading-snug">{activity.text}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-[10px] text-text-muted">{activity.time}</span>
-                  <span className="w-1 h-1 rounded-full bg-primary/20" />
+                  <span className="w-1 h-1 rounded-[8px] bg-primary/20" />
                   <span className="text-[10px] text-text-muted">{activity.user}</span>
                 </div>
               </div>

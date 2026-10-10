@@ -290,7 +290,7 @@ export default function NewRepairTicket() {
                   )}
                   <span className="relative z-10 flex items-center gap-1.5">
                     {isDone ? (
-                      <span className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center"><FiCheck size={11} className="text-success" /></span>
+                      <span className="w-5 h-5 rounded-[8px] bg-success/20 flex items-center justify-center"><FiCheck size={11} className="text-success" /></span>
                     ) : (
                       <Icon size={13} className={isActive ? 'text-white' : ''} />
                     )}
@@ -508,9 +508,9 @@ export default function NewRepairTicket() {
                   <span className="text-[10px] text-text-muted font-medium">Progress</span>
                   <span className="text-xs font-bold text-primary">{Math.round((step / 6) * 100)}%</span>
                 </div>
-                <div className="mt-2 h-1.5 rounded-full bg-[rgba(15,23,42,0.8)] overflow-hidden">
+                <div className="mt-2 h-1.5 rounded-[8px] bg-[rgba(15,23,42,0.8)] overflow-hidden">
                   <motion.div initial={{ width: 0 }} animate={{ width: `${(step / 6) * 100}%` }}
-                    className="h-full rounded-full bg-gradient-to-r from-primary to-blue-500"
+                    className="h-full rounded-[8px] bg-gradient-to-r from-primary to-blue-500"
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                   />
                 </div>

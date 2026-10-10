@@ -23,7 +23,7 @@ export default function ActivityTimeline() {
           <p className="text-xs text-text-muted mt-0.5">Latest store updates</p>
         </div>
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-success/10">
-          <span className="w-1.5 h-1.5 rounded-full bg-success shadow-lg" />
+          <span className="w-1.5 h-1.5 rounded-[8px] bg-success shadow-lg" />
           <span className="text-[10px] font-semibold text-success">Live</span>
         </div>
       </div>
@@ -51,7 +51,7 @@ export default function ActivityTimeline() {
                 <p className="text-sm text-text-secondary leading-snug">{activity.text}</p>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-[10px] text-text-label">{activity.time}</span>
-                  <span className="w-1 h-1 rounded-full bg-text-label" />
+                  <span className="w-1 h-1 rounded-[8px] bg-text-label" />
                   <span className="text-[10px] text-text-label">{activity.user}</span>
                 </div>
               </div>

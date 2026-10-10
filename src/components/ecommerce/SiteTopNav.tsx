@@ -75,7 +75,7 @@ const DefaultIcon = () => (
   </svg>
 )
 
-export default function SiteTopNav() {
+export default function SiteTopNav({ transparent = false }: { transparent?: boolean }) {
   const navigate = useNavigate()
   const [q, setQ] = useState('')
   const [acctOpen, setAcctOpen] = useState(false)
@@ -199,9 +199,8 @@ export default function SiteTopNav() {
     }
   }
 
-  const handleLogout = () => {
-    authService.logout()
-    window.dispatchEvent(new Event('auth-changed'))
+  const handleLogout = async () => {
+    await authService.logout()
     setAcctOpen(false)
     navigate('/')
   }
@@ -211,7 +210,10 @@ export default function SiteTopNav() {
 
   return (
     <>
-      <div className={`pfn-root${scrolled ? ' pfn-scrolled' : ''}`} ref={rootRef}>
+      <div
+        className={`pfn-root${scrolled ? ' pfn-scrolled' : ''}${transparent ? ' pfn-transparent' : ''}`}
+        ref={rootRef}
+      >
         {/* ══ ROW 1: UTILITY BAR ══ */}
         {!scrolled && (
           <div className="pfn-util-bar">
@@ -707,8 +709,9 @@ export default function SiteTopNav() {
         </div>
       </div>
 
-      {/* Spacer to push content below fixed nav */}
-      <div className="pfn-spacer" style={{ height: navH || undefined }} />
+      {/* Spacer to push content below fixed nav. Skipped on the landing page so
+          the hero image can extend from the very top of the viewport. */}
+      {!transparent && <div className="pfn-spacer" style={{ height: navH || undefined }} />}
     </>
   )
 }

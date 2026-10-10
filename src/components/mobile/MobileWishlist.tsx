@@ -86,7 +86,7 @@ export default function MobileWishlist() {
   }, [products])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Header */}
       <MobileTopSection title="My Wishlist" subtitle={`${products.length} ${products.length === 1 ? 'item' : 'items'} saved`} icon="wishlist" />
 
@@ -97,12 +97,12 @@ export default function MobileWishlist() {
           </div>
         ) : products.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
-            <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+            <div className="w-20 h-20 rounded-[8px] mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <Heart size={34} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[18px] font-bold text-[#1F2937] mb-1">Your wishlist is empty</h2>
             <p className="text-[13px] text-[#6B7280] mb-6">Save your favorite products to find them easily later.</p>
-            <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-full text-[14px] font-semibold text-white inline-flex items-center gap-2"
+            <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-[14px] font-semibold text-white inline-flex items-center gap-2"
               style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
               <ShoppingCart size={16} /> Browse Products
             </button>
@@ -156,7 +156,7 @@ export default function MobileWishlist() {
                         </div>
                       </div>
                       <button onClick={() => removeFromWishlist(id)}
-                        className="w-8 h-8 rounded-full bg-[#FFFBFB] flex items-center justify-center flex-shrink-0"
+                        className="w-8 h-8 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center flex-shrink-0"
                         style={{ color: '#EF4444' }}>
                         <Trash2 size={15} />
                       </button>
@@ -172,7 +172,7 @@ export default function MobileWishlist() {
             </div>
 
             <button onClick={() => navigate('/collection/all')} className={`${card} rounded-[20px] py-5 mt-3 w-full flex flex-col items-center justify-center text-center gap-0.5`}>
-              <div className="w-12 h-12 rounded-full mb-2 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+              <div className="w-12 h-12 rounded-[8px] mb-2 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
                 <Heart size={22} style={{ color: PURPLE }} />
               </div>
               <h3 className="text-[14px] font-bold text-[#1F2937] w-full text-center">Discover More</h3>
@@ -188,7 +188,7 @@ export default function MobileWishlist() {
             <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wide">Total Value</p>
             <p className="text-[16px] font-bold text-[#1F2937]">{formatPrice(totalValue)}</p>
           </div>
-          <button onClick={() => navigate('/collection/all')} className="h-11 px-6 rounded-full text-[13px] font-semibold text-white inline-flex items-center gap-2"
+          <button onClick={() => navigate('/collection/all')} className="h-11 px-6 rounded-[8px] text-[13px] font-semibold text-white inline-flex items-center gap-2"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
             <ShoppingCart size={15} /> Browse All
           </button>

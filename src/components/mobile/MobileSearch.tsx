@@ -52,7 +52,7 @@ export default function MobileSearch() {
     <div className="min-h-screen bg-[#F8F9FB] text-[#0F172A] max-w-[480px] mx-auto flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-[#E5E7EB] px-3 py-2.5 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-full bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition flex-shrink-0">
           <ArrowLeft size={19} className="text-[#0F172A]" />
         </button>
         <div className="flex-1 flex items-center gap-2 h-11 bg-[#FEE2E6] rounded-2xl px-3.5">
@@ -83,7 +83,7 @@ export default function MobileSearch() {
                   <button
                     key={t}
                     onClick={() => runTerm(t)}
-                    className="px-3.5 py-2 rounded-full bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#0F172A] active:scale-95 transition"
+                    className="px-3.5 py-2 rounded-[8px] bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#0F172A] active:scale-95 transition"
                   >
                     {t}
                   </button>

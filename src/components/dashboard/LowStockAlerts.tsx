@@ -30,7 +30,7 @@ export default function LowStockAlerts() {
                 <motion.span
                   animate={{ scale: [1, 1.4, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-danger border-2 border-surface"
+                  className="absolute -top-1 -right-1 w-3 h-3 rounded-[8px] bg-danger border-2 border-surface"
                 />
               )}
             </div>

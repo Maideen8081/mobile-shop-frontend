@@ -35,15 +35,15 @@ export default function CustomerProfile() {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
         className="relative rounded-3xl bg-bg-card border border-border shadow-lg shadow-black/[0.03] p-5 lg:p-6 overflow-hidden"
       >
-        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-[8px] bg-primary/10 blur-3xl" />
         <div className="flex flex-col sm:flex-row gap-5 items-start">
           <div className="relative">
             <div className="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-2xl font-bold text-white ">
               {customer.avatar}
             </div>
-            <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${customer.status === 'active' ? 'bg-success/100' : 'bg-gray-300'}`} />
+            <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-[8px] border-2 border-white ${customer.status === 'active' ? 'bg-success/100' : 'bg-gray-300'}`} />
             {customer.vip && (
-              <span className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full bg-primary border-2 border-white flex items-center justify-center text-[10px] shadow-md">
+              <span className="absolute -bottom-1 -left-1 w-6 h-6 rounded-[8px] bg-primary border-2 border-white flex items-center justify-center text-[10px] shadow-md">
                 ⭐
               </span>
             )}
@@ -125,9 +125,9 @@ export default function CustomerProfile() {
                     <p className="text-[10px] text-text-muted">{p.variant}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[10px] font-semibold text-text-secondary">₹{p.price.toLocaleString('en-IN')}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="w-1 h-1 rounded-[8px] bg-gray-300" />
                       <span className="text-[10px] text-text-muted">{p.paymentMethod}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="w-1 h-1 rounded-[8px] bg-gray-300" />
                       <span className="text-[10px] text-text-muted">{p.date}</span>
                     </div>
                   </div>
@@ -160,9 +160,9 @@ export default function CustomerProfile() {
                     <p className="text-[10px] text-text-muted">{r.deviceModel} • {r.issue}</p>
                     <div className="flex items-center gap-2 mt-1 text-[10px] text-text-muted">
                       <span>{r.technician}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="w-1 h-1 rounded-[8px] bg-gray-300" />
                       <span>₹{r.cost.toLocaleString('en-IN')}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="w-1 h-1 rounded-[8px] bg-gray-300" />
                       <span>{r.date}</span>
                     </div>
                   </div>

@@ -29,7 +29,7 @@ export default function CareInstructionList({ instructions, onChange }: CareInst
             <motion.div key={i} initial={{ opacity: 0, x: -12, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} exit={{ opacity: 0, x: 12, height: 0 }} transition={{ duration: 0.2 }}
               className="flex items-center gap-2"
             >
-              <span className="w-6 h-6 rounded-full bg-teal-50 flex items-center justify-center text-[10px] font-bold text-teal-500 flex-shrink-0">{i + 1}</span>
+              <span className="w-6 h-6 rounded-[8px] bg-teal-50 flex items-center justify-center text-[10px] font-bold text-teal-500 flex-shrink-0">{i + 1}</span>
               <input type="text" value={inst} onChange={(e) => update(i, e.target.value)} placeholder="e.g. Avoid water exposure"
                 className="flex-1 h-10 px-4 rounded-xl bg-surface-lighter border border-teal-100/30 text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-teal-300/50 focus:shadow-[0_0_0_4px_rgba(20,184,166,0.08)]"
               />

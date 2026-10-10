@@ -137,7 +137,7 @@ export default function Dashboard() {
                 <div className="flex flex-wrap gap-3 mt-2 justify-center">
                   {categoryData.map((item) => (
                     <div key={item.name} className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="w-2 h-2 rounded-[8px]" style={{ backgroundColor: item.color }} />
                       <span className="text-[11px] text-text-secondary">{item.name}</span>
                     </div>
                   ))}
@@ -230,7 +230,7 @@ export default function Dashboard() {
                   <div className="space-y-2.5">
                     {recentActivities.slice(0, 4).map((activity) => (
                       <div key={activity.id} className="flex items-start gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-[8px] bg-primary mt-1.5 shrink-0" />
                         <div className="min-w-0">
                           <p className="text-xs text-text-secondary leading-relaxed">{activity.text}</p>
                           <p className="text-[10px] text-text-muted mt-0.5">{activity.time}</p>

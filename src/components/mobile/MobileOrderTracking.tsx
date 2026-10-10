@@ -176,7 +176,7 @@ export default function MobileOrderTracking() {
 function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: boolean; onSelect: (o: any) => void }) {
   const navigate = useNavigate()
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <MobileHeader title="My Orders" onBack={() => navigate('/profile')} />
 
       <div className="px-4 mt-3">
@@ -191,7 +191,7 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
             </div>
             <h2 className="text-[17px] font-bold text-[#1F2937]">No orders yet</h2>
             <p className="text-[12.5px] text-[#6B7280] mt-1.5 max-w-[240px]">Complete your first purchase to see orders here.</p>
-            <button onClick={() => navigate('/collection/all')} className="mt-5 h-11 px-7 rounded-full text-white text-[13px] font-bold active:scale-95 transition"
+            <button onClick={() => navigate('/collection/all')} className="mt-5 h-11 px-7 rounded-[8px] text-white text-[13px] font-bold active:scale-95 transition"
               style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
               Browse Products
             </button>
@@ -219,12 +219,12 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[13px] font-bold text-[#1F2937] truncate">{order.displayOrderId || order.orderId}</span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style={{ background: `${badge.color}1A`, color: badge.color }}>{badge.label}</span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[8px] flex-shrink-0" style={{ background: `${badge.color}1A`, color: badge.color }}>{badge.label}</span>
                     </div>
                     <p className="text-[11px] text-[#6B7280] truncate">{first?.name || 'Order'}</p>
                     <div className="flex items-center gap-1.5 mt-1.5">
-                      <div className="flex-1 h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden max-w-[140px]">
-                        <div className="h-full rounded-full" style={{ width: `${((currentStepIndex + 1) / STEPS.length) * 100}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
+                      <div className="flex-1 h-1.5 rounded-[8px] bg-[#E5E7EB] overflow-hidden max-w-[140px]">
+                        <div className="h-full rounded-[8px]" style={{ width: `${((currentStepIndex + 1) / STEPS.length) * 100}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
                       </div>
                       <span className="text-[10px] font-semibold text-[#6B7280] flex-shrink-0">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
                     </div>
@@ -268,13 +268,13 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
   const progressPct = isDelivered ? 100 : Math.round(((currentStepIndex) / (STEPS.length - 1)) * 100)
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <MobileHeader title="Track Order" onBack={onBack} />
 
       {/* Status banner */}
       <div className="relative px-4 pt-2 pb-6 overflow-hidden" style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
-        <div className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute -bottom-10 -left-8 w-36 h-36 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -top-10 -right-8 w-40 h-40 rounded-[8px] bg-white/10 blur-2xl" />
+        <div className="absolute -bottom-10 -left-8 w-36 h-36 rounded-[8px] bg-white/10 blur-2xl" />
         <div className="relative flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0">
             <Truck size={22} className="text-white" />
@@ -295,13 +295,13 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
             return (
               <div key={step.key} className="flex gap-3 relative">
                 {idx < STEPS.length - 1 && (
-                  <span className="absolute left-[15px] top-9 bottom-1 w-[2px] rounded-full" style={{ background: done ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.18)' }} />
+                  <span className="absolute left-[15px] top-9 bottom-1 w-[2px] rounded-[8px]" style={{ background: done ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.18)' }} />
                 )}
-                <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${state === 'done' ? 'bg-white' : state === 'active' ? 'bg-white/90' : 'bg-white/15'}`}>
+                <div className={`relative z-10 w-8 h-8 rounded-[8px] flex items-center justify-center flex-shrink-0 transition-all ${state === 'done' ? 'bg-white' : state === 'active' ? 'bg-white/90' : 'bg-white/15'}`}>
                   {state === 'done' ? (
                     <Check size={15} className="text-[#16A34A]" />
                   ) : state === 'active' ? (
-                    <span className="w-3 h-3 rounded-full bg-[#16A34A] animate-pulse" />
+                    <span className="w-3 h-3 rounded-[8px] bg-[#16A34A] animate-pulse" />
                   ) : (
                     <Icon size={14} className="text-white/70" />
                   )}
@@ -324,7 +324,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
               <p className="text-[10px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
               <p className="text-[15px] font-bold text-[#1F2937]">{order.displayOrderId || order.orderId}</p>
             </div>
-            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-[8px] text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
               {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
@@ -343,9 +343,9 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
               <span className="text-[11px] font-semibold text-[#6B7280]">{isDelivered ? 'Completed' : 'Order Progress'}</span>
               <span className="text-[12px] font-bold" style={{ color: PURPLE }}>{progressPct}%</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-[#E5E7EB] overflow-hidden">
+            <div className="h-2 w-full rounded-[8px] bg-[#E5E7EB] overflow-hidden">
               <motion.div initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 1, ease: 'easeOut' }}
-                className="h-full rounded-full" style={{ background: `linear-gradient(90deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
+                className="h-full rounded-[8px]" style={{ background: `linear-gradient(90deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
             </div>
           </div>
         </div>
@@ -406,7 +406,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
               navigate(`/product/${firstItem.productId}?${params.toString()}`)
             }
           }} className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><Star size={18} /></div>
+            <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><Star size={18} /></div>
             <div className="flex-1 text-left">
               <p className="text-[13px] font-semibold text-[#1F2937]">Rate your experience</p>
               <p className="text-[11px] text-[#6B7280]">Help others by reviewing your purchase</p>
@@ -429,7 +429,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
           }}
           className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}
         >
-          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}><Receipt size={18} /></div>
+          <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}><Receipt size={18} /></div>
           <div className="flex-1 text-left">
             <p className="text-[13px] font-semibold text-[#1F2937]">Digital Receipt</p>
             <p className="text-[11px] text-[#6B7280]">Download order summary</p>
@@ -440,10 +440,10 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
       {/* Sticky CTAs */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5 pb-[calc(env(safe-area-inset-bottom)+12px)]">
-        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-full text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2 active:scale-95 transition">
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2 active:scale-95 transition">
           <ShoppingBag size={15} /> Shop More
         </button>
-        <button onClick={onShowAll} className="flex-1 h-12 rounded-full text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2 active:scale-95 transition"
+        <button onClick={onShowAll} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2 active:scale-95 transition"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           <Package size={15} /> All Orders
         </button>
@@ -465,7 +465,7 @@ function MobileHeader({ title, onBack }: { title: string; onBack: () => void }) 
   return (
     <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="px-3 py-2.5 flex items-center gap-2.5">
-        <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+        <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
           <ChevronLeft size={22} className="text-[#1F2937]" />
         </button>
         <h1 className="text-[16px] font-bold text-[#1F2937]">{title}</h1>

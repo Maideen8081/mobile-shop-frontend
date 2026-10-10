@@ -188,7 +188,7 @@ export default function MobileBookRepair() {
 
   if (result) {
     return (
-      <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(203,32,45,0.1)' }}>
           <FiCheckCircle size={40} style={{ color: PURPLE }} />
         </div>
@@ -199,10 +199,10 @@ export default function MobileBookRepair() {
           <p className="text-[24px] font-bold font-mono" style={{ color: PURPLE }}>{result.repairId}</p>
           <p className="text-[11px] text-[#6B7280] mt-2">Save this ID to track your repair.</p>
         </div>
-        <button onClick={() => navigate('/my-repairs')} className="w-full h-12 rounded-full text-[14px] font-bold text-white mb-3" style={{ background: grad }}>
+        <button onClick={() => navigate('/my-repairs')} className="w-full h-12 rounded-[8px] text-[14px] font-bold text-white mb-3" style={{ background: grad }}>
           Track My Repair
         </button>
-        <button onClick={() => navigate('/repairs')} className="w-full h-12 rounded-full text-[14px] font-semibold" style={{ background: '#fff', border: '1.5px solid #E5E7EB', color: '#374151' }}>
+        <button onClick={() => navigate('/repairs')} className="w-full h-12 rounded-[8px] text-[14px] font-semibold" style={{ background: '#fff', border: '1.5px solid #E5E7EB', color: '#374151' }}>
           Back to Services
         </button>
       </div>
@@ -211,11 +211,11 @@ export default function MobileBookRepair() {
 
   const cardCls = 'bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-4'
   const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] text-[#1F2937] focus:border-[#FF5A65] transition-all'
-  const nextBtn = 'flex items-center justify-center gap-1.5 h-11 rounded-full text-[13px] font-bold text-white active:scale-95 transition'
-  const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-full bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#374151] active:scale-95 transition'
+  const nextBtn = 'flex items-center justify-center gap-1.5 h-11 rounded-[8px] text-[13px] font-bold text-white active:scale-95 transition'
+  const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-[8px] bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#374151] active:scale-95 transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <MobileTopSection title="Book a Repair" subtitle={selectedIssue || 'Step by step'} icon="wishlist" />
 
       <div className="px-4 pt-4">
@@ -246,7 +246,7 @@ export default function MobileBookRepair() {
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-2">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i + 1 <= step ? 'bg-[#FF5A65]' : 'bg-[#E5E7EB]'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-[8px] transition-all duration-300 ${i + 1 <= step ? 'bg-[#FF5A65]' : 'bg-[#E5E7EB]'}`} />
           ))}
         </div>
         <p className="text-[11px] font-semibold text-[#6B7280] mb-4">{progressLabel}</p>

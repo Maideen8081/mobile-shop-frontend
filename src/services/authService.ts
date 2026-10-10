@@ -1,6 +1,7 @@
 import api from './api'
 
 const BASE = '/api/v1/auth'
+const ADMIN_BASE = '/api/v1/admin/auth'
 const AUTH_FLAG = 'is_authenticated'
 const USER_KEY = 'user_profile'
 
@@ -16,58 +17,15 @@ export interface RegisterData {
   confirmPassword: string
 }
 
-function extractTokens(body: any): { access: string; refresh?: string } | null {
-  if (!body) return null
-  const src = body.data || body
-
-  // 1) Direct keys: { access: "..." } or { access_token: "..." }
-  for (const key of ['access', 'access_token', 'token', 'key']) {
-    const val = src[key]
-    if (val && typeof val === 'string') {
-      return { access: val, refresh: src.refresh || src.refresh_token || null }
-    }
-  }
-
-  // 2) Nested tokens object: { data: { tokens: { access: "..." } } }
-  if (src.tokens && typeof src.tokens === 'object') {
-    const t = src.tokens
-    for (const key of ['access', 'access_token', 'token', 'key']) {
-      const val = t[key]
-      if (val && typeof val === 'string') {
-        return { access: val, refresh: t.refresh || t.refresh_token || null }
-      }
-    }
-  }
-
-  // 3) Deeply nested: { data: { data: { tokens: { access: "..." } } } }
-  if (src.data && typeof src.data === 'object') {
-    const deep = src.data
-    if (deep.tokens && typeof deep.tokens === 'object') {
-      const t = deep.tokens
-      for (const key of ['access', 'access_token', 'token', 'key']) {
-        const val = t[key]
-        if (val && typeof val === 'string') {
-          return { access: val, refresh: t.refresh || t.refresh_token || null }
-        }
-      }
-    }
-  }
-
-  // 4) JWT string fallback anywhere in the object
-  function findJwt(obj: Record<string, unknown>): { access: string; refresh?: string } | null {
-    for (const key of Object.keys(obj)) {
-      const val = obj[key]
-      if (typeof val === 'string' && val.startsWith('eyJ') && val.split('.').length === 3) {
-        return { access: val }
-      }
-      if (val && typeof val === 'object' && !Array.isArray(val)) {
-        const found = findJwt(val as Record<string, unknown>)
-        if (found) return found
-      }
-    }
-    return null
-  }
-  return findJwt(src)
+export interface UserProfile {
+  id: number
+  email: string
+  fullName: string
+  mobile?: string
+  dateJoined?: string
+  isActive?: boolean
+  role?: string
+  isAdmin?: boolean
 }
 
 function markAuthenticated() {
@@ -77,9 +35,8 @@ function markAuthenticated() {
 
 function markUnauthenticated() {
   const keys = [
-    AUTH_FLAG, 'access_token', 'refresh_token', USER_KEY,
-    'wishlist', 'last_order', 'order_history',
-    'phonehub_addresses',
+    AUTH_FLAG, USER_KEY, 'access_token', 'refresh_token',
+    'wishlist', 'last_order', 'order_history', 'phonehub_addresses',
   ]
   keys.forEach(k => localStorage.removeItem(k))
   window.dispatchEvent(new Event('auth-changed'))
@@ -87,9 +44,42 @@ function markUnauthenticated() {
   window.dispatchEvent(new Event('wishlist-updated'))
 }
 
-function saveUserProfile(body: any, loginEmail?: string) {
-  const src = body?.data || body || {}
-  const user = src.user || src
+interface ProfileLike {
+  user?: Record<string, unknown> | null
+  data?: Record<string, unknown> | null
+  id?: number
+  user_id?: number
+  email?: string
+  user_email?: string
+  full_name?: string
+  fullName?: string
+  name?: string
+  username?: string
+  first_name?: string
+  last_name?: string
+  mobile?: string
+  phone?: string
+  phone_number?: string
+  contact_number?: string
+  date_joined?: string
+  created_at?: string
+  createdAt?: string
+  is_active?: boolean
+  isActive?: boolean
+  role?: string
+  is_admin?: boolean
+  isAdmin?: boolean
+}
+
+function unwrapProfile(body: unknown): ProfileLike {
+  if (typeof body !== 'object' || body === null) return {}
+  const record = body as Record<string, unknown>
+  const inner = (typeof record.user === 'object' && record.user !== null) ? record.user as Record<string, unknown> : record
+  return inner as ProfileLike
+}
+
+function saveUserProfile(body: unknown, loginEmail?: string) {
+  const user = unwrapProfile((body as ProfileLike)?.data)
   let name = user.full_name || user.fullName || user.name || user.username || ''
   if (!name && (user.first_name || user.last_name)) {
     name = `${user.first_name || ''} ${user.last_name || ''}`.trim()
@@ -100,43 +90,37 @@ function saveUserProfile(body: any, loginEmail?: string) {
   }
 }
 
-export interface UserProfile {
-  id: number
-  email: string
-  fullName: string
-  mobile?: string
-  dateJoined?: string
-  isActive?: boolean
+function normalizeProfile(raw: ProfileLike): UserProfile {
+  const user = unwrapProfile(raw)
+  return {
+    id: user.id ?? user.user_id ?? 0,
+    email: user.email ?? user.user_email ?? '',
+    fullName: user.full_name ?? user.fullName ?? user.name ?? user.username ?? `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+    mobile: user.mobile ?? user.phone ?? user.phone_number ?? user.contact_number ?? '',
+    dateJoined: user.date_joined ?? user.created_at ?? user.createdAt ?? '',
+    isActive: user.is_active ?? user.isActive ?? true,
+    role: user.role ?? undefined,
+    isAdmin: Boolean(user.is_admin ?? user.isAdmin),
+  }
 }
 
-function normalizeProfile(raw: any): UserProfile {
-  return {
-    id: raw.id ?? raw.user_id ?? 0,
-    email: raw.email ?? raw.user_email ?? '',
-    fullName: raw.full_name ?? raw.fullName ?? raw.name ?? raw.username ?? `${raw.first_name || ''} ${raw.last_name || ''}`.trim(),
-    mobile: raw.mobile ?? raw.phone ?? raw.phone_number ?? raw.contact_number ?? '',
-    dateJoined: raw.date_joined ?? raw.created_at ?? raw.createdAt ?? '',
-    isActive: raw.is_active ?? raw.isActive ?? true,
-  }
+/** Prime the CSRF cookie for the API origin (must run once at app boot). */
+export function bootstrapCsrf(): Promise<void> {
+  return api.get(`${BASE}/csrf/`).then(() => undefined).catch(() => undefined)
 }
 
 export const authService = {
   login: async (data: LoginData) => {
-    ['phonehub_addresses', 'wishlist', 'last_order', 'order_history', 'user_profile'].forEach(k => localStorage.removeItem(k))
+    localStorage.removeItem(USER_KEY)
     const payload = { email: data.email, password: data.password }
     const r = await api.post(`${BASE}/login/`, payload)
-    const tokens = extractTokens(r.data)
-    if (tokens) {
-      localStorage.setItem('access_token', tokens.access)
-      if (tokens.refresh) localStorage.setItem('refresh_token', tokens.refresh)
-      saveUserProfile(r.data, data.email)
-      markAuthenticated()
-    }
+    saveUserProfile(r.data, data.email)
+    markAuthenticated()
     return r.data
   },
 
   register: async (data: RegisterData) => {
-    ['phonehub_addresses', 'wishlist', 'last_order', 'order_history', 'user_profile'].forEach(k => localStorage.removeItem(k))
+    localStorage.removeItem(USER_KEY)
     const payload = {
       full_name: data.fullName,
       email: data.email,
@@ -144,32 +128,59 @@ export const authService = {
       confirm_password: data.confirmPassword,
     }
     const r = await api.post(`${BASE}/register/`, payload)
-    const tokens = extractTokens(r.data)
-    if (tokens) {
-      localStorage.setItem('access_token', tokens.access)
-      if (tokens.refresh) localStorage.setItem('refresh_token', tokens.refresh)
-      saveUserProfile(r.data, data.email)
-      markAuthenticated()
-    }
+    saveUserProfile(r.data, data.email)
+    markAuthenticated()
     return r.data
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await api.post(`${BASE}/logout/`)
+    } catch {
+      // Session already invalid — local cleanup still proceeds.
+    }
+    markUnauthenticated()
+  },
+
+  adminLogin: async (data: LoginData) => {
+    const r = await api.post(`${ADMIN_BASE}/login/`, { email: data.email, password: data.password })
+    saveUserProfile(r.data, data.email)
+    localStorage.setItem('is_admin_session', 'true')
+    markAuthenticated()
+    return r.data
+  },
+
+  adminLogout: async () => {
+    try {
+      await api.post(`${ADMIN_BASE}/logout/`)
+    } catch {
+      // proceed with cleanup
+    }
+    localStorage.removeItem('is_admin_session')
     markUnauthenticated()
   },
 
   getToken: (): string | null => {
-    return localStorage.getItem('access_token')
+    // Sessions are HTTP-only; tokens are never available to the browser.
+    return null
   },
 
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem(AUTH_FLAG)
   },
 
-  getProfile: async (): Promise<UserProfile> => {
-    const r = await api.get(`${BASE}/profile/`)
+  getProfile: async (opts?: { skipAuthRedirect?: boolean }): Promise<UserProfile> => {
+    const r = await api.get(`${BASE}/profile/`, opts)
     const body = r.data?.data ?? r.data
-    const profile = normalizeProfile(body)
+    const profile = normalizeProfile(unwrapProfile(body))
+    localStorage.setItem(USER_KEY, JSON.stringify({ name: profile.fullName, email: profile.email }))
+    return profile
+  },
+
+  getAdminProfile: async (opts?: { skipAuthRedirect?: boolean }): Promise<UserProfile> => {
+    const r = await api.get(`${ADMIN_BASE}/profile/`, opts)
+    const body = r.data?.data ?? r.data
+    const profile = normalizeProfile(unwrapProfile(body))
     localStorage.setItem(USER_KEY, JSON.stringify({ name: profile.fullName, email: profile.email }))
     return profile
   },
@@ -180,28 +191,24 @@ export const authService = {
     return r.data
   },
 
-  updateProfile: async (data: { fullName?: string; mobile?: string; email?: string }): Promise<UserProfile> => {
-    try {
-      const r = await api.put(`${BASE}/profile/`, {
-        full_name: data.fullName,
-        mobile: data.mobile,
-        email: data.email,
-      })
-      const body = r.data?.data ?? r.data
-      const profile = normalizeProfile(body)
-      localStorage.setItem(USER_KEY, JSON.stringify({ name: profile.fullName, email: profile.email }))
-      return profile
-    } catch {
-      // Endpoint may not exist — still persist locally so the UI updates.
-      const stored = localStorage.getItem(USER_KEY)
-      const prev = stored ? JSON.parse(stored) : {}
-      const merged = {
-        name: data.fullName ?? prev.name ?? '',
-        email: data.email ?? prev.email ?? '',
-        mobile: data.mobile ?? prev.mobile ?? '',
-      }
-      localStorage.setItem(USER_KEY, JSON.stringify(merged))
-      return { id: 0, email: merged.email, fullName: merged.name, mobile: merged.mobile }
-    }
+  changePassword: async (data: { oldPassword: string; newPassword: string; confirmPassword: string }) => {
+    return api.post(`${BASE}/change-password/`, {
+      old_password: data.oldPassword,
+      new_password: data.newPassword,
+      confirm_password: data.confirmPassword,
+    })
+  },
+
+  updateProfile: async (data: { fullName?: string; mobile?: string; email?: string; dateOfBirth?: string; gender?: string }): Promise<UserProfile> => {
+    const r = await api.put(`${BASE}/profile/`, {
+      full_name: data.fullName,
+      mobile: data.mobile,
+      date_of_birth: data.dateOfBirth,
+      gender: data.gender,
+    })
+    const body = r.data?.data ?? r.data
+    const profile = normalizeProfile(unwrapProfile(body))
+    localStorage.setItem(USER_KEY, JSON.stringify({ name: profile.fullName, email: profile.email }))
+    return profile
   },
 }

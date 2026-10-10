@@ -41,7 +41,7 @@ export default function ProductCard({ product }: { product: any }) {
             {tags.map((t) => (
               <span
                 key={t.label}
-                className={`text-[8.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full leading-none ${t.cls}`}
+                className={`text-[8.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-[8px] leading-none ${t.cls}`}
               >
                 {t.label}
               </span>

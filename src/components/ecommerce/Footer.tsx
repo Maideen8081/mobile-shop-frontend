@@ -126,7 +126,7 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
               <h3 className="font-bold text-white uppercase tracking-widest text-xs">
                 {col.title}
               </h3>
-              <div className={`bg-pf-red rounded-full ${compact ? 'w-6 h-0.5' : 'w-8 h-0.5'}`} />
+              <div className={`bg-pf-red rounded-[8px] ${compact ? 'w-6 h-0.5' : 'w-8 h-0.5'}`} />
               {col.links.map((link) => (
                 <Link
                   key={link.label}

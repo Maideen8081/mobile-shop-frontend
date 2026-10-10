@@ -58,7 +58,7 @@ export default function PremiumProductCard({
           {tags.length > 0 && (
             <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
               {tags.slice(0, 2).map((tag, idx) => (
-                <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full`}>
+                <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[8px]`}>
                   {tag.label}
                 </span>
               ))}
@@ -113,7 +113,7 @@ export default function PremiumProductCard({
 
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {tags.map((tag, idx) => (
-              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm`}>
+              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[10px] font-bold px-2.5 py-1 rounded-[8px] shadow-sm`}>
                 {tag.label}
               </span>
             ))}
@@ -122,7 +122,7 @@ export default function PremiumProductCard({
           <div className="absolute bottom-3 right-3">
             <button
               onClick={handleWishlist}
-              className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-10 h-10 rounded-full flex items-center justify-center shadow-lg`}
+              className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-10 h-10 rounded-[8px] flex items-center justify-center shadow-lg`}
               aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
             >
               <Heart size={18} className={isInWishlist ? 'fill-current' : ''} />
@@ -161,7 +161,7 @@ export default function PremiumProductCard({
         {tags.length > 0 && (
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {tags.map((tag, idx) => (
-              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm`} style={{ animationDelay: `${idx * 100}ms` }}>
+              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-2 py-0.5 rounded-[8px] shadow-sm`} style={{ animationDelay: `${idx * 100}ms` }}>
                 {tag.label}
               </span>
             ))}
@@ -171,7 +171,7 @@ export default function PremiumProductCard({
         <div className="absolute bottom-2 right-2">
           <button
             onClick={handleWishlist}
-            className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-9 h-9 rounded-full flex items-center justify-center shadow-lg`}
+            className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-9 h-9 rounded-[8px] flex items-center justify-center shadow-lg`}
             aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />

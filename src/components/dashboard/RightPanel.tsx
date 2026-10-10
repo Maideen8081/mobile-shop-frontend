@@ -44,7 +44,7 @@ export default function RightPanel() {
           <div className="flex items-center gap-2">
             <FiBell size={15} className="text-primary" />
             <h3 className="text-sm font-semibold text-text-primary">Notifications</h3>
-            <span className="px-1.5 py-0.5 text-[9px] font-bold text-white bg-primary rounded-full">3</span>
+            <span className="px-1.5 py-0.5 text-[9px] font-bold text-white bg-primary rounded-[8px]">3</span>
           </div>
           <button className="text-text-label hover:text-text-muted transition-colors cursor-pointer">
             <FiRefreshCw size={12} />
@@ -62,7 +62,7 @@ export default function RightPanel() {
                 !notif.read ? 'bg-primary/5' : 'hover:bg-white/[0.02]'
               }`}
             >
-              <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${!notif.read ? 'bg-primary' : 'bg-text-label'}`} />
+              <div className={`w-2 h-2 rounded-[8px] mt-1.5 flex-shrink-0 ${!notif.read ? 'bg-primary' : 'bg-text-label'}`} />
               <div className="flex-1 min-w-0">
                 <p className={`text-xs ${!notif.read ? 'font-semibold text-text-primary' : 'text-text-secondary'}`}>{notif.text}</p>
                 <p className="text-[9px] text-text-label mt-0.5">{notif.time}</p>

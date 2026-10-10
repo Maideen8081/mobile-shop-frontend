@@ -35,7 +35,7 @@ export default function MobileHeader() {
   }, [])
 
   const badge = (n: number) => (n > 99 ? '99+' : String(n))
-  const iconBtn = 'relative w-10 h-10 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition'
+  const iconBtn = 'relative w-10 h-10 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition'
   const displayName = userName ? userName : (isLoggedIn ? 'Welcome!' : 'Guest')
 
   return (
@@ -49,7 +49,7 @@ export default function MobileHeader() {
           <img
             src={isLoggedIn ? 'https://i.pravatar.cc/80?img=12' : 'https://i.pravatar.cc/80?img=5'}
             alt="User"
-            className="w-11 h-11 rounded-full border-2 border-white/40 object-cover flex-shrink-0"
+            className="w-11 h-11 rounded-[8px] border-2 border-white/40 object-cover flex-shrink-0"
           />
           <div className="min-w-0 flex-1">
             <p className="text-[11px] text-white/75 leading-tight">Good morning 👋</p>
@@ -64,12 +64,12 @@ export default function MobileHeader() {
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <button onClick={() => navigate('/notifications')} aria-label="Notifications" className={iconBtn}>
             <Bell size={18} />
-            <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-full ring-2 ring-[#A81D2A]" />
+            <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#A81D2A]" />
           </button>
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className={iconBtn}>
             <Heart size={18} />
             {wishlistCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#22C55E] text-white text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-[#22C55E] text-white text-[9px] font-bold flex items-center justify-center">
                 {badge(wishlistCount)}
               </span>
             )}
@@ -77,7 +77,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/cart')} aria-label="Cart" className={iconBtn}>
             <ShoppingBag size={18} />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-white text-[#CB202D] text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-white text-[#CB202D] text-[9px] font-bold flex items-center justify-center">
                 {badge(cartCount)}
               </span>
             )}
@@ -104,9 +104,9 @@ export default function MobileHeader() {
           aria-label="Search products"
           className="flex-1 bg-transparent text-sm text-[#1F2937] placeholder:text-gray-400 outline-none min-w-0 cursor-pointer"
         />
-        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-full bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Mic size={17} /></button>
-        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 rounded-full bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><QrCode size={17} /></button>
-        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-full bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Camera size={17} /></button>
+        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Mic size={17} /></button>
+        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><QrCode size={17} /></button>
+        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Camera size={17} /></button>
       </form>
     </div>
   )

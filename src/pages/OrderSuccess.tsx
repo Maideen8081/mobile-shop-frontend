@@ -124,7 +124,7 @@ export default function OrderSuccess() {
           position:absolute;
           width:160px;
           height:160px;
-          border-radius:50%;
+          border-radius: 8px;
           background:radial-gradient(circle, rgba(180,34,47,0.2) 0%, transparent 70%);
           animation:osGlow 2s ease-in-out infinite;
         }
@@ -209,7 +209,7 @@ export default function OrderSuccess() {
           top:-9px;
           width:18px;
           height:18px;
-          border-radius:50%;
+          border-radius: 8px;
           background:var(--paper);
           border:1px solid var(--line);
         }
@@ -254,7 +254,7 @@ export default function OrderSuccess() {
           transform:translateX(-50%);
           width:6px;
           height:6px;
-          border-radius:50%;
+          border-radius: 8px;
           background:var(--red-bright);
         }
         .os-items{padding:8px 36px 10px;}
@@ -385,7 +385,7 @@ export default function OrderSuccess() {
         .os-trust-icon{
           width:36px;
           height:36px;
-          border-radius:50%;
+          border-radius: 8px;
           background:var(--red-tint);
           display:flex;
           align-items:center;

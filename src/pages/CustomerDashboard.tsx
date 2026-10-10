@@ -41,7 +41,7 @@ const ChartTooltip = ({ active, payload, label }: any) => {
       <p className="text-xs font-semibold text-text-muted mb-2">{label}</p>
       {payload.map((entry: any, i: number) => (
         <div key={i} className="flex items-center gap-2 text-xs">
-          <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
+          <span className="w-2 h-2 rounded-[8px]" style={{ background: entry.color }} />
           <span className="text-text-muted">{entry.name}: </span>
           <span className="font-semibold text-text-primary">{entry.value.toLocaleString('en-IN')}</span>
         </div>
@@ -158,7 +158,7 @@ export default function CustomerDashboard() {
             <div className="flex flex-wrap gap-3 mt-3">
               {segmentData.map((item, i) => (
                 <div key={i} className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
+                  <span className="w-2.5 h-2.5 rounded-[8px]" style={{ background: item.color }} />
                   <span className="text-[10px] text-text-muted">{item.name}</span>
                   <span className="text-[10px] font-semibold text-text-secondary">{item.value}%</span>
                 </div>

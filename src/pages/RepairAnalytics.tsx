@@ -17,7 +17,7 @@ const ChartTooltip = ({ active, payload, label }: any) => {
       <p className="text-xs font-semibold text-text-muted mb-2">{label}</p>
       {payload.map((entry: any, i: number) => (
         <div key={i} className="flex items-center gap-2 text-xs">
-          <span className="w-2 h-2 rounded-full" style={{ background: entry.color }} />
+          <span className="w-2 h-2 rounded-[8px]" style={{ background: entry.color }} />
           <span className="text-text-muted">{entry.name}: </span>
           <span className="font-semibold text-text-primary">{typeof entry.value === 'number' ? entry.value.toLocaleString('en-IN') : entry.value}</span>
         </div>
@@ -48,7 +48,7 @@ const DonutChartCard = ({ title, subtitle, data, colors, delay = 0 }: { title: s
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 mt-2">
           {data.slice(0, 6).map((item, i) => (
             <div key={i} className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full" style={{ background: colors[i % colors.length] }} />
+              <span className="w-2 h-2 rounded-[8px]" style={{ background: colors[i % colors.length] }} />
               <span className="text-[10px] text-text-muted">{item.name}</span>
               <span className="text-[10px] font-semibold text-text-secondary">{Math.round(item.value / total * 100)}%</span>
             </div>
@@ -64,7 +64,7 @@ const OverviewCard = ({ title, value, subtitle, icon: Icon, color, delay = 0 }: 
     whileHover={{ y: -4, boxShadow: '0 32px 80px rgba(0,0,0,0.08)' }}
     className="relative rounded-3xl bg-bg-card border border-border p-5 overflow-hidden group"
   >
-    <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full blur-3xl opacity-20 group-hover:scale-150 transition-transform duration-700" style={{ background: color }} />
+    <div className="absolute -top-12 -right-12 w-36 h-36 rounded-[8px] blur-3xl opacity-20 group-hover:scale-150 transition-transform duration-700" style={{ background: color }} />
     <div className="relative z-10">
       <div className="flex items-start justify-between mb-3">
         <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">{title}</p>
@@ -313,15 +313,15 @@ export default function RepairAnalytics() {
                   <td className="py-3 px-2"><span className="text-sm text-text-muted">{Math.round(tech.repairs * (1 - tech.efficiency / 100))}</span></td>
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-16 h-1.5 rounded-full bg-bg-card overflow-hidden">
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${tech.efficiency}%` }} />
+                      <div className="w-16 h-1.5 rounded-[8px] bg-bg-card overflow-hidden">
+                        <div className="h-full rounded-[8px] bg-primary" style={{ width: `${tech.efficiency}%` }} />
                       </div>
                       <span className="text-xs font-semibold text-text-secondary">{tech.efficiency}%</span>
                     </div>
                   </td>
                   <td className="py-3 px-2">
                     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold ${tech.online ? 'bg-success/10 text-success' : 'bg-bg text-text-muted'}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${tech.online ? 'bg-primary' : 'bg-gray-400'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-[8px] ${tech.online ? 'bg-primary' : 'bg-gray-400'}`} />
                       {tech.online ? 'Online' : 'Offline'}
                     </span>
                   </td>

@@ -254,12 +254,12 @@ export default function EditCategoryModal({ open, category, onClose, onSave, loa
                 <motion.button
                   type="button"
                   onClick={() => setStatus(!status)}
-                  className={`relative w-11 h-6 rounded-full transition-colors duration-300 cursor-pointer ${status ? 'bg-primary' : 'bg-gray-300'}`}
+                  className={`relative w-11 h-6 rounded-[8px] transition-colors duration-300 cursor-pointer ${status ? 'bg-primary' : 'bg-gray-300'}`}
                 >
                   <motion.span
                     layout
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm ${status ? 'right-0.5' : 'left-0.5'}`}
+                    className={`absolute top-0.5 w-5 h-5 rounded-[8px] bg-white shadow-sm ${status ? 'right-0.5' : 'left-0.5'}`}
                   />
                 </motion.button>
                 <span className="text-xs text-text-muted">{status ? 'Active' : 'Inactive'}</span>
@@ -297,7 +297,7 @@ export default function EditCategoryModal({ open, category, onClose, onSave, loa
 
                 {fetching && (
                   <div className="flex items-center justify-center py-6">
-                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-[8px] animate-spin" />
                   </div>
                 )}
 
@@ -326,7 +326,7 @@ export default function EditCategoryModal({ open, category, onClose, onSave, loa
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50"
                       >
                         {submittingSub ? (
-                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-[8px] animate-spin" />
                         ) : (
                           <FiPlus size={11} />
                         )}
@@ -420,7 +420,7 @@ export default function EditCategoryModal({ open, category, onClose, onSave, loa
                 style={{ backgroundColor: '#CB202D' }}
               >
                 {loading ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-[8px] animate-spin" />
                 ) : (
                   <FiSave size={14} />
                 )}

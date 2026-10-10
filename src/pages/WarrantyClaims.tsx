@@ -90,10 +90,10 @@ export default function WarrantyClaims() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-sm font-bold text-text-primary">{claim.claimId}</span>
-                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusColors[claim.status] || 'bg-bg text-text-muted'}`}>
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-[8px] ${statusColors[claim.status] || 'bg-bg text-text-muted'}`}>
                               {claim.status}
                             </span>
-                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${priorityColors[claim.priority] || ''}`}>
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-[8px] ${priorityColors[claim.priority] || ''}`}>
                               {claim.priority}
                             </span>
                           </div>

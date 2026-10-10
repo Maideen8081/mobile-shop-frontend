@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock } from 'react-icons/fi'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { createValidator, required, email } from '../utils/validation'
-import { authService } from '../services/authService'
+import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import MobileLogin from '../components/mobile/MobileLogin'
 import { useIsMobile } from '../components/mobile/helpers'
@@ -40,12 +40,13 @@ export default function LoginPage() {
   if (isMobile) return <MobileLogin />
   const navigate = useNavigate()
   const showToast = useToast().show
+  const { login } = useAuth()
   const { formData, errors, loading, handleChange, handleSubmit } = useAuthForm<LoginFormData>({
     initial: { email: '', password: '' },
     validate: validateLogin,
     onSubmit: async (data) => {
       try {
-        await authService.login(data)
+        await login(data)
         showToast('Logged in successfully!', 'success')
         const redirect = sessionStorage.getItem('redirect_after_login')
         sessionStorage.removeItem('redirect_after_login')
@@ -121,7 +122,7 @@ export default function LoginPage() {
                 <button
                   key={index}
                   onClick={() => setActiveSlide(index)}
-                  className="transition-all duration-300 rounded-full"
+                  className="transition-all duration-300 rounded-[8px]"
                   style={{
                     width: index === activeSlide ? '28px' : '8px',
                     height: '8px',

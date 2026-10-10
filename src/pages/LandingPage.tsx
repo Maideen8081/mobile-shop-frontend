@@ -266,28 +266,24 @@ const testimonials = [
     name: 'Arjun Sharma',
     quote: '"Fixed my iPhone screen in under 45 minutes at my office. The precision is unmatched."',
     badge: 'Verified Repair',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpD0gDp2KPBgbOB-g8gRUfCCJzJx0vgpeIdM30Fq3N7ryEonoqHasCj_qJnJNJB-evwweGxXoCIEOZ1GaqlMhErqg6yrJ4m_QyV_Jy4EEePsDpnoxURmjJItCQgJNrfY_3ihxXHZnHPHkp4lqUlLAK-igjIZwezecenuHRlQZEtABxGcNKR6JFAYGEbSlrg0_0qfuZ0prJGJR2ZeBU9gZOPb-mZLsWA5xoY32M8nXtcHSzgEDK2t0Etfck765JZWEFNKutd-9OUA',
   },
   {
     name: 'Priya Kapur',
     quote:
       '"Bought a refurbished Pixel and it looks brand new. The warranty gives me total peace of mind."',
     badge: 'Verified Purchase',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDEGD_xap-ygQ-fNS6sODxUxwv1e1_dABvkJltx4B7-_MVtN3QJcAL9Xl486D7zo3p2cqQ48WYOhk-alO1y55o2t6UjzF45Fx4jfycfzH6qbK8BhYKiXlna3RdRn8yO1Nl1wcTER0XaQpSMqHYKyDawFHEkvGYi31HP5tb21TDgvNv89Ty82r7XjWCYpDzykWnnngwHUDpGQiq1JRoM43zZjHj4WTsVy8-ASs8UsmR2wrl2df6ZwlnQnpnkuPSlFkR05JMH6L2o9Q',
   },
   {
     name: 'Rahul Mehta',
     quote:
       '"Excellent diagnostics. Honest people are hard to find. They saved me from an unnecessary repair."',
     badge: 'Verified Repair',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCvTcGQl6D6p1vLwiAd3uLi43IC34SUX1FqCx-Tf28eHkQihCdEN650pCDiUBL7Ik6i979XXg640FdDbCp3WwIiHrxn-FJ0zg-lGhWU3eXl80fv_uR3heNazeisZ2Mf3HtrxnvkTkL_BZMumGI7NCqbOEoBoBCF-fEzLlOCz7plezWn0wcDM13OLDeT85tCA9ZLvnLrPwRU52ZgtuLjip1qyJ_tNtCab7-Y9gAn28uNAvEigAL4y6QB70Sq_7olGesO8G62XZxulA',
   },
   {
     name: 'Ananya Reddy',
     quote:
       '"Got my Galaxy S24 Ultra at an amazing price. Their refurbished quality is top-notch with original accessories."',
     badge: 'Verified Purchase',
-    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNjhLhh7xHg7-2FT8j-4Ss91-U4uAENmL521w8epzBjdRPSLvoCS7DhCR8LkTf6cv19u4UlBAhuaeQmq9f4oWqAszcFGkbTSvHprHjer9ih87UOTcxxNxONs0aB3HDmKQNMeCYj5hMlL3aG07bXtweLbjvv27eMeKr8jumXfq_sB4ONBaZb2o_6q3xJ59p3tfO4Q73m4lioD5pnZBcf_heMsYq5z6zOc9JdjV9eIGZW9pCTcuUm-mdcDYekjh-xa0ZdM13AJ1GYA',
   },
 ]
 
@@ -336,62 +332,6 @@ export default function LandingPage() {
   const [heroCopyIndex, setHeroCopyIndex] = useState(0)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
   const [slideProgress, setSlideProgress] = useState(0)
-  const heroRef = useRef<HTMLElement>(null)
-  const heroMediaRef = useRef<HTMLDivElement>(null)
-  const heroCopyRef = useRef<HTMLDivElement>(null)
-
-  /* Hero depth push.
-     Three layers move at different rates so the section reads as real depth
-     rather than one flat tilted rectangle:
-       • the section hinges away on X from its top edge (small angle, no fade)
-       • the video layer lags behind and drifts down  → separates in Z
-       • the copy travels up and further back         → strongest parallax
-     Desktop-only, rAF-driven, so scrolling never triggers a render. */
-  useEffect(() => {
-    const hero = heroRef.current
-    const media = heroMediaRef.current
-    const copy = heroCopyRef.current
-    if (!hero) return
-    const query = window.matchMedia(TILT_QUERY)
-    if (!query.matches) return
-
-    let frame = 0
-    const apply = () => {
-      frame = 0
-      const span = Math.max(hero.offsetHeight, 1)
-      const distance = Math.min(Math.max(window.scrollY / span, 0), 1)
-      if (distance === 0) return
-
-      hero.style.transformOrigin = '50% 0%'
-      hero.style.transform =
-        `perspective(1600px) rotateX(${(distance * 6).toFixed(2)}deg) ` +
-        `translate3d(0, ${(distance * 22).toFixed(1)}px, 0) ` +
-        `scale(${(1 - distance * 0.05).toFixed(4)})`
-
-      if (media) {
-        media.style.transform =
-          `translate3d(0, ${(distance * 38).toFixed(1)}px, 0) ` +
-          `scale(${(1 + distance * 0.05).toFixed(4)})`
-      }
-      if (copy) {
-        copy.style.transform = `translate3d(0, ${(-distance * 26).toFixed(1)}px, ${(-distance * 70).toFixed(1)}px)`
-      }
-    }
-
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(apply)
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
-    apply()
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [])
-  const [countdown, setCountdown] = useState({ hours: '02', mins: '40', secs: '28' })
   const [categories, setCategories] = useState<Category[]>(cachedHomeData?.categories ?? [])
   const [categoriesLoading, setCategoriesLoading] = useState(() => !cachedHomeData)
   const categoryTrackRef = useRef<HTMLDivElement>(null)
@@ -515,33 +455,6 @@ export default function LandingPage() {
     }
     setCurrentSlide(target)
   }
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        let s = parseInt(prev.secs) - 1
-        let m = parseInt(prev.mins)
-        let h = parseInt(prev.hours)
-        if (s < 0) {
-          s = 59
-          m--
-        }
-        if (m < 0) {
-          m = 59
-          h--
-        }
-        if (h < 0) {
-          h = 23
-        }
-        return {
-          hours: h.toString().padStart(2, '0'),
-          mins: m.toString().padStart(2, '0'),
-          secs: s.toString().padStart(2, '0'),
-        }
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -776,11 +689,10 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-pf-red/30 selection:text-pf-red-dark">
-      <SiteTopNav />
+      <SiteTopNav transparent />
       {/* ─── HERO CAROUSEL (Video Background) ─── */}
       <section
-        ref={heroRef}
-        className="hero-section relative h-[84vh] min-h-[680px] max-h-[860px] overflow-hidden bg-black"
+        className="hero-section hero-section--full relative overflow-hidden bg-black"
       >
         {heroSlides.map((slide, i) => {
           const copy = slide.copies[heroCopyIndex] ?? slide.copies[0]
@@ -792,7 +704,7 @@ export default function LandingPage() {
                 i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
-              <div className="absolute -inset-y-16 inset-x-0" ref={heroMediaRef}>
+              <div className="absolute -inset-y-16 inset-x-0">
                 <video
                   ref={(el) => {
                     videoRefs.current[i] = el
@@ -816,23 +728,24 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
               <div className="absolute inset-0 bg-gradient-to-r from-pf-red/5 via-transparent to-transparent" />
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
-              <div
-                ref={heroCopyRef}
-                className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex flex-col justify-center items-start pt-[116px]"
-              >
+              {/* Top scrim — a light wash so the transparent navigation layers
+                  stay legible on bright slides, while the hero footage still
+                  shows clearly through the glass. Kept gentle on purpose. */}
+              <div className="absolute inset-x-0 top-0 h-[220px] bg-gradient-to-b from-black/55 via-black/18 to-transparent" />
+              <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex flex-col justify-center items-start pt-[116px]">
                 {/* Keyed on slide + variant so the CSS animation replays each swap. */}
                 <div
                   key={`${currentSlide}-${heroCopyIndex}`}
                   className="w-full max-w-[620px] hero-copy-swap"
                 >
                   <div
-                    className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-pf-red/10 border border-pf-red/25 text-pf-red text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                    className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-pf-red/10 border border-pf-red/25 text-pf-red text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                     }`}
                   >
                     <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-full bg-pf-red animate-ping" />
-                      <span className="absolute inset-0 rounded-full bg-pf-red" />
+                      <span className="absolute inset-0 rounded-[8px] bg-pf-red animate-ping" />
+                      <span className="absolute inset-0 rounded-[8px] bg-pf-red" />
                     </span>
                     {copy.tag}
                   </div>
@@ -846,7 +759,7 @@ export default function LandingPage() {
                     <br />
                     <span className="relative inline-block bg-gradient-to-r from-pf-red via-pf-red to-pf-red bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(217,30,54,0.4)]">
                       {copy.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-pf-red to-transparent rounded-full opacity-60 animate-pulse" />
+                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-pf-red to-transparent rounded-[8px] opacity-60 animate-pulse" />
                     </span>{' '}
                     <span className="text-white/80">{copy.title[2]}</span>
                   </SlideHeading>
@@ -889,14 +802,14 @@ export default function LandingPage() {
               type="button"
               onClick={() => goToSlide(i)}
               aria-label={`Play slide ${i + 1}: ${slide.copies[0].tag}`}
-              className={`relative h-1.5 rounded-full transition-all duration-500 overflow-hidden ${
+              className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
                 i === currentSlide ? 'w-16 bg-white/25' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
                 /* Real playback progress, so the dash fills as the clip plays out. */
                 <span
-                  className="absolute inset-y-0 left-0 rounded-full bg-pf-red"
+                  className="absolute inset-y-0 left-0 rounded-[8px] bg-pf-red"
                   style={{ width: `${Math.min(100, Math.max(0, slideProgress * 100))}%` }}
                 />
               )}
@@ -1006,7 +919,7 @@ export default function LandingPage() {
                                 {cat.products} items
                               </p>
                             </div>
-                            <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-pf-red/0 rounded-full transition-all duration-400 group-hover:bg-pf-red/30" />
+                            <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-pf-red/0 rounded-[8px] transition-all duration-400 group-hover:bg-pf-red/30" />
                           </Link>
                         ))}
                       </div>
@@ -1047,8 +960,8 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto scroll-reveal">
             <div className="glass-card overflow-hidden rounded-4xl border border-pf-red/15 flex flex-col lg:flex-row items-stretch relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
               <div className="absolute top-6 right-6 z-10">
-                <span className="inline-flex items-center gap-1.5 bg-pf-red-dark text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                <span className="inline-flex items-center gap-1.5 bg-pf-red-dark text-white px-4 py-1.5 rounded-[8px] text-xs font-bold uppercase tracking-wider animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-[8px] bg-white" />
                   Limited Offer
                 </span>
               </div>
@@ -1062,25 +975,6 @@ export default function LandingPage() {
                   <br />
                   <span className="text-pf-red">Up to 25% Off</span>
                 </h2>
-                <div className="flex gap-4">
-                  {[
-                    { label: 'Hours', val: countdown.hours },
-                    { label: 'Minutes', val: countdown.mins },
-                    { label: 'Seconds', val: countdown.secs },
-                  ].map((unit) => (
-                    <div
-                      key={unit.label}
-                      className="flex flex-col items-center bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl min-w-[90px] border border-pf-red/10 shadow-sm"
-                    >
-                      <span className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-pf-red-dark tabular-nums">
-                        {unit.val}
-                      </span>
-                      <span className="text-xs font-bold text-on-surface-variant tracking-widest mt-1">
-                        {unit.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
                 <p className="text-base md:text-lg text-on-surface-variant leading-relaxed">
                   Grab the latest flagships and premium accessories at unbeatable prices. Certified
                   performance, uncompromised quality.
@@ -1097,7 +991,7 @@ export default function LandingPage() {
                 <div
                   role="tablist"
                   aria-label="Advertised products"
-                  className="flex gap-1.5 p-1.5 rounded-full bg-white/70 border border-pf-red/10 mb-4"
+                  className="flex gap-1.5 p-1.5 rounded-[8px] bg-white/70 border border-pf-red/10 mb-4"
                 >
                   {DEAL_TABS.map((tab) => {
                     const selected = tab.key === dealTab
@@ -1205,7 +1099,7 @@ export default function LandingPage() {
                       )}
                       <Link
                         to={`/product/${product.id}`}
-                        className="absolute bottom-4 right-4 bg-pf-red text-white w-11 h-11 rounded-full flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(217,30,54,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
+                        className="absolute bottom-4 right-4 bg-pf-red text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(217,30,54,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
                       >
                         <span className="material-symbols-outlined text-xl">visibility</span>
                       </Link>
@@ -1270,7 +1164,7 @@ export default function LandingPage() {
                 icon: 'local_shipping',
                 title: 'Mail-In Service',
                 desc: 'Send your device from anywhere with our secure, prepaid shipping kits and track online.',
-                gradient: 'fromgold/10 to-transparent',
+                gradient: 'from-gold/10 to-transparent',
               },
               {
                 icon: 'home_repair_service',
@@ -1346,7 +1240,7 @@ export default function LandingPage() {
                     className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-pf-red/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                   >
                     <div className="absolute top-3 left-3 z-10">
-                      <span className="bg-pf-red text-white text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-widest shadow-lg">
+                      <span className="bg-pf-red text-white text-xs px-3 py-1.5 rounded-[8px] font-bold uppercase tracking-widest shadow-lg">
                         New
                       </span>
                     </div>
@@ -1445,7 +1339,7 @@ export default function LandingPage() {
                   className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-pf-red/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
                 >
                   <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-pf-red-dark text-white text-xs px-3 py-1.5 rounded-full font-bold tracking-wide shadow-lg">
+                    <span className="bg-pf-red-dark text-white text-xs px-3 py-1.5 rounded-[8px] font-bold tracking-wide shadow-lg">
                       Refurbished
                     </span>
                   </div>
@@ -1522,7 +1416,7 @@ export default function LandingPage() {
                   Board-level repair with microscopic accuracy
                 </p>
               </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-4 right-4 w-12 h-12 rounded-[8px] bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="material-symbols-outlined text-pf-red">play_arrow</span>
               </div>
             </div>
@@ -1547,7 +1441,7 @@ export default function LandingPage() {
                 </span>
                 <p className="text-white/60 text-sm mt-1">Advanced testing for peak performance</p>
               </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-4 right-4 w-12 h-12 rounded-[8px] bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="material-symbols-outlined text-pf-red">play_arrow</span>
               </div>
             </div>
@@ -1599,8 +1493,15 @@ export default function LandingPage() {
                   }}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full overflow-hidden bg-pf-red/10 shrink-0 ring-2 ring-pf-red/20">
-                      <img alt={t.name} className="w-full h-full object-cover" src={t.img} />
+                    <div className="w-14 h-14 rounded-[8px] bg-pf-red/10 shrink-0 ring-2 ring-pf-red/20 flex items-center justify-center">
+                      <span className="text-pf-red-dark font-bold text-lg">
+                        {t.name
+                          .split(' ')
+                          .map((w) => w[0])
+                          .join('')
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </span>
                     </div>
                     <div>
                       <h3 className="font-bold text-base text-on-surface">{t.name}</h3>

@@ -5,7 +5,7 @@
    Desktop only — mobile handled separately.
    ═══════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   --pf-red: #d91e36;
@@ -21,6 +21,12 @@
   --pf-gold: #b08d57;
   --pf-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
   --pf-shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.13);
+  --pf-drop-bg: #1b1210;
+  --pf-drop-border: rgba(255, 255, 255, 0.1);
+  --pf-drop-text: #f5f0eb;
+  --pf-drop-muted: rgba(245, 240, 235, 0.55);
+  --pf-drop-hover: rgba(217, 30, 54, 0.18);
+  --pf-drop-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 /* ─── OUTER WRAPPER ─── */
@@ -50,6 +56,8 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 40;
 }
 .pfn-util-inner {
   max-width: 1440px;
@@ -122,7 +130,7 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: 9999px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -149,6 +157,8 @@
   display: flex;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 30;
 }
 .pfn-main-inner {
   max-width: 1440px;
@@ -193,7 +203,7 @@
   gap: 2px;
 }
 .pfn-logo-name {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 800;
   font-size: 20px;
   color: var(--pf-ink);
@@ -220,7 +230,7 @@
   align-items: center;
   background: var(--pf-soft);
   border: 1.5px solid var(--pf-border);
-  border-radius: 9999px;
+  border-radius: 8px;
   padding: 0 5px 0 16px;
   gap: 8px;
   transition:
@@ -371,7 +381,7 @@
   color: #fff;
   font-size: 12px;
   font-weight: 800;
-  border-radius: 50%;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -428,7 +438,7 @@
   font-weight: 800;
   min-width: 20px;
   height: 20px;
-  border-radius: 50%;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,7 +468,7 @@
 .pfn-acc-avatar {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--pf-red);
   color: #fff;
   font-size: 12px;
@@ -539,10 +549,10 @@
   top: calc(100% + 10px);
   right: 0;
   width: 280px;
-  background: var(--pf-white);
-  border: 1px solid var(--pf-border);
+  background: var(--pf-drop-bg);
+  border: 1px solid var(--pf-drop-border);
   border-radius: 16px;
-  box-shadow: var(--pf-shadow-lg);
+  box-shadow: var(--pf-drop-shadow);
   padding: 8px;
   z-index: 9999;
   animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -562,13 +572,13 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px 14px;
-  border-bottom: 1px solid var(--pf-border);
+  border-bottom: 1px solid var(--pf-drop-border);
   margin-bottom: 6px;
 }
 .pfn-drop-avatar {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--pf-red);
   color: #fff;
   font-size: 15px;
@@ -585,13 +595,13 @@
 .pfn-drop-id b {
   display: block;
   font-size: 13px;
-  color: var(--pf-ink);
+  color: var(--pf-drop-text);
   font-weight: 700;
 }
 .pfn-drop-id span {
   display: block;
   font-size: 12px;
-  color: var(--pf-muted);
+  color: var(--pf-drop-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -600,8 +610,8 @@
 .pfn-drop-item svg {
   width: 15px;
   height: 15px;
-  stroke: var(--pf-ink);
-  fill: none; /* BLACK icons in dropdown */
+  stroke: var(--pf-drop-text);
+  fill: none;
   stroke-width: 2;
   flex-shrink: 0;
   transition: stroke 0.15s;
@@ -614,7 +624,7 @@
   gap: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--pf-ink);
+  color: var(--pf-drop-text);
   border-radius: 8px;
   cursor: pointer;
   text-decoration: none;
@@ -623,11 +633,11 @@
     color 0.15s;
 }
 .pfn-menu-row:hover {
-  background: var(--pf-red-tint);
-  color: var(--pf-red);
+  background: var(--pf-drop-hover);
+  color: #fff;
 }
 .pfn-menu-row:hover svg {
-  stroke: var(--pf-red);
+  stroke: #fff;
 }
 
 .pfn-drop-item {
@@ -645,21 +655,21 @@
 
 .pfn-drop-sep {
   height: 1px;
-  background: var(--pf-border);
+  background: var(--pf-drop-border);
   margin: 6px 0;
 }
 .pfn-drop-logout {
-  color: var(--pf-red);
+  color: #ff6b7d;
 }
 .pfn-drop-logout svg {
-  stroke: #c0392b;
+  stroke: #ff6b7d;
 }
 .pfn-drop-logout:hover {
-  background: #fff5f5;
-  color: var(--pf-red-dark);
+  background: var(--pf-drop-hover);
+  color: #fff;
 }
 .pfn-drop-logout:hover svg {
-  stroke: #b71c1c;
+  stroke: #fff;
 }
 
 /* ══════════════════════════════════════════
@@ -672,6 +682,7 @@
   display: flex;
   align-items: center;
   position: relative;
+  z-index: 20;
   box-shadow: 0 4px 16px rgba(217, 30, 54, 0.35);
 }
 .pfn-mega-inner {
@@ -776,10 +787,10 @@
   top: calc(100% + 0px);
   left: 0;
   width: 700px;
-  background: var(--pf-white);
-  border: 1px solid var(--pf-border);
+  background: var(--pf-drop-bg);
+  border: 1px solid var(--pf-drop-border);
   border-radius: 16px;
-  box-shadow: var(--pf-shadow-lg);
+  box-shadow: var(--pf-drop-shadow);
   padding: 20px;
   z-index: 9999;
   animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -795,12 +806,12 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--pf-muted);
+  color: var(--pf-drop-muted);
   padding: 6px 10px 8px;
   display: flex;
   align-items: center;
   gap: 6px;
-  border-bottom: 1px solid var(--pf-border);
+  border-bottom: 1px solid var(--pf-drop-border);
   margin-bottom: 4px;
 }
 .pfn-mega-head svg {
@@ -814,7 +825,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: var(--pf-soft);
+  background: rgba(255, 255, 255, 0.07);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -822,28 +833,29 @@
   transition: background 0.15s;
 }
 .pfn-mega-link:hover .pfn-mega-link-icon {
-  background: var(--pf-red-tint);
+  background: var(--pf-drop-hover);
 }
 .pfn-mega-link-icon svg {
   width: 15px;
   height: 15px;
-  stroke: var(--pf-ink);
-  fill: none; /* BLACK icon in dropdown */
+  stroke: var(--pf-drop-text);
+  fill: none;
   stroke-width: 2;
   transition: stroke 0.15s;
 }
 .pfn-mega-link:hover .pfn-mega-link-icon svg {
-  stroke: var(--pf-red);
+  stroke: #fff;
 }
 .pfn-mega-link-text b {
   display: block;
   font-size: 13px;
   font-weight: 700;
+  color: var(--pf-drop-text);
 }
 .pfn-mega-link-text span {
   display: block;
   font-size: 12px;
-  color: var(--pf-muted);
+  color: var(--pf-drop-muted);
   font-weight: 500;
 }
 
@@ -853,10 +865,10 @@
   top: calc(100% + 0px);
   left: 0;
   min-width: 220px;
-  background: var(--pf-white);
-  border: 1px solid var(--pf-border);
+  background: var(--pf-drop-bg);
+  border: 1px solid var(--pf-drop-border);
   border-radius: 16px;
-  box-shadow: var(--pf-shadow);
+  box-shadow: var(--pf-drop-shadow);
   padding: 8px;
   z-index: 9999;
   animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -865,8 +877,8 @@
 .pfn-nav-drop-link svg {
   width: 15px;
   height: 15px;
-  stroke: var(--pf-ink);
-  fill: none; /* BLACK */
+  stroke: var(--pf-drop-text);
+  fill: none;
 }
 
 /* ══════════════════════════════════════════
@@ -877,6 +889,127 @@
 }
 .pfn-root.pfn-scrolled + .pfn-spacer {
   height: 124px !important;
+}
+
+/* ══════════════════════════════════════════
+   TRANSPARENT OVERLAY — LANDING PAGE ONLY
+   Opt-in via the `transparent` prop. The three layers turn into
+   dark / white / crimson glass so the hero carousel shows through.
+   Once scrolled, the rules stop matching and each bar snaps back to
+   its solid, readable treatment above.
+   ══════════════════════════════════════════ */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-bar {
+  background: rgba(8, 9, 12, 0.28);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-main-bar {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.1);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-mega-bar {
+  background: rgba(140, 14, 34, 0.42);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s;
+}
+
+/* Logo — white lockup over the hero; the red mark keeps the brand anchor. */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-name {
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-sub {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* Search — frosted field with white text/icons. */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.26);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form:focus-within {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-icon {
+  color: #fff;
+  stroke: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input {
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Quick nav links — translucent white. */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link {
+  color: rgba(255, 255, 255, 0.88);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link svg {
+  stroke: rgba(255, 255, 255, 0.92);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover svg {
+  stroke: #fff;
+}
+
+/* Circular icon buttons — glass pills with white icons. */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn svg {
+  stroke: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Sign-in / account controls — glass with white text. */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn svg {
+  stroke: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-name {
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-chevron {
+  stroke: rgba(255, 255, 255, 0.85);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn:hover {
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 /* ══════════════════════════════════════════
@@ -921,7 +1054,7 @@
   }
   .pfn-acc-btn {
     padding: 6px;
-    border-radius: 50%;
+    border-radius: 8px;
   }
   .pfn-acc-chevron {
     display: none;

@@ -75,7 +75,7 @@ function CheckoutStepper({ currentStep }: { currentStep: number }) {
               <motion.div
                 animate={isActive ? { scale: [1, 1.08, 1] } : {}}
                 transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                className={`relative w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                className={`relative w-12 h-12 rounded-[8px] flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                   isCompleted ? 'text-white' : isActive ? 'text-white' : 'bg-gray-100 text-gray-400 border-2 border-gray-200'
                 }`}
                 style={isCompleted || isActive ? {
@@ -90,7 +90,7 @@ function CheckoutStepper({ currentStep }: { currentStep: number }) {
                   </span>
                 )}
                 {isActive && (
-                  <div className="absolute -inset-1 rounded-full border-2 border-red-300/50 animate-ping" style={{ animationDuration: '2s' }} />
+                  <div className="absolute -inset-1 rounded-[8px] border-2 border-red-300/50 animate-ping" style={{ animationDuration: '2s' }} />
                 )}
               </motion.div>
               <span className={`text-[10px] font-bold tracking-widest ${isActive ? 'text-red-500' : isCompleted ? 'text-red-500' : 'text-gray-400'}`}>
@@ -98,9 +98,9 @@ function CheckoutStepper({ currentStep }: { currentStep: number }) {
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div className="w-20 h-[3px] rounded-full bg-gray-200 overflow-hidden mx-2 mb-6">
+              <div className="w-20 h-[3px] rounded-[8px] bg-gray-200 overflow-hidden mx-2 mb-6">
                 <motion.div initial={{ width: 0 }} animate={{ width: isCompleted ? '100%' : '0%' }}
-                  className="h-full rounded-full"
+                  className="h-full rounded-[8px]"
                   style={{ background: `linear-gradient(90deg, ${RED}, ${RED_DEEP})` }} />
               </div>
             )}
@@ -337,7 +337,7 @@ export default function CheckoutAddress() {
                 SAVED ADDRESSES
               </h2>
               {!loading && addresses.length > 0 && (
-                <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">{addresses.length}</span>
+                <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-[8px]">{addresses.length}</span>
               )}
             </div>
 
@@ -385,7 +385,7 @@ export default function CheckoutAddress() {
                         onMouseLeave={e => { if (!isSelected) { e.currentTarget.style.borderColor = '#F0F0F0'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)' } }}>
                         {isSelected && (
                           <div className="absolute top-3 right-3">
-                            <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-[8px] uppercase tracking-wider">
                               <FiCheck size={10} /> Selected
                             </span>
                           </div>
@@ -400,11 +400,11 @@ export default function CheckoutAddress() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="text-sm font-bold text-gray-900">{addr.fullName}</h3>
-                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-[8px] ${
                                 isSelected ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500'
                               }`}>{addr.addressType}</span>
                               {addr.isDefault && (
-                                <span className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-600">DEFAULT</span>
+                                <span className="text-[8px] font-bold px-2 py-0.5 rounded-[8px] bg-green-100 text-green-600">DEFAULT</span>
                               )}
                             </div>
                             <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-1.5">
@@ -501,7 +501,7 @@ export default function CheckoutAddress() {
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <p className="text-sm font-bold text-gray-900">{addr.fullName}</p>
-                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full" style={{ background: `${RED}15`, color: RED }}>{addr.addressType}</span>
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-[8px]" style={{ background: `${RED}15`, color: RED }}>{addr.addressType}</span>
                               </div>
                               <p className="text-xs text-gray-600 leading-relaxed">
                                 {addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}
@@ -584,7 +584,7 @@ export default function CheckoutAddress() {
             style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               className="bg-white rounded-2xl p-8 max-w-sm w-full" style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
-              <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-5">
+              <div className="w-14 h-14 rounded-[8px] bg-red-50 flex items-center justify-center mx-auto mb-5">
                 <FiTrash2 size={24} className="text-red-500" />
               </div>
               <h3 className="text-xl font-bold text-center text-gray-900 mb-2">Delete Address?</h3>

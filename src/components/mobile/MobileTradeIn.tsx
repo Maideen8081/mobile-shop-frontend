@@ -134,17 +134,17 @@ export default function MobileTradeIn() {
   const filteredRows = estimateRows.filter(r => !selectedBrand || r.device.toLowerCase().includes(selectedBrand.toLowerCase()))
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Hero carousel */}
       <section className="relative h-[360px] overflow-hidden">
         {heroSlides.map((slide, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-1000 ${i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
             style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
-            <div className="absolute -top-10 -right-8 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
-            <div className="absolute -bottom-12 -left-10 w-56 h-56 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -top-10 -right-8 w-48 h-48 rounded-[8px] bg-white/10 blur-2xl" />
+            <div className="absolute -bottom-12 -left-10 w-56 h-56 rounded-[8px] bg-white/10 blur-3xl" />
             <div className="relative h-full px-6 flex flex-col justify-center">
-              <span className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full bg-white/15 text-white text-[11px] font-bold uppercase tracking-wider mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse" /> {slide.tag}
+              <span className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-[8px] bg-white/15 text-white text-[11px] font-bold uppercase tracking-wider mb-4">
+                <span className="w-1.5 h-1.5 rounded-[8px] bg-[#00ff88] animate-pulse" /> {slide.tag}
               </span>
               <h1 className="text-[28px] font-extrabold leading-[1.1] text-white">
                 {slide.title[0]}<br />
@@ -152,7 +152,7 @@ export default function MobileTradeIn() {
               </h1>
               <p className="text-[13px] text-white/75 mt-3 leading-relaxed max-w-[300px]">{slide.desc}</p>
               <button onClick={() => { setShowForm(true); setSubmitted(false); setFormErrors({}) }}
-                className="mt-5 self-start inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-[14px] px-6 py-3 rounded-full active:scale-95 transition">
+                className="mt-5 self-start inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-[14px] px-6 py-3 rounded-[8px] active:scale-95 transition">
                 Get Your Quote <FiArrowRight size={16} />
               </button>
             </div>
@@ -161,7 +161,7 @@ export default function MobileTradeIn() {
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
           {heroSlides.map((_, i) => (
             <button key={i} onClick={() => setCurrentSlide(i)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlide ? 'w-8 bg-[#00ff88]' : 'w-4 bg-white/40'}`} />
+              className={`h-1.5 rounded-[8px] transition-all duration-500 ${i === currentSlide ? 'w-8 bg-[#00ff88]' : 'w-4 bg-white/40'}`} />
           ))}
         </div>
       </section>
@@ -177,7 +177,7 @@ export default function MobileTradeIn() {
             const Icon = step.icon
             return (
               <div key={step.title} className={`${card} p-4`}>
-                <div className="w-11 h-11 rounded-full bg-[#FEE2E6] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
+                <div className="w-11 h-11 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
                   <Icon size={20} />
                 </div>
                 <span className="text-[11px] font-bold" style={{ color: PURPLE }}>STEP {idx + 1}</span>
@@ -197,7 +197,7 @@ export default function MobileTradeIn() {
           <div className="flex flex-wrap gap-2 mb-3">
             {brands.map((brand) => (
               <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                className={`px-3.5 h-9 rounded-full text-[12px] font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
+                className={`px-3.5 h-9 rounded-[8px] text-[12px] font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
                 style={selectedBrand === brand ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                 {brand}
               </button>
@@ -227,7 +227,7 @@ export default function MobileTradeIn() {
               const Icon = item.icon
               return (
                 <li key={i} className="flex items-center gap-2.5">
-                  <span className="w-7 h-7 rounded-full bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
+                  <span className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
                   <span className="text-[12px] text-[#4B5563]">{item.text}</span>
                 </li>
               )
@@ -249,7 +249,7 @@ export default function MobileTradeIn() {
             <h2 className="text-[17px] font-extrabold">Trade-In Submitted!</h2>
             <p className="text-[12px] text-[#6B7280] mt-1 mb-4">We'll review your device and get back within 24 hours with a final quote.</p>
             <button onClick={() => { setSubmitted(false); navigate('/') }}
-              className="inline-flex items-center gap-2 text-white font-bold text-[13px] px-6 py-3 rounded-full active:scale-95 transition"
+              className="inline-flex items-center gap-2 text-white font-bold text-[13px] px-6 py-3 rounded-[8px] active:scale-95 transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
               Back to Home <FiArrowRight size={15} />
             </button>
@@ -263,8 +263,8 @@ export default function MobileTradeIn() {
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowForm(false)} />
           <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
             <div className="px-4 pt-4 pb-2 flex-shrink-0">
-              <div className="w-10 h-1 rounded-full bg-[#D9D9E3] mx-auto mb-3" />
-              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
+              <div className="w-10 h-1 rounded-[8px] bg-[#D9D9E3] mx-auto mb-3" />
+              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
               <p className="text-[15px] font-extrabold">Sell Your Phone</p>
               <p className="text-[12px] text-[#6B7280] mt-0.5">Fill details — we'll analyze the value instantly.</p>
             </div>

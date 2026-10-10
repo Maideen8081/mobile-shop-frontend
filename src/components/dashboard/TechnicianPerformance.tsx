@@ -28,15 +28,15 @@ export default function TechnicianPerformance() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-text-primary truncate">{tech.name}</p>
-                <span className={`w-2 h-2 rounded-full ${tech.active ? 'bg-success' : 'bg-text-label'}`} />
+                <span className={`w-2 h-2 rounded-[8px] ${tech.active ? 'bg-success' : 'bg-text-label'}`} />
               </div>
               <p className="text-xs text-text-muted">{tech.speciality} • {tech.repairs} repairs</p>
-              <div className="mt-1.5 relative h-1.5 rounded-full bg-surface-lighter overflow-hidden">
+              <div className="mt-1.5 relative h-1.5 rounded-[8px] bg-surface-lighter overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${tech.efficiency}%` }}
                   transition={{ duration: 1, delay: i * 0.1, ease: 'easeOut' }}
-                  className={`h-full rounded-full ${tech.efficiency >= 90 ? 'bg-success' : tech.efficiency >= 85 ? 'bg-primary' : 'bg-warning'}`}
+                  className={`h-full rounded-[8px] ${tech.efficiency >= 90 ? 'bg-success' : tech.efficiency >= 85 ? 'bg-primary' : 'bg-warning'}`}
                 />
               </div>
             </div>

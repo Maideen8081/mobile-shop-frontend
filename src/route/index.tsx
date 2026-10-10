@@ -1,7 +1,9 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import type { ReactNode } from 'react'
 import LandingGate from '../pages/LandingGate'
 import SearchPageGate from '../pages/SearchPageGate'
 import AuthGuard from '../components/AuthGuard'
+import AdminGuard from '../components/AdminGuard'
 import Dashboard from '../pages/Dashboard'
 import CategoryManagement from '../pages/CategoryManagement'
 import ProductManagement from '../pages/ProductManagement'
@@ -43,23 +45,70 @@ import ProfilePage from '../pages/ProfilePage'
 import MobileNotifications from '../components/mobile/MobileNotifications'
 import AdminOrders from '../pages/AdminOrders'
 import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
+import AdminLoginPage from '../pages/AdminLoginPage'
+
+// Admin-only pages. Routed under /admin/* and protected by AdminGuard, which
+// itself is enforced server-side by IsAdminUser on every API call.
+const adminPages: { path: string; element: ReactNode }[] = [
+  { path: '/admin/dashboard', element: <Dashboard /> },
+  { path: '/admin/categories', element: <CategoryManagement /> },
+  { path: '/admin/products', element: <ProductManagement /> },
+  { path: '/admin/repair-dashboard', element: <RepairDashboard /> },
+  { path: '/admin/new-repair', element: <NewRepairTicket /> },
+  { path: '/admin/user-bookings', element: <UserBookings /> },
+  { path: '/admin/technician-panel', element: <TechnicianPanel /> },
+  { path: '/admin/device-tracking', element: <DeviceTracking /> },
+  { path: '/admin/customer-dashboard', element: <CustomerDashboard /> },
+  { path: '/admin/customer-list', element: <CustomerList /> },
+  { path: '/admin/customer-profile', element: <CustomerProfile /> },
+  { path: '/admin/warranty-dashboard', element: <WarrantyDashboard /> },
+  { path: '/admin/warranty-tracking', element: <WarrantyTracking /> },
+  { path: '/admin/warranty-claims', element: <WarrantyClaims /> },
+  { path: '/admin/expiry-alerts', element: <ExpiryAlerts /> },
+  { path: '/admin/brand-warranty', element: <BrandWarrantyRecords /> },
+  { path: '/admin/online-orders', element: <AdminOrders /> },
+  { path: '/admin/trade-in-management', element: <AdminTradeInDashboard /> },
+]
+
+// Legacy admin URLs redirect behind the admin guard so stale links cannot open
+// admin pages outside the /admin/* namespace.
+const legacyAdminRedirects: { from: string; to: string }[] = [
+  { from: '/dashboard', to: '/admin/dashboard' },
+  { from: '/categories', to: '/admin/categories' },
+  { from: '/products', to: '/admin/products' },
+  { from: '/repair-dashboard', to: '/admin/repair-dashboard' },
+  { from: '/new-repair', to: '/admin/new-repair' },
+  { from: '/user-bookings', to: '/admin/user-bookings' },
+  { from: '/technician-panel', to: '/admin/technician-panel' },
+  { from: '/device-tracking', to: '/admin/device-tracking' },
+  { from: '/customer-dashboard', to: '/admin/customer-dashboard' },
+  { from: '/customer-list', to: '/admin/customer-list' },
+  { from: '/customer-profile', to: '/admin/customer-profile' },
+  { from: '/warranty-dashboard', to: '/admin/warranty-dashboard' },
+  { from: '/warranty-tracking', to: '/admin/warranty-tracking' },
+  { from: '/warranty-claims', to: '/admin/warranty-claims' },
+  { from: '/expiry-alerts', to: '/admin/expiry-alerts' },
+  { from: '/brand-warranty', to: '/admin/brand-warranty' },
+  { from: '/online-orders', to: '/admin/online-orders' },
+  { from: '/trade-in-management', to: '/admin/trade-in-management' },
+]
 
 export default function AppRoutes() {
   return (
     <Routes>
+      {/* Admin area */}
+      <Route path="/admin/login" element={<AdminLoginPage />} />
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      {adminPages.map(({ path, element }) => (
+        <Route key={path} path={path} element={<AdminGuard>{element}</AdminGuard>} />
+      ))}
+      {legacyAdminRedirects.map(({ from, to }) => (
+        <Route key={from} path={from} element={<AdminGuard><Navigate to={to} replace /></AdminGuard>} />
+      ))}
+
+      {/* Public storefront */}
       <Route path="/" element={<LandingGate />} />
       <Route path="/search" element={<SearchPageGate />} />
-      <Route path="/cart" element={<AuthGuard><CartGate /></AuthGuard>} />
-      <Route path="/wishlist" element={<AuthGuard><WishlistPage /></AuthGuard>} />
-      <Route path="/profile/addresses" element={<AuthGuard><AddressManagement /></AuthGuard>} />
-      <Route path="/checkout/address" element={<AuthGuard><CheckoutAddress /></AuthGuard>} />
-      <Route path="/checkout/payment" element={<AuthGuard><PaymentPage /></AuthGuard>} />
-      <Route path="/checkout/success" element={<AuthGuard><OrderSuccess /></AuthGuard>} />
-      <Route path="/orders" element={<AuthGuard><OrderTrackingGate /></AuthGuard>} />
-      <Route path="/my-repairs" element={<AuthGuard><CustomerRepairTracking /></AuthGuard>} />
-      <Route path="/my-repairs/:id" element={<AuthGuard><RepairDetailPage /></AuthGuard>} />
-      <Route path="/book-repair" element={<BookRepair />} />
-      <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/home" element={<LandingPage />} />
       <Route path="/collection/:category" element={<CollectionGate />} />
       <Route path="/product/:productId/variation/:variationId" element={<ProductDetailGate />} />
@@ -70,29 +119,25 @@ export default function AppRoutes() {
       <Route path="/accessories" element={<AccessoriesPage />} />
       <Route path="/trade-in" element={<TradeInPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/categories" element={<CategoryManagement />} />
-      <Route path="/products" element={<ProductManagement />} />
-      <Route path="/repair-dashboard" element={<RepairDashboard />} />
-      <Route path="/new-repair" element={<NewRepairTicket />} />
-      <Route path="/user-bookings" element={<UserBookings />} />
-      <Route path="/technician-panel" element={<TechnicianPanel />} />
-      <Route path="/device-tracking" element={<DeviceTracking />} />
-      <Route path="/customer-dashboard" element={<CustomerDashboard />} />
-      <Route path="/customer-list" element={<CustomerList />} />
-      <Route path="/customer-profile" element={<CustomerProfile />} />
-      <Route path="/warranty-dashboard" element={<WarrantyDashboard />} />
-      <Route path="/warranty-tracking" element={<WarrantyTracking />} />
-      <Route path="/warranty-claims" element={<WarrantyClaims />} />
-      <Route path="/expiry-alerts" element={<ExpiryAlerts />} />
-      <Route path="/brand-warranty" element={<BrandWarrantyRecords />} />
+      <Route path="/book-repair" element={<BookRepair />} />
+      <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<RegisterPage />} />
-      <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
       <Route path="/notifications" element={<MobileNotifications />} />
+
+      {/* Customer-only (authenticated) */}
+      <Route path="/cart" element={<AuthGuard><CartGate /></AuthGuard>} />
+      <Route path="/wishlist" element={<AuthGuard><WishlistPage /></AuthGuard>} />
+      <Route path="/profile/addresses" element={<AuthGuard><AddressManagement /></AuthGuard>} />
       <Route path="/address/create" element={<AuthGuard><AddressCreatePage /></AuthGuard>} />
-      <Route path="/online-orders" element={<AdminOrders />} />
-      <Route path="/trade-in-management" element={<AdminTradeInDashboard />} />
+      <Route path="/checkout/address" element={<AuthGuard><CheckoutAddress /></AuthGuard>} />
+      <Route path="/checkout/payment" element={<AuthGuard><PaymentPage /></AuthGuard>} />
+      <Route path="/checkout/success" element={<AuthGuard><OrderSuccess /></AuthGuard>} />
+      <Route path="/orders" element={<AuthGuard><OrderTrackingGate /></AuthGuard>} />
+      <Route path="/my-repairs" element={<AuthGuard><CustomerRepairTracking /></AuthGuard>} />
+      <Route path="/my-repairs/:id" element={<AuthGuard><RepairDetailPage /></AuthGuard>} />
+      <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+
       <Route path="*" element={<LandingGate />} />
     </Routes>
   )

@@ -185,7 +185,7 @@ export default function MobileCart() {
 
   if (cartLoading) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <DoubleRingLoader size={48} />
@@ -198,7 +198,7 @@ export default function MobileCart() {
 
   if (items.length === 0) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <MobileTopSection title="My Cart" subtitle="Review your items" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
           <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)' }}>
@@ -206,7 +206,7 @@ export default function MobileCart() {
           </div>
           <h2 className="text-xl font-bold text-[#1F2937]">Your cart is empty</h2>
           <p className="text-[13px] text-[#6B7280] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
-          <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-full text-white text-[14px] font-bold active:scale-95 transition"
+          <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-[14px] font-bold active:scale-95 transition"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
             Start Shopping
           </button>
@@ -217,7 +217,7 @@ export default function MobileCart() {
   }
 
   return (
-    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <MobileTopSection title="My Cart" subtitle={`${totalItems} ${totalItems === 1 ? 'item' : 'items'}`} icon="cart" />
 
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3.5 pt-3 pb-4 space-y-3">
@@ -244,7 +244,7 @@ export default function MobileCart() {
             <div key={key} className={`${card} p-2.5 flex gap-2.5`}>
               <button onClick={() => navigate(`/product/${item.productId}`)} className="relative w-[76px] h-[76px] rounded-xl bg-[#FFFBFB] overflow-hidden flex-shrink-0 active:scale-95 transition self-center">
                 {img ? <img src={img} alt={item.name} className="w-full h-full object-contain p-1.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center text-[#64748B] text-2xl">📦</div>}
-                <span className="absolute top-1 left-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: PURPLE }}>×{item.quantity}</span>
+                <span className="absolute top-1 left-1 text-[9px] font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: PURPLE }}>×{item.quantity}</span>
               </button>
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="flex items-start justify-between gap-1.5">
@@ -266,12 +266,12 @@ export default function MobileCart() {
                     <span className="text-[15px] font-extrabold leading-none" style={{ color: PURPLE }}>₹{item.price.toLocaleString('en-IN')}</span>
                     <p className="text-[9.5px] font-semibold mt-0.5" style={{ color: stockColor }}>{stockLabel}</p>
                   </div>
-                  <div className="flex items-center gap-1 rounded-full bg-[#FFFBFB] border border-[#E2E8F0] px-1 py-0.5">
-                    <button onClick={() => handleUpdateQty(item, -1)} aria-label="Decrease" className="w-7 h-7 rounded-full flex items-center justify-center text-[#0F172A] active:scale-90 transition">
+                  <div className="flex items-center gap-1 rounded-[8px] bg-[#FFFBFB] border border-[#E2E8F0] px-1 py-0.5">
+                    <button onClick={() => handleUpdateQty(item, -1)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[#0F172A] active:scale-90 transition">
                       <Minus size={14} />
                     </button>
                     <span className="font-bold w-6 text-center text-[13px]">{item.quantity}</span>
-                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-full flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
+                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
                       <Plus size={14} />
                     </button>
                   </div>
@@ -284,7 +284,7 @@ export default function MobileCart() {
         {/* Recommended */}
         <div className="mt-5 pt-1">
           <div className="flex items-center gap-2 px-1 mb-3">
-            <div className="w-1 h-4 rounded-full" style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
+            <div className="w-1 h-4 rounded-[8px]" style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
             <div>
               <h3 className="text-[15px] font-bold text-[#1F2937] leading-none">Recommended for You</h3>
               <p className="text-[11px] text-[#6B7280] mt-0.5">Frequently bought together</p>
@@ -341,7 +341,7 @@ export default function MobileCart() {
           )}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {Object.entries(VALID_COUPONS).slice(0, 3).map(([code, c]) => (
-              <button key={code} onClick={() => setCouponCode(code)} disabled={couponApplied} className="text-[10px] font-semibold px-2.5 py-1 rounded-full border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
+              <button key={code} onClick={() => setCouponCode(code)} disabled={couponApplied} className="text-[10px] font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
                 {code} · {c.label}
               </button>
             ))}
@@ -354,8 +354,8 @@ export default function MobileCart() {
             <span>Free Shipping</span>
             <span>{shipping === 0 ? 'Unlocked' : `₹${(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString('en-IN')} left`}</span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-[#E2E8F0] overflow-hidden">
-            <div className="h-full rounded-full" style={{ width: `${shippingProgress}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
+          <div className="h-1.5 w-full rounded-[8px] bg-[#E2E8F0] overflow-hidden">
+            <div className="h-full rounded-[8px]" style={{ width: `${shippingProgress}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
           </div>
         </div>
 
@@ -464,13 +464,13 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
             style={{ userSelect: 'none' }}
           >
             {off > 0 && (
-              <span className="absolute top-2 left-2 z-10 text-[9px] font-bold px-2 py-0.5 rounded-full text-white" style={{ background: SUCCESS }}>
+              <span className="absolute top-2 left-2 z-10 text-[9px] font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>
                 {off}% OFF
               </span>
             )}
             <button
               onClick={() => onWish(p)}
-              className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white flex items-center justify-center shadow"
+              className="absolute top-2 right-2 z-10 w-7 h-7 rounded-[8px] bg-white flex items-center justify-center shadow"
               style={{ color: wished ? '#EC4899' : '#9CA3AF' }}
             >
               <Heart size={14} fill={wished ? '#EC4899' : 'none'} />
@@ -498,7 +498,7 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
                 <button
                   onClick={() => onAdd(p)}
                   aria-label="Add to cart"
-                  className="w-8 h-8 rounded-full text-white flex items-center justify-center flex-shrink-0 active:scale-90 transition"
+                  className="w-8 h-8 rounded-[8px] text-white flex items-center justify-center flex-shrink-0 active:scale-90 transition"
                   style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}
                 >
                   <Plus size={16} />
@@ -574,7 +574,7 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
           />
         </div>
         {activeTip > 0 && (
-          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-semibold text-white" style={{ background: SUCCESS }}>
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-[11px] font-semibold text-white" style={{ background: SUCCESS }}>
             <Check size={13} /> Thank you for supporting your delivery partner!
           </motion.div>
         )}

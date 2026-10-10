@@ -73,7 +73,7 @@ export default function TechnicianPanel() {
                   <p className="text-xs font-bold text-text-primary truncate">{tech.name}</p>
                   <p className="text-[9px] text-text-muted">{tech.speciality}</p>
                 </div>
-                <span className={`w-2 h-2 rounded-full ${tech.online ? 'bg-emerald-500' : 'bg-gray-300'}`} />
+                <span className={`w-2 h-2 rounded-[8px] ${tech.online ? 'bg-emerald-500' : 'bg-gray-300'}`} />
               </div>
             </motion.button>
           ))}
@@ -115,7 +115,7 @@ export default function TechnicianPanel() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${selectedTech.online ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300'}`} />
+              <span className={`w-2 h-2 rounded-[8px] ${selectedTech.online ? 'bg-emerald-500 animate-pulse' : 'bg-gray-300'}`} />
               <span className="text-xs font-medium text-text-muted">{selectedTech.online ? 'Online' : 'Offline'}</span>
             </div>
           </motion.div>

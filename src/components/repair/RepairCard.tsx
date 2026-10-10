@@ -20,7 +20,7 @@ export default function RepairCard({ ticket, index = 0, onClick, compact = false
       onClick={() => onClick?.(ticket)}
       className="relative rounded-2xl bg-bg-card border border-border shadow-sm p-4 cursor-pointer overflow-hidden group"
     >
-      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-full bg-gradient-to-br from-primary/[0.03] to-secondary/[0.03] blur-2xl group-hover:scale-150 transition-transform duration-700" />
+      <div className="absolute -top-16 -right-16 w-32 h-32 rounded-[8px] bg-gradient-to-br from-primary/[0.03] to-secondary/[0.03] blur-2xl group-hover:scale-150 transition-transform duration-700" />
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2.5">

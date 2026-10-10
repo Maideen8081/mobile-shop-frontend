@@ -164,7 +164,7 @@ export default function AdCarousel() {
       >
         {!loaded && (
           <div className="absolute inset-0 bg-[#FEE2E6] animate-pulse flex items-center justify-center z-30">
-            <div className="w-10 h-10 rounded-full border-4 border-[#C7D2FE] border-t-[#CB202D] animate-spin" />
+            <div className="w-10 h-10 rounded-[8px] border-4 border-[#C7D2FE] border-t-[#CB202D] animate-spin" />
           </div>
         )}
 
@@ -225,14 +225,14 @@ export default function AdCarousel() {
                   </p>
                   <div className="flex items-center gap-3 mt-2.5 flex-wrap">
                     <span
-                      className="text-[12px] sm:text-[15px] font-extrabold px-3 py-1 rounded-full shadow text-[#0F172A]"
+                      className="text-[12px] sm:text-[15px] font-extrabold px-3 py-1 rounded-[8px] shadow text-[#0F172A]"
                       style={{ background: b.accent }}
                     >
                       {b.offer}
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                      className="flex items-center gap-1 text-[11px] sm:text-[13px] font-bold px-3.5 py-1.5 rounded-full bg-white text-[#0F172A] shadow-md active:scale-95 transition"
+                      className="flex items-center gap-1 text-[11px] sm:text-[13px] font-bold px-3.5 py-1.5 rounded-[8px] bg-white text-[#0F172A] shadow-md active:scale-95 transition"
                     >
                       {b.cta} <ArrowRight size={14} />
                     </button>
@@ -246,13 +246,13 @@ export default function AdCarousel() {
         {/* Desktop arrows (hidden on mobile) */}
         <button
           aria-label="Previous slide"
-          className="ad-prev hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
+          className="ad-prev hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-[8px] bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
         >
           <ChevronLeft size={20} className="text-[#0F172A]" />
         </button>
         <button
           aria-label="Next slide"
-          className="ad-next hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
+          className="ad-next hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-[8px] bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
         >
           <ChevronRight size={20} className="text-[#0F172A]" />
         </button>
@@ -262,7 +262,7 @@ export default function AdCarousel() {
       <style>{`
         .ad-dots { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
         .ad-bullet {
-          width: 6px; height: 6px; border-radius: 999px;
+          width: 6px; height: 6px; border-radius: 8px;
           background: #CBD5E1; cursor: pointer; transition: all 0.35s ease;
         }
         .ad-bullet-active { width: 22px; background: #059669; }

@@ -260,8 +260,8 @@ export default function ProductForm({ onSubmit, loading, categoryOptions, subcat
         value ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-surface-lighter border-border text-text-muted hover:border-primary/20'
       }`}
     >
-      <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${value ? 'border-primary bg-primary' : 'border-border'}`}>
-        {value && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+      <span className={`w-4 h-4 rounded-[8px] border-2 flex items-center justify-center transition-all ${value ? 'border-primary bg-primary' : 'border-border'}`}>
+        {value && <span className="w-1.5 h-1.5 rounded-[8px] bg-white" />}
       </span>
       {label}
     </button>

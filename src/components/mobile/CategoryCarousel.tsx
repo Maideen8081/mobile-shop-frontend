@@ -40,13 +40,13 @@ export default function CategoryCarousel({ categories }: { categories: Category[
               className="snap-start flex-shrink-0 w-[76px] flex flex-col items-center gap-2 active:scale-95 transition"
             >
               <div
-                className={`w-[72px] h-[72px] rounded-full flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : 'hover:scale-105'}`}
+                className={`w-[72px] h-[72px] rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : 'hover:scale-105'}`}
                 style={active
                   ? { background: 'linear-gradient(135deg,#CB202D,#A81D2A)', boxShadow: '0 10px 24px rgba(203,32,45,0.40)' }
                   : { background: '#FFFFFF', boxShadow: '0 6px 18px rgba(31,41,55,0.08)' }}
               >
                 {img ? (
-                  <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-full" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                  <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-[8px]" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                 ) : (
                   <span className="text-[28px] leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                 )}

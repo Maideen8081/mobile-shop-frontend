@@ -37,7 +37,7 @@ export default function DashboardCard({
       whileHover={{ y: -4 }}
       className="bg-bg-card border border-border shadow-card rounded-xl p-5 relative overflow-hidden group cursor-pointer"
     >
-      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500" style={{ background: bgGlow }} />
+      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-[8px] blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500" style={{ background: bgGlow }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">

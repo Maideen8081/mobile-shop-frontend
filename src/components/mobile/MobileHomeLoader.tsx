@@ -64,8 +64,8 @@ export default function MobileHomeLoader() {
     >
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] right-[-20%] w-[300px] h-[300px] rounded-full bg-white/[0.03] blur-[60px]" />
-        <div className="absolute bottom-[20%] left-[-15%] w-[250px] h-[250px] rounded-full bg-purple-400/[0.06] blur-[50px]" />
+        <div className="absolute top-[10%] right-[-20%] w-[300px] h-[300px] rounded-[8px] bg-white/[0.03] blur-[60px]" />
+        <div className="absolute bottom-[20%] left-[-15%] w-[250px] h-[250px] rounded-[8px] bg-purple-400/[0.06] blur-[50px]" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -86,8 +86,8 @@ export default function MobileHomeLoader() {
             <p className="text-white/40 text-[10px] font-semibold tracking-[0.08em] uppercase">Your Tech Store</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/8">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-[8px] border border-white/8">
+          <div className="w-1.5 h-1.5 rounded-[8px] bg-emerald-400 animate-pulse" />
           <span className="text-white/70 text-[10px] font-semibold">Live</span>
         </div>
       </div>
@@ -111,7 +111,7 @@ export default function MobileHomeLoader() {
               return (
                 <div
                   key={i}
-                  className="absolute w-[36px] h-[36px] rounded-full flex items-center justify-center"
+                  className="absolute w-[36px] h-[36px] rounded-[8px] flex items-center justify-center"
                   style={{
                     left: x,
                     top: y,
@@ -129,7 +129,7 @@ export default function MobileHomeLoader() {
           {/* Center white circle */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div
-              className="relative w-[100px] h-[100px] rounded-full bg-white flex items-center justify-center"
+              className="relative w-[100px] h-[100px] rounded-[8px] bg-white flex items-center justify-center"
               style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.25), 0 0 0 6px rgba(255,255,255,0.08)' }}
             >
               <AnimatePresence mode="wait">
@@ -168,7 +168,7 @@ export default function MobileHomeLoader() {
           {stages.map((_, i) => (
             <span
               key={i}
-              className={`block rounded-full transition-all duration-400 ${
+              className={`block rounded-[8px] transition-all duration-400 ${
                 i === stage ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/20'
               }`}
             />

@@ -57,7 +57,7 @@ export function WorkflowTracker({ currentStatus, size = 'lg' }: WorkflowTrackerP
               )}
             </div>
             {i < repairStatuses.length - 1 && (
-              <div className={`flex-1 h-0.5 rounded-full ${isComplete ? 'bg-primary' : 'bg-bg'}`} />
+              <div className={`flex-1 h-0.5 rounded-[8px] ${isComplete ? 'bg-primary' : 'bg-bg'}`} />
             )}
           </div>
         )
@@ -72,12 +72,12 @@ export function TimelineTracker({ currentStatus }: { currentStatus: RepairStatus
 
   return (
     <div className="space-y-3">
-      <div className="relative h-2 rounded-full bg-bg overflow-hidden">
+      <div className="relative h-2 rounded-[8px] bg-bg overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-y-0 left-0 rounded-full bg-primary"
+          className="absolute inset-y-0 left-0 rounded-[8px] bg-primary"
         />
       </div>
       <div className="grid grid-cols-7 gap-1">

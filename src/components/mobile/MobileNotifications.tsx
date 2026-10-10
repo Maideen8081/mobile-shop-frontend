@@ -59,10 +59,10 @@ export default function MobileNotifications() {
   const visible = filter === 'unread' ? items.filter((n) => n.unread) : items
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
@@ -76,7 +76,7 @@ export default function MobileNotifications() {
         <div className="flex gap-2 mt-3">
           {(['all', 'unread'] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
-              className="h-9 px-4 rounded-full text-[12px] font-semibold capitalize transition"
+              className="h-9 px-4 rounded-[8px] text-[12px] font-semibold capitalize transition"
               style={filter === f ? { background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})`, color: '#fff' } : { background: '#fff', color: '#6B7280' }}>
               {f === 'all' ? 'All' : 'Unread'}
             </button>
@@ -87,7 +87,7 @@ export default function MobileNotifications() {
       <div className="px-4 pt-4">
         {visible.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-6`}>
-            <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+            <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <FiBell size={32} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-[16px] font-bold text-[#1F2937] mb-1">No notifications</h2>
@@ -103,7 +103,7 @@ export default function MobileNotifications() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-[14px] font-semibold text-[#1F2937] truncate">{n.title}</p>
-                    {n.unread && <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: PURPLE }} />}
+                    {n.unread && <span className="w-2 h-2 rounded-[8px] flex-shrink-0" style={{ background: PURPLE }} />}
                   </div>
                   <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{n.description}</p>
                   <p className="text-[11px] text-[#9CA3AF] mt-1">{n.time}</p>

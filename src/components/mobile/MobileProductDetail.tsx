@@ -482,7 +482,7 @@ export default function MobileProductDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <DoubleRingLoader size={56} label="Loading product…" />
       </div>
     )
@@ -493,13 +493,13 @@ export default function MobileProductDetail() {
       <div className="min-h-screen bg-white max-w-[480px] mx-auto flex flex-col items-center justify-center p-8 text-center font-sans">
         <p className="text-[15px] font-bold text-[#1F2937] mb-2">Product not found</p>
         <p className="text-[13px] text-[#6B7280] mb-6">{fetchError || 'This product is unavailable.'}</p>
-        <button onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-full text-white text-[13px] font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Go Back</button>
+        <button onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-[8px] text-white text-[13px] font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Go Back</button>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`
         @keyframes shimmerSlide {
           0% { transform: translateX(-100%); }
@@ -534,7 +534,7 @@ export default function MobileProductDetail() {
       {/* Sticky top bar — product page style (white/neutral, no purple gradient) */}
       <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-3 py-2.5 flex items-center gap-2.5">
-          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
             <ChevronLeft size={22} className="text-[#1F2937]" />
           </button>
           <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
@@ -546,14 +546,14 @@ export default function MobileProductDetail() {
               className="flex-1 bg-transparent text-[13px] text-[#1F2937] placeholder:text-[#9CA3AF] outline-none min-w-0 cursor-pointer"
             />
           </form>
-          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
             <Heart size={19} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#1F2937]'} />
-            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#22C55E] rounded-full ring-2 ring-white" />}
+            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-white" />}
           </button>
-          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
             <ShoppingBag size={19} className="text-[#1F2937]" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#EF4444] text-white text-[9px] font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-[8px] bg-[#EF4444] text-white text-[9px] font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
             )}
           </button>
         </div>
@@ -562,8 +562,8 @@ export default function MobileProductDetail() {
       {/* Deal of the day — flash sale banner with countdown */}
       <div className="px-3 mt-3">
         <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)', boxShadow: '0 10px 30px rgba(203,32,45,0.30)' }}>
-          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-white/10" />
-          <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-full bg-white/10" />
+          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-[8px] bg-white/10" />
+          <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-[8px] bg-white/10" />
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame size={18} className="text-[#FFD54F]" fill="#FFD54F" />
@@ -589,7 +589,7 @@ export default function MobileProductDetail() {
             <button key={c.code}
               onClick={() => { navigator.clipboard?.writeText(c.code).catch(() => {}); showToast(`Coupon ${c.code} copied!`, 'success') }}
               className="snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(203,32,45,0.08)] active:scale-[0.97] transition relative overflow-hidden">
-              <span className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }}><Tag size={15} className="text-white" /></span>
+              <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }}><Tag size={15} className="text-white" /></span>
               <div className="text-left">
                 <p className="text-[14px] font-extrabold leading-tight text-[#1F2937]">{c.label}</p>
                 <p className="text-[10px] font-bold px-1.5 py-0.5 rounded inline-block mt-0.5" style={{ color: PURPLE, background: '#FEE2E6' }}>{c.code}</p>
@@ -597,7 +597,7 @@ export default function MobileProductDetail() {
             </button>
           ))}
           <div className={`snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl text-white`} style={{ background: 'linear-gradient(135deg,#16A34A,#15803D)' }}>
-            <span className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0"><Gift size={15} className="text-white" /></span>
+            <span className="w-9 h-9 rounded-[8px] bg-white/20 flex items-center justify-center flex-shrink-0"><Gift size={15} className="text-white" /></span>
             <div className="text-left">
               <p className="text-[13px] font-extrabold leading-tight">Free Delivery</p>
               <p className="text-[10px] text-white/85">On this order</p>
@@ -684,32 +684,32 @@ export default function MobileProductDetail() {
 
           {/* Floating overlay buttons top-right */}
           <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
-            <button onClick={toggleWishlist} aria-label="Wishlist" className="w-12 h-12 rounded-full bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition" style={wished ? { background: '#FEE2F2' } : undefined}>
+            <button onClick={toggleWishlist} aria-label="Wishlist" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition" style={wished ? { background: '#FEE2F2' } : undefined}>
               <motion.span animate={wished ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
                 <Heart size={21} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#CB202D]'} />
               </motion.span>
             </button>
-            <button onClick={handleShare} aria-label="Share" className="w-12 h-12 rounded-full bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition">
+            <button onClick={handleShare} aria-label="Share" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition">
               <Share2 size={20} className="text-[#CB202D]" />
             </button>
           </div>
 
           {/* Discount badge */}
           {discountPct > 0 && (
-            <span className="absolute top-3 left-3 z-20 text-[11px] font-extrabold text-white px-3 py-1 rounded-full bg-gradient-to-r from-[#EF4444] to-[#F97316] shadow-[0_6px_16px_rgba(239,68,68,0.4)]">
+            <span className="absolute top-3 left-3 z-20 text-[11px] font-extrabold text-white px-3 py-1 rounded-[8px] bg-gradient-to-r from-[#EF4444] to-[#F97316] shadow-[0_6px_16px_rgba(239,68,68,0.4)]">
               {discountPct}% OFF
             </span>
           )}
 
           {/* Rating badge bottom-left */}
-          <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
+          <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-white/90 backdrop-blur shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
             <span className="text-[12px] font-bold text-[#1F2937]">{rating.toFixed(1)}</span>
             <Star size={12} fill="#F59E0B" className="text-[#F59E0B]" />
             <span className="text-[10px] text-[#6B7280]">({ratingCount})</span>
           </div>
 
           {images.length > 1 && (
-            <div className="absolute bottom-3 right-3 z-20 text-[11px] font-semibold text-[#1F2937] bg-white/90 backdrop-blur px-2.5 py-1 rounded-full shadow">
+            <div className="absolute bottom-3 right-3 z-20 text-[11px] font-semibold text-[#1F2937] bg-white/90 backdrop-blur px-2.5 py-1 rounded-[8px] shadow">
               {selectedImage + 1}/{images.length}
             </div>
           )}
@@ -733,7 +733,7 @@ export default function MobileProductDetail() {
         <div className="px-3 mt-3 space-y-3">
           {/* Product info card */}
           <div className={`${card} p-4 skel-stagger-1`}>
-            <div className="h-3 w-16 rounded-full skel-brand" />
+            <div className="h-3 w-16 rounded-[8px] skel-brand" />
             <div className="h-5 w-3/4 rounded mt-2.5 skel-brand" />
             <div className="h-3 w-2/5 rounded mt-2 skel-brand" />
             <div className="flex items-center gap-2 mt-3">
@@ -744,7 +744,7 @@ export default function MobileProductDetail() {
             <div className="flex items-end gap-2 mt-3">
               <div className="h-7 w-24 rounded skel-brand" />
               <div className="h-3.5 w-14 rounded skel-brand" />
-              <div className="h-5 w-12 rounded-full skel-brand" />
+              <div className="h-5 w-12 rounded-[8px] skel-brand" />
             </div>
             <div className="h-3 w-20 rounded mt-2 skel-brand" />
           </div>
@@ -763,7 +763,7 @@ export default function MobileProductDetail() {
 
           {/* Variant buttons card */}
           <div className={`${card} p-4 skel-stagger-3`}>
-            <div className="h-3 w-20 rounded-full skel-brand" />
+            <div className="h-3 w-20 rounded-[8px] skel-brand" />
             <div className="flex gap-2 mt-2.5">
               <div className="flex-1 h-11 rounded-2xl skel-brand" />
               <div className="flex-1 h-11 rounded-2xl skel-brand" />
@@ -776,7 +776,7 @@ export default function MobileProductDetail() {
             <div className="space-y-3 mt-3">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full skel-brand flex-shrink-0" />
+                  <div className="w-8 h-8 rounded-[8px] skel-brand flex-shrink-0" />
                   <div className="flex-1 space-y-1.5">
                     <div className="h-3 w-3/4 rounded skel-brand" />
                     <div className="h-2.5 w-1/2 rounded skel-brand" />
@@ -791,7 +791,7 @@ export default function MobileProductDetail() {
             <div className="grid grid-cols-3 gap-2.5">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex flex-col items-center gap-1.5 bg-[#FFFBFB] rounded-xl px-2 py-3">
-                  <div className="w-9 h-9 rounded-full skel-brand" />
+                  <div className="w-9 h-9 rounded-[8px] skel-brand" />
                   <div className="h-2 w-12 rounded skel-brand" />
                 </div>
               ))}
@@ -806,10 +806,10 @@ export default function MobileProductDetail() {
           {/* Badges */}
           {(trending || newArrival || bestSelling || featured) && (
             <div className="flex flex-wrap gap-1.5 mb-2.5">
-              {featured && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-full" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Featured</span>}
-              {bestSelling && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-full bg-[#16A34A]">Best Seller</span>}
-              {trending && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-full bg-[#EA580C]">Trending</span>}
-              {newArrival && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-full bg-[#0EA5E9]">New Arrival</span>}
+              {featured && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-[8px]" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Featured</span>}
+              {bestSelling && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-[8px] bg-[#16A34A]">Best Seller</span>}
+              {trending && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-[8px] bg-[#EA580C]">Trending</span>}
+              {newArrival && <span className="text-[10px] font-bold uppercase tracking-wide text-white px-2.5 py-1 rounded-[8px] bg-[#0EA5E9]">New Arrival</span>}
             </div>
           )}
           {productBrand && (
@@ -838,7 +838,7 @@ export default function MobileProductDetail() {
             <span className="text-[28px] font-black">₹{Number(currentPrice).toLocaleString('en-IN')}</span>
             {mrp > currentPrice && <span className="text-[15px] text-[#9CA3AF] line-through mb-1.5">₹{Number(mrp).toLocaleString('en-IN')}</span>}
             {discountPct > 0 && (
-              <span className="text-[12px] font-extrabold px-2.5 py-1 rounded-full mb-1.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{discountPct}% off</span>
+              <span className="text-[12px] font-extrabold px-2.5 py-1 rounded-[8px] mb-1.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{discountPct}% off</span>
             )}
           </div>
 
@@ -904,8 +904,8 @@ export default function MobileProductDetail() {
                           <p className="text-[14px] font-black">₹{Number(vPrice).toLocaleString('en-IN')}</p>
                           {vMrp > vPrice && <p className="text-[10px] text-[#9CA3AF] line-through">₹{Number(vMrp).toLocaleString('en-IN')}</p>}
                         </div>
-                        {vOff > 0 && <span className="text-[10px] font-extrabold rounded-full px-1.5 py-0.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{vOff}%</span>}
-                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#CB202D] bg-[#CB202D]' : 'border-[#D1D5DB]'}`}>
+                        {vOff > 0 && <span className="text-[10px] font-extrabold rounded-[8px] px-1.5 py-0.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{vOff}%</span>}
+                        <span className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#CB202D] bg-[#CB202D]' : 'border-[#D1D5DB]'}`}>
                           {selected && <Check size={12} className="text-white" />}
                         </span>
                       </div>
@@ -923,7 +923,7 @@ export default function MobileProductDetail() {
               <div className="flex gap-3">
                 {colors.map((c: string, i: number) => (
                   <button key={c} onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
-                    className={`w-11 h-11 rounded-full border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#CB202D] scale-110 shadow-[0_4px_12px_rgba(203,32,45,0.35)]' : 'border-[#E5E7EB]'}`}
+                    className={`w-11 h-11 rounded-[8px] border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#CB202D] scale-110 shadow-[0_4px_12px_rgba(203,32,45,0.35)]' : 'border-[#E5E7EB]'}`}
                     style={{ backgroundColor: COLOR_PALETTE[c.toLowerCase().trim()] || '#ccc' }} title={c} />
                 ))}
               </div>
@@ -965,12 +965,12 @@ export default function MobileProductDetail() {
           {/* Stock status */}
           <div className="mt-4 flex items-center gap-2">
             {!inStock ? (
-              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-full bg-[#EF4444]">Out of Stock</span>
+              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-[8px] bg-[#EF4444]">Out of Stock</span>
             ) : stockQty <= lowStockAlert ? (
-              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-full bg-[#EA580C]">Only {stockQty} left — Hurry!</span>
+              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-[8px] bg-[#EA580C]">Only {stockQty} left — Hurry!</span>
             ) : (
-              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-full flex items-center gap-1" style={{ background: SUCCESS }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> In Stock ({stockQty} available)
+              <span className="text-[12px] font-bold text-white px-3 py-1 rounded-[8px] flex items-center gap-1" style={{ background: SUCCESS }}>
+                <span className="w-1.5 h-1.5 rounded-[8px] bg-white animate-pulse" /> In Stock ({stockQty} available)
               </span>
             )}
           </div>
@@ -978,12 +978,12 @@ export default function MobileProductDetail() {
           {/* Quantity */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-[13px] font-bold">Quantity</p>
-            <div className="flex items-center rounded-full p-1" style={{ background: '#FEE2E6' }}>
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition" aria-label="Decrease" style={{ color: PURPLE }}>
+            <div className="flex items-center rounded-[8px] p-1" style={{ background: '#FEE2E6' }}>
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 rounded-[8px] flex items-center justify-center active:scale-90 transition" aria-label="Decrease" style={{ color: PURPLE }}>
                 <Minus size={16} />
               </button>
               <span className="w-10 text-center font-bold text-[14px]">{qty}</span>
-              <button onClick={() => setQty(Math.min(stockQty, qty + 1))} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition text-white" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }} aria-label="Increase">
+              <button onClick={() => setQty(Math.min(stockQty, qty + 1))} className="w-9 h-9 rounded-[8px] flex items-center justify-center active:scale-90 transition text-white" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }} aria-label="Increase">
                 <Plus size={16} />
               </button>
             </div>
@@ -1030,7 +1030,7 @@ export default function MobileProductDetail() {
             <div className="grid grid-cols-2 gap-2.5">
               {features.slice(0, 6).map((f: string, i: number) => (
                 <div key={i} className="flex items-start gap-2 text-[12.5px] bg-[#FFFBFB] rounded-xl px-3 py-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#ECFDF5' }}><Check size={13} className="text-[#16A34A]" /></span>
+                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#ECFDF5' }}><Check size={13} className="text-[#16A34A]" /></span>
                   <span className="leading-tight">{f}</span>
                 </div>
               ))}
@@ -1046,7 +1046,7 @@ export default function MobileProductDetail() {
               const Icon = d.icon
               return (
                 <div key={i} className="flex flex-col items-center gap-1.5 text-center bg-[#FFFBFB] rounded-xl px-2 py-3">
-                  <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#FEE2E6', color: PURPLE }}><Icon size={16} /></span>
+                  <span className="w-9 h-9 rounded-[8px] flex items-center justify-center" style={{ background: '#FEE2E6', color: PURPLE }}><Icon size={16} /></span>
                   <span className="text-[11px] font-medium leading-tight text-[#4B5563]">{d.label}</span>
                 </div>
               )
@@ -1074,7 +1074,7 @@ export default function MobileProductDetail() {
             <div className="space-y-2">
               {careInstructions.map((c: string, i: number) => (
                 <div key={i} className="flex items-start gap-2.5 bg-[#FFFBFB] rounded-xl px-3 py-2.5">
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEE2E6', color: PURPLE }}>
+                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEE2E6', color: PURPLE }}>
                     <span className="text-[11px] font-bold">{i + 1}</span>
                   </span>
                   <span className="text-[12.5px] text-[#4B5563] leading-tight">{c}</span>
@@ -1138,8 +1138,8 @@ export default function MobileProductDetail() {
               <div key={star} className="flex items-center gap-2 mt-1.5">
                 <span className="text-[11px] text-[#6B7280] w-3">{star}</span>
                 <Star size={11} fill="#F59E0B" className="text-[#F59E0B]" />
-                <div className="flex-1 h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }} />
+                <div className="flex-1 h-1.5 rounded-[8px] bg-[#E5E7EB] overflow-hidden">
+                  <div className="h-full rounded-[8px]" style={{ width: `${pct}%`, background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }} />
                 </div>
               </div>
             )
@@ -1172,7 +1172,7 @@ export default function MobileProductDetail() {
                   {reviews.length > 0 ? reviews.map((r: any, i: number) => (
                     <div key={r.id || i} className="bg-[#FFFBFB] rounded-2xl p-3">
                       <div className="flex items-center gap-2.5">
-                        <span className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[13px]" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{(r.userName || r.name || 'U').charAt(0).toUpperCase()}</span>
+                        <span className="w-9 h-9 rounded-[8px] flex items-center justify-center text-white font-bold text-[13px]" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{(r.userName || r.name || 'U').charAt(0).toUpperCase()}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-[13px] font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#CB202D]" /></p>
                           <p className="text-[10.5px] text-[#9CA3AF]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.date}</p>
@@ -1223,9 +1223,9 @@ export default function MobileProductDetail() {
                         <img src={getImageUrl(p.image) || getProductImage(p) || FALLBACK_IMG} alt={p.name} className="w-full h-full object-contain p-2" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                       </button>
                       {pOff > 0 && (
-                        <span className="absolute top-2 left-2 text-[9px] font-extrabold text-white px-2 py-0.5 rounded-full bg-gradient-to-r from-[#EF4444] to-[#F97316]">{pOff}% off</span>
+                        <span className="absolute top-2 left-2 text-[9px] font-extrabold text-white px-2 py-0.5 rounded-[8px] bg-gradient-to-r from-[#EF4444] to-[#F97316]">{pOff}% off</span>
                       )}
-                      <button onClick={() => { if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname); navigate('/login'); return } const wl = new Set<number>((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).map((x: any) => typeof x === 'number' ? x : x.id)); if (wl.has(Number(p.id))) wl.delete(Number(p.id)); else wl.add(Number(p.id)); localStorage.setItem('wishlist', JSON.stringify(Array.from(wl))); window.dispatchEvent(new Event('wishlist-updated')); showToast('Wishlist updated', 'success') }} aria-label="Wishlist" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white shadow flex items-center justify-center">
+                      <button onClick={() => { if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname); navigate('/login'); return } const wl = new Set<number>((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).map((x: any) => typeof x === 'number' ? x : x.id)); if (wl.has(Number(p.id))) wl.delete(Number(p.id)); else wl.add(Number(p.id)); localStorage.setItem('wishlist', JSON.stringify(Array.from(wl))); window.dispatchEvent(new Event('wishlist-updated')); showToast('Wishlist updated', 'success') }} aria-label="Wishlist" className="absolute top-2 right-2 w-7 h-7 rounded-[8px] bg-white shadow flex items-center justify-center">
                         <Heart size={13} className="text-[#CB202D]" />
                       </button>
                     </div>
@@ -1303,7 +1303,7 @@ export default function MobileProductDetail() {
       {/* Zoom helper hint */}
       {zoomScale > 1 && (
         <button onClick={() => { setZoomScale(1); setZoomOrigin('center center') }}
-          className="fixed bottom-28 right-4 z-[60] px-3.5 py-2 rounded-full bg-black/75 text-white text-[12px] font-semibold shadow-lg active:scale-90 transition">
+          className="fixed bottom-28 right-4 z-[60] px-3.5 py-2 rounded-[8px] bg-black/75 text-white text-[12px] font-semibold shadow-lg active:scale-90 transition">
           Reset Zoom
         </button>
       )}

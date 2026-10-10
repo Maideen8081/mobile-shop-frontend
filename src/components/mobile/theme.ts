@@ -35,11 +35,11 @@ export const C = {
   cardPress: 'active:scale-[0.98] transition',
   sectionTitle: 'text-[17px] font-extrabold text-[#0F172A] tracking-tight',
   viewAll: 'text-[12px] font-bold text-[#CB202D] flex items-center gap-0.5 active:opacity-70',
-  chip: 'text-[10px] font-bold px-2 py-0.5 rounded-full',
+  chip: 'text-[10px] font-bold px-2 py-0.5 rounded-[8px]',
   primaryBtn:
     'bg-[#CB202D] text-white font-bold active:scale-95 transition shadow-[0_6px_16px_rgba(203,32,45,0.28)]',
   iconWrap: 'rounded-xl bg-[#FEE2E6] text-[#CB202D] flex items-center justify-center',
-  pill: 'rounded-full',
+  pill: 'rounded-[8px]',
   grad: 'linear-gradient(135deg,#A81D2A 0%,#CB202D 55%,#FF5A65 100%)',
   gradSoft: 'linear-gradient(135deg,#FEE2E6 0%,#FDD 100%)',
 }

@@ -66,7 +66,7 @@ export default function StatusUpdateModal({ open, currentStatus, onClose, onUpda
                       <p className={`text-sm font-semibold ${selected ? opt.color : 'text-text-secondary'}`}>{opt.value}</p>
                       {i === currentIdx && <p className="text-[10px] text-text-muted">Current status</p>}
                     </div>
-                    {selected && <span className={`w-6 h-6 rounded-full ${opt.bg} flex items-center justify-center`}><FiCheckCircle size={14} className={opt.color} /></span>}
+                    {selected && <span className={`w-6 h-6 rounded-[8px] ${opt.bg} flex items-center justify-center`}><FiCheckCircle size={14} className={opt.color} /></span>}
                   </motion.button>
                 )
               })}

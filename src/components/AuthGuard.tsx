@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { authService } from '../services/authService'
+import { useAuth } from '../context/AuthContext'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -9,15 +9,18 @@ interface AuthGuardProps {
 export default function AuthGuard({ children }: AuthGuardProps) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { isAuthenticated, loading } = useAuth()
 
   useEffect(() => {
-    if (!authService.isAuthenticated()) {
-      sessionStorage.setItem('redirect_after_login', location.pathname)
+    if (loading) return
+    if (!isAuthenticated) {
+      sessionStorage.setItem('redirect_after_login', location.pathname + location.search)
       navigate('/login', { replace: true })
     }
-  }, [navigate, location])
+  }, [isAuthenticated, loading, navigate, location])
 
-  if (!authService.isAuthenticated()) return null
+  if (loading) return null
+  if (!isAuthenticated) return null
 
   return <>{children}</>
 }

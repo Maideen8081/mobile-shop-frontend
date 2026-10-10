@@ -32,7 +32,7 @@ export default function WarrantyTimeline({ events }: WarrantyTimelineProps) {
 
   return (
     <div className="relative">
-      <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary/40 via-info/40 to-border rounded-full" />
+      <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary/40 via-info/40 to-border rounded-[8px]" />
       <div className="space-y-0">
         {events.map((event, i) => {
           const cfg = typeConfig[event.type] || typeConfig.created

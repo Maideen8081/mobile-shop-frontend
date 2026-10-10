@@ -1,11 +1,16 @@
 import AppRoutes from './route'
 import { ToastProvider } from './context/ToastContext'
+import { AuthProvider } from './context/AuthContext'
+import SupportChatButton from './components/ecommerce/SupportChatButton'
 
 function App() {
   return (
-    <ToastProvider>
-      <AppRoutes />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <AppRoutes />
+        <SupportChatButton />
+      </ToastProvider>
+    </AuthProvider>
   )
 }
 

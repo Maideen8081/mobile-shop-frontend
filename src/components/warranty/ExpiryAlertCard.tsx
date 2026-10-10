@@ -35,7 +35,7 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
       whileHover={{ y: -4, boxShadow: '0 24px 60px rgba(0,0,0,0.06)' }}
       className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
     >
-      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#CB202D' : isWarning ? '#CB202D' : '#A81D2A'}, transparent)` }} />
+      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-[8px] blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#CB202D' : isWarning ? '#CB202D' : '#A81D2A'}, transparent)` }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
@@ -54,8 +54,8 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
               </p>
             </div>
           </div>
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold ${urgencyBg} ${urgencyColor} border`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${urgencyDot}`} />
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] text-[10px] font-semibold ${urgencyBg} ${urgencyColor} border`}>
+            <span className={`w-1.5 h-1.5 rounded-[8px] ${urgencyDot}`} />
             {days}d left
           </span>
         </div>
@@ -70,12 +70,12 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
             <span>Time remaining</span>
             <span className={`font-bold ${urgencyColor}`}>{days} days</span>
           </div>
-          <div className="w-full h-1.5 rounded-full bg-surface-lighter overflow-hidden">
+          <div className="w-full h-1.5 rounded-[8px] bg-surface-lighter overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.min((days / 365) * 100, 100)}%` }}
               transition={{ duration: 1, ease: 'easeOut' }}
-              className={`h-full rounded-full ${isCritical ? 'bg-gradient-to-r from-red-400 to-red-500' : isWarning ? 'bg-gradient-to-r from-primary to-primary-hover' : 'bg-gradient-to-r from-primary to-primary-hover'}`}
+              className={`h-full rounded-[8px] ${isCritical ? 'bg-gradient-to-r from-red-400 to-red-500' : isWarning ? 'bg-gradient-to-r from-primary to-primary-hover' : 'bg-gradient-to-r from-primary to-primary-hover'}`}
             />
           </div>
         </div>

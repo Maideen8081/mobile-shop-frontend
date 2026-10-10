@@ -121,7 +121,7 @@ export default function MobileOrderSuccess() {
   const confetti = ['#CB202D', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#FF5A65']
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Confetti */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {confetti.map((c, i) => (
@@ -132,22 +132,22 @@ export default function MobileOrderSuccess() {
 
       {/* Top banner */}
       <div className="relative px-4 pt-4 pb-24 text-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
-        <div className="absolute -top-16 -right-10 w-48 h-48 rounded-full bg-white/15 blur-2xl" />
-        <div className="absolute -bottom-12 -left-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-        <button onClick={() => navigate('/home')} className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center z-10">
+        <div className="absolute -top-16 -right-10 w-48 h-48 rounded-[8px] bg-white/15 blur-2xl" />
+        <div className="absolute -bottom-12 -left-10 w-40 h-40 rounded-[8px] bg-white/10 blur-2xl" />
+        <button onClick={() => navigate('/home')} className="absolute top-4 left-4 w-9 h-9 rounded-[8px] bg-white/20 flex items-center justify-center z-10">
           <FiChevronLeft size={20} className="text-white" />
         </button>
         <div className="relative w-24 h-24 mx-auto mt-6">
-          <span className="absolute inset-0 rounded-full bg-white/25 animate-ping" />
-          <div className="relative w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-xl">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
+          <span className="absolute inset-0 rounded-[8px] bg-white/25 animate-ping" />
+          <div className="relative w-24 h-24 rounded-[8px] bg-white flex items-center justify-center shadow-xl">
+            <div className="w-16 h-16 rounded-[8px] flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
               <FiCheck size={34} className="text-white" />
             </div>
           </div>
         </div>
         <h1 className="text-[22px] font-bold text-white mt-4">Order Confirmed!</h1>
         <p className="text-[13px] text-white/80 mt-1">Thank you — your order has been placed.</p>
-        <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-white/20 text-[11px] font-semibold text-white">
+        <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-[8px] bg-white/20 text-[11px] font-semibold text-white">
           <FiCheck size={12} /> Payment Successful
         </span>
       </div>
@@ -159,7 +159,7 @@ export default function MobileOrderSuccess() {
             <p className="text-[11px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
             <p className="text-[16px] font-bold text-[#1F2937]">{displayOrderId}</p>
           </div>
-          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-full text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-[8px] text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
             {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
           </button>
         </div>
@@ -181,13 +181,13 @@ export default function MobileOrderSuccess() {
               return (
                 <div key={step} className="flex items-center flex-1 last:flex-none">
                   <div className="flex flex-col items-center flex-shrink-0">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center ${done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
+                    <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center ${done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
                       style={done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
                       {done ? <FiCheck size={14} /> : <span className="text-[10px] font-bold">{i + 1}</span>}
                     </div>
                     <span className={`text-[9px] mt-1 font-semibold text-center leading-tight ${done ? 'text-[#15803D]' : 'text-[#9CA3AF]'}`}>{label}</span>
                   </div>
-                  {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-full ${done && i < currentStep ? '' : 'bg-[#E5E7EB]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
+                  {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-[8px] ${done && i < currentStep ? '' : 'bg-[#E5E7EB]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
                 </div>
               )
             })}
@@ -278,11 +278,11 @@ export default function MobileOrderSuccess() {
 
       {/* Sticky CTAs */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5">
-        <button onClick={() => navigate(`/orders?order_id=${orderId}`)} className="flex-1 h-12 rounded-full text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2"
+        <button onClick={() => navigate(`/orders?order_id=${orderId}`)} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           <FiTruck size={15} /> Track Order
         </button>
-        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-full text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2">
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2">
           <FiShoppingBag size={15} /> Shop More
         </button>
       </div>

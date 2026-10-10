@@ -70,7 +70,7 @@ export default function CategoryTable({ data, onEdit, onDelete }: CategoryTableP
                     {cat.subcategories.map((sub) => (
                       <span
                         key={sub.id}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] text-[11px] font-medium"
                         style={{
                           backgroundColor: 'rgba(139,92,246,0.16)',
                           color: '#c4b5fd',

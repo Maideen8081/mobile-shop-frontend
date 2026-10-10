@@ -631,13 +631,13 @@ const counts = useMemo(() => {
                         const isActive = idx === currentIdx
                         return (
                           <div key={step} className="flex items-center gap-3 py-2">
-                            <div className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                            <div className={`relative z-10 w-6 h-6 rounded-[8px] flex items-center justify-center shrink-0 ${
                               isActive ? 'bg-primary shadow-lg shadow-primary/30' :
                               isCompleted ? 'bg-primary/20' : 'bg-gray-200'
                             }`}>
                               {isCompleted ? <FiCheckCircle size={12} className="text-primary" /> :
-                               isActive ? <div className="w-2 h-2 rounded-full bg-white" /> :
-                               <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />}
+                               isActive ? <div className="w-2 h-2 rounded-[8px] bg-white" /> :
+                               <div className="w-1.5 h-1.5 rounded-[8px] bg-gray-400" />}
                             </div>
                             <span className={`text-xs font-medium ${
                               isActive ? 'text-text-primary font-semibold' : isCompleted ? 'text-primary' : 'text-text-muted'
@@ -741,7 +741,7 @@ const counts = useMemo(() => {
                   <h3 className="text-base font-bold text-text-primary">Repair Estimate</h3>
                   <p className="text-xs font-mono text-text-muted">{selectedTicket.repairId}</p>
                 </div>
-                <button onClick={() => setRepairModalOpen(false)} className="ml-auto w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"><FiX size={14} /></button>
+                <button onClick={() => setRepairModalOpen(false)} className="ml-auto w-8 h-8 rounded-[8px] bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"><FiX size={14} /></button>
               </div>
               <div className="space-y-4">
                 <div>

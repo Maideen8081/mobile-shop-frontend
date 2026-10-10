@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock, FiUserPlus, FiCheck, FiShield, FiHeadphones } from 'react-icons/fi'
 import { useAuthForm } from '../hooks/useAuthForm'
 import { createValidator, required, email, minLength, passwordStrength } from '../utils/validation'
-import { authService } from '../services/authService'
+import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import MobileRegister from '../components/mobile/MobileRegister'
 import { useIsMobile } from '../components/mobile/helpers'
@@ -57,12 +57,13 @@ export default function RegisterPage() {
   if (isMobile) return <MobileRegister />
   const navigate = useNavigate()
   const showToast = useToast().show
+  const { register } = useAuth()
   const { formData, errors, loading, handleChange, setField, handleSubmit } = useAuthForm<RegisterFormData>({
     initial: { fullName: '', email: '', password: '', confirmPassword: '', agreeTerms: false },
     validate: validateRegister,
     onSubmit: async (data) => {
       try {
-        await authService.register(data)
+        await register(data)
         showToast('Account created successfully!', 'success')
         const redirect = sessionStorage.getItem('redirect_after_login')
         sessionStorage.removeItem('redirect_after_login')
@@ -107,7 +108,7 @@ export default function RegisterPage() {
       <main className="flex-grow flex items-center justify-center relative overflow-hidden" style={{ padding: '80px 64px' }}>
         <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-[8px]"
             style={{
               top: '-12rem',
               left: '-12rem',
@@ -118,7 +119,7 @@ export default function RegisterPage() {
             }}
           />
           <div
-            className="absolute rounded-full"
+            className="absolute rounded-[8px]"
             style={{
               bottom: '-12rem',
               right: '-12rem',
@@ -164,7 +165,7 @@ export default function RegisterPage() {
                   <button
                     key={index}
                     onClick={() => setActiveSlide(index)}
-                    className="transition-all duration-300 rounded-full"
+                    className="transition-all duration-300 rounded-[8px]"
                     style={{
                       width: index === activeSlide ? '28px' : '8px',
                       height: '8px',

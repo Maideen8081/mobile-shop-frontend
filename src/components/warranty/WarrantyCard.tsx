@@ -33,7 +33,7 @@ export default function WarrantyCard({ warranty }: WarrantyCardProps) {
       whileHover={{ y: -6, boxShadow: '0 32px 80px rgba(0,0,0,0.08)' }}
       className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
     >
-      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-30" style={{ background: `radial-gradient(circle, ${days < 0 ? '#64748b' : isUrgent ? '#CB202D' : '#A81D2A'}, transparent)` }} />
+      <div className="absolute -top-16 -right-16 w-40 h-40 rounded-[8px] blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-30" style={{ background: `radial-gradient(circle, ${days < 0 ? '#64748b' : isUrgent ? '#CB202D' : '#A81D2A'}, transparent)` }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
@@ -46,8 +46,8 @@ export default function WarrantyCard({ warranty }: WarrantyCardProps) {
               <p className="text-[11px] text-text-muted font-medium">{warranty.productBrand}</p>
             </div>
           </div>
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold ${s.bg} ${s.text} border border-border`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[8px] text-[10px] font-semibold ${s.bg} ${s.text} border border-border`}>
+            <span className={`w-1.5 h-1.5 rounded-[8px] ${s.dot}`} />
             {warranty.status}
           </span>
         </div>

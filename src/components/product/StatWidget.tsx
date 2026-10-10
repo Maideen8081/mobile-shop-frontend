@@ -24,7 +24,7 @@ export default function StatWidget({ label, value, icon, color, bgGlow, delay }:
       whileHover={{ y: -4, boxShadow: '0 20px 60px rgba(0,0,0,0.06)' }}
       className="relative rounded-xl bg-bg-card border border-border shadow-sm p-4 overflow-hidden group cursor-pointer"
     >
-      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" style={{ background: bgGlow }} />
+      <div className="absolute -top-8 -right-8 w-24 h-24 rounded-[8px] blur-2xl group-hover:scale-150 transition-transform duration-700" style={{ background: bgGlow }} />
       <div className="relative z-10 flex items-start justify-between">
         <div>
           <p className="text-xs text-text-muted font-medium">{label}</p>

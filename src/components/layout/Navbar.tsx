@@ -159,7 +159,7 @@ export default function Navbar({ setMobileOpen, title = 'Dashboard' }: NavbarPro
 
               <button className="relative w-9 h-9 rounded-lg flex items-center justify-center text-text-muted hover:bg-white/[0.04] transition-colors" aria-label="Messages">
                 <FiMessageCircle size={18} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-success ring-2 ring-surface" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-[8px] bg-success ring-2 ring-surface" />
               </button>
 
               <div ref={notifRef} className="relative">
@@ -170,7 +170,7 @@ export default function Navbar({ setMobileOpen, title = 'Dashboard' }: NavbarPro
                 >
                   <FiBell size={18} />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-full bg-danger text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-surface">
+                    <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 rounded-[8px] bg-danger text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-surface">
                       {unreadCount}
                     </span>
                   )}
@@ -205,7 +205,7 @@ export default function Navbar({ setMobileOpen, title = 'Dashboard' }: NavbarPro
                               <p className="text-[11px] text-text-label mt-0.5">{n.time}</p>
                             </div>
                             {n.unread && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 mt-2" />
+                              <span className="w-1.5 h-1.5 rounded-[8px] bg-primary flex-shrink-0 mt-2" />
                             )}
                           </button>
                         ))}
@@ -251,7 +251,7 @@ export default function Navbar({ setMobileOpen, title = 'Dashboard' }: NavbarPro
                           <div>
                             <p className="text-sm font-semibold text-text-primary">Maideen</p>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                              <span className="w-1.5 h-1.5 rounded-[8px] bg-success" />
                               <span className="text-[11px] text-text-label">Online</span>
                             </div>
                           </div>

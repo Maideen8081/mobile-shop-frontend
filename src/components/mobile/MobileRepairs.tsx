@@ -61,7 +61,7 @@ function ServiceCard({ service, index, onBook }: { service: typeof services[0]; 
           <h3 className="text-[14px] font-bold leading-tight" style={{ color: BRAND.ink }}>{service.title}</h3>
           <p className="text-[11.5px] mt-0.5 leading-snug line-clamp-2" style={{ color: BRAND.muted }}>{service.desc}</p>
         </div>
-        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)' }}>
+        <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)' }}>
           <ArrowRight size={14} style={{ color: BRAND.primary }} />
         </div>
       </div>
@@ -125,14 +125,14 @@ export default function MobileRepairs() {
             borderBottomRightRadius: 28,
           }}
         >
-          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-16 -left-8 w-32 h-32 rounded-full bg-white/8 blur-3xl" />
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-[8px] bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-8 w-32 h-32 rounded-[8px] bg-white/8 blur-3xl" />
 
           <div className="flex items-center gap-3 relative z-10">
             <button
               onClick={() => navigate(-1)}
               aria-label="Back"
-              className="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
+              className="w-9 h-9 rounded-[8px] bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
             >
               <span className="material-symbols-outlined text-lg">arrow_back</span>
             </button>
@@ -155,7 +155,7 @@ export default function MobileRepairs() {
                   <h2 className="text-[17px] font-extrabold text-white leading-tight">We Fix It, Fast</h2>
                   <p className="text-[11px] text-white/80 mt-0.5">Screen, battery, water damage & more</p>
                 </div>
-                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }}>
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-[8px]" style={{ background: 'rgba(255,255,255,0.2)' }}>
                   <span className="text-[10px] font-bold text-white">4.8</span>
                   <Star size={11} className="text-white fill-white" />
                 </div>
@@ -200,7 +200,7 @@ export default function MobileRepairs() {
       {/* ─── HOW IT WORKS ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
             <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>How It Works</h2>
             <p className="text-[11px]" style={{ color: BRAND.muted }}>Four simple steps to get your device fixed</p>
@@ -218,7 +218,7 @@ export default function MobileRepairs() {
       {/* ─── BRANDS ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
             <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Brands We Service</h2>
             <p className="text-[11px]" style={{ color: BRAND.muted }}>All major brands supported</p>
@@ -248,7 +248,7 @@ export default function MobileRepairs() {
       {/* ─── FAQ ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
             <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Quick FAQs</h2>
             <p className="text-[11px]" style={{ color: BRAND.muted }}>Common questions answered</p>

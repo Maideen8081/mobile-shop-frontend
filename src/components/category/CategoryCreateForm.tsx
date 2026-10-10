@@ -108,12 +108,12 @@ export default function CategoryCreateForm({
         <motion.button
           type="button"
           onClick={() => setStatus(!status)}
-          className={`relative w-11 h-6 rounded-full transition-colors duration-300 cursor-pointer ${status ? 'bg-primary' : 'bg-gray-300'}`}
+          className={`relative w-11 h-6 rounded-[8px] transition-colors duration-300 cursor-pointer ${status ? 'bg-primary' : 'bg-gray-300'}`}
         >
           <motion.span
             layout
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-            className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm ${status ? 'right-0.5' : 'left-0.5'}`}
+            className={`absolute top-0.5 w-5 h-5 rounded-[8px] bg-white shadow-sm ${status ? 'right-0.5' : 'left-0.5'}`}
           />
         </motion.button>
       </div>
@@ -167,14 +167,14 @@ export default function CategoryCreateForm({
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setFile(null) }}
-                  className="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full bg-danger/90 flex items-center justify-center hover:bg-danger transition-colors cursor-pointer shadow-md"
+                  className="absolute -top-2.5 -right-2.5 w-7 h-7 rounded-[8px] bg-danger/90 flex items-center justify-center hover:bg-danger transition-colors cursor-pointer shadow-md"
                 >
                   <FiX size={13} className="text-white" />
                 </button>
               </>
             ) : (
               <>
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                <div className="w-12 h-12 rounded-[8px] bg-primary/10 flex items-center justify-center mb-2">
                   <FiImage size={22} className="text-primary" />
                 </div>
                 <p className="text-sm text-text-secondary font-medium">Drop image here or click to browse</p>
@@ -223,7 +223,7 @@ export default function CategoryCreateForm({
             style={{ backgroundColor: '#CB202D' }}
           >
             {loading ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-[8px] animate-spin" />
             ) : (
               <FiPlus size={15} />
             )}

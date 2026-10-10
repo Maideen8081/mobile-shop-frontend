@@ -228,7 +228,7 @@ export default function AdminTradeInDashboard() {
               {loading ? (
                 <tr>
                   <td colSpan={7} className="text-center py-12 text-text-secondary">
-                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
+                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-[8px] animate-spin mx-auto mb-3" />
                     <p className="font-medium text-sm">Loading trade-ins...</p>
                   </td>
                 </tr>
@@ -266,13 +266,13 @@ export default function AdminTradeInDashboard() {
                     </td>
                     <td className="px-4 py-3 text-right font-bold text-text-primary text-sm">{formatCurrency(trade.estimatedValue)}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: sc.dot }} />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
+                        <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
                         {STATUS_LABELS[trade.status] || trade.status}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center hidden lg:table-cell">
-                      <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold" style={{ background: pc.bg, color: pc.text }}>
+                      <span className="inline-flex px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: pc.bg, color: pc.text }}>
                         {trade.paymentStatus === 'completed' ? 'Paid' : trade.paymentStatus === 'failed' ? 'Failed' : 'Pending'}
                       </span>
                     </td>
@@ -324,8 +324,8 @@ export default function AdminTradeInDashboard() {
                 {(() => {
                   const sc = STATUS_COLORS[selected.status] || STATUS_COLORS.pending
                   return (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: sc.dot }} />
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
+                      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
                       {STATUS_LABELS[selected.status] || selected.status}
                     </span>
                   )
@@ -556,7 +556,7 @@ export default function AdminTradeInDashboard() {
               onClick={() => setDeleteConfirm(null)}
             >
               <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
-                <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 rounded-[8px] bg-red-100 flex items-center justify-center mx-auto mb-4">
                   <FiTrash2 size={24} className="text-red-500" />
                 </div>
                 <h3 className="text-lg font-bold text-text-primary mb-1">Delete Trade-In?</h3>
