@@ -188,7 +188,7 @@ export default function MobileBookRepair() {
 
   if (result) {
     return (
-      <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(203,32,45,0.1)' }}>
           <FiCheckCircle size={40} style={{ color: PURPLE }} />
         </div>
@@ -215,7 +215,7 @@ export default function MobileBookRepair() {
   const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-[8px] bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#374151] active:scale-95 transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileTopSection title="Book a Repair" subtitle={selectedIssue || 'Step by step'} icon="wishlist" />
 
       <div className="px-4 pt-4">

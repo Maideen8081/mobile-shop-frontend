@@ -1,0 +1,138 @@
+/* Shared marketing section heading: pill eyebrow + display title with an
+   animated underline accent + subtitle. Consistent across Landing, Repairs,
+   About and Trade-In pages. */
+
+.sec-head__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sec-head__main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sec-head--center .sec-head__inner,
+.sec-head--center .sec-head__main {
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .sec-head--side .sec-head__inner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .sec-head--side .sec-head__side {
+    flex: none;
+    padding-bottom: 4px;
+  }
+}
+
+.sec-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border: 1px solid rgba(217, 30, 54, 0.2);
+  border-radius: 9999px;
+  background: var(--color-secondary-container);
+  color: var(--color-pf-red-dark);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sec-eyebrow__ic {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.sec-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+}
+
+.sec-sub {
+  margin: 14px 0 0;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+@media (min-width: 768px) {
+  .sec-sub {
+    font-size: 1.125rem;
+  }
+}
+.sec-head--center .sec-sub {
+  max-width: 42rem;
+}
+
+/* ── underline accent ── */
+
+.sec-ul {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  color: var(--color-pf-red-dark);
+}
+.sec-ul__svg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.1em;
+  width: 100%;
+  height: 0.24em;
+  fill: none;
+  stroke: var(--color-pf-red);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+}
+.sec-head.is-in .sec-ul__svg {
+  animation: sec-ul-fill 0.9s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes sec-ul-fill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ── light tone (dark / coloured backgrounds) ── */
+
+.sec-head--light .sec-title {
+  color: #fff;
+}
+.sec-head--light .sec-sub {
+  color: rgba(255, 255, 255, 0.6);
+}
+.sec-head--light .sec-eyebrow {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.sec-head--light .sec-ul {
+  color: #fff;
+}
+.sec-head--light .sec-ul__svg {
+  stroke: rgba(255, 255, 255, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sec-ul__svg {
+    stroke-dashoffset: 0;
+    animation: none !important;
+  }
+}

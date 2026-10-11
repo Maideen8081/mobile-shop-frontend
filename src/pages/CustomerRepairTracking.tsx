@@ -726,7 +726,7 @@ function RepairDetailModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] bg-[#FFFBFB] flex flex-col font-sans"
-        style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+        style={{ fontFamily: 'var(--font-ui)' }}
       >
         {/* Fixed header */}
         <div className="flex-shrink-0 w-full px-4 h-14 flex items-center gap-3" style={{ background: C.grad }}>
@@ -1319,7 +1319,7 @@ export default function CustomerRepairTracking() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="min-h-screen" style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
       <style>{`
         .pulse-rail {
           height: 4px; width: 100%;
@@ -1351,7 +1351,7 @@ export default function CustomerRepairTracking() {
         }
         @keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
         h1.title {
-          font-family: 'Fraunces', serif;
+          font-family:var(--font-display);
           font-weight: 700; font-size: clamp(36px, 5vw, 52px);
           line-height: 1.05; letter-spacing: -0.01em; margin: 0;
         }
@@ -1364,7 +1364,7 @@ export default function CustomerRepairTracking() {
           box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
         }
         .stat-chip .label { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #857D79; font-weight: 600; margin-bottom: 4px; }
-        .stat-chip .num { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; color: #1B1210; line-height: 1; }
+        .stat-chip .num { font-family:var(--font-display); font-size: 30px; font-weight: 700; color: #1B1210; line-height: 1; }
         .stat-chip.accent .num { color: #D91E36; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 36px 0 28px; }
         .stat-card {
@@ -1377,7 +1377,7 @@ export default function CustomerRepairTracking() {
         .stat-card:hover::before { opacity: 1; }
         .stat-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
         .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(217,30,54,0.06); color: #D91E36; }
-        .stat-card .value { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
+        .stat-card .value { font-family:var(--font-display); font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
         .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #857D79; }
         .stat-card.total .value { color: #1B1210; }
         .stat-card.active .value { color: #D91E36; }
@@ -1385,10 +1385,10 @@ export default function CustomerRepairTracking() {
         .stat-card.rejected .value { color: #857D79; }
         .control-panel { background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08); padding: 18px 20px; margin-bottom: 28px; }
         .search-row { display: flex; align-items: center; gap: 10px; background: #FBF8F6; border: 1px solid #ECE4E0; border-radius: 12px; padding: 11px 14px; margin-bottom: 14px; }
-        .search-row input { border: none; background: transparent; outline: none; font-family: 'Inter', sans-serif; font-size: 14px; width: 100%; color: #1B1210; }
+        .search-row input { border: none; background: transparent; outline: none; font-family:var(--font-ui); font-size: 14px; width: 100%; color: #1B1210; }
         .search-row input::placeholder { color: #857D79; }
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .filter-pill { border: 1px solid #ECE4E0; background: #FFFFFF; color: #4A403D; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all .15s ease; }
+        .filter-pill { border: 1px solid #ECE4E0; background: #FFFFFF; color: #4A403D; font-family:var(--font-ui); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all .15s ease; }
         .filter-pill:hover { border-color: #D91E36; color: #D91E36; }
         .filter-pill.is-active { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; }
         .ticket-list { display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
@@ -1421,7 +1421,7 @@ export default function CustomerRepairTracking() {
         .ticket-topline { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
         .ticket-id-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #857D79; }
         .ticket-id { font-size: 13px; font-weight: 700; color: #A3122A; }
-        .device-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; margin: 0 0 4px; }
+        .device-name { font-family:var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 4px; }
         .ticket-date { font-size: 12.5px; color: #857D79; margin-bottom: 12px; }
         .vitals-label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #857D79; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
         .vitals-track {
@@ -1461,7 +1461,7 @@ export default function CustomerRepairTracking() {
         .tag.priority-medium { color: #D97706; border-color: #FEF3C7; background: #FFFBEB; }
         .tag.priority-high { color: #A3122A; border-color: #FECDD3; background: rgba(217,30,54,0.04); }
         .tag.priority-critical { color: #fff; background: #D91E36; border-color: #D91E36; }
-        .tag.price { font-family: 'Inter', sans-serif; color: #1B1210; }
+        .tag.price { font-family:var(--font-display); color: #1B1210; }
         .ticket-right { display: flex; align-items: center; gap: 18px; flex-direction: column; align-self: stretch; justify-content: space-between; padding: 2px 0; }
         .status-pill { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 6px 13px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
         .status-pill .d { width: 6px; height: 6px; border-radius: 8px; }
@@ -1476,7 +1476,7 @@ export default function CustomerRepairTracking() {
         .chevron { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ECE4E0; display: flex; align-items: center; justify-content: center; color: #A3122A; transition: background .15s, transform .15s, border-color .15s; }
         .ticket-card:hover .chevron { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; transform: translateX(3px); }
         .empty-state { text-align: center; padding: 70px 20px; color: #857D79; }
-        .empty-state h3 { font-family: 'Fraunces', serif; font-size: 22px; color: #1B1210; margin: 0 0 6px; }
+        .empty-state h3 { font-family:var(--font-display); font-size: 22px; color: #1B1210; margin: 0 0 6px; }
         .empty-state p { font-size: 13.5px; margin: 0; }
         footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #857D79; font-size: 12px; }
         footer .mono { color: #D91E36; font-weight: 600; }
@@ -1734,7 +1734,7 @@ export default function CustomerRepairTracking() {
                     {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
                   </span>
                 </div>
-                <h1 className="text-xl font-extrabold tracking-tight" style={{ fontFamily: 'Manrope, sans-serif', color: BRAND.ink }}>
+                <h1 className="text-xl font-extrabold tracking-tight" style={{ fontFamily: 'var(--font-display)', color: BRAND.ink }}>
                   My Repairs
                 </h1>
               </header>
@@ -1827,7 +1827,7 @@ export default function CustomerRepairTracking() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 }}
-                      className="text-2xl font-bold mb-2" style={{ color: '#1B1210', fontFamily: "'Fraunces', serif" }}
+                      className="text-2xl font-bold mb-2" style={{ color: '#1B1210', fontFamily: 'var(--font-display)' }}
                     >
                       No Repair Requests Found
                     </motion.h2>

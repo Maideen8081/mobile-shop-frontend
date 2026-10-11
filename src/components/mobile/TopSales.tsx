@@ -8,7 +8,7 @@ import { C } from './theme'
 function TopProduct({ product, index = 0 }: { product: any; index?: number }) {
   const navigate = useNavigate()
   const img = getProductImage(product)
-  const { price, discount: mrp, discountPct } = getProductPrice(product)
+  const { discountPct } = getProductPrice(product)
 
   return (
     <motion.div
@@ -26,24 +26,14 @@ function TopProduct({ product, index = 0 }: { product: any; index?: number }) {
           −{discountPct}%
         </span>
       )}
-      <div className="relative w-full overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#FEE2E6] to-[#F8F9FB] aspect-square">
+      <div className="relative w-full overflow-hidden rounded-t-2xl bg-white p-[6%] aspect-square">
         <img
           src={img || FALLBACK_IMG}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 ease-out group-active:scale-110"
+          className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 ease-out group-active:scale-[1.04]"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
         />
-      </div>
-      <div className="px-2 py-1.5 flex flex-col gap-0.5">
-        {Number(price) > 0 && (
-          <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="text-[12px] font-extrabold text-[#A81D2A] leading-none">${Number(price).toFixed(2)}</span>
-            {discountPct > 0 && Number(mrp) > Number(price) && (
-              <span className="text-[9.5px] text-[#94A3B8] line-through leading-none">${Number(mrp).toFixed(2)}</span>
-            )}
-          </div>
-        )}
       </div>
     </motion.div>
   )

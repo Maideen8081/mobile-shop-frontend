@@ -125,8 +125,8 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
       boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
     }}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg font-semibold text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>Order Progress</h2>
-        <span className="text-xs font-bold text-[#3b4b3d]/60" style={{ fontFamily: 'Manrope, sans-serif' }}>
+        <h2 className="text-lg font-semibold text-[#191c1d]" style={{ fontFamily: 'var(--font-display)' }}>Order Progress</h2>
+        <span className="text-xs font-bold text-[#3b4b3d]/60" style={{ fontFamily: 'var(--font-ui)' }}>
           {order.status === 'delivered' ? 'COMPLETED' : `Estimated Delivery: ${order.deliveryDate}`}
         </span>
       </div>
@@ -162,11 +162,11 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
                 )}
               </div>
               <h3 className="text-xs font-bold text-center" style={{
-                fontFamily: 'Manrope, sans-serif',
+                fontFamily: 'var(--font-ui)',
                 color: isActive ? '#191c1d' : 'rgba(59,75,61,0.4)',
               }}>{step.label}</h3>
               <p className="text-[10px] mt-1" style={{
-                fontFamily: 'Manrope, sans-serif',
+                fontFamily: 'var(--font-ui)',
                 color: isActive ? '#A3122A' : 'rgba(59,75,61,0.3)',
               }}>
                 {statusLabel()}
@@ -204,7 +204,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
               Order <span style={{ color: '#A3122A' }}>#{order.displayOrderId || order.orderId}</span>
             </h1>
             <p className="text-sm mt-1" style={{ color: 'rgba(59,75,61,0.7)' }}>Placed on {order.orderDate}</p>
@@ -215,7 +215,7 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
             border: `1px solid ${badge.color}20`,
           }}>
             <div className="w-2.5 h-2.5 rounded-[8px] animate-pulse" style={{ background: badge.color }} />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: badge.color, fontFamily: 'Manrope, sans-serif' }}>{badge.label}</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: badge.color, fontFamily: 'var(--font-ui)' }}>{badge.label}</span>
           </div>
         </div>
 
@@ -264,13 +264,13 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
                     border: '1px solid rgba(217,30,54,0.3)',
                   }}>
                     <div className="text-[8px] font-bold mb-0.5" style={{ color: '#A3122A' }}>ORDER ID</div>
-                    <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>{order.displayOrderId || order.orderId}</div>
+                    <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'var(--font-ui)' }}>{order.displayOrderId || order.orderId}</div>
                   </div>
                 </div>
 
                 <div className="w-full md:w-1/2 space-y-4">
                   <div>
-                    <h2 className="text-xl font-bold text-[#191c1d]" style={{ fontFamily: 'Manrope, sans-serif' }}>
+                    <h2 className="text-xl font-bold text-[#191c1d]" style={{ fontFamily: 'var(--font-display)' }}>
                       {items.length} {items.length === 1 ? 'Item' : 'Items'}
                     </h2>
                     {firstItem && (
@@ -621,7 +621,7 @@ export default function OrderTracking() {
               <span className="material-symbols-outlined text-2xl" style={{ color: '#A3122A' }}>inventory_2</span>
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>My Orders</h1>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>My Orders</h1>
               <p className="text-sm" style={{ color: 'rgba(59,75,61,0.7)' }}>Track and manage your orders</p>
             </div>
           </div>

@@ -125,7 +125,7 @@ export default function AddressCreatePage() {
             >
               <FiArrowLeft size={18} />
             </button>
-            <h1 className="font-bold tracking-tight" style={{ fontSize: '28px', fontFamily: "'Inter', sans-serif", color: '#191c1d' }}>
+            <h1 className="font-bold tracking-tight" style={{ fontSize: '28px', fontFamily: 'var(--font-display)', color: '#191c1d' }}>
               Add New Address
             </h1>
           </div>
@@ -144,7 +144,7 @@ export default function AddressCreatePage() {
               <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(0, 105, 72, 0.1)' }}>
                 <FiMapPin size={18} style={{ color: '#006948' }} />
               </div>
-              <h2 className="font-semibold text-lg" style={{ fontFamily: "'Inter', sans-serif", color: '#191c1d' }}>
+              <h2 className="font-semibold text-lg" style={{ fontFamily: 'var(--font-display)', color: '#191c1d' }}>
                 {form.addressType === 'Home' ? 'Home Address' : form.addressType === 'Office' ? 'Office Address' : 'Delivery Address'}
               </h2>
             </div>
@@ -206,7 +206,7 @@ export default function AddressCreatePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                <label className="block text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                   ADDRESS TYPE
                 </label>
                 <div className="flex gap-3">
@@ -239,7 +239,7 @@ export default function AddressCreatePage() {
                 >
                   {form.isDefault && <FiCheck size={11} className="text-white" />}
                 </div>
-                <span className="text-sm" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>Set as default address</span>
+                <span className="text-sm" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>Set as default address</span>
               </label>
             </div>
 
@@ -289,7 +289,7 @@ function FormField({ label, value, onChange, placeholder, type = 'text', maxLeng
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold tracking-wider mb-1.5" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+      <label className="block text-xs font-semibold tracking-wider mb-1.5" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
         {label}
       </label>
       <div className="relative">
@@ -307,7 +307,7 @@ function FormField({ label, value, onChange, placeholder, type = 'text', maxLeng
           className="w-full bg-transparent border-b py-2.5 text-base transition-all outline-none"
           style={{
             borderBottom: `1px solid ${error ? '#ba1a1a' : '#bccac0'}`,
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: 'var(--font-ui)',
             color: '#191c1d',
             paddingLeft: icon ? '36px' : '0',
           }}
@@ -316,7 +316,7 @@ function FormField({ label, value, onChange, placeholder, type = 'text', maxLeng
         />
       </div>
       {error && (
-        <p className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+        <p className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
           {error}
         </p>
       )}

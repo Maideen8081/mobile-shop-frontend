@@ -121,7 +121,7 @@ export default function MobileProfile() {
 
   if (!authService.isAuthenticated()) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         {/* Header */}
         <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
           <span className="absolute -top-10 -right-8 w-40 h-40 rounded-[8px] bg-white/20 blur-2xl" />
@@ -236,7 +236,7 @@ export default function MobileProfile() {
   const press = 'active:scale-[0.98] transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* ── Premium compact header ── */}
       <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
         {/* decorative blurred circles */}

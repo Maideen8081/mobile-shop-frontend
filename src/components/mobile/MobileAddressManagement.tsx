@@ -137,7 +137,7 @@ export default function MobileAddressManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-40" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-40" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#EEF1F4] px-3 py-3 flex items-center gap-2">
         <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">

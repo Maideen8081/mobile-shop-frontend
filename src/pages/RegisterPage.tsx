@@ -151,13 +151,13 @@ export default function RegisterPage() {
               </div>
             ))}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-12 z-10">
-              <span className="text-white text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <span className="text-white text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ fontFamily: 'var(--font-ui)' }}>
                 Premium Collection
               </span>
-              <h2 className="text-white font-bold leading-tight mb-2" style={{ fontSize: '42px', fontFamily: "'Inter', sans-serif", lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+              <h2 className="text-white font-bold leading-tight mb-2" style={{ fontSize: '42px', fontFamily: 'var(--font-display)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
                 {carouselSlides[activeSlide].label}
               </h2>
-              <p className="text-white/70 max-w-md" style={{ fontSize: '16px', fontFamily: "'Inter', sans-serif", lineHeight: 1.5 }}>
+              <p className="text-white/70 max-w-md" style={{ fontSize: '16px', fontFamily: 'var(--font-ui)', lineHeight: 1.5 }}>
                 {carouselSlides[activeSlide].desc}
               </p>
               <div className="flex gap-2 mt-6">
@@ -189,17 +189,17 @@ export default function RegisterPage() {
               }}
             >
               <div className="mb-8">
-                <h1 className="font-bold mb-1" style={{ fontSize: '36px', fontFamily: "'Inter', sans-serif", lineHeight: 1.2, letterSpacing: '-0.02em', color: '#191c1d' }}>
+                <h1 className="font-bold mb-1" style={{ fontSize: '36px', fontFamily: 'var(--font-display)', lineHeight: 1.2, letterSpacing: '-0.02em', color: '#191c1d' }}>
                   Join PhonePremium
                 </h1>
-                <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
+                <p className="text-base" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>
                   Experience the pinnacle of mobile engineering and exclusive privileges.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col">
-                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                     FULL NAME
                   </label>
                   <div className="relative">
@@ -214,7 +214,7 @@ export default function RegisterPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-all placeholder:text-[#c6c6c7] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.fullName ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -223,14 +223,14 @@ export default function RegisterPage() {
                     />
                   </div>
                   {errors.fullName && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.fullName}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                     EMAIL ADDRESS
                   </label>
                   <div className="relative">
@@ -245,7 +245,7 @@ export default function RegisterPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-all placeholder:text-[#c6c6c7] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.email ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -254,14 +254,14 @@ export default function RegisterPage() {
                     />
                   </div>
                   {errors.email && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.email}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                     PASSWORD
                   </label>
                   <div className="relative">
@@ -276,7 +276,7 @@ export default function RegisterPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-all placeholder:text-[#c6c6c7] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.password ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -285,14 +285,14 @@ export default function RegisterPage() {
                     />
                   </div>
                   {errors.password && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.password}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-semibold tracking-wider mb-2" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                     CONFIRM PASSWORD
                   </label>
                   <div className="relative">
@@ -307,7 +307,7 @@ export default function RegisterPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-all placeholder:text-[#c6c6c7] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.confirmPassword ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -316,7 +316,7 @@ export default function RegisterPage() {
                     />
                   </div>
                   {errors.confirmPassword && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.confirmPassword}
                     </span>
                   )}
@@ -334,7 +334,7 @@ export default function RegisterPage() {
                     >
                       {formData.agreeTerms && <FiCheck size={10} className="text-white" />}
                     </div>
-                    <label className="text-sm cursor-pointer" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }} onClick={() => setField('agreeTerms', !formData.agreeTerms)}>
+                    <label className="text-sm cursor-pointer" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }} onClick={() => setField('agreeTerms', !formData.agreeTerms)}>
                       I agree to the{' '}
                       <Link to="#" className="font-semibold hover:underline" style={{ color: '#D91E36' }}>
                         Terms &amp; Conditions
@@ -342,7 +342,7 @@ export default function RegisterPage() {
                     </label>
                   </div>
                   {errors.agreeTerms && (
-                    <span className="text-xs" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.agreeTerms}
                     </span>
                   )}
@@ -355,7 +355,7 @@ export default function RegisterPage() {
                   style={{
                     background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                     fontSize: '14px',
-                    fontFamily: "'Inter', sans-serif",
+                    fontFamily: 'var(--font-ui)',
                     fontWeight: 700,
                     boxShadow: '0 4px 16px rgba(217,30,54,0.3)',
                   }}
@@ -367,7 +367,7 @@ export default function RegisterPage() {
               </form>
 
               <div className="mt-8 pt-6 border-t text-center" style={{ borderTop: '1px solid #bccac0' }}>
-                <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
+                <p className="text-base" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>
                   Already have an account?{' '}
                   <Link to="/login" className="font-bold hover:underline ml-1" style={{ color: '#D91E36' }}>
                     Login
@@ -379,11 +379,11 @@ export default function RegisterPage() {
             <div className="mt-6 flex justify-between px-2 opacity-60">
               <div className="flex items-center gap-1">
                 <FiShield size={16} />
-                <span className="text-xs font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>Secure Data</span>
+                <span className="text-xs font-semibold" style={{ fontFamily: 'var(--font-ui)' }}>Secure Data</span>
               </div>
               <div className="flex items-center gap-1">
                 <FiHeadphones size={16} />
-                <span className="text-xs font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>24/7 Priority Support</span>
+                <span className="text-xs font-semibold" style={{ fontFamily: 'var(--font-ui)' }}>24/7 Priority Support</span>
               </div>
             </div>
           </div>
@@ -401,14 +401,14 @@ export default function RegisterPage() {
         }}
       >
         <div className="flex flex-col items-center md:items-start gap-2">
-          <div className="text-xl font-semibold" style={{ color: '#006948', fontFamily: "'Inter', sans-serif" }}>
+          <div className="text-xl font-semibold" style={{ color: '#006948', fontFamily: 'var(--font-ui)' }}>
             PhonePremium
           </div>
-          <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
+          <p className="text-base" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>
             &copy; 2024 PhonePremium. Engineering Excellence.
           </p>
         </div>
-        <nav className="flex gap-6 flex-wrap justify-center" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <nav className="flex gap-6 flex-wrap justify-center" style={{ fontFamily: 'var(--font-ui)' }}>
           <Link to="#" className="text-base hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Privacy Policy</Link>
           <Link to="#" className="text-base hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Terms of Service</Link>
           <Link to="#" className="text-base hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Shipping Info</Link>

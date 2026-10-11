@@ -108,13 +108,13 @@ export default function LoginPage() {
             </div>
           ))}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-12 z-10">
-            <span className="text-white text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <span className="text-white text-xs font-semibold uppercase tracking-[0.2em] mb-3" style={{ fontFamily: 'var(--font-ui)' }}>
               Premium Collection
             </span>
-            <h2 className="text-white font-bold leading-tight mb-2" style={{ fontSize: '42px', fontFamily: "'Inter', sans-serif", lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <h2 className="text-white font-bold leading-tight mb-2" style={{ fontSize: '42px', fontFamily: 'var(--font-display)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               {carouselSlides[activeSlide].label}
             </h2>
-            <p className="text-white/70 max-w-md" style={{ fontSize: '16px', fontFamily: "'Inter', sans-serif", lineHeight: 1.5 }}>
+            <p className="text-white/70 max-w-md" style={{ fontSize: '16px', fontFamily: 'var(--font-ui)', lineHeight: 1.5 }}>
               {carouselSlides[activeSlide].desc}
             </p>
             <div className="flex gap-2 mt-6">
@@ -137,10 +137,10 @@ export default function LoginPage() {
         <div className="flex-1 flex flex-col justify-center max-w-md mx-auto md:mx-0 w-full">
           <div className="w-full space-y-12">
             <div className="space-y-2">
-              <h1 className="font-bold tracking-tight" style={{ fontSize: '36px', fontFamily: "'Inter', sans-serif", lineHeight: 1.2, letterSpacing: '-0.02em', color: '#191c1d' }}>
+              <h1 className="font-bold tracking-tight" style={{ fontSize: '36px', fontFamily: 'var(--font-display)', lineHeight: 1.2, letterSpacing: '-0.02em', color: '#191c1d' }}>
                 Welcome back
               </h1>
-              <p className="text-base" style={{ fontFamily: "'Inter', sans-serif", color: '#5d5f5f' }}>
+              <p className="text-base" style={{ fontFamily: 'var(--font-ui)', color: '#5d5f5f' }}>
                 Log in to manage your premium hardware and exclusive services.
               </p>
             </div>
@@ -148,7 +148,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                     EMAIL ADDRESS
                   </label>
                   <div className="relative">
@@ -163,7 +163,7 @@ export default function LoginPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-colors placeholder:text-[#bccac0] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.email ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -172,7 +172,7 @@ export default function LoginPage() {
                     />
                   </div>
                   {errors.email && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.email}
                     </span>
                   )}
@@ -180,10 +180,10 @@ export default function LoginPage() {
 
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: "'Inter', sans-serif" }}>
+                    <label className="text-xs font-semibold tracking-wider" style={{ color: '#6d7a72', fontFamily: 'var(--font-ui)' }}>
                       PASSWORD
                     </label>
-                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#D91E36', fontFamily: "'Inter', sans-serif" }}>
+                    <Link to="#" className="text-xs font-semibold hover:underline" style={{ color: '#D91E36', fontFamily: 'var(--font-ui)' }}>
                       Forgot Password?
                     </Link>
                   </div>
@@ -199,7 +199,7 @@ export default function LoginPage() {
                       className="w-full bg-transparent border-0 border-b py-2 text-base transition-colors placeholder:text-[#bccac0] pl-10"
                       style={{
                         borderBottom: `1px solid ${errors.password ? '#ba1a1a' : '#bccac0'}`,
-                        fontFamily: "'Inter', sans-serif",
+                        fontFamily: 'var(--font-ui)',
                         color: '#191c1d',
                         outline: 'none',
                       }}
@@ -208,7 +208,7 @@ export default function LoginPage() {
                     />
                   </div>
                   {errors.password && (
-                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: "'Inter', sans-serif" }}>
+                    <span className="text-xs mt-1" style={{ color: '#ba1a1a', fontFamily: 'var(--font-ui)' }}>
                       {errors.password}
                     </span>
                   )}
@@ -222,7 +222,7 @@ export default function LoginPage() {
                 style={{
                   background: 'linear-gradient(135deg, #D91E36, #A3122A)',
                   fontSize: '20px',
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: 'var(--font-ui)',
                   boxShadow: '0 4px 16px rgba(217,30,54,0.3)',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(0.9)' }}
@@ -233,7 +233,7 @@ export default function LoginPage() {
             </form>
 
             <div className="pt-6 border-t text-center space-y-4" style={{ borderTop: '1px solid #bccac0' }}>
-              <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-base" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>
                 Don't have an account?{' '}
                 <Link to="/signup" className="font-semibold hover:underline" style={{ color: '#D91E36' }}>
                   Register
@@ -242,7 +242,7 @@ export default function LoginPage() {
               <div className="grid grid-cols-2 gap-4">
                 <button
                   className="flex items-center justify-center gap-2 py-2 border rounded-lg text-sm font-medium transition-colors"
-                  style={{ borderColor: '#bccac0', color: '#191c1d', fontFamily: "'Inter', sans-serif" }}
+                  style={{ borderColor: '#bccac0', color: '#191c1d', fontFamily: 'var(--font-ui)' }}
                   onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#edeeef' }}
                   onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
@@ -251,7 +251,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   className="flex items-center justify-center gap-2 py-2 border rounded-lg text-sm font-medium transition-colors"
-                  style={{ borderColor: '#bccac0', color: '#191c1d', fontFamily: "'Inter', sans-serif" }}
+                  style={{ borderColor: '#bccac0', color: '#191c1d', fontFamily: 'var(--font-ui)' }}
                   onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#edeeef' }}
                   onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
@@ -274,16 +274,16 @@ export default function LoginPage() {
           borderTop: '1px solid #bccac0',
         }}
       >
-        <div className="text-xl font-semibold" style={{ color: '#006948', fontFamily: "'Inter', sans-serif" }}>
+        <div className="text-xl font-semibold" style={{ color: '#006948', fontFamily: 'var(--font-ui)' }}>
           PhonePremium
         </div>
-        <div className="flex flex-wrap justify-center gap-4 text-base" style={{ fontFamily: "'Inter', sans-serif", color: '#5d5f5f' }}>
+        <div className="flex flex-wrap justify-center gap-4 text-base" style={{ fontFamily: 'var(--font-ui)', color: '#5d5f5f' }}>
           <Link to="#" className="hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Privacy Policy</Link>
           <Link to="#" className="hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Terms of Service</Link>
           <Link to="#" className="hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Shipping Info</Link>
           <Link to="#" className="hover:underline opacity-80 hover:opacity-100 transition-all" style={{ color: '#5d5f5f' }}>Contact Us</Link>
         </div>
-        <p className="text-base" style={{ color: '#5d5f5f', fontFamily: "'Inter', sans-serif" }}>
+        <p className="text-base" style={{ color: '#5d5f5f', fontFamily: 'var(--font-ui)' }}>
           &copy; 2024 PhonePremium. Engineering Excellence.
         </p>
       </footer>

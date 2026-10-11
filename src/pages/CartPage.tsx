@@ -200,12 +200,6 @@ export default function CartPage() {
     <div className="wink-cart-root">
       <SiteTopNav />
       <div>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-
         <div className="ribbon">
           White-glove delivery included &nbsp;·&nbsp; <span>Members save an extra 10% with code WINKRED10</span>
         </div>
@@ -480,14 +474,14 @@ export default function CartPage() {
           --radius-md:18px;
           --radius-lg:26px;
 
-          font-family:'Inter', sans-serif;
+          font-family:var(--font-ui);
           background:var(--paper);
           color:var(--ink);
           -webkit-font-smoothing:antialiased;
           letter-spacing:-0.005em;
           min-height: 100vh;
         }
-        .wink-cart-root .serif { font-family:'Fraunces', serif; }
+        .wink-cart-root .serif { font-family:var(--font-display); }
         .wink-cart-root img { max-width:100%; display:block; }
         .wink-cart-root button { font-family:inherit; cursor:pointer; background:none; border:none; }
         .wink-cart-root input { font-family:inherit; }
@@ -530,7 +524,7 @@ export default function CartPage() {
         .wink-cart-root .step-num {
           width:30px; height:30px; border-radius: 8px;
           display:flex; align-items:center; justify-content:center;
-          font-size:12px; font-weight:600; font-family:'Fraunces', serif;
+          font-size:12px; font-weight:600; font-family:var(--font-display);
           background:transparent; color:var(--ink-soft); border:1px solid var(--line);
         }
         .wink-cart-root .step.active .step-num { background:var(--red); color:var(--white); border-color:var(--red); }
@@ -572,11 +566,11 @@ export default function CartPage() {
         .wink-cart-root .cart-card:hover .cart-thumb img { transform:scale(1.08); }
         .wink-cart-root .cart-main { flex:1; display:flex; flex-direction:column; justify-space-between; min-width:0; }
         .wink-cart-root .cart-main-top { display:flex; justify-content:space-between; gap:16px; }
-        .wink-cart-root .cart-title h3 { font-family:'Fraunces', serif; font-size:19px; font-weight:500; margin-bottom:6px; }
+        .wink-cart-root .cart-title h3 { font-family:var(--font-display); font-size:19px; font-weight:500; margin-bottom:6px; }
         .wink-cart-root .cart-title .meta { font-size:12.5px; color:var(--ink-soft); margin-bottom:3px; }
         .wink-cart-root .cart-title .sku { font-size:10.5px; color:#A39C8E; letter-spacing:.03em; }
-        .wink-cart-root .cart-price { font-family:'Fraunces', serif; font-size:19px; font-weight:500; white-space:nowrap; text-align:right; }
-        .wink-cart-root .cart-price .unit { display:block; font-family:'Inter', sans-serif; font-size:11px; color:#A39C8E; font-weight:500; margin-top:3px; }
+        .wink-cart-root .cart-price { font-family:var(--font-display); font-size:19px; font-weight:500; white-space:nowrap; text-align:right; }
+        .wink-cart-root .cart-price .unit { display:block; font-family:var(--font-ui); font-size:11px; color:#A39C8E; font-weight:500; margin-top:3px; }
 
         .wink-cart-root .stock {
           display:inline-flex; align-items:center; gap:6px;
@@ -598,7 +592,7 @@ export default function CartPage() {
         }
         .wink-cart-root .qty-stepper button:hover { background:var(--red); color:var(--white); }
         .wink-cart-root .qty-stepper .qty-val {
-          width:30px; text-align:center; font-size:12.5px; font-weight:600; font-family:'Fraunces', serif;
+          width:30px; text-align:center; font-size:12.5px; font-weight:600; font-family:var(--font-display);
         }
         .wink-cart-root .card-links { display:flex; align-items:center; gap:18px; font-size:12px; font-weight:600; }
         .wink-cart-root .card-links button { color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:1px; }
@@ -632,14 +626,14 @@ export default function CartPage() {
           background:var(--red);
           margin-bottom:20px;
         }
-        .wink-cart-root .summary h2 { font-family:'Fraunces', serif; font-size:22px; font-weight:500; margin-bottom:4px; }
+        .wink-cart-root .summary h2 { font-family:var(--font-display); font-size:22px; font-weight:500; margin-bottom:4px; }
         .wink-cart-root .summary .sub { font-size:12px; color:#A39C8E; margin-bottom:22px; }
 
         .wink-cart-root .summary-row {
           display:flex; justify-content:space-between; align-items:center;
           font-size:13px; color:#B7B0A5; padding:10px 0;
         }
-        .wink-cart-root .summary-row span:last-child { color:#EDE9E1; font-weight:600; font-family:'Fraunces', serif; }
+        .wink-cart-root .summary-row span:last-child { color:#EDE9E1; font-weight:600; font-family:var(--font-display); }
         .wink-cart-root .summary-row.free span:last-child { color:#9BC49E; }
         .wink-cart-root .summary-divider { height:1px; background:rgba(255,255,255,0.09); margin:6px 0; }
 
@@ -664,7 +658,7 @@ export default function CartPage() {
           padding:16px 0 24px; margin-top:6px; border-top:1px solid rgba(255,255,255,0.09);
         }
         .wink-cart-root .summary-total .label { font-size:14px; font-weight:600; color:#EDE9E1; letter-spacing:.02em; }
-        .wink-cart-root .summary-total .amount { font-family:'Fraunces', serif; font-size:28px; font-weight:500; color:#fff; }
+        .wink-cart-root .summary-total .amount { font-family:var(--font-display); font-size:28px; font-weight:500; color:#fff; }
 
         .wink-cart-root .checkout-btn {
           width:100%; background:var(--red); color:var(--white); border:none;
@@ -686,7 +680,7 @@ export default function CartPage() {
           display:flex; align-items:baseline; justify-content:space-between;
           margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid var(--line);
         }
-        .wink-cart-root .recs-head h2 { font-family:'Fraunces', serif; font-size:26px; font-weight:500; }
+        .wink-cart-root .recs-head h2 { font-family:var(--font-display); font-size:26px; font-weight:500; }
         .wink-cart-root .recs-head .note { font-size:12.5px; color:var(--ink-soft); }
         .wink-cart-root .recs-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:28px; }
         .wink-cart-root .rec-card { background:transparent; }
@@ -699,7 +693,7 @@ export default function CartPage() {
         }
         .wink-cart-root .rec-img img { width:100%; height:100%; object-fit:contain; transition:transform .5s cubic-bezier(.2,.7,.3,1); }
         .wink-cart-root .rec-card:hover .rec-img img { transform:scale(1.07); }
-        .wink-cart-root .rec-info h4 { font-family:'Fraunces', serif; font-size:15.5px; font-weight:500; margin-bottom:6px; }
+        .wink-cart-root .rec-info h4 { font-family:var(--font-display); font-size:15.5px; font-weight:500; margin-bottom:6px; }
         .wink-cart-root .rec-bottom { display:flex; align-items:center; justify-content:flex-end; margin-top:10px; }
         .wink-cart-root .add-btn {
           background:transparent; color:var(--ink); border:1px solid var(--line);
@@ -714,7 +708,7 @@ export default function CartPage() {
         }
         .wink-cart-root .empty-state.show { display:block; }
         .wink-cart-root .empty-state svg { width:40px; height:40px; color:#A39C8E; margin:0 auto 16px; }
-        .wink-cart-root .empty-state p { color:var(--ink-soft); font-size:14px; margin-bottom:18px; font-family:'Fraunces', serif; font-size:17px; }
+        .wink-cart-root .empty-state p { color:var(--ink-soft); font-size:14px; margin-bottom:18px; font-family:var(--font-display); font-size:17px; }
         .wink-cart-root .empty-state a {
           display:inline-block; background:var(--red); color:var(--white); padding:12px 26px;
           border-radius: 8px; font-size:12.5px; font-weight:700; text-decoration:none;

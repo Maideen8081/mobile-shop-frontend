@@ -86,7 +86,7 @@ export default function MobileWishlist() {
   }, [products])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Header */}
       <MobileTopSection title="My Wishlist" subtitle={`${products.length} ${products.length === 1 ? 'item' : 'items'} saved`} icon="wishlist" />
 

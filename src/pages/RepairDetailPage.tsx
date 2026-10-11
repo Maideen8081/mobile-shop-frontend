@@ -243,7 +243,7 @@ export default function RepairDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <div className="pulse-rail" />
         <div className="shell" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 32px' }}>
           <div style={{ padding: '40px 0' }}>
@@ -258,10 +258,10 @@ export default function RepairDetailPage() {
 
   if (error || !ticket) {
     return (
-      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <div className="pulse-rail" />
         <div className="shell" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 32px', textAlign: 'center', paddingTop: 80 }}>
-          <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 28, color: '#1B1210', marginBottom: 12 }}>Ticket Not Found</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, color: '#1B1210', marginBottom: 12 }}>Ticket Not Found</h2>
           <p style={{ color: '#857D79', marginBottom: 24 }}>The repair ticket you're looking for doesn't exist or has been removed.</p>
           <button onClick={() => navigate('/my-repairs')} style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)', color: '#fff', border: 'none', padding: '12px 28px', borderRadius: 12, fontWeight: 700, fontSize: 14, cursor: 'pointer', boxShadow: '0 4px 12px rgba(217,30,54,0.3)' }}>
             Back to My Repairs
@@ -279,7 +279,7 @@ export default function RepairDetailPage() {
   const courierSent = ticket.status === 'Accepted' && ticket.courier
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', minHeight: '100vh', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', minHeight: '100vh', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
       <style>{`
         .pulse-rail { height: 4px; width: 100%; background: linear-gradient(90deg, #A3122A, #D91E36 45%, #E8304A 55%, #A3122A); background-size: 220% 100%; animation: railmove 6s ease-in-out infinite; position: sticky; top: 0; z-index: 50; }
         @keyframes railmove { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
@@ -326,9 +326,9 @@ export default function RepairDetailPage() {
             <div>
               <div className="flex items-center gap-2.5 mb-2">
                 <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: '#857D79' }}>Ticket</span>
-                <span style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, color: '#A3122A' }}>{ticket.repairId}</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 600, color: '#A3122A' }}>{ticket.repairId}</span>
               </div>
-              <h1 style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 'clamp(22px, 3.5vw, 32px)', margin: 0, color: '#1B1210' }}>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(22px, 3.5vw, 32px)', margin: 0, color: '#1B1210' }}>
                 {ticket.deviceBrand} {ticket.deviceModel}
               </h1>
               <p style={{ fontSize: 14, color: '#857D79', marginTop: 6 }}>

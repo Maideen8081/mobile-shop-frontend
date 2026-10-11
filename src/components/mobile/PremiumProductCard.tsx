@@ -47,12 +47,12 @@ export default function PremiumProductCard({
         onClick={handleClick}
         className="group flex gap-4 p-3 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-[#FDD] transition-all duration-300 active:scale-[0.99] animate-fade-in-up"
       >
-        <div className="relative w-24 h-24 flex-shrink-0 rounded-xl bg-slate-50 overflow-hidden animate-scale-in">
+        <div className="relative w-24 h-24 flex-shrink-0 rounded-xl bg-white overflow-hidden p-[6%] animate-scale-in">
           <img
             src={imageError ? FALLBACK_IMG : img}
             alt={product.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+            className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 hover:scale-[1.04]"
             onError={() => setImageError(true)}
           />
           {tags.length > 0 && (
@@ -73,7 +73,7 @@ export default function PremiumProductCard({
                 {product.brand}
               </span>
             )}
-            <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-sm">
+            <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#CB202D] transition-colors text-sm">
               {product.name}
             </h3>
           </div>
@@ -102,12 +102,12 @@ export default function PremiumProductCard({
         onClick={handleClick}
         className="group relative bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#FDD] transition-all duration-500 active:scale-[0.99] animate-fade-in-up"
       >
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-white p-[6%]">
           <img
             src={imageError ? FALLBACK_IMG : img}
             alt={product.name}
             loading="lazy"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.04]"
             onError={() => setImageError(true)}
           />
 
@@ -149,12 +149,12 @@ export default function PremiumProductCard({
       onClick={handleClick}
       className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-[#FDD] transition-all duration-400 active:scale-[0.98] animate-fade-in-up"
     >
-      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="relative aspect-square overflow-hidden bg-white p-[6%]">
         <img
           src={imageError ? FALLBACK_IMG : img}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-110"
+          className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.04]"
           onError={() => setImageError(true)}
         />
 
@@ -185,7 +185,7 @@ export default function PremiumProductCard({
             {product.brand}
           </span>
         )}
-        <h3 className="font-semibold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-sm">
+        <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#CB202D] transition-colors text-sm">
           {product.name}
         </h3>
       </div>

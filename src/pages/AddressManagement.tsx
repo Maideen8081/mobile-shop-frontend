@@ -155,7 +155,7 @@ export default function AddressManagement() {
         .addr-crumb .sep{color:#D8D2D5;}
         .addr-crumb .current{color:#17151A;font-weight:600;}
         .addr-page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding:14px 0 30px;border-bottom:1px solid #EAE5E6;margin-bottom:30px;}
-        .addr-title{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(30px,4vw,42px);letter-spacing:-0.01em;text-transform:uppercase;margin:0 0 6px;}
+        .addr-title{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,4vw,42px);letter-spacing:-0.01em;text-transform:uppercase;margin:0 0 6px;}
         .addr-sub{margin:0;color:#4A4750;font-size:14.5px;}
         .addr-btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:14px;padding:13px 22px;border-radius:11px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;}
         .addr-btn svg{width:16px;height:16px;}
@@ -174,7 +174,7 @@ export default function AddressManagement() {
         .addr-card.is-default .addr-icon{background:#D2172E;color:#fff;}
         .addr-icon svg{width:20px;height:20px;}
         .addr-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-        .addr-name{font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;}
+        .addr-name{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.01em;text-transform:uppercase;}
         .addr-badge-default{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:#D2172E;color:#fff;padding:3px 8px;border-radius: 8px;}
         .addr-phone{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#4A4750;margin-top:3px;}
         .addr-phone svg{width:12px;height:12px;color:#837E88;}
@@ -183,7 +183,7 @@ export default function AddressManagement() {
         .type-pill.work{color:#2E6FBF;border-color:#D3E1F4;}
         .type-pill.other{color:#B87A12;border-color:#F1DCB2;}
         .addr-body{font-size:13.8px;line-height:1.65;color:#4A4750;padding:2px 0 16px 54px;}
-        .addr-body .pin{font-family:'JetBrains Mono',monospace;color:#17151A;font-weight:600;}
+        .addr-body .pin{font-family:var(--font-display);color:#17151A;font-weight:600;}
         .addr-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px dashed #EAE5E6;}
         .icon-btn{width:34px;height:34px;border-radius:9px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;}
         .icon-btn svg{width:15px;height:15px;}
@@ -208,7 +208,7 @@ export default function AddressManagement() {
         .modal{background:#fff;border-radius:20px;width:100%;max-width:560px;box-shadow:0 30px 60px -20px rgba(23,21,26,0.35);max-height:88vh;overflow-y:auto;animation:modal-pop .18s ease;}
         @keyframes modal-pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
         .modal-head{display:flex;justify-content:space-between;align-items:center;padding:24px 28px 20px;border-bottom:1px solid #EAE5E6;}
-        .modal-head h2{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0;text-transform:uppercase;color:#17151A;}
+        .modal-head h2{font-family:var(--font-display);font-size:24px;margin:0;text-transform:uppercase;color:#17151A;}
         .modal-close{width:36px;height:36px;border-radius:10px;border:none;background:#FBF8F6;color:#4A4750;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
         .modal-close:hover{background:#FCEDEE;color:#D2172E;}
         .modal-close svg{width:16px;height:16px;}
@@ -217,7 +217,7 @@ export default function AddressManagement() {
         .field{display:flex;flex-direction:column;gap:7px;}
         .field.full{grid-column:1 / -1;}
         .field label{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#4A4750;}
-        .field input{border:1.5px solid #EAE5E6;border-radius:10px;padding:13px 14px;font-size:14px;font-family:'Inter',sans-serif;color:#17151A;outline:none;background:#FBF8F6;transition:border-color .15s,background .15s,box-shadow .15s;}
+        .field input{border:1.5px solid #EAE5E6;border-radius:10px;padding:13px 14px;font-size:14px;font-family:var(--font-ui);color:#17151A;outline:none;background:#FBF8F6;transition:border-color .15s,background .15s,box-shadow .15s;}
         .field input:focus{border-color:#D2172E;background:#fff;box-shadow:0 0 0 3px rgba(210,23,46,0.08);}
         .field input::placeholder{color:#B2ADB4;}
         .type-select-row{display:flex;gap:10px;margin-bottom:16px;}
@@ -236,7 +236,7 @@ export default function AddressManagement() {
         .confirm-modal{max-width:400px;text-align:center;padding:36px 28px 28px;}
         .confirm-modal .warn-icon{width:56px;height:56px;border-radius: 8px;background:#FCEDEE;color:#D2172E;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
         .confirm-modal .warn-icon svg{width:26px;height:26px;}
-        .confirm-modal h3{font-family:'Big Shoulders Display',sans-serif;font-size:24px;margin:0 0 10px;text-transform:uppercase;color:#17151A;}
+        .confirm-modal h3{font-family:var(--font-display);font-size:24px;margin:0 0 10px;text-transform:uppercase;color:#17151A;}
         .confirm-modal p{font-size:14px;color:#4A4750;margin:0 0 24px;line-height:1.6;}
         .confirm-actions{display:flex;gap:12px;}
         .confirm-actions .addr-btn{flex:1;justify-content:center;}
@@ -277,7 +277,7 @@ export default function AddressManagement() {
         {addresses.length === 0 ? (
           <div className="text-center" style={{ padding: '60px 20px 90px', color: '#837E88' }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: 44, height: 44, color: '#D2172E', marginBottom: 14 }}><path d="M12 21s7-6.2 7-11.2A7 7 0 105 9.8C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-            <h3 style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontSize: 24, color: '#17151A', margin: '0 0 6px', textTransform: 'uppercase' }}>No saved addresses yet</h3>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, color: '#17151A', margin: '0 0 6px', textTransform: 'uppercase' }}>No saved addresses yet</h3>
             <p style={{ fontSize: 13.5, margin: '0 0 18px' }}>Add a delivery address to speed up checkout next time.</p>
             <button className="addr-btn addr-btn-primary" onClick={openAdd}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>

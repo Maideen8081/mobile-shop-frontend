@@ -189,6 +189,11 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
         .join('')
         .toUpperCase()
     : '?'
+  /* Profile names are stored uppercase ("THUVAN MAIDEEN A"). Render them in
+     title case so the nav doesn't show a long all-caps run. */
+  const displayName = user.name
+    ? user.name.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+    : ''
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -386,7 +391,7 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                     <div className="pfn-acc-avatar">{initials}</div>
                     <div className="pfn-acc-info">
                       <span className="pfn-acc-label">Account</span>
-                      <span className="pfn-acc-name">{user.name || 'My Account'}</span>
+                      <span className="pfn-acc-name" title={displayName || 'My Account'}>{displayName || 'My Account'}</span>
                     </div>
                     <svg
                       className="pfn-acc-chevron"
@@ -404,7 +409,7 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                       <div className="pfn-drop-header">
                         <div className="pfn-drop-avatar">{initials}</div>
                         <div className="pfn-drop-id">
-                          <b>{user.name || 'User'}</b>
+                          <b>{displayName || 'User'}</b>
                           <span>{user.email || ''}</span>
                         </div>
                       </div>

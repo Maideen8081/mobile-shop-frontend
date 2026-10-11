@@ -482,7 +482,7 @@ export default function MobileProductDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: 'var(--font-ui)' }}>
         <DoubleRingLoader size={56} label="Loading product…" />
       </div>
     )
@@ -499,7 +499,7 @@ export default function MobileProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <style>{`
         @keyframes shimmerSlide {
           0% { transform: translateX(-100%); }

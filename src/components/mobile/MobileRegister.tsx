@@ -75,7 +75,7 @@ export default function MobileRegister() {
   const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition'
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
         <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />

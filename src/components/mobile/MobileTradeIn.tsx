@@ -134,7 +134,7 @@ export default function MobileTradeIn() {
   const filteredRows = estimateRows.filter(r => !selectedBrand || r.device.toLowerCase().includes(selectedBrand.toLowerCase()))
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto font-sans text-[#1F2937] pb-28" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Hero carousel */}
       <section className="relative h-[360px] overflow-hidden">
         {heroSlides.map((slide, i) => (

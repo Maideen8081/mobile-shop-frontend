@@ -185,7 +185,7 @@ export default function MobileCart() {
 
   if (cartLoading) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <DoubleRingLoader size={48} />
@@ -198,7 +198,7 @@ export default function MobileCart() {
 
   if (items.length === 0) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Review your items" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
           <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)' }}>
@@ -217,7 +217,7 @@ export default function MobileCart() {
   }
 
   return (
-    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileTopSection title="My Cart" subtitle={`${totalItems} ${totalItems === 1 ? 'item' : 'items'}`} icon="cart" />
 
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3.5 pt-3 pb-4 space-y-3">

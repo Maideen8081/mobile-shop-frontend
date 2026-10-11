@@ -90,7 +90,7 @@ export default function OrderSuccess() {
             radial-gradient(1200px 600px at 15% -10%, #fff 0%, var(--paper) 45%),
             var(--paper);
           color:var(--ink);
-          font-family:'Inter',sans-serif;
+          font-family:var(--font-ui);
           -webkit-font-smoothing:antialiased;
           min-height:100vh;
           display:flex;
@@ -134,7 +134,7 @@ export default function OrderSuccess() {
         }
         .os-eyebrow{
           margin-top:24px;
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:11px;
           letter-spacing:0.2em;
           color:var(--red-bright);
@@ -142,7 +142,7 @@ export default function OrderSuccess() {
           font-weight:500;
         }
         .os-h1{
-          font-family:'Fraunces',serif;
+          font-family:var(--font-display);
           font-weight:500;
           font-size:clamp(32px,5vw,48px);
           text-align:center;
@@ -183,7 +183,7 @@ export default function OrderSuccess() {
           padding:32px 36px 28px;
         }
         .os-field-label{
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:10px;
           letter-spacing:0.14em;
           color:var(--ink-soft);
@@ -191,7 +191,7 @@ export default function OrderSuccess() {
           margin-bottom:10px;
         }
         .os-field-value{
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:18px;
           font-weight:500;
           color:var(--ink);
@@ -223,7 +223,7 @@ export default function OrderSuccess() {
         .os-progress-block{padding:28px 36px 30px;}
         .os-progress-header{display:flex;justify-content:space-between;margin-bottom:18px;}
         .os-status-text{font-size:13px;font-weight:600;color:var(--ink);}
-        .os-status-pct{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--red-bright);font-weight:500;}
+        .os-status-pct{font-family:var(--font-display);font-size:13px;color:var(--red-bright);font-weight:500;}
         .os-track{position:relative;height:3px;background:var(--red-tint);border-radius:3px;overflow:hidden;}
         .os-track-fill{
           position:absolute;
@@ -282,7 +282,7 @@ export default function OrderSuccess() {
         .os-item-thumb img{width:100%;height:100%;object-fit:cover;}
         .os-item-info{flex:1;min-width:0;}
         .os-item-name{
-          font-family:'Fraunces',serif;
+          font-family:var(--font-display);
           font-size:17px;
           font-weight:500;
           margin-bottom:4px;
@@ -291,11 +291,11 @@ export default function OrderSuccess() {
         .os-item-meta{
           font-size:12px;
           color:var(--ink-soft);
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           letter-spacing:0.02em;
         }
         .os-item-price{
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:14.5px;
           font-weight:500;
           color:var(--ink);
@@ -311,14 +311,14 @@ export default function OrderSuccess() {
           border-radius:0 0 6px 6px;
         }
         .os-total-label{
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:11px;
           letter-spacing:0.14em;
           color:var(--ink-soft);
           text-transform:uppercase;
         }
         .os-total-value{
-          font-family:'Fraunces',serif;
+          font-family:var(--font-display);
           font-size:32px;
           font-weight:600;
           color:var(--red);
@@ -331,7 +331,7 @@ export default function OrderSuccess() {
           flex-wrap:wrap;
         }
         .os-btn{
-          font-family:'Inter',sans-serif;
+          font-family:var(--font-ui);
           font-weight:600;
           font-size:14.5px;
           padding:16px 36px;
@@ -376,7 +376,7 @@ export default function OrderSuccess() {
           flex-direction:column;
           align-items:center;
           gap:8px;
-          font-family:'IBM Plex Mono',monospace;
+          font-family:var(--font-display);
           font-size:9.5px;
           letter-spacing:0.12em;
           color:var(--ink-soft);
@@ -457,7 +457,7 @@ export default function OrderSuccess() {
 
             <div className="os-items">
               {items.length === 0 ? (
-                <div style={{padding:'20px 0',textAlign:'center',color:'var(--ink-soft)',fontSize:'13px',fontFamily:"'IBM Plex Mono',monospace"}}>Order details loading...</div>
+                <div style={{padding:'20px 0',textAlign:'center',color:'var(--ink-soft)',fontSize:'13px',fontFamily: 'var(--font-display)'}}>Order details loading...</div>
               ) : items.map(item => {
                 const imgUrl = resolveImage(item)
                 const hasImg = imgUrl && !imgErrors[item.productId]

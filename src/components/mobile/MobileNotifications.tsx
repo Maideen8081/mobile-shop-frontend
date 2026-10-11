@@ -59,7 +59,7 @@ export default function MobileNotifications() {
   const visible = filter === 'unread' ? items.filter((n) => n.unread) : items
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">

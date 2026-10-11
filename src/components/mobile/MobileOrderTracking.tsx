@@ -176,7 +176,7 @@ export default function MobileOrderTracking() {
 function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: boolean; onSelect: (o: any) => void }) {
   const navigate = useNavigate()
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileHeader title="My Orders" onBack={() => navigate('/profile')} />
 
       <div className="px-4 mt-3">
@@ -268,7 +268,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
   const progressPct = isDelivered ? 100 : Math.round(((currentStepIndex) / (STEPS.length - 1)) * 100)
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileHeader title="Track Order" onBack={onBack} />
 
       {/* Status banner */}

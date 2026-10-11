@@ -121,7 +121,7 @@ export default function MobileOrderSuccess() {
   const confetti = ['#CB202D', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#FF5A65']
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Confetti */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {confetti.map((c, i) => (

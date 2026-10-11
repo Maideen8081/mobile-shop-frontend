@@ -660,7 +660,7 @@ const NOT_AUTHED_CSS = `
   min-height: 60vh; text-align: center; padding: 40px 20px;
 }
 .pp-not-authed svg { color: #A39C8E; margin-bottom: 16px; }
-.pp-not-authed h2 { font-family: 'Fraunces', serif; font-size: 24px; color: #1B1414; margin-bottom: 8px; }
+.pp-not-authed h2 { font-family:var(--font-display); font-size: 24px; color: #1B1414; margin-bottom: 8px; }
 .pp-not-authed p { font-size: 14px; color: #6E5C5C; margin-bottom: 24px; }
 .pp-login-btn {
   padding: 14px 32px; border-radius: 8px; border: none; cursor: pointer;
@@ -674,7 +674,7 @@ const NOT_AUTHED_CSS = `
 
 const DP_CSS = `
 .dp-root{
-  font-family:'Inter', sans-serif;
+  font-family:var(--font-ui);
   background: var(--color-paper, #FBF8F6);
   color: var(--color-ink, #1B1210);
   -webkit-font-smoothing:antialiased;
@@ -763,7 +763,7 @@ const DP_CSS = `
   padding:4px 10px; border-radius:20px;
 }
 .dp-member-card-number{
-  font-family:'Fraunces', serif;
+  font-family:var(--font-display);
   font-size:17px; letter-spacing:0.08em;
   margin-bottom:18px;
 }
@@ -821,12 +821,12 @@ const DP_CSS = `
   width:100%; height:100%; border-radius: 8px;
   background:linear-gradient(135deg,#7A1B2B,#3A0410);
   display:flex; align-items:center; justify-content:center;
-  font-family:'Fraunces', serif; font-size:32px; font-weight:600;
+  font-family:var(--font-display); font-size:32px; font-weight:600;
   border:3px solid var(--color-maroon, #5C0A1C);
 }
 .dp-profile-name-row{ display:flex; align-items:center; gap:12px; margin-bottom:6px; }
 .dp-profile-name{
-  font-family:'Fraunces', serif; font-size:30px; font-weight:600;
+  font-family:var(--font-display); font-size:30px; font-weight:600;
 }
 .dp-badge-gold{
   display:inline-flex; align-items:center; gap:5px;
@@ -879,7 +879,7 @@ const DP_CSS = `
   display:flex; align-items:center; justify-content:center;
   background:rgba(214,0,28,0.06); color:var(--color-red-dark, #8C0016);
 }
-.dp-stat-value{ font-family:'Fraunces', serif; font-size:28px; font-weight:600; margin-bottom:4px; }
+.dp-stat-value{ font-family:var(--font-display); font-size:28px; font-weight:600; margin-bottom:4px; }
 .dp-stat-label{ font-size:13px; color:var(--color-gray, #857D79); }
 
 /* Section */
@@ -899,7 +899,7 @@ const DP_CSS = `
   font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
   color:var(--color-red-dark, #8C0016); margin-bottom:6px; display:block;
 }
-.dp-section-title{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; }
+.dp-section-title{ font-family:var(--font-display); font-size:22px; font-weight:600; }
 .dp-link-action{
   font-size:13.5px; font-weight:600; color:var(--color-red-dark, #8C0016);
   display:flex; align-items:center; gap:5px;
@@ -1064,7 +1064,7 @@ const DP_CSS = `
   display:flex; justify-content:space-between; align-items:center;
   padding:20px 24px 0;
 }
-.dp-modal-header h2{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; }
+.dp-modal-header h2{ font-family:var(--font-display); font-size:18px; font-weight:600; }
 .dp-modal-close{
   width:32px; height:32px; border-radius: 8px; border:none;
   background:var(--color-paper, #FBF8F6); font-size:20px; color:var(--color-gray, #857D79);

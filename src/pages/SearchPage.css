@@ -1,6 +1,4 @@
 /* ── SearchPage.css ── */
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
-
 :root {
   --sp-red: #D91E36;
   --sp-red-dark: #A3122A;
@@ -16,7 +14,7 @@
 
 /* ── Root ── */
 .sp-root {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family:var(--font-ui);
   background: var(--sp-paper);
   color: var(--sp-ink);
   min-height: 100vh;
@@ -52,7 +50,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family:var(--font-display);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 3px;
@@ -66,7 +64,7 @@
 }
 
 .sp-hero-title {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family:var(--font-display);
   font-size: clamp(42px, 6vw, 64px);
   font-weight: 800;
   line-height: 1.05;
@@ -120,7 +118,7 @@
   border: none;
   outline: none;
   font-size: 16px;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   color: var(--sp-ink);
   padding: 12px 12px;
   background: transparent;
@@ -158,7 +156,7 @@
   color: white;
   border: none;
   border-radius: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -193,7 +191,7 @@
 }
 
 .sp-section-title {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family:var(--font-display);
   font-size: 22px;
   font-weight: 700;
   color: var(--sp-ink);
@@ -237,7 +235,7 @@
   background: white;
   border: 1px solid var(--sp-line);
   border-radius: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   font-size: 13px;
   font-weight: 500;
   color: var(--sp-ink);
@@ -328,7 +326,7 @@
 }
 
 .sp-category-name {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family:var(--font-display);
   font-size: 14px;
   font-weight: 700;
   text-align: center;
@@ -369,21 +367,26 @@
 
 .sp-card-media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f9fafb;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  padding: 6%;
 }
 
 .sp-card-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: multiply;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .sp-card:hover .sp-card-media img,
 .sp-card-img-hover {
-  transform: scale(1.08);
+  transform: scale(1.04);
 }
 
 .sp-card-tags {
@@ -462,7 +465,7 @@
 }
 
 .sp-card-name {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family:var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: var(--sp-ink);
@@ -488,14 +491,14 @@
 }
 
 .sp-card-price {
-  font-family: 'JetBrains Mono', monospace;
+  font-family:var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--sp-ink);
 }
 
 .sp-card-old-price {
-  font-family: 'JetBrains Mono', monospace;
+  font-family:var(--font-display);
   font-size: 12px;
   color: var(--sp-gray);
   text-decoration: line-through;
@@ -546,7 +549,7 @@
 }
 
 .sp-empty h3 {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family:var(--font-display);
   font-size: 24px;
   font-weight: 700;
   color: var(--sp-ink);

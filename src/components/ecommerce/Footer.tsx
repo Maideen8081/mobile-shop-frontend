@@ -47,7 +47,7 @@ interface EcommerceFooterProps {
 
 export default function EcommerceFooter({ compact = false }: EcommerceFooterProps) {
   return (
-    <footer className="bg-[#141414] text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <footer className="bg-[#141414] text-white" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="h-1 w-full bg-gradient-to-r from-pf-red via-pf-red to-pf-red" />
 
       <div

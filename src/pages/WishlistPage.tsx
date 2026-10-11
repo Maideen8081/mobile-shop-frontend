@@ -54,8 +54,6 @@ function WishCard(props: {
 }) {
   const navigate = useNavigate()
   const { product, onWishlist, onAddToCart } = props
-  const { current: price, old: oldPrice } = getProductPrice(product)
-  const discount = oldPrice ? Math.round(((oldPrice - price) / oldPrice) * 100) : 0
   const tag = getProductTags(product)[0] || ''
 
   return (
@@ -71,15 +69,10 @@ function WishCard(props: {
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /></svg>
           </button>
         </div>
-        <span className="wx-price-chip">{fmtINR(price)}</span>
       </Link>
       <div className="wx-product-info">
         <h4>{getProductName(product)}</h4>
         <div className="wx-product-bottom">
-          <span className="wx-price">
-            {fmtINR(price)}
-            {discount > 0 && <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--gray-400)', marginLeft: 6, textDecoration: 'line-through' }}>{fmtINR(oldPrice!)}</span>}
-          </span>
           <div className="wx-mini-actions">
             <button className="wx-act-btn wx-liked" aria-label="Remove from wishlist" onClick={(e) => { e.stopPropagation(); onWishlist(e) }}>
               <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>

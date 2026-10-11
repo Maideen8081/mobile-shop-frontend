@@ -27,12 +27,12 @@ export default function ProductCard({ product }: { product: any }) {
       onClick={() => navigate(`/product/${product.id}`)}
       className="group flex flex-col items-stretch cursor-pointer select-none"
     >
-      <div className="relative aspect-square w-full rounded-xl bg-[#F4F6FA] overflow-hidden">
+      <div className="relative aspect-square w-full rounded-xl bg-white overflow-hidden p-[6%]">
         <img
           src={img || FALLBACK_IMG}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-300 ease-out group-active:scale-105"
+          className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 ease-out group-active:scale-[1.04]"
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
         />
 
@@ -56,7 +56,7 @@ export default function ProductCard({ product }: { product: any }) {
             {product.brand}
           </span>
         )}
-        <h3 className="text-[11.5px] font-medium text-[#1E293B] leading-snug line-clamp-2 group-active:text-[#CB202D] transition-colors">
+        <h3 className="text-[11.5px] font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#CB202D] transition-colors">
           {product.name}
         </h3>
       </div>

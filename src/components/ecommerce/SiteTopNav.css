@@ -5,16 +5,14 @@
    Desktop only — mobile handled separately.
    ═══════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
   --pf-red: #d91e36;
   --pf-red-dark: #a3122a;
   --pf-red-deep: #5c0a1c;
   --pf-red-glow: rgba(217, 30, 54, 0.18);
   --pf-red-tint: rgba(217, 30, 54, 0.06);
-  --pf-ink: #0f172a;
-  --pf-muted: #475569;
+  --pf-ink: var(--color-on-surface);
+  --pf-muted: var(--color-on-surface-variant);
   --pf-border: #ece4e0;
   --pf-soft: #f5f0ec;
   --pf-white: #ffffff;
@@ -23,8 +21,8 @@
   --pf-shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.13);
   --pf-drop-bg: #1b1210;
   --pf-drop-border: rgba(255, 255, 255, 0.1);
-  --pf-drop-text: #f5f0eb;
-  --pf-drop-muted: rgba(245, 240, 235, 0.55);
+  --pf-drop-text: #ffffff;
+  --pf-drop-muted: rgba(255, 255, 255, 0.6);
   --pf-drop-hover: rgba(217, 30, 54, 0.18);
   --pf-drop-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
@@ -36,7 +34,7 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -113,7 +111,7 @@
   border: none;
   cursor: pointer;
   font-size: 12px;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -203,7 +201,7 @@
   gap: 2px;
 }
 .pfn-logo-name {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: 20px;
   color: var(--pf-ink);
@@ -256,8 +254,8 @@
   border: none;
   background: none;
   outline: none;
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-family:var(--font-ui);
   color: var(--pf-ink);
   height: 46px;
 }
@@ -268,9 +266,9 @@
   flex-shrink: 0;
   cursor: pointer;
   padding: 9px 22px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   letter-spacing: 0.01em;
   transition:
     background 0.2s,
@@ -313,7 +311,7 @@
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   text-decoration: none;
   white-space: nowrap;
   transition:
@@ -347,6 +345,10 @@
   height: 44px;
   text-decoration: none;
   cursor: pointer;
+  border: 1px solid var(--pf-line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--pf-ink);
   transition:
     border-color 0.2s,
     background 0.2s,
@@ -363,12 +365,14 @@
   stroke-linejoin: round;
 }
 .pfn-icon-btn:hover {
+  background: var(--pf-red);
   border-color: var(--pf-red);
+  color: #fff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--pf-red-glow);
+  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.3);
 }
 .pfn-icon-btn:hover svg {
-  stroke: var(--pf-red);
+  stroke: #fff;
 }
 
 .pfn-badge {
@@ -405,9 +409,9 @@
   gap: 9px;
   cursor: pointer;
   padding: 11px 22px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   text-decoration: none;
   transition:
     background 0.2s,
@@ -459,7 +463,7 @@
     border-color 0.2s,
     background 0.2s,
     box-shadow 0.2s;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
 }
 .pfn-acc-btn:hover {
   border-color: var(--pf-red);
@@ -492,13 +496,16 @@
   text-transform: uppercase;
 }
 .pfn-acc-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--pf-ink);
+  /* Names arrive uppercase from the profile; render them in title case so a
+     long run of caps isn't shown (audit: 16-char all-caps). */
+  text-transform: capitalize;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 90px;
+  max-width: 160px;
 }
 .pfn-acc-chevron {
   width: 14px;
@@ -517,9 +524,9 @@
   align-items: center;
   gap: 7px;
   padding: 10px 18px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   text-decoration: none;
   transition:
     border-color 0.2s,
@@ -581,7 +588,7 @@
   border-radius: 8px;
   background: var(--pf-red);
   color: #fff;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -594,9 +601,10 @@
 }
 .pfn-drop-id b {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--pf-drop-text);
   font-weight: 700;
+  text-transform: capitalize;
 }
 .pfn-drop-id span {
   display: block;
@@ -622,7 +630,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--pf-drop-text);
   border-radius: 8px;
@@ -646,7 +654,7 @@
   padding: 10px 14px;
   border: none;
   background: transparent;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   text-align: left;
 }
 .pfn-mega-link {
@@ -659,10 +667,10 @@
   margin: 6px 0;
 }
 .pfn-drop-logout {
-  color: #ff6b7d;
+  color: var(--pf-red);
 }
 .pfn-drop-logout svg {
-  stroke: #ff6b7d;
+  stroke: var(--pf-red);
 }
 .pfn-drop-logout:hover {
   background: var(--pf-drop-hover);
@@ -705,9 +713,9 @@
   gap: 6px;
   padding: 0 15px;
   height: 52px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family:var(--font-ui);
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   white-space: nowrap;
@@ -848,7 +856,7 @@
 }
 .pfn-mega-link-text b {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--pf-drop-text);
 }
@@ -928,7 +936,7 @@
   color: #fff;
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-sub {
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Search — frosted field with white text/icons. */
@@ -949,12 +957,12 @@
   color: #fff;
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input::placeholder {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Quick nav links — translucent white. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.8);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link svg {
   stroke: rgba(255, 255, 255, 0.92);
@@ -978,8 +986,14 @@
   stroke: #fff;
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: var(--pf-red);
+  border-color: var(--pf-red);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.3);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover svg {
+  stroke: #fff;
 }
 
 /* Sign-in / account controls — glass with white text. */
@@ -1003,7 +1017,7 @@
   color: #fff;
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-label {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-chevron {
   stroke: rgba(255, 255, 255, 0.85);

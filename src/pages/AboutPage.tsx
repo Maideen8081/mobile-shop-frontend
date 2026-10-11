@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
+import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 
 const team = [
   { name: 'Marcus Chen', role: 'Founder & Lead Technician', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
@@ -185,8 +186,12 @@ export default function AboutPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="inline-block text-xs font-bold text-[#D91E36] tracking-[0.2em] uppercase mb-3">Our Story</span>
-              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-6">From a Small Shop to Trusted Repair Network</h2>
+              <SectionHeading
+                className="mb-6"
+                eyebrow="Our Story"
+                icon="auto_stories"
+                title={<>From a Small Shop to <Accent>Trusted</Accent> Repair Network</>}
+              />
               <div className="space-y-4 text-base md:text-lg text-on-surface-variant leading-relaxed">
                 <p>PhoneFix Pro was founded in 2017 with a simple mission: make quality device repairs accessible and affordable for everyone. What started as a small counter-service shop has grown into a trusted repair network with three locations and thousands of satisfied customers.</p>
                 <p>We believe in transparency, quality craftsmanship, and genuine care for our customers. Every device that comes through our doors is treated with the same precision and attention we would give our own.</p>
@@ -203,11 +208,14 @@ export default function AboutPage() {
       {/* ─── TEAM ─── */}
       <section className="py-20 px-6 md:px-12 bg-[#FBF8F6] scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#D91E36] tracking-[0.2em] uppercase mb-3">Team</span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Meet Our Team</h2>
-            <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">The people behind the repairs — skilled, certified, and passionate about what they do.</p>
-          </div>
+          <SectionHeading
+            className="mb-14"
+            align="center"
+            eyebrow="Team"
+            icon="groups"
+            title={<>Meet Our <Accent>Team</Accent></>}
+            subtitle="The people behind the repairs — skilled, certified, and passionate about what they do."
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member) => (
               <div key={member.name} className="glass-card p-6 md:p-8 rounded-2xl text-center group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:border-[#D91E36]/25 hover:-translate-y-1 stagger-item">

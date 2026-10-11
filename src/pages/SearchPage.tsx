@@ -434,7 +434,7 @@ function ProductCard(props: {
   onAddToCart: (e: React.MouseEvent) => void
 }) {
   const { product, index, liked, onWishlist, onAddToCart } = props
-  const { current: price, old, pct } = getProductPrice(product)
+  const { pct } = getProductPrice(product)
   const [imgErr, setImageErr] = useState(false)
   const [hovered, setHovered] = useState(false)
 
@@ -485,16 +485,7 @@ function ProductCard(props: {
       <div className="sp-card-info">
         <h4 className="sp-card-name">{product.name}</h4>
         {product.brand && <p className="sp-card-brand">{product.brand}</p>}
-        <div className="sp-card-price-row">
-          <span className="sp-card-price">{formatPrice(price)}</span>
-          {old && <span className="sp-card-old-price">{formatPrice(old)}</span>}
-          {pct > 0 && <span className="sp-card-discount">-{pct}%</span>}
-        </div>
       </div>
     </Link>
   )
-}
-
-function formatPrice(n: number) {
-  return n ? `₹${n.toLocaleString('en-IN')}` : '₹0'
 }

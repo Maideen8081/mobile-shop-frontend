@@ -199,7 +199,7 @@ export default function BookRepair() {
 
   if (result) {
     return (
-      <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <SiteTopNav />
         <div className="pt-24"><BackBar label="Back to Services" to="/repairs" /></div>
         <main className="max-w-lg mx-auto px-4 py-8">
@@ -207,11 +207,11 @@ export default function BookRepair() {
             <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(217,30,54,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
               <FiCheckCircle size={40} style={{ color: '#D91E36' }} />
             </div>
-            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 30, fontWeight: 600, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 600, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
             <p style={{ fontSize: 14, color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully.</p>
             <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 24, marginBottom: 32, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: '#857D79', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8 }}>Your Tracking ID</p>
-              <p style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 600, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
               <p style={{ fontSize: 12, color: '#857D79', marginTop: 12 }}>Save this ID to track your repair.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -252,7 +252,7 @@ export default function BookRepair() {
     background: '#FBF8F6',
     outline: 'none',
     transition: 'border-color .16s ease, background .16s ease',
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: 'var(--font-ui)',
   }
 
   const labelStyle: React.CSSProperties = {
@@ -296,7 +296,7 @@ export default function BookRepair() {
   }
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
       <SiteTopNav />
       <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
 
@@ -306,7 +306,7 @@ export default function BookRepair() {
             <FiEdit3 size={18} style={{ color: '#D91E36' }} />
           </div>
           <div className="flex-1 relative">
-            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: '#1B1210' }}>Book a Repair</h1>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, color: '#1B1210' }}>Book a Repair</h1>
             <div onClick={() => setShowServicePicker(!showServicePicker)} className="inline-flex items-center gap-1.5 cursor-pointer group mt-0.5">
               <p style={{ fontSize: 13.5, color: '#857D79', transition: 'color .16s' }} className="group-hover:text-[#D91E36]">{selectedIssue || 'Select a service'}</p>
               <svg className={`w-3.5 h-3.5 transition-transform ${showServicePicker ? 'rotate-180' : ''}`} style={{ color: '#857D79' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>

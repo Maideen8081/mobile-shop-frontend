@@ -211,7 +211,7 @@ export default function PaymentPage() {
         }
         .pp-body{
           background:radial-gradient(1200px 600px at 15% -10%, #fff 0%, var(--paper) 45%),var(--paper-dim);
-          font-family:'Inter',sans-serif;
+          font-family:var(--font-ui);
           color:var(--ink-900);
           min-height:100vh;
           padding-bottom:0;
@@ -233,7 +233,7 @@ export default function PaymentPage() {
         .pp-layout{max-width:1180px;margin:56px auto 0;display:grid;grid-template-columns:1.55fr 1fr;gap:44px;padding:0 32px;align-items:start;}
         .pp-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--red-600);margin-bottom:14px;}
         .pp-eyebrow::before{content:"";width:7px;height:7px;border-radius: 8px;background:var(--red-500);box-shadow:0 0 0 4px rgba(200,24,36,.15);}
-        .pp-title{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(36px,4.4vw,52px);line-height:1.02;letter-spacing:-0.01em;color:var(--ink-900);margin-bottom:10px;}
+        .pp-title{font-family:var(--font-display);font-weight:600;font-size:clamp(36px,4.4vw,52px);line-height:1.02;letter-spacing:-0.01em;color:var(--ink-900);margin-bottom:10px;}
         .pp-title em{font-style:italic;color:var(--red-600);}
         .pp-sub{font-size:14.5px;color:var(--ink-600);margin-bottom:36px;max-width:460px;}
         .pp-options{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -255,7 +255,7 @@ export default function PaymentPage() {
         .pp-opt-name{font-size:16px;font-weight:700;color:var(--ink-900);margin-bottom:4px;}
         .pp-opt-desc{font-size:12px;color:var(--ink-400);letter-spacing:.02em;line-height:1.5;}
         .pp-badge-soon{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#fdf1e4;color:#b0742a;padding:4px 9px;border-radius: 8px;border:1px solid #f2ddb8;}
-        .pp-cta{margin-top:32px;width:100%;padding:19px 24px;border:none;border-radius:14px;background:linear-gradient(120deg,var(--red-600),var(--red-500) 55%,var(--red-700));background-size:220% 100%;color:#fff;font-family:'Inter',sans-serif;font-size:15.5px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:0 18px 34px -14px rgba(168,18,26,.55);transition:.3s ease;}
+        .pp-cta{margin-top:32px;width:100%;padding:19px 24px;border:none;border-radius:14px;background:linear-gradient(120deg,var(--red-600),var(--red-500) 55%,var(--red-700));background-size:220% 100%;color:#fff;font-family:var(--font-ui);font-size:15.5px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:0 18px 34px -14px rgba(168,18,26,.55);transition:.3s ease;}
         .pp-cta:hover{background-position:100% 0;transform:translateY(-1px);box-shadow:0 22px 40px -14px rgba(168,18,26,.65);}
         .pp-cta:active{transform:translateY(0);}
         .pp-cta:disabled{opacity:.7;cursor:not-allowed;}
@@ -263,7 +263,7 @@ export default function PaymentPage() {
         .pp-note svg{width:13px;height:13px;color:var(--gold-500);}
         .pp-summary{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px 26px;box-shadow:var(--shadow);position:sticky;top:28px;}
         .pp-summary-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-        .pp-summary-title{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:600;font-size:19px;}
+        .pp-summary-title{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:600;font-size:19px;}
         .pp-summary-title svg{width:19px;height:19px;color:var(--red-500);}
         .pp-item-count{font-size:11px;font-weight:700;color:var(--red-600);background:#fdeceb;padding:4px 10px;border-radius: 8px;}
         .pp-cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
@@ -276,16 +276,16 @@ export default function PaymentPage() {
         .pp-item-meta{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-400);margin-bottom:2px;}
         .pp-stock-dot{width:5px;height:5px;border-radius: 8px;background:#2f9e59;}
         .pp-item-variant{font-size:10.5px;color:var(--ink-400);}
-        .pp-item-price{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;color:var(--ink-900);white-space:nowrap;}
+        .pp-item-price{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--ink-900);white-space:nowrap;}
         .pp-price-breakdown{margin-top:18px;padding-top:18px;border-top:1px dashed var(--line);}
         .pp-pb-label{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-400);margin-bottom:12px;}
         .pp-pb-live{font-size:9px;color:#2f9e59;background:#eafaf1;padding:3px 8px;border-radius: 8px;font-weight:700;}
         .pp-pb-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--ink-600);margin-bottom:10px;}
-        .pp-pb-row span:last-child{font-family:'JetBrains Mono',monospace;color:var(--ink-900);font-weight:500;}
+        .pp-pb-row span:last-child{font-family:var(--font-display);color:var(--ink-900);font-weight:500;}
         .pp-pb-row.free span:last-child{color:#2f9e59;font-weight:700;}
         .pp-pb-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
         .pp-pb-total-label{font-size:14px;font-weight:700;color:var(--ink-900);}
-        .pp-pb-total-value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--red-600);}
+        .pp-pb-total-value{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--red-600);}
         .pp-trust-row{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;}
         .pp-trust-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:9.5px;font-weight:600;color:var(--ink-400);text-align:center;letter-spacing:.02em;}
         .pp-trust-item svg{width:18px;height:18px;color:var(--gold-500);}

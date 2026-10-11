@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { categoryService } from '../services/categoryService'
 import { productService } from '../services/productService'
 import type { Category } from '../services/categoryService'
@@ -10,6 +10,11 @@ import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import SectionLoader from '../components/ecommerce/SectionLoader'
+import FlashSaleStage, { type FlashSaleCard } from '../components/ecommerce/FlashSaleStage'
+import RefurbishedShowcase, { type RefurbishedDevice } from '../components/ecommerce/RefurbishedShowcase'
+import ProductCard, { type ProductCardData } from '../components/ecommerce/ProductCard'
+import YouTubeLite from '../components/ui/YouTubeLite'
+import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 import explodingViewVideo from '../assets/Orange_smartphone_exploding_view_1080p_20261002155324.mp4'
 import internalComponentsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
 
@@ -87,13 +92,11 @@ const fallbackCategories: Category[] = [
   },
 ]
 
-const SLIDE_IMAGES = [
-  'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1920&q=80',
-  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1920&q=80',
-  'https://images.unsplash.com/photo-1592890288564-76628a30a657?w=1920&q=80',
-  'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1920&q=80',
-  'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1920&q=80',
-  'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=1920&q=80',
+/* YouTube "In Action" features — first id plays in the left tile, second in
+   the right tile. Both are loaded lazily on hover/click. */
+const VIDEO_FEATURES = [
+  { videoId: 'GVpAOzDBxkk', title: 'Precision Micro-Soldering', subtitle: 'Board-level repair with microscopic accuracy' },
+  { videoId: '65UD9JreEzM', title: 'Diagnostic Calibration', subtitle: 'Advanced testing for peak performance' },
 ]
 
 /**
@@ -319,7 +322,6 @@ const categoryIconMap: Record<string, string> = {
 }
 
 export default function LandingPage() {
-  const navigate = useNavigate()
   const { show: showToast } = useToast()
   const [wishlist, setWishlist] = useState<Set<number>>(() => {
     try {
@@ -368,8 +370,8 @@ export default function LandingPage() {
   const [refurbishedLoading, setRefurbishedLoading] = useState(() => !cachedHomeData)
   const [dealTab, setDealTab] = useState<DealTabKey>('popular')
 
-  const toggleWishlist = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation()
+  const toggleWishlist = (id: number, e?: React.MouseEvent) => {
+    e?.stopPropagation()
     setWishlist((prev) => {
       const next = new Set(prev)
       let added = false
@@ -687,6 +689,78 @@ export default function LandingPage() {
     return pool.sort(byRating).slice(0, 6)
   }, [dealTab, arrivals, trending, refurbished])
 
+  /* Card data for the desktop-only flash sale stage. Pulled from the same
+     `dealProducts` pool so real images, names and prices are shown. */
+  const dealCards: FlashSaleCard[] = dealProducts.map((product: any): FlashSaleCard => {
+    const variant = product?.variants?.[0] ?? product
+    const price = Number(variant?.discountPrice || variant?.price || 0)
+    const mrp = Number(variant?.price || price)
+    return {
+      id: Number(product.id),
+      name: String(product.name ?? ''),
+      image: getProductImage(product),
+      price,
+      mrp,
+      off: mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0,
+    }
+  })
+
+  /* Device data for the certified-refurbished showcase. Mirrors `dealCards`:
+     real images, names, prices and derived grade/rating. */
+  const refurbishedDevices: RefurbishedDevice[] = refurbished.slice(0, 8).map((product): RefurbishedDevice => {
+    const variant = product?.variants?.[0] ?? product
+    const mrp = Number(variant?.price || 0)
+    const price = Number(variant?.discountPrice || variant?.price || 0)
+    const rating = Number(product?.rating || 0)
+    return {
+      id: Number(product.id),
+      name: String(product.name ?? ''),
+      image: getProductImage(product),
+      price,
+      mrp,
+      save: Math.max(0, mrp - price),
+      meta: [variant?.storage, variant?.color].filter(Boolean).join(' · '),
+      rating,
+      grade: rating >= 4.7 ? 'Like new' : rating >= 4.4 ? 'Excellent' : 'Good',
+    }
+  })
+
+  /* Card data for the Trending / New Arrivals grids, reusing the shared
+     ProductCard design (same shell as the refurbished rail, adapted to
+     brand-new stock: no condition grade, generic highlights). */
+  const toCardData = (product: any, kind: 'trending' | 'new'): ProductCardData => {
+    const variant = product?.variants?.[0] ?? product
+    const mrp = Number(variant?.price || 0)
+    const price = Number(variant?.discountPrice || variant?.price || 0)
+    const rating = Number(product?.rating || 0)
+    const features: string[] = Array.isArray(product?.features) ? product.features.filter(Boolean) : []
+    const checks =
+      features.length >= 4
+        ? features.slice(0, 5)
+        : ['Genuine sealed unit', 'Official warranty', 'Free express delivery', 'Free 7-day returns']
+    return {
+      id: Number(product.id),
+      name: String(product.name ?? ''),
+      image: getProductImage(product),
+      price,
+      mrp,
+      save: Math.max(0, mrp - price),
+      rating,
+      meta: [variant?.storage, variant?.color].filter(Boolean).join(' · '),
+      badge: kind === 'trending' ? 'Trending' : 'New',
+      badgeIcon: 'spark',
+      overlayTitle: kind === 'trending' ? "Why it's trending" : "What's inside",
+      checks,
+      certTitle: 'Customer rating',
+      certText: kind === 'trending' ? 'Free express delivery' : '1-year warranty',
+      warranty: '1 yr',
+      returns: '7 days',
+    }
+  }
+
+  const trendingCards: ProductCardData[] = trending.slice(0, 8).map((p) => toCardData(p, 'trending'))
+  const arrivalCards: ProductCardData[] = arrivals.slice(0, 4).map((p) => toCardData(p, 'new'))
+
   return (
     <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-pf-red/30 selection:text-pf-red-dark">
       <SiteTopNav transparent />
@@ -751,7 +825,7 @@ export default function LandingPage() {
                   </div>
                   <SlideHeading
                     isActive={i === currentSlide}
-                    className={`text-[clamp(34px,5vw,66px)] font-extrabold leading-[1.06] text-white mb-5 transition-all duration-700 delay-300 ${
+                    className={`text-[clamp(34px,5vw,60px)] font-extrabold leading-[1.06] text-white mb-5 transition-all duration-700 delay-300 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                     }`}
                   >
@@ -825,14 +899,13 @@ export default function LandingPage() {
       {/* ─── CATEGORIES ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface">
         <div className="max-w-[1440px] mx-auto scroll-reveal">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-              Categories
-            </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">
-              Browse by Category
-            </h2>
-          </div>
+          <SectionHeading
+            className="mb-14"
+            align="center"
+            eyebrow="Categories"
+            icon="category"
+            title={<>Browse by <Accent>Category</Accent></>}
+          />
 
           {categoriesLoading ? (
             <SectionLoader type="categories" count={6} />
@@ -954,8 +1027,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── HOT DEAL ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface-container-low/20">
+      {/* ─── HOT DEAL (mobile / tablet) ─── */}
+      <section className="lg:hidden py-20 px-6 md:px-12 bg-surface-container-low/20">
         <Tilt3D amount={0.85}>
           <div className="max-w-[1440px] mx-auto scroll-reveal">
             <div className="glass-card overflow-hidden rounded-4xl border border-pf-red/15 flex flex-col lg:flex-row items-stretch relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
@@ -1052,84 +1125,35 @@ export default function LandingPage() {
         </Tilt3D>
       </section>
 
+      {/* ─── HOT DEAL (desktop stage) ─── */}
+      <FlashSaleStage
+        cards={dealCards}
+        tabs={DEAL_TABS}
+        activeTab={dealTab}
+        onTabChange={(key) => setDealTab(key as DealTabKey)}
+      />
+
       {/* ─── TRENDING DEVICES ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface">
         <Tilt3D amount={0.6}>
           <div className="max-w-[1440px] mx-auto scroll-reveal">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-              <div>
-                <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-                  Trending
-                </span>
-                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">
-                  Trending Devices
-                </h2>
-                <p className="text-base md:text-lg text-on-surface-variant mt-1">
-                  The most sought-after tech in our collection.
-                </p>
-              </div>
+            <SectionHeading
+              className="mb-12"
+              eyebrow="Trending"
+              icon="trending_up"
+              title={<>Trending <Accent>Devices</Accent></>}
+              subtitle="The most sought-after tech in our collection."
+            >
               <Link to="/collection/all?tab=trending" className="btn btn-quiet btn-sm shrink-0">
                 Explore All <span className="material-symbols-outlined text-lg">arrow_forward</span>
               </Link>
-            </div>
+            </SectionHeading>
             {trendingLoading ? (
               <SectionLoader type="products" count={8} />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {trending.slice(0, 8).map((product) => (
-                  <div
-                    key={product.id}
-                    onClick={() => navigate(`/product/${product.id}`)}
-                    className="glass-card p-4 rounded-4xl group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:border-pf-red/25 hover:-translate-y-1 stagger-item"
-                  >
-                    <div className="relative rounded-2xl overflow-hidden bg-white h-[270px] mb-4 flex items-center justify-center p-5">
-                      {getProductImage(product) ? (
-                        <img
-                          src={getProductImage(product)}
-                          alt={product.name}
-                          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-                          onError={(e) => {
-                            ;(e.target as HTMLImageElement).src = FALLBACK_IMG
-                          }}
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center text-on-surface-variant">
-                          <span className="material-symbols-outlined text-5xl">inventory_2</span>
-                        </div>
-                      )}
-                      <Link
-                        to={`/product/${product.id}`}
-                        className="absolute bottom-4 right-4 bg-pf-red text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(217,30,54,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
-                      >
-                        <span className="material-symbols-outlined text-xl">visibility</span>
-                      </Link>
-                    </div>
-                    <div className="px-1 pb-1">
-                      <h3 className="font-bold text-base md:text-lg text-on-surface mb-1.5 leading-snug">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-pf-red-dark font-extrabold text-lg">
-                          {getProductPrice(product)}
-                        </span>
-                        <div className="flex items-center gap-1">
-                          <div className="flex">
-                            {[1, 2, 3, 4, 5].map((s) => (
-                              <span
-                                key={s}
-                                className={`material-symbols-outlined text-sm ${s <= 4 ? 'text-gold' : 'text-gold/40'}`}
-                              >
-                                star
-                              </span>
-                            ))}
-                          </div>
-                          <span className="text-xs font-bold text-on-surface-variant">
-                            {product.rating || '4.9'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {trendingCards.map((card, i) => (
+                  <ProductCard key={card.id} {...card} order={i} />
                 ))}
               </div>
             )}
@@ -1140,18 +1164,14 @@ export default function LandingPage() {
       {/* ─── REPAIR SERVICES ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-              Services
-            </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">
-              Precision Repair Services
-            </h2>
-            <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              From micro-soldering to full device restoration — we handle it all with clinical
-              precision.
-            </p>
-          </div>
+          <SectionHeading
+            className="mb-14"
+            align="center"
+            eyebrow="Services"
+            icon="handyman"
+            title={<>Precision <Accent>Repair</Accent> Services</>}
+            subtitle="From micro-soldering to full device restoration — we handle it all with clinical precision."
+          />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
@@ -1196,19 +1216,13 @@ export default function LandingPage() {
       {newArrivalsLoading ? (
         <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
           <div className="max-w-[1440px] mx-auto">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-              <div>
-                <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-                  New
-                </span>
-                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">
-                  New Arrivals
-                </h2>
-              </div>
-              <p className="text-base md:text-lg text-on-surface-variant mt-1">
-                Discover the latest cutting-edge technology.
-              </p>
-            </div>
+            <SectionHeading
+              className="mb-12"
+              eyebrow="New"
+              icon="new_releases"
+              title={<>New <Accent>Arrivals</Accent></>}
+              subtitle="Discover the latest cutting-edge technology."
+            />
             <SectionLoader type="products" count={4} />
           </div>
         </section>
@@ -1216,84 +1230,26 @@ export default function LandingPage() {
         arrivals.length > 0 && (
           <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
             <div className="max-w-[1440px] mx-auto">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-                <div>
-                  <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-                    New
-                  </span>
-                  <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">
-                    New Arrivals
-                  </h2>
-                  <p className="text-base md:text-lg text-on-surface-variant mt-1">
-                    Discover the latest cutting-edge technology.
-                  </p>
-                </div>
+              <SectionHeading
+                className="mb-12"
+                eyebrow="New"
+                icon="new_releases"
+                title={<>New <Accent>Arrivals</Accent></>}
+                subtitle="Discover the latest cutting-edge technology."
+              >
                 <Link to="/collection/all?tab=new" className="btn btn-quiet btn-sm shrink-0">
                   View All <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </Link>
-              </div>
+              </SectionHeading>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {arrivals.slice(0, 4).map((product) => (
-                  <div
-                    key={product.id}
-                    onClick={() => navigate(`/product/${product.id}`)}
-                    className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-pf-red/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
-                  >
-                    <div className="absolute top-3 left-3 z-10">
-                      <span className="bg-pf-red text-white text-xs px-3 py-1.5 rounded-[8px] font-bold uppercase tracking-widest shadow-lg">
-                        New
-                      </span>
-                    </div>
-                    <div className="bg-white rounded-lg overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
-                      {getProductImage(product) ? (
-                        <img
-                          src={getProductImage(product)}
-                          alt={product.name}
-                          className="w-full h-full object-contain group-hover:scale-110 transition-all duration-500"
-                          onError={(e) => {
-                            ;(e.target as HTMLImageElement).src = FALLBACK_IMG
-                          }}
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center text-on-surface-variant">
-                          <span className="material-symbols-outlined text-5xl">inventory_2</span>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-bold text-base text-on-surface mb-1">{product.name}</h3>
-                    <div className="flex items-center justify-between mt-2">
-                      <p className="text-pf-red-dark font-extrabold text-lg">
-                        {getProductPrice(product)}
-                      </p>
-                      <div className="flex gap-1">
-                        <Link
-                          to={`/product/${product.id}`}
-                          className="p-2.5 rounded-lg bg-pf-red/10 text-pf-red-dark hover:bg-pf-red hover:text-pf-red-dark transition-all duration-300"
-                        >
-                          <span className="material-symbols-outlined text-xl">visibility</span>
-                        </Link>
-                        <button
-                          onClick={(e) => toggleWishlist(product.id, e)}
-                          className={`p-2.5 rounded-lg transition-all duration-300 ${
-                            wishlist.has(product.id)
-                              ? 'bg-pf-red/10 text-pf-red'
-                              : 'text-on-surface-variant hover:text-pf-red-dark hover:bg-pf-red/10'
-                          }`}
-                        >
-                          <span
-                            className="material-symbols-outlined text-xl"
-                            style={{
-                              fontVariationSettings: wishlist.has(product.id)
-                                ? "'FILL' 1"
-                                : "'FILL' 0",
-                            }}
-                          >
-                            favorite
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {arrivalCards.map((card, i) => (
+                  <ProductCard
+                    key={card.id}
+                    {...card}
+                    order={i}
+                    wishlisted={wishlist.has(card.id)}
+                    onToggleWishlist={toggleWishlist}
+                  />
                 ))}
               </div>
             </div>
@@ -1302,149 +1258,28 @@ export default function LandingPage() {
       )}
 
       {/* ─── CERTIFIED REFURBISHED ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
-        <div className="max-w-[1440px] mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-            <div>
-              <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-                Refurbished
-              </span>
-              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface">
-                Certified Refurbished
-              </h2>
-              <p className="text-base md:text-lg text-on-surface-variant mt-1">
-                Pristine devices, verified for excellence.
-              </p>
-            </div>
-            <Link to="/phones" className="btn btn-secondary btn-sm shrink-0">
-              View Collection
-            </Link>
-          </div>
-          {refurbishedLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="glass-card p-4 rounded-2xl">
-                  <div className="bg-gray-200 rounded-lg h-[210px] mb-4 animate-pulse" />
-                  <div className="h-4 w-28 bg-gray-200 rounded animate-pulse mb-2" />
-                  <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              {refurbished.slice(0, 8).map((product) => (
-                <div
-                  key={product.id}
-                  onClick={() => navigate(`/product/${product.id}`)}
-                  className="glass-card p-4 rounded-2xl group relative cursor-pointer hover:border-pf-red/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 stagger-item"
-                >
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="bg-pf-red-dark text-white text-xs px-3 py-1.5 rounded-[8px] font-bold tracking-wide shadow-lg">
-                      Refurbished
-                    </span>
-                  </div>
-                  <div className="bg-white rounded-lg overflow-hidden h-[210px] mb-4 flex items-center justify-center p-5">
-                    {getProductImage(product) ? (
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="w-full h-full object-contain group-hover:scale-110 transition-all duration-500"
-                        onError={(e) => {
-                          ;(e.target as HTMLImageElement).src = FALLBACK_IMG
-                        }}
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center text-on-surface-variant">
-                        <span className="material-symbols-outlined text-5xl">inventory_2</span>
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="font-bold text-base text-on-surface">{product.name}</h3>
-                  <div className="flex items-center justify-between mt-2">
-                    <p className="text-pf-red-dark font-extrabold text-lg">
-                      {getProductPrice(product)}
-                    </p>
-                    <Link
-                      to={`/product/${product.id}`}
-                      className="p-2.5 rounded-lg bg-pf-red/10 text-pf-red-dark hover:bg-pf-red hover:text-pf-red-dark transition-all duration-300"
-                    >
-                      <span className="material-symbols-outlined text-xl">visibility</span>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+      <RefurbishedShowcase devices={refurbishedDevices} loading={refurbishedLoading} />
 
       {/* ─── VIDEO SHOWCASE ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-              In Action
-            </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">
-              See the Precision in Action
-            </h2>
-            <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">
-              Watch how we bring your devices back to life with clinical-grade repair techniques.
-            </p>
-          </div>
+          <SectionHeading
+            className="mb-14"
+            align="center"
+            eyebrow="In Action"
+            icon="play_circle"
+            title={<>See the <Accent>Precision</Accent> in Action</>}
+            subtitle="Watch how we bring your devices back to life with clinical-grade repair techniques."
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative group rounded-4xl overflow-hidden shadow-xl aspect-video bg-black">
-              <video
-                className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={SLIDE_IMAGES[0]}
-              >
-                <source
-                  src="https://cdn.coverr.co/videos/coverr-close-up-of-a-smartphone-display-5682/1080p.mp4"
-                  type="video/mp4"
-                />
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <span className="text-white text-lg md:text-xl font-bold">
-                  Precision Micro-Soldering
-                </span>
-                <p className="text-white/60 text-sm mt-1">
-                  Board-level repair with microscopic accuracy
-                </p>
-              </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-[8px] bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="material-symbols-outlined text-pf-red">play_arrow</span>
-              </div>
-            </div>
-            <div className="relative group rounded-4xl overflow-hidden shadow-xl aspect-video bg-black">
-              <video
-                className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={SLIDE_IMAGES[1]}
-              >
-                <source
-                  src="https://cdn.coverr.co/videos/coverr-phone-in-hands-5600/1080p.mp4"
-                  type="video/mp4"
-                />
-              </video>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                <span className="text-white text-lg md:text-xl font-bold">
-                  Diagnostic Calibration
-                </span>
-                <p className="text-white/60 text-sm mt-1">Advanced testing for peak performance</p>
-              </div>
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-[8px] bg-pf-red/20 backdrop-blur-sm border border-pf-red/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="material-symbols-outlined text-pf-red">play_arrow</span>
-              </div>
-            </div>
+            {VIDEO_FEATURES.map((feature) => (
+              <YouTubeLite
+                key={feature.videoId}
+                videoId={feature.videoId}
+                title={feature.title}
+                subtitle={feature.subtitle}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -1457,7 +1292,7 @@ export default function LandingPage() {
               {partners.map((p) => (
                 <span
                   key={p + dup}
-                  className="text-5xl md:text-7xl font-extrabold text-on-surface/10 uppercase tracking-tighter select-none"
+                  className="text-5xl md:text-6xl font-extrabold text-on-surface/10 tracking-tighter select-none"
                 >
                   {p}
                 </span>
@@ -1471,17 +1306,14 @@ export default function LandingPage() {
       <section className="py-20 px-6 md:px-12 overflow-hidden bg-surface">
         <Tilt3D amount={0.75}>
           <div className="max-w-[1440px] mx-auto scroll-reveal">
-            <div className="text-center mb-14">
-              <span className="inline-block text-xs font-bold text-pf-red tracking-[0.2em] uppercase mb-3">
-                Testimonials
-              </span>
-              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">
-                Trusted by Thousands
-              </h2>
-              <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">
-                Real experiences from our community of tech enthusiasts.
-              </p>
-            </div>
+            <SectionHeading
+              className="mb-14"
+              align="center"
+              eyebrow="Testimonials"
+              icon="format_quote"
+              title={<>Trusted by <Accent>Thousands</Accent></>}
+              subtitle="Real experiences from our community of tech enthusiasts."
+            />
             <div className="flex gap-6 overflow-x-auto pb-6 no-scrollbar snap-x">
               {testimonials.map((t, i) => (
                 <div

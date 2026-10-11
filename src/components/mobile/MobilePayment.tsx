@@ -90,7 +90,7 @@ export default function MobilePayment() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
@@ -181,7 +181,7 @@ export default function MobilePayment() {
 
   if (isCartEmpty) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
@@ -203,7 +203,7 @@ export default function MobilePayment() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />

@@ -5,6 +5,7 @@ import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileRepairs from '../components/mobile/MobileRepairs'
+import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 
 const services = [
   { icon: 'phone_iphone', title: 'Screen Repair', desc: 'Cracked or shattered screen? We replace it with premium OEM-grade glass in under 60 minutes.' },
@@ -178,11 +179,14 @@ export default function RepairsPage() {
       {/* ─── SERVICES ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold text-[#D91E36] tracking-[0.2em] uppercase mb-3">Our Services</span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-4">Precision Repair Services</h2>
-            <p className="text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto">We cover everything from simple fixes to complex board-level repairs. All work is backed by our satisfaction guarantee.</p>
-          </div>
+          <SectionHeading
+            className="mb-14"
+            align="center"
+            eyebrow="Our Services"
+            icon="handyman"
+            title={<>Precision <Accent>Repair</Accent> Services</>}
+            subtitle="We cover everything from simple fixes to complex board-level repairs. All work is backed by our satisfaction guarantee."
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((svc, idx) => (
               <div
@@ -211,8 +215,12 @@ export default function RepairsPage() {
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="inline-block text-xs font-bold text-[#D91E36] tracking-[0.2em] uppercase mb-3">Process</span>
-              <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface mb-8">How It Works</h2>
+              <SectionHeading
+                className="mb-8"
+                eyebrow="Process"
+                icon="route"
+                title={<>How It <Accent>Works</Accent></>}
+              />
               <div className="space-y-8">
                 {[
                   { step: '01', title: 'Bring It In', desc: 'Visit any of our locations or mail your device using our secure prepaid shipping kit.' },
@@ -241,9 +249,15 @@ export default function RepairsPage() {
       {/* ─── BRANDS ─── */}
       <section className="py-20 px-6 md:px-12 bg-[#A3122A] scroll-reveal">
         <div className="max-w-[1440px] mx-auto text-center">
-          <span className="inline-block text-xs font-bold text-[#D91E36] tracking-[0.2em] uppercase mb-3">Brands</span>
-          <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-white mb-4">Brands We Service</h2>
-          <p className="text-white/60 text-lg mb-12 max-w-xl mx-auto">We work on all major smartphone brands. Don't see yours? Give us a call.</p>
+          <SectionHeading
+            className="mb-12"
+            align="center"
+            light
+            eyebrow="Brands"
+            icon="verified"
+            title={<>Brands We <Accent>Service</Accent></>}
+            subtitle="We work on all major smartphone brands. Don't see yours? Give us a call."
+          />
           <div className="flex flex-wrap justify-center gap-4">
             {brands.map((brand) => (
               <div key={brand} className="bg-white/5 border border-white/10 rounded-xl px-7 py-4 text-white font-bold text-lg hover:bg-white/10 hover:border-[#D91E36]/30 hover:text-[#D91E36] transition-all duration-300 cursor-pointer">

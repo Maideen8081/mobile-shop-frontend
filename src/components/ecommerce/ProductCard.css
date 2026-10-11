@@ -1,0 +1,699 @@
+/* Reusable product card — the "certified refurbished" card design, shared by
+   the Trending, New Arrivals and Refurbished sections. Scoped under `.pc`. */
+
+.pc {
+  --pc-card: #ffffff;
+  --pc-ink: var(--color-on-surface);
+  --pc-muted: var(--color-on-surface-variant);
+  --pc-line: var(--color-pf-line);
+  --pc-plate: var(--color-surface-container);
+  --pc-plate2: var(--color-surface-container-high);
+  --pc-red: var(--color-pf-red-dark);
+  --pc-red-b: var(--color-pf-red);
+  --pc-ok: #1f8a5b;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 clamp(290px, 27vw, 368px);
+  scroll-snap-align: start;
+  font-family: var(--font-ui);
+  color: var(--pc-ink);
+  background: var(--pc-card);
+  border: 1px solid var(--pc-line);
+  border-radius: 16px;
+  overflow: hidden;
+  transform-origin: top center;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.pc:hover {
+  border-color: rgba(217, 30, 54, 0.35);
+  box-shadow: 0 26px 52px rgba(20, 12, 10, 0.12);
+  transform: translateY(-6px);
+}
+
+/* reveal */
+.pc:not(.pc-in) {
+  opacity: 0;
+  transform: translateY(34px) rotateX(9deg) scale(0.98);
+}
+.pc-in.pc {
+  animation: pc-cardin 0.75s calc(var(--i, 0) * 0.08s + 0.2s) cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes pc-cardin {
+  0% {
+    opacity: 0;
+    transform: translateY(34px) rotateX(9deg) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* shared svg helpers */
+.pc-ic {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+.pc-tick {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: var(--pc-ok);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 18;
+  stroke-dashoffset: 18;
+}
+.pc-in .pc-tick {
+  animation: pc-tickdraw 0.4s calc(0.75s + var(--k, 0) * 0.09s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes pc-tickdraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* plate — the image area now owns its own white canvas */
+.pc-plate {
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+}
+
+.pc-chip {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 9999px;
+  background: var(--pc-ink);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.pc-chip .pc-ic {
+  width: 13px;
+  height: 13px;
+  stroke: #6ee7a8;
+}
+
+.pc-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.pc-eye,
+.pc-wish {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--pc-card);
+  border: 1px solid rgba(217, 30, 54, 0.2);
+  color: var(--pc-red);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.pc-eye .pc-ic,
+.pc-wish .pc-ic {
+  width: 18px;
+  height: 18px;
+}
+.pc-wish .pc-ic-fill {
+  fill: currentColor;
+}
+.pc-eye::after {
+  content: 'Quick view';
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  transform: translateY(-50%) translateX(4px);
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--pc-ink);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.pc-eye:hover,
+.pc-wish:hover,
+.pc-wish.is-active {
+  background: var(--pc-red);
+  border-color: var(--pc-red);
+  color: #fff;
+}
+.pc-eye:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+.pc-eye:focus-visible,
+.pc-wish:focus-visible {
+  outline: 2px solid var(--pc-red);
+  outline-offset: 2px;
+}
+
+.pc-art {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: inherit;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  padding: 6%;
+}
+.pc-art img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: multiply;
+  transition: transform 0.5s ease;
+}
+.pc-art-link {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.pc:hover .pc-art img {
+  transform: scale(1.04);
+}
+.pc-art[data-fit='cover'] img {
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+.pc-ph {
+  font-size: 72px;
+  color: var(--pc-muted);
+}
+
+.pc-grade {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(31, 138, 91, 0.25);
+  color: var(--pc-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+}
+.pc-grade i {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--pc-ok);
+  box-shadow: 0 0 0 3px rgba(31, 138, 91, 0.18);
+}
+
+/* hover overlay */
+.pc-ov {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(27, 18, 16, 0.4) 0%, rgba(27, 18, 16, 0.92) 78%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.pc:hover .pc-ov {
+  opacity: 1;
+}
+.pc-ov h3 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+.pc-ov ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+}
+.pc-ov li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.75rem;
+}
+.pc-ov .pc-tick {
+  stroke: #6ee7a8;
+}
+
+/* body */
+.pc-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 18px 20px 16px;
+}
+
+.pc-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.5em;
+}
+.pc-name a {
+  color: var(--pc-ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pc-name a:hover {
+  color: var(--pc-red);
+}
+
+.pc-meta {
+  margin: 4px 0 0;
+  color: var(--pc-muted);
+  font-size: 0.875rem;
+}
+
+.pc-tear {
+  position: relative;
+  height: 16px;
+  border-bottom: 2px dashed rgba(27, 18, 16, 0.14);
+}
+.pc-tear::before,
+.pc-tear::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  width: 26px;
+  height: 14px;
+  background: radial-gradient(circle at 50% 0, transparent 6px, var(--pc-card) 6.5px);
+}
+.pc-tear::before {
+  left: -6px;
+}
+.pc-tear::after {
+  right: -6px;
+}
+
+.pc-cert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0 14px;
+}
+.pc-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex: none;
+}
+.pc-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.pc-ring circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.pc-ring .pc-tr {
+  stroke: rgba(27, 18, 16, 0.12);
+}
+.pc-ring .pc-fg {
+  stroke: var(--pc-ok);
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 113.1;
+}
+.pc-in .pc-ring .pc-fg {
+  animation: pc-ringfill 1.1s calc(0.7s + var(--i, 0) * 0.08s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.pc-ring span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--pc-ink);
+}
+@keyframes pc-ringfill {
+  to {
+    stroke-dashoffset: calc(113.1 - var(--p, 90) * 1.131);
+  }
+}
+
+.pc-cert p {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  color: var(--pc-muted);
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+.pc-cert p b {
+  color: var(--pc-ink);
+  font-size: 0.875rem;
+}
+
+.pc-add {
+  width: 100%;
+  margin-top: auto;
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--pc-red-b);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  overflow: visible;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+.pc-add .pc-ic {
+  width: 17px;
+  height: 17px;
+  transition: transform 0.2s ease;
+}
+.pc-add:hover {
+  background: var(--pc-red);
+  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.3);
+}
+.pc-add:hover .pc-ic {
+  transform: translateX(3px);
+}
+.pc-add:active {
+  transform: translateY(1px);
+}
+.pc-add:focus-visible {
+  outline: 2px solid var(--pc-red);
+  outline-offset: 2px;
+}
+.pc-add.is-added,
+.pc-add.is-added:hover {
+  background: var(--pc-ok);
+  box-shadow: none;
+}
+
+/* skeleton */
+.pc-skel {
+  pointer-events: none;
+  opacity: 1;
+}
+.pc-skel:not(.pc-in) {
+  opacity: 1;
+  transform: none;
+}
+.pc-skel .pc-plate {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pc-skel .pc-body {
+  gap: 10px;
+}
+.pc-skel-line {
+  height: 13px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--pc-plate) 25%, var(--pc-plate2) 50%, var(--pc-plate) 75%);
+  background-size: 200% 100%;
+  animation: pc-shimmer 1.4s infinite;
+}
+@keyframes pc-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── quick view dialog ── */
+
+.pc dialog {
+  width: min(900px, 92vw);
+  max-width: 92vw;
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  background: var(--pc-card);
+  color: var(--pc-ink);
+  overflow: hidden;
+}
+.pc dialog::backdrop {
+  background: rgba(16, 10, 9, 0.55);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.pc dialog.pc-show::backdrop {
+  opacity: 1;
+}
+.pc-qv {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  max-height: min(78vh, 660px);
+  overflow: auto;
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pc dialog.pc-show .pc-qv {
+  opacity: 1;
+  transform: none;
+}
+
+.pc-qv .pc-qvx {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--pc-card);
+  border: 1px solid rgba(217, 30, 54, 0.2);
+  color: var(--pc-red);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.pc-qv .pc-qvx .pc-ic {
+  width: 19px;
+  height: 19px;
+}
+.pc-qv .pc-qvx:hover {
+  background: var(--pc-red);
+  border-color: var(--pc-red);
+  color: #fff;
+}
+.pc-qv .pc-qvx:focus-visible {
+  outline: 2px solid var(--pc-red);
+  outline-offset: 2px;
+}
+
+.pc-qvplate {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+  padding: 6%;
+  background: #ffffff;
+}
+.pc-qvplate img {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: multiply;
+}
+
+.pc-qvinfo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 30px 30px;
+}
+.pc-qvtags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pc-qvinfo h3 {
+  margin: 16px 0 2px;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.pc-qv .pc-meta {
+  font-size: 0.875rem;
+}
+
+.pc-specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 20px;
+}
+.pc-specs div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--pc-line);
+  border-radius: 12px;
+  background: var(--pc-plate);
+}
+.pc-specs b {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--pc-ink);
+}
+.pc-specs span {
+  font-size: 0.75rem;
+  color: var(--pc-muted);
+}
+
+.pc-qvinfo h4 {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--pc-ink);
+}
+.pc-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px 16px;
+}
+.pc-checks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--pc-ink);
+}
+.pc-qvinfo .pc-tick {
+  stroke-dasharray: 0;
+  stroke-dashoffset: 0;
+}
+
+.pc-qvactions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+.pc-qvactions .pc-add {
+  flex: 1;
+}
+.pc-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  color: var(--pc-red);
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pc-ghost:hover {
+  color: var(--pc-red-b);
+}
+
+/* ── responsive ── */
+
+@media (max-width: 720px) {
+  .pc dialog {
+    width: 92vw;
+  }
+  .pc-qv {
+    grid-template-columns: 1fr;
+    max-height: none;
+  }
+  .pc-qvplate {
+    min-height: 240px;
+    padding: 24px;
+  }
+  .pc-qvplate img {
+    width: 56%;
+  }
+}
+
+/* ── reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .pc *,
+  .pc *::before,
+  .pc *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .pc:not(.pc-in) {
+    opacity: 1;
+    transform: none;
+  }
+  .pc-ring .pc-fg {
+    stroke-dashoffset: calc(113.1 - var(--p, 90) * 1.131);
+  }
+  .pc-qv {
+    opacity: 1;
+    transform: none;
+  }
+}

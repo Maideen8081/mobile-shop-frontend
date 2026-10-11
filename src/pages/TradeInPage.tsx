@@ -6,6 +6,7 @@ import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileTradeIn from '../components/mobile/MobileTradeIn'
 import { tradeInService, type TradeInSubmission } from '../services/tradeInService'
+import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 
 const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
 
@@ -269,10 +270,14 @@ export default function TradeInPage() {
 
         {/* How It Works */}
         <section id="how-it-works" className="py-24 px-4 md:px-8 max-w-[1400px] mx-auto" ref={setRevealRef}>
-          <div className="text-center mb-16">
-            <h2 className="text-[clamp(28px,4vw,48px)] font-extrabold text-[#181c1e] mb-4">How Trade-In Works</h2>
-            <p className="text-[#434748] max-w-2xl mx-auto">Four simple steps to turn your old device into savings.</p>
-          </div>
+          <SectionHeading
+            className="mb-16"
+            align="center"
+            eyebrow="Process"
+            icon="swap_horiz"
+            title={<>How <Accent>Trade-In</Accent> Works</>}
+            subtitle="Four simple steps to turn your old device into savings."
+          />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step, idx) => (
               <div key={step.title} className="glass-card p-8 rounded-[1.75rem] text-center group hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:border-[#D91E36]/25 hover:-translate-y-1 transition-all duration-500" style={{ transitionDelay: `${idx * 100}ms` }}>
@@ -292,8 +297,13 @@ export default function TradeInPage() {
           <div className="max-w-[1200px] mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               <div>
-                <h2 className="text-[clamp(24px,3vw,40px)] font-extrabold text-[#181c1e] mb-6">Estimate Your Trade-In Value</h2>
-                <p className="text-[#434748] mb-8">Select your device brand to see estimated trade-in values for popular models.</p>
+                <SectionHeading
+                  className="mb-8"
+                  eyebrow="Estimate"
+                  icon="calculate"
+                  title={<>Estimate Your <Accent>Value</Accent></>}
+                  subtitle="Select your device brand to see estimated trade-in values for popular models."
+                />
                 <div className="flex flex-wrap gap-3 mb-8">
                   {brands.map((brand) => (
                     <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
@@ -345,10 +355,14 @@ export default function TradeInPage() {
         {showForm && (
           <section id="trade-in-form" ref={formRef} className="py-24 px-4 md:px-8 bg-white scroll-mt-24">
             <div className="max-w-[1200px] mx-auto">
-              <div className="text-center mb-14">
-                <h2 className="text-[clamp(28px,4vw,44px)] font-extrabold text-[#181c1e] mb-3">Sell Your Phone</h2>
-                <p className="text-[#434748] max-w-xl mx-auto">Fill in your device details and contact info. We'll analyze the value instantly.</p>
-              </div>
+              <SectionHeading
+                className="mb-14"
+                align="center"
+                eyebrow="Trade-In"
+                icon="sell"
+                title={<>Sell Your <Accent>Phone</Accent></>}
+                subtitle="Fill in your device details and contact info. We'll analyze the value instantly."
+              />
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 {/* Form */}
                 <div className="lg:col-span-3 glass-card p-8 md:p-10 rounded-[2rem]">
