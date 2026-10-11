@@ -50,10 +50,10 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family:var(--font-display);
-  font-size: 11px;
+  font-family:var(--font-ui);
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 3px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--sp-red-bright);
   margin-bottom: 16px;
@@ -61,6 +61,7 @@
   background: rgba(210, 23, 46, 0.12);
   border: 1px solid rgba(210, 23, 46, 0.25);
   border-radius: 8px;
+  background-color: rgba(210, 23, 46, 0.12); /* Explicit for contrast */
 }
 
 .sp-hero-title {
@@ -71,6 +72,7 @@
   color: white;
   margin: 0 0 16px;
   letter-spacing: 1px;
+  background-color: transparent; /* Explicit for contrast */
 }
 
 .sp-hero-accent {
@@ -78,13 +80,15 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  background-color: transparent; /* Explicit for contrast */
 }
 
 .sp-hero-sub {
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 36px;
   font-weight: 400;
+  background-color: transparent; /* Explicit for contrast */
 }
 
 /* ── Search bar ── */
@@ -128,32 +132,52 @@
   color: var(--sp-gray);
 }
 
-.sp-clear-btn {
+/* Base icon button - shared by clear btn, card actions */
+.sp-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #fff;
+  color: var(--sp-ink);
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.sp-icon-btn:hover {
+  background: var(--sp-red);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.sp-clear-btn {
   width: 32px;
   height: 32px;
-  border: none;
+  box-shadow: none;
   background: transparent;
   color: var(--sp-gray);
-  cursor: pointer;
   border-radius: 8px;
-  transition: all 0.2s;
 }
 
 .sp-clear-btn:hover {
   background: #f1f1f1;
   color: var(--sp-ink);
+  transform: none;
+  box-shadow: none;
 }
 
-.sp-search-btn {
-  display: flex;
+/* Primary button - shared by search btn, search again btn */
+.sp-btn-primary {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
   background: var(--sp-red);
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 12px;
   font-family:var(--font-ui);
@@ -162,12 +186,17 @@
   cursor: pointer;
   transition: all 0.25s;
   white-space: nowrap;
+  text-decoration: none;
 }
 
-.sp-search-btn:hover {
+.sp-btn-primary:hover {
   background: var(--sp-red-dark);
   transform: translateY(-1px);
   box-shadow: 0 4px 16px rgba(210, 23, 46, 0.35);
+}
+
+.sp-search-btn {
+  composes: sp-btn-primary;
 }
 
 /* ── Body ── */
@@ -242,6 +271,7 @@
   cursor: pointer;
   transition: all 0.2s;
   animation: spChipIn 0.3s ease backwards;
+  background-color: #fff; /* Explicit background for contrast */
 }
 
 .sp-history-chip:hover {
@@ -274,18 +304,23 @@
 }
 
 .sp-popular {
-  background: linear-gradient(135deg, rgba(210, 23, 46, 0.06), rgba(240, 48, 73, 0.04));
+  background: rgba(210, 23, 46, 0.08);
   border-color: rgba(210, 23, 46, 0.15);
+  background-color: #fff; /* Solid background for contrast */
 }
 
 .sp-clear-all {
   font-size: 13px;
-  font-weight: 500;
-  color: var(--sp-gray);
+  font-weight: 600;
+  color: #5a5550;
   background: none;
   border: none;
   cursor: pointer;
   transition: color 0.2s;
+  padding: 0;
+  font-family: var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .sp-clear-all:hover {
@@ -312,6 +347,7 @@
   color: var(--sp-ink);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   animation: spCardIn 0.4s ease backwards;
+  background-color: #fff; /* Explicit for contrast */
 }
 
 .sp-category-card:hover {
@@ -334,8 +370,8 @@
 
 .sp-category-count {
   font-size: 12px;
-  color: var(--sp-gray);
-  font-weight: 500;
+  color: #5a5550;
+  font-weight: 600;
 }
 
 /* ── Product grid ── */
@@ -396,6 +432,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  z-index: 2;
 }
 
 .sp-card-tag {
@@ -410,10 +447,10 @@
   text-transform: uppercase;
 }
 
-.sp-tag-new { background: linear-gradient(135deg, #10b981, #059669); }
-.sp-tag-best { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.sp-tag-default { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-.sp-tag-discount { background: linear-gradient(135deg, var(--sp-red-bright), var(--sp-red)); }
+.sp-tag-new { background: #059669; }
+.sp-tag-best { background: #dc2626; }
+.sp-tag-default { background: #2563eb; }
+.sp-tag-discount { background: var(--sp-red); }
 
 .sp-card-actions {
   position: absolute;
@@ -433,24 +470,12 @@
 }
 
 .sp-card-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: white;
-  border: none;
-  border-radius: 10px;
-  color: var(--sp-ink);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
+  composes: sp-icon-btn;
 }
 
 .sp-card-action:hover {
   background: var(--sp-red);
-  color: white;
+  color: #fff;
   transform: scale(1.1);
 }
 
@@ -478,9 +503,10 @@
 }
 
 .sp-card-brand {
-  font-size: 12px;
-  color: var(--sp-gray);
+  font-size: 13px;
+  color: #5a5550;
   margin: 0 0 8px;
+  font-weight: 500;
 }
 
 .sp-card-price-row {

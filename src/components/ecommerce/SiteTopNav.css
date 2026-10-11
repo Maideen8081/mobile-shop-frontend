@@ -128,7 +128,7 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -139,9 +139,85 @@
   background: var(--pf-red);
   color: #fff;
 }
-.pfn-util-badge.new-badge {
-  background: #e6a817;
+.pfn-util-badge.new {
+  background: #8b5a0a;
   color: #fff;
+}
+
+/* Utility bar buttons (Book Repair, Track Device) - ensure contrast on dark background */
+.pfn-util-right .btn-quiet {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.pfn-util-right .btn-quiet:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+.pfn-util-right .btn-primary {
+  background: var(--pf-red) !important;
+  color: #fff !important;
+}
+.pfn-util-right .btn-primary:hover {
+  background: var(--pf-red-dark) !important;
+}
+
+/* Utility bar buttons (Book Repair, Track Device) in transparent mode */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary {
+  background: var(--pf-red) !important;
+  color: #fff !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary:hover {
+  background: var(--pf-red-dark) !important;
+}
+
+/* Utility bar buttons - scrolled mode (dark background) */
+.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-quiet {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+}
+.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-quiet:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-primary {
+  background: var(--pf-red);
+  color: #fff;
+}
+.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-primary:hover {
+  background: var(--pf-red-dark);
+}
+
+/* Utility bar buttons (Book Repair, Track Device) in transparent mode */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet {
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary {
+  background: var(--pf-red) !important;
+  color: #fff !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary:hover {
+  background: var(--pf-red-dark) !important;
 }
 
 /* ══════════════════════════════════════════
@@ -180,7 +256,7 @@
   width: 40px;
   height: 40px;
   background: var(--pf-red);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -228,7 +304,7 @@
   align-items: center;
   background: var(--pf-soft);
   border: 1.5px solid var(--pf-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 0 5px 0 16px;
   gap: 8px;
   transition:
@@ -276,6 +352,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  border-radius: var(--radius-md);
 }
 .pfn-search-btn:hover {
   transform: scale(1.02);
@@ -318,6 +395,7 @@
     background 0.15s,
     color 0.15s,
     box-shadow 0.15s;
+  border-radius: var(--radius-md);
 }
 .pfn-quick-link svg {
   width: 15px;
@@ -346,7 +424,7 @@
   text-decoration: none;
   cursor: pointer;
   border: 1px solid var(--pf-line);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: #fff;
   color: var(--pf-ink);
   transition:
@@ -385,7 +463,7 @@
   color: #fff;
   font-size: 12px;
   font-weight: 800;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -419,6 +497,7 @@
     box-shadow 0.2s;
   position: relative;
   flex-shrink: 0;
+  border-radius: var(--radius-full);
 }
 .pfn-cart-btn:hover {
   transform: translateY(-1px);
@@ -442,7 +521,7 @@
   font-weight: 800;
   min-width: 20px;
   height: 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -472,7 +551,7 @@
 .pfn-acc-avatar {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--pf-red);
   color: #fff;
   font-size: 12px;
@@ -558,7 +637,7 @@
   width: 280px;
   background: var(--pf-drop-bg);
   border: 1px solid var(--pf-drop-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--pf-drop-shadow);
   padding: 8px;
   z-index: 9999;
@@ -585,15 +664,15 @@
 .pfn-drop-avatar {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--pf-red);
   color: #fff;
   font-size: 16px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  font-weight: 800.
+  display: flex.
+  align-items: center.
+  justify-content: center.
+  flex-shrink: 0
 }
 .pfn-drop-id {
   flex: 1;
@@ -633,7 +712,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--pf-drop-text);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -716,7 +795,7 @@
   font-size: 14px;
   font-weight: 600;
   font-family:var(--font-ui);
-  color: rgba(255, 255, 255, 0.8);
+  color: #fff;
   text-decoration: none;
   white-space: nowrap;
   letter-spacing: 0.01em;
@@ -752,7 +831,7 @@
 .pfn-nav-link svg {
   width: 14px;
   height: 14px;
-  stroke: rgba(255, 255, 255, 0.8);
+  stroke: #fff;
   fill: none;
   transition:
     transform 0.2s,
@@ -773,16 +852,16 @@
   flex-shrink: 0;
 }
 
-/* "Book Repair / Trade-In" accent links — white bg, red text */
+/* "Book Repair / Trade-In" accent links — solid dark red bg, white text */
 .pfn-nav-link.pfn-accent {
   color: #fff;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--pf-red-dark);
   border-radius: 8px;
   margin: 0 3px;
 }
 .pfn-nav-link.pfn-accent:hover {
-  background: rgba(255, 255, 255, 0.28);
+  background: var(--pf-red-deep);
   color: #fff;
 }
 .pfn-nav-link.pfn-accent::after {
@@ -797,7 +876,7 @@
   width: 700px;
   background: var(--pf-drop-bg);
   border: 1px solid var(--pf-drop-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--pf-drop-shadow);
   padding: 20px;
   z-index: 9999;
@@ -875,7 +954,7 @@
   min-width: 220px;
   background: var(--pf-drop-bg);
   border: 1px solid var(--pf-drop-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--pf-drop-shadow);
   padding: 8px;
   z-index: 9999;
@@ -907,13 +986,34 @@
    its solid, readable treatment above.
    ══════════════════════════════════════════ */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-bar {
-  background: rgba(8, 9, 12, 0.28);
+  background: rgba(8, 9, 12, 0.85);
   backdrop-filter: blur(14px) saturate(150%);
   -webkit-backdrop-filter: blur(14px) saturate(150%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left a,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left span {
+  color: rgba(255, 255, 255, 0.9);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left a:hover {
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left svg {
+  stroke: currentColor;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-sep {
+  background: rgba(255, 255, 255, 0.2);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right a,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right button {
+  color: rgba(255, 255, 255, 0.9);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right a:hover,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right button:hover {
+  color: #fff;
+}
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-main-bar {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
@@ -924,66 +1024,140 @@
     box-shadow 0.3s;
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-mega-bar {
-  background: rgba(140, 14, 34, 0.42);
+  background: rgba(140, 14, 34, 0.95);
   backdrop-filter: blur(14px) saturate(150%);
   -webkit-backdrop-filter: blur(14px) saturate(150%);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: background 0.3s;
 }
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link {
+  color: #fff;
+}
+
+/* Account dropdown in transparent mode */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop {
+  background: var(--pf-drop-bg);
+  border-color: var(--pf-drop-border);
+  box-shadow: var(--pf-drop-shadow);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout {
+  color: var(--pf-drop-text);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item:hover,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout:hover {
+  background: var(--pf-drop-hover);
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item svg,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout svg {
+  stroke: var(--pf-drop-text);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item:hover svg,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout:hover svg {
+  stroke: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-drop-sep {
+  background: var(--pf-drop-border);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link:hover,
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-active {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.15);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link svg {
+  stroke: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link:hover svg {
+  transform: rotate(180deg);
+  stroke: #fff;
+}
+
+/* Ensure solid white text on mega bar for all states (fixes contrast issues 2-10) */
+.pfn-mega-bar .pfn-nav-link {
+  color: #fff !important;
+}
+.pfn-mega-bar .pfn-nav-link:hover,
+.pfn-mega-bar .pfn-nav-link.pfn-active {
+  color: #fff !important;
+}
+.pfn-mega-bar .pfn-nav-link svg {
+  stroke: #fff !important;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-divider {
+  background: rgba(255, 255, 255, 0.3);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-accent {
+  color: #fff;
+  background: var(--pf-red-dark);
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-accent:hover {
+  background: var(--pf-red-deep);
+  color: #fff;
+}
 
 /* Logo — white lockup over the hero; the red mark keeps the brand anchor. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-name {
-  color: #fff;
+  color: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-sub {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--pf-muted);
 }
 
-/* Search — frosted field with white text/icons. */
+/* Search — frosted field with dark text/icons. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.15);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form:focus-within {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+  background: #fff;
+  border-color: var(--pf-red);
+  box-shadow: 0 0 0 3px rgba(217, 30, 54, 0.15);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-icon {
-  color: #fff;
-  stroke: #fff;
+  color: var(--pf-ink);
+  stroke: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input {
-  color: #fff;
+  color: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--pf-muted);
 }
 
-/* Quick nav links — translucent white. */
+/* Search button — ensure solid red background in transparent mode */
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-btn {
+  background: var(--pf-red);
+  color: #fff;
+}
+.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-btn:hover {
+  background: var(--pf-red-dark);
+}
+
+/* Quick nav links — dark text on light glass. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link svg {
-  stroke: rgba(255, 255, 255, 0.92);
+  stroke: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.14);
+  color: var(--pf-red);
+  background: var(--pf-red-tint);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover svg {
-  stroke: #fff;
+  stroke: var(--pf-red);
 }
 
-/* Circular icon buttons — glass pills with white icons. */
+/* Circular icon buttons — glass pills with dark icons. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn svg {
-  stroke: #fff;
+  stroke: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover {
   background: var(--pf-red);
@@ -996,34 +1170,34 @@
   stroke: #fff;
 }
 
-/* Sign-in / account controls — glass with white text. */
+/* Sign-in / account controls — glass with dark text. */
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.26);
+  color: var(--pf-ink);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn svg {
-  stroke: #fff;
+  stroke: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-name {
-  color: #fff;
+  color: var(--pf-ink);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-label {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--pf-muted);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-chevron {
-  stroke: rgba(255, 255, 255, 0.85);
+  stroke: var(--pf-muted);
 }
 .pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn:hover {
-  border-color: rgba(255, 255, 255, 0.45);
+  border-color: var(--pf-red);
 }
 
 /* ══════════════════════════════════════════

@@ -236,4 +236,10 @@ export const productService = {
 
   deleteVariantImage: (imageId: number) =>
     api.delete(`${PRODUCTS_URL}/images/${imageId}/delete/`).then((r) => r.data),
+
+  notifyWhenAvailable: (productId: number, variantId: number | null, email: string) =>
+    api.post(`${PRODUCTS_URL}/${productId}/notify/`, {
+      email,
+      variant_id: variantId,
+    }).then((r) => r.data),
 }

@@ -510,7 +510,7 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[10px] font-bold tracking-wider uppercase"
-      style={{ background: `${badge.color}15`, color: badge.color }}
+      style={{ background: `${badge.color}25`, color: badge.color }}
     >
       <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: badge.color }} />
       {badge.label}
@@ -622,7 +622,7 @@ export default function OrderTracking() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>My Orders</h1>
-              <p className="text-sm" style={{ color: 'rgba(59,75,61,0.7)' }}>Track and manage your orders</p>
+              <p className="text-sm" style={{ color: 'rgba(59,75,61,0.9)' }}>Track and manage your orders</p>
             </div>
           </div>
 
@@ -651,13 +651,13 @@ export default function OrderTracking() {
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.5)' }}>Order</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.8)' }}>Order</span>
                           <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{order.displayOrderId || order.orderId}</span>
                           <StatusBadge status={order.status} />
                         </div>
-                        <p className="text-xs mb-2" style={{ color: 'rgba(59,75,61,0.6)' }}>{order.orderDate}</p>
+                        <p className="text-xs mb-2" style={{ color: 'rgba(59,75,61,0.8)' }}>{order.orderDate}</p>
                         <div className="flex items-center gap-4">
-                          <span className="text-[11px]" style={{ color: 'rgba(59,75,61,0.6)' }}>
+                          <span className="text-[11px]" style={{ color: 'rgba(59,75,61,0.8)' }}>
                             {itemCount} {itemCount === 1 ? 'item' : 'items'}
                           </span>
                           <div className="flex items-center gap-1.5 flex-1 max-w-[200px]">
@@ -678,7 +678,7 @@ export default function OrderTracking() {
                       <div className="text-right flex-shrink-0 flex items-center gap-4">
                         <div>
                           <p className="text-base font-extrabold" style={{ color: '#A3122A' }}>{formatPrice(order.total)}</p>
-                          <p className="text-[10px]" style={{ color: 'rgba(59,75,61,0.5)' }}>
+                          <p className="text-[10px]" style={{ color: 'rgba(59,75,61,0.8)' }}>
                             {STEPS[Math.min(currentStepIndex, STEPS.length - 1)]?.label || 'Confirmed'}
                           </p>
                         </div>

@@ -1363,7 +1363,7 @@ export default function CustomerRepairTracking() {
           padding: 14px 20px; min-width: 128px;
           box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
         }
-        .stat-chip .label { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #857D79; font-weight: 600; margin-bottom: 4px; }
+        .stat-chip .label { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #5A5550; font-weight: 600; margin-bottom: 4px; }
         .stat-chip .num { font-family:var(--font-display); font-size: 30px; font-weight: 700; color: #1B1210; line-height: 1; }
         .stat-chip.accent .num { color: #D91E36; }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 36px 0 28px; }
@@ -1378,7 +1378,7 @@ export default function CustomerRepairTracking() {
         .stat-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
         .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(217,30,54,0.06); color: #D91E36; }
         .stat-card .value { font-family:var(--font-display); font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
-        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #857D79; }
+        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #5A5550; }
         .stat-card.total .value { color: #1B1210; }
         .stat-card.active .value { color: #D91E36; }
         .stat-card.completed .value { color: #059669; }
@@ -1390,7 +1390,7 @@ export default function CustomerRepairTracking() {
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
         .filter-pill { border: 1px solid #ECE4E0; background: #FFFFFF; color: #4A403D; font-family:var(--font-ui); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all .15s ease; }
         .filter-pill:hover { border-color: #D91E36; color: #D91E36; }
-        .filter-pill.is-active { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; }
+        .filter-pill.is-active { background: linear-gradient(135deg, #D91E36, #A3122A); background-color: #A3122A; border-color: #D91E36; color: #fff; }
         .ticket-list { display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
         .ticket-card {
           display: grid; grid-template-columns: 104px 1fr auto; gap: 22px; align-items: center;
@@ -1477,8 +1477,8 @@ export default function CustomerRepairTracking() {
         .ticket-card:hover .chevron { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; transform: translateX(3px); }
         .empty-state { text-align: center; padding: 70px 20px; color: #857D79; }
         .empty-state h3 { font-family:var(--font-display); font-size: 22px; color: #1B1210; margin: 0 0 6px; }
-        .empty-state p { font-size: 13.5px; margin: 0; }
-        footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #857D79; font-size: 12px; }
+        .empty-state p { font-size: 13.5px; margin: 0; color: #5A5550; }
+        footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #5A5550; font-size: 12px; }
         footer .mono { color: #D91E36; font-weight: 600; }
         @media (max-width: 880px) {
           .shell { padding: 0 18px; }
@@ -1585,7 +1585,7 @@ export default function CustomerRepairTracking() {
         </header>
       </div>
 
-      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-0 lg:pb-0" style={isMobile ? { paddingTop: '0.75rem' } : {}}>
+      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-0 lg:pb-0" style={isMobile ? { paddingTop: '0.75rem' } : {}} aria-label="My repairs">
         <div className="max-w-[1180px] mx-auto" style={isMobile ? {} : { padding: '0 32px' }}>
 
           {/* ========== DESKTOP UI (lg+) ========== */}
@@ -1598,14 +1598,14 @@ export default function CustomerRepairTracking() {
               <header className="hero">
                 <div className="shell hero-inner">
                   <div>
-                    <div className="eyebrow">
+                    <div className="eyebrow" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
                       <span className="dot" />
                       {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`} · Live Manifest
                     </div>
-                    <h1 className="title">
-                      Diagnostics<br /><em>Protocol</em> Manifest
+                    <h1 className="title" style={{ backgroundColor: 'transparent' }}>
+                      Diagnostics<br /><em style={{ backgroundColor: 'transparent' }}>Protocol</em> Manifest
                     </h1>
-                    <p className="subline">
+                    <p className="subline" style={{ backgroundColor: 'transparent' }}>
                       Every device on the bench, tracked like a vital sign — intake to delivery, one pulse line at a time.
                     </p>
                   </div>
@@ -1622,7 +1622,7 @@ export default function CustomerRepairTracking() {
                 </div>
               </header>
 
-              <main className="shell">
+              <div className="shell">
                 {/* Stats Grid */}
                 <section className="stats-grid" aria-label="Repair summary">
                   {[
@@ -1704,7 +1704,7 @@ export default function CustomerRepairTracking() {
                     <section className="ticket-list" aria-label="Repair tickets" style={{ display: 'none' }} />
                     <div className="empty-state show">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 40, height: 40, color: '#D91E36', marginBottom: 12 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-                      <h3>No matching tickets</h3>
+                      <h2>No matching tickets</h2>
                       <p>Try a different ticket ID, device name, or filter.</p>
                     </div>
                   </>
@@ -1719,7 +1719,7 @@ export default function CustomerRepairTracking() {
                 <footer>
                   <span className="mono">MANIFEST//</span> updated automatically as repairs move through the bench.
                 </footer>
-              </main>
+              </div>
             </>
           )}
 

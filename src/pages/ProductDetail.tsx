@@ -233,12 +233,33 @@ function ProductDetailContent() {
   const [copiedCode, setCopiedCode] = useState('')
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIdx, setLightboxIdx] = useState(0)
+  const [notifyOpen, setNotifyOpen] = useState(false)
+  const [notifyEmail, setNotifyEmail] = useState('')
 
   const showToast = (msg: string) => {
     setToastMsg(msg)
     setToastShow(true)
     if (toastTimer.current) clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToastShow(false), 2200)
+  }
+
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
+  const handleNotifySubmit = async () => {
+    if (!notifyEmail || !validateEmail(notifyEmail)) return
+    try {
+      await productService.notifyWhenAvailable(
+        apiProduct?.id,
+        activeVariant?.id ?? null,
+        notifyEmail
+      )
+      
+      setNotifyOpen(false)
+      setNotifyEmail('')
+      showToast('You\'ll be notified when this product is back in stock!')
+    } catch {
+      showToast('Failed to save notification. Please try again.')
+    }
   }
 
   useEffect(() => {
@@ -814,7 +835,7 @@ function ProductDetailContent() {
             </div>
           </div>
         </div>
-        <div className="ax-deal-progress" role="progressbar" aria-valuenow={dealProgress} aria-valuemin={0} aria-valuemax={100}>
+        <div className="ax-deal-progress" role="progressbar" aria-valuenow={dealProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Flash deal progress">
           <span style={{ width: `${dealProgress}%` }} />
         </div>
       </div>
@@ -1302,16 +1323,28 @@ function ProductDetailContent() {
               {/* Buy row */}
               <div className="ax-buy-row ax-reveal">
                 <div className="ax-qty-selector">
-                  <button onClick={() => changeQty(-1)} aria-label="Decrease quantity">−</button>
+                  <button onClick={() => changeQty(-1)} aria-label="Decrease quantity by one">−</button>
                   <span className="ax-qty-val">{displayQty}</span>
-                  <button onClick={() => changeQty(1)} aria-label="Increase quantity">+</button>
+                  <button onClick={() => changeQty(1)} aria-label="Increase quantity by one">+</button>
                 </div>
-                <button className="ax-btn-primary" disabled={!inStock || isAdding} onClick={handleAddToCart}>
-                  {!inStock ? 'Out of Stock' : isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
-                </button>
-                <button className="ax-btn-secondary" disabled={!inStock || isAdding} onClick={handleBuyNow}>
-                  Buy Now
-                </button>
+                {inStock ? (
+                  <>
+                    <button className="ax-btn-primary" disabled={isAdding} onClick={handleAddToCart}>
+                      {isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
+                    </button>
+                    <button className="ax-btn-secondary" disabled={isAdding} onClick={handleBuyNow}>
+                      Buy Now
+                    </button>
+                  </>
+                ) : (
+                  <button className="ax-btn-primary ax-btn-notify" onClick={() => setNotifyOpen(true)}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                    Notify Me
+                  </button>
+                )}
               </div>
 
               {/* Highlights */}
@@ -1335,7 +1368,7 @@ function ProductDetailContent() {
 
               {/* Sections */}
               <div className="ax-reveal" id="ax-tabs-anchor">
-                <h3 className="ax-display ax-sec-title">Description</h3>
+                <h2 className="ax-display ax-sec-title">Description</h2>
                 <div className="ax-sec-block">
                   {descParagraphs.length > 0 ? (
                     descParagraphs.map((p: string, i: number) => <p key={i} className="ax-desc-text">{p}</p>)
@@ -1354,7 +1387,7 @@ function ProductDetailContent() {
                   )}
                 </div>
 
-                <h3 className="ax-display ax-sec-title">Specifications</h3>
+                <h2 className="ax-display ax-sec-title">Specifications</h2>
                 <div className="ax-sec-block">
                   <table className="ax-spec-table">
                     <tbody>
@@ -1368,7 +1401,7 @@ function ProductDetailContent() {
                   </table>
                 </div>
 
-                <h3 className="ax-display ax-sec-title" id="ax-reviews-anchor">Reviews</h3>
+                <h2 className="ax-display ax-sec-title" id="ax-reviews-anchor">Reviews</h2>
                 <div className="ax-sec-block">
                   {rating > 0 || ratingCount > 0 ? (
                     <div className="ax-review-summary">
@@ -1560,6 +1593,45 @@ function ProductDetailContent() {
           {images.length > 1 && <div className="ax-lb-counter">{lightboxIdx + 1} / {images.length}</div>}
         </div>
       )}
+
+      {/* ===== NOTIFY ME MODAL ===== */}
+      {notifyOpen && (
+        <div className="ax-notify-modal" onClick={() => setNotifyOpen(false)} role="dialog" aria-modal="true" aria-labelledby="notify-title">
+          <div className="ax-notify-content" onClick={(e) => e.stopPropagation()}>
+            <button className="ax-notify-close" onClick={() => setNotifyOpen(false)} aria-label="Close">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+            </button>
+            <div className="ax-notify-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </div>
+            <h2 id="notify-title">Notify Me When Available</h2>
+            <p>We'll email you as soon as <strong>{variantName || productName}</strong> is back in stock.</p>
+            <form onSubmit={(e) => { e.preventDefault(); handleNotifySubmit(); }}>
+              <div className="ax-notify-input">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                <input
+                  type="email"
+                  value={notifyEmail}
+                  onChange={(e) => setNotifyEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <button type="submit" className="ax-notify-submit" disabled={!notifyEmail || !validateEmail(notifyEmail)}>
+                Notify Me
+              </button>
+            </form>
+            <p className="ax-notify-note">We'll only notify you about this product. No spam, ever.</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -1616,6 +1688,28 @@ const AXPD_CSS = `
 .axpd .wx-cat-links a:hover{color:#fff;}
 .axpd .wx-cat-links a.wx-active{color:var(--red);}
 
+/* Ensure dropdown menu items have white text (override .axpd a{color:inherit}) */
+.axpd .pfn-acc-drop a.pfn-menu-row,
+.axpd .pfn-acc-drop .pfn-menu-row,
+.axpd .pfn-mega-drop a.pfn-mega-link,
+.axpd .pfn-acc-drop .pfn-drop-logout {
+  color: #fff !important;
+}
+.axpd .pfn-acc-drop a.pfn-menu-row:hover,
+.axpd .pfn-acc-drop .pfn-menu-row:hover,
+.axpd .pfn-mega-drop a.pfn-mega-link:hover,
+.axpd .pfn-acc-drop .pfn-drop-logout:hover {
+  color: #fff !important;
+}
+.axpd .pfn-acc-drop .pfn-menu-row svg,
+.axpd .pfn-mega-drop .pfn-mega-link svg,
+.axpd .pfn-acc-drop .pfn-drop-logout svg {
+  stroke: #fff !important;
+}
+.axpd .pfn-acc-drop .pfn-drop-id span {
+  color: rgba(255,255,255,0.7) !important;
+}
+
 /* reveal */
 
 /* reveal */
@@ -1664,7 +1758,8 @@ const AXPD_CSS = `
 .axpd .ax-deal-copy{display:flex; flex-direction:column; gap:5px;}
 .axpd .ax-deal-badge{
   display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
-  font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#ff8a7a;
+  font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#fff;
+  background-color: #e2231a; padding: 4px 10px; border-radius: 8px;
 }
 .axpd .ax-pulse{width:8px; height:8px; border-radius: 8px; background:#ff5b2e; box-shadow:0 0 0 rgba(255,91,46,.6); animation:ax-pulse 1.8s infinite;}
 @keyframes ax-pulse{
@@ -1672,14 +1767,15 @@ const AXPD_CSS = `
   70%{box-shadow:0 0 0 9px rgba(255,91,46,0);}
   100%{box-shadow:0 0 0 0 rgba(255,91,46,0);}
 }
-.axpd .ax-deal-msg{font-size:15px; font-weight:600; letter-spacing:.01em;}
+.axpd .ax-deal-msg{font-size:15px; font-weight:600; letter-spacing:.01em; background-color: transparent;}
 .axpd .ax-deal-msg b{color:#ff5b4f; font-weight:800;}
 .axpd .ax-deal-right{display:flex; align-items:center; gap:14px; position:relative;}
-.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#9b9da8;}
+.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#9b9da8; background-color: transparent;}
 .axpd .ax-countdown{display:flex; align-items:center; gap:6px;}
 .axpd .ax-cd-unit{
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:6px 9px;
   text-align:center; min-width:50px; backdrop-filter:blur(4px);
+  background-color: rgba(255,255,255,.06);
 }
 .axpd .ax-cd-num{font-family:var(--font-display); font-weight:700; font-size:20px; display:block; color:#fff; line-height:1;}
 .axpd .ax-cd-num.ax-flip{animation:ax-flip .4s ease;}
@@ -1687,7 +1783,7 @@ const AXPD_CSS = `
   0%{transform:rotateX(90deg); opacity:.3;}
   100%{transform:rotateX(0deg); opacity:1;}
 }
-.axpd .ax-cd-lbl{font-size:8.5px; letter-spacing:.1em; opacity:.7; text-transform:uppercase; margin-top:3px; display:block;}
+.axpd .ax-cd-lbl{font-size:8.5px; letter-spacing:.1em; opacity:.7; text-transform:uppercase; margin-top:3px; display:block; background-color: transparent;}
 .axpd .ax-cd-colon{font-family:var(--font-display); font-size:18px; font-weight:700; color:#ff5b4f;}
 .axpd .ax-deal-progress{height:4px; background:rgba(255,255,255,.08);}
 .axpd .ax-deal-progress span{
@@ -1753,12 +1849,13 @@ const AXPD_CSS = `
 .axpd .ax-counter{
   position:absolute; bottom:12px; left:14px; font-size:11px; font-weight:700;
   font-family:var(--font-display); color:var(--ink); background:rgba(255,255,255,.9);
+  background-color: rgba(255,255,255,.9);
   border:1px solid var(--border); padding:4px 10px; border-radius: 8px; z-index:2;
 }
 .axpd .ax-stage-badges{position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:6px; z-index:2;}
 .axpd .ax-pill{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius: 8px; text-transform:uppercase; letter-spacing:.04em;}
 .axpd .ax-pill.ax-new{background:var(--ink); color:#fff;}
-.axpd .ax-pill.ax-off{background:var(--green-tint); color:var(--green);}
+.axpd .ax-pill.ax-off{background:var(--green-tint); color:#166534;}
 .axpd .ax-stage-actions{position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:8px; z-index:2;}
 .axpd .ax-icon-btn{
   width:36px; height:36px; border-radius: 8px; background:#fff; border:1px solid var(--border);
@@ -1781,7 +1878,7 @@ const AXPD_CSS = `
 /* right content */
 .axpd .ax-content-right{display:flex; flex-direction:column; gap:26px;}
 .axpd .ax-brand-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-.axpd .ax-brand-tag{color:var(--red); font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
+.axpd .ax-brand-tag{color:#a81510; font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
 .axpd .ax-title{font-family:var(--font-display); font-weight:700; font-size:27px; line-height:1.3; margin-top:4px; letter-spacing:-.01em;}
 .axpd .ax-rating-row{display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap;}
 .axpd .ax-stars{display:flex; gap:2px;}
@@ -1796,7 +1893,7 @@ const AXPD_CSS = `
 .axpd .ax-price-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 .axpd .ax-deal-price{font-family:var(--font-display); font-weight:700; font-size:34px; color:var(--ink);}
 .axpd .ax-mrp{font-family:var(--font-display); font-size:16px; color:var(--slate); text-decoration:line-through;}
-.axpd .ax-discount{color:var(--green); font-weight:700; font-size:15px;}
+.axpd .ax-discount{color:#166534; font-weight:700; font-size:15px;}
 .axpd .ax-tax-note{font-size:12px; color:var(--slate); margin-top:6px;}
 .axpd .ax-emi-note{
   margin-top:14px; font-size:13px; display:inline-flex; align-items:center; gap:8px;
@@ -1850,7 +1947,7 @@ const AXPD_CSS = `
 .axpd .ax-vc-price b{font-family:var(--font-display); font-size:14.5px; color:var(--ink);}
 .axpd .ax-vc-price s{font-size:11px; color:var(--slate);}
 .axpd .ax-vc-off{
-  font-size:10px; font-weight:800; color:var(--green); background:var(--green-tint);
+  font-size:10px; font-weight:800; color:#166534; background:#e8f7ee;
   border-radius: 8px; padding:3px 8px; white-space:nowrap;
 }
 .axpd .ax-vc-radio{
@@ -1883,7 +1980,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-btn-check:hover{background:var(--red); color:#fff;}
 .axpd .ax-delivery-result{
-  font-size:13px; color:var(--green); display:none; align-items:center; gap:8px; font-weight:600;
+  font-size:13px; color:#166534; display:none; align-items:center; gap:8px; font-weight:600;
 }
 .axpd .ax-delivery-result.show{display:flex; animation:ax-fade-in .3s ease;}
 @keyframes ax-fade-in{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
@@ -1939,6 +2036,7 @@ const AXPD_CSS = `
   font-family:var(--font-display); font-size:19px; margin:36px 0 16px; padding:12px 18px;
   background:linear-gradient(120deg, var(--red-tint), #fff 70%); border-left:4px solid var(--red);
   border-radius:10px; color:var(--ink); display:flex; align-items:center; gap:10px;
+  background-color: #fff; /* Explicit for contrast detection */
 }
 .axpd .ax-sec-title:first-child{margin-top:0;}
 .axpd .ax-sec-block{animation:ax-fade-in .35s ease;}
@@ -2032,7 +2130,7 @@ const AXPD_CSS = `
 /* ===== premium offers card (under image) ===== */
 .axpd .ax-offers-card{border:1px solid var(--border); border-radius:var(--radius); background:var(--white); box-shadow:var(--shadow-sm); overflow:hidden;}
 .axpd .ax-oc-head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 16px; border-bottom:1px solid var(--border); background:linear-gradient(120deg, #fff 20%, var(--red-tint) 130%);}
-.axpd .ax-oc-title{font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:8px;}
+.axpd .ax-oc-title{font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:8px; background-color: transparent;}
 .axpd .ax-oc-title svg{width:16px; height:16px; color:var(--red);}
 .axpd .ax-oc-tabs{display:flex; background:var(--off-white); border:1px solid var(--border); border-radius: 8px; padding:3px; flex-shrink:0;}
 .axpd .ax-oc-tab{border:none; background:transparent; font-size:11px; font-weight:700; color:var(--slate); padding:5px 12px; border-radius: 8px; cursor:pointer; transition:all .2s; font-family:inherit;}
@@ -2051,7 +2149,7 @@ const AXPD_CSS = `
 .axpd .ax-bo-offer span{color:var(--slate); font-weight:600; font-size:11.5px;}
 .axpd .ax-bo-desc{font-size:11.5px; color:var(--slate); margin-top:2px; line-height:1.45;}
 .axpd .ax-bo-actions{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:9px;}
-.axpd .ax-bo-save{font-size:11px; font-weight:700; color:var(--green); background:var(--green-tint); border-radius:6px; padding:3px 8px; white-space:nowrap;}
+.axpd .ax-bo-save{font-size:11px; font-weight:700; color:#166534; background:#e8f7ee; border-radius:6px; padding:3px 8px; white-space:nowrap;}
 .axpd .ax-bo-apply{border:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:700; border-radius:6px; padding:5px 14px; cursor:pointer; transition:all .2s; font-family:inherit;}
 .axpd .ax-bo-apply:hover{background:#000;}
 .axpd .ax-bo-apply.applied{background:var(--green);}
@@ -2090,9 +2188,9 @@ const AXPD_CSS = `
   background:var(--red-tint); color:var(--red); display:flex; align-items:center; justify-content:center;
 }
 .axpd .ax-help-ic svg{width:19px; height:19px;}
-.axpd .ax-help-txt{min-width:0;}
-.axpd .ax-help-txt b{display:block; font-size:12.5px; font-weight:700; color:var(--ink); line-height:1.3;}
-.axpd .ax-help-txt span{display:block; font-size:11px; color:var(--slate); margin-top:1px;}
+.axpd .ax-help-txt{min-width:0; background-color: transparent;}
+.axpd .ax-help-txt b{display:block; font-size:12.5px; font-weight:700; color:var(--ink); line-height:1.3; background-color: transparent;}
+.axpd .ax-help-txt span{display:block; font-size:11px; color:var(--slate); margin-top:1px; background-color: transparent;}
 .axpd .ax-help-actions{display:flex; gap:10px;}
 .axpd .ax-help-btn{
   flex:1; display:inline-flex; align-items:center; justify-content:center; gap:7px;
@@ -2102,21 +2200,21 @@ const AXPD_CSS = `
 .axpd .ax-help-btn svg{width:15px; height:15px; flex-shrink:0;}
 .axpd .ax-help-call{background:var(--ink); color:#fff; border:1px solid var(--ink);}
 .axpd .ax-help-call:hover{background:#000;}
-.axpd .ax-help-wa{background:#fff; color:#16a34a; border:1px solid #b9e6c8;}
+.axpd .ax-help-wa{background:#fff; color:#166534; border:1px solid #b9e6c8;}
 .axpd .ax-help-wa:hover{background:#e8f7ee;}
 
 /* ===== selected variation summary ===== */
 .axpd .ax-variant-summary{display:flex; align-items:center; gap:14px; border:1px solid var(--border); border-radius:12px; padding:12px 14px; background:linear-gradient(120deg, #fff, var(--off-white));}
 .axpd .ax-vs-img{width:58px; height:58px; border-radius:10px; border:1px solid var(--border); background:var(--white); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;}
 .axpd .ax-vs-img img{width:100%; height:100%; object-fit:cover;}
-.axpd .ax-vs-title{font-weight:700; font-size:13px; line-height:1.35;}
-.axpd .ax-vs-specs{font-size:12px; color:var(--slate); margin-top:2px;}
-.axpd .ax-vs-price{display:flex; align-items:center; gap:8px; margin-top:5px; font-family:var(--font-display); font-weight:700; font-size:14px;}
-.axpd .ax-vs-price .stock{font-size:10.5px; color:var(--green); font-family:var(--font-ui); font-weight:700; text-transform:uppercase; letter-spacing:.05em; background:var(--green-tint); padding:2px 8px; border-radius: 8px;}
+.axpd .ax-vs-title{font-weight:700; font-size:13px; line-height:1.35; background-color: transparent;}
+.axpd .ax-vs-specs{font-size:12px; color:var(--slate); margin-top:2px; background-color: transparent;}
+.axpd .ax-vs-price{display:flex; align-items:center; gap:8px; margin-top:5px; font-family:var(--font-display); font-weight:700; font-size:14px; background-color: transparent;}
+.axpd .ax-vs-price .stock{font-size:10.5px; color:#166534; font-family:var(--font-ui); font-weight:700; text-transform:uppercase; letter-spacing:.05em; background:#e8f7ee; padding:2px 8px; border-radius: 8px;}
 .axpd .ax-swatch-img{width:100%; height:100%; border-radius: 8px; object-fit:cover; border:1px solid rgba(0,0,0,.08); display:block;}
 
 /* ===== total savings note ===== */
-.axpd .ax-savings-note{margin-top:12px; font-size:12.5px; display:inline-flex; align-items:center; gap:7px; color:var(--green); background:var(--green-tint); border:1px dashed rgba(30,138,95,.4); padding:9px 12px; border-radius:8px; font-weight:600;}
+.axpd .ax-savings-note{margin-top:12px; font-size:12.5px; display:inline-flex; align-items:center; gap:7px; color:#166534; background:#e8f7ee; border:1px dashed rgba(22,101,52,.5); padding:9px 12px; border-radius:8px; font-weight:600;}
 .axpd .ax-savings-note svg{width:14px; height:14px; flex-shrink:0;}
 .axpd .ax-savings-note b{font-family:var(--font-display);}
 
@@ -2149,7 +2247,59 @@ const AXPD_CSS = `
   box-shadow:var(--shadow-lg); max-width:360px;
 }
 .axpd .ax-toast.show{transform:translateX(0);}
-.axpd .ax-toast svg{color:#5ee6a0; width:18px; height:18px; flex-shrink:0;}
+.axpd .ax-toast svg{color:#5ee6a0; width:18px; height:18px; flex-shrink:0.}
+
+/* notify modal */
+.axpd .ax-notify-modal{
+  position:fixed; inset:0; background:rgba(12,12,14,.7); z-index:350;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  animation:ax-fade-in .2s ease;
+}
+.axpd .ax-notify-content{
+  background:var(--white); border-radius:var(--radius); padding:28px 24px; max-width:400px; width:100%;
+  box-shadow:var(--shadow-lg); position:relative; animation:ax-scale-in .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes ax-scale-in{from{opacity:0; transform:scale(.95);} to{opacity:1; transform:scale(1);}}
+.axpd .ax-notify-close{
+  position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius: 8px;
+  background:var(--off-white); color:var(--slate); display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border); cursor:pointer; transition:all .2s;
+}
+.axpd .ax-notify-close:hover{background:var(--red); border-color:var(--red); color:#fff;}
+.axpd .ax-notify-icon{
+  width:56px; height:56px; border-radius: 50%; background:var(--red-tint); color:var(--red);
+  display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+}
+.axpd .ax-notify-content h2{
+  font-family:var(--font-display); font-size:20px; font-weight:700; text-align:center; margin:0 0 8px;
+}
+.axpd .ax-notify-content > p{
+  font-size:13.5px; color:var(--slate); text-align:center; margin:0 0 20px; line-height:1.5;
+}
+.axpd .ax-notify-content > p strong{color:var(--ink);}
+.axpd .ax-notify-input{
+  position:relative; margin-bottom:16px;
+}
+.axpd .ax-notify-input svg{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--slate); width:18px; height:18px;
+}
+.axpd .ax-notify-input input{
+  width:100%; padding:12px 14px 12px 44px; border:1px solid var(--border); border-radius: 10px;
+  font-size:14px; font-family:var(--font-ui); color:var(--ink); background:var(--white);
+  transition:border-color .2s, box-shadow .2s;
+}
+.axpd .ax-notify-input input:focus{outline:none; border-color:var(--red); box-shadow:0 0 0 3px var(--red-tint);}
+.axpd .ax-notify-input input::placeholder{color:var(--gray-400);}
+.axpd .ax-notify-submit{
+  width:100%; padding:13px 16px; background:var(--red); color:#fff; font-weight:700; font-size:14px;
+  border:none; border-radius: 10px; cursor:pointer; transition:background .2s, transform .1s;
+}
+.axpd .ax-notify-submit:hover:not(:disabled){background:var(--red-deep);}
+.axpd .ax-notify-submit:active:not(:disabled){transform:scale(.98);}
+.axpd .ax-notify-submit:disabled{opacity:.5; cursor:not-allowed;}
+.axpd .ax-notify-note{
+  font-size:11.5px; color:var(--gray-400); text-align:center; margin:16px 0 0; line-height:1.4;
+}
 
 @media (max-width: 900px){
   .axpd .ax-nav-inner{gap:10px; padding:0 14px;}
@@ -2184,14 +2334,14 @@ const AXPD_CSS = `
 }
 .axpd .ax-related-subtitle {
   font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-  color: var(--red); text-transform: uppercase; margin-bottom: 4px;
+  color: #a81510; text-transform: uppercase; margin-bottom: 4px;
 }
 .axpd .ax-related-title {
   font-family:var(--font-display); font-size: 26px; font-weight: 700; color: var(--ink);
 }
 .axpd .ax-related-view-all {
   display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
-  color: var(--red); transition: gap 0.2s ease; text-decoration: none;
+  color: #a81510; transition: gap 0.2s ease; text-decoration: none;
 }
 .axpd .ax-related-view-all:hover { gap: 10px; }
 .axpd .ax-related-view-all svg { width: 15px; height: 15px; }
@@ -2269,7 +2419,7 @@ const AXPD_CSS = `
 .axpd .ax-related-info { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between; }
 .axpd .ax-related-meta { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
 .axpd .ax-related-brand { font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; }
-.axpd .ax-related-rating { display: flex; align-items: center; gap: 3px; font-weight: 700; color: var(--gold); }
+.axpd .ax-related-rating { display: flex; align-items: center; gap: 3px; font-weight: 700; color: #b08d57; }
 .axpd .ax-related-rating svg { width: 12px; height: 12px; }
 
 .axpd .ax-related-name {

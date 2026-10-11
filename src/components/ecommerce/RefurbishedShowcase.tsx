@@ -142,7 +142,7 @@ export default function RefurbishedShowcase({ devices, loading }: RefurbishedSho
   }
 
   return (
-    <section className="rfc" ref={rootRef} aria-label="Certified refurbished devices">
+    <section className="rfc" ref={rootRef} aria-label="Certified refurbished devices showcase">
       <div className="rfc-wrap">
         <SectionHeading
           className="rfc-head"
@@ -187,7 +187,7 @@ export default function RefurbishedShowcase({ devices, loading }: RefurbishedSho
 
         <div className="rfc-railwrap">
           {loading ? (
-            <div className="rfc-rail" aria-hidden="true">
+            <div className="rfc-rail" aria-hidden="true" role="region">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="pc pc-skel">
                   <div className="pc-plate" />
@@ -205,6 +205,7 @@ export default function RefurbishedShowcase({ devices, loading }: RefurbishedSho
                 ref={railRef}
                 onPointerDown={onPointerDown}
                 tabIndex={-1}
+                role="region"
                 aria-label="Certified refurbished devices"
               >
                 {devices.map((d, i) => (

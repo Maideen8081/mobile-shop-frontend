@@ -7,7 +7,7 @@ export default function Partners() {
         {[0, 1].map((dup) => (
           <div key={dup} className="flex items-center gap-8 mx-6">
             {partners.map((p) => (
-              <span key={p + dup} className="text-[18px] font-extrabold text-[#0F172A]/15 uppercase tracking-tighter select-none">{p}</span>
+              <span key={p + dup} className="text-[18px] font-extrabold text-[#0F172A]/60 uppercase tracking-tighter select-none">{p}</span>
             ))}
           </div>
         ))}

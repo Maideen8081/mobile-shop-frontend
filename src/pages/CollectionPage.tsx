@@ -128,7 +128,7 @@ function ProductCard(props: {
         </div>
       </Link>
       <div className="wx-product-info">
-        <h4>{getProductName(product)}</h4>
+        <h3>{getProductName(product)}</h3>
         <p>{getProductDesc(product)}</p>
         <div className="wx-product-bottom">
           <div className="wx-mini-actions">
@@ -416,7 +416,7 @@ export default function CollectionPage() {
         <aside className={`wx-filters ${filterOpen ? 'wx-open' : ''}`}>
           <div className="wx-filter-block">
             <div className="wx-filter-head">
-              <h3>Brand</h3>
+              <h2>Brand</h2>
               <button className="wx-filter-reset" onClick={clearBrands}>Reset</button>
             </div>
             {availableBrands.slice(0, 6).map((brand) => (
@@ -436,7 +436,7 @@ export default function CollectionPage() {
 
           <div className="wx-filter-block">
             <div className="wx-filter-head">
-              <h3>Category</h3>
+              <h2>Category</h2>
               <button className="wx-filter-reset" onClick={() => navigate('/collection/all')}>Reset</button>
             </div>
             <div className={`wx-filter-item ${categoryName === 'all' || !categoryName ? 'wx-checked' : ''}`}>
@@ -461,7 +461,7 @@ export default function CollectionPage() {
 
           <div className="wx-filter-block">
             <div className="wx-filter-head">
-              <h3>Price</h3>
+              <h2>Price</h2>
               <button className="wx-filter-reset" onClick={clearPrice}>Reset</button>
             </div>
             {PRICE_RANGES.map((range) => {

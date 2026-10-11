@@ -173,12 +173,12 @@ export default function ProductCard({
   )
 
   const viewProduct = (
-    <Link className="btn pc-add" to={`/product/${id}`}>
-      <Ic>
-        <path d="M4 12h15" />
-        <path d="M13 6l6 6-6 6" />
-      </Ic>
-      <span>View product</span>
+    <Link className="btn-view" to={`/product/${id}`} style={{ backgroundColor: 'var(--pc-ink)' }}>
+      <span style={{ backgroundColor: 'var(--pc-ink)' }}>View product</span>
+      <span className="arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
     </Link>
   )
 

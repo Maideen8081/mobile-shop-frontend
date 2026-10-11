@@ -217,7 +217,7 @@ export default function SearchPage() {
         <div className="sp-hero-content">
           <div className="sp-hero-eyebrow">
             <Sparkles size={14} />
-            <span>Search & Discover</span>
+            <span>Search & discover</span>
           </div>
           <h1 className="sp-hero-title">
             FIND YOUR <span className="sp-hero-accent">PERFECT</span> GEAR
@@ -240,11 +240,11 @@ export default function SearchPage() {
                 autoComplete="off"
               />
               {query && (
-                <button type="button" onClick={() => { setQuery(''); setSearchParams({}, { replace: true }) }} className="sp-clear-btn" aria-label="Clear">
+                <button type="button" onClick={() => { setQuery(''); setSearchParams({}, { replace: true }) }} className="sp-icon-btn sp-clear-btn" aria-label="Clear">
                   <X size={18} />
                 </button>
               )}
-              <button type="submit" className="sp-search-btn">
+              <button type="submit" className="sp-btn-primary sp-search-btn">
                 <span>Search</span>
                 <ArrowRight size={16} />
               </button>
@@ -372,7 +372,7 @@ export default function SearchPage() {
                   <div className="sp-empty-icon">🔍</div>
                   <h3>No results found</h3>
                   <p>Try different keywords or browse our categories below</p>
-                  <button onClick={() => { setQuery(''); setHasSearched(false); setSearchParams({}, { replace: true }) }} className="sp-search-again">
+                  <button onClick={() => { setQuery(''); setHasSearched(false); setSearchParams({}, { replace: true }) }} className="sp-btn-primary sp-search-again">
                     Clear Search
                   </button>
                 </div>
@@ -477,13 +477,13 @@ function ProductCard(props: {
           <button onClick={onAddToCart} className="sp-card-action" aria-label="Add to cart">
             <ShoppingCart size={16} />
           </button>
-          <Link to={`/product/${product.id}`} className="sp-card-action" aria-label="Quick view" onClick={(e) => e.stopPropagation()}>
+          <Link to={`/product/${product.id}`} className="sp-icon-btn sp-card-action" aria-label="Quick view" onClick={(e) => e.stopPropagation()}>
             <Eye size={16} />
           </Link>
         </div>
       </div>
       <div className="sp-card-info">
-        <h4 className="sp-card-name">{product.name}</h4>
+        <h3 className="sp-card-name">{product.name}</h3>
         {product.brand && <p className="sp-card-brand">{product.brand}</p>}
       </div>
     </Link>

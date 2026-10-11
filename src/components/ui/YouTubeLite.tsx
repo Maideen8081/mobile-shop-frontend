@@ -39,7 +39,7 @@ export default function YouTubeLite({ videoId, title, subtitle, className = '' }
 
   return (
     <div
-      className={`relative group rounded-4xl overflow-hidden shadow-xl aspect-video bg-black ${className}`}
+      className={`relative group rounded-2xl overflow-hidden shadow-xl aspect-video bg-black ${className}`}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
@@ -73,7 +73,7 @@ export default function YouTubeLite({ videoId, title, subtitle, className = '' }
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-left">
             <span className="text-white text-lg md:text-xl font-bold">{title}</span>
-            {subtitle && <p className="text-white/60 text-sm mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-white/80 text-sm mt-1">{subtitle}</p>}
           </div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 rounded-full bg-pf-red/90 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300 animate-glow-pulse">
             <span className="material-symbols-outlined text-white text-3xl">play_arrow</span>

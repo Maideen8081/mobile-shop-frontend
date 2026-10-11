@@ -245,13 +245,13 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                 <span className="pfn-util-badge sale">Sale</span>
                 <span className="pfn-util-badge new">New Arrivals</span>
                 <div className="pfn-util-sep" />
-                <Link to="/book-repair">Book Repair</Link>
-                <Link to="/track-repair">Track Device</Link>
+                <Link to="/book-repair" className="btn btn-quiet btn-xs">Book Repair</Link>
+                <Link to="/track-repair" className="btn btn-quiet btn-xs">Track Device</Link>
                 {!isAuth && (
                   <>
                     <div className="pfn-util-sep" />
-                    <Link to="/login">Sign In</Link>
-                    <Link to="/register">Register</Link>
+                    <Link to="/login" className="btn btn-quiet btn-xs">Sign In</Link>
+                    <Link to="/register" className="btn btn-primary btn-xs">Register</Link>
                   </>
                 )}
               </div>

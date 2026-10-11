@@ -11,6 +11,7 @@
   --pc-red: var(--color-pf-red-dark);
   --pc-red-b: var(--color-pf-red);
   --pc-ok: #1f8a5b;
+  --ease: cubic-bezier(.22, 1, .36, 1);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -20,7 +21,7 @@
   color: var(--pc-ink);
   background: var(--pc-card);
   border: 1px solid var(--pc-line);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
   transform-origin: top center;
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
@@ -98,7 +99,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 11px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--pc-ink);
   color: #fff;
   font-size: 0.75rem;
@@ -127,7 +128,7 @@
   height: 38px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--pc-card);
   border: 1px solid rgba(217, 30, 54, 0.2);
   color: var(--pc-red);
@@ -225,7 +226,7 @@
   align-items: center;
   gap: 6px;
   padding: 5px 11px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(31, 138, 91, 0.25);
   color: var(--pc-ink);
@@ -407,7 +408,7 @@
   min-height: 46px;
   padding: 0 20px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--pc-red-b);
   color: #fff;
   font-size: 0.875rem;
@@ -443,6 +444,81 @@
 .pc-add.is-added:hover {
   background: var(--pc-ok);
   box-shadow: none;
+}
+
+/* btn-view — full-width pill with expanding red circle + sliding arrows */
+.pc-body .btn-view {
+  --h: 48px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--h);
+  padding: 0 6px 0 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  background: var(--pc-ink);
+  color: #fff;
+  font: 600 14px/1 var(--font-ui);
+  letter-spacing: .01em;
+  text-decoration: none;
+  transition: transform .3s var(--ease);
+}
+.pc-body .btn-view::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: 6px;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--pc-red-b);
+  transform: translateY(-50%) scale(1);
+  transition: transform .6s var(--ease);
+}
+.pc-body .btn-view .arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.pc-body .btn-view .arrow svg {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+  transition: transform .45s var(--ease);
+}
+.pc-body .btn-view .arrow svg:last-child {
+  transform: translateX(-160%);
+}
+.pc-body .btn-view:hover::before,
+.pc-body .btn-view:focus-visible::before {
+  transform: translateY(-50%) scale(14);
+}
+.pc-body .btn-view:hover .arrow svg:first-child,
+.pc-body .btn-view:focus-visible .arrow svg:first-child {
+  transform: translateX(160%);
+}
+.pc-body .btn-view:hover .arrow svg:last-child,
+.pc-body .btn-view:focus-visible .arrow svg:last-child {
+  transform: translateX(0);
+}
+.pc-body .btn-view:active {
+  transform: scale(.98);
+}
+.pc-body .btn-view:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--pc-red-b) 55%, transparent);
+  outline-offset: 3px;
 }
 
 /* skeleton */
@@ -482,7 +558,7 @@
   width: min(900px, 92vw);
   max-width: 92vw;
   border: none;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 0;
   background: var(--pc-card);
   color: var(--pc-ink);
@@ -519,7 +595,7 @@
   height: 40px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--pc-card);
   border: 1px solid rgba(217, 30, 54, 0.2);
   color: var(--pc-red);
@@ -592,7 +668,7 @@
   gap: 3px;
   padding: 12px 14px;
   border: 1px solid var(--pc-line);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--pc-plate);
 }
 .pc-specs b {

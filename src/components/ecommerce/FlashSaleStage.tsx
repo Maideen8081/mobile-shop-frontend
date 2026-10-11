@@ -24,8 +24,6 @@ interface FlashSaleStageProps {
   onTabChange: (key: string) => void
 }
 
-const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`
-
 /**
  * Desktop-only "Tech Essentials" offer band — the landing page's attention
  * centrepiece. It reuses the app's own surface background, colour tokens and
@@ -109,8 +107,8 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
       <div ref={revealRef} className={`fs-3d relative max-w-[1440px] mx-auto ${inView ? 'fs-in' : ''}`}>
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10 xl:gap-16 items-center">
           {/* Offer copy */}
-          <div className="fs-rise flex flex-col justify-center" style={{ '--fs-i': 0 } as React.CSSProperties}>
-            <span className="inline-flex items-center gap-2 self-start bg-pf-red/10 border border-pf-red/20 text-pf-red text-xs font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full">
+          <div className={`fs-rise flex flex-col justify-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-pf-red/10`} style={{ '--fs-i': 0 } as React.CSSProperties}>
+            <span className="inline-flex items-center gap-2 self-start bg-pf-red/20 border border-pf-red/30 text-pf-red text-xs font-bold tracking-[0.15em] uppercase px-3 py-1.5 rounded-full">
               <span className="material-symbols-outlined text-base">local_fire_department</span>
               Flash Sale
               <span className="w-1.5 h-1.5 rounded-full bg-pf-red animate-pulse" aria-hidden="true" />
@@ -128,13 +126,13 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
               performance, uncompromised quality — refurbs and new arrivals included.
             </p>
 
-            <div className="flex items-center gap-3 flex-wrap mt-8 p-3 rounded-2xl bg-white/80 border border-pf-red/15 shadow-red-subtle">
+            <div className="flex items-center gap-3 flex-wrap mt-8 p-3 rounded-2xl bg-white border border-pf-red/20 shadow-red-subtle">
               <span className="text-sm font-semibold text-pf-red-dark pl-1">Offer ends in</span>
               <div className="flex gap-2" role="timer" aria-live="off">
                 {units.map((u) => (
                   <div
                     key={u.label}
-                    className="min-w-[64px] px-3 py-2 rounded-xl bg-pf-red/5 border border-pf-red/15 text-center"
+                    className="min-w-[64px] px-3 py-2 rounded-xl bg-pf-red/15 border border-pf-red/25 text-center"
                   >
                     <b key={u.value} className="pfx-num block font-display text-2xl font-bold text-pf-red">
                       {u.value}
@@ -150,13 +148,13 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
                 Claim Offer Now
                 <span className="material-symbols-outlined text-lg">bolt</span>
               </Link>
-              <Link to="/collection/all?tab=new" className="btn btn-quiet btn-md w-fit">
+              <Link to="/collection/all?tab=new" className="btn btn-quiet btn-md w-fit bg-white">
                 See All Deals
                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
               </Link>
             </div>
 
-            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-on-surface-variant mt-8">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-on-surface/90 mt-8">
               <li className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-base text-pf-red">verified</span>
                 Certified performance
@@ -170,7 +168,7 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
 
           {/* Advertised products — the same real data and `.btn` segmented control
               the rest of the page already uses. */}
-          <div className="min-w-0">
+          <div className="min-w-0 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-pf-red/10">
             <div
               className="fs-rise flex items-center justify-between flex-wrap gap-3 mb-5"
               style={{ '--fs-i': 1 } as React.CSSProperties}
@@ -212,11 +210,6 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
                   style={{ '--fs-i': 2 + i } as React.CSSProperties}
                 >
                   <div className="relative h-28 xl:h-32 rounded-xl bg-surface-container-low flex items-center justify-center overflow-hidden mb-3">
-                    {card.off > 0 && (
-                      <span className="absolute top-2 left-2 z-10 bg-pf-red text-white text-xs font-bold px-2 py-1 rounded-[8px]">
-                        -{card.off}%
-                      </span>
-                    )}
                     {card.image ? (
                       <img
                         src={card.image}
@@ -232,16 +225,10 @@ export default function FlashSaleStage({ cards, tabs, activeTab, onTabChange }: 
                         inventory_2
                       </span>
                     )}
-                  </div>
+</div>
                   <p className="text-sm font-bold text-on-surface leading-tight line-clamp-2 mb-1 group-hover:text-pf-red-dark transition-colors">
                     {card.name}
                   </p>
-                  <div className="mt-auto flex items-baseline gap-2 pt-1">
-                    <span className="text-pf-red font-extrabold text-base">{fmt(card.price)}</span>
-                    {card.mrp > card.price && (
-                      <span className="text-xs text-on-surface-variant line-through">{fmt(card.mrp)}</span>
-                    )}
-                  </div>
                 </Link>
               ))}
             </div>

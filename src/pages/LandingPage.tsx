@@ -770,12 +770,13 @@ export default function LandingPage() {
       >
         {heroSlides.map((slide, i) => {
           const copy = slide.copies[heroCopyIndex] ?? slide.copies[0]
+          const isActive = i === currentSlide
           return (
             <div
               key={i}
-              aria-hidden={i !== currentSlide}
+              aria-hidden={!isActive}
               className={`absolute inset-0 transition-all duration-[1.2s] ease-in-out ${
-                i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
               <div className="absolute -inset-y-16 inset-x-0">
@@ -788,7 +789,8 @@ export default function LandingPage() {
                   muted
                   playsInline
                   preload={i === 0 ? 'auto' : 'metadata'}
-                  aria-hidden={i !== currentSlide}
+                  aria-hidden="true"
+                  tabIndex={-1}
                   onTimeUpdate={(e) => {
                     const v = e.currentTarget
                     if (i !== currentSlide) return
@@ -813,7 +815,7 @@ export default function LandingPage() {
                   className="w-full max-w-[620px] hero-copy-swap"
                 >
                   <div
-                    className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-pf-red/10 border border-pf-red/25 text-pf-red text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                    className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-pf-red/20 border border-pf-red/30 text-pf-red text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                     }`}
                   >
@@ -891,7 +893,7 @@ export default function LandingPage() {
           ))}
         </div>
         {/* Slide counter */}
-        <div className="absolute bottom-10 right-6 md:right-12 z-20 text-white/60 text-sm font-mono tracking-wider">
+        <div className="absolute bottom-10 right-6 md:right-12 z-20 text-white/90 text-sm font-mono tracking-wider bg-black/70 px-3 py-1.5 rounded-[8px]">
           {String(currentSlide + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
         </div>
       </section>
@@ -984,7 +986,7 @@ export default function LandingPage() {
                                 </span>
                               )}
                             </div>
-                            <div className="relative z-10 text-center">
+                            <div className="relative z-10 text-center bg-white/90 rounded-xl p-2">
                               <h3 className="font-bold text-base text-on-surface group-hover:text-pf-red-dark transition-colors">
                                 {cat.name}
                               </h3>
@@ -1292,7 +1294,7 @@ export default function LandingPage() {
               {partners.map((p) => (
                 <span
                   key={p + dup}
-                  className="text-5xl md:text-6xl font-extrabold text-on-surface/10 tracking-tighter select-none"
+                  className="text-5xl md:text-6xl font-extrabold text-on-surface/60 tracking-tighter select-none"
                 >
                   {p}
                 </span>
@@ -1314,7 +1316,7 @@ export default function LandingPage() {
               title={<>Trusted by <Accent>Thousands</Accent></>}
               subtitle="Real experiences from our community of tech enthusiasts."
             />
-            <div className="flex gap-6 overflow-x-auto pb-6 no-scrollbar snap-x">
+            <div className="flex gap-6 overflow-x-auto pb-6 no-scrollbar snap-x" tabIndex={0} role="region" aria-label="Testimonials">
               {testimonials.map((t, i) => (
                 <div
                   key={i}

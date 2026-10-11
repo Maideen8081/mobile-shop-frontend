@@ -123,9 +123,9 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
 
           {linkColumns.map((col) => (
             <div key={col.title} className={`flex flex-col ${compact ? 'gap-2' : 'gap-3.5'}`}>
-              <h3 className="font-bold text-white uppercase tracking-widest text-xs">
+              <h2 className="font-bold text-white uppercase tracking-widest text-xs">
                 {col.title}
-              </h3>
+              </h2>
               <div className={`bg-pf-red rounded-[8px] ${compact ? 'w-6 h-0.5' : 'w-8 h-0.5'}`} />
               {col.links.map((link) => (
                 <Link
@@ -144,9 +144,9 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
           className={`${compact ? 'mt-5 p-3.5' : 'mt-8 p-5'} flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-2xl bg-white/5 border border-white/10`}
         >
           <div>
-            <h4 className={`font-bold text-white ${compact ? 'text-sm' : 'text-base'}`}>
+            <h2 className={`font-bold text-white ${compact ? 'text-sm' : 'text-base'}`}>
               Stay in the loop
-            </h4>
+            </h2>
             <p className={`text-white/60 mt-0.5 ${compact ? 'text-xs' : 'text-sm'}`}>
               Get exclusive deals and new arrivals in your inbox.
             </p>

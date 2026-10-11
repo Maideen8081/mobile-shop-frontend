@@ -1,23 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { addToCartWithAuth } from '../utils/cartAuth'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
-import MobileWishlist from '../components/mobile/MobileWishlist'
-import { useIsMobile } from '../components/mobile/helpers'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
-import './CollectionPage.css'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
-import '../components/ecommerce/SiteTopNav.css'
+import EcommerceFooter from '../components/ecommerce/Footer'
+import './WishlistPage.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
-const FALLBACK_IMG = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 480%22 fill=%22%23f1eeeb%22%3E%3Crect width=%22400%22 height=%22480%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2218%22 fill=%22%2322C55E%22%3EProduct%3C/text%3E%3C/svg%3E'
-
 function getProductImage(product: any): string {
   const raw = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
-  if (!raw) return FALLBACK_IMG
+  if (!raw) return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80'
   if (raw.startsWith('http') || raw.startsWith('data:')) return raw
   return `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
 }
@@ -45,99 +39,119 @@ function getProductTags(product: any): string[] {
   return tags
 }
 
-const fmtINR = (n: number) => '₹' + Math.round(n || 0).toLocaleString('en-IN')
-
-function WishCard(props: {
+interface WishCardProps {
   product: any
-  onWishlist: (e: React.MouseEvent) => void
-  onAddToCart: (e: React.MouseEvent) => void
-}) {
-  const navigate = useNavigate()
-  const { product, onWishlist, onAddToCart } = props
+  onRemove: (id: number) => void
+  onAddToCart: (e: React.MouseEvent<Element>, product: any) => void
+}
+
+function WishCard({ product, onRemove, onAddToCart }: WishCardProps) {
   const tag = getProductTags(product)[0] || ''
+  const { current: price } = getProductPrice(product)
+  const name = getProductName(product)
+  const image = getProductImage(product)
+  const productId = product.id || product.product_id
 
   return (
-    <div className="wx-product-card">
-      <Link to={`/product/${product.id}`} className="wx-product-media">
-        <img src={getProductImage(product)} alt={getProductName(product)} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-        {tag && <span className="wx-product-tag">{tag}</span>}
-        <div className="wx-product-actions">
-          <button className="wx-act-btn wx-liked" aria-label="Remove from wishlist" onClick={(e) => { e.preventDefault(); onWishlist(e) }}>
-            <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
-          </button>
-          <button className="wx-act-btn" aria-label="Quick view" onClick={(e) => { e.preventDefault(); navigate(`/product/${product.id}`) }}>
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /></svg>
-          </button>
-        </div>
-      </Link>
-      <div className="wx-product-info">
-        <h4>{getProductName(product)}</h4>
-        <div className="wx-product-bottom">
-          <div className="wx-mini-actions">
-            <button className="wx-act-btn wx-liked" aria-label="Remove from wishlist" onClick={(e) => { e.stopPropagation(); onWishlist(e) }}>
-              <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
-            </button>
-            <button className="wx-act-btn" aria-label="Add to cart" onClick={(e) => { e.stopPropagation(); onAddToCart(e) }}>
-              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
-            </button>
+    <li className="wishlist-item">
+      <article className="wish-card" data-id={productId}>
+        <Link to={`/product/${productId}`} className="wish-card-media" aria-label={`View ${name}`}>
+          {tag && <span className="wish-card-tag">{tag}</span>}
+          <div className="wish-card-art" aria-hidden="true">
+            <img 
+              src={image} 
+              alt={name} 
+              loading="lazy" 
+              onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80' }}
+            />
           </div>
+          <button 
+            className="wish-card-heart" 
+            aria-label={`Remove ${name} from wishlist`}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(productId) }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c1.74 0 3.41.81 4.5 2.09C19.58 5.08 22 8.18 22 11.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
+        </Link>
+        <div className="wish-card-info">
+          <div className="wish-card-cat">{tag || 'Accessories'}</div>
+          <h3 className="wish-card-name"><Link to={`/product/${productId}`}>{name}</Link></h3>
+          <div className="wish-card-row">
+            <span className="wish-card-price">₹{price.toLocaleString('en-IN')}</span>
+            <span className="wish-card-stock">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12l5 5L20 7"/>
+              </svg>
+              In stock
+            </span>
+          </div>
+          <button 
+            className="btn btn-primary btn-sm wish-card-cart"
+            onClick={(e) => onAddToCart(e, product)}
+            disabled={false}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>
+            </svg>
+            <span>Add to cart</span>
+          </button>
         </div>
-      </div>
-    </div>
+      </article>
+    </li>
   )
 }
 
 export default function WishlistPage() {
-  const isMobile = useIsMobile()
-  if (isMobile) return <MobileWishlist />
-
   const navigate = useNavigate()
   const { show: showToast } = useToast()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [addingAll, setAddingAll] = useState(false)
+  const [_cart, setCart] = useState<Set<number>>(new Set())
+  const [_lastRemoved, setLastRemoved] = useState<{ item: any; idx: number } | null>(null)
 
   useEffect(() => {
-    loadWishlist()
-    const handler = () => loadWishlist()
-    window.addEventListener('wishlist-updated', handler)
-    return () => window.removeEventListener('wishlist-updated', handler)
-  }, [])
-
-  const loadWishlist = async () => {
-    setLoading(true)
-    try {
+    const load = async () => {
       const ids: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
-      if (ids.length === 0) {
-        setProducts([])
-        setLoading(false)
-        return
-      }
+      if (ids.length === 0) { setProducts([]); setLoading(false); return }
       const results = await Promise.allSettled(ids.map((id) => productService.getById(id)))
       const fetched = results
         .filter((r) => r.status === 'fulfilled')
         .map((r) => (r as PromiseFulfilledResult<any>).value)
       setProducts(fetched)
-    } catch {
-      setProducts([])
+      setLoading(false)
     }
-    setLoading(false)
-  }
+    load()
+    const handler = () => { 
+      const ids: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]'); 
+      setProducts((prev) => prev.filter((p) => !ids.includes(p.id || p.product_id))) 
+    }
+    window.addEventListener('wishlist-updated', handler)
+    return () => window.removeEventListener('wishlist-updated', handler)
+  }, [])
 
-  const removeFromWishlist = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation()
+  const removeFromWishlist = useCallback((id: number) => {
     const stored: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
-    const updated = stored.filter((pid) => pid !== id)
-    localStorage.setItem('wishlist', JSON.stringify(updated))
-    window.dispatchEvent(new Event('wishlist-updated'))
-    setProducts((prev) => prev.filter((p) => (p.id || p.product_id) !== id))
-  }
+    const idx = stored.indexOf(id)
+    if (idx > -1) {
+      const updated = stored.filter((pid) => pid !== id)
+      localStorage.setItem('wishlist', JSON.stringify(updated))
+      window.dispatchEvent(new Event('wishlist-updated'))
+      setLastRemoved({ item: products[idx], idx })
+      setProducts((prev) => prev.filter((p) => (p.id || p.product_id) !== id))
+      showToast('Removed from wishlist', 'success')
+    }
+  }, [products, showToast])
 
-  const addToCart = async (e: React.MouseEvent, product: any) => {
+  const addToCart = useCallback(async (e: React.MouseEvent<Element>, product: any) => {
+    e.preventDefault()
     e.stopPropagation()
     const id = product.id || product.product_id
-    const name = getProductName(product)
-    const price = getProductPrice(product).current
-    const image = getProductImage(product)
+    const name = product.product_name ?? product.name ?? ''
+    const price = product.variants?.[0]?.discount_price || product.variants?.[0]?.discountPrice || product.variants?.[0]?.price || product.min_price || 0
+    const image = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
     try {
       const added = await addToCartWithAuth({
         productId: id,
@@ -151,84 +165,172 @@ export default function WishlistPage() {
         ram: '',
         color: '',
       })
-      if (added) showToast(`${name} added to cart`, 'success')
+      if (added) {
+        setCart(prev => new Set([...prev, product.id || product.product_id]))
+        showToast(`${name} added to cart`, 'success')
+      }
     } catch (err: any) {
-      showToast(err?.message || 'Failed to add to cart', 'error')
+      console.error(err)
+      showToast('Failed to add to cart', 'error')
     }
-  }
+  }, [showToast])
+
+  const addAllToCart = useCallback(async () => {
+    if (products.length === 0 || addingAll) return
+    
+    setAddingAll(true)
+    let successCount = 0
+    
+    for (const product of products) {
+      const id = product.id || product.product_id
+      const name = product.product_name ?? product.name ?? ''
+      const price = product.variants?.[0]?.discount_price || product.variants?.[0]?.discountPrice || product.variants?.[0]?.price || product.min_price || 0
+      const image = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
+      
+      try {
+        const added = await addToCartWithAuth({
+          productId: id,
+          variationId: 0,
+          quantity: 1,
+          name,
+          brand: product.brand || '',
+          price,
+          image,
+          storage: '',
+          ram: '',
+          color: '',
+        })
+        if (added) {
+          setCart(prev => new Set([...prev, product.id || product.product_id]))
+          successCount++
+        }
+        // Small delay to avoid overwhelming the API
+        await new Promise(resolve => setTimeout(resolve, 100))
+      } catch (err) {
+        console.error(`Failed to add ${name} to cart:`, err)
+      }
+    }
+    
+    setAddingAll(false)
+    
+    if (successCount > 0) {
+      showToast(`${successCount} item${successCount > 1 ? 's' : ''} added to cart`, 'success')
+    } else if (products.length > 0) {
+      showToast('Failed to add items to cart. Please try again.', 'error')
+    }
+  }, [products, showToast])
 
   const totalValue = products.reduce((sum, p) => sum + getProductPrice(p).current, 0)
 
-  if (loading) {
-    return (
-      <>
-        <SiteTopNav />
-        <DesktopPageLoader text="Loading your wishlist..." />
-        <EcommerceFooter compact />
-      </>
-    )
-  }
-
   return (
-    <>
+    <div className="wishlist-page">
       <SiteTopNav />
-      <div className="wx-page min-h-screen">
+      <main className="wishlist-main">
+        <header className="wishlist-header">
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <Link to="/">Home</Link>
+            <span aria-hidden="true">/</span>
+            <strong>Wishlist</strong>
+          </nav>
 
-          <div className="wx-wishlist-head">
-          <button className="wx-back-btn" onClick={() => navigate(-1)} aria-label="Go back">
-            <svg viewBox="0 0 24 24"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
-          </button>
-          <div className="wx-page-head">
-            <div className="wx-breadcrumb">
-              <Link to="/">Home</Link>
-              <span className="wx-sep">/</span>
-              <span className="wx-current">Wishlist</span>
+          <div className="wishlist-head">
+            <button className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M11 6l-6 6 6 6"/>
+              </svg>
+            </button>
+            <div className="wishlist-head-content">
+              <h1>My Wishlist</h1>
+              <p className="wishlist-count" aria-live="polite">{products.length} {products.length === 1 ? 'item' : 'items'} saved</p>
             </div>
-            <h2>My Wishlist</h2>
           </div>
-        </div>
+        </header>
 
-        <main className="wx-wishlist-main">
-          {products.length === 0 ? (
-            <div className="wx-wishlist-empty">
-              <div className="wx-wishlist-empty-icon">
-                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
-              </div>
-              <h3>Your wishlist is empty</h3>
-              <p>Save your favorite products to find them easily later.</p>
-              <Link to="/collection/all" className="wx-wishlist-cta-btn">Browse Products</Link>
-            </div>
-          ) : (
-            <>
-              <div className="wx-grid-toolbar">
-                <div className="wx-result-count">
-                  {products.length} {products.length === 1 ? 'item' : 'items'} saved
+        {loading ? (
+          <div className="wishlist-loading" aria-label="Loading wishlist">
+            <div className="loading-spinner"></div>
+            <p>Loading your wishlist...</p>
+          </div>
+        ) : (
+          <div className="wishlist-layout">
+            <section className="wishlist-grid-section" aria-labelledby="wishlist-heading">
+              <h2 id="wishlist-heading" className="visually-hidden">Wishlist items</h2>
+              {products.length === 0 ? (
+                <div className="wishlist-empty">
+                  <div className="empty-ring">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20.5s-7.2-4.4-9.2-8.8C1.4 8.6 3.2 5.5 6.3 5.5c1.9 0 3.2 1 4.2 2.3h3C14.4 6.1 15.8 5 17.8 5c3.1 0 4.9 3.1 3.5 6.2-2 4.4-9.2 8.8-9.2 8.8z"/>
+                    </svg>
+                  </div>
+                  <h2>Your wishlist is empty</h2>
+                  <p>Save devices you like and they'll be waiting here.</p>
+                  <Link to="/collection/all" className="btn btn-primary">Browse Products</Link>
                 </div>
-                <div className="wx-wishlist-total">
-                  Total value: <b>{fmtINR(totalValue)}</b>
-                </div>
-              </div>
+              ) : (
+                <>
+                  <ul className="wishlist-grid" role="list" aria-label="Wishlist items">
+                    {products.map((product) => (
+                      <WishCard
+                        key={product.id || product.product_id}
+                        product={product}
+                        onRemove={removeFromWishlist}
+                        onAddToCart={addToCart}
+                      />
+                    ))}
+                  </ul>
+                  <div className="wishlist-cta-section">
+                    <Link to="/collection/all" className="btn btn-outline btn-discover">
+                      Discover more products
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                      </svg>
+                    </Link>
+                  </div>
+                </>
+              )}
+            </section>
 
-              <div className="wx-product-grid">
-                {products.map((product) => (
-                  <WishCard
-                    key={product.id || product.product_id}
-                    product={product}
-                    onWishlist={(e) => removeFromWishlist(e, product.id || product.product_id)}
-                    onAddToCart={(e) => addToCart(e, product)}
-                  />
-                ))}
+            <aside className="wishlist-summary" aria-label="Wishlist summary">
+              <h2>Total value</h2>
+              <div className="summary-total">
+                <span>₹{totalValue.toLocaleString('en-IN')}</span>
+                <small>{products.length} {products.length === 1 ? 'item' : 'items'} · incl. taxes</small>
               </div>
-
-              <div className="wx-wishlist-cta">
-                <Link to="/collection/all" className="wx-wishlist-cta-btn">Discover More Products</Link>
-              </div>
-            </>
-          )}
-        </main>
-      </div>
+              <ul className="summary-benefits">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Genuine sealed units</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free express delivery</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free 7-day returns</li>
+              </ul>
+              <button 
+                className="btn btn-primary btn-add-all" 
+                disabled={products.length === 0 || addingAll}
+                onClick={addAllToCart}
+              >
+                <span>{addingAll ? 'Adding...' : 'Add all to cart'}</span>
+                <span className="btn-chip" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M13 6l6 6-6 6"/>
+                  </svg>
+                </span>
+              </button>
+              <button className="btn btn-outline btn-share" onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(window.location.href)
+                  showToast('Wishlist link copied', 'success')
+                } catch {}
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>
+                </svg>
+                Share wishlist
+              </button>
+            </aside>
+          </div>
+        )}
+      </main>
 
       <EcommerceFooter compact />
-    </>
+    </div>
   )
 }

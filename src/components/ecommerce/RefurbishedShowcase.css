@@ -53,7 +53,7 @@
   height: 48px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: #ffffff;
   border: 1px solid rgba(217, 30, 54, 0.2);
   color: var(--color-pf-red-dark);
@@ -85,7 +85,7 @@
   min-height: 44px;
   padding: 0 20px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--color-pf-red);
   color: #fff;
   font-weight: 700;
@@ -160,7 +160,7 @@
   margin: 10px auto 0;
   width: min(520px, 70%);
   background: rgba(27, 18, 16, 0.1);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 .rfc-prog i {
@@ -168,7 +168,7 @@
   inset: 0 auto 0 0;
   width: var(--tw, 30%);
   transform: translateX(calc(var(--tx, 0) * 1%));
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   background: var(--rfc-red-b);
   transition: width 0.15s linear, transform 0.15s linear;
 }
@@ -188,7 +188,7 @@
   padding: 16px 18px;
   background: var(--rfc-card);
   border: 1px solid var(--rfc-line);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 .rfc-trust .rfc-ico {
   width: 44px;
@@ -196,7 +196,7 @@
   flex: none;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--rfc-tint);
   color: var(--rfc-red);
 }
