@@ -42,6 +42,7 @@ import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import AddressCreatePage from '../pages/AddressCreatePage'
 import ProfilePage from '../pages/ProfilePage'
+import SupportChatPage from '../pages/SupportChatPage'
 import MobileNotifications from '../components/mobile/MobileNotifications'
 import AdminOrders from '../pages/AdminOrders'
 import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
@@ -119,6 +120,7 @@ export default function AppRoutes() {
       <Route path="/accessories" element={<AccessoriesPage />} />
       <Route path="/trade-in" element={<TradeInPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/support" element={<SupportChatPage />} />
       <Route path="/book-repair" element={<BookRepair />} />
       <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/login" element={<LoginPage />} />
