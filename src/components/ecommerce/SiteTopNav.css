@@ -1247,6 +1247,13 @@
   .pfn-acc-chevron {
     display: none;
   }
+  .pfn-main-inner {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .pfn-logo-text {
+    display: none;
+  }
   .pfn-icon-cluster {
     gap: 4px;
   }
@@ -1262,4 +1269,29 @@
 /* Suppress old header so it doesn't interfere */
 .wx-header {
   display: none !important;
+}
+
+/* Phone widths only: keep the search bar inside the viewport (320px+). */
+@media (max-width: 480px) {
+  .pfn-search-wrap {
+    min-width: 0;
+    width: 100%;
+  }
+  .pfn-search-form {
+    min-width: 0;
+  }
+  .pfn-search-form input {
+    min-width: 0;
+    width: 100%;
+  }
+  .pfn-search-btn {
+    padding: 9px 14px;
+  }
+  .pfn-icon-cluster {
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .pfn-acc-btn {
+    min-width: 0;
+  }
 }

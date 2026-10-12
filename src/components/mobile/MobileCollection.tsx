@@ -27,7 +27,10 @@ const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }>
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
-let cachedProducts: Record<string, any[]> = {}
+type CachedPage = { items: any[]; page: number; hasMore: boolean }
+let cachedProducts: Record<string, CachedPage> = {}
+
+const cacheKeyFor = (category: string, tab: string, sort: string) => `${category}|${tab}|${sort}`
 
 export default function MobileCollection() {
   const navigate = useNavigate()
@@ -35,12 +38,13 @@ export default function MobileCollection() {
   const categoryName = category ? decodeURIComponent(category) : ''
   const activeTab: TabKey = 'all'
 
-  const cacheKey = `${categoryName}|${activeTab}|newest`
+  const cacheKey = cacheKeyFor(categoryName, activeTab, 'newest')
+  const latestRequest = useRef(0)
 
-  const [products, setProducts] = useState<any[]>(() => cachedProducts[cacheKey] || [])
+  const [products, setProducts] = useState<any[]>(() => cachedProducts[cacheKey]?.items || [])
   const [loadingMore, setLoadingMore] = useState(false)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
+  const [page, setPage] = useState(() => cachedProducts[cacheKey]?.page ?? 1)
+  const [hasMore, setHasMore] = useState(() => cachedProducts[cacheKey]?.hasMore ?? false)
   const [sortBy, setSortBy] = useState('newest')
   const [tab, setTab] = useState<TabKey>(activeTab)
   const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>(() => cachedCategories || [])
@@ -115,7 +119,13 @@ export default function MobileCollection() {
   }, [])
 
   const load = (pageNum: number, replace: boolean) => {
-    if (replace && cachedProducts[cacheKey]) {
+    const key = cacheKeyFor(categoryName, tab, sortBy)
+    const requestId = ++latestRequest.current
+    const cached = cachedProducts[key]
+    if (replace && cached) {
+      setProducts(cached.items)
+      setPage(cached.page)
+      setHasMore(cached.hasMore)
       setProductsLoading(false)
       return
     }
@@ -135,13 +145,20 @@ export default function MobileCollection() {
     setLoadingMore(pageNum > 1)
     productService.list(params).then((res: any) => {
       const items = Array.isArray(res) ? res : (res?.results || res?.data || [])
-      cachedProducts[cacheKey] = items
-      setProducts(replace ? items : [...products, ...items])
-      setHasMore(items.length >= 12)
+      const merged = replace ? items : [...products, ...items]
+      const more = items.length >= 12
+      cachedProducts[key] = { items: merged, page: pageNum, hasMore: more }
+      if (requestId !== latestRequest.current) return
+      setProducts(merged)
+      setHasMore(more)
       setPage(pageNum)
     }).catch(() => {
-      if (replace) setProducts([])
-    }).finally(() => { setProductsLoading(false); setLoadingMore(false) })
+      if (replace && requestId === latestRequest.current) setProducts([])
+    }).finally(() => {
+      if (requestId !== latestRequest.current) return
+      setProductsLoading(false)
+      setLoadingMore(false)
+    })
   }
 
   useEffect(() => { load(1, true) }, [categoryName, tab, sortBy])

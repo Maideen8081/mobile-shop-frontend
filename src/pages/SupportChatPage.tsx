@@ -11,7 +11,6 @@ import {
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import ChatAssistantIcon from '../components/ecommerce/ChatAssistantIcon'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import { sendChatMessage } from '../services/chatService'
 import './SupportChatPage.css'
 
@@ -257,7 +256,6 @@ export default function SupportChatPage() {
           </div>
         </div>
       </main>
-      <EcommerceFooter />
     </div>
   )
 }

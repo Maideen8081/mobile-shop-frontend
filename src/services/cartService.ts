@@ -1,5 +1,6 @@
 import api from './api'
 import { authService } from './authService'
+import { productService } from './productService'
 
 export interface CartItem {
   productId: number
@@ -89,6 +90,24 @@ function syncCachedItemsFromLocal() {
   }
 }
 
+function normalizeVariantId(value: number | string | null | undefined): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const n = Number(value)
+  return Number.isNaN(n) ? null : n
+}
+
+function sameVariant(a: number | string | null | undefined, b: number | string | null | undefined): boolean {
+  return normalizeVariantId(a) === normalizeVariantId(b)
+}
+
+async function resolveDefaultVariationId(productId: number): Promise<number> {
+  const product = await productService.getById(productId)
+  const variants = Array.isArray(product?.variants) ? product.variants : []
+  const inStock = variants.find((v: { stock?: number }) => Number(v?.stock) > 0)
+  const chosen = inStock || variants[0]
+  return chosen ? Number(chosen.id) : 0
+}
+
 export const cartService = {
   isUsingApi(): boolean {
     return authService.isAuthenticated()
@@ -165,7 +184,7 @@ export const cartService = {
 
   async addItem(params: {
     productId: number
-    variationId: number
+    variationId: number | string
     quantity: number
     name: string
     brand?: string
@@ -176,9 +195,18 @@ export const cartService = {
     color?: string
     emoji?: string
   }): Promise<void> {
+    let variantId = normalizeVariantId(params.variationId) ?? 0
+    if (this.isUsingApi() && !variantId) {
+      try {
+        variantId = await resolveDefaultVariationId(params.productId)
+      } catch {
+        // Product lookup failed; fall through and let the API surface the error.
+      }
+    }
+
     const optimisticItem: CartItem = {
       productId: params.productId,
-      variantId: params.variationId,
+      variantId,
       name: params.name,
       brand: params.brand,
       price: params.price,
@@ -194,7 +222,7 @@ export const cartService = {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
       const existingIdx = (cachedCartItems || []).findIndex(
-        (i) => i.productId === params.productId && i.variantId === params.variationId
+        (i) => i.productId === params.productId && sameVariant(i.variantId, variantId)
       )
       if (existingIdx >= 0) {
         cachedCartItems![existingIdx].quantity += params.quantity
@@ -207,7 +235,7 @@ export const cartService = {
       try {
         await api.post('/api/v1/cart/add/', {
           product_id: params.productId,
-          variation_id: params.variationId,
+          variation_id: variantId,
           quantity: params.quantity,
         })
         notifyCartErrorListeners(null)
@@ -226,7 +254,7 @@ export const cartService = {
           }
         } else {
           cachedCartItems = (cachedCartItems || []).filter(
-            (i) => !(i.productId === params.productId && i.variantId === params.variationId)
+            (i) => !(i.productId === params.productId && sameVariant(i.variantId, variantId))
           )
         }
         dispatchCartUpdated()
@@ -235,7 +263,7 @@ export const cartService = {
 
     const cart = getLocalCart()
     const existingIdx = cart.findIndex(
-      (i) => i.productId === params.productId && i.variantId === params.variationId
+      (i) => i.productId === params.productId && sameVariant(i.variantId, variantId)
     )
     if (existingIdx >= 0) {
       cart[existingIdx].quantity += params.quantity
@@ -251,12 +279,12 @@ export const cartService = {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
       const items = cachedCartItems || []
-      const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
+      const item = items.find((i) => i.productId === productId && sameVariant(i.variantId, variantId))
       if (item?.cartItemId) {
         const action = delta > 0 ? 'increase' : 'decrease'
         item.quantity += delta
         if (item.quantity <= 0) {
-          cachedCartItems = items.filter((i) => !(i.productId === productId && i.variantId === (variantId ?? null)))
+          cachedCartItems = items.filter((i) => !(i.productId === productId && sameVariant(i.variantId, variantId)))
         }
         dispatchCartUpdated()
 
@@ -285,7 +313,7 @@ export const cartService = {
 
     const cart = getLocalCart()
     const idx = cart.findIndex(
-      (i) => i.productId === productId && i.variantId === (variantId ?? null)
+      (i) => i.productId === productId && sameVariant(i.variantId, variantId)
     )
     if (idx < 0) return
     const newQty = cart[idx].quantity + delta
@@ -303,9 +331,9 @@ export const cartService = {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
       const items = cachedCartItems || []
-      const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
+      const item = items.find((i) => i.productId === productId && sameVariant(i.variantId, variantId))
       if (item?.cartItemId) {
-        cachedCartItems = items.filter((i) => !(i.productId === productId && i.variantId === (variantId ?? null)))
+        cachedCartItems = items.filter((i) => !(i.productId === productId && sameVariant(i.variantId, variantId)))
         dispatchCartUpdated()
 
         try {
@@ -327,7 +355,7 @@ export const cartService = {
 
     const cart = getLocalCart()
     const idx = cart.findIndex(
-      (i) => i.productId === productId && i.variantId === (variantId ?? null)
+      (i) => i.productId === productId && sameVariant(i.variantId, variantId)
     )
     if (idx < 0) return
     cart.splice(idx, 1)
@@ -364,12 +392,12 @@ export const cartService = {
 
   isInCart(productId: number, variantId?: number | null): boolean {
     const items = cachedCartItems || getLocalCart()
-    return items.some((i) => i.productId === productId && i.variantId === (variantId ?? null))
+    return items.some((i) => i.productId === productId && sameVariant(i.variantId, variantId))
   },
 
   getItemCountInCart(productId: number, variantId?: number | null): number {
     const items = cachedCartItems || getLocalCart()
-    const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
+    const item = items.find((i) => i.productId === productId && sameVariant(i.variantId, variantId))
     return item?.quantity || 0
   },
 }

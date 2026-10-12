@@ -84,7 +84,8 @@ export default function AccessoriesPage() {
   const [activeTab, setActiveTab] = useState('all')
   const [products, setProducts] = useState<any[]>(() => cachedAccessories['all'] || [])
   const [loading, setLoading] = useState(() => !cachedAccessories['all'])
-  const [accessoryCategoryNames, setAccessoryCategoryNames] = useState<string[]>(() => cachedAccessoryCategoryNames || [])
+  // null until the category list has resolved, so products are never cached unfiltered
+  const [accessoryCategoryNames, setAccessoryCategoryNames] = useState<string[] | null>(() => cachedAccessoryCategoryNames)
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
@@ -101,32 +102,38 @@ export default function AccessoriesPage() {
         .filter((c) => c.status === 'active')
         .filter((c) => /accessor|case|cable|charger|audio|headphone|earphone|wearable|watch|band|screen.protec|power.bank|holder|mount|adapter/i.test(c.name))
         .map((c) => c.name)
-      cachedAccessoryCategoryNames = accessoryCats.length > 0 ? accessoryCats : []
-      setAccessoryCategoryNames(cachedAccessoryCategoryNames)
-    }).catch(() => {})
+      cachedAccessoryCategoryNames = accessoryCats
+      setAccessoryCategoryNames(accessoryCats)
+    }).catch(() => {
+      cachedAccessoryCategoryNames = []
+      setAccessoryCategoryNames([])
+    })
   }, [])
 
   useEffect(() => {
+    if (accessoryCategoryNames === null) return
     const cached = cachedAccessories[activeTab]
     if (cached) {
       setProducts(cached)
       setLoading(false)
       return
     }
+    let cancelled = false
     setLoading(true)
     const params: Record<string, any> = { page_size: 50 }
     if (activeTab === 'new') params.is_new_arrival = true
     else if (activeTab === 'trending') params.is_trending = true
     else if (activeTab === 'popular') params.is_featured = true
     productService.list(params).then((data) => {
-      const cats = cachedAccessoryCategoryNames || []
-      const filtered = cats.length > 0
-        ? data.filter((p: any) => cats.includes(p.category))
+      const filtered = accessoryCategoryNames.length > 0
+        ? data.filter((p: any) => accessoryCategoryNames.includes(p.category))
         : data
       cachedAccessories[activeTab] = filtered
+      if (cancelled) return
       setProducts(filtered)
       setLoading(false)
-    }).catch(() => setLoading(false))
+    }).catch(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [activeTab, accessoryCategoryNames])
 
   useEffect(() => {

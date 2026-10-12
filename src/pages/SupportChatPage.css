@@ -2,6 +2,10 @@
   --scp-red: #d91e36;
   --scp-red-dark: #a3122a;
   --scp-red-soft: rgba(217, 30, 54, 0.12);
+  /* Darken the shared "muted" token for this page so small secondary text
+     clears WCAG AA (4.5:1) on both #fff and #fbf8f6. #857d79 only reached
+     3.81–4.03:1. */
+  --color-pf-muted: #6f6660;
   background: var(--color-paper, #fbf8f6);
   height: 100dvh;
   overflow: hidden;

@@ -82,12 +82,16 @@ let cachedPhones: Record<string, any[]> = {}
 
 export default function PhonesPage() {
   const isMobile = useIsMobile()
-  if (isMobile) return <MobilePhones />
+  return isMobile ? <MobilePhones /> : <PhonesDesktop />
+}
+
+function PhonesDesktop() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('all')
   const [products, setProducts] = useState<any[]>(() => cachedPhones['all'] || [])
   const [loading, setLoading] = useState(() => !cachedPhones['all'])
-  const [phoneCategoryNames, setPhoneCategoryNames] = useState<string[]>(() => cachedPhoneCategoryNames || [])
+  // null until the category list has resolved, so products are never cached unfiltered
+  const [phoneCategoryNames, setPhoneCategoryNames] = useState<string[] | null>(() => cachedPhoneCategoryNames)
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
@@ -104,32 +108,38 @@ export default function PhonesPage() {
         .filter((c) => c.status === 'active')
         .filter((c) => /phone|smartphone|mobile/i.test(c.name))
         .map((c) => c.name)
-      cachedPhoneCategoryNames = phoneCats.length > 0 ? phoneCats : []
-      setPhoneCategoryNames(cachedPhoneCategoryNames)
-    }).catch(() => {})
+      cachedPhoneCategoryNames = phoneCats
+      setPhoneCategoryNames(phoneCats)
+    }).catch(() => {
+      cachedPhoneCategoryNames = []
+      setPhoneCategoryNames([])
+    })
   }, [])
 
   useEffect(() => {
+    if (phoneCategoryNames === null) return
     const cached = cachedPhones[activeTab]
     if (cached) {
       setProducts(cached)
       setLoading(false)
       return
     }
+    let cancelled = false
     setLoading(true)
     const params: Record<string, any> = { page_size: 50 }
     if (activeTab === 'new') params.is_new_arrival = true
     else if (activeTab === 'trending') params.is_trending = true
     else if (activeTab === 'popular') params.is_featured = true
     productService.list(params).then((data) => {
-      const cats = cachedPhoneCategoryNames || []
-      const filtered = cats.length > 0
-        ? data.filter((p: any) => cats.includes(p.category))
+      const filtered = phoneCategoryNames.length > 0
+        ? data.filter((p: any) => phoneCategoryNames.includes(p.category))
         : data
       cachedPhones[activeTab] = filtered
+      if (cancelled) return
       setProducts(filtered)
       setLoading(false)
-    }).catch(() => setLoading(false))
+    }).catch(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [activeTab, phoneCategoryNames])
 
   useEffect(() => {

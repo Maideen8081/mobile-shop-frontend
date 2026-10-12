@@ -107,6 +107,8 @@ export default function MobilePhones() {
   }, [])
 
   useEffect(() => {
+    // Wait for categories so the phone-only filter is applied before the result is cached
+    if (!categoriesLoaded) return
     const cacheKey = `${activeCategory}|${tab}|${sortBy}`
     if (cachedProducts[cacheKey]) {
       setProducts(cachedProducts[cacheKey])
@@ -130,7 +132,7 @@ export default function MobilePhones() {
       cachedProducts[cacheKey] = filtered
       setProducts(filtered)
     }).catch(() => {}).finally(() => setProductsLoading(false))
-  }, [activeCategory, tab, sortBy, categories])
+  }, [activeCategory, tab, sortBy, categories, categoriesLoaded])
 
   const hero = HERO_COPY
 
