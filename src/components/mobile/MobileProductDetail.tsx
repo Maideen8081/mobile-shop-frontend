@@ -49,8 +49,8 @@ export default function MobileProductDetail() {
       .catch(() => {})
   }, [])
 
-  const [product, setProduct] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [product, setProduct] = useState<any>(() => (resolvedId ? productService.peekById(Number(resolvedId)) : null) ?? null)
+  const [loading, setLoading] = useState(() => !(resolvedId && productService.peekById(Number(resolvedId))))
   const [fetchError, setFetchError] = useState('')
   const [selectedImage, setSelectedImage] = useState(0)
   const [qty, setQty] = useState(1)
@@ -87,11 +87,14 @@ export default function MobileProductDetail() {
   useEffect(() => {
     if (!resolvedId) { setLoading(false); return }
     let cancelled = false
-    setLoading(true)
+    // Show an already-viewed product instantly; refresh it quietly behind.
+    const cached = productService.peekById(Number(resolvedId))
+    if (cached) setProduct(cached)
+    setLoading(!cached)
     setFetchError('')
     productService.getById(Number(resolvedId))
       .then((res) => { if (!cancelled) setProduct(res) })
-      .catch((err) => { if (!cancelled) setFetchError(err?.message || 'Failed to load product') })
+      .catch((err) => { if (!cancelled && !cached) setFetchError(err?.message || 'Failed to load product') })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])
@@ -398,6 +401,8 @@ export default function MobileProductDetail() {
       showToast('Added to cart!', 'success')
       setRelatedFlash((f) => ({ ...f, [p.id]: true }))
       setTimeout(() => setRelatedFlash((f) => ({ ...f, [p.id]: false })), 1500)
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
     } finally {
       setRelatedLoading((f) => ({ ...f, [p.id]: false }))
     }

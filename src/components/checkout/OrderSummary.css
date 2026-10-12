@@ -1,0 +1,70 @@
+/* Order summary card for the checkout steps. Builds on CartPage.css (.cx-*). */
+
+.osum-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+.osum-head h2 { margin: 0 !important; }
+.osum-head span { font-size: 13px; font-weight: 600; color: var(--cx-muted); }
+
+.osum-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.osum-items li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.osum-img {
+  width: 52px;
+  height: 52px;
+  padding: 5px;
+  border: 1px solid var(--cx-line);
+  border-radius: var(--radius-md, 8px);
+  background: #fff;
+}
+.osum-img img { width: 100%; height: 100%; object-fit: contain; }
+.osum-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.osum-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--cx-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.osum-meta { font-size: 12px; color: var(--cx-muted); }
+.osum-price { font-size: 14px; font-weight: 700; white-space: nowrap; }
+
+.osum-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cx-red);
+}
+.osum-toggle svg { transition: transform 0.2s; }
+.osum-toggle svg.is-open { transform: rotate(180deg); }
+
+.osum-card dl { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--cx-line); }
+
+.osum-skel { display: flex; flex-direction: column; gap: 12px; }
+.osum-skel span {
+  height: 52px;
+  border-radius: var(--radius-md, 8px);
+  background: linear-gradient(90deg, #f1ece9 25%, #f8f5f3 50%, #f1ece9 75%);
+  background-size: 200% 100%;
+  animation: cx-shimmer 1.2s infinite linear;
+}
+
+/* "Delivering to" box used under the totals */
+.osum-deliver {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--cx-bg);
+  font-size: 13px;
+}
+.osum-deliver svg { color: var(--cx-red); flex-shrink: 0; margin-top: 1px; }
+.osum-deliver div { display: flex; flex-direction: column; gap: 2px; color: var(--cx-ink-2); }
+.osum-deliver div span + span { color: var(--cx-muted); }

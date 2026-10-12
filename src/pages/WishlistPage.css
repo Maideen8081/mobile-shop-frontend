@@ -293,6 +293,10 @@
   border-radius: var(--radius-full);
   background: rgba(22, 101, 52, 0.1);
 }
+.wish-card-stock.is-out {
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.1);
+}
 
 .wish-card-cart {
   display: inline-flex;
@@ -496,6 +500,16 @@
   width: 100%;
   padding: 10px 16px;
   font-size: 0.8125rem;
+  /* Global .btn-outline is styled for dark backgrounds. */
+  background: #fff;
+  color: var(--color-on-surface, #1b1210);
+  border: 1px solid #ece4e0;
+  backdrop-filter: none;
+}
+.btn-share:hover {
+  background: #fff;
+  color: var(--color-pf-red, #d91e36);
+  border-color: var(--color-pf-red, #d91e36);
 }
 
 .wishlist-loading {
@@ -504,7 +518,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  text-align: center.
+  text-align: center;
 }
 
 .loading-spinner {

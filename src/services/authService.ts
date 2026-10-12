@@ -1,4 +1,4 @@
-import api from './api'
+import api, { refreshCsrfToken } from './api'
 
 const BASE = '/api/v1/auth'
 const ADMIN_BASE = '/api/v1/admin/auth'
@@ -106,7 +106,7 @@ function normalizeProfile(raw: ProfileLike): UserProfile {
 
 /** Prime the CSRF cookie for the API origin (must run once at app boot). */
 export function bootstrapCsrf(): Promise<void> {
-  return api.get(`${BASE}/csrf/`).then(() => undefined).catch(() => undefined)
+  return refreshCsrfToken().then(() => undefined)
 }
 
 export const authService = {
@@ -116,6 +116,8 @@ export const authService = {
     const r = await api.post(`${BASE}/login/`, payload)
     saveUserProfile(r.data, data.email)
     markAuthenticated()
+    // Login rotates the CSRF secret server-side; pick up the new token.
+    await refreshCsrfToken()
     return r.data
   },
 
@@ -130,6 +132,8 @@ export const authService = {
     const r = await api.post(`${BASE}/register/`, payload)
     saveUserProfile(r.data, data.email)
     markAuthenticated()
+    // Login rotates the CSRF secret server-side; pick up the new token.
+    await refreshCsrfToken()
     return r.data
   },
 
@@ -147,6 +151,8 @@ export const authService = {
     saveUserProfile(r.data, data.email)
     localStorage.setItem('is_admin_session', 'true')
     markAuthenticated()
+    // Login rotates the CSRF secret server-side; pick up the new token.
+    await refreshCsrfToken()
     return r.data
   },
 

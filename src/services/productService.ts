@@ -87,6 +87,10 @@ export interface ProductListParams {
   ordering?: string
 }
 
+// Products already viewed this session, so going back to a product page
+// renders immediately while a fresh copy loads in the background.
+const productByIdCache = new Map<number, any>()
+
 function unwrapData<T>(res: { data: any }): T {
   const body = res.data
   return body?.success === true && 'data' in body ? body.data : body
@@ -202,17 +206,27 @@ export const productService = {
     }).then((r) => normalizeProduct(unwrapData<any>(r as any))),
 
   getById: (id: number) =>
-    api.get(`${PRODUCTS_URL}/${id}/`).then((r) =>
-      normalizeProduct(unwrapData<any>(r as any)),
-    ),
+    api.get(`${PRODUCTS_URL}/${id}/`).then((r) => {
+      const product = normalizeProduct(unwrapData<any>(r as any))
+      productByIdCache.set(id, product)
+      return product
+    }),
+
+  peekById: (id: number): any | undefined => productByIdCache.get(id),
 
   update: (id: number, formData: FormData) =>
     api.put(`${PRODUCTS_URL}/${id}/update/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => normalizeProduct(unwrapData<any>(r as any))),
+    }).then((r) => {
+      productByIdCache.delete(id)
+      return normalizeProduct(unwrapData<any>(r as any))
+    }),
 
   delete: (id: number) =>
-    api.delete(`${PRODUCTS_URL}/${id}/delete/`).then((r) => r.data),
+    api.delete(`${PRODUCTS_URL}/${id}/delete/`).then((r) => {
+      productByIdCache.delete(id)
+      return r.data
+    }),
 
   search: (query: string) =>
     api.get(`${PRODUCTS_URL}/search/`, { params: { query } }).then((r) =>

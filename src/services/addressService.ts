@@ -92,13 +92,12 @@ export const addressService = {
   list: async (): Promise<AddressData[]> => {
     try {
       const r = await api.get(`${BASE}/list/`)
-      const raw = extractItems(r.data)
-      if (raw.length > 0) {
-        const apiAddrs = raw.map(i => normalize(i))
-        lsWrite(apiAddrs)
-        return apiAddrs
-      }
-      return lsRead()
+      // The server is the source of truth, even when it has no addresses: the
+      // local cache isn't per-user, and ordering with a cached address that the
+      // server doesn't know fails with "Address not found".
+      const apiAddrs = extractItems(r.data).map(i => normalize(i))
+      lsWrite(apiAddrs)
+      return apiAddrs
     } catch {
       return lsRead()
     }

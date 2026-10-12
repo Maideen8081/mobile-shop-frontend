@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -6,6 +6,7 @@ import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileRepairs from '../components/mobile/MobileRepairs'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
+import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_20261012230812.mp4'
 
 const services = [
   { icon: 'phone_iphone', title: 'Screen Repair', desc: 'Cracked or shattered screen? We replace it with premium OEM-grade glass in under 60 minutes.' },
@@ -20,49 +21,63 @@ const services = [
 
 const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo', 'Realme', 'Motorola']
 
+/* Hero copy that rotates over a single looping repair clip, the same way the
+   landing page rotates its copy over its video. */
 const heroSlides = [
   {
     tag: 'Screen Repair',
     title: ['Professional', 'Screen', 'Repair — 60 Min'],
     desc: 'Cracked or shattered screen? We replace it with premium OEM-grade glass while you wait. Fast, reliable, guaranteed.',
-    img: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=1920&q=80',
   },
   {
     tag: 'Battery Service',
     title: ['Battery', 'Replacement', '— Full Day Power'],
     desc: 'Fast, reliable battery swaps using genuine components to bring your device back to full life.',
-    img: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1920&q=80',
   },
   {
     tag: 'Water Damage',
     title: ['Water', 'Damage', 'Restoration'],
     desc: 'Advanced ultrasonic cleaning and component-level restoration for liquid-damaged devices of all brands.',
-    img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=1920&q=80',
   },
   {
     tag: 'Motherboard',
     title: ['Advanced', 'Micro-Soldering', '& Board Repair'],
     desc: 'Board-level repairs including no power, water damage, and complex component-level restoration.',
-    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1920&q=80',
   },
   {
     tag: 'All Repairs',
     title: ['Complete', 'Repair', 'Services — One Stop'],
     desc: 'From simple screen fixes to complex motherboard repairs — our certified technicians handle it all.',
-    img: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1920&q=80',
   },
 ]
 
 export default function RepairsPage() {
   const isMobile = useIsMobile()
-  if (isMobile) return <MobileRepairs />
-  const [currentSlide, setCurrentSlide] = useState(0)
+  return isMobile ? <MobileRepairs /> : <DesktopRepairs />
+}
 
+function DesktopRepairs() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  /* Restarted on every slide change so a manual pick gets a full 5s. */
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
     }, 5000)
     return () => clearInterval(interval)
+  }, [currentSlide])
+
+  /* Pause the background clip while the tab is hidden. */
+  useEffect(() => {
+    const onVisibility = () => {
+      const video = videoRef.current
+      if (!video) return
+      if (document.hidden) video.pause()
+      else void video.play().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
   }, [])
 
   useEffect(() => {
@@ -91,17 +106,31 @@ export default function RepairsPage() {
 
       {/* ─── HERO CAROUSEL ─── */}
       <section className="hero-section relative h-screen overflow-hidden bg-black">
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <source src={repairVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
+        <div className="absolute inset-x-0 top-0 h-[220px] bg-gradient-to-b from-black/55 via-black/18 to-transparent" />
         {heroSlides.map((slide, i) => (
           <div
             key={i}
+            aria-hidden={i !== currentSlide}
             className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
               i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
                 <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
@@ -132,7 +161,7 @@ export default function RepairsPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   <Link to="/book-repair"
-                    className="group inline-flex items-center gap-2 bg-[#D91E36] text-[#A3122A] font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(217,30,54,0.3)] hover:shadow-[0_0_60px_rgba(217,30,54,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float cursor-pointer"
+                    className="group inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(217,30,54,0.3)] hover:shadow-[0_0_60px_rgba(217,30,54,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float cursor-pointer"
                   >
                     <span>Schedule Repair</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -160,6 +189,8 @@ export default function RepairsPage() {
           {heroSlides.map((_, i) => (
             <button
               key={i}
+              type="button"
+              aria-label={`Show slide ${i + 1}: ${heroSlides[i].tag}`}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
                 i === currentSlide ? 'w-16 bg-[#D91E36]' : 'w-6 bg-white/30 hover:bg-white/50'

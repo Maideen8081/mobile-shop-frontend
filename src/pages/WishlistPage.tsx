@@ -30,6 +30,51 @@ function getProductName(product: any): string {
   return product.product_name ?? product.name ?? ''
 }
 
+// Some pages store wishlist entries as ids, others as { id } objects.
+function readWishlistIds(): number[] {
+  try {
+    const stored: any[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
+    return [...new Set(stored.map((x) => Number(typeof x === 'object' && x ? x.id : x)).filter(Boolean))]
+  } catch {
+    return []
+  }
+}
+
+function writeWishlistIds(ids: number[]) {
+  localStorage.setItem('wishlist', JSON.stringify(ids))
+  window.dispatchEvent(new Event('wishlist-updated'))
+}
+
+const sellingPrice = (v: any) => (Number(v.discountPrice) > 0 ? Number(v.discountPrice) : Number(v.price) || 0)
+
+/** Cheapest in-stock variant, or null when nothing can be bought. */
+function pickVariant(product: any): any | null {
+  const variants: any[] = product.variants || []
+  return variants
+    .filter((v) => Number(v.stock) > 0)
+    .sort((a, b) => sellingPrice(a) - sellingPrice(b))[0] || null
+}
+
+function isOutOfStock(product: any): boolean {
+  return (product.variants || []).length > 0 && !pickVariant(product)
+}
+
+function cartParams(product: any) {
+  const v = pickVariant(product)
+  return {
+    productId: Number(product.id || product.product_id),
+    variationId: v ? Number(v.id) : 0,
+    quantity: 1,
+    name: getProductName(product),
+    brand: product.brand || '',
+    price: v ? sellingPrice(v) : getProductPrice(product).current,
+    image: getProductImage(product),
+    storage: v?.storage || '',
+    ram: v?.ram || '',
+    color: v?.color || '',
+  }
+}
+
 function getProductTags(product: any): string[] {
   const tags: string[] = []
   if (product.is_trending || product.trending) tags.push('Trending')
@@ -51,6 +96,7 @@ function WishCard({ product, onRemove, onAddToCart }: WishCardProps) {
   const name = getProductName(product)
   const image = getProductImage(product)
   const productId = product.id || product.product_id
+  const outOfStock = isOutOfStock(product)
 
   return (
     <li className="wishlist-item">
@@ -80,17 +126,21 @@ function WishCard({ product, onRemove, onAddToCart }: WishCardProps) {
           <h3 className="wish-card-name"><Link to={`/product/${productId}`}>{name}</Link></h3>
           <div className="wish-card-row">
             <span className="wish-card-price">₹{price.toLocaleString('en-IN')}</span>
-            <span className="wish-card-stock">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12l5 5L20 7"/>
-              </svg>
-              In stock
-            </span>
+            {outOfStock ? (
+              <span className="wish-card-stock is-out">Out of stock</span>
+            ) : (
+              <span className="wish-card-stock">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12l5 5L20 7"/>
+                </svg>
+                In stock
+              </span>
+            )}
           </div>
           <button 
             className="btn btn-primary btn-sm wish-card-cart"
             onClick={(e) => onAddToCart(e, product)}
-            disabled={false}
+            disabled={outOfStock}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>
@@ -108,13 +158,11 @@ export default function WishlistPage() {
   const { show: showToast } = useToast()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [addingAll, setAddingAll] = useState(false)
-  const [_cart, setCart] = useState<Set<number>>(new Set())
-  const [_lastRemoved, setLastRemoved] = useState<{ item: any; idx: number } | null>(null)
+  const [moveProgress, setMoveProgress] = useState<{ done: number; total: number } | null>(null)
 
   useEffect(() => {
     const load = async () => {
-      const ids: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
+      const ids = readWishlistIds()
       if (ids.length === 0) { setProducts([]); setLoading(false); return }
       const results = await Promise.allSettled(ids.map((id) => productService.getById(id)))
       const fetched = results
@@ -124,101 +172,77 @@ export default function WishlistPage() {
       setLoading(false)
     }
     load()
-    const handler = () => { 
-      const ids: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]'); 
-      setProducts((prev) => prev.filter((p) => !ids.includes(p.id || p.product_id))) 
+    // Keep only products that are still saved (e.g. removed from another tab/page).
+    const handler = () => {
+      const ids = readWishlistIds()
+      setProducts((prev) => prev.filter((p) => ids.includes(Number(p.id || p.product_id))))
     }
     window.addEventListener('wishlist-updated', handler)
     return () => window.removeEventListener('wishlist-updated', handler)
   }, [])
 
   const removeFromWishlist = useCallback((id: number) => {
-    const stored: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
-    const idx = stored.indexOf(id)
-    if (idx > -1) {
-      const updated = stored.filter((pid) => pid !== id)
-      localStorage.setItem('wishlist', JSON.stringify(updated))
-      window.dispatchEvent(new Event('wishlist-updated'))
-      setLastRemoved({ item: products[idx], idx })
-      setProducts((prev) => prev.filter((p) => (p.id || p.product_id) !== id))
-      showToast('Removed from wishlist', 'success')
-    }
-  }, [products, showToast])
+    writeWishlistIds(readWishlistIds().filter((pid) => pid !== Number(id)))
+    setProducts((prev) => prev.filter((p) => Number(p.id || p.product_id) !== Number(id)))
+    showToast('Removed from wishlist', 'success')
+  }, [showToast])
 
   const addToCart = useCallback(async (e: React.MouseEvent<Element>, product: any) => {
     e.preventDefault()
     e.stopPropagation()
-    const id = product.id || product.product_id
-    const name = product.product_name ?? product.name ?? ''
-    const price = product.variants?.[0]?.discount_price || product.variants?.[0]?.discountPrice || product.variants?.[0]?.price || product.min_price || 0
-    const image = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
+    const name = getProductName(product)
     try {
-      const added = await addToCartWithAuth({
-        productId: id,
-        variationId: 0,
-        quantity: 1,
-        name,
-        brand: product.brand || '',
-        price,
-        image,
-        storage: '',
-        ram: '',
-        color: '',
-      })
-      if (added) {
-        setCart(prev => new Set([...prev, product.id || product.product_id]))
-        showToast(`${name} added to cart`, 'success')
-      }
+      const added = await addToCartWithAuth(cartParams(product))
+      if (added) showToast(`${name} added to cart`, 'success')
     } catch (err: any) {
       console.error(err)
-      showToast('Failed to add to cart', 'error')
+      showToast(err?.message || 'Failed to add to cart', 'error')
     }
   }, [showToast])
 
-  const addAllToCart = useCallback(async () => {
-    if (products.length === 0 || addingAll) return
-    
-    setAddingAll(true)
-    let successCount = 0
-    
-    for (const product of products) {
-      const id = product.id || product.product_id
-      const name = product.product_name ?? product.name ?? ''
-      const price = product.variants?.[0]?.discount_price || product.variants?.[0]?.discountPrice || product.variants?.[0]?.price || product.min_price || 0
-      const image = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
-      
-      try {
-        const added = await addToCartWithAuth({
-          productId: id,
-          variationId: 0,
-          quantity: 1,
-          name,
-          brand: product.brand || '',
-          price,
-          image,
-          storage: '',
-          ram: '',
-          color: '',
-        })
-        if (added) {
-          setCart(prev => new Set([...prev, product.id || product.product_id]))
-          successCount++
+  /** Adds every saved product to the cart and removes the ones that made it. */
+  const moveAllToCart = useCallback(async () => {
+    if (products.length === 0 || moveProgress) return
+
+    const movedIds: number[] = []
+    const failed: { name: string; reason: string }[] = []
+    setMoveProgress({ done: 0, total: products.length })
+
+    // Sequential on purpose: each add refreshes the server cart.
+    for (const [i, product] of products.entries()) {
+      const name = getProductName(product)
+      if (isOutOfStock(product)) {
+        failed.push({ name, reason: 'out of stock' })
+      } else {
+        try {
+          const added = await addToCartWithAuth(cartParams(product))
+          if (!added) break // redirected to login
+          movedIds.push(Number(product.id || product.product_id))
+        } catch (err: any) {
+          failed.push({ name, reason: err?.message || 'could not be added' })
         }
-        // Small delay to avoid overwhelming the API
-        await new Promise(resolve => setTimeout(resolve, 100))
-      } catch (err) {
-        console.error(`Failed to add ${name} to cart:`, err)
       }
+      setMoveProgress({ done: i + 1, total: products.length })
     }
-    
-    setAddingAll(false)
-    
-    if (successCount > 0) {
-      showToast(`${successCount} item${successCount > 1 ? 's' : ''} added to cart`, 'success')
-    } else if (products.length > 0) {
-      showToast('Failed to add items to cart. Please try again.', 'error')
+
+    if (movedIds.length > 0) {
+      writeWishlistIds(readWishlistIds().filter((id) => !movedIds.includes(id)))
+      setProducts((prev) => prev.filter((p) => !movedIds.includes(Number(p.id || p.product_id))))
     }
-  }, [products, showToast])
+    setMoveProgress(null)
+
+    if (failed.length === 0) {
+      showToast(`${movedIds.length} item${movedIds.length !== 1 ? 's' : ''} moved to cart`, 'success')
+    } else {
+      const detail = failed.map((f) => `${f.name} (${f.reason})`).join(', ')
+      showToast(
+        movedIds.length > 0
+          ? `${movedIds.length} moved to cart. Still in wishlist: ${detail}`
+          : `Couldn't move items to cart: ${detail}`,
+        'error',
+      )
+    }
+  }, [products, moveProgress, showToast])
 
   const totalValue = products.reduce((sum, p) => sum + getProductPrice(p).current, 0)
 
@@ -303,10 +327,10 @@ export default function WishlistPage() {
               </ul>
               <button 
                 className="btn btn-primary btn-add-all" 
-                disabled={products.length === 0 || addingAll}
-                onClick={addAllToCart}
+                disabled={products.length === 0 || moveProgress !== null}
+                onClick={moveAllToCart}
               >
-                <span>{addingAll ? 'Adding...' : 'Add all to cart'}</span>
+                <span>{moveProgress ? `Moving ${moveProgress.done}/${moveProgress.total}…` : 'Move all to cart'}</span>
                 <span className="btn-chip" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14M13 6l6 6-6 6"/>

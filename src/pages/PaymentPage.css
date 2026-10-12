@@ -1,0 +1,104 @@
+/* Desktop checkout — payment step. Builds on CartPage.css / CheckoutAddress.css. */
+
+.pp-skel { height: 110px; }
+
+.pp-address {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 20px 24px;
+}
+.pp-address p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--cx-ink-2); }
+.pp-address .ca-addr-top { padding-right: 0; }
+.pp-address-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cx-red-tint);
+  color: var(--cx-red);
+}
+.pp-eta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--cx-green-tint);
+  color: var(--cx-green);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pp-secure { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cx-green); }
+
+.pp-methods { display: flex; flex-direction: column; gap: 10px; padding: 20px 24px 8px; }
+.pp-method {
+  display: grid;
+  grid-template-columns: 22px 44px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1.5px solid var(--cx-line);
+  border-radius: var(--radius-lg, 12px);
+  background: #fff;
+  text-align: left;
+  font: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+.pp-method:hover:not(:disabled) { border-color: #dcd3ce; }
+.pp-method:focus-visible { outline: none; border-color: var(--cx-red); box-shadow: 0 0 0 3px var(--cx-red-tint); }
+.pp-method.is-selected { border-color: var(--cx-red); background: #fffafa; }
+.pp-method.is-selected .ca-radio { border-color: var(--cx-red); }
+.pp-method.is-selected .ca-radio::after { transform: scale(1); }
+.pp-method:disabled { background: #fcfbfa; }
+.pp-method:disabled .pp-method-icon,
+.pp-method:disabled .pp-method-text { opacity: 0.5; }
+
+.pp-method-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--cx-bg);
+  color: var(--cx-ink-2);
+}
+.pp-method.is-selected .pp-method-icon { background: var(--cx-red-tint); color: var(--cx-red); }
+.pp-method-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pp-method-text strong { font-size: 15px; font-weight: 600; color: var(--cx-ink); }
+.pp-method-text span { font-size: 13px; color: var(--cx-muted); }
+.pp-soon {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--cx-bg);
+  color: var(--cx-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pp-note {
+  margin: 8px 24px 22px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--cx-bg);
+  font-size: 13.5px;
+  color: var(--cx-ink-2);
+}
+
+.pp-error {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--cx-red-tint);
+  color: var(--cx-red-dark);
+  font-size: 13px;
+  font-weight: 600;
+}
+.pp-terms { margin: 12px 0 0; text-align: center; font-size: 12px; color: var(--cx-muted); }
+.pp-terms a { color: var(--cx-ink-2); }

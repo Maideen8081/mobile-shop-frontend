@@ -4,10 +4,14 @@ declare module 'axios' {
   interface AxiosRequestConfig {
     /** Skip the global 401 → login redirect (used for passive auth checks). */
     skipAuthRedirect?: boolean
+    /** Internal: set once a request has been retried after a CSRF refresh. */
+    _csrfRetried?: boolean
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+// In dev, requests go through the Vite proxy (see vite.config.ts) so they're
+// same-origin; production builds call the API directly.
+const API_BASE_URL = import.meta.env.DEV ? '' : (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000')
 
 function getCookie(name: string): string {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)'))
@@ -35,10 +39,30 @@ const api = axios.create({
 
 // Sessions handle identity; CSRF tokens protect unsafe requests. The cookie is
 // set by the server on GET /api/v1/auth/csrf/ and echoed back on write calls.
+// In production the API lives on another site, so document.cookie can't see
+// the API's csrftoken — the endpoint also returns the token in its body.
+const CSRF_PATH = '/api/v1/auth/csrf/'
+let csrfToken = ''
+
+export async function refreshCsrfToken(): Promise<string> {
+  try {
+    const r = await axios.get(CSRF_PATH, { baseURL: API_BASE_URL, withCredentials: true })
+    csrfToken = r.data?.data?.csrf_token || ''
+  } catch {
+    csrfToken = ''
+  }
+  return csrfToken
+}
+
+function isCsrfFailure(error: any): boolean {
+  const detail = error?.response?.data?.detail
+  return error?.response?.status === 403 && typeof detail === 'string' && detail.toLowerCase().includes('csrf')
+}
+
 api.interceptors.request.use((config) => {
   const method = (config.method || 'get').toLowerCase()
   if (UNSAFE_METHODS.includes(method)) {
-    const csrf = getCookie('csrftoken')
+    const csrf = csrfToken || getCookie('csrftoken')
     if (csrf) config.headers['X-CSRFToken'] = csrf
   }
   return config
@@ -68,7 +92,13 @@ api.interceptors.response.use(
       setTimeout(() => { isRedirecting = false }, 2000)
     }
 
-    if (status === 403 && error?.response?.data?.detail?.toLowerCase().includes('csrf')) {
+    // Django rotates the CSRF secret on login/logout, so a stale token is
+    // expected occasionally: fetch a fresh one and retry the request once.
+    if (isCsrfFailure(error) && error.config && !error.config._csrfRetried) {
+      error.config._csrfRetried = true
+      return refreshCsrfToken().then(() => api.request(error.config))
+    }
+    if (isCsrfFailure(error)) {
       console.error(`[api] ${method} ${url} → CSRF token missing or invalid`)
     }
 

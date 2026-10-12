@@ -6,6 +6,7 @@ import { productService } from '../../services/productService'
 import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 import MobileTopSection from './MobileTopSection'
+import { useMobileToast } from './useMobileToast'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -25,6 +26,7 @@ export default function MobileWishlist() {
   const navigate = useNavigate()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const { show: showToast, Toast } = useMobileToast()
 
   useEffect(() => {
     loadWishlist()
@@ -66,16 +68,21 @@ export default function MobileWishlist() {
     const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
     const rawImages = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
     const image = resolveImage(rawImages)
-    const added = await addToCartWithAuth({
-      productId: id,
-      variationId: 0,
-      quantity: 1,
-      name,
-      brand: product.brand || '',
-      price,
-      image,
-    })
-    if (added) window.dispatchEvent(new Event('cart-updated'))
+    try {
+      const added = await addToCartWithAuth({
+        productId: id,
+        variationId: 0,
+        quantity: 1,
+        name,
+        brand: product.brand || '',
+        price,
+        image,
+      })
+      return added
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+      return false
+    }
   }
 
   const totalValue = useMemo(() => {
@@ -111,8 +118,7 @@ export default function MobileWishlist() {
           <>
             <button onClick={async () => {
               for (const p of products) {
-                await addToCart(p);
-                removeFromWishlist(p.id || p.product_id);
+                if (await addToCart(p)) removeFromWishlist(p.id || p.product_id)
               }
             }}
               className={`${card} rounded-[16px] py-3 w-full flex items-center justify-center gap-2 text-[13px] font-semibold mb-3`}
@@ -161,7 +167,7 @@ export default function MobileWishlist() {
                         <Trash2 size={15} />
                       </button>
                     </div>
-                    <button onClick={async () => { await addToCart(product); removeFromWishlist(id) }}
+                    <button onClick={async () => { if (await addToCart(product)) removeFromWishlist(id) }}
                       className="w-full h-10 mt-3 rounded-2xl text-[13px] font-semibold text-white inline-flex items-center justify-center gap-1.5 active:scale-[0.98] transition"
                       style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
                       <ShoppingCart size={15} /> Move to Cart
@@ -194,6 +200,7 @@ export default function MobileWishlist() {
           </button>
         </div>
       )}
+      {Toast}
     </div>
   )
 }

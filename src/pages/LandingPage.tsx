@@ -461,10 +461,16 @@ export default function LandingPage() {
   useEffect(() => {
     let cancelled = false
     const fetchData = async () => {
+      // Filled as sections load, then stored module-wide so returning to this
+      // page renders instantly instead of showing the loaders again.
+      const next: NonNullable<typeof cachedHomeData> = { ...cachedHomeData }
       const catFallback = () => {
-        setCategories(fallbackCategories)
-        setTrendingProducts(productsData.filter((p) => p.trending))
-        setNewArrivals(productsData.filter((p) => p.newArrival).slice(0, 4))
+        next.categories = fallbackCategories
+        next.trending = productsData.filter((p) => p.trending)
+        next.newArrivals = productsData.filter((p) => p.newArrival).slice(0, 4)
+        setCategories(next.categories)
+        setTrendingProducts(next.trending)
+        setNewArrivals(next.newArrivals)
       }
       try {
         const [cats, trending, arrivals] = await Promise.all([
@@ -481,9 +487,9 @@ export default function LandingPage() {
         setCategories(cat)
         setTrendingProducts(tr)
         setNewArrivals(na)
-        if (cachedHomeData) cachedHomeData.categories = cat
-        if (cachedHomeData) cachedHomeData.trending = tr
-        if (cachedHomeData) cachedHomeData.newArrivals = na
+        next.categories = cat
+        next.trending = tr
+        next.newArrivals = na
       } catch {
         if (!cancelled) catFallback()
       }
@@ -491,16 +497,17 @@ export default function LandingPage() {
         const refurbished = await productService.list({ is_refurbished: true, page_size: 8 })
         if (!cancelled) {
           setRefurbishedPhones(refurbished)
-          if (cachedHomeData) cachedHomeData.refurbished = refurbished
+          next.refurbished = refurbished
         }
       } catch {
         if (!cancelled) {
           const fb = productsData.filter((p) => p.refurbished).slice(0, 8)
           setRefurbishedPhones(fb)
-          if (cachedHomeData) cachedHomeData.refurbished = fb
+          next.refurbished = fb
         }
       }
       if (!cancelled) {
+        cachedHomeData = next
         setCategoriesLoading(false)
         setTrendingLoading(false)
         setNewArrivalsLoading(false)

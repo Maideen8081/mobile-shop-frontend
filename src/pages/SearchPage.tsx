@@ -192,19 +192,23 @@ export default function SearchPage() {
     if (!variant) { showToast('No variant available', 'error'); return }
     const price = variant.discount_price || variant.discountPrice || variant.price || product.min_price || 0
     const image = getProductImage(product)
-    const added = await addToCartWithAuth({
-      productId: product.id,
-      variationId: variant.id,
-      quantity: 1,
-      name: product.name,
-      brand: product.brand || '',
-      price,
-      image,
-      storage: variant.storage || '',
-      ram: variant.ram || '',
-      color: variant.color || '',
-    })
-    if (added) showToast('Added to cart', 'success')
+    try {
+      const added = await addToCartWithAuth({
+        productId: product.id,
+        variationId: variant.id,
+        quantity: 1,
+        name: product.name,
+        brand: product.brand || '',
+        price,
+        image,
+        storage: variant.storage || '',
+        ram: variant.ram || '',
+        color: variant.color || '',
+      })
+      if (added) showToast('Added to cart', 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    }
   }
 
   return (

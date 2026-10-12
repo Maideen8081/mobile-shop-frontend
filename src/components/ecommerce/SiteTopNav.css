@@ -668,11 +668,11 @@
   background: var(--pf-red);
   color: #fff;
   font-size: 16px;
-  font-weight: 800.
-  display: flex.
-  align-items: center.
-  justify-content: center.
-  flex-shrink: 0
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .pfn-drop-id {
   flex: 1;

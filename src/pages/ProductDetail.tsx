@@ -190,8 +190,8 @@ function ProductDetailContent() {
   const rootRef = useRef<HTMLDivElement>(null)
   const priceBlockRef = useRef<HTMLDivElement>(null)
 
-  const [apiProduct, setApiProduct] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [apiProduct, setApiProduct] = useState<any>(() => (resolvedId ? productService.peekById(Number(resolvedId)) : null) ?? null)
+  const [loading, setLoading] = useState(() => !(resolvedId && productService.peekById(Number(resolvedId))))
   const [fetchError, setFetchError] = useState('')
   const [selectedImage, setSelectedImage] = useState(0)
   const [qty, setQty] = useState(1)
@@ -293,11 +293,14 @@ function ProductDetailContent() {
   useEffect(() => {
     if (!resolvedId) { setLoading(false); return }
     let cancelled = false
-    setLoading(true)
+    // Show an already-viewed product instantly; refresh it quietly behind.
+    const cached = productService.peekById(Number(resolvedId))
+    if (cached) setApiProduct(cached)
+    setLoading(!cached)
     setFetchError('')
     productService.getById(Number(resolvedId))
       .then((res) => { if (!cancelled) setApiProduct(res) })
-      .catch((err) => { if (!cancelled) setFetchError(err?.message || 'Failed to load product') })
+      .catch((err) => { if (!cancelled && !cached) setFetchError(err?.message || 'Failed to load product') })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])

@@ -44,7 +44,8 @@ const PAGE_SIZE = 20
 
 function getProductPrice(product: any): { current: number; old: number | null } {
   const v = product.variants?.[0]
-  if (!v) return { current: product.min_price || 0, old: null }
+  // List endpoints don't include variants; normalized products expose minPrice.
+  if (!v) return { current: Number(product.min_price ?? product.minPrice) || 0, old: null }
   let rawPrice = v.discount_price || v.discountPrice || v.price || product.min_price || 0
   if (!rawPrice || rawPrice === 0) {
     rawPrice = v.mrp || v.original_price || v.originalPrice || product.min_price || 0
@@ -108,6 +109,7 @@ function ProductCard(props: {
   const navigate = useNavigate()
   const { product, liked, onWishlist, onAddToCart, badge } = props
   const tag = badge || getProductTags(product)[0] || ''
+  const price = getProductPrice(product)
 
   return (
     <div className="wx-product-card">
@@ -117,32 +119,35 @@ function ProductCard(props: {
         <div className="wx-product-actions">
           <button
             className={`wx-act-btn ${liked ? 'wx-liked' : ''}`}
-            aria-label="Add to wishlist"
+            aria-label={liked ? 'Remove from wishlist' : 'Add to wishlist'}
+            aria-pressed={liked}
             onClick={(e) => { e.preventDefault(); onWishlist(e) }}
           >
             <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
           </button>
-          <button className="wx-act-btn" aria-label="Quick view" onClick={(e) => { e.preventDefault(); navigate(`/product/${product.id}`) }}>
+          <button className="wx-act-btn wx-act-quick" aria-label="Quick view" onClick={(e) => { e.preventDefault(); navigate(`/product/${product.id}`) }}>
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /></svg>
           </button>
         </div>
       </Link>
       <div className="wx-product-info">
-        <h3>{getProductName(product)}</h3>
+        <h3><Link to={`/product/${product.id}`}>{getProductName(product)}</Link></h3>
         <p>{getProductDesc(product)}</p>
         <div className="wx-product-bottom">
-          <div className="wx-mini-actions">
-            <button
-              className={`wx-act-btn ${liked ? 'wx-liked' : ''}`}
-              aria-label="Add to wishlist"
-              onClick={(e) => { e.stopPropagation(); onWishlist(e) }}
-            >
-              <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
-            </button>
-            <button className="wx-act-btn" aria-label="Add to cart" onClick={(e) => { e.stopPropagation(); onAddToCart(e) }}>
-              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
-            </button>
+          <div className="wx-product-price">
+            {price.current > 0 ? (
+              <>
+                <span className="wx-price-now">₹{Math.round(price.current).toLocaleString('en-IN')}</span>
+                {price.old && <s className="wx-price-old">₹{Math.round(price.old).toLocaleString('en-IN')}</s>}
+              </>
+            ) : (
+              <span className="wx-price-na">View price</span>
+            )}
           </div>
+          <button className="wx-cart-btn" aria-label={`Add ${getProductName(product)} to cart`} onClick={(e) => { e.stopPropagation(); onAddToCart(e) }}>
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
+            Add
+          </button>
         </div>
       </div>
     </div>
@@ -328,19 +333,23 @@ export default function CollectionPage() {
     const price = getProductPrice(product).current
     const image = getProductImage(product)
     const name = getProductName(product)
-    const added = await addToCartWithAuth({
-      productId: product.id,
-      variationId: 0,
-      quantity: 1,
-      name,
-      brand: product.brand || '',
-      price,
-      image,
-      storage: '',
-      ram: '',
-      color: '',
-    })
-    if (added) showToast(`${name} added to cart`, 'success')
+    try {
+      const added = await addToCartWithAuth({
+        productId: product.id,
+        variationId: 0,
+        quantity: 1,
+        name,
+        brand: product.brand || '',
+        price,
+        image,
+        storage: '',
+        ram: '',
+        color: '',
+      })
+      if (added) showToast(`${name} added to cart`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart', 'error')
+    }
   }
 
    const scrollToGrid = () => {

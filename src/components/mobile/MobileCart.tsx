@@ -300,7 +300,14 @@ export default function MobileCart() {
             <RecCarousel
               products={recommended}
               wishlisted={wishlisted}
-              onAdd={async (p) => { await addProductToCart(p); showToast(`${p.product_name || p.name} added to cart`, 'success') }}
+              onAdd={async (p) => {
+                try {
+                  await addProductToCart(p)
+                  showToast(`${p.product_name || p.name} added to cart`, 'success')
+                } catch (err: any) {
+                  showToast(err?.message || 'Failed to add to cart', 'error')
+                }
+              }}
               onWish={toggleWish}
               onOpen={(id) => navigate(`/product/${id}`)}
             />

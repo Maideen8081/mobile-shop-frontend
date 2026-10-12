@@ -15,6 +15,9 @@ export interface CartItem {
   color?: string
   emoji?: string
   cartItemId?: number
+  /** Original (pre-discount) unit price, when the server provides one. */
+  mrp?: number
+  stockStatus?: 'in_stock' | 'low_stock' | 'out_of_stock'
 }
 
 export interface CartTotals {
@@ -80,7 +83,23 @@ function mapApiItem(item: any): CartItem {
     ram: item.selected_ram || '',
     color: item.selected_color || '',
     cartItemId: item.cart_item_id,
+    mrp: Number(item.price),
+    stockStatus: item.stock_status,
   }
+}
+
+function apiErrorMessage(err: any, fallback: string): string {
+  const data = err?.response?.data
+  return data?.message || data?.detail || data?.error || err?.message || fallback
+}
+
+// 0, null and undefined all mean "no specific variant".
+function sameVariant(a: number | null | undefined, b: number | null | undefined): boolean {
+  return (a || null) === (b || null)
+}
+
+function findItem(items: CartItem[], productId: number, variantId: number | null | undefined) {
+  return items.find((i) => i.productId === productId && sameVariant(i.variantId, variantId))
 }
 
 function syncCachedItemsFromLocal() {
@@ -127,14 +146,18 @@ export const cartService = {
         quantity: Number(body.quantity || 0),
         cartId: body.cart_id,
       }
+      // The server is the source of truth: if it disagrees with what we had
+      // cached (e.g. stale local items), let the badge and other views resync.
+      const changed = JSON.stringify(cachedCartItems ?? getLocalCart()) !== JSON.stringify(items)
       cachedCartItems = items
       cachedCartTotals = totals
       cartCacheTimestamp = Date.now()
       setLocalCart(items)
+      if (changed) dispatchCartUpdated()
       return { items, totals }
     } catch (err: any) {
       const status = err?.response?.status
-      const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Cart API error'
+      const message = apiErrorMessage(err, 'Cart API error')
       console.error(`[cartService] GET /api/v1/cart/ failed (${status || 'network'}):`, message, err)
       notifyCartErrorListeners({ message, status, timestamp: Date.now() })
       syncCachedItemsFromLocal()
@@ -194,7 +217,7 @@ export const cartService = {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
       const existingIdx = (cachedCartItems || []).findIndex(
-        (i) => i.productId === params.productId && i.variantId === params.variationId
+        (i) => i.productId === params.productId && sameVariant(i.variantId, params.variationId)
       )
       if (existingIdx >= 0) {
         cachedCartItems![existingIdx].quantity += params.quantity
@@ -207,7 +230,8 @@ export const cartService = {
       try {
         await api.post('/api/v1/cart/add/', {
           product_id: params.productId,
-          variation_id: params.variationId,
+          // null lets the server pick the product's default variant.
+          variation_id: params.variationId || null,
           quantity: params.quantity,
         })
         notifyCartErrorListeners(null)
@@ -216,7 +240,7 @@ export const cartService = {
         return
       } catch (err: any) {
         const status = err?.response?.status
-        const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Failed to add item to cart'
+        const message = apiErrorMessage(err, 'Failed to add item to cart')
         console.error(`[cartService] POST /api/v1/cart/add/ failed (${status || 'network'}):`, message, err)
         notifyCartErrorListeners({ message, status, timestamp: Date.now() })
         if (existingIdx >= 0) {
@@ -226,16 +250,19 @@ export const cartService = {
           }
         } else {
           cachedCartItems = (cachedCartItems || []).filter(
-            (i) => !(i.productId === params.productId && i.variantId === params.variationId)
+            (i) => !(i.productId === params.productId && sameVariant(i.variantId, params.variationId))
           )
         }
         dispatchCartUpdated()
+        // Don't fall back to a local-only cart: the next server refresh would
+        // silently drop the item. Let the caller show the real reason instead.
+        throw new Error(message)
       }
     }
 
     const cart = getLocalCart()
     const existingIdx = cart.findIndex(
-      (i) => i.productId === params.productId && i.variantId === params.variationId
+      (i) => i.productId === params.productId && sameVariant(i.variantId, params.variationId)
     )
     if (existingIdx >= 0) {
       cart[existingIdx].quantity += params.quantity
@@ -250,13 +277,17 @@ export const cartService = {
   async updateQuantity(productId: number, variantId: number | null | undefined, delta: number): Promise<void> {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
-      const items = cachedCartItems || []
-      const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
+      let item = findItem(cachedCartItems || [], productId, variantId)
+      if (!item?.cartItemId) {
+        // Cached copy predates the server's ids (e.g. optimistic add) — refresh.
+        item = findItem((await this.getCart(true)).items, productId, variantId)
+      }
       if (item?.cartItemId) {
+        const items = cachedCartItems || []
         const action = delta > 0 ? 'increase' : 'decrease'
         item.quantity += delta
         if (item.quantity <= 0) {
-          cachedCartItems = items.filter((i) => !(i.productId === productId && i.variantId === (variantId ?? null)))
+          cachedCartItems = items.filter((i) => i !== item)
         }
         dispatchCartUpdated()
 
@@ -271,22 +302,18 @@ export const cartService = {
           return
         } catch (err: any) {
           const status = err?.response?.status
-          const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Failed to update cart quantity'
+          const message = apiErrorMessage(err, 'Failed to update cart quantity')
           console.error(`[cartService] PUT /api/v1/cart/update-quantity/ failed (${status || 'network'}):`, message, err)
           notifyCartErrorListeners({ message, status, timestamp: Date.now() })
-          item.quantity -= delta
-          if (item.quantity <= 0) {
-            cachedCartItems = getLocalCart()
-          }
+          await this.getCart(true)
           dispatchCartUpdated()
         }
       }
+      return
     }
 
     const cart = getLocalCart()
-    const idx = cart.findIndex(
-      (i) => i.productId === productId && i.variantId === (variantId ?? null)
-    )
+    const idx = cart.findIndex((i) => i.productId === productId && sameVariant(i.variantId, variantId))
     if (idx < 0) return
     const newQty = cart[idx].quantity + delta
     if (newQty <= 0) {
@@ -302,10 +329,12 @@ export const cartService = {
   async removeItem(productId: number, variantId: number | null | undefined): Promise<void> {
     if (this.isUsingApi()) {
       syncCachedItemsFromLocal()
-      const items = cachedCartItems || []
-      const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
+      let item = findItem(cachedCartItems || [], productId, variantId)
+      if (!item?.cartItemId) {
+        item = findItem((await this.getCart(true)).items, productId, variantId)
+      }
       if (item?.cartItemId) {
-        cachedCartItems = items.filter((i) => !(i.productId === productId && i.variantId === (variantId ?? null)))
+        cachedCartItems = (cachedCartItems || []).filter((i) => i !== item)
         dispatchCartUpdated()
 
         try {
@@ -316,19 +345,18 @@ export const cartService = {
           return
         } catch (err: any) {
           const status = err?.response?.status
-          const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Failed to remove cart item'
+          const message = apiErrorMessage(err, 'Failed to remove cart item')
           console.error(`[cartService] DELETE /api/v1/cart/remove/${item.cartItemId}/ failed (${status || 'network'}):`, message, err)
           notifyCartErrorListeners({ message, status, timestamp: Date.now() })
-          cachedCartItems = getLocalCart()
+          await this.getCart(true)
           dispatchCartUpdated()
         }
       }
+      return
     }
 
     const cart = getLocalCart()
-    const idx = cart.findIndex(
-      (i) => i.productId === productId && i.variantId === (variantId ?? null)
-    )
+    const idx = cart.findIndex((i) => i.productId === productId && sameVariant(i.variantId, variantId))
     if (idx < 0) return
     cart.splice(idx, 1)
     setLocalCart(cart)
@@ -350,11 +378,12 @@ export const cartService = {
         return
       } catch (err: any) {
         const status = err?.response?.status
-        const message = err?.response?.data?.detail || err?.response?.data?.error || err?.message || 'Failed to clear cart'
+        const message = apiErrorMessage(err, 'Failed to clear cart')
         console.error(`[cartService] DELETE /api/v1/cart/clear/ failed (${status || 'network'}):`, message, err)
         notifyCartErrorListeners({ message, status, timestamp: Date.now() })
         await this.getCart(true)
         dispatchCartUpdated()
+        return
       }
     }
 
@@ -364,12 +393,11 @@ export const cartService = {
 
   isInCart(productId: number, variantId?: number | null): boolean {
     const items = cachedCartItems || getLocalCart()
-    return items.some((i) => i.productId === productId && i.variantId === (variantId ?? null))
+    return items.some((i) => i.productId === productId && sameVariant(i.variantId, variantId))
   },
 
   getItemCountInCart(productId: number, variantId?: number | null): number {
     const items = cachedCartItems || getLocalCart()
-    const item = items.find((i) => i.productId === productId && i.variantId === (variantId ?? null))
-    return item?.quantity || 0
+    return findItem(items, productId, variantId)?.quantity || 0
   },
 }

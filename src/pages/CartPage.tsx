@@ -1,25 +1,32 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {
+  ArrowLeft, ArrowRight, BadgePercent, Check, Heart, Lock, Minus, Plus,
+  RotateCcw, ShieldCheck, ShoppingBag, Tag, Trash2, Truck, X,
+} from 'lucide-react'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
+import './CartPage.css'
 import { productService } from '../services/productService'
-import { cartService } from '../services/cartService'
+import { cartService, type CartItem } from '../services/cartService'
+import { FREE_SHIPPING_THRESHOLD, TAX_RATE } from '../components/mobile/cartLogic'
+import { computeTotals, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../utils/checkout'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'https://picsum.photos/seed/product/300/300'
 
-interface WinkCartItem {
+interface CartRow {
+  key: string
   id: number
   variantId?: number | null
   name: string
-  meta: string
-  sku: string
+  brand: string
+  specs: string[]
   price: number
+  mrp: number
   qty: number
   stock: 'in' | 'low' | 'out'
-  stockText: string
   img: string
-  cartItemId?: number
 }
 
 interface RecProduct {
@@ -30,16 +37,19 @@ interface RecProduct {
   brand?: string
 }
 
-function getProductImage(product: any): string {
-  const raw = product.common_image || product.image || product.images?.[0] || product.thumbnail || product.variants?.[0]?.images?.[0] || ''
+function resolveImage(raw: string): string {
   if (!raw) return FALLBACK_IMG
   if (raw.startsWith('http') || raw.startsWith('data:')) return raw
   return `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
 }
 
+function getProductImage(product: any): string {
+  return resolveImage(product.common_image || product.image || product.images?.[0] || product.thumbnail || product.variants?.[0]?.images?.[0] || '')
+}
+
 function getProductPrice(product: any): number {
   const v = product.variants?.[0]
-  if (!v) return product.min_price || product.price || 0
+  if (!v) return product.min_price || product.minPrice || product.price || 0
   let rawPrice = v.discount_price || v.discountPrice || v.price || product.min_price || 0
   if (!rawPrice || rawPrice === 0) {
     rawPrice = v.mrp || v.original_price || v.originalPrice || product.min_price || 0
@@ -47,31 +57,64 @@ function getProductPrice(product: any): number {
   return isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
 }
 
-function mapCartItemsToWink(items: any[]): WinkCartItem[] {
-  return items.map((item) => ({
-    id: item.productId || item.id,
-    variantId: item.variantId ?? item.variationId ?? null,
-    name: item.name || 'Item',
-    meta: [item.brand, item.storage, item.ram, item.color].filter(Boolean).join(', ') || 'Standard Edition',
-    sku: item.sku || `SKU-MOB-${item.productId || item.id}`,
-    price: item.price || 0,
-    qty: item.quantity || item.qty || 1,
-    stock: 'in',
-    stockText: 'In Stock',
-    img: item.image || item.img || FALLBACK_IMG,
-    cartItemId: item.cartItemId || null,
-  }))
+const isRealSpec = (v?: string) => Boolean(v && v.trim() && v.trim().toUpperCase() !== 'N/A')
+
+function toRows(items: CartItem[]): CartRow[] {
+  return items.map((item) => {
+    const price = Number(item.price) || 0
+    const mrp = Number(item.mrp) || price
+    return {
+      key: String(item.cartItemId ?? `${item.productId}-${item.variantId ?? 'default'}`),
+      id: item.productId,
+      variantId: item.variantId ?? null,
+      name: item.name || 'Item',
+      brand: item.brand || '',
+      specs: [item.color, item.storage, item.ram].filter(isRealSpec) as string[],
+      price,
+      mrp: mrp > price ? mrp : price,
+      qty: item.quantity || 1,
+      stock: item.stockStatus === 'out_of_stock' ? 'out' : item.stockStatus === 'low_stock' ? 'low' : 'in',
+      img: resolveImage(item.image || ''),
+    }
+  })
 }
+
+const fmt = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
+
+function addToWishlist(productId: number) {
+  try {
+    const stored: any[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
+    const ids = stored.map((x) => (typeof x === 'number' ? x : x?.id)).filter(Boolean)
+    if (!ids.includes(productId)) {
+      localStorage.setItem('wishlist', JSON.stringify([...ids, productId]))
+      window.dispatchEvent(new Event('wishlist-updated'))
+    }
+  } catch { /* storage unavailable: nothing to save */ }
+}
+
+const STEPS = ['Cart', 'Address', 'Payment']
 
 export default function CartPage() {
   const navigate = useNavigate()
-  const [cart, setCart] = useState<WinkCartItem[]>([])
+  const [cart, setCart] = useState<CartRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [busyKeys, setBusyKeys] = useState<string[]>([])
+  const [removingKeys, setRemovingKeys] = useState<string[]>([])
+  const [notice, setNotice] = useState<{ text: string; type: 'ok' | 'err' } | null>(null)
+
+  const [promoInput, setPromoInput] = useState('')
+  // Coupons are validated by the server, which is what applies them to the order.
+  const [coupon, setCoupon] = useState<CheckoutCoupon | null>(readCheckoutCoupon)
+  const [promoBusy, setPromoBusy] = useState(false)
+  const [promoMsg, setPromoMsg] = useState<{ text: string; type: 'err' } | null>(null)
+
+  const [recommendations, setRecommendations] = useState<RecProduct[]>([])
+  const [addedRecIds, setAddedRecIds] = useState<Record<number, boolean>>({})
 
   const fetchCart = useCallback(async () => {
     try {
       const { items } = await cartService.getCart(true)
-      setCart(mapCartItemsToWink(items))
+      setCart(toRows(items))
     } catch {
       setCart([])
     } finally {
@@ -81,782 +124,390 @@ export default function CartPage() {
 
   useEffect(() => {
     let cancelled = false
-    const load = async () => {
-      try {
-        const { items } = await cartService.getCart(true)
-        if (!cancelled) setCart(mapCartItemsToWink(items))
-      } catch {
-        if (!cancelled) setCart([])
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    load()
-    return () => { cancelled = true }
-  }, [])
-
-  useEffect(() => {
+    cartService.getCart(true)
+      .then(({ items }) => { if (!cancelled) setCart(toRows(items)) })
+      .catch(() => { if (!cancelled) setCart([]) })
+      .finally(() => { if (!cancelled) setLoading(false) })
     const onCartUpdated = () => fetchCart()
     window.addEventListener('cart-updated', onCartUpdated)
-    return () => window.removeEventListener('cart-updated', onCartUpdated)
+    return () => {
+      cancelled = true
+      window.removeEventListener('cart-updated', onCartUpdated)
+    }
   }, [fetchCart])
-
-  const [recommendations, setRecommendations] = useState<RecProduct[]>([])
-  const [removingIds, setRemovingIds] = useState<number[]>([])
-  const [promoInput, setPromoInput] = useState('')
-  const [discountRate, setDiscountRate] = useState(0)
-  const [promoMsg, setPromoMsg] = useState<{ text: string; type: 'ok' | 'err' | '' }>({ text: '', type: '' })
-  const [addedRecIds, setAddedRecIds] = useState<Record<number, boolean>>({})
-  const [checkoutLoading, setCheckoutLoading] = useState(false)
 
   useEffect(() => {
     productService
-      .list({ page_size: 4 })
+      .list({ page_size: 8 })
       .then((prods) => {
-        if (prods && prods.length > 0) {
-          const mapped: RecProduct[] = prods.slice(0, 4).map((p: any) => ({
-            id: p.id,
-            name: p.name || p.product_name || 'Product',
-            price: getProductPrice(p) || 199,
-            img: getProductImage(p),
-            brand: p.brand || 'PhoneFix',
-          }))
-          setRecommendations(mapped)
-        }
+        setRecommendations((prods || []).slice(0, 4).map((p: any) => ({
+          id: p.id,
+          name: p.name || p.product_name || 'Product',
+          price: getProductPrice(p),
+          img: getProductImage(p),
+          brand: p.brand || '',
+        })))
       })
       .catch(() => {})
   }, [])
 
-  function fmt(n: number) {
-    return '₹' + Math.round(n).toLocaleString('en-IN')
+  useEffect(() => {
+    if (!notice) return
+    const t = setTimeout(() => setNotice(null), 2600)
+    return () => clearTimeout(t)
+  }, [notice])
+
+  const inCart = new Set(cart.map((i) => i.id))
+  const recs = recommendations.filter((r) => !inCart.has(r.id))
+
+  const mrpTotal = cart.reduce((s, i) => s + i.mrp * i.qty, 0)
+  // Same pricing as the payment step and the server's order total.
+  const { subtotal, quantity: totalItems, shipping, tax, discount: promoDiscount, total } =
+    computeTotals(cart.map((i) => ({ price: i.price, quantity: i.qty })), coupon?.discount || 0)
+  const productSavings = mrpTotal - subtotal
+  const appliedPromo = coupon?.code || null
+  const toFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal)
+  const shippingProgress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100)
+  const hasOutOfStock = cart.some((i) => i.stock === 'out')
+
+  const withBusy = async (key: string, fn: () => Promise<void>) => {
+    if (busyKeys.includes(key)) return
+    setBusyKeys((b) => [...b, key])
+    try { await fn() } finally { setBusyKeys((b) => b.filter((k) => k !== key)) }
   }
 
-  const totalItems = cart.reduce((s, i) => s + i.qty, 0)
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0)
-  const discount = subtotal * discountRate
-  const tax = (subtotal - discount) * 0.065
-  const total = subtotal - discount + tax
+  const handleQtyChange = (item: CartRow, delta: number) => {
+    if (item.qty + delta < 1) return
+    withBusy(item.key, async () => {
+      setCart((prev) => prev.map((i) => (i.key === item.key ? { ...i, qty: i.qty + delta } : i)))
+      await cartService.updateQuantity(item.id, item.variantId, delta)
+      const err = cartService.getLastCartError()
+      if (err && Date.now() - err.timestamp < 1500) setNotice({ text: err.message, type: 'err' })
+      await fetchCart()
+    })
+  }
 
-  const handleQtyChange = async (item: WinkCartItem, delta: number) => {
-    const newQty = item.qty + delta
-    if (newQty < 1) return
-    setCart((prev) =>
-      prev.map((i) => (i.id === item.id ? { ...i, qty: newQty } : i))
-    )
-    await cartService.updateQuantity(item.id, item.variantId, delta)
+  const removeRow = (item: CartRow, message: string) => {
+    withBusy(item.key, async () => {
+      setRemovingKeys((r) => [...r, item.key])
+      await cartService.removeItem(item.id, item.variantId)
+      await new Promise((r) => setTimeout(r, 220))
+      setRemovingKeys((r) => r.filter((k) => k !== item.key))
+      setNotice({ text: message, type: 'ok' })
+      await fetchCart()
+    })
+  }
+
+  const handleSaveForLater = (item: CartRow) => {
+    addToWishlist(item.id)
+    removeRow(item, `${item.name} moved to your wishlist`)
+  }
+
+  const handleClearCart = async () => {
+    if (!window.confirm('Remove all items from your cart?')) return
+    await cartService.clearCart()
+    setNotice({ text: 'Cart cleared', type: 'ok' })
     await fetchCart()
   }
 
-  const handleRemove = async (item: WinkCartItem) => {
-    setRemovingIds((prev) => [...prev, item.id])
-    await cartService.removeItem(item.id, item.variantId)
-    setTimeout(() => {
-      setCart((prev) => prev.filter((i) => i.id !== item.id))
-      setRemovingIds((prev) => prev.filter((x) => x !== item.id))
-      fetchCart()
-    }, 280)
-  }
+  // Re-check an applied coupon when the cart changes (percentage discounts and
+  // minimum-spend rules depend on the subtotal).
+  const couponCode = coupon?.code
+  useEffect(() => {
+    if (!couponCode || loading) return
+    let cancelled = false
+    validateCoupon(couponCode, subtotal)
+      .then((c) => { if (!cancelled) { setCoupon(c); saveCheckoutCoupon(c) } })
+      .catch((err) => {
+        if (cancelled) return
+        setCoupon(null)
+        saveCheckoutCoupon(null)
+        setPromoMsg({ text: `${couponCode} removed: ${err?.message || 'no longer valid'}`, type: 'err' })
+      })
+    return () => { cancelled = true }
+  }, [couponCode, subtotal, loading])
 
-  const handleApplyPromo = () => {
-    const code = promoInput.trim().toUpperCase()
-    if (code === 'WINKRED10') {
-      setDiscountRate(0.10)
-      setPromoMsg({ text: 'WINKRED10 applied — 10% off', type: 'ok' })
-    } else if (code === '') {
-      setPromoMsg({ text: 'Enter a promo code', type: 'err' })
-    } else {
-      setDiscountRate(0)
-      setPromoMsg({ text: 'Invalid promo code', type: 'err' })
+  const handleApplyPromo = async () => {
+    const code = promoInput.trim()
+    if (!code) { setPromoMsg({ text: 'Enter a promo code', type: 'err' }); return }
+    setPromoBusy(true)
+    try {
+      const applied = await validateCoupon(code, subtotal)
+      setCoupon(applied)
+      saveCheckoutCoupon(applied)
+      setPromoInput('')
+      setPromoMsg(null)
+      setNotice({ text: `${applied.code} applied — you save ${fmt(applied.discount)}`, type: 'ok' })
+    } catch (err: any) {
+      setPromoMsg({ text: err?.message || 'That code isn’t valid', type: 'err' })
+    } finally {
+      setPromoBusy(false)
     }
   }
 
+  const removePromo = () => {
+    setCoupon(null)
+    saveCheckoutCoupon(null)
+    setPromoMsg(null)
+  }
+
   const handleCheckout = () => {
-    if (cart.length === 0) return
-    setCheckoutLoading(true)
-    setTimeout(() => {
-      setCheckoutLoading(false)
-      navigate('/checkout/address')
-    }, 1200)
+    if (cart.length === 0 || hasOutOfStock) return
+    saveCheckoutCoupon(coupon ? { code: coupon.code, discount: promoDiscount } : null)
+    navigate('/checkout/address')
   }
 
   const handleAddRec = async (rec: RecProduct) => {
-    await cartService.addItem({
-      productId: rec.id,
-      variationId: 0,
-      quantity: 1,
-      name: rec.name,
-      brand: rec.brand || 'PhoneFix',
-      price: rec.price,
-      image: rec.img,
-    })
+    try {
+      await cartService.addItem({
+        productId: rec.id,
+        variationId: 0,
+        quantity: 1,
+        name: rec.name,
+        brand: rec.brand || '',
+        price: rec.price,
+        image: rec.img,
+      })
+    } catch (err: any) {
+      setNotice({ text: err?.message || 'Failed to add to cart', type: 'err' })
+      return
+    }
     setAddedRecIds((prev) => ({ ...prev, [rec.id]: true }))
+    setNotice({ text: `${rec.name} added to cart`, type: 'ok' })
     await fetchCart()
-    setTimeout(() => {
-      setAddedRecIds((prev) => ({ ...prev, [rec.id]: false }))
-    }, 1200)
   }
 
   return (
-    <div className="wink-cart-root">
+    <div className="cx-root">
       <SiteTopNav />
-      <div>
-        <div className="ribbon">
-          White-glove delivery included &nbsp;·&nbsp; <span>Members save an extra 10% with code WINKRED10</span>
-        </div>
 
-        <div className="topbar">
-          <div className="topbar-inner">
-            <div className="fade-up">
-              <div className="eyebrow">Checkout</div>
-              <h1 className="serif">Your <em>Cart</em></h1>
-              <div className="item-count">
-                {totalItems} item{totalItems !== 1 ? 's' : ''} selected
-              </div>
-            </div>
-            <div className="stepper fade-up" style={{ animationDelay: '.1s' }}>
-              <div className="step active">
-                <div className="step-num serif">1</div>
-                <div className="step-label">Cart</div>
-              </div>
-              <div className="step-line"></div>
-              <div className="step">
-                <div className="step-num serif">2</div>
-                <div className="step-label">Shipping</div>
-              </div>
-              <div className="step-line"></div>
-              <div className="step">
-                <div className="step-num serif">3</div>
-                <div className="step-label">Payment</div>
-              </div>
-            </div>
+      <main className="cx-wrap">
+        <header className="cx-head">
+          <div>
+            <nav className="cx-crumbs" aria-label="Breadcrumb">
+              <Link to="/">Home</Link><span>/</span><span aria-current="page">Cart</span>
+            </nav>
+            <h1>Shopping Cart</h1>
+            <p className="cx-head-sub">
+              {loading ? 'Loading your items…' : `${totalItems} item${totalItems !== 1 ? 's' : ''} in your cart`}
+            </p>
           </div>
-        </div>
+          <ol className="cx-steps" aria-label="Checkout progress">
+            {STEPS.map((label, i) => (
+              <li key={label} className={i === 0 ? 'is-active' : ''}>
+                <span className="cx-step-num">{i + 1}</span>
+                {label}
+              </li>
+            ))}
+          </ol>
+        </header>
 
-        <div className="cart-layout">
-          <div className="fade-up" style={{ animationDelay: '.12s' }}>
-            <div className="col-heading">
-              <span>Your Selection</span>
-              <span>
-                {totalItems} item{totalItems !== 1 ? 's' : ''}
-              </span>
+        {!loading && cart.length === 0 ? (
+          <section className="cx-empty">
+            <div className="cx-empty-icon"><ShoppingBag size={34} /></div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven’t added anything yet. Explore the latest phones and accessories.</p>
+            <div className="cx-empty-actions">
+              <Link to="/collection/all" className="cx-btn cx-btn-primary">Start shopping <ArrowRight size={16} /></Link>
+              <Link to="/wishlist" className="cx-btn cx-btn-ghost"><Heart size={16} /> View wishlist</Link>
             </div>
+          </section>
+        ) : (
+          <div className="cx-grid">
+            <section className="cx-main">
+              {!loading && (
+                <div className="cx-ship-card">
+                  <div className="cx-ship-top">
+                    <Truck size={18} />
+                    {toFreeShipping > 0 ? (
+                      <span>Add <strong>{fmt(toFreeShipping)}</strong> more for <strong>free delivery</strong></span>
+                    ) : (
+                      <span><strong>You’ve unlocked free delivery</strong> on this order</span>
+                    )}
+                  </div>
+                  <div className="cx-ship-bar"><span style={{ width: `${shippingProgress}%` }} /></div>
+                </div>
+              )}
 
-            {loading ? (
-              <div className="empty-state show">
-                <p className="serif">Loading cart...</p>
-              </div>
-            ) : cart.length > 0 ? (
-              <div className="cart-items">
-                {cart.map((item) => {
-                  const isRemoving = removingIds.includes(item.id)
-                  return (
-                    <div
-                      key={item.id}
-                      className={`cart-card ${isRemoving ? 'removing' : ''}`}
-                    >
-                      <div
-                        className="cart-thumb"
-                        onClick={() => navigate(`/product/${item.id}`)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <img src={item.img} alt={item.name} />
-                      </div>
-                      <div className="cart-main">
-                        <div className="cart-main-top">
-                          <div className="cart-title">
-                            <h3
-                              className="serif"
-                              onClick={() => navigate(`/product/${item.id}`)}
-                              style={{ cursor: 'pointer' }}
-                            >
-                              {item.name}
-                            </h3>
-                            <div className="meta">{item.meta}</div>
-                            <div className="sku">SKU {item.sku}</div>
-                            <div className={`stock ${item.stock}`}>
-                              <span className="dot"></span>
-                              {item.stockText}
+              <div className="cx-card">
+                <div className="cx-card-head">
+                  <h2>Items <span>({totalItems})</span></h2>
+                  {!loading && cart.length > 0 && (
+                    <button className="cx-link-btn" onClick={handleClearCart}>
+                      <Trash2 size={15} /> Clear cart
+                    </button>
+                  )}
+                </div>
+
+                {loading ? (
+                  <ul className="cx-items">
+                    {[0, 1].map((n) => (
+                      <li key={n} className="cx-item cx-skel">
+                        <div className="cx-thumb" />
+                        <div className="cx-skel-lines"><span /><span /><span /></div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ul className="cx-items">
+                    {cart.map((item) => {
+                      const busy = busyKeys.includes(item.key)
+                      const off = item.mrp > item.price ? Math.round(((item.mrp - item.price) / item.mrp) * 100) : 0
+                      return (
+                        <li key={item.key} className={`cx-item${removingKeys.includes(item.key) ? ' is-removing' : ''}${busy ? ' is-busy' : ''}`}>
+                          <button className="cx-thumb" onClick={() => navigate(`/product/${item.id}`)} aria-label={`View ${item.name}`}>
+                            <img src={item.img} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG }} />
+                          </button>
+
+                          <div className="cx-info">
+                            {item.brand && <div className="cx-brand">{item.brand}</div>}
+                            <Link to={`/product/${item.id}`} className="cx-name">{item.name}</Link>
+                            {item.specs.length > 0 && (
+                              <div className="cx-specs">
+                                {item.specs.map((s) => <span key={s}>{s}</span>)}
+                              </div>
+                            )}
+                            <div className={`cx-stock is-${item.stock}`}>
+                              <span className="cx-dot" />
+                              {item.stock === 'out' ? 'Out of stock — remove to continue' : item.stock === 'low' ? 'Only a few left' : 'In stock'}
+                            </div>
+
+                            <div className="cx-actions">
+                              <div className="cx-qty" aria-label="Quantity">
+                                <button onClick={() => handleQtyChange(item, -1)} disabled={busy || item.qty <= 1} aria-label="Decrease quantity"><Minus size={14} /></button>
+                                <span>{item.qty}</span>
+                                <button onClick={() => handleQtyChange(item, 1)} disabled={busy || item.stock === 'out'} aria-label="Increase quantity"><Plus size={14} /></button>
+                              </div>
+                              <button className="cx-link-btn" onClick={() => handleSaveForLater(item)} disabled={busy}>
+                                <Heart size={15} /> Save for later
+                              </button>
+                              <button className="cx-link-btn is-danger" onClick={() => removeRow(item, `${item.name} removed`)} disabled={busy}>
+                                <Trash2 size={15} /> Remove
+                              </button>
                             </div>
                           </div>
-                          <div className="cart-price serif">
-                            {fmt(item.price * item.qty)}
-                            <span className="unit">{fmt(item.price)} each</span>
+
+                          <div className="cx-price">
+                            <div className="cx-price-now">{fmt(item.price * item.qty)}</div>
+                            {off > 0 && (
+                              <div className="cx-price-was">
+                                <s>{fmt(item.mrp * item.qty)}</s>
+                                <span className="cx-off">{off}% off</span>
+                              </div>
+                            )}
+                            {item.qty > 1 && <div className="cx-price-unit">{fmt(item.price)} each</div>}
                           </div>
-                        </div>
-                        <div className="cart-bottom">
-                          <div className="qty-stepper">
-                            <button
-                              className="qty-dec"
-                              aria-label="Decrease quantity"
-                              onClick={() => handleQtyChange(item, -1)}
-                            >
-                              –
-                            </button>
-                            <span className="qty-val serif">{item.qty}</span>
-                            <button
-                              className="qty-inc"
-                              aria-label="Increase quantity"
-                              onClick={() => handleQtyChange(item, 1)}
-                            >
-                              +
-                            </button>
-                          </div>
-                          <div className="card-links">
-                            <button className="remove" onClick={() => handleRemove(item)}>
-                              Remove
-                            </button>
-                            <button className="save" onClick={() => handleRemove(item)}>
-                              Save for later
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
               </div>
-            ) : (
-              <div className="empty-state show">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-                </svg>
-                <p className="serif">Your cart is empty.</p>
-                <Link to="/collection/all">Continue Shopping</Link>
-              </div>
-            )}
 
-            <Link to="/collection/all" className="continue-link">
-              <svg viewBox="0 0 24 24">
-                <path d="M19 12H5" />
-                <path d="M12 19l-7-7 7-7" />
-              </svg>
-              Continue Shopping
-            </Link>
-          </div>
+              <Link to="/collection/all" className="cx-back">
+                <ArrowLeft size={16} /> Continue shopping
+              </Link>
+            </section>
 
-          <aside className="summary fade-up" style={{ animationDelay: '.2s' }}>
-            <h2>Order Summary</h2>
-            <div className="sub">Review before you proceed to shipping</div>
-            <div className="summary-row">
-              <span>Subtotal · {totalItems} item{totalItems !== 1 ? 's' : ''}</span>
-              <span>{fmt(subtotal)}</span>
-            </div>
-            <div className="summary-row free">
-              <span>Shipping</span>
-              <span>Free</span>
-            </div>
-            <div className="summary-row">
-              <span>Estimated Tax</span>
-              <span>{fmt(tax)}</span>
-            </div>
-            {discountRate > 0 && (
-              <div className="summary-row">
-                <span>Discount</span>
-                <span style={{ color: 'var(--color-success, #16a34a)' }}>-{fmt(discount)}</span>
-              </div>
-            )}
-            <div className="summary-divider"></div>
-
-            <div className="promo-row">
-              <input
-                type="text"
-                placeholder="Promo code"
-                value={promoInput}
-                onChange={(e) => setPromoInput(e.target.value)}
-              />
-              <button onClick={handleApplyPromo}>Apply</button>
-            </div>
-            {promoMsg.text && (
-              <div className={`promo-msg ${promoMsg.type}`}>{promoMsg.text}</div>
-            )}
-
-            <div className="summary-total">
-              <span className="label">Total</span>
-              <span className="amount serif">{fmt(total)}</span>
-            </div>
-
-            <button
-              className="checkout-btn"
-              disabled={cart.length === 0}
-              style={{ opacity: cart.length === 0 ? 0.5 : 1 }}
-              onClick={handleCheckout}
-            >
-              {checkoutLoading ? (
-                'Redirecting…'
-              ) : (
-                <>
-                  Proceed to Checkout
-                  <svg viewBox="0 0 24 24">
-                    <path d="M5 12h14" />
-                    <path d="M13 6l6 6-6 6" />
-                  </svg>
-                </>
-              )}
-            </button>
-
-            <div className="trust-list">
-              <div className="trust-item">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
-                </svg>
-                Secure checkout, encrypted payment
-              </div>
-              <div className="trust-item">
-                <svg viewBox="0 0 24 24">
-                  <rect x="1" y="4" width="22" height="16" rx="2" />
-                  <path d="M1 10h22" />
-                </svg>
-                Free white-glove delivery on this order
-              </div>
-            </div>
-          </aside>
-        </div>
-
-        <div className="recs">
-          <div className="recs-head">
-            <h2 className="serif">Add to your order</h2>
-            <div className="note">Curated to complement your selection</div>
-          </div>
-          <div className="recs-grid">
-            {recommendations.map((r) => {
-              const isAdded = addedRecIds[r.id]
-              return (
-                <div key={r.id} className="rec-card">
-                  <div
-                    className="rec-img"
-                    onClick={() => navigate(`/product/${r.id}`)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <img src={r.img} alt={r.name} />
-                  </div>
-                  <div className="rec-info">
-                    <h4
-                      className="serif"
-                      onClick={() => navigate(`/product/${r.id}`)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {r.name}
-                    </h4>
-                    <div className="rec-bottom">
-                      <button
-                        className={`add-btn ${isAdded ? 'added' : ''}`}
-                        onClick={() => handleAddRec(r)}
-                      >
-                        {isAdded ? 'Added ✓' : '+ Add'}
-                      </button>
-                    </div>
-                  </div>
+            <aside className="cx-side">
+              <div className="cx-card cx-summary">
+                <h2>Price details</h2>
+                <dl>
+                  <div><dt>Price ({totalItems} item{totalItems !== 1 ? 's' : ''})</dt><dd>{fmt(mrpTotal)}</dd></div>
+                  {productSavings > 0 && <div className="is-save"><dt>Discount</dt><dd>−{fmt(productSavings)}</dd></div>}
+                  {appliedPromo && <div className="is-save"><dt>Coupon ({appliedPromo})</dt><dd>−{fmt(promoDiscount)}</dd></div>}
+                  <div><dt>Delivery</dt><dd className={shipping === 0 ? 'is-free' : ''}>{shipping === 0 ? 'Free' : fmt(shipping)}</dd></div>
+                  <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{fmt(tax)}</dd></div>
+                </dl>
+                <div className="cx-total">
+                  <span>Total amount</span>
+                  <strong>{fmt(total)}</strong>
                 </div>
-              )
-            })}
+                {productSavings + promoDiscount > 0 && (
+                  <div className="cx-savings">
+                    <BadgePercent size={16} /> You save {fmt(productSavings + promoDiscount)} on this order
+                  </div>
+                )}
+
+                <div className="cx-promo">
+                  {appliedPromo ? (
+                    <div className="cx-promo-applied">
+                      <Tag size={15} />
+                      <span><strong>{appliedPromo}</strong> applied</span>
+                      <button onClick={removePromo} aria-label="Remove promo code"><X size={15} /></button>
+                    </div>
+                  ) : (
+                    <form className="cx-promo-form" onSubmit={(e) => { e.preventDefault(); handleApplyPromo() }}>
+                      <Tag size={15} />
+                      <input
+                        type="text"
+                        placeholder="Promo code"
+                        value={promoInput}
+                        onChange={(e) => setPromoInput(e.target.value)}
+                        aria-label="Promo code"
+                      />
+                      <button type="submit" disabled={promoBusy}>{promoBusy ? '…' : 'Apply'}</button>
+                    </form>
+                  )}
+                  {promoMsg && <div className={`cx-promo-msg is-${promoMsg.type}`}>{promoMsg.text}</div>}
+                </div>
+
+                <button
+                  className="cx-btn cx-btn-primary cx-checkout"
+                  disabled={loading || cart.length === 0 || hasOutOfStock}
+                  onClick={handleCheckout}
+                >
+                  <Lock size={16} /> Proceed to checkout <ArrowRight size={16} />
+                </button>
+                {hasOutOfStock && <p className="cx-warn">Remove out-of-stock items to continue.</p>}
+              </div>
+
+              <ul className="cx-trust">
+                <li><ShieldCheck size={18} /><div><strong>Secure payments</strong><span>UPI, cards & COD</span></div></li>
+                <li><RotateCcw size={18} /><div><strong>7-day returns</strong><span>No-questions-asked</span></div></li>
+                <li><Truck size={18} /><div><strong>Fast delivery</strong><span>Free over {fmt(FREE_SHIPPING_THRESHOLD)}</span></div></li>
+              </ul>
+            </aside>
           </div>
+        )}
+
+        {recs.length > 0 && (
+          <section className="cx-recs">
+            <div className="cx-recs-head">
+              <h2>You may also like</h2>
+              <Link to="/collection/all">View all <ArrowRight size={15} /></Link>
+            </div>
+            <div className="cx-recs-grid">
+              {recs.map((r) => (
+                <article key={r.id} className="cx-rec">
+                  <button className="cx-rec-img" onClick={() => navigate(`/product/${r.id}`)} aria-label={`View ${r.name}`}>
+                    <img src={r.img} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG }} />
+                  </button>
+                  {r.brand && <div className="cx-brand">{r.brand}</div>}
+                  <Link to={`/product/${r.id}`} className="cx-rec-name">{r.name}</Link>
+                  <div className="cx-rec-bottom">
+                    <span className="cx-rec-price">{r.price > 0 ? fmt(r.price) : ''}</span>
+                    <button
+                      className={`cx-rec-add${addedRecIds[r.id] ? ' is-added' : ''}`}
+                      onClick={() => handleAddRec(r)}
+                      disabled={addedRecIds[r.id]}
+                    >
+                      {addedRecIds[r.id] ? <><Check size={14} /> Added</> : <><Plus size={14} /> Add</>}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+
+      {notice && (
+        <div className={`cx-toast is-${notice.type}`} role="status">
+          {notice.type === 'ok' ? <Check size={16} /> : <X size={16} />}
+          {notice.text}
         </div>
-      </div>
-
-      <style>{`
-        .wink-cart-root {
-          --ink:#181513;
-          --ink-2:#2A2624;
-          --ink-soft:#54504C;
-          --paper:#FBF8F6;
-          --paper-2:#F8F8F8;
-          --line:#E7E7EA;
-          --line-soft:#EEE8DC;
-          --red:#A8172A;
-          --red-bright:#C41E2F;
-          --red-tint:#F6E4E1;
-          --cream:#F9F9F9;
-          --white:#ffffff;
-          --gold:#B08A4E;
-          --radius-sm:10px;
-          --radius-md:18px;
-          --radius-lg:26px;
-
-          font-family:var(--font-ui);
-          background:var(--paper);
-          color:var(--ink);
-          -webkit-font-smoothing:antialiased;
-          letter-spacing:-0.005em;
-          min-height: 100vh;
-        }
-        .wink-cart-root .serif { font-family:var(--font-display); }
-        .wink-cart-root img { max-width:100%; display:block; }
-        .wink-cart-root button { font-family:inherit; cursor:pointer; background:none; border:none; }
-        .wink-cart-root input { font-family:inherit; }
-        .wink-cart-root svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-        .wink-cart-root ::selection { background:var(--red); color:var(--white); }
-
-        @keyframes fadeUp { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-        .wink-cart-root .fade-up { animation:fadeUp .5s cubic-bezier(.2,.7,.3,1) both; }
-
-        /* ===== Top ribbon ===== */
-        .wink-cart-root .ribbon {
-          background:var(--ink);
-          color:#D9D4CC;
-          text-align:center; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;
-          padding:9px 16px; font-weight:600;
-        }
-        .wink-cart-root .ribbon span { color:#fff; }
-
-        /* ===== Header ===== */
-        .wink-cart-root .topbar {
-          background:var(--paper);
-          padding:52px 56px 38px;
-          border-bottom:1px solid var(--line);
-        }
-        .wink-cart-root .topbar-inner {
-          max-width:1280px; margin:0 auto;
-          display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:24px;
-        }
-        .wink-cart-root .eyebrow {
-          font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-          color:var(--red); margin-bottom:10px; display:flex; align-items:center; gap:8px;
-        }
-        .wink-cart-root .eyebrow::before { content:''; width:18px; height:1px; background:var(--red); }
-        .wink-cart-root .topbar h1 { font-size:44px; font-weight:500; letter-spacing:-0.01em; line-height:1; }
-        .wink-cart-root .topbar h1 em { font-style:italic; color:var(--red); }
-        .wink-cart-root .item-count { font-size:13.5px; color:var(--ink-soft); margin-top:10px; font-weight:500; }
-
-        .wink-cart-root .stepper { display:flex; align-items:center; gap:0; }
-        .wink-cart-root .step { display:flex; align-items:center; gap:10px; }
-        .wink-cart-root .step-num {
-          width:30px; height:30px; border-radius: 8px;
-          display:flex; align-items:center; justify-content:center;
-          font-size:12px; font-weight:600; font-family:var(--font-display);
-          background:transparent; color:var(--ink-soft); border:1px solid var(--line);
-        }
-        .wink-cart-root .step.active .step-num { background:var(--red); color:var(--white); border-color:var(--red); }
-        .wink-cart-root .step.done .step-num { background:var(--ink); color:var(--white); border-color:var(--ink); }
-        .wink-cart-root .step-label { font-size:12.5px; font-weight:600; color:var(--ink-soft); letter-spacing:.01em; }
-        .wink-cart-root .step.active .step-label { color:var(--ink); }
-        .wink-cart-root .step-line { width:44px; height:1px; background:var(--line); margin:0 12px; }
-
-        /* ===== Layout ===== */
-        .wink-cart-root .cart-layout {
-          max-width:1280px; margin:0 auto; padding:48px 56px 100px;
-          display:grid; grid-template-columns:1fr 380px; gap:56px; align-items:start;
-        }
-
-        .wink-cart-root .col-heading {
-          display:flex; align-items:center; justify-content:space-between;
-          margin-bottom:6px; padding-bottom:16px; border-bottom:1px solid var(--line);
-        }
-        .wink-cart-root .col-heading span { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
-
-        /* ===== Cart items ===== */
-        .wink-cart-root .cart-items { display:flex; flex-direction:column; }
-        .wink-cart-root .cart-card {
-          display:flex; gap:26px;
-          padding:30px 0;
-          border-bottom:1px solid var(--line-soft);
-          transition:opacity .3s ease, transform .3s ease;
-        }
-        .wink-cart-root .cart-card:last-child { border-bottom:none; }
-        .wink-cart-root .cart-thumb {
-          width:128px; height:128px; border-radius:var(--radius-sm);
-          overflow:hidden; flex-shrink:0; background:#ffffff;
-          border:1px solid var(--line);
-          position:relative;
-          display:flex; align-items:center; justify-content:center;
-          padding:8px;
-        }
-        .wink-cart-root .cart-thumb img { width:100%; height:100%; object-fit:contain; transition:transform .6s cubic-bezier(.2,.7,.3,1); }
-        .wink-cart-root .cart-card:hover .cart-thumb img { transform:scale(1.08); }
-        .wink-cart-root .cart-main { flex:1; display:flex; flex-direction:column; justify-space-between; min-width:0; }
-        .wink-cart-root .cart-main-top { display:flex; justify-content:space-between; gap:16px; }
-        .wink-cart-root .cart-title h3 { font-family:var(--font-display); font-size:19px; font-weight:500; margin-bottom:6px; }
-        .wink-cart-root .cart-title .meta { font-size:12.5px; color:var(--ink-soft); margin-bottom:3px; }
-        .wink-cart-root .cart-title .sku { font-size:10.5px; color:#A39C8E; letter-spacing:.03em; }
-        .wink-cart-root .cart-price { font-family:var(--font-display); font-size:19px; font-weight:500; white-space:nowrap; text-align:right; }
-        .wink-cart-root .cart-price .unit { display:block; font-family:var(--font-ui); font-size:11px; color:#A39C8E; font-weight:500; margin-top:3px; }
-
-        .wink-cart-root .stock {
-          display:inline-flex; align-items:center; gap:6px;
-          font-size:11.5px; font-weight:600; margin-top:12px; width:fit-content; letter-spacing:.01em;
-        }
-        .wink-cart-root .stock.in { color:#4C7A54; }
-        .wink-cart-root .stock.low { color:var(--red); }
-        .wink-cart-root .stock .dot { width:5px; height:5px; border-radius: 8px; background:currentColor; }
-
-        .wink-cart-root .cart-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:16px; flex-wrap:wrap; gap:14px; }
-        .wink-cart-root .qty-stepper {
-          display:flex; align-items:center; gap:0;
-          border:1px solid var(--line); border-radius: 8px; overflow:hidden;
-          background:var(--cream);
-        }
-        .wink-cart-root .qty-stepper button {
-          width:32px; height:32px; font-size:14px; color:var(--ink);
-          display:flex; align-items:center; justify-content:center;
-        }
-        .wink-cart-root .qty-stepper button:hover { background:var(--red); color:var(--white); }
-        .wink-cart-root .qty-stepper .qty-val {
-          width:30px; text-align:center; font-size:12.5px; font-weight:600; font-family:var(--font-display);
-        }
-        .wink-cart-root .card-links { display:flex; align-items:center; gap:18px; font-size:12px; font-weight:600; }
-        .wink-cart-root .card-links button { color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:1px; }
-        .wink-cart-root .card-links button:hover { color:var(--red); border-color:var(--red); }
-
-        .wink-cart-root .cart-card.removing { opacity:0; transform:translateX(24px); }
-
-        .wink-cart-root .continue-link {
-          display:inline-flex; align-items:center; gap:9px;
-          font-size:13px; font-weight:600; color:var(--ink); margin-top:28px;
-          padding-bottom:2px; border-bottom:1px solid var(--ink);
-          text-decoration:none;
-        }
-        .wink-cart-root .continue-link:hover { color:var(--red); border-color:var(--red); }
-        .wink-cart-root .continue-link svg { width:14px; height:14px; }
-
-        /* ===== Order summary — light panel matching app theme ===== */
-        .wink-cart-root .summary {
-          background: var(--color-surface-container-lowest, #ffffff);
-          color: var(--color-on-surface, #1a1c1c);
-          border: 1px solid var(--color-pf-line, #ece4e0);
-          border-radius: var(--radius-lg);
-          padding: 28px 24px;
-          position: sticky;
-          top: 120px;
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-        .wink-cart-root .summary::before {
-          content: '';
-          display: block;
-          height: 3px;
-          width: 40px;
-          background: var(--color-pf-red, #d91e36);
-          border-radius: 2px;
-          margin-bottom: 20px;
-        }
-        .wink-cart-root .summary h2 {
-          font-family: var(--font-display);
-          font-size: 20px;
-          font-weight: 600;
-          margin-bottom: 4px;
-          color: var(--color-on-surface, #1a1c1c);
-        }
-        .wink-cart-root .summary .sub {
-          font-size: 13px;
-          color: var(--color-pf-muted, #857d79);
-          margin-bottom: 20px;
-        }
-
-        .wink-cart-root .summary-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 14px;
-          color: var(--color-on-surface-variant, #47464c);
-          padding: 12px 0;
-        }
-        .wink-cart-root .summary-row span:last-child {
-          color: var(--color-on-surface, #1a1c1c);
-          font-weight: 600;
-          font-family: var(--font-display);
-        }
-        .wink-cart-root .summary-row.free span:last-child {
-          color: var(--color-success, #16a34a);
-        }
-        .wink-cart-root .summary-divider {
-          height: 1px;
-          background: var(--color-pf-line, #ece4e0);
-          margin: 8px 0;
-        }
-
-        .wink-cart-root .promo-row {
-          display: flex;
-          gap: 10px;
-          margin: 20px 0 8px;
-        }
-        .wink-cart-root .promo-row input {
-          flex: 1;
-          border: 1px solid var(--color-pf-line, #ece4e0);
-          background: var(--color-surface, #fbf8f6);
-          color: var(--color-on-surface, #1a1c1c);
-          border-radius: 8px;
-          padding: 12px 16px;
-          font-size: 13px;
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .wink-cart-root .promo-row input::placeholder {
-          color: var(--color-pf-muted, #857d79);
-        }
-        .wink-cart-root .promo-row input:focus {
-          border-color: var(--color-pf-red, #d91e36);
-          box-shadow: 0 0 0 3px rgba(217, 30, 54, 0.12);
-        }
-        .wink-cart-root .promo-row button {
-          background: var(--color-on-surface, #1a1c1c);
-          color: #fff;
-          border: none;
-          padding: 0 22px;
-          border-radius: 8px;
-          font-size: 12.5px;
-          font-weight: 700;
-          transition: background 0.2s;
-        }
-        .wink-cart-root .promo-row button:hover {
-          background: var(--color-pf-red, #d91e36);
-        }
-        .wink-cart-root .promo-msg {
-          font-size: 12px;
-          margin: 6px 0 10px;
-          font-weight: 600;
-          min-height: 16px;
-        }
-        .wink-cart-root .promo-msg.ok {
-          color: var(--color-success, #16a34a);
-        }
-        .wink-cart-root .promo-msg.err {
-          color: var(--color-error, #ba1a1a);
-        }
-
-        .wink-cart-root .summary-total {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          padding: 18px 0 22px;
-          margin-top: 8px;
-          border-top: 1px solid var(--color-pf-line, #ece4e0);
-        }
-        .wink-cart-root .summary-total .label {
-          font-size: 15px;
-          font-weight: 600;
-          color: var(--color-on-surface, #1a1c1c);
-          letter-spacing: .01em;
-        }
-        .wink-cart-root .summary-total .amount {
-          font-family: var(--font-display);
-          font-size: 28px;
-          font-weight: 600;
-          color: var(--color-on-surface, #1a1c1c);
-        }
-
-        .wink-cart-root .checkout-btn {
-          width: 100%;
-          background: var(--color-pf-red, #d91e36);
-          color: #fff;
-          border: none;
-          padding: 16px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: .02em;
-          box-shadow: 0 8px 24px rgba(217, 30, 54, 0.3);
-          transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-        .wink-cart-root .checkout-btn:hover:not(:disabled) {
-          background: var(--color-pf-red-dark, #a3122a);
-          transform: translateY(-2px);
-          box-shadow: 0 12px 32px rgba(217, 30, 54, 0.4);
-        }
-        .wink-cart-root .checkout-btn:active:not(:disabled) {
-          transform: translateY(0);
-        }
-        .wink-cart-root .checkout-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        .wink-cart-root .checkout-btn svg {
-          width: 16px;
-          height: 16px;
-          stroke: currentColor;
-        }
-
-        .wink-cart-root .trust-list {
-          margin-top: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-        }
-        .wink-cart-root .trust-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 12px;
-          color: var(--color-pf-muted, #857d79);
-          font-weight: 500;
-        }
-        .wink-cart-root .trust-item svg {
-          color: var(--color-pf-red, #d91e36);
-          flex-shrink: 0;
-          width: 16px;
-          height: 16px;
-        }
-
-        /* ===== Recommendations ===== */
-        .wink-cart-root .recs { max-width:1280px; margin:0 auto; padding:0 56px 110px; }
-        .wink-cart-root .recs-head {
-          display:flex; align-items:baseline; justify-content:space-between;
-          margin-bottom:30px; padding-bottom:20px; border-bottom:1px solid var(--line);
-        }
-        .wink-cart-root .recs-head h2 { font-family:var(--font-display); font-size:26px; font-weight:500; }
-        .wink-cart-root .recs-head .note { font-size:12.5px; color:var(--ink-soft); }
-        .wink-cart-root .recs-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:28px; }
-        .wink-cart-root .rec-card { background:transparent; }
-        .wink-cart-root .rec-img {
-          aspect-ratio:1/1; background:#ffffff; overflow:hidden; border-radius:var(--radius-sm);
-          border:1px solid var(--line);
-          margin-bottom:16px; position:relative;
-          display:flex; align-items:center; justify-content:center;
-          padding:12px;
-        }
-        .wink-cart-root .rec-img img { width:100%; height:100%; object-fit:contain; transition:transform .5s cubic-bezier(.2,.7,.3,1); }
-        .wink-cart-root .rec-card:hover .rec-img img { transform:scale(1.07); }
-        .wink-cart-root .rec-info h4 { font-family:var(--font-display); font-size:15.5px; font-weight:500; margin-bottom:6px; }
-        .wink-cart-root .rec-bottom { display:flex; align-items:center; justify-content:flex-end; margin-top:10px; }
-        .wink-cart-root .add-btn {
-          background:transparent; color:var(--ink); border:1px solid var(--line);
-          padding:8px 15px; border-radius: 8px; font-size:11px; font-weight:700; letter-spacing:.03em;
-          transition:all .2s ease;
-        }
-        .wink-cart-root .add-btn:hover { background:var(--ink); color:var(--white); border-color:var(--ink); }
-        .wink-cart-root .add-btn.added { background:var(--red); color:var(--white); border-color:var(--red); }
-
-        .wink-cart-root .empty-state {
-          text-align:center; padding:70px 20px; border:1px dashed var(--line); border-radius:var(--radius-md); display:none;
-        }
-        .wink-cart-root .empty-state.show { display:block; }
-        .wink-cart-root .empty-state svg { width:40px; height:40px; color:#A39C8E; margin:0 auto 16px; }
-        .wink-cart-root .empty-state p { color:var(--ink-soft); font-size:14px; margin-bottom:18px; font-family:var(--font-display); font-size:17px; }
-        .wink-cart-root .empty-state a {
-          display:inline-block; background:var(--red); color:var(--white); padding:12px 26px;
-          border-radius: 8px; font-size:12.5px; font-weight:700; text-decoration:none;
-        }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 1020px) {
-          .wink-cart-root .cart-layout { grid-template-columns:1fr; padding:36px 32px 70px; gap:40px; }
-          .wink-cart-root .summary { position:static; }
-          .wink-cart-root .topbar { padding:38px 32px 28px; }
-          .wink-cart-root .recs { padding:0 32px 80px; }
-          .wink-cart-root .recs-grid { grid-template-columns:repeat(2, 1fr); gap:22px; }
-          .wink-cart-root .step-label { display:none; }
-          .wink-cart-root .step-line { width:24px; margin:0 8px; }
-        }
-        @media (max-width: 620px) {
-          .wink-cart-root .topbar-inner { flex-direction:column; align-items:flex-start; }
-          .wink-cart-root .topbar h1 { font-size:32px; }
-          .wink-cart-root .stepper { align-self:flex-start; }
-          .wink-cart-root .cart-card { gap:16px; }
-          .wink-cart-root .cart-thumb { width:88px; height:88px; }
-          .wink-cart-root .cart-title h3 { font-size:16px; }
-          .wink-cart-root .cart-price { font-size:16px; }
-          .wink-cart-root .cart-main-top { flex-direction:row; }
-          .wink-cart-root .cart-bottom { flex-direction:column; align-items:flex-start; }
-          .wink-cart-root .recs-grid { grid-template-columns:repeat(2, 1fr); gap:14px; }
-          .wink-cart-root .summary { padding:28px 22px 24px; border-radius:20px; }
-          .wink-cart-root .cart-layout { padding:28px 20px 56px; }
-          .wink-cart-root .recs { padding:0 20px 64px; }
-          .wink-cart-root .ribbon { font-size:10px; }
-        }
-      `}</style>
+      )}
     </div>
   )
 }

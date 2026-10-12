@@ -1,0 +1,194 @@
+/* Desktop checkout — address step. Shares layout/tokens with CartPage.css. */
+
+.cx-steps li.is-done { color: var(--cx-ink-2); }
+.cx-steps li.is-done .cx-step-num { background: var(--cx-green); color: #fff; }
+
+/* ── Address list ── */
+.ca-list { display: flex; flex-direction: column; gap: 12px; padding: 20px 24px; }
+
+.ca-addr {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1.5px solid var(--cx-line);
+  border-radius: var(--radius-lg, 12px);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.ca-addr:hover { border-color: #dcd3ce; }
+.ca-addr:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cx-red-tint); border-color: var(--cx-red); }
+.ca-addr.is-selected { border-color: var(--cx-red); background: #fffafa; }
+
+.ca-radio {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  border: 2px solid #cfc7c2;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.2s;
+}
+.ca-radio::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cx-red);
+  transform: scale(0);
+  transition: transform 0.2s;
+}
+.ca-addr.is-selected .ca-radio { border-color: var(--cx-red); }
+.ca-addr.is-selected .ca-radio::after { transform: scale(1); }
+
+.ca-addr-body { min-width: 0; }
+.ca-addr-top { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; padding-right: 140px; }
+.ca-addr-top strong { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+.ca-addr-body p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--cx-ink-2); }
+.ca-phone { display: flex; align-items: center; gap: 6px; margin-top: 6px !important; color: var(--cx-muted) !important; font-size: 13px !important; }
+
+.ca-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--cx-bg);
+  color: var(--cx-ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.ca-chip.is-default { background: var(--cx-green-tint); color: var(--cx-green); }
+
+.ca-deliver-tag {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--cx-red);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ca-addr-actions,
+.ca-confirm { display: flex; align-items: center; gap: 18px; margin-top: 12px; }
+.ca-confirm span { font-size: 13px; font-weight: 600; color: var(--cx-red); }
+.ca-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-md, 8px);
+  background: var(--cx-red);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.ca-danger:hover:not(:disabled) { background: var(--cx-red-dark); }
+
+.ca-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 48px);
+  margin: 0 24px 24px;
+  height: 52px;
+  border: 1.5px dashed #d8cfca;
+  border-radius: var(--radius-lg, 12px);
+  background: transparent;
+  color: var(--cx-ink-2);
+  font-size: 14px;
+  font-weight: 600;
+}
+.ca-add:hover { border-color: var(--cx-red); color: var(--cx-red); background: var(--cx-red-tint); }
+
+.ca-skel {
+  height: 128px;
+  border-radius: var(--radius-lg, 12px);
+  background: linear-gradient(90deg, #f1ece9 25%, #f8f5f3 50%, #f1ece9 75%);
+  background-size: 200% 100%;
+  animation: cx-shimmer 1.2s infinite linear;
+}
+
+/* ── Form ── */
+.ca-form { padding: 20px 24px 24px; border-top: 1px solid var(--cx-line); }
+.ca-list + .ca-form { margin-top: 4px; }
+.cx-card-head + .ca-form { border-top: 0; }
+.ca-form-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ca-form-head h3 { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+
+.ca-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.ca-field { display: flex; flex-direction: column; gap: 6px; }
+.ca-field.is-wide { grid-column: 1 / -1; }
+.ca-field label { font-size: 13px; font-weight: 600; color: var(--cx-ink-2); }
+.ca-field label span { font-weight: 500; color: var(--cx-muted); }
+.ca-field input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--cx-line);
+  border-radius: var(--radius-md, 8px);
+  background: #fff;
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--cx-ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ca-field input:focus { outline: none; border-color: var(--cx-red); box-shadow: 0 0 0 3px var(--cx-red-tint); }
+.ca-field.has-error input { border-color: var(--cx-red); }
+.ca-field-err { margin: 0; font-size: 12.5px; color: var(--cx-red); font-weight: 500; }
+
+.ca-type { border: 0; margin: 18px 0 0; padding: 0; }
+.ca-type legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--cx-ink-2); }
+.ca-type div { display: flex; gap: 10px; }
+.ca-type button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--cx-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cx-ink-2);
+  font-size: 13px;
+  font-weight: 600;
+}
+.ca-type button:hover { border-color: var(--cx-red); color: var(--cx-red); }
+.ca-type button.is-active { border-color: var(--cx-red); background: var(--cx-red-tint); color: var(--cx-red); }
+
+.ca-check { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; color: var(--cx-ink-2); cursor: pointer; }
+.ca-check input { position: absolute; opacity: 0; pointer-events: none; }
+.ca-check-box {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cfc7c2;
+  border-radius: 6px;
+  color: transparent;
+  transition: all 0.2s;
+}
+.ca-check input:checked + .ca-check-box { background: var(--cx-red); border-color: var(--cx-red); color: #fff; }
+.ca-check input:focus-visible + .ca-check-box { box-shadow: 0 0 0 3px var(--cx-red-tint); }
+
+.ca-form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+
+.ca-spin { animation: ca-spin 0.9s linear infinite; }
+@keyframes ca-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .ca-form-grid { grid-template-columns: 1fr; }
+  .ca-addr-top { padding-right: 0; }
+  .ca-deliver-tag { position: static; grid-column: 2; justify-self: start; }
+}
