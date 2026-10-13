@@ -101,6 +101,7 @@ export default function CartPage() {
   const [busyKeys, setBusyKeys] = useState<string[]>([])
   const [removingKeys, setRemovingKeys] = useState<string[]>([])
   const [notice, setNotice] = useState<{ text: string; type: 'ok' | 'err' } | null>(null)
+  const [confirmClear, setConfirmClear] = useState(false)
 
   const [promoInput, setPromoInput] = useState('')
   // Coupons are validated by the server, which is what applies them to the order.
@@ -203,12 +204,25 @@ export default function CartPage() {
     removeRow(item, `${item.name} moved to your wishlist`)
   }
 
-  const handleClearCart = async () => {
-    if (!window.confirm('Remove all items from your cart?')) return
+  const handleConfirmClear = async () => {
+    setConfirmClear(false)
     await cartService.clearCart()
-    setNotice({ text: 'Cart cleared', type: 'ok' })
+    const err = cartService.getLastCartError()
+    if (err && Date.now() - err.timestamp < 1500) {
+      setNotice({ text: err.message, type: 'err' })
+    } else {
+      setNotice({ text: 'Cart cleared', type: 'ok' })
+    }
     await fetchCart()
   }
+
+  // Keyboard dismissal for the clear-cart dialog.
+  useEffect(() => {
+    if (!confirmClear) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setConfirmClear(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [confirmClear])
 
   // Re-check an applied coupon when the cart changes (percentage discounts and
   // minimum-spend rules depend on the subtotal).
@@ -333,7 +347,7 @@ export default function CartPage() {
                 <div className="cx-card-head">
                   <h2>Items <span>({totalItems})</span></h2>
                   {!loading && cart.length > 0 && (
-                    <button className="cx-link-btn" onClick={handleClearCart}>
+                    <button className="cx-link-btn" onClick={() => setConfirmClear(true)}>
                       <Trash2 size={15} /> Clear cart
                     </button>
                   )}
@@ -501,6 +515,25 @@ export default function CartPage() {
           </section>
         )}
       </main>
+
+      {confirmClear && (
+        <div
+          className="cx-modal-backdrop"
+          onMouseDown={(e) => { if (e.target === e.currentTarget) setConfirmClear(false) }}
+        >
+          <div className="cx-modal" role="dialog" aria-modal="true" aria-labelledby="cx-clear-title" aria-describedby="cx-clear-desc">
+            <div className="cx-modal-icon"><Trash2 size={20} /></div>
+            <h2 id="cx-clear-title">Clear your cart?</h2>
+            <p id="cx-clear-desc">
+              All {totalItems} {totalItems === 1 ? 'item' : 'items'} will be removed from your cart. You can add them again anytime.
+            </p>
+            <div className="cx-modal-actions">
+              <button className="cx-btn cx-btn-ghost" onClick={() => setConfirmClear(false)} autoFocus>Keep items</button>
+              <button className="cx-btn cx-btn-danger" onClick={handleConfirmClear}>Clear cart</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {notice && (
         <div className={`cx-toast is-${notice.type}`} role="status">

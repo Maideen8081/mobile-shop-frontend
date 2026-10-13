@@ -191,17 +191,6 @@ function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => vo
   return (
     <main className="relative min-h-screen pb-16 overflow-hidden" style={{ background: '#FBF8F6' }}>
       <div className="relative z-10 max-w-[1200px] mx-auto px-4 md:px-8 pt-6">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-xs font-semibold mb-6 transition-colors cursor-pointer"
-          style={{ color: 'rgba(59,75,61,0.6)' }}
-          onMouseEnter={e => e.currentTarget.style.color = '#A3122A'}
-          onMouseLeave={e => e.currentTarget.style.color = 'rgba(59,75,61,0.6)'}
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to Orders
-        </button>
-
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-[#191c1d] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>

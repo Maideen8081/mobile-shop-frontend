@@ -19,7 +19,16 @@ const services = [
   { icon: 'memory', title: 'Motherboard Repair', desc: 'Advanced micro-soldering for board-level issues including no power, water damage, and more.' },
 ]
 
-const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo', 'Realme', 'Motorola']
+const brands = [
+  { name: 'Apple', icon: 'phone_iphone', color: '#1d1d1f' },
+  { name: 'Samsung', icon: 'smartphone', color: '#1428A0' },
+  { name: 'Google', icon: 'google_home_devices', color: '#4285F4' },
+  { name: 'OnePlus', icon: 'mobile_friendly', color: '#F5010C' },
+  { name: 'Xiaomi', icon: 'devices', color: '#FF6900' },
+  { name: 'Oppo', icon: 'phone_android', color: '#1D6FA4' },
+  { name: 'Realme', icon: 'stay_current_portrait', color: '#FFD700' },
+  { name: 'Motorola', icon: 'tap_and_play', color: '#E1000F' },
+]
 
 /* Hero copy that rotates over a single looping repair clip, the same way the
    landing page rotates its copy over its video. */
@@ -105,7 +114,7 @@ function DesktopRepairs() {
       <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
-      <section className="hero-section relative h-screen overflow-hidden bg-black">
+      <section className="hero-section relative overflow-hidden bg-black" style={{ height: 'min(82vh, 680px)', minHeight: '480px' }}>
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover object-center"
@@ -269,32 +278,90 @@ function DesktopRepairs() {
                 ))}
               </div>
             </div>
-            <div className="relative group rounded-[2rem] overflow-hidden shadow-xl">
-              <img alt="Repair technician at work" className="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105" src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&q=80" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+            <div className="relative group">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-[1.5rem] overflow-hidden shadow-lg aspect-[3/4]">
+                  <img
+                    alt="Technician repairing phone screen"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=600&q=80"
+                  />
+                </div>
+                <div className="flex flex-col gap-4 pt-8">
+                  <div className="rounded-[1.5rem] overflow-hidden shadow-lg aspect-square">
+                    <img
+                      alt="Phone motherboard micro-soldering"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80"
+                    />
+                  </div>
+                  <div className="rounded-[1.5rem] overflow-hidden shadow-lg flex-1">
+                    <img
+                      alt="Battery replacement service"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&q=80"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl px-5 py-3 flex items-center gap-3 z-10">
+                <div className="w-10 h-10 rounded-xl bg-[#D91E36]/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[#D91E36] text-xl">verified</span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#191c1d]">90-Day Warranty</div>
+                  <div className="text-[10px] text-gray-500">On all repairs</div>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 bg-[#D91E36] rounded-2xl shadow-xl px-5 py-3 flex items-center gap-3 z-10">
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white text-xl">timer</span>
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">60-Min Repairs</div>
+                  <div className="text-[10px] text-white/80">Screen & battery</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─── BRANDS ─── */}
-      <section className="py-20 px-6 md:px-12 bg-[#A3122A] scroll-reveal">
-        <div className="max-w-[1440px] mx-auto text-center">
-          <SectionHeading
-            className="mb-12"
-            align="center"
-            light
-            eyebrow="Brands"
-            icon="verified"
-            title={<>Brands We <Accent>Service</Accent></>}
-            subtitle="We work on all major smartphone brands. Don't see yours? Give us a call."
-          />
-          <div className="flex flex-wrap justify-center gap-4">
+      <section className="py-20 px-6 md:px-12 scroll-reveal" style={{ background: 'linear-gradient(135deg, #0f0c0c 0%, #1a0a0d 50%, #0f0c0c 100%)' }}>
+        <div className="max-w-[1440px] mx-auto">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-[8px] bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-xs font-bold tracking-[0.15em] uppercase mb-5">
+              <span className="material-symbols-outlined text-sm">verified</span>
+              Brands
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+              Brands We <span className="text-[#D91E36]">Service</span>
+            </h2>
+            <p className="text-white/60 text-base max-w-xl mx-auto">We work on all major smartphone brands. Don't see yours? Give us a call.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {brands.map((brand) => (
-              <div key={brand} className="bg-white/5 border border-white/10 rounded-xl px-7 py-4 text-white font-bold text-lg hover:bg-white/10 hover:border-[#D91E36]/30 hover:text-[#D91E36] transition-all duration-300 cursor-pointer">
-                {brand}
+              <div
+                key={brand.name}
+                className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl border border-white/8 bg-white/3 hover:bg-white/8 hover:border-[#D91E36]/40 transition-all duration-300 cursor-pointer overflow-hidden"
+              >
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `radial-gradient(circle at center, ${brand.color}10 0%, transparent 70%)` }} />
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 relative z-10"
+                  style={{ background: `${brand.color}20`, border: `1px solid ${brand.color}40` }}
+                >
+                  <span className="material-symbols-outlined text-2xl" style={{ color: brand.color }}>{brand.icon}</span>
+                </div>
+                <span className="text-white font-bold text-base relative z-10">{brand.name}</span>
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(90deg, transparent, ${brand.color}, transparent)` }} />
               </div>
             ))}
+          </div>
+          <div className="mt-10 text-center">
+            <p className="text-white/40 text-sm">Don't see your brand? <Link to="/about" className="text-[#D91E36] hover:text-[#E53E4E] font-semibold transition-colors">Contact us</Link> — we service most devices.</p>
           </div>
         </div>
       </section>

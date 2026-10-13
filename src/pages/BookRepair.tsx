@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiUser, FiSmartphone, FiAlertCircle, FiCheckCircle, FiArrowRight, FiArrowLeft, FiSend, FiX, FiImage, FiEdit3 } from 'react-icons/fi'
+import { FiUser, FiSmartphone, FiAlertCircle, FiCheckCircle, FiArrowRight, FiArrowLeft, FiSend, FiX, FiImage } from 'react-icons/fi'
 import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { deviceBrands } from '../data/repairData'
@@ -24,11 +24,15 @@ const issueQuestions: Record<string, string[]> = {
 
 const defaultQuestions = ['Please describe the issue you are facing', 'How long has this issue been present?', 'Is the device currently usable?', 'Any previous repairs done?']
 
-const stepLabels = ['Questions', 'Your Details', 'Device Info', 'Photos', 'Done']
+/* Fixed step labels — questions + 3 extra steps (details, device, photos) */
+const EXTRA_STEPS = ['Your Details', 'Device Info', 'Photos']
 
 export default function BookRepair() {
   const isMobile = useIsMobile()
-  if (isMobile) return <MobileBookRepair />
+  return isMobile ? <MobileBookRepair /> : <DesktopBookRepair />
+}
+
+function DesktopBookRepair() {
   const { issue } = useParams()
   const decodedIssue = issue ? decodeURIComponent(issue) : ''
 
@@ -48,7 +52,7 @@ export default function BookRepair() {
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [services, setServices] = useState<RepairService[]>([])
   const [selectedIssue, setSelectedIssue] = useState(decodedIssue)
-  const [showServicePicker, setShowServicePicker] = useState(false)
+  const [showServicePicker, setShowServicePicker] = useState(!decodedIssue)
   const [address, setAddress] = useState('')
   const [serialNumber, setSerialNumber] = useState('')
   const [deviceColor, setDeviceColor] = useState('')
@@ -58,7 +62,11 @@ export default function BookRepair() {
   const questions = issueQuestions[selectedIssue] || defaultQuestions
   const [answers, setAnswers] = useState<string[]>(questions.map(() => ''))
 
-  const totalSteps = questions.length + 4
+  const totalSteps = questions.length + EXTRA_STEPS.length
+  const stepLabels = [
+    ...questions.map((_, i) => `Q${i + 1}`),
+    ...EXTRA_STEPS,
+  ]
 
   useEffect(() => {
     repairService.getServices().then(setServices).catch(() => {})
@@ -66,11 +74,21 @@ export default function BookRepair() {
 
   useEffect(() => {
     setSelectedIssue(decodedIssue)
+    setShowServicePicker(!decodedIssue)
   }, [decodedIssue])
 
   useEffect(() => {
-    setAnswers(questions.map(() => '')); setStep(1); setErrors({}); setTouched({})
+    setAnswers(questions.map(() => ''))
+    setStep(1)
+    setErrors({})
+    setTouched({})
   }, [selectedIssue])
+
+  useEffect(() => {
+    const urls = imageFiles.map((f) => URL.createObjectURL(f))
+    setPreviews(urls)
+    return () => urls.forEach((u) => URL.revokeObjectURL(u))
+  }, [imageFiles])
 
   const matchedService = services.find(s =>
     s.slug.toLowerCase() === selectedIssue.toLowerCase() ||
@@ -78,8 +96,8 @@ export default function BookRepair() {
   )
 
   const validateName = (v: string) => v.trim().length < 2 ? 'Name must be at least 2 characters' : ''
-  const validateMobile = (v: string) => !/^\d{10}$/.test(v.replace(/\D/g, '')) ? 'Enter a valid 10-digit mobile number' : ''
-  const validateEmail = (v: string) => !v.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email address' : ''
+  const validateMobile = (v: string) => !/^\d{10}$/.test(v.replace(/\D/g, '')) ? 'Enter a valid 10-digit number' : ''
+  const validateEmail = (v: string) => !v.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email' : ''
   const validateBrand = (v: string) => !v ? 'Please select a brand' : ''
   const validateModel = (v: string) => !v.trim() ? 'Model is required' : ''
   const validateImei = (v: string) => v.trim() && !/^\d{15}$/.test(v.trim()) ? 'IMEI must be exactly 15 digits' : ''
@@ -90,8 +108,7 @@ export default function BookRepair() {
     const me = validateMobile(mobile); if (me) e.mobile = me
     const ee = validateEmail(email); if (ee) e.email = ee
     if (!address.trim()) e.address = 'Address is required'
-    setErrors(e)
-    setTouched({ name: true, mobile: true, email: true, address: true })
+    setErrors(e); setTouched({ name: true, mobile: true, email: true, address: true })
     return Object.keys(e).length === 0
   }
 
@@ -103,16 +120,9 @@ export default function BookRepair() {
     if (!serialNumber.trim()) e.serialNumber = 'Serial number is required'
     if (!deviceColor.trim()) e.deviceColor = 'Color is required'
     if (warranty === 'unknown') e.warranty = 'Please select warranty status'
-    setErrors(e)
-    setTouched({ brand: true, model: true, imei: true, serialNumber: true, deviceColor: true, warranty: true })
+    setErrors(e); setTouched({ brand: true, model: true, imei: true, serialNumber: true, deviceColor: true, warranty: true })
     return Object.keys(e).length === 0
   }
-
-  useEffect(() => {
-    const urls = imageFiles.map((f) => URL.createObjectURL(f))
-    setPreviews(urls)
-    return () => urls.forEach((u) => URL.revokeObjectURL(u))
-  }, [imageFiles])
 
   const updateAnswer = (idx: number, val: string) => {
     const a = [...answers]; a[idx] = val; setAnswers(a)
@@ -120,9 +130,7 @@ export default function BookRepair() {
 
   const buildDescription = () => {
     let desc = ''
-    answers.forEach((a, i) => {
-      if (a.trim()) desc += `Q: ${questions[i]}\nA: ${a.trim()}\n`
-    })
+    answers.forEach((a, i) => { if (a.trim()) desc += `Q: ${questions[i]}\nA: ${a.trim()}\n` })
     return desc.trim()
   }
 
@@ -130,7 +138,7 @@ export default function BookRepair() {
 
   const goNext = () => {
     if (step <= questions.length) {
-      if (!answers[step - 1]?.trim()) { setQErrors({ [step - 1]: 'Please answer this question' }); return }
+      if (!answers[step - 1]?.trim()) { setQErrors({ [step - 1]: 'Please answer this question to continue' }); return }
     }
     if (step === questions.length + 1) { if (!validateDetails()) return }
     if (step === questions.length + 2) { if (!validateDevice()) return }
@@ -141,13 +149,10 @@ export default function BookRepair() {
 
   const handleSubmit = async () => {
     if (!validateDetails() || !validateDevice()) return
-    setSubmitting(true)
-    setSubmitError('')
+    setSubmitting(true); setSubmitError('')
     try {
       const fd = new FormData()
-      if (matchedService) {
-        fd.append('service_id', String(matchedService.id))
-      }
+      if (matchedService) fd.append('service_id', String(matchedService.id))
       fd.append('customer_name', name.trim())
       fd.append('customer_mobile', mobile.trim())
       fd.append('customer_email', email.trim())
@@ -164,23 +169,9 @@ export default function BookRepair() {
       fd.append('priority', 'medium')
       fd.append('source', 'online')
       imageFiles.forEach((file) => fd.append('photos', file))
-      console.log('[BookRepair] Submitting booking:', {
-        name: name.trim(),
-        mobile: mobile.trim(),
-        email: email.trim(),
-        device: `${brand} ${model.trim()}`,
-        issue: selectedIssue || 'Other',
-        address: address.trim(),
-        serialNumber: serialNumber.trim(),
-        deviceColor: deviceColor.trim(),
-        warranty,
-        description: buildDescription(),
-      })
       const created = await repairService.create(fd)
-      console.log('[BookRepair] Booking created:', created.repairId)
       setResult({ repairId: created.repairId, ticketId: created.id })
     } catch (err: any) {
-      console.error('[BookRepair] Booking error:', err)
       const resp = err?.response?.data
       if (resp && typeof resp === 'object' && !resp.message) {
         const msgs = Object.entries(resp).map(([, v]) => Array.isArray(v) ? v[0] : v).filter(Boolean)
@@ -193,37 +184,72 @@ export default function BookRepair() {
     }
   }
 
-  const progressLabel = step <= questions.length
-    ? `Question ${step} of ${questions.length}`
-    : stepLabels[step - questions.length]
+  const inputStyle: React.CSSProperties = {
+    width: '100%', height: 44, padding: '0 15px', borderRadius: 11,
+    border: '1.5px solid #ECE4E0', fontSize: 14, color: '#1B1210',
+    background: '#FBF8F6', outline: 'none',
+    transition: 'border-color .16s ease, background .16s ease',
+    fontFamily: 'var(--font-ui)',
+  }
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: 12.5, fontWeight: 600,
+    color: '#4A403D', marginBottom: 6, letterSpacing: '0.01em',
+  }
+
+  const btnPrimary: React.CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: 7,
+    padding: '11px 22px', borderRadius: 12, fontSize: 13.5, fontWeight: 700,
+    color: '#fff', background: 'linear-gradient(135deg, #D91E36, #A3122A)',
+    border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px rgba(217,30,54,0.28)',
+    transition: 'transform .16s ease, box-shadow .16s ease',
+  }
+
+  const btnGhost: React.CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: 7,
+    padding: '11px 20px', borderRadius: 12, fontSize: 13.5, fontWeight: 600,
+    color: '#4A403D', background: '#F5F0EC', border: '1.5px solid #ECE4E0',
+    cursor: 'pointer', transition: 'all .16s ease',
+  }
+
+  const cardStyle: React.CSSProperties = {
+    background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20,
+    padding: '28px 32px', boxShadow: '0 8px 32px -12px rgba(27,18,16,0.12)',
+  }
+
+  function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+    return (
+      <div>
+        <label style={labelStyle}>{label}</label>
+        {children}
+        {error && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 5 }}>{error}</p>}
+      </div>
+    )
+  }
 
   if (result) {
     return (
-      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
         <SiteTopNav />
-        <div className="pt-24"><BackBar label="Back to Services" to="/repairs" /></div>
-        <main className="max-w-lg mx-auto px-4 py-8">
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-            <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(217,30,54,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-              <FiCheckCircle size={40} style={{ color: '#D91E36' }} />
+        <BackBar label="Back to Repair Services" to="/repairs" />
+        <main className="max-w-lg mx-auto px-4 py-12">
+          <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
+            <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(5,150,105,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: '1px solid rgba(5,150,105,0.15)' }}>
+              <FiCheckCircle size={40} style={{ color: '#059669' }} />
             </div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 600, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
-            <p style={{ fontSize: 14, color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully.</p>
-            <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 24, marginBottom: 32, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
-              <p style={{ fontSize: 12, fontWeight: 600, color: '#857D79', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 8 }}>Your Tracking ID</p>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 600, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
-              <p style={{ fontSize: 12, color: '#857D79', marginTop: 12 }}>Save this ID to track your repair.</p>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 700, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
+            <p style={{ fontSize: 14, color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully. We'll contact you shortly.</p>
+            <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 28, marginBottom: 28, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: '#857D79', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Your Tracking ID</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 700, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
+              <p style={{ fontSize: 12, color: '#857D79', marginTop: 10 }}>Save this ID to track your repair status.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link to="/my-repairs"
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 28px', borderRadius: 12, fontSize: 13.5, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg, #D91E36, #A3122A)', transition: 'transform .16s ease, box-shadow .16s ease' }}
-              >
-                Track My Repair <FiArrowRight size={16} />
+              <Link to="/my-repairs" style={{ ...btnPrimary, textDecoration: 'none', justifyContent: 'center' }}>
+                Track My Repair <FiArrowRight size={15} />
               </Link>
-              <Link to="/repairs"
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '12px 28px', borderRadius: 12, fontSize: 13.5, fontWeight: 600, color: '#4A403D', background: '#F5F0EC', border: '1.5px solid #ECE4E0', transition: 'all .16s ease' }}
-              >
-                Back to Services
+              <Link to="/repairs" style={{ ...btnGhost, textDecoration: 'none', justifyContent: 'center' }}>
+                Book Another
               </Link>
             </div>
           </motion.div>
@@ -233,313 +259,354 @@ export default function BookRepair() {
     )
   }
 
-  const cardStyle: React.CSSProperties = {
-    background: '#fff',
-    border: '1px solid #ECE4E0',
-    borderRadius: 20,
-    padding: '24px 28px',
-    boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)',
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    height: 44,
-    padding: '0 15px',
-    borderRadius: 11,
-    border: '1.5px solid #ECE4E0',
-    fontSize: 14,
-    color: '#1B1210',
-    background: '#FBF8F6',
-    outline: 'none',
-    transition: 'border-color .16s ease, background .16s ease',
-    fontFamily: 'var(--font-ui)',
-  }
-
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontSize: 12.5,
-    fontWeight: 600,
-    color: '#4A403D',
-    marginBottom: 6,
-    letterSpacing: '0.01em',
-  }
-
-  const btnPrimary: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '10px 20px',
-    borderRadius: 12,
-    fontSize: 13,
-    fontWeight: 600,
-    color: '#fff',
-    background: 'linear-gradient(135deg, #D91E36, #A3122A)',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'transform .16s ease, box-shadow .16s ease',
-    boxShadow: '0 4px 12px rgba(217,30,54,0.3)',
-  }
-
-  const btnGhost: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '10px 20px',
-    borderRadius: 12,
-    fontSize: 13,
-    fontWeight: 600,
-    color: '#4A403D',
-    background: '#F5F0EC',
-    border: '1px solid #ECE4E0',
-    cursor: 'pointer',
-    transition: 'all .16s ease',
-  }
-
   return (
     <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
       <SiteTopNav />
-      <div className="pt-24"><BackBar label="Back to Repair Services" to="/repairs" /></div>
+      <BackBar label="Back to Repair Services" to="/repairs" />
 
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-12">
-        <div className="flex items-center gap-3 mb-2">
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(217,30,54,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <FiEdit3 size={18} style={{ color: '#D91E36' }} />
-          </div>
-          <div className="flex-1 relative">
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, color: '#1B1210' }}>Book a Repair</h1>
-            <div onClick={() => setShowServicePicker(!showServicePicker)} className="inline-flex items-center gap-1.5 cursor-pointer group mt-0.5">
-              <p style={{ fontSize: 13.5, color: '#857D79', transition: 'color .16s' }} className="group-hover:text-[#D91E36]">{selectedIssue || 'Select a service'}</p>
-              <svg className={`w-3.5 h-3.5 transition-transform ${showServicePicker ? 'rotate-180' : ''}`} style={{ color: '#857D79' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-16">
+
+        {/* ── Page header ── */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.06)', border: '1px solid rgba(217,30,54,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#D91E36' }}>build</span>
             </div>
-            {showServicePicker && (
-              <div className="absolute top-full left-0 mt-1 z-20" style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 14, boxShadow: '0 20px 50px -20px rgba(92,10,28,0.18)', minWidth: 220, maxHeight: 224, overflowY: 'auto', padding: '4px' }}>
-                {services.filter(s => s.is_active).map(s => (
-                  <button key={s.id} type="button" onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
-                    style={{
-                      width: '100%',
-                      textAlign: 'left',
-                      padding: '10px 14px',
-                      fontSize: 13.5,
-                      fontWeight: 500,
-                      borderRadius: 10,
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'background .16s ease',
-                      background: selectedIssue === s.name ? 'linear-gradient(135deg, #D91E36, #A3122A)' : 'transparent',
-                      color: selectedIssue === s.name ? '#fff' : '#1B1210',
-                    }}
-                    onMouseEnter={(e) => { if (selectedIssue !== s.name) e.currentTarget.style.background = 'rgba(217,30,54,0.06)' }}
-                    onMouseLeave={(e) => { if (selectedIssue !== s.name) e.currentTarget.style.background = 'transparent' }}
-                  >{s.name}</button>
-                ))}
-                {services.filter(s => s.is_active).length === 0 && <p style={{ padding: '10px 14px', fontSize: 13, color: '#857D79' }}>No services available</p>}
-              </div>
-            )}
+            <div>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 700, color: '#1B1210', lineHeight: 1.1 }}>Book a Repair</h1>
+              <p style={{ fontSize: 13, color: '#857D79', marginTop: 2 }}>Complete the steps below to book your repair.</p>
+            </div>
           </div>
         </div>
-        <p style={{ fontSize: 13.5, color: '#857D79', marginBottom: 24 }}>Complete the steps below to book your repair.</p>
 
-        {/* Progress Bar */}
-        <div className="flex items-center gap-1 mb-3">
-          {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} style={{ height: 4, flex: 1, borderRadius: 10, transition: 'all .3s ease', background: i + 1 <= step ? '#D91E36' : '#ECE4E0' }} />
-          ))}
-        </div>
-        <p style={{ fontSize: 12, color: '#857D79', fontWeight: 500, marginBottom: 24 }}>{progressLabel}</p>
-
-        <AnimatePresence mode="wait">
-          {step <= questions.length ? (
-            <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#D91E36' }}>help</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Question {step} of {questions.length}</span>
+        {/* ── Service selector ── */}
+        <div style={{ background: '#fff', border: showServicePicker ? '1.5px solid #D91E36' : '1px solid #ECE4E0', borderRadius: 16, padding: '14px 18px', marginBottom: 24, boxShadow: '0 4px 16px -8px rgba(27,18,16,0.08)', cursor: 'pointer' }}
+          onClick={() => setShowServicePicker(v => !v)}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#D91E36' }}>medical_services</span>
+              <div>
+                <p style={{ fontSize: 10.5, fontWeight: 700, color: '#857D79', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 1 }}>Service Type</p>
+                <p style={{ fontSize: 14, fontWeight: 600, color: selectedIssue ? '#1B1210' : '#857D79' }}>
+                  {selectedIssue || 'Select a repair service…'}
+                </p>
               </div>
-              <p style={{ fontSize: 15, fontWeight: 600, color: '#1B1210', marginBottom: 16, marginTop: 8 }}>{questions[step - 1]}</p>
-              <textarea value={answers[step - 1]} onChange={(e) => { const v = e.target.value; updateAnswer(step - 1, v); if (qErrors[step - 1] && v.trim()) setQErrors(p => { const n = { ...p }; delete n[step - 1]; return n }) }}
-                rows={3} style={{ ...inputStyle, height: 'auto', padding: '12px 15px', resize: 'none', borderColor: qErrors[step - 1] ? '#ef4444' : '#ECE4E0' }} placeholder="Type your answer..." autoFocus
+            </div>
+            <svg className={`transition-transform duration-200 ${showServicePicker ? 'rotate-180' : ''}`} width="16" height="16" fill="none" stroke="#857D79" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </div>
+
+          <AnimatePresence>
+            {showServicePicker && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                  {services.filter(s => s.is_active).map(s => (
+                    <button key={s.id} type="button"
+                      onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
+                      style={{
+                        textAlign: 'left', padding: '10px 14px', fontSize: 13, fontWeight: 500,
+                        borderRadius: 10, border: selectedIssue === s.name ? '1.5px solid #D91E36' : '1px solid #ECE4E0',
+                        cursor: 'pointer', transition: 'all .15s ease',
+                        background: selectedIssue === s.name ? 'rgba(217,30,54,0.06)' : '#FBF8F6',
+                        color: selectedIssue === s.name ? '#D91E36' : '#1B1210',
+                        fontFamily: 'var(--font-ui)',
+                      }}
+                      onMouseEnter={(e) => { if (selectedIssue !== s.name) { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.3)'; e.currentTarget.style.background = 'rgba(217,30,54,0.03)' } }}
+                      onMouseLeave={(e) => { if (selectedIssue !== s.name) { e.currentTarget.style.borderColor = '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' } }}
+                    >
+                      {selectedIssue === s.name && <span style={{ color: '#D91E36', marginRight: 4 }}>✓</span>}
+                      {s.name}
+                    </button>
+                  ))}
+                  {services.filter(s => s.is_active).length === 0 && (
+                    <p style={{ gridColumn: '1/-1', fontSize: 13, color: '#857D79', padding: '4px 0' }}>Loading services…</p>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* ── Step indicator ── */}
+        <div style={{ marginBottom: 28 }}>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10 }}>
+            {stepLabels.map((label, i) => {
+              const idx = i + 1
+              const done = idx < step
+              const active = idx === step
+              return (
+                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{
+                    height: 4, width: '100%', borderRadius: 10,
+                    background: done ? '#22c55e' : active ? '#D91E36' : '#ECE4E0',
+                    transition: 'background .3s ease',
+                  }} />
+                  <span style={{
+                    fontSize: 9, fontWeight: 700, letterSpacing: '0.04em',
+                    color: done ? '#16a34a' : active ? '#D91E36' : '#C4BBB8',
+                    textTransform: 'uppercase',
+                    transition: 'color .3s ease',
+                  }}>{label}</span>
+                </div>
+              )
+            })}
+          </div>
+          <p style={{ fontSize: 12, color: '#857D79', fontWeight: 500 }}>
+            Step {step} of {totalSteps} —{' '}
+            <span style={{ color: '#1B1210', fontWeight: 600 }}>{stepLabels[step - 1]}</span>
+          </p>
+        </div>
+
+        {/* ── Form steps ── */}
+        <AnimatePresence mode="wait">
+          {/* Question steps */}
+          {step <= questions.length ? (
+            <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(217,30,54,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#D91E36' }}>{step}</span>
+                </div>
+                <span style={{ fontSize: 10.5, fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  Question {step} of {questions.length}
+                </span>
+              </div>
+              <p style={{ fontSize: 16, fontWeight: 600, color: '#1B1210', margin: '14px 0 16px', lineHeight: 1.4 }}>{questions[step - 1]}</p>
+              <textarea
+                value={answers[step - 1]}
+                onChange={(e) => { updateAnswer(step - 1, e.target.value); if (qErrors[step - 1] && e.target.value.trim()) setQErrors(p => { const n = { ...p }; delete n[step - 1]; return n }) }}
+                rows={4}
+                style={{ ...inputStyle, height: 'auto', padding: '13px 16px', resize: 'none', borderColor: qErrors[step - 1] ? '#ef4444' : '#ECE4E0' }}
+                placeholder="Type your answer here…"
+                autoFocus
                 onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = qErrors[step - 1] ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
               />
-              {qErrors[step - 1] && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{qErrors[step - 1]}</p>}
-              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
-                <button onClick={goPrev} disabled={step === 1} style={{ ...btnGhost, opacity: step === 1 ? 0.4 : 1, cursor: step === 1 ? 'not-allowed' : 'pointer' }}>
-                  <FiArrowLeft size={13} /> Back
+              {qErrors[step - 1] && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 12.5, color: '#ef4444' }}>
+                  <FiAlertCircle size={13} /> {qErrors[step - 1]}
+                </div>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
+                <button onClick={goPrev} disabled={step === 1}
+                  style={{ ...btnGhost, opacity: step === 1 ? 0.4 : 1, cursor: step === 1 ? 'not-allowed' : 'pointer' }}>
+                  <FiArrowLeft size={14} /> Back
                 </button>
                 <button onClick={goNext} style={btnPrimary}>
-                  {step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={13} />
+                  {step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={14} />
                 </button>
               </div>
             </motion.div>
+
           ) : step === questions.length + 1 ? (
-            <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
-              <div className="flex items-center gap-2 mb-4">
-                <FiUser size={14} style={{ color: '#D91E36' }} />
-                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Your Details</span>
+            /* Your Details */
+            <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FiUser size={16} style={{ color: '#D91E36' }} />
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Your Details</span>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <label style={labelStyle}>Full Name <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={name} onBlur={() => { setTouched(p => ({ ...p, name: true })); setErrors(p => ({ ...p, name: validateName(name) })) }} onChange={(e) => { setName(e.target.value); if (touched.name) setErrors(p => ({ ...p, name: validateName(e.target.value) })) }}
-                    style={{ ...inputStyle, borderColor: touched.name && errors.name ? '#ef4444' : '#ECE4E0' }} placeholder="Your name" autoFocus
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <Field label="Full Name *" error={touched.name ? errors.name : undefined}>
+                  <input value={name} autoFocus
+                    onChange={(e) => { setName(e.target.value); if (touched.name) setErrors(p => ({ ...p, name: validateName(e.target.value) })) }}
+                    onBlur={() => { setTouched(p => ({ ...p, name: true })); setErrors(p => ({ ...p, name: validateName(name) })) }}
+                    style={{ ...inputStyle, borderColor: touched.name && errors.name ? '#ef4444' : '#ECE4E0' }}
+                    placeholder="Your full name"
                     onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
                     onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.name && errors.name ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
                   />
-                  {touched.name && errors.name && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.name}</p>}
+                </Field>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <Field label="Mobile Number *" error={touched.mobile ? errors.mobile : undefined}>
+                    <input value={mobile} placeholder="10-digit number"
+                      onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setMobile(v); if (touched.mobile) setErrors(p => ({ ...p, mobile: validateMobile(v) })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, mobile: true })); setErrors(p => ({ ...p, mobile: validateMobile(mobile) })) }}
+                      style={{ ...inputStyle, borderColor: touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
+                  <Field label="Email Address *" error={touched.email ? errors.email : undefined}>
+                    <input value={email} type="email" placeholder="email@example.com"
+                      onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }}
+                      style={{ ...inputStyle, borderColor: touched.email && errors.email ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.email && errors.email ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
                 </div>
-                <div>
-                  <label style={labelStyle}>Mobile Number <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={mobile} onBlur={() => { setTouched(p => ({ ...p, mobile: true })); setErrors(p => ({ ...p, mobile: validateMobile(mobile) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setMobile(v); if (touched.mobile) setErrors(p => ({ ...p, mobile: validateMobile(v) })) }}
-                    style={{ ...inputStyle, borderColor: touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0' }} placeholder="+91 98765 43210"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.mobile && errors.mobile && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.mobile}</p>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Email Address <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={email} onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }} onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
-                    style={{ ...inputStyle, borderColor: touched.email && errors.email ? '#ef4444' : '#ECE4E0' }} placeholder="email@example.com" type="email"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.email && errors.email ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.email && errors.email && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.email}</p>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Address <span style={{ color: '#ef4444' }}>*</span></label>
-                  <textarea value={address} onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(prev => ({ ...prev, address: 'Address is required' })) }} onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(prev => ({ ...prev, address: !e.target.value.trim() ? 'Address is required' : '' })) }}
-                    style={{ ...inputStyle, height: 'auto', padding: '10px 15px', minHeight: 60, resize: 'none', borderColor: touched.address && errors.address ? '#ef4444' : '#ECE4E0' }} placeholder="Your address for pickup/delivery" rows={2}
+                <Field label="Pickup / Delivery Address *" error={touched.address ? errors.address : undefined}>
+                  <textarea value={address} rows={2} placeholder="Your full address for pickup or delivery"
+                    onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(p => ({ ...p, address: !e.target.value.trim() ? 'Address is required' : '' })) }}
+                    onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(p => ({ ...p, address: 'Address is required' })) }}
+                    style={{ ...inputStyle, height: 'auto', padding: '11px 15px', resize: 'none', borderColor: touched.address && errors.address ? '#ef4444' : '#ECE4E0' }}
                     onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
                     onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.address && errors.address ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
                   />
-                  {touched.address && errors.address && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.address}</p>}
-                </div>
+                </Field>
               </div>
-              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
-                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={13} /></button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
+                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={14} /></button>
               </div>
             </motion.div>
+
           ) : step === questions.length + 2 ? (
-            <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
-              <div className="flex items-center gap-2 mb-4">
-                <FiSmartphone size={14} style={{ color: '#D91E36' }} />
-                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Device Information</span>
+            /* Device Info */
+            <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FiSmartphone size={16} style={{ color: '#D91E36' }} />
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Device Information</span>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <label style={labelStyle}>Brand <span style={{ color: '#ef4444' }}>*</span></label>
-                  <select value={brand} onBlur={() => { setTouched(p => ({ ...p, brand: true })); setErrors(p => ({ ...p, brand: validateBrand(brand) })) }} onChange={(e) => { setBrand(e.target.value); if (touched.brand) setErrors(p => ({ ...p, brand: validateBrand(e.target.value) })) }}
-                    style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.brand && errors.brand ? '#ef4444' : '#ECE4E0' }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.brand && errors.brand ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  >
-                    <option value="">Select brand</option>
-                    {deviceBrands.map((b) => <option key={b} value={b}>{b}</option>)}
-                  </select>
-                  {touched.brand && errors.brand && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.brand}</p>}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <Field label="Brand *" error={touched.brand ? errors.brand : undefined}>
+                    <select value={brand} autoFocus
+                      onChange={(e) => { setBrand(e.target.value); if (touched.brand) setErrors(p => ({ ...p, brand: validateBrand(e.target.value) })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, brand: true })); setErrors(p => ({ ...p, brand: validateBrand(brand) })) }}
+                      style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.brand && errors.brand ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.brand && errors.brand ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    >
+                      <option value="">Select brand</option>
+                      {deviceBrands.map((b) => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Model *" error={touched.model ? errors.model : undefined}>
+                    <input value={model} placeholder="e.g. iPhone 15 Pro"
+                      onChange={(e) => { setModel(e.target.value); if (touched.model) setErrors(p => ({ ...p, model: validateModel(e.target.value) })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, model: true })); setErrors(p => ({ ...p, model: validateModel(model) })) }}
+                      style={{ ...inputStyle, borderColor: touched.model && errors.model ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.model && errors.model ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
                 </div>
-                <div>
-                  <label style={labelStyle}>Model <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={model} onBlur={() => { setTouched(p => ({ ...p, model: true })); setErrors(p => ({ ...p, model: validateModel(model) })) }} onChange={(e) => { setModel(e.target.value); if (touched.model) setErrors(p => ({ ...p, model: validateModel(e.target.value) })) }}
-                    style={{ ...inputStyle, borderColor: touched.model && errors.model ? '#ef4444' : '#ECE4E0' }} placeholder="e.g. iPhone 15 Pro Max" autoFocus
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.model && errors.model ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.model && errors.model && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.model}</p>}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <Field label="IMEI Number *" error={touched.imei ? errors.imei : undefined}>
+                    <input value={imei} placeholder="15-digit IMEI"
+                      onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }}
+                      style={{ ...inputStyle, borderColor: touched.imei && errors.imei ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.imei && errors.imei ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
+                  <Field label="Serial No. *" error={touched.serialNumber ? errors.serialNumber : undefined}>
+                    <input value={serialNumber} placeholder="Device serial number"
+                      onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(p => ({ ...p, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(p => ({ ...p, serialNumber: 'Serial number is required' })) }}
+                      style={{ ...inputStyle, borderColor: touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
                 </div>
-                <div>
-                  <label style={labelStyle}>IMEI Number <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={imei} onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
-                    style={{ ...inputStyle, borderColor: touched.imei && errors.imei ? '#ef4444' : '#ECE4E0' }} placeholder="15 digit IMEI"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.imei && errors.imei ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.imei && errors.imei && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.imei}</p>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Serial No. <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={serialNumber} onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(prev => ({ ...prev, serialNumber: 'Serial number is required' })) }} onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(prev => ({ ...prev, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }}
-                    style={{ ...inputStyle, borderColor: touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0' }} placeholder="Device serial number"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.serialNumber && errors.serialNumber && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.serialNumber}</p>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Color <span style={{ color: '#ef4444' }}>*</span></label>
-                  <input value={deviceColor} onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(prev => ({ ...prev, deviceColor: 'Color is required' })) }} onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(prev => ({ ...prev, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }}
-                    style={{ ...inputStyle, borderColor: touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0' }} placeholder="e.g. Space Black, Silver"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                  {touched.deviceColor && errors.deviceColor && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.deviceColor}</p>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Warranty Status <span style={{ color: '#ef4444' }}>*</span></label>
-                  <select value={warranty} onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(prev => ({ ...prev, warranty: 'Please select warranty status' })) }} onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(prev => ({ ...prev, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }}
-                    style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0' }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  >
-                    <option value="unknown">Unknown</option>
-                    <option value="in_warranty">In Warranty</option>
-                    <option value="out_of_warranty">Out of Warranty</option>
-                    <option value="expired">Expired</option>
-                  </select>
-                  {touched.warranty && errors.warranty && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 4 }}>{errors.warranty}</p>}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <Field label="Device Color *" error={touched.deviceColor ? errors.deviceColor : undefined}>
+                    <input value={deviceColor} placeholder="e.g. Space Black"
+                      onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(p => ({ ...p, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(p => ({ ...p, deviceColor: 'Color is required' })) }}
+                      style={{ ...inputStyle, borderColor: touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    />
+                  </Field>
+                  <Field label="Warranty Status *" error={touched.warranty ? errors.warranty : undefined}>
+                    <select value={warranty}
+                      onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(p => ({ ...p, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }}
+                      onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(p => ({ ...p, warranty: 'Please select warranty status' })) }}
+                      style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0', color: warranty === 'unknown' ? '#857D79' : '#1B1210' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
+                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+                    >
+                      <option value="unknown" disabled>Select status</option>
+                      <option value="in_warranty">In Warranty</option>
+                      <option value="out_of_warranty">Out of Warranty</option>
+                      <option value="expired">Expired</option>
+                    </select>
+                  </Field>
                 </div>
               </div>
-              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
-                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={13} /></button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
+                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={14} /></button>
               </div>
             </motion.div>
+
           ) : (
-            <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} style={cardStyle}>
-              <div className="flex items-center gap-2 mb-4">
-                <FiImage size={14} style={{ color: '#D91E36' }} />
-                <span style={{ fontSize: 14.5, fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
+            /* Photos */
+            <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FiImage size={16} style={{ color: '#D91E36' }} />
+                </div>
+                <div>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
+                  <span style={{ fontSize: 12.5, color: '#857D79', marginLeft: 8, fontWeight: 400 }}>(optional)</span>
+                </div>
               </div>
-              <div onClick={() => inputRef.current?.click()}
-                style={{ borderRadius: 11, border: '1.5px dashed rgba(217,30,54,0.2)', padding: 24, textAlign: 'center', cursor: 'pointer', background: '#FBF8F6', transition: 'border-color .16s ease' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.4)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.2)' }}
+
+              <div
+                onClick={() => inputRef.current?.click()}
+                style={{ borderRadius: 14, border: '1.5px dashed rgba(217,30,54,0.22)', padding: '28px 20px', textAlign: 'center', cursor: 'pointer', background: '#FBF8F6', transition: 'all .18s ease' }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.45)'; e.currentTarget.style.background = 'rgba(217,30,54,0.02)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.22)'; e.currentTarget.style.background = '#FBF8F6' }}
               >
-                <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) setImageFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
-                <p style={{ fontSize: 13.5, color: '#4A403D' }}>Tap to upload photos</p>
-                <p style={{ fontSize: 12, color: '#857D79', marginTop: 4 }}>Show the damage area for faster diagnosis</p>
+                <input ref={inputRef} type="file" accept="image/*" multiple className="hidden"
+                  onChange={(e) => { if (e.target.files) setImageFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
+                  <FiImage size={20} style={{ color: '#D91E36' }} />
+                </div>
+                <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1B1210', marginBottom: 4 }}>Click to upload photos</p>
+                <p style={{ fontSize: 12, color: '#857D79' }}>Show the damage area for faster diagnosis. PNG, JPG, HEIC supported.</p>
               </div>
+
               {previews.length > 0 && (
-                <div className="grid grid-cols-4 gap-2" style={{ marginTop: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginTop: 14 }}>
                   {previews.map((url, i) => (
-                    <div key={i} className="relative" style={{ aspectRatio: '1/1', borderRadius: 10, background: '#fff', border: '1px solid #ECE4E0', overflow: 'hidden' }}>
+                    <div key={i} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: 10, overflow: 'hidden', border: '1px solid #ECE4E0' }}>
                       <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <button onClick={() => {
-                        URL.revokeObjectURL(url)
-                        setImageFiles(f => f.filter((_, j) => j !== i))
-                      }}
-                        style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: 6, background: 'rgba(239,68,68,0.8)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', opacity: 0, transition: 'opacity .15s' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1' }}
-                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0' }}
-                      ><FiX size={10} /></button>
+                      <button onClick={() => { URL.revokeObjectURL(url); setImageFiles(f => f.filter((_, j) => j !== i)) }}
+                        style={{ position: 'absolute', top: 5, right: 5, width: 22, height: 22, borderRadius: 6, background: 'rgba(239,68,68,0.85)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
+                        <FiX size={11} />
+                      </button>
                     </div>
                   ))}
                 </div>
               )}
+
               {submitError && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', fontSize: 12, color: '#ef4444', marginTop: 12 }}>
-                  <FiAlertCircle size={12} /> {submitError}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)', fontSize: 13, color: '#ef4444', marginTop: 14 }}>
+                  <FiAlertCircle size={14} /> {submitError}
                 </div>
               )}
-              <div className="flex items-center justify-between" style={{ marginTop: 20 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={13} /> Back</button>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
+                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
                 <button onClick={handleSubmit} disabled={submitting}
-                  style={{ ...btnPrimary, padding: '10px 24px', opacity: submitting ? 0.5 : 1, cursor: submitting ? 'not-allowed' : 'pointer', background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
-                ><FiSend size={13} /> {submitting ? 'Booking...' : 'Book Now'}</button>
+                  style={{ ...btnPrimary, opacity: submitting ? 0.6 : 1, cursor: submitting ? 'not-allowed' : 'pointer', background: submitting ? 'linear-gradient(135deg,#9CA3AF,#6B7280)' : 'linear-gradient(135deg,#D91E36,#A3122A)' }}>
+                  {submitting
+                    ? <><span className="material-symbols-outlined" style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}>progress_activity</span> Booking…</>
+                    : <><FiSend size={14} /> Book Now</>
+                  }
+                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </main>
 
       <EcommerceFooter compact />

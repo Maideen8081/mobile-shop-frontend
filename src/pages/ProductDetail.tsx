@@ -763,7 +763,7 @@ function ProductDetailContent() {
               <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#e2231a,#a81510)' }}>
                 Go Back
               </button>
-              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] bg-[#1c1c1e] text-white text-sm font-bold">
+              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] text-sm font-bold cursor-pointer" style={{ background: 'rgba(163,18,42,0.08)', color: '#A3122A', border: '1.5px solid rgba(163,18,42,0.2)' }}>
                 Browse Products
               </Link>
             </div>

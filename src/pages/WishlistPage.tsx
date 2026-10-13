@@ -86,66 +86,83 @@ function getProductTags(product: any): string[] {
 
 interface WishCardProps {
   product: any
+  adding: boolean
+  added: boolean
   onRemove: (id: number) => void
   onAddToCart: (e: React.MouseEvent<Element>, product: any) => void
 }
 
-function WishCard({ product, onRemove, onAddToCart }: WishCardProps) {
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80'
+
+function WishCard({ product, adding, added, onRemove, onAddToCart }: WishCardProps) {
   const tag = getProductTags(product)[0] || ''
-  const { current: price } = getProductPrice(product)
+  const { current: price, old } = getProductPrice(product)
   const name = getProductName(product)
   const image = getProductImage(product)
   const productId = product.id || product.product_id
   const outOfStock = isOutOfStock(product)
+  const off = old && old > price ? Math.round(((old - price) / old) * 100) : 0
 
   return (
     <li className="wishlist-item">
       <article className="wish-card" data-id={productId}>
-        <Link to={`/product/${productId}`} className="wish-card-media" aria-label={`View ${name}`}>
+        <div className="wish-card-media">
           {tag && <span className="wish-card-tag">{tag}</span>}
-          <div className="wish-card-art" aria-hidden="true">
-            <img 
-              src={image} 
-              alt={name} 
-              loading="lazy" 
-              onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80' }}
-            />
-          </div>
-          <button 
-            className="wish-card-heart" 
+          <Link to={`/product/${productId}`} className="wish-card-art-link" aria-label={`View ${name}`}>
+            <div className="wish-card-art" aria-hidden="true">
+              <img
+                src={image}
+                alt=""
+                loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE }}
+              />
+            </div>
+          </Link>
+          <button
+            type="button"
+            className="wish-card-heart"
             aria-label={`Remove ${name} from wishlist`}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(productId) }}
+            title="Remove from wishlist"
+            onClick={() => onRemove(productId)}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c1.74 0 3.41.81 4.5 2.09C19.58 5.08 22 8.18 22 11.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
           </button>
-        </Link>
+        </div>
         <div className="wish-card-info">
           <div className="wish-card-cat">{tag || 'Accessories'}</div>
           <h3 className="wish-card-name"><Link to={`/product/${productId}`}>{name}</Link></h3>
           <div className="wish-card-row">
             <span className="wish-card-price">₹{price.toLocaleString('en-IN')}</span>
+            {off > 0 && (
+              <span className="wish-card-was">
+                <s>₹{old!.toLocaleString('en-IN')}</s>
+                <span className="wish-card-off">{off}% off</span>
+              </span>
+            )}
             {outOfStock ? (
               <span className="wish-card-stock is-out">Out of stock</span>
             ) : (
               <span className="wish-card-stock">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M5 12l5 5L20 7"/>
                 </svg>
                 In stock
               </span>
             )}
           </div>
-          <button 
+          <button
+            type="button"
             className="btn btn-primary btn-sm wish-card-cart"
             onClick={(e) => onAddToCart(e, product)}
-            disabled={outOfStock}
+            disabled={outOfStock || adding}
+            aria-busy={adding}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2 3h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>
             </svg>
-            <span>Add to cart</span>
+            <span>{adding ? 'Adding…' : added ? 'Added to cart' : outOfStock ? 'Unavailable' : 'Add to cart'}</span>
           </button>
         </div>
       </article>
@@ -159,19 +176,32 @@ export default function WishlistPage() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [moveProgress, setMoveProgress] = useState<{ done: number; total: number } | null>(null)
+  const [addingIds, setAddingIds] = useState<number[]>([])
+  const [addedIds, setAddedIds] = useState<number[]>([])
+  // Saved items whose product could not be fetched. They stay in localStorage
+  // (and the nav count) so they are not silently lost.
+  const [unavailableCount, setUnavailableCount] = useState(0)
+
+  const loadWishlist = useCallback(async () => {
+    const ids = readWishlistIds()
+    if (ids.length === 0) {
+      setProducts([])
+      setUnavailableCount(0)
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    const results = await Promise.allSettled(ids.map((id) => productService.getById(id)))
+    const fetched = results
+      .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
+      .map((r) => r.value)
+    setProducts(fetched)
+    setUnavailableCount(ids.length - fetched.length)
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
-    const load = async () => {
-      const ids = readWishlistIds()
-      if (ids.length === 0) { setProducts([]); setLoading(false); return }
-      const results = await Promise.allSettled(ids.map((id) => productService.getById(id)))
-      const fetched = results
-        .filter((r) => r.status === 'fulfilled')
-        .map((r) => (r as PromiseFulfilledResult<any>).value)
-      setProducts(fetched)
-      setLoading(false)
-    }
-    load()
+    loadWishlist()
     // Keep only products that are still saved (e.g. removed from another tab/page).
     const handler = () => {
       const ids = readWishlistIds()
@@ -179,7 +209,7 @@ export default function WishlistPage() {
     }
     window.addEventListener('wishlist-updated', handler)
     return () => window.removeEventListener('wishlist-updated', handler)
-  }, [])
+  }, [loadWishlist])
 
   const removeFromWishlist = useCallback((id: number) => {
     writeWishlistIds(readWishlistIds().filter((pid) => pid !== Number(id)))
@@ -190,15 +220,24 @@ export default function WishlistPage() {
   const addToCart = useCallback(async (e: React.MouseEvent<Element>, product: any) => {
     e.preventDefault()
     e.stopPropagation()
+    const productId = Number(product.id || product.product_id)
+    if (addingIds.includes(productId)) return
     const name = getProductName(product)
+    setAddingIds((ids) => [...ids, productId])
     try {
       const added = await addToCartWithAuth(cartParams(product))
-      if (added) showToast(`${name} added to cart`, 'success')
+      if (added) {
+        setAddedIds((ids) => [...ids, productId])
+        setTimeout(() => setAddedIds((ids) => ids.filter((id) => id !== productId)), 2000)
+        showToast(`${name} added to cart`, 'success')
+      }
     } catch (err: any) {
       console.error(err)
       showToast(err?.message || 'Failed to add to cart', 'error')
+    } finally {
+      setAddingIds((ids) => ids.filter((id) => id !== productId))
     }
-  }, [showToast])
+  }, [addingIds, showToast])
 
   /** Adds every saved product to the cart and removes the ones that made it. */
   const moveAllToCart = useCallback(async () => {
@@ -259,7 +298,7 @@ export default function WishlistPage() {
 
           <div className="wishlist-head">
             <button className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M11 6l-6 6 6 6"/>
               </svg>
             </button>
@@ -282,30 +321,41 @@ export default function WishlistPage() {
               {products.length === 0 ? (
                 <div className="wishlist-empty">
                   <div className="empty-ring">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 20.5s-7.2-4.4-9.2-8.8C1.4 8.6 3.2 5.5 6.3 5.5c1.9 0 3.2 1 4.2 2.3h3C14.4 6.1 15.8 5 17.8 5c3.1 0 4.9 3.1 3.5 6.2-2 4.4-9.2 8.8-9.2 8.8z"/>
                     </svg>
                   </div>
                   <h2>Your wishlist is empty</h2>
                   <p>Save devices you like and they'll be waiting here.</p>
-                  <Link to="/collection/all" className="btn btn-primary">Browse Products</Link>
+                  <Link to="/collection/all" className="wishlist-browse-btn">Browse Products</Link>
                 </div>
               ) : (
                 <>
+                  {unavailableCount > 0 && (
+                    <div className="wishlist-notice" role="alert">
+                      <span>{unavailableCount} saved {unavailableCount === 1 ? 'item' : 'items'} could not be loaded.</span>
+                      <button type="button" onClick={loadWishlist}>Try again</button>
+                    </div>
+                  )}
                   <ul className="wishlist-grid" role="list" aria-label="Wishlist items">
-                    {products.map((product) => (
-                      <WishCard
-                        key={product.id || product.product_id}
-                        product={product}
-                        onRemove={removeFromWishlist}
-                        onAddToCart={addToCart}
-                      />
-                    ))}
+                    {products.map((product) => {
+                      const id = Number(product.id || product.product_id)
+                      return (
+                        <WishCard
+                          key={id}
+                          product={product}
+                          adding={addingIds.includes(id)}
+                          added={addedIds.includes(id)}
+                          onRemove={removeFromWishlist}
+                          onAddToCart={addToCart}
+                        />
+                      )
+                    })}
                   </ul>
                   <div className="wishlist-cta-section">
                     <Link to="/collection/all" className="btn btn-outline btn-discover">
                       Discover more products
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <path d="M5 12h14M13 6l6 6-6 6"/>
                       </svg>
                     </Link>
@@ -321,18 +371,18 @@ export default function WishlistPage() {
                 <small>{products.length} {products.length === 1 ? 'item' : 'items'} · incl. taxes</small>
               </div>
               <ul className="summary-benefits">
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Genuine sealed units</li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free express delivery</li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free 7-day returns</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Genuine sealed units</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free express delivery</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free 7-day returns</li>
               </ul>
               <button 
                 className="btn btn-primary btn-add-all" 
-                disabled={products.length === 0 || moveProgress !== null}
+                disabled={products.length === 0 || moveProgress !== null || products.every(isOutOfStock)}
                 onClick={moveAllToCart}
               >
                 <span>{moveProgress ? `Moving ${moveProgress.done}/${moveProgress.total}…` : 'Move all to cart'}</span>
                 <span className="btn-chip" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M13 6l6 6-6 6"/>
                   </svg>
                 </span>
@@ -341,9 +391,11 @@ export default function WishlistPage() {
                 try {
                   await navigator.clipboard.writeText(window.location.href)
                   showToast('Wishlist link copied', 'success')
-                } catch {}
+                } catch {
+                  showToast('Could not copy the link', 'error')
+                }
               }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                   <path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>
                 </svg>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, Component } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiLoader } from 'react-icons/fi'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useIsMobile } from '../components/mobile/helpers'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { repairService, type RepairTicket } from '../services/repairService'
@@ -1380,9 +1380,13 @@ export default function CustomerRepairTracking() {
         .stat-card .value { font-family:var(--font-display); font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
         .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #5A5550; }
         .stat-card.total .value { color: #1B1210; }
+        .stat-card.total .icon { background: rgba(27,18,16,0.05); color: #4A403D; }
         .stat-card.active .value { color: #D91E36; }
+        .stat-card.active .icon { background: rgba(217,30,54,0.08); color: #D91E36; }
         .stat-card.completed .value { color: #059669; }
+        .stat-card.completed .icon { background: rgba(5,150,105,0.08); color: #059669; }
         .stat-card.rejected .value { color: #857D79; }
+        .stat-card.rejected .icon { background: rgba(107,114,128,0.08); color: #857D79; }
         .control-panel { background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08); padding: 18px 20px; margin-bottom: 28px; }
         .search-row { display: flex; align-items: center; gap: 10px; background: #FBF8F6; border: 1px solid #ECE4E0; border-radius: 12px; padding: 11px 14px; margin-bottom: 14px; }
         .search-row input { border: none; background: transparent; outline: none; font-family:var(--font-ui); font-size: 14px; width: 100%; color: #1B1210; }
@@ -1475,9 +1479,12 @@ export default function CustomerRepairTracking() {
         .status-pill.rejected .d { background: #857D79; }
         .chevron { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ECE4E0; display: flex; align-items: center; justify-content: center; color: #A3122A; transition: background .15s, transform .15s, border-color .15s; }
         .ticket-card:hover .chevron { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; transform: translateX(3px); }
-        .empty-state { text-align: center; padding: 70px 20px; color: #857D79; }
-        .empty-state h3 { font-family:var(--font-display); font-size: 22px; color: #1B1210; margin: 0 0 6px; }
-        .empty-state p { font-size: 13.5px; margin: 0; color: #5A5550; }
+        .empty-state { text-align: center; padding: 60px 20px 80px; color: #857D79; }
+        .empty-state .empty-icon { width: 72px; height: 72px; border-radius: 20px; background: rgba(217,30,54,0.06); border: 1px solid rgba(217,30,54,0.12); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .empty-state h3 { font-family:var(--font-display); font-size: 22px; color: #1B1210; margin: 0 0 6px; font-weight: 700; }
+        .empty-state p { font-size: 13.5px; margin: 0 0 22px; color: #5A5550; line-height: 1.5; }
+        .empty-state .book-repair-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg,#D91E36,#A3122A); color: #fff; font-family:var(--font-ui); font-size: 13.5px; font-weight: 700; padding: 12px 22px; border-radius: 12px; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 4px 16px rgba(217,30,54,0.25); transition: transform .15s, box-shadow .15s; letter-spacing: 0.01em; }
+        .empty-state .book-repair-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(217,30,54,0.35); }
         footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #5A5550; font-size: 12px; }
         footer .mono { color: #D91E36; font-weight: 600; }
         @media (max-width: 880px) {
@@ -1608,6 +1615,19 @@ export default function CustomerRepairTracking() {
                     <p className="subline" style={{ backgroundColor: 'transparent' }}>
                       Every device on the bench, tracked like a vital sign — intake to delivery, one pulse line at a time.
                     </p>
+                    <Link
+                      to="/repairs"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20,
+                        background: 'linear-gradient(135deg,#D91E36,#A3122A)', color: '#fff',
+                        fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700,
+                        padding: '10px 20px', borderRadius: 10, textDecoration: 'none',
+                        boxShadow: '0 4px 14px rgba(217,30,54,0.25)', letterSpacing: '0.01em',
+                      }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 15, height: 15 }}><path d="M12 5v14m-7-7h14" /></svg>
+                      Book New Repair
+                    </Link>
                   </div>
                   <div className="stat-chip-row">
                     <div className="stat-chip">
@@ -1702,10 +1722,24 @@ export default function CustomerRepairTracking() {
                 ) : filteredTickets.length === 0 ? (
                   <>
                     <section className="ticket-list" aria-label="Repair tickets" style={{ display: 'none' }} />
-                    <div className="empty-state show">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 40, height: 40, color: '#D91E36', marginBottom: 12 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-                      <h2>No matching tickets</h2>
-                      <p>Try a different ticket ID, device name, or filter.</p>
+                    <div className="empty-state">
+                      <div className="empty-icon">
+                        {searchQuery.trim() || statusFilter !== 'All'
+                          ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 32, height: 32, color: '#D91E36' }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+                          : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 32, height: 32, color: '#D91E36' }}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
+                        }
+                      </div>
+                      <h3>{searchQuery.trim() || statusFilter !== 'All' ? 'No matching tickets' : 'No repair tickets yet'}</h3>
+                      <p>{searchQuery.trim() || statusFilter !== 'All'
+                        ? 'Try a different ticket ID, device name, or filter.'
+                        : 'Your repair history will appear here once you book your first repair.'
+                      }</p>
+                      {!(searchQuery.trim() || statusFilter !== 'All') && (
+                        <Link to="/repairs" className="book-repair-btn">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 16, height: 16 }}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
+                          Book Your First Repair
+                        </Link>
+                      )}
                     </div>
                   </>
                 ) : (

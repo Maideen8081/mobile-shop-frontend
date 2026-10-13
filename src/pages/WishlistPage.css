@@ -551,3 +551,83 @@
   white-space: nowrap;
   border: 0;
 }
+/* Card image link (the heart button sits beside it, not inside it) */
+.wish-card-art-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.wish-card-art-link:focus-visible {
+  outline: 2px solid var(--color-pf-red);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+/* Original price and discount next to the selling price */
+.wish-card-was {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-on-surface-variant, #6b6764);
+}
+.wish-card-was s {
+  text-decoration-thickness: 1px;
+}
+.wish-card-off {
+  font-weight: 700;
+  color: #15803d;
+}
+
+/* Saved items whose product could not be loaded */
+.wishlist-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  background: #fff4f4;
+  border: 1px solid rgba(217, 30, 54, 0.2);
+  font-size: 0.875rem;
+  color: var(--color-on-surface);
+}
+.wishlist-notice button {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: 1px solid var(--color-pf-red);
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: var(--color-pf-red);
+  font-weight: 700;
+  cursor: pointer;
+}
+.wishlist-notice button:hover {
+  background: var(--color-pf-red);
+  color: #fff;
+}
+
+/* Empty-state call to action */
+.wishlist-browse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-pf-red);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(217, 30, 54, 0.25);
+  transition: background 0.2s, transform 0.15s;
+}
+.wishlist-browse-btn:hover {
+  background: var(--color-pf-red-dark);
+  transform: translateY(-1px);
+}
+.wishlist-browse-btn:focus-visible {
+  outline: 2px solid var(--color-pf-red);
+  outline-offset: 3px;
+}

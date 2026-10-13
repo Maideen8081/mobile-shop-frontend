@@ -230,12 +230,12 @@ export default function OrderSuccess() {
           left:0;top:0;height:100%;
           background:linear-gradient(90deg, var(--red), var(--red-bright));
           border-radius:3px;
-          width:88%;
+          width:60%;
           animation:osTrackFill 1.5s cubic-bezier(0.4,0,0.2,1) both;
         }
         @keyframes osTrackFill{
           0%{width:0%;}
-          100%{width:88%;}
+          100%{width:60%;}
         }
         .os-milestones{display:flex;justify-content:space-between;margin-top:14px;}
         .os-milestone{
@@ -441,7 +441,7 @@ export default function OrderSuccess() {
             <div className="os-progress-block">
               <div className="os-progress-header">
                 <span className="os-status-text">Payment confirmed &amp; processing</span>
-                <span className="os-status-pct">88%</span>
+                <span className="os-status-pct">60%</span>
               </div>
               <div className="os-track"><div className="os-track-fill" /></div>
               <div className="os-milestones">

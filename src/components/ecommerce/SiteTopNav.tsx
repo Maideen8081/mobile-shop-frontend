@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { categoryService } from '../../services/categoryService'
 import { authService } from '../../services/authService'
@@ -80,7 +80,10 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
   const [q, setQ] = useState('')
   const [acctOpen, setAcctOpen] = useState(false)
   const [megaOpen, setMegaOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  // Read the real scroll position on mount. Starting from `false` made a page
+  // opened while scrolled (e.g. Cart from the landing page) mount expanded and
+  // then collapse, which read as a flicker.
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 40)
   const [wishlistCount, setWishlistCount] = useState(0)
   const [cartCount, setCartCount] = useState(0)
   const [user, setUser] = useState<{ name: string; email: string }>({ name: '', email: '' })
@@ -151,15 +154,21 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
       .catch(() => {})
   }, [])
 
-  /* ── measure nav height for spacer ── */
-  useEffect(() => {
-    const measure = () => {
-      if (rootRef.current) setNavH(rootRef.current.offsetHeight)
-    }
-    measure()
+  /* ── measure nav height for spacer ──
+     useLayoutEffect so the spacer is sized before the first paint, and a
+     ResizeObserver so it follows the utility bar appearing or collapsing. */
+  useLayoutEffect(() => {
+    const el = rootRef.current
+    if (!el) return
+    const measure = () => setNavH(el.offsetHeight)
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
+    ro?.observe(el)
     window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [scrolled])
+    return () => {
+      ro?.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [])
 
   /* ── scroll compact ── */
   useEffect(() => {
