@@ -15,6 +15,13 @@
 
   --font-primary: var(--font-ui);
 
+  /* ── Website landing experience tokens (overridden locally in .we wrapper) ── */
+  --color-foreground: #f6efe9;
+  --color-muted: #8f8590;
+  --color-border: rgba(246,239,233,0.12);
+  --color-accent: #ff8a3d;
+  --color-magenta: #c2185b;
+
   --color-dark: #0a0a0a;
   --color-dark-card: #111111;
   --color-dark-card2: #1a1a1a;

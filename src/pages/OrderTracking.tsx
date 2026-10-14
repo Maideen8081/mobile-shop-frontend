@@ -179,7 +179,7 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
   )
 }
 
-function OrderDetailView({ order, onBack }: { order: OrderData; onBack: () => void }) {
+function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack: () => void }) {
   const navigate = useNavigate()
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
   const currentStepIndex = STATUS_INDEX[order.status] ?? 0

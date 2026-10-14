@@ -1,0 +1,44 @@
+/* Scoped overrides for the Me-website landing experience.
+   All Tailwind utility classes inside .we use these CSS custom properties. */
+.we {
+  --color-background: #07040a;
+  --color-foreground: #f6efe9;
+  --color-muted: #8f8590;
+  --color-border: rgba(246, 239, 233, 0.12);
+  --color-primary: #ff3b4e;
+  --color-accent: #ff8a3d;
+  --color-magenta: #c2185b;
+  --font-display: 'Bricolage Grotesque', 'Sora Variable', sans-serif;
+
+  background: #07040a;
+  color: #f6efe9;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+.we body {
+  background: #07040a;
+}
+
+.we ::selection {
+  background: #ff3b4e;
+  color: #fff;
+}
+
+.we .perspective {
+  perspective: 1400px;
+}
+
+.we .preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
