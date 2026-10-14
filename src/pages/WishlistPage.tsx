@@ -5,75 +5,17 @@ import { addToCartWithAuth } from '../utils/cartAuth'
 import { useToast } from '../context/ToastContext'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import EcommerceFooter from '../components/ecommerce/Footer'
+import {
+  FALLBACK_IMAGE,
+  cartParams,
+  getProductImage,
+  getProductName,
+  getProductPrice,
+  isOutOfStock,
+  readWishlistIds,
+  writeWishlistIds,
+} from '../utils/wishlist'
 import './WishlistPage.css'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
-
-function getProductImage(product: any): string {
-  const raw = product.common_image || product.image || product.images?.[0] || product.thumbnail || ''
-  if (!raw) return 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80'
-  if (raw.startsWith('http') || raw.startsWith('data:')) return raw
-  return `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
-}
-
-function getProductPrice(product: any): { current: number; old: number | null } {
-  const v = product.variants?.[0]
-  if (!v) return { current: product.min_price || 0, old: null }
-  const rawPrice = v.discount_price || v.discountPrice || v.price || product.min_price || 0
-  const price = isNaN(Number(rawPrice)) ? 0 : Number(rawPrice)
-  const rawOld = v.price || 0
-  const old = rawOld > price ? Number(rawOld) : null
-  return { current: price, old }
-}
-
-function getProductName(product: any): string {
-  return product.product_name ?? product.name ?? ''
-}
-
-// Some pages store wishlist entries as ids, others as { id } objects.
-function readWishlistIds(): number[] {
-  try {
-    const stored: any[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
-    return [...new Set(stored.map((x) => Number(typeof x === 'object' && x ? x.id : x)).filter(Boolean))]
-  } catch {
-    return []
-  }
-}
-
-function writeWishlistIds(ids: number[]) {
-  localStorage.setItem('wishlist', JSON.stringify(ids))
-  window.dispatchEvent(new Event('wishlist-updated'))
-}
-
-const sellingPrice = (v: any) => (Number(v.discountPrice) > 0 ? Number(v.discountPrice) : Number(v.price) || 0)
-
-/** Cheapest in-stock variant, or null when nothing can be bought. */
-function pickVariant(product: any): any | null {
-  const variants: any[] = product.variants || []
-  return variants
-    .filter((v) => Number(v.stock) > 0)
-    .sort((a, b) => sellingPrice(a) - sellingPrice(b))[0] || null
-}
-
-function isOutOfStock(product: any): boolean {
-  return (product.variants || []).length > 0 && !pickVariant(product)
-}
-
-function cartParams(product: any) {
-  const v = pickVariant(product)
-  return {
-    productId: Number(product.id || product.product_id),
-    variationId: v ? Number(v.id) : 0,
-    quantity: 1,
-    name: getProductName(product),
-    brand: product.brand || '',
-    price: v ? sellingPrice(v) : getProductPrice(product).current,
-    image: getProductImage(product),
-    storage: v?.storage || '',
-    ram: v?.ram || '',
-    color: v?.color || '',
-  }
-}
 
 function getProductTags(product: any): string[] {
   const tags: string[] = []
@@ -91,8 +33,6 @@ interface WishCardProps {
   onRemove: (id: number) => void
   onAddToCart: (e: React.MouseEvent<Element>, product: any) => void
 }
-
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80'
 
 function WishCard({ product, adding, added, onRemove, onAddToCart }: WishCardProps) {
   const tag = getProductTags(product)[0] || ''

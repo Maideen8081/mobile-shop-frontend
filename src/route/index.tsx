@@ -24,7 +24,7 @@ import BrandWarrantyRecords from '../pages/BrandWarrantyRecords'
 import CollectionGate from '../pages/CollectionGate'
 import ProductDetailGate from '../pages/ProductDetailGate'
 import CartGate from '../pages/CartGate'
-import WishlistPage from '../pages/WishlistPage'
+import WishlistGate from '../pages/WishlistGate'
 import RepairsPage from '../pages/RepairsPage'
 import PhonesPage from '../pages/PhonesPage'
 import AccessoriesPage from '../pages/AccessoriesPage'
@@ -42,7 +42,7 @@ import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import AddressCreatePage from '../pages/AddressCreatePage'
 import ProfilePage from '../pages/ProfilePage'
-import SupportChatPage from '../pages/SupportChatPage'
+import SupportChatGate from '../pages/SupportChatGate'
 import MobileNotifications from '../components/mobile/MobileNotifications'
 import AdminOrders from '../pages/AdminOrders'
 import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
@@ -120,7 +120,7 @@ export default function AppRoutes() {
       <Route path="/accessories" element={<AccessoriesPage />} />
       <Route path="/trade-in" element={<TradeInPage />} />
       <Route path="/about" element={<AboutPage />} />
-      <Route path="/support" element={<SupportChatPage />} />
+      <Route path="/support" element={<SupportChatGate />} />
       <Route path="/book-repair" element={<BookRepair />} />
       <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/login" element={<LoginPage />} />
@@ -129,7 +129,7 @@ export default function AppRoutes() {
 
       {/* Customer-only (authenticated) */}
       <Route path="/cart" element={<AuthGuard><CartGate /></AuthGuard>} />
-      <Route path="/wishlist" element={<AuthGuard><WishlistPage /></AuthGuard>} />
+      <Route path="/wishlist" element={<AuthGuard><WishlistGate /></AuthGuard>} />
       <Route path="/profile/addresses" element={<AuthGuard><AddressManagement /></AuthGuard>} />
       <Route path="/address/create" element={<AuthGuard><AddressCreatePage /></AuthGuard>} />
       <Route path="/checkout/address" element={<AuthGuard><CheckoutAddress /></AuthGuard>} />
