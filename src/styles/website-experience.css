@@ -42,3 +42,18 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
+/* Preserve 3D for product ring */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.perspective {
+  perspective: 1400px;
+}
+
+/* Outro reveal elements: visible by default, GSAP will animate from y+opacity */
+.we-reveal {
+  opacity: 1;
+  transform: none;
+}

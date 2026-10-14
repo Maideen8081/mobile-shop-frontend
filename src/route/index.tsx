@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import WebsiteExperience from '../pages/WebsiteExperience'
+import LandingGate from '../pages/LandingGate'
 import SearchPageGate from '../pages/SearchPageGate'
 import AuthGuard from '../components/AuthGuard'
 import AdminGuard from '../components/AdminGuard'
@@ -110,7 +111,7 @@ export default function AppRoutes() {
       {/* Public storefront */}
       <Route path="/" element={<WebsiteExperience />} />
       <Route path="/search" element={<SearchPageGate />} />
-      <Route path="/home" element={<LandingPage />} />
+      <Route path="/home" element={<LandingGate />} />
       <Route path="/collection/:category" element={<CollectionGate />} />
       <Route path="/product/:productId/variation/:variationId" element={<ProductDetailGate />} />
       <Route path="/product/:productId/:variantId" element={<ProductDetailGate />} />
