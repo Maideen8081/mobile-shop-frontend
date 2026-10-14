@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ChatAssistantIcon from './ChatAssistantIcon'
+import { useIsMobile } from '../mobile/helpers'
 import './SupportChatButton.css'
 
 const STORAGE_KEY = 'support-chat-btn-pos'
@@ -31,6 +32,7 @@ function getSavedPos(btnSize: number): { x: number; y: number } {
 
 export default function SupportChatButton() {
   const { pathname } = useLocation()
+  const isMobile = useIsMobile()
   const navigate = useNavigate()
   const btnSize = 80
 
@@ -119,7 +121,8 @@ export default function SupportChatButton() {
   /* Decide popup position: left or right of button */
   const popupOnLeft = pos.x > window.innerWidth / 2
 
-  if (pathname === '/support') return null
+  // The mobile website has its own chat link in the top bar.
+  if (pathname === '/support' || (isMobile && pathname === '/')) return null
 
   const showPopup = hovered && !dragging.current
 
