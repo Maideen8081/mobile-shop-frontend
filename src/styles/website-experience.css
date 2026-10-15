@@ -59,6 +59,13 @@ html.lenis body {
 }
 
 /* ── Mobile website (MobileWebsiteExperience) ── */
+/* clip (not hidden) so the page isn't a scroll container and sticky cards work */
+.we.wem {
+  overflow-x: clip;
+}
+.wem .p3d {
+  transform-style: preserve-3d;
+}
 .wem-noscroll {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -67,20 +74,134 @@ html.lenis body {
   display: none;
 }
 
-@keyframes wem-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/* Split text: each glyph flips up on its own baseline */
+.wem-split {
+  perspective: 700px;
+}
+.wem-w {
+  display: inline-block;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+}
+.wem-ch {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  backface-visibility: hidden;
+}
+
+/* Hero aurora */
+.wem-aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  will-change: transform;
+}
+.wem-aurora-a { width: 80vw; height: 80vw; left: -20vw; top: 18%; background: rgba(194, 24, 91, 0.55); animation: wem-drift 14s ease-in-out infinite; }
+.wem-aurora-b { width: 70vw; height: 70vw; right: -25vw; top: 38%; background: rgba(255, 59, 78, 0.4); animation: wem-drift 17s ease-in-out infinite reverse; }
+.wem-aurora-c { width: 60vw; height: 60vw; left: 20vw; bottom: -10%; background: rgba(255, 138, 61, 0.25); animation: wem-drift 20s ease-in-out infinite; }
+
+/* Perspective grid floor */
+.wem-floor {
+  position: absolute;
+  inset: auto -50% 0;
+  height: 42%;
+  perspective: 320px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 90%);
+  mask-image: linear-gradient(to top, #000 10%, transparent 90%);
+}
+.wem-floor-grid {
+  position: absolute;
+  inset: -100% 0 0;
+  transform: rotateX(68deg);
+  transform-origin: 50% 100%;
+}
+.wem-floor-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -48px;
+  background-image:
+    linear-gradient(rgba(255, 59, 78, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 59, 78, 0.35) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: wem-floor 2.4s linear infinite;
+  will-change: transform;
+}
+
+/* Phone glare, masked to the phone's own pixels */
+.wem-glare {
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  pointer-events: none;
+  overflow: hidden;
+}
+.wem-glare-beam {
+  position: absolute;
+  inset: -20% 10%;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 48%, rgba(255, 255, 255, 0.08) 56%, transparent 66%);
+}
+
+/* Orbiting accessories (spin the ring, counter-spin each item so it faces you) */
+/* tilted so the front of the orbit passes low across the phone and the back passes high */
+.wem-orbit-tilt { transform: rotateX(-22deg) rotateZ(-8deg); }
+.wem-orbit-spin { animation: wem-spin 16s linear infinite; }
+.wem-orbit-face { animation: wem-spin 16s linear infinite reverse; }
+
+/* Coverflow cards entering after a category change */
+.wem-card-in { animation: wem-card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Shine sweep across CTAs */
+.wem-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: wem-shine 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Press-tilt card highlight that follows the finger */
+.wem-glow-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.28), transparent 55%);
+  pointer-events: none;
+}
+
+.wem-pulse { animation: wem-pulse 2.2s ease-out infinite; }
+
+@keyframes wem-spin { to { transform: rotateY(360deg); } }
+@keyframes wem-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(8vw, -6vw, 0) scale(1.15); }
+  66% { transform: translate3d(-6vw, 5vw, 0) scale(0.9); }
+}
+@keyframes wem-floor { to { transform: translateY(48px); } }
+@keyframes wem-card-in {
+  from { opacity: 0; transform: translateX(60px) rotateY(-50deg) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes wem-shine {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+@keyframes wem-pulse {
+  from { transform: scale(1); opacity: 0.55; }
+  to { transform: scale(1.35, 1.7); opacity: 0; }
 }
 @keyframes wem-bob {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-12px) rotate(4deg); }
 }
-
-.wem-marquee { animation: wem-marquee 22s linear infinite; }
-.wem-marquee-rev { animation: wem-marquee 26s linear infinite reverse; }
 .wem-bob { animation: wem-bob 3.2s ease-in-out infinite; }
 .wem-bob-alt { animation: wem-bob 3.8s ease-in-out infinite reverse; }
 
 @media (prefers-reduced-motion: reduce) {
-  .wem-marquee, .wem-marquee-rev, .wem-bob, .wem-bob-alt { animation: none; }
+  .wem-bob, .wem-bob-alt, .wem-aurora, .wem-floor-grid::before, .wem-orbit-spin, .wem-orbit-face,
+  .wem-card-in, .wem-shine::after, .wem-pulse { animation: none; }
 }
