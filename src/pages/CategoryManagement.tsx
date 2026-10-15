@@ -12,6 +12,10 @@ import EditCategoryModal from '../components/category/EditCategoryModal'
 import DeleteModal from '../components/category/DeleteModal'
 import Toast from '../components/category/Toast'
 import { categoryService, subCategoryService, type Category, type SubCategory, type CategoryStats } from '../services/categoryService'
+import type { CategoryCreateData } from '../components/category/CategoryCreateForm'
+import type { CategoryEditData } from '../components/category/EditCategoryModal'
+import { apiErrorMessage } from '../utils/checkout'
+import { serverFieldErrors, type Errors } from '../utils/catalogValidation'
 
 type ViewMode = 'table' | 'cards'
 
@@ -53,40 +57,23 @@ export default function CategoryManagement() {
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type })
-    setTimeout(() => setToast(null), 4000)
+    setTimeout(() => setToast(null), type === 'error' ? 6000 : 4000)
   }
 
   const loadList = useCallback(async () => {
     try {
-      const [cats, subs] = await Promise.all([
-        categoryService.list(),
-        subCategoryService.list().catch(() => []),
-      ])
-      const categorySubs = Array.isArray(subs)
-        ? subs.reduce((acc: Record<number, SubCategory[]>, s: any) => {
-            const parentId = s.parent_category ?? s.parentCategory ?? s.parent_id
-            if (parentId) {
-              if (!acc[parentId]) acc[parentId] = []
-              acc[parentId].push({
-                id: s.id,
-                name: s.sub_category_name ?? s.name,
-                products: s.products ?? s.product_count ?? 0,
-              })
-            }
-            return acc
-          }, {})
-        : {}
-      const merged = safeCategories(cats).map((cat) => {
-        const csubs = categorySubs[cat.id] || []
-        return {
-          ...cat,
-          subcategories: csubs,
-          sub_category_count: csubs.length,
-        }
-      })
-      setCategories(merged)
-    } catch {
-      setCategories([])
+      const [cats, subs] = await Promise.all([categoryService.list(), subCategoryService.list()])
+      const byParent = subs.reduce((acc: Record<number, SubCategory[]>, s) => {
+        if (s.parentId) (acc[s.parentId] ||= []).push(s)
+        return acc
+      }, {})
+      setCategories(safeCategories(cats).map((cat) => {
+        const csubs = byParent[cat.id] || []
+        return { ...cat, subcategories: csubs, sub_category_count: csubs.length }
+      }))
+      setError('')
+    } catch (err) {
+      setError(apiErrorMessage(err, 'Could not load categories. Check your connection and try again.'))
     }
   }, [])
 
@@ -99,67 +86,73 @@ export default function CategoryManagement() {
     }
   }, [])
 
-  const fetchData = useCallback(async () => {
-    setLoading(true); setError('')
-    await Promise.all([loadList(), loadStats()])
-    setLoading(false)
+  // Initial load: `loading` already starts true.
+  useEffect(() => {
+    Promise.all([loadList(), loadStats()]).finally(() => setLoading(false))
   }, [loadList, loadStats])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  const fetchData = async () => {
+    setLoading(true)
+    await Promise.all([loadList(), loadStats()])
+    setLoading(false)
+  }
 
-  const handleCombinedCreate = async (data: {
-    name: string
-    status: boolean
-    image: File | null
-    subCategoryName: string
-  }) => {
+  const refresh = () => Promise.all([loadList(), loadStats()])
+
+  const handleCreate = async (data: CategoryCreateData): Promise<Errors | null> => {
     setSubmitting(true)
     try {
       const fd = new FormData()
       fd.append('category_name', data.name)
       fd.append('status', data.status ? 'active' : 'inactive')
-      if (data.image) fd.append('category_image', data.image)
-      const created = await categoryService.create(fd)
-      await loadList()
-
-      if (data.subCategoryName) {
-        await subCategoryService.create({
-          parentId: created.id,
-          name: data.subCategoryName,
-          status: true,
-        })
-        await loadList()
-        showToast('Category and subcategory created successfully', 'success')
-      } else {
-        showToast('Category created successfully', 'success')
+      fd.append('category_image', data.image)
+      let created
+      try {
+        created = await categoryService.create(fd)
+      } catch (err) {
+        const fieldErrors = serverFieldErrors(err)
+        showToast(apiErrorMessage(err, 'Failed to create category'), 'error')
+        return Object.keys(fieldErrors).length ? fieldErrors : {}
       }
-      await loadStats()
+
+      const failedSubs: string[] = []
+      for (const name of data.subCategoryNames) {
+        try {
+          await subCategoryService.create({ parentId: created.id, name, status: true })
+        } catch (err) {
+          failedSubs.push(`${name} (${apiErrorMessage(err, 'failed')})`)
+        }
+      }
+      await refresh()
       setShowForm(false)
-    } catch {
-      showToast('Failed to create category', 'error')
+      if (failedSubs.length) {
+        showToast(`Category created, but these sub categories failed: ${failedSubs.join(', ')}`, 'error')
+      } else {
+        const n = data.subCategoryNames.length
+        showToast(n ? `Category created with ${n} sub categor${n === 1 ? 'y' : 'ies'}` : 'Category created successfully', 'success')
+      }
+      return null
     } finally {
       setSubmitting(false)
     }
   }
 
-  const handleEdit = async (editData: { name: string; status: 'active' | 'inactive'; image?: File | null; imageRemoved?: boolean }) => {
-    if (!editModal.category) return
+  const handleEdit = async (editData: CategoryEditData): Promise<Errors | null> => {
+    if (!editModal.category) return null
     setSubmitting(true)
     try {
       const fd = new FormData()
       fd.append('category_name', editData.name)
       fd.append('status', editData.status)
-      if (editData.image) {
-        fd.append('category_image', editData.image)
-      } else if (editData.imageRemoved) {
-        fd.append('category_image', '')
-      }
+      if (editData.image) fd.append('category_image', editData.image)
       await categoryService.update(editModal.category.id, fd)
-      await Promise.all([loadList(), loadStats()])
+      await refresh()
       setEditModal({ open: false, category: null })
       showToast('Category updated successfully', 'success')
-    } catch {
-      showToast('Failed to update category', 'error')
+      return null
+    } catch (err) {
+      showToast(apiErrorMessage(err, 'Failed to update category'), 'error')
+      return serverFieldErrors(err)
     } finally {
       setSubmitting(false)
     }
@@ -169,12 +162,12 @@ export default function CategoryManagement() {
     if (!deleteModal.category) return
     setSubmitting(true)
     try {
-      await categoryService.delete(deleteModal.category.id)
-      await Promise.all([loadList(), loadStats()])
+      const res = await categoryService.delete(deleteModal.category.id)
+      await refresh()
       setDeleteModal({ open: false, category: null })
-      showToast('Category deleted successfully', 'success')
-    } catch {
-      showToast('Failed to delete category', 'error')
+      showToast(res?.message || 'Category deleted successfully', 'success')
+    } catch (err) {
+      showToast(apiErrorMessage(err, 'Failed to delete category'), 'error')
     } finally {
       setSubmitting(false)
     }
@@ -247,7 +240,7 @@ export default function CategoryManagement() {
       {error && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400">
           {error}
-          <button onClick={() => setError('')} className="ml-2 underline hover:text-red-300">Dismiss</button>
+          <button onClick={fetchData} className="ml-2 underline hover:text-red-300">Retry</button>
         </div>
       )}
 
@@ -259,8 +252,9 @@ export default function CategoryManagement() {
           transition={{ duration: 0.25 }}
         >
           <CategoryCreateForm
-            onSubmit={handleCombinedCreate}
+            onSubmit={handleCreate}
             loading={submitting}
+            existingNames={catList.map((c) => c.name)}
           />
         </motion.div>
       )}
@@ -291,8 +285,13 @@ export default function CategoryManagement() {
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-[8px] animate-spin" />
         </div>
+      ) : catList.length === 0 ? (
+        error ? null : <EmptyState onAction={() => setShowForm(true)} />
       ) : filtered.length === 0 ? (
-        <EmptyState onAction={() => setShowForm(true)} />
+        <div className="text-center py-12 text-sm text-text-muted">
+          No categories match your search.
+          <button onClick={() => { setSearch(''); setFilterStatus('all') }} className="ml-1 text-primary font-medium underline cursor-pointer">Clear filters</button>
+        </div>
       ) : viewMode === 'table' ? (
         <div className="hidden sm:block">
           <CategoryTable
@@ -328,8 +327,10 @@ export default function CategoryManagement() {
       <EditCategoryModal
         open={editModal.open}
         category={editModal.category}
+        existingNames={catList.map((c) => c.name)}
         onClose={() => setEditModal({ open: false, category: null })}
         onSave={handleEdit}
+        onSubsChanged={refresh}
         loading={submitting}
       />
 

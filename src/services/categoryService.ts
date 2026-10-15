@@ -18,6 +18,8 @@ export interface SubCategory {
   id: number
   name: string
   products: number
+  parentId?: number
+  status?: 'active' | 'inactive'
 }
 
 export interface CategoryStats {
@@ -48,13 +50,17 @@ function normalizeCategory(raw: any): Category {
     products: raw.products ?? raw.product_count ?? 0,
     sub_category_count: raw.sub_category_count ?? (Array.isArray(raw.subcategories) ? raw.subcategories.length : 0),
     created: raw.created ?? raw.created_at ?? '',
-    subcategories: Array.isArray(raw.subcategories)
-      ? raw.subcategories.map((s: any) => ({
-          id: s.id,
-          name: s.sub_category_name ?? s.name,
-          products: s.products ?? s.product_count ?? 0,
-        }))
-      : [],
+    subcategories: Array.isArray(raw.subcategories) ? raw.subcategories.map(normalizeSubCategory) : [],
+  }
+}
+
+export function normalizeSubCategory(s: any): SubCategory {
+  return {
+    id: s.id,
+    name: s.sub_category_name ?? s.name,
+    products: s.products ?? s.product_count ?? 0,
+    parentId: s.parent_category ?? s.parent_id,
+    status: s.status === 'inactive' ? 'inactive' : 'active',
   }
 }
 
@@ -101,9 +107,9 @@ export const categoryService = {
 }
 
 export const subCategoryService = {
-  list: () =>
-    api.get(`${SUBCATEGORIES_URL}/`).then((r) =>
-      toArray(unwrapData<any>(r as any)),
+  list: (parentId?: number) =>
+    api.get(`${SUBCATEGORIES_URL}/`, { params: parentId ? { parent_category: parentId } : undefined }).then((r) =>
+      toArray(unwrapData<any>(r as any)).map(normalizeSubCategory),
     ),
 
   create: (data: { parentId: number; name: string; status: boolean }) =>
@@ -111,12 +117,12 @@ export const subCategoryService = {
       parent_category: data.parentId,
       sub_category_name: data.name,
       status: data.status ? 'active' : 'inactive',
-    }).then((r) => r.data),
+    }).then((r) => normalizeSubCategory(unwrapData<any>(r as any))),
 
   update: (id: number, data: { name: string }) =>
     api.put(`${SUBCATEGORIES_URL}/${id}/`, {
       sub_category_name: data.name,
-    }).then((r) => r.data),
+    }).then((r) => normalizeSubCategory(unwrapData<any>(r as any))),
 
   delete: (id: number) =>
     api.delete(`${SUBCATEGORIES_URL}/${id}/`).then((r) => r.data),

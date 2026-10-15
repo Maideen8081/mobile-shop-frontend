@@ -7,8 +7,18 @@ export const productStats = [
   { id: 6, label: 'Total Variants', value: 342, icon: 'FiLayers', color: '#06b6d4', bgGlow: 'rgba(6,182,212,0.12)' },
 ]
 
+export interface VariantImageRef {
+  id: number
+  url: string
+  isMain: boolean
+}
+
 export interface Variant {
   id: string
+  /** Database id; absent for variants not saved yet. */
+  dbId?: number
+  imageRefs?: VariantImageRef[]
+  isActive?: boolean
   name: string
   ram: string
   storage: string
@@ -26,6 +36,9 @@ export interface Variant {
 
 export interface Product {
   id: number
+  categoryId?: number | null
+  subcategoryId?: number | null
+  coverImage?: string | null
   name: string
   brand: string
   model: string

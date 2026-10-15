@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { FiStar, FiShoppingBag, FiCpu, FiMonitor, FiCamera } from 'react-icons/fi'
+import { FiShoppingBag, FiCpu, FiMonitor, FiCamera } from 'react-icons/fi'
 import { TagBadge } from './StatusBadge'
 
 interface PreviewCardProps {
@@ -114,9 +114,6 @@ export default function PreviewCard({ product }: PreviewCardProps) {
         <div className="flex items-center gap-3 text-xs text-text-secondary">
           <span className={`font-semibold ${product.stock === 0 ? 'text-danger' : product.stock <= 5 ? 'text-warning' : 'text-success'}`}>
             {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
-          </span>
-          <span className="flex items-center gap-1">
-            <FiStar size={11} className="text-warning fill-warning" /> 4.8
           </span>
         </div>
 

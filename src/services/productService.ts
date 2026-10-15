@@ -66,6 +66,7 @@ export interface ProductStats {
   featured_products: number
   total_variants: number
   low_stock_products: number
+  low_stock_variants?: number
 }
 
 export interface ProductListParams {
@@ -126,9 +127,17 @@ function extractImageField(raw: any): string[] {
   return []
 }
 
+function idOf(v: any): number | null {
+  if (v && typeof v === 'object') return Number(v.id) || null
+  return Number(v) || null
+}
+
 function normalizeProduct(raw: any): any {
   return {
     id: raw.id,
+    categoryId: idOf(raw.category),
+    subcategoryId: idOf(raw.sub_category),
+    coverImage: typeof raw.common_image === 'string' && raw.common_image ? raw.common_image : null,
     name: raw.product_name ?? raw.name,
     brand: raw.brand ?? '',
     model: raw.model_number ?? raw.model ?? '',
@@ -160,6 +169,11 @@ function normalizeProduct(raw: any): any {
 function normalizeVariant(raw: any): any {
   return {
     id: String(raw.id),
+    dbId: Number(raw.id) || undefined,
+    imageRefs: Array.isArray(raw.images)
+      ? raw.images.filter((img: any) => img && typeof img === 'object' && img.id).map((img: any) => ({ id: img.id, url: img.image, isMain: !!img.is_main }))
+      : [],
+    isActive: raw.is_active !== false,
     name: raw.variant_name ?? raw.name ?? '',
     ram: raw.ram_size ?? raw.ram ?? '',
     storage: raw.storage_size ?? raw.storage ?? '',
@@ -188,6 +202,18 @@ export const productService = {
     api.get(`${PRODUCTS_URL}/`, { params }).then((r) =>
       toArray(unwrapData<any>(r as any)).map(normalizeProduct),
     ),
+
+  /** Every product with variants inline, for the admin catalog (100 per request). */
+  listAllForAdmin: async () => {
+    const all: any[] = []
+    for (let page = 1; page <= 50; page++) {
+      const r = await api.get(`${PRODUCTS_URL}/`, { params: { include: 'variants', page_size: 100, page } })
+      const data = unwrapData<any>(r as any)
+      all.push(...toArray(data).map(normalizeProduct))
+      if (!(r as any).data?.next) break  // the paginated body is { success, count, next, data }
+    }
+    return all
+  },
 
   listPaginated: (params?: ProductListParams) =>
     api.get(`${PRODUCTS_URL}/`, { params }).then((r) => {

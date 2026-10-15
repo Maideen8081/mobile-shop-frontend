@@ -1,500 +1,421 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiPlus, FiRefreshCw, FiSave, FiAlertCircle, FiImage, FiUploadCloud, FiX } from 'react-icons/fi'
+import { FiPlus, FiRefreshCw, FiSave, FiAlertCircle, FiImage, FiX, FiUploadCloud } from 'react-icons/fi'
 import GlassCard from '../dashboard/GlassCard'
 import FeatureInputList from './FeatureInputList'
 import CareInstructionList from './CareInstructionList'
 import VariantCard from './VariantCard'
 import PreviewCard from './PreviewCard'
 import SearchableDropdown from './SearchableDropdown'
-import { categories, subcategories, brands } from '../../data/productData'
-import type { Variant } from '../../data/productData'
+import CreatableSelect from '../ui/CreatableSelect'
+import { brands } from '../../data/productData'
+import type { Product } from '../../data/productData'
+import type { SubCategory } from '../../services/categoryService'
+import {
+  IMAGE_ACCEPT, IMAGE_TYPES_LABEL, PRODUCT, PRODUCT_IMAGE_MAX_MB,
+  duplicateVariantIndexes, imageFileError, omitKey, validateProduct, validateVariant, type Errors,
+} from '../../utils/catalogValidation'
+import {
+  buildProductFormData, emptyProductDraft, fileDraft, newVariantDraft, nextKey, productToDraft, releaseImage,
+  type ProductDraft, type VariantDraft,
+} from './productDraft'
 
-let variantIdCounter = 1
-const newVariant = (): Variant => ({
-  id: `v${variantIdCounter++}`, name: '', ram: '', storage: '', battery: 0,
-  color: '', processor: '', display: '', camera: '',
-  price: 0, discountPrice: 0, stock: 0, lowStockAlert: 5, images: [],
-})
-
-interface FormErrors {
-  [key: string]: string
+// Server field names → form field names, so API errors land next to the right input.
+const SERVER_FIELDS: Record<string, string> = {
+  product_name: 'name', brand: 'brand', model_number: 'model', category: 'category', sub_category: 'subcategory',
+  description: 'description', features: 'features', care_instructions: 'careInstructions',
+  common_image: 'cover', remove_common_image: 'cover', variants: 'variants', variant_images: 'variants',
 }
 
 interface ProductFormProps {
-  onSubmit?: (formData: FormData) => Promise<void>
+  mode: 'create' | 'edit'
+  initial?: Product | null
+  categoryOptions: { id: number; name: string }[]
+  subcategoryOptions: SubCategory[]
+  /** Resolves to server field errors, or null on success. */
+  onSubmit: (formData: FormData) => Promise<Errors | null>
+  onCancel?: () => void
   loading?: boolean
-  categoryOptions?: { id: number; name: string }[]
-  subcategoryOptions?: { id: number; name: string }[]
-  categoryNames?: string[]
-  subcategoryNames?: string[]
+  /** "drawer" drops the preview column for the narrow edit panel. */
+  layout?: 'page' | 'drawer'
 }
 
-function dataURLToBlob(dataURL: string): Blob {
-  const arr = dataURL.split(',')
-  if (arr.length < 2) return new Blob([])
-  const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg'
-  const raw = window.atob(arr[1])
-  const u8 = new Uint8Array(raw.length)
-  for (let i = 0; i < raw.length; i++) u8[i] = raw.charCodeAt(i)
-  return new Blob([u8], { type: mime })
-}
-
-export default function ProductForm({ onSubmit, loading, categoryOptions, subcategoryOptions, categoryNames, subcategoryNames }: ProductFormProps) {
-  const [name, setName] = useState('')
-  const [brand, setBrand] = useState('')
-  const [model, setModel] = useState('')
-  const [category, setCategory] = useState('')
-  const [subcategory, setSubcategory] = useState('')
-  const [description, setDescription] = useState('')
-  const [features, setFeatures] = useState<string[]>([])
-  const [careInstructions, setCareInstructions] = useState<string[]>([])
-  const [variants, setVariants] = useState<Variant[]>([newVariant()])
-  const [trending, setTrending] = useState(false)
-  const [newArrival, setNewArrival] = useState(false)
-  const [bestSelling, setBestSelling] = useState(false)
-  const [featured, setFeatured] = useState(false)
-  const [refurbished, setRefurbished] = useState(false)
-  const [status, setStatus] = useState(true)
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [variantErrors, setVariantErrors] = useState<Record<string, FormErrors>>({})
+export default function ProductForm({
+  mode, initial, categoryOptions, subcategoryOptions, onSubmit, onCancel, loading, layout = 'page',
+}: ProductFormProps) {
+  const [draft, setDraft] = useState<ProductDraft>(() => (initial ? productToDraft(initial) : emptyProductDraft()))
+  const [errors, setErrors] = useState<Errors>({})
+  const [variantErrors, setVariantErrors] = useState<Record<string, Errors>>({})
   const [shakeKey, setShakeKey] = useState(0)
-  const [productImages, setProductImages] = useState<string[]>([])
-  const [productImgDragOver, setProductImgDragOver] = useState(false)
-  const productImgRef = useRef<HTMLInputElement>(null)
-  const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
+  const [previewIdx, setPreviewIdx] = useState(0)
+  const [extraBrands, setExtraBrands] = useState<string[]>([])
+  const coverRef = useRef<HTMLInputElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
 
-  const totalStock = variants.reduce((sum, v) => sum + (v.stock || 0), 0)
-  const minPrice = Math.min(...variants.map((v) => v.discountPrice || v.price || Infinity))
-  const maxPrice = Math.max(...variants.map((v) => v.price || 0))
-  const effectivePrice = minPrice === Infinity ? 0 : minPrice
-
-  const addVariant = () => setVariants([...variants, newVariant()])
-  const updateVariant = (i: number, v: Variant) => {
-    const next = [...variants]
-    next[i] = v
-    setVariants(next)
-    const ve = { ...variantErrors }
-    delete ve[v.id]
-    setVariantErrors(ve)
-  }
-  const removeVariant = (i: number) => {
-    const next = variants.filter((_, idx) => idx !== i)
-    setVariants(next)
-    if (selectedVariantIdx >= next.length) setSelectedVariantIdx(Math.max(0, next.length - 1))
-  }
-  const duplicateVariant = (i: number) => {
-    const copy = { ...variants[i], id: `v${variantIdCounter++}`, images: [...variants[i].images] }
-    setVariants([...variants, copy])
+  const set = <K extends keyof ProductDraft>(key: K, value: ProductDraft[K], errorKey: string = key) => {
+    setDraft((d) => ({ ...d, [key]: value }))
+    if (errors[errorKey]) setErrors((e) => omitKey(e, errorKey))
   }
 
-  const handleProductImages = useCallback((files: FileList) => {
-    const remaining = 10 - productImages.length
-    if (remaining <= 0) return
-    const toAdd = Math.min(files.length, remaining)
-    for (let i = 0; i < toAdd; i++) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const result = e.target?.result
-        if (result) {
-          setProductImages((prev) => [...prev, result as string])
-        }
-      }
-      reader.readAsDataURL(files[i])
+  // Category options: active categories, plus the product's current one if it was deactivated since.
+  const categories = useMemo(() => {
+    const list = [...categoryOptions]
+    if (initial?.categoryId && !list.some((c) => c.id === initial.categoryId)) {
+      list.unshift({ id: initial.categoryId, name: `${initial.category} (inactive)` })
     }
-  }, [productImages])
+    return list
+  }, [categoryOptions, initial])
+  const category = categories.find((c) => c.id === draft.categoryId)
+  const subs = subcategoryOptions.filter((s) => s.parentId === draft.categoryId)
+  const sub = subs.find((s) => s.id === draft.subcategoryId)
+  const brandOptions = useMemo(
+    () => Array.from(new Set([...brands, ...extraBrands, ...(draft.brand ? [draft.brand] : [])])),
+    [extraBrands, draft.brand],
+  )
 
-  const addProductImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleProductImages(e.target.files)
-    e.target.value = ''
+  const updateVariant = (key: string, v: VariantDraft) => {
+    setDraft((d) => ({ ...d, variants: d.variants.map((x) => (x.key === key ? v : x)) }))
+    if (variantErrors[key]) setVariantErrors((ve) => { const next = { ...ve }; delete next[key]; return next })
   }
+  const addVariant = () => setDraft((d) => ({ ...d, variants: [...d.variants, newVariantDraft()] }))
+  const removeVariant = (key: string) => setDraft((d) => {
+    d.variants.find((v) => v.key === key)?.images.forEach(releaseImage)
+    return { ...d, variants: d.variants.filter((v) => v.key !== key) }
+  })
+  // Images aren't copied: each saved image belongs to exactly one variant.
+  const duplicateVariant = (key: string) => setDraft((d) => {
+    const src = d.variants.find((v) => v.key === key)
+    if (!src) return d
+    const copy: VariantDraft = { ...src, key: nextKey('v'), dbId: undefined, name: `${src.name} (copy)`, images: [] }
+    return { ...d, variants: [...d.variants, copy] }
+  })
 
-  const removeProductImage = (idx: number) => {
-    setProductImages((prev) => prev.filter((_, i) => i !== idx))
+  const pickCover = (f: File) => {
+    const err = imageFileError(f, PRODUCT_IMAGE_MAX_MB)
+    if (err) { setErrors((e) => ({ ...e, cover: err })); return }
+    if (draft.cover) releaseImage(draft.cover)
+    setDraft((d) => ({ ...d, cover: fileDraft(f), coverRemoved: false }))
+    setErrors((e) => omitKey(e, 'cover'))
+  }
+  const removeCover = () => {
+    if (draft.cover) releaseImage(draft.cover)
+    setDraft((d) => ({ ...d, cover: null, coverRemoved: true }))
   }
 
   const validate = (): boolean => {
-    const errs: FormErrors = {}
-    const vErrs: Record<string, FormErrors> = {}
-
-    if (!name.trim()) errs.name = 'Product name is required'
-    if (!brand) errs.brand = 'Please select a brand'
-    if (!model.trim()) errs.model = 'Model number is required'
-    if (!category) errs.category = 'Please select a category'
-    if (!subcategory) errs.subcategory = 'Please select a subcategory'
-
-    variants.forEach((v) => {
-      const ve: FormErrors = {}
-      if (!v.name.trim()) ve.name = 'Variant name is required'
-      if (!v.color.trim()) ve.color = 'Color is required'
-      if (!v.ram) ve.ram = 'RAM size is required'
-      if (!v.storage) ve.storage = 'Storage size is required'
-      if (!v.battery || v.battery <= 0) ve.battery = 'Battery capacity is required'
-      if (!v.processor.trim()) ve.processor = 'Processor is required'
-      if (!v.display.trim()) ve.display = 'Display size is required'
-      if (!v.camera.trim()) ve.camera = 'Camera details is required'
-      if (!v.price || v.price <= 0) ve.price = 'Price must be greater than 0'
-      if (v.images.length === 0) ve.images = 'At least one variant image required'
-      if (Object.keys(ve).length > 0) vErrs[v.id] = ve
+    const errs = validateProduct({
+      name: draft.name, brand: draft.brand, model: draft.model,
+      category: draft.categoryId ? String(draft.categoryId) : '',
+      subcategory: draft.subcategoryId ? String(draft.subcategoryId) : '',
+      categoryHasSubs: subs.length > 0,
+      description: draft.description, features: draft.features, careInstructions: draft.careInstructions,
     })
+    if (draft.variants.length === 0) errs.variants = 'Add at least one variant'
+    else if (draft.variants.length > PRODUCT.maxVariants) errs.variants = `At most ${PRODUCT.maxVariants} variants`
 
-    if (variants.length === 0) errs.variants = 'At least one variant is required'
+    const vErrs: Record<string, Errors> = {}
+    draft.variants.forEach((v) => {
+      const e = validateVariant({ ...v, imageCount: v.images.length })
+      if (Object.keys(e).length) vErrs[v.key] = e
+    })
+    duplicateVariantIndexes(draft.variants).forEach((i) => {
+      const key = draft.variants[i].key
+      vErrs[key] = { ...vErrs[key], color: 'Another variant already has this color, RAM and storage' }
+    })
 
     setErrors(errs)
     setVariantErrors(vErrs)
-    if (Object.keys(errs).length > 0 || Object.keys(vErrs).length > 0) setShakeKey((k) => k + 1)
-
-    return Object.keys(errs).length === 0 && Object.keys(vErrs).length === 0
+    const ok = !Object.keys(errs).length && !Object.keys(vErrs).length
+    if (!ok) {
+      setShakeKey((k) => k + 1)
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    return ok
   }
 
-  const buildFormData = useCallback((): FormData => {
-    const fd = new FormData()
-    fd.append('product_name', name.trim())
-    fd.append('brand', brand)
-    fd.append('model_number', model.trim())
-
-    const catMap = new Map((categoryOptions || []).map((c) => [c.name, c.id]))
-    const subMap = new Map((subcategoryOptions || []).map((s) => [s.name, s.id]))
-    fd.append('category', String(catMap.get(category) ?? category))
-    fd.append('sub_category', String(subMap.get(subcategory) ?? subcategory))
-
-    fd.append('description', description)
-    fd.append('is_published', status ? 'true' : 'false')
-    fd.append('is_trending', String(trending))
-    fd.append('is_new_arrival', String(newArrival))
-    fd.append('is_best_selling', String(bestSelling))
-    fd.append('is_featured', String(featured))
-    fd.append('is_refurbished', String(refurbished))
-
-    fd.append('features', JSON.stringify(
-      features.filter(Boolean).map((f) => ({ feature_text: f }))
-    ))
-
-    fd.append('care_instructions', JSON.stringify(
-      careInstructions.filter(Boolean).map((c) => ({ instruction_text: c }))
-    ))
-
-    const variantPayload = variants.map((v) => ({
-      variant_name: v.name,
-      color: v.color,
-      ram_size: v.ram,
-      storage_size: v.storage,
-      battery_capacity: v.battery,
-      processor: v.processor,
-      display_size: v.display,
-      camera_details: v.camera,
-      price: v.price,
-      discount_price: v.discountPrice || 0,
-      stock_quantity: v.stock,
-      low_stock_alert: v.lowStockAlert || 5,
-    }))
-
-    fd.append('variants', JSON.stringify(variantPayload))
-
-    const allFiles: File[] = []
-    const imageMap: Record<string, number[]> = {}
-    variants.forEach((v, vi) => {
-      const indices: number[] = []
-      v.images.forEach((img, ii) => {
-        if (img.startsWith('data:')) {
-          const blob = dataURLToBlob(img)
-          const file = new File([blob], `v${vi}_${ii}.jpg`, { type: blob.type || 'image/jpeg' })
-          allFiles.push(file)
-          indices.push(allFiles.length - 1)
-        }
-      })
-      if (indices.length > 0) imageMap[String(vi)] = indices
-    })
-
-    allFiles.forEach((f) => fd.append('variant_images', f))
-    if (Object.keys(imageMap).length > 0)     fd.append('variant_image_map', JSON.stringify(imageMap))
-
-    const existingUrls: string[] = []
-    const productAllFiles: File[] = []
-    const productImgIndices: number[] = []
-    productImages.forEach((img, ii) => {
-      if (img.startsWith('data:')) {
-        const blob = dataURLToBlob(img)
-        const file = new File([blob], `product_${ii}.jpg`, { type: blob.type || 'image/jpeg' })
-        productAllFiles.push(file)
-        productImgIndices.push(productAllFiles.length - 1)
-      } else if (img.startsWith('http') || img.startsWith('blob:')) {
-        existingUrls.push(img)
-      }
-    })
-    productAllFiles.forEach((f) => fd.append('product_images', f))
-    if (productImgIndices.length > 0) {
-      fd.append('product_image_map', JSON.stringify(productImgIndices))
-      fd.append('common_image', productAllFiles[0], productAllFiles[0].name)
-    }
-    if (existingUrls.length > 0) {
-      fd.append('existing_product_images', JSON.stringify(existingUrls))
-    }
-
-    return fd
-  }, [name, brand, model, category, subcategory, categoryOptions, subcategoryOptions, description, status, trending, newArrival, bestSelling, featured, features, careInstructions, variants, productImages])
-
   const handleSave = async () => {
-    if (!validate()) return
-    if (!onSubmit) return
-    const fd = buildFormData()
-    await onSubmit(fd)
+    if (loading || !validate()) return
+    const serverErrors = await onSubmit(buildProductFormData(draft, mode === 'edit'))
+    if (serverErrors) {
+      const mapped: Errors = {}
+      for (const [k, msg] of Object.entries(serverErrors)) {
+        const field = SERVER_FIELDS[k] || 'form'
+        mapped[field] = mapped[field] ? `${mapped[field]} · ${msg}` : msg
+      }
+      setErrors(mapped)
+      setShakeKey((k) => k + 1)
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else if (mode === 'create') {
+      reset()
+    }
   }
 
   const reset = () => {
-    setName(''); setBrand(''); setModel(''); setCategory(''); setSubcategory('')
-    setDescription(''); setFeatures([]); setCareInstructions([])
-    setVariants([newVariant()]); setTrending(false); setNewArrival(false); setBestSelling(false)
-    setFeatured(false); setRefurbished(false); setStatus(true)
-    setProductImages([]); setErrors({}); setVariantErrors({}); setSelectedVariantIdx(0)
+    draft.variants.forEach((v) => v.images.forEach(releaseImage))
+    if (draft.cover) releaseImage(draft.cover)
+    setDraft(initial ? productToDraft(initial) : emptyProductDraft())
+    setErrors({}); setVariantErrors({}); setPreviewIdx(0)
   }
 
-  const getError = (field: string) => errors[field] || ''
-  const hasError = (field: string) => !!errors[field]
+  const errorCount = Object.keys(errors).length + Object.keys(variantErrors).length
+  const totalStock = draft.variants.reduce((sum, v) => sum + (v.stock || 0), 0)
+  const prices = draft.variants.map((v) => v.discountPrice || v.price).filter((p) => p > 0)
+  const previewVariant = draft.variants[previewIdx] || draft.variants[0]
 
-  const previewVariant = variants[selectedVariantIdx] || variants[0]
-
-  const Toggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
-    <button type="button" onClick={() => onChange(!value)}
+  const inputCls = (err?: string) =>
+    `w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 ${err ? 'border-danger' : 'border-border'}`
+  const fieldError = (k: string) => (errors[k] ? (
+    <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} role="alert" className="text-xs text-danger mt-1 flex items-start gap-1">
+      <FiAlertCircle size={11} className="mt-0.5 shrink-0" /> {errors[k]}
+    </motion.p>
+  ) : null)
+  const toggle = (label: string, value: boolean, onChange: (v: boolean) => void) => (
+    <button type="button" role="switch" aria-checked={value} onClick={() => onChange(!value)}
       className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
         value ? 'bg-primary/10 border-primary/20 text-primary' : 'bg-surface-lighter border-border text-text-muted hover:border-primary/20'
       }`}
     >
-      <span className={`w-4 h-4 rounded-[8px] border-2 flex items-center justify-center transition-all ${value ? 'border-primary bg-primary' : 'border-border'}`}>
-        {value && <span className="w-1.5 h-1.5 rounded-[8px] bg-white" />}
+      <span className={`w-4 h-4 rounded-md border-2 flex items-center justify-center transition-all ${value ? 'border-primary bg-primary' : 'border-border'}`}>
+        {value && <span className="w-1.5 h-1.5 rounded-sm bg-white" />}
       </span>
       {label}
     </button>
   )
 
-  const FieldError = ({ field }: { field: string }) => {
-    if (!errors[field]) return null
+  const form = (
+    <div className="space-y-6">
+      <div ref={topRef} className="scroll-mt-24" />
+      <AnimatePresence>
+        {errorCount > 0 && (
+          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="alert"
+            className="flex items-start gap-2 px-4 py-3 rounded-xl bg-danger/5 border border-danger/20 text-sm text-danger"
+          >
+            <FiAlertCircle size={16} className="mt-0.5 shrink-0" />
+            <div>
+              <p className="font-semibold">Please fix the highlighted fields before saving.</p>
+              {errors.form && <p className="text-xs mt-0.5">{errors.form}</p>}
+              {errors.variants && <p className="text-xs mt-0.5">{errors.variants}</p>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <section>
+        <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Basic Information</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="block md:col-span-2">
+            <span className="flex justify-between text-xs font-semibold text-text-secondary mb-1.5">
+              <span>Product Name <span className="text-danger">*</span></span>
+              <span className="font-normal text-text-muted">{draft.name.trim().length}/{PRODUCT.nameMax}</span>
+            </span>
+            <input type="text" placeholder="e.g. iPhone 15 Pro Max" value={draft.name} maxLength={PRODUCT.nameMax + 20}
+              onChange={(e) => set('name', e.target.value)} className={inputCls(errors.name)} aria-invalid={!!errors.name} />
+            {fieldError('name')}
+          </label>
+          <div>
+            <CreatableSelect label="Brand" options={brandOptions} value={draft.brand}
+              onChange={(v) => set('brand', v)}
+              onCreate={(v) => { const b = v.trim(); setExtraBrands((x) => [...x, b]); set('brand', b) }}
+              placeholder="Select or type a brand" error={errors.brand} required />
+          </div>
+          <label className="block">
+            <span className="block text-xs font-semibold text-text-secondary mb-1.5">Model Number <span className="text-danger">*</span></span>
+            <input type="text" placeholder="e.g. A2849" value={draft.model} maxLength={PRODUCT.modelMax}
+              onChange={(e) => set('model', e.target.value)} className={inputCls(errors.model)} aria-invalid={!!errors.model} />
+            {fieldError('model')}
+          </label>
+          <div>
+            <SearchableDropdown label="Category" options={categories.map((c) => c.name)} value={category?.name || ''}
+              onChange={(name) => {
+                const id = categories.find((c) => c.name === name)?.id ?? null
+                setDraft((d) => ({ ...d, categoryId: id, subcategoryId: id === d.categoryId ? d.subcategoryId : null }))
+                setErrors((e) => omitKey(e, 'category', 'subcategory'))
+              }}
+              placeholder={categories.length ? 'Select Category' : 'No active categories'} error={errors.category} required />
+          </div>
+          <div>
+            {draft.categoryId && subs.length === 0 ? (
+              <div>
+                <span className="block text-xs font-semibold text-text-secondary mb-1.5">Sub Category</span>
+                <p className="h-11 px-4 flex items-center rounded-xl bg-surface-lighter border border-dashed border-border text-xs text-text-muted">
+                  {category?.name} has no sub categories
+                </p>
+              </div>
+            ) : (
+              <SearchableDropdown label="Sub Category" options={subs.map((s) => s.name)} value={sub?.name || ''}
+                onChange={(name) => set('subcategoryId', subs.find((s) => s.name === name)?.id ?? null, 'subcategory')}
+                placeholder={draft.categoryId ? 'Select Sub Category' : 'Select a category first'} error={errors.subcategory} required={subs.length > 0} />
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-border pt-5">
+        <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Cover Image <span className="normal-case font-normal tracking-normal">(optional — used on listing cards)</span></h4>
+        <div className="flex items-center gap-4">
+          <div className="w-24 h-24 rounded-xl bg-surface-lighter border border-border overflow-hidden shrink-0 flex items-center justify-center">
+            {draft.cover ? <img src={draft.cover.src} alt="Cover" className="w-full h-full object-contain" /> : <FiImage size={22} className="text-text-muted" />}
+          </div>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <button type="button" onClick={() => coverRef.current?.click()}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 cursor-pointer"
+              ><FiUploadCloud size={12} /> {draft.cover ? 'Replace' : 'Upload'}</button>
+              {draft.cover && (
+                <button type="button" onClick={removeCover}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-danger/10 text-danger text-xs font-semibold hover:bg-danger/20 cursor-pointer"
+                ><FiX size={12} /> Remove</button>
+              )}
+            </div>
+            <p className="text-[11px] text-text-muted">{IMAGE_TYPES_LABEL}, up to {PRODUCT_IMAGE_MAX_MB}MB. Without one, the first variant image is used.</p>
+          </div>
+          <input ref={coverRef} type="file" accept={IMAGE_ACCEPT} className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) pickCover(f); e.target.value = '' }} />
+        </div>
+        {fieldError('cover')}
+      </section>
+
+      <section className="border-t border-border pt-5">
+        <label className="block">
+          <span className="flex justify-between text-xs font-bold text-text-muted uppercase tracking-wider mb-3">
+            <span>Description</span>
+            <span className="font-normal normal-case tracking-normal">{draft.description.trim().length}/{PRODUCT.descriptionMax}</span>
+          </span>
+          <textarea rows={4} placeholder="Detailed product description..." value={draft.description} maxLength={PRODUCT.descriptionMax + 100}
+            onChange={(e) => set('description', e.target.value)}
+            className={`w-full px-4 py-3 rounded-xl bg-surface-lighter border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 resize-y ${errors.description ? 'border-danger' : 'border-border'}`} />
+        </label>
+        {fieldError('description')}
+      </section>
+
+      <section className="border-t border-border pt-5">
+        <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Visibility & Tags</h4>
+        <div className="flex flex-wrap gap-2">
+          {toggle(draft.published ? '● Published' : '○ Hidden from shop', draft.published, (v) => set('published', v))}
+          {toggle('🔥 Trending', draft.trending, (v) => set('trending', v))}
+          {toggle('✨ New Arrival', draft.newArrival, (v) => set('newArrival', v))}
+          {toggle('🏆 Best Selling', draft.bestSelling, (v) => set('bestSelling', v))}
+          {toggle('⭐ Featured', draft.featured, (v) => set('featured', v))}
+          {toggle('♻️ Refurbished', draft.refurbished, (v) => set('refurbished', v))}
+        </div>
+      </section>
+
+      <section className="border-t border-border pt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+        <FeatureInputList features={draft.features} onChange={(f) => set('features', f)} label="Features"
+          maxItems={PRODUCT.maxFeatures} maxLength={PRODUCT.featureMax} error={errors.features} />
+        <CareInstructionList instructions={draft.careInstructions} onChange={(c) => set('careInstructions', c)} error={errors.careInstructions} />
+      </section>
+
+      <section className="border-t border-border pt-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+              Variants ({draft.variants.length}/{PRODUCT.maxVariants}) <span className="text-danger">*</span>
+            </h4>
+            <p className="text-[10px] text-text-muted mt-0.5">Each variant is a unique color + RAM + storage with its own price, stock and images</p>
+          </div>
+          <motion.button type="button" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={addVariant}
+            disabled={draft.variants.length >= PRODUCT.maxVariants}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold cursor-pointer disabled:opacity-50"
+          ><FiPlus size={13} /> Add Variant</motion.button>
+        </div>
+        <div className="space-y-3">
+          <AnimatePresence initial={false}>
+            {draft.variants.map((v, i) => (
+              <VariantCard key={v.key} variant={v} index={i} canDelete={draft.variants.length > 1}
+                onChange={(val) => updateVariant(v.key, val)}
+                onDelete={() => removeVariant(v.key)}
+                onDuplicate={() => duplicateVariant(v.key)}
+                errors={variantErrors[v.key]}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+    </div>
+  )
+
+  const actions = (
+    <div className="flex flex-wrap items-center gap-3">
+      <motion.button type="button" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSave} disabled={loading}
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+      >
+        {loading ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <FiSave size={15} />}
+        {loading ? 'Saving...' : mode === 'create' ? 'Save Product' : 'Save Changes'}
+      </motion.button>
+      {onCancel && (
+        <button type="button" onClick={onCancel} disabled={loading}
+          className="px-5 py-2.5 rounded-xl bg-surface-lighter border border-border text-text-secondary text-sm font-semibold hover:bg-surface-hover cursor-pointer disabled:opacity-50"
+        >Cancel</button>
+      )}
+      <button type="button" onClick={reset} disabled={loading}
+        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-lighter border border-border text-text-muted text-sm font-semibold hover:bg-rose-50 cursor-pointer disabled:opacity-50"
+      ><FiRefreshCw size={14} /> {mode === 'create' ? 'Reset' : 'Discard changes'}</button>
+    </div>
+  )
+
+  if (layout === 'drawer') {
     return (
-      <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-        className="text-xs text-danger mt-1 flex items-center gap-1"
-      ><FiAlertCircle size={11} /> {errors[field]}</motion.p>
+      <div className="flex flex-col h-full">
+        <div className="flex-1 overflow-y-auto p-6">
+          <motion.div key={shakeKey} animate={shakeKey ? { x: [0, -4, 4, -4, 4, 0] } : {}} transition={{ duration: 0.35 }}>{form}</motion.div>
+        </div>
+        <div className="border-t border-border p-4 bg-bg-card">{actions}</div>
+      </div>
     )
   }
 
   return (
-    <motion.div key={shakeKey} animate={Object.keys(errors).length > 0 ? { x: [0, -4, 4, -4, 4, -2, 2, 0] } : {}} transition={{ duration: 0.4 }}>
+    <motion.div key={shakeKey} animate={shakeKey ? { x: [0, -4, 4, -4, 4, 0] } : {}} transition={{ duration: 0.35 }}>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         <div className="lg:col-span-2">
           <GlassCard className="p-5 lg:p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-sm font-bold text-text-primary tracking-tight">Add New Product</h3>
-                <p className="text-xs text-text-muted mt-0.5">Fill details to create a new mobile product</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button type="button" onClick={() => setStatus(!status)}
-                  className={`relative w-20 h-8 rounded-xl border transition-all cursor-pointer ${status ? 'bg-primary/10 border-primary/20' : 'bg-rose-50 border-rose-200/50'}`}
-                >
-                  <span className={`text-[10px] font-semibold ${status ? 'text-primary' : 'text-rose-600'}`}>{status ? 'Active' : 'Inactive'}</span>
-                  <span className={`absolute top-1 bottom-1 w-4 rounded-lg bg-white shadow-sm transition-all duration-200 ${status ? 'right-1' : 'left-1'}`} />
-                </button>
-              </div>
+            <div className="mb-6">
+              <h3 className="text-sm font-bold text-text-primary tracking-tight">Add New Product</h3>
+              <p className="text-xs text-text-muted mt-0.5">Fields marked * are required</p>
             </div>
-
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Basic Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Product Name <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" placeholder="e.g. iPhone 15 Pro Max" value={name}
-                      onChange={(e) => { setName(e.target.value); if (errors.name) { const { name: _, ...r } = errors; setErrors(r) } }}
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(139,92,246,0.08)] ${hasError('name') ? 'border-danger' : 'border-border'}`}
-                    />
-                    <FieldError field="name" />
-                  </div>
-                  <div>
-                    <SearchableDropdown label="Brand" options={brands} value={brand}
-                      onChange={(v) => { setBrand(v); if (errors.brand) { const { brand: _, ...r } = errors; setErrors(r) } }}
-                      placeholder="Select Brand" error={getError('brand')} required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Model Number <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" placeholder="e.g. A2849" value={model}
-                      onChange={(e) => { setModel(e.target.value); if (errors.model) { const { model: _, ...r } = errors; setErrors(r) } }}
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${hasError('model') ? 'border-danger' : 'border-border'}`}
-                    />
-                    <FieldError field="model" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <SearchableDropdown label="Category" options={categoryNames || categories} value={category}
-                      onChange={(v) => { setCategory(v); if (errors.category) { const { category: _, ...r } = errors; setErrors(r) } }}
-                      placeholder="Select Category" error={getError('category')} required
-                    />
-                  </div>
-                  <div>
-                    <SearchableDropdown label="Sub Category" options={subcategoryNames || subcategories} value={subcategory}
-                      onChange={(v) => { setSubcategory(v); if (errors.subcategory) { const { subcategory: _, ...r } = errors; setErrors(r) } }}
-                      placeholder="Select Sub Category" error={getError('subcategory')} required
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Product Images ({productImages.length}/10)</h5>
-                  <div
-                    onDragOver={(e) => { e.preventDefault(); setProductImgDragOver(true) }}
-                    onDragLeave={() => setProductImgDragOver(false)}
-                    onDrop={(e) => { e.preventDefault(); setProductImgDragOver(false); if (e.dataTransfer.files) handleProductImages(e.dataTransfer.files) }}
-                    className={`rounded-xl border-2 border-dashed p-4 text-center transition-all duration-200 cursor-pointer ${
-                      productImgDragOver ? 'border-primary bg-primary/10' : 'border-primary/20 hover:border-primary/30 bg-surface-lighter'
-                    }`}
-                    onClick={() => productImgRef.current?.click()}
-                  >
-                    <input ref={productImgRef} type="file" accept="image/*" multiple className="hidden" onChange={addProductImages} />
-                    <div className="flex flex-col items-center gap-1.5">
-                      <FiUploadCloud size={18} className="text-primary" />
-                      <p className="text-xs font-semibold text-text-secondary">Drop product images or click to upload</p>
-                      <p className="text-[10px] text-text-muted">Up to 10 images | PNG, JPG, WebP</p>
-                    </div>
-                  </div>
-                  {productImages.length > 0 && (
-                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 mt-3">
-                      {productImages.map((img, i) => (
-                        <div key={`pi-${i}-${img.slice(0, 30)}`}
-                          className="relative group aspect-square rounded-xl bg-surface-lighter border border-border overflow-hidden"
-                        >
-                          <img src={img} alt={`Product image ${i + 1}`} className="w-full h-full object-cover" />
-                          <button type="button" onClick={() => removeProductImage(i)}
-                            className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer"
-                          >
-                            <span className="w-6 h-6 rounded-lg bg-white/90 flex items-center justify-center hover:bg-white">
-                              <FiX size={10} className="text-danger" />
-                            </span>
-                          </button>
-                        </div>
-                      ))}
-                      {productImages.length < 10 && (
-                        <button type="button" onClick={() => productImgRef.current?.click()}
-                          className="aspect-square rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/30 transition-all cursor-pointer"
-                        ><FiImage size={18} /></button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="border-t border-border pt-5">
-                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Description</h4>
-                <textarea rows={3} placeholder="Detailed product description..." value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-surface-lighter border border-border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(139,92,246,0.08)] resize-none"
-                />
-              </div>
-
-              <div className="border-t border-border pt-5">
-                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Tags</h4>
-                <div className="flex flex-wrap gap-2">
-                  <Toggle label="🔥 Trending" value={trending} onChange={setTrending} />
-                  <Toggle label="✨ New Arrival" value={newArrival} onChange={setNewArrival} />
-                  <Toggle label="🏆 Best Selling" value={bestSelling} onChange={setBestSelling} />
-                  <Toggle label="⭐ Featured" value={featured} onChange={setFeatured} />
-                  <Toggle label="♻️ Refurbished" value={refurbished} onChange={setRefurbished} />
-                </div>
-              </div>
-
-              <div className="border-t border-border pt-5">
-                <FeatureInputList features={features} onChange={setFeatures} label="Product Features" placeholder="e.g. 120Hz AMOLED Display" />
-              </div>
-
-              <div className="border-t border-border pt-5">
-                <CareInstructionList instructions={careInstructions} onChange={setCareInstructions} />
-              </div>
-
-              <div className="border-t border-border pt-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">
-                      Product Variants <span className="text-danger">*</span>
-                    </h4>
-                    <p className="text-[10px] text-text-muted mt-0.5">Each variant represents a unique configuration (RAM, storage, color, price)</p>
-                  </div>
-                  <motion.button type="button" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={addVariant}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold cursor-pointer"
-                  ><FiPlus size={13} /> Add Variant</motion.button>
-                </div>
-                {getError('variants') && (
-                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                    className="text-xs text-danger mb-3 flex items-center gap-1"
-                  ><FiAlertCircle size={11} /> {errors.variants}</motion.p>
-                )}
-                <div className="space-y-3">
-                  <AnimatePresence>
-                    {variants.map((v, i) => (
-                      <VariantCard key={v.id} variant={v} index={i}
-                        onChange={(val) => updateVariant(i, val)}
-                        onDelete={() => removeVariant(i)}
-                        onDuplicate={() => duplicateVariant(i)}
-                        errors={variantErrors[v.id] || {}}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
-
-              <div className="border-t border-border pt-5 flex flex-wrap items-center gap-3">
-                <motion.button type="button" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSave} disabled={loading}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
-                ><FiSave size={15} /> {loading ? 'Saving...' : 'Save Product'}</motion.button>
-                <motion.button type="button" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={reset} disabled={loading}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-lighter border border-border text-text-muted text-sm font-semibold hover:bg-rose-50 transition-all cursor-pointer disabled:opacity-50"
-                ><FiRefreshCw size={14} /> Reset</motion.button>
-              </div>
-            </div>
+            {form}
+            <div className="border-t border-border pt-5 mt-6">{actions}</div>
           </GlassCard>
         </div>
-
         <div className="lg:col-span-1">
           <div className="sticky top-24 space-y-4">
             <GlassCard className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">Live Preview</h4>
-                {variants.length > 1 && (
-                  <select value={selectedVariantIdx} onChange={(e) => setSelectedVariantIdx(Number(e.target.value))}
+                {draft.variants.length > 1 && (
+                  <select value={previewIdx} onChange={(e) => setPreviewIdx(Number(e.target.value))} aria-label="Preview variant"
                     className="text-[10px] px-2 py-1 rounded-lg bg-surface-lighter border border-border text-text-secondary outline-none cursor-pointer"
                   >
-                    {variants.map((_, i) => (<option key={i} value={i}>Variant {i + 1}</option>))}
+                    {draft.variants.map((v, i) => <option key={v.key} value={i}>{v.name || `Variant ${i + 1}`}</option>)}
                   </select>
                 )}
               </div>
               <PreviewCard product={{
-                name, originalPrice: previewVariant?.price || 0,
-                discountPrice: previewVariant?.discountPrice || 0,
-                thumbnail: previewVariant?.images?.[0] || '📱', category, brand,
-                stock: previewVariant?.stock || 0, trending, newArrival,
-                ram: previewVariant?.ram || '', storage: previewVariant?.storage || '',
-                battery: previewVariant?.battery || 0, processor: previewVariant?.processor || '',
-                display: previewVariant?.display || '', camera: previewVariant?.camera || '',
-                color: previewVariant?.color || '', images: previewVariant?.images || [],
+                name: draft.name, originalPrice: previewVariant?.price || 0, discountPrice: previewVariant?.discountPrice || 0,
+                thumbnail: previewVariant?.images[0]?.src || draft.cover?.src || '📱', category: category?.name || '', brand: draft.brand,
+                stock: previewVariant?.stock || 0, trending: draft.trending, newArrival: draft.newArrival,
+                ram: previewVariant?.ram || '', storage: previewVariant?.storage || '', battery: previewVariant?.battery || 0,
+                processor: previewVariant?.processor || '', display: previewVariant?.display || '', camera: previewVariant?.camera || '',
+                color: previewVariant?.color || '', images: previewVariant?.images.map((img) => img.src) || [],
               }} />
             </GlassCard>
-            {variants.length > 0 && (
-              <GlassCard className="p-4">
-                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Summary</h4>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between"><span className="text-text-muted">Variants</span><span className="font-semibold text-text-primary">{variants.length}</span></div>
-                  <div className="flex justify-between"><span className="text-text-muted">Total Stock</span><span className="font-semibold text-text-primary">{totalStock}</span></div>
-                  {effectivePrice > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-text-muted">Price Range</span>
-                      <span className="font-semibold text-text-primary">₹{effectivePrice.toLocaleString('en-IN')}{maxPrice > effectivePrice ? ` - ₹${maxPrice.toLocaleString('en-IN')}` : ''}</span>
-                    </div>
-                  )}
-                </div>
-              </GlassCard>
-            )}
+            <GlassCard className="p-4">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Summary</h4>
+              <dl className="space-y-2 text-xs">
+                <div className="flex justify-between"><dt className="text-text-muted">Variants</dt><dd className="font-semibold text-text-primary">{draft.variants.length}</dd></div>
+                <div className="flex justify-between"><dt className="text-text-muted">Total stock</dt><dd className="font-semibold text-text-primary">{totalStock.toLocaleString('en-IN')}</dd></div>
+                {prices.length > 0 && (
+                  <div className="flex justify-between">
+                    <dt className="text-text-muted">Price range</dt>
+                    <dd className="font-semibold text-text-primary">
+                      ₹{Math.min(...prices).toLocaleString('en-IN')}{Math.max(...prices) > Math.min(...prices) ? ` – ₹${Math.max(...prices).toLocaleString('en-IN')}` : ''}
+                    </dd>
+                  </div>
+                )}
+                <div className="flex justify-between"><dt className="text-text-muted">Status</dt><dd className="font-semibold text-text-primary">{draft.published ? 'Published' : 'Hidden'}</dd></div>
+              </dl>
+            </GlassCard>
           </div>
         </div>
       </div>

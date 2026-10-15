@@ -1,355 +1,259 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiChevronDown, FiTrash2, FiCopy, FiImage, FiX, FiStar, FiUploadCloud } from 'react-icons/fi'
-import { useRef, useState, useCallback } from 'react'
+import { FiChevronDown, FiTrash2, FiCopy, FiImage, FiX, FiStar, FiUploadCloud, FiAlertCircle } from 'react-icons/fi'
+import { useRef, useState } from 'react'
 import SearchableDropdown from './SearchableDropdown'
 import { ramOptions, storageOptions } from '../../data/productData'
-import type { Variant } from '../../data/productData'
-
-function VariantImage({ src, onRemove, onSetMain, isMain, index }: { src: string; onRemove: () => void; onSetMain?: () => void; isMain: boolean; index: number }) {
-  const [error, setError] = useState(false)
-  const isUrl = src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('http')
-  return (
-    <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-      className="relative group aspect-square rounded-xl bg-surface-lighter border border-border overflow-hidden"
-    >
-      {isUrl && !error ? (
-        <img src={src} alt={`Variant image ${index + 1}`} onError={() => setError(true)} className="w-full h-full object-cover" />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <FiImage size={20} className="text-text-muted" />
-        </div>
-      )}
-      {isMain && (
-        <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-warning text-white text-[8px] font-bold">Main</div>
-      )}
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100">
-        {!isMain && onSetMain && (
-          <button type="button" onClick={(e) => { e.stopPropagation(); onSetMain() }}
-            className="w-6 h-6 rounded-lg bg-white/90 flex items-center justify-center hover:bg-white cursor-pointer"
-            title="Set as main"
-          ><FiStar size={10} className="text-warning" /></button>
-        )}
-        <button type="button" onClick={(e) => { e.stopPropagation(); onRemove() }}
-          className="w-6 h-6 rounded-lg bg-white/90 flex items-center justify-center hover:bg-white cursor-pointer"
-          title="Remove"
-        ><FiX size={10} className="text-danger" /></button>
-      </div>
-    </motion.div>
-  )
-}
+import {
+  IMAGE_ACCEPT, IMAGE_TYPES_LABEL, PRODUCT, PRODUCT_IMAGE_MAX_MB, imageFileError,
+} from '../../utils/catalogValidation'
+import { fileDraft, releaseImage, type VariantDraft } from './productDraft'
 
 interface VariantCardProps {
-  variant: Variant
+  variant: VariantDraft
   index: number
-  onChange: (variant: Variant) => void
+  canDelete: boolean
+  onChange: (variant: VariantDraft) => void
   onDelete: () => void
   onDuplicate: () => void
   errors?: Record<string, string>
 }
 
-export default function VariantCard({ variant, index, onChange, onDelete, onDuplicate, errors = {} }: VariantCardProps) {
-  const [open, setOpen] = useState(index === 0)
+const withCurrent = (options: string[], value: string) => (value && !options.includes(value) ? [value, ...options] : options)
+
+export default function VariantCard({ variant, index, canDelete, onChange, onDelete, onDuplicate, errors = {} }: VariantCardProps) {
+  const [openState, setOpen] = useState(index === 0 || !variant.dbId)
+  const [dragOver, setDragOver] = useState(false)
+  const [imageError, setImageError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const errorCount = Object.keys(errors).length
 
-  const update = (key: keyof Variant, val: string | number | string[]) => onChange({ ...variant, [key]: val })
+  // A card with errors stays open so the admin sees them.
+  const open = openState || errorCount > 0
 
-  const handleFiles = useCallback((files: FileList) => {
-    const remaining = 10 - variant.images.length
-    if (remaining <= 0) return
-    const toAdd = Math.min(files.length, remaining)
-    for (let i = 0; i < toAdd; i++) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          onChange({ ...variant, images: [...variant.images, e.target.result as string] })
-        }
-      }
-      reader.readAsDataURL(files[i])
-    }
-  }, [variant, onChange])
+  const update = <K extends keyof VariantDraft>(key: K, val: VariantDraft[K]) => onChange({ ...variant, [key]: val })
+  const num = (s: string) => (s.trim() === '' ? 0 : Number(s))
 
-  const addImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleFiles(e.target.files)
-    e.target.value = ''
+  const addFiles = (files: FileList) => {
+    const room = PRODUCT.maxImagesPerVariant - variant.images.length
+    const picked = Array.from(files)
+    const problems: string[] = []
+    const good = picked.filter((f) => { const err = imageFileError(f, PRODUCT_IMAGE_MAX_MB); if (err) problems.push(err); return !err })
+    if (good.length > room) problems.push(`Only ${room} more image${room === 1 ? '' : 's'} allowed (max ${PRODUCT.maxImagesPerVariant})`)
+    setImageError(problems.join(' · '))
+    if (room > 0 && good.length) onChange({ ...variant, images: [...variant.images, ...good.slice(0, room).map(fileDraft)] })
   }
 
-  const removeImage = (imgIdx: number) => {
-    onChange({ ...variant, images: variant.images.filter((_, i) => i !== imgIdx) })
+  const removeImage = (key: string) => {
+    const img = variant.images.find((i) => i.key === key)
+    if (img) releaseImage(img)
+    onChange({ ...variant, images: variant.images.filter((i) => i.key !== key) })
   }
 
-  const setMainImage = (imgIdx: number) => {
-    const next = [...variant.images]
-    const [item] = next.splice(imgIdx, 1)
-    next.unshift(item)
-    onChange({ ...variant, images: next })
+  const makeMain = (key: string) => {
+    const img = variant.images.find((i) => i.key === key)
+    if (img) onChange({ ...variant, images: [img, ...variant.images.filter((i) => i.key !== key)] })
   }
 
-  const [imageDragOver, setImageDragOver] = useState(false)
+  const input = (hasErr: boolean) =>
+    `w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${hasErr ? 'border-danger' : 'border-border'}`
+  const err = (k: string) => (errors[k] ? <p role="alert" className="text-xs text-danger mt-1">{errors[k]}</p> : null)
+  const label = (text: string, required = true) => (
+    <span className="block text-xs font-semibold text-text-secondary mb-1.5">{text} {required && <span className="text-danger">*</span>}</span>
+  )
 
-  const hasError = (field: string) => errors[field] ? true : false
-  const getError = (field: string) => errors[field] || ''
+  const discountPct = variant.price > 0 && variant.discountPrice > 0 && variant.discountPrice < variant.price
+    ? Math.round((1 - variant.discountPrice / variant.price) * 100) : 0
+  const stockState = variant.stock === 0 ? 'Out of stock' : variant.stock <= variant.lowStockAlert ? 'Low stock' : 'In stock'
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-      className={`rounded-xl bg-bg-card border overflow-hidden ${
-        Object.keys(errors).length > 0 ? 'border-danger/30' : 'border-border'
-      }`}
+    <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+      className={`rounded-xl bg-bg-card border overflow-hidden ${errorCount ? 'border-danger/40' : 'border-border'}`}
     >
-      <button type="button" onClick={() => setOpen(!open)}
+      <button type="button" onClick={() => setOpen(!openState)} aria-expanded={open}
         className="w-full flex items-center justify-between px-5 py-4 hover:bg-primary/[0.03] transition-colors cursor-pointer"
       >
-        <div className="flex items-center gap-3">
-          <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{index + 1}</span>
-          <div className="text-left">
-            <p className="text-sm font-semibold text-text-primary">{variant.name || `Variant ${index + 1}`}</p>
-            <p className="text-[10px] text-text-muted">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0 overflow-hidden">
+            {variant.images[0] ? <img src={variant.images[0].src} alt="" className="w-full h-full object-cover" /> : index + 1}
+          </span>
+          <div className="text-left min-w-0">
+            <p className="text-sm font-semibold text-text-primary truncate">{variant.name || `Variant ${index + 1}`}</p>
+            <p className="text-[10px] text-text-muted truncate">
               {variant.ram || 'RAM'} • {variant.storage || 'Storage'} • {variant.color || 'Color'}
               {variant.price > 0 && ` • ₹${variant.price.toLocaleString('en-IN')}`}
+              {variant.dbId ? '' : ' • new'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
+          {errorCount > 0 && (
+            <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-danger/10 text-danger text-[10px] font-semibold">
+              <FiAlertCircle size={10} /> {errorCount} to fix
+            </span>
+          )}
           <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
             <FiChevronDown size={16} className="text-text-muted" />
           </motion.span>
         </div>
       </button>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="border-t border-border"
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }} className="border-t border-border"
           >
             <div className="p-5 space-y-5">
-              {/* Basic Variant Info */}
-              <div>
-                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Basic Variant Info</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Variant Name <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" value={variant.name} onChange={(e) => update('name', e.target.value)} placeholder="e.g. Midnight Black 256GB"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('name') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('name') && <p className="text-xs text-danger mt-1">{getError('name')}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Color <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" value={variant.color} onChange={(e) => update('color', e.target.value)} placeholder="e.g. Midnight Black"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('color') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('color') && <p className="text-xs text-danger mt-1">{getError('color')}</p>}
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="block">
+                  {label('Variant Name')}
+                  <input type="text" value={variant.name} maxLength={100} onChange={(e) => update('name', e.target.value)} placeholder="e.g. Midnight Black 256GB" className={input(!!errors.name)} />
+                  {err('name')}
+                </label>
+                <label className="block">
+                  {label('Color')}
+                  <input type="text" value={variant.color} maxLength={50} onChange={(e) => update('color', e.target.value)} placeholder="e.g. Midnight Black" className={input(!!errors.color)} />
+                  {err('color')}
+                </label>
               </div>
 
-              {/* Mobile Specs */}
               <div className="border-t border-border pt-4">
-                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Mobile Specifications</h5>
+                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Specifications</h5>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <SearchableDropdown
-                      label="RAM Size"
-                      options={ramOptions}
-                      value={variant.ram}
-                      onChange={(v) => update('ram', v)}
-                      placeholder="Select RAM"
-                      error={getError('ram')}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <SearchableDropdown
-                      label="Storage Size"
-                      options={storageOptions}
-                      value={variant.storage}
-                      onChange={(v) => update('storage', v)}
-                      placeholder="Select Storage"
-                      error={getError('storage')}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Battery Capacity (mAh) <span className="text-danger">*</span>
-                    </label>
-                    <input type="number" value={variant.battery || ''} onChange={(e) => update('battery', Number(e.target.value))} placeholder="e.g. 5000"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('battery') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('battery') && <p className="text-xs text-danger mt-1">{getError('battery')}</p>}
-                  </div>
+                  <SearchableDropdown label="RAM Size" options={withCurrent(ramOptions, variant.ram)} value={variant.ram}
+                    onChange={(v) => update('ram', v)} placeholder="Select RAM" error={errors.ram} required />
+                  <SearchableDropdown label="Storage Size" options={withCurrent(storageOptions, variant.storage)} value={variant.storage}
+                    onChange={(v) => update('storage', v)} placeholder="Select Storage" error={errors.storage} required />
+                  <label className="block">
+                    {label('Battery (mAh)')}
+                    <input type="number" inputMode="numeric" min={PRODUCT.batteryMin} max={PRODUCT.batteryMax} step={1}
+                      value={variant.battery || ''} onChange={(e) => update('battery', num(e.target.value))} placeholder="e.g. 5000" className={input(!!errors.battery)} />
+                    {err('battery')}
+                  </label>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Processor <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" value={variant.processor} onChange={(e) => update('processor', e.target.value)} placeholder="e.g. A17 Pro"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('processor') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('processor') && <p className="text-xs text-danger mt-1">{getError('processor')}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Display Size <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" value={variant.display} onChange={(e) => update('display', e.target.value)} placeholder='e.g. 6.7" Super Retina XDR'
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('display') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('display') && <p className="text-xs text-danger mt-1">{getError('display')}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Camera Details <span className="text-danger">*</span>
-                    </label>
-                    <input type="text" value={variant.camera} onChange={(e) => update('camera', e.target.value)} placeholder="e.g. 48MP + 12MP + 12MP"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('camera') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('camera') && <p className="text-xs text-danger mt-1">{getError('camera')}</p>}
-                  </div>
+                  <label className="block">
+                    {label('Processor')}
+                    <input type="text" value={variant.processor} maxLength={100} onChange={(e) => update('processor', e.target.value)} placeholder="e.g. A17 Pro" className={input(!!errors.processor)} />
+                    {err('processor')}
+                  </label>
+                  <label className="block">
+                    {label('Display Size')}
+                    <input type="text" value={variant.display} maxLength={50} onChange={(e) => update('display', e.target.value)} placeholder='e.g. 6.7" OLED' className={input(!!errors.display)} />
+                    {err('display')}
+                  </label>
+                  <label className="block">
+                    {label('Camera Details')}
+                    <input type="text" value={variant.camera} maxLength={255} onChange={(e) => update('camera', e.target.value)} placeholder="e.g. 48MP + 12MP" className={input(!!errors.camera)} />
+                    {err('camera')}
+                  </label>
                 </div>
               </div>
 
-              {/* Pricing */}
               <div className="border-t border-border pt-4">
-                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Pricing</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Price (₹) <span className="text-danger">*</span>
-                    </label>
-                    <input type="number" value={variant.price || ''} onChange={(e) => update('price', Number(e.target.value))} placeholder="e.g. 159900"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('price') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('price') && <p className="text-xs text-danger mt-1">{getError('price')}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">Discount Price (₹)</label>
-                    <input type="number" value={variant.discountPrice || ''} onChange={(e) => update('discountPrice', Number(e.target.value))} placeholder="e.g. 142900"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('discountPrice') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('discountPrice') && <p className="text-xs text-danger mt-1">{getError('discountPrice')}</p>}
-                  </div>
+                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Pricing & Stock</h5>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <label className="block">
+                    {label('Price (₹)')}
+                    <input type="number" inputMode="decimal" min={0.01} step={0.01} value={variant.price || ''}
+                      onChange={(e) => update('price', num(e.target.value))} placeholder="e.g. 59999" className={input(!!errors.price)} />
+                    {err('price')}
+                  </label>
+                  <label className="block">
+                    {label('Discount Price (₹)', false)}
+                    <input type="number" inputMode="decimal" min={0} step={0.01} value={variant.discountPrice || ''}
+                      onChange={(e) => update('discountPrice', num(e.target.value))} placeholder="Optional" className={input(!!errors.discountPrice)} />
+                    {err('discountPrice')}
+                  </label>
+                  <label className="block">
+                    {label('Stock')}
+                    <input type="number" inputMode="numeric" min={0} max={PRODUCT.stockMax} step={1} value={Number.isNaN(variant.stock) ? '' : variant.stock}
+                      onChange={(e) => update('stock', num(e.target.value))} className={input(!!errors.stock)} />
+                    {err('stock')}
+                  </label>
+                  <label className="block">
+                    {label('Low Stock Alert', false)}
+                    <input type="number" inputMode="numeric" min={0} max={PRODUCT.lowStockMax} step={1} value={Number.isNaN(variant.lowStockAlert) ? '' : variant.lowStockAlert}
+                      onChange={(e) => update('lowStockAlert', num(e.target.value))} className={input(!!errors.lowStockAlert)} />
+                    {err('lowStockAlert')}
+                  </label>
                 </div>
-                {variant.price > 0 && variant.discountPrice > 0 && variant.discountPrice < variant.price && (
-                  <div className="mt-3 px-4 py-2.5 rounded-xl bg-success/10 border border-success/20 flex items-center gap-3">
-                    <span className="text-xs font-bold text-success">{Math.round((1 - variant.discountPrice / variant.price) * 100)}% OFF</span>
-                    <span className="text-xs text-text-muted line-through">₹{variant.price.toLocaleString('en-IN')}</span>
-                    <span className="text-xs font-semibold text-text-primary">₹{variant.discountPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                )}
+                <div className="flex flex-wrap gap-2 mt-3 text-xs font-semibold">
+                  {discountPct > 0 && (
+                    <span className="px-3 py-1.5 rounded-lg bg-success/10 text-success">{discountPct}% off · customer pays ₹{variant.discountPrice.toLocaleString('en-IN')}</span>
+                  )}
+                  <span className={`px-3 py-1.5 rounded-lg ${variant.stock === 0 ? 'bg-rose-50 text-rose-600' : variant.stock <= variant.lowStockAlert ? 'bg-amber-50 text-amber-700' : 'bg-primary/10 text-primary'}`}>
+                    {stockState}
+                  </span>
+                </div>
               </div>
 
-              {/* Stock */}
-              <div className="border-t border-border pt-4">
-                <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">Stock</h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-                      Stock Quantity <span className="text-danger">*</span>
-                    </label>
-                    <input type="number" value={variant.stock || ''} onChange={(e) => update('stock', Number(e.target.value))} placeholder="e.g. 50"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('stock') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('stock') && <p className="text-xs text-danger mt-1">{getError('stock')}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-text-secondary mb-1.5">Low Stock Alert</label>
-                    <input type="number" value={variant.lowStockAlert || ''} onChange={(e) => update('lowStockAlert', Number(e.target.value))} placeholder="e.g. 5"
-                      className={`w-full h-11 px-4 rounded-xl bg-surface-lighter border text-sm text-text-primary outline-none transition-all focus:border-primary/50 ${
-                        hasError('lowStockAlert') ? 'border-danger' : 'border-border'
-                      }`}
-                    />
-                    {getError('lowStockAlert') && <p className="text-xs text-danger mt-1">{getError('lowStockAlert')}</p>}
-                  </div>
-                </div>
-                {variant.stock > 0 && (
-                  <div className={`mt-3 px-4 py-2.5 rounded-xl text-xs font-semibold ${
-                    variant.stock === 0 ? 'bg-rose-50 text-rose-600' :
-                    variant.lowStockAlert && variant.stock <= variant.lowStockAlert ? 'bg-primary/10 text-primary' :
-                    'bg-primary/10 text-primary'
-                  }`}>
-                    {variant.stock === 0 ? 'Out of Stock' :
-                     variant.lowStockAlert && variant.stock <= variant.lowStockAlert ? 'Low Stock' : 'In Stock'}
-                  </div>
-                )}
-              </div>
-
-              {/* Images */}
               <div className="border-t border-border pt-4">
                 <h5 className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-3">
-                  Variant Images ({variant.images.length}/10) <span className="text-danger">*</span>
+                  Images ({variant.images.length}/{PRODUCT.maxImagesPerVariant}) <span className="text-danger">*</span>
+                  <span className="normal-case font-normal tracking-normal ml-2">First image is the main one</span>
                 </h5>
                 <div
-                  onDragOver={(e) => { e.preventDefault(); setImageDragOver(true) }}
-                  onDragLeave={() => setImageDragOver(false)}
-                  onDrop={(e) => { e.preventDefault(); setImageDragOver(false); if (e.dataTransfer.files) handleFiles(e.dataTransfer.files) }}
-                  className={`rounded-xl border-2 border-dashed p-4 text-center transition-all duration-200 cursor-pointer ${
-                    imageDragOver ? 'border-primary bg-primary/10' : 'border-primary/20 hover:border-primary/30 bg-surface-lighter'
-                  }`}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files) }}
                   onClick={() => inputRef.current?.click()}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inputRef.current?.click() } }}
+                  role="button" tabIndex={0} aria-label={`Upload images for variant ${index + 1}`}
+                  className={`rounded-xl border-2 border-dashed p-4 text-center transition-all duration-200 cursor-pointer ${
+                    dragOver ? 'border-primary bg-primary/10' : errors.images ? 'border-danger bg-danger/5' : 'border-primary/20 hover:border-primary/30 bg-surface-lighter'
+                  }`}
                 >
-                  <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={addImages} />
+                  <input ref={inputRef} type="file" accept={IMAGE_ACCEPT} multiple className="hidden"
+                    onChange={(e) => { if (e.target.files?.length) addFiles(e.target.files); e.target.value = '' }} />
                   <div className="flex flex-col items-center gap-1.5">
                     <FiUploadCloud size={18} className="text-primary" />
                     <p className="text-xs font-semibold text-text-secondary">Drop images or click to upload</p>
-                    <p className="text-[10px] text-text-muted">Up to 10 images | PNG, JPG, WebP</p>
+                    <p className="text-[10px] text-text-muted">{IMAGE_TYPES_LABEL}, up to {PRODUCT_IMAGE_MAX_MB}MB each</p>
                   </div>
                 </div>
-
                 {variant.images.length > 0 && (
-                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 mt-3">
-                    <AnimatePresence>
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mt-3">
+                    <AnimatePresence initial={false}>
                       {variant.images.map((img, i) => (
-                        <VariantImage key={`${i}-${img.slice(0, 30)}`} src={img} index={i} isMain={i === 0}
-                          onSetMain={i !== 0 ? () => setMainImage(i) : undefined}
-                          onRemove={() => removeImage(i)}
-                        />
+                        <motion.div key={img.key} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                          className="relative group aspect-square rounded-xl bg-surface-lighter border border-border overflow-hidden"
+                        >
+                          <img src={img.src} alt={`Variant image ${i + 1}`} className="w-full h-full object-cover" />
+                          {i === 0 && <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded-md bg-warning text-white text-[8px] font-bold">Main</span>}
+                          {!img.id && <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-md bg-primary text-white text-[8px] font-bold">New</span>}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 group-focus-within:bg-black/40 transition-all flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100">
+                            {i !== 0 && (
+                              <button type="button" onClick={() => makeMain(img.key)} title="Make main image" aria-label="Make main image"
+                                className="w-6 h-6 rounded-lg bg-white/90 flex items-center justify-center hover:bg-white cursor-pointer"
+                              ><FiStar size={10} className="text-warning" /></button>
+                            )}
+                            <button type="button" onClick={() => removeImage(img.key)} title="Remove image" aria-label="Remove image"
+                              className="w-6 h-6 rounded-lg bg-white/90 flex items-center justify-center hover:bg-white cursor-pointer"
+                            ><FiX size={10} className="text-danger" /></button>
+                          </div>
+                        </motion.div>
                       ))}
                     </AnimatePresence>
-                    {variant.images.length < 10 && (
-                      <button type="button" onClick={() => inputRef.current?.click()}
+                    {variant.images.length < PRODUCT.maxImagesPerVariant && (
+                      <button type="button" onClick={() => inputRef.current?.click()} aria-label="Add image"
                         className="aspect-square rounded-xl border-2 border-dashed border-primary/20 flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/30 transition-all cursor-pointer"
                       ><FiImage size={18} /></button>
                     )}
                   </div>
                 )}
-                {getError('images') && <p className="text-xs text-danger mt-1">{getError('images')}</p>}
+                {(imageError || errors.images) && (
+                  <p role="alert" className="text-xs text-danger mt-1.5">{[errors.images, imageError].filter(Boolean).join(' · ')}</p>
+                )}
               </div>
 
-              {/* Actions */}
               <div className="border-t border-border pt-3 flex items-center gap-2">
-                <motion.button type="button" whileTap={{ scale: 0.95 }} onClick={onDuplicate}
+                <button type="button" onClick={onDuplicate}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors cursor-pointer"
-                ><FiCopy size={12} /> Duplicate</motion.button>
-                <motion.button type="button" whileTap={{ scale: 0.95 }} onClick={onDelete}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-semibold hover:bg-rose-100/50 transition-colors cursor-pointer"
-                ><FiTrash2 size={12} /> Remove</motion.button>
+                ><FiCopy size={12} /> Duplicate</button>
+                <button type="button" onClick={onDelete} disabled={!canDelete}
+                  title={canDelete ? undefined : 'A product needs at least one variant'}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 text-rose-600 text-xs font-semibold hover:bg-rose-100/50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                ><FiTrash2 size={12} /> Remove variant</button>
               </div>
             </div>
           </motion.div>
