@@ -1,0 +1,263 @@
+/* Desktop order confirmation. Scoped under .osx so nothing leaks into the app. */
+.osx {
+  --osx-paper: #fbf8f6;
+  --osx-card: #ffffff;
+  --osx-ink: #1b1210;
+  --osx-ink-2: #4a403d;
+  --osx-muted: #857d79;
+  --osx-line: #ece4e0;
+  --osx-red: #d91e36;
+  --osx-red-dark: #a3122a;
+  --osx-red-tint: #fdecee;
+  --osx-green: #059669;
+  --osx-green-tint: #e7f6f0;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--osx-paper);
+  color: var(--osx-ink);
+  font-family: var(--font-ui);
+}
+
+.osx-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 36px 24px 64px;
+}
+
+/* ── Hero ── */
+.osx-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 32px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #065f46 0%, #059669 60%, #10b981 100%);
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(5, 150, 105, 0.25);
+}
+.osx-hero::after {
+  content: '';
+  position: absolute;
+  right: -80px;
+  top: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+.osx-check {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--osx-green);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.18);
+  animation: osx-pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.osx-check svg path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: osx-draw 0.5s 0.35s ease-out forwards;
+}
+.osx-hero-text { position: relative; flex: 1; min-width: 0; }
+.osx-hero-text h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.osx-hero-text p { margin: 0; font-size: 14.5px; opacity: 0.9; line-height: 1.6; }
+.osx-hero-meta {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.osx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.osx-hero-actions { position: relative; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+
+/* ── Buttons ── */
+.osx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  font: 600 14px var(--font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+}
+.osx-btn:active { transform: scale(0.98); }
+.osx-btn-light { background: #fff; color: var(--osx-green); }
+.osx-btn-light:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); }
+.osx-btn-outline-light { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.55); }
+.osx-btn-outline-light:hover { background: rgba(255, 255, 255, 0.12); }
+.osx-btn-primary {
+  background: linear-gradient(135deg, var(--osx-red), var(--osx-red-dark));
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(217, 30, 54, 0.28);
+}
+.osx-btn-primary:hover { box-shadow: 0 10px 24px rgba(217, 30, 54, 0.38); }
+.osx-btn-ghost { background: #fff; color: var(--osx-ink); border-color: var(--osx-line); }
+.osx-btn-ghost:hover { border-color: var(--osx-ink-2); }
+
+/* ── Layout ── */
+.osx-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+.osx-card {
+  background: var(--osx-card);
+  border: 1px solid var(--osx-line);
+  border-radius: 18px;
+  box-shadow: 0 2px 10px rgba(27, 18, 16, 0.04);
+}
+.osx-card + .osx-card { margin-top: 20px; }
+.osx-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--osx-line);
+}
+.osx-card-head h2 { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+.osx-card-head span { font-size: 12.5px; color: var(--osx-muted); }
+.osx-card-body { padding: 20px 22px; }
+
+/* ── Timeline ── */
+.osx-timeline { list-style: none; margin: 0; padding: 0; }
+.osx-step { position: relative; display: flex; gap: 14px; padding-bottom: 22px; }
+.osx-step:last-child { padding-bottom: 0; }
+.osx-step::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 0;
+  width: 2px;
+  background: var(--osx-line);
+}
+.osx-step:last-child::before { display: none; }
+.osx-step.is-done::before { background: var(--osx-green); }
+.osx-dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--osx-line);
+  color: var(--osx-muted);
+}
+.osx-step.is-done .osx-dot { background: var(--osx-green); border-color: var(--osx-green); color: #fff; }
+.osx-step.is-current .osx-dot { border-color: var(--osx-red); color: var(--osx-red); box-shadow: 0 0 0 4px var(--osx-red-tint); }
+.osx-step-text { padding-top: 5px; }
+.osx-step-text strong { display: block; font-size: 14px; font-weight: 600; color: var(--osx-ink); }
+.osx-step:not(.is-done):not(.is-current) .osx-step-text strong { color: var(--osx-muted); font-weight: 500; }
+.osx-step-text span { font-size: 12.5px; color: var(--osx-muted); }
+
+/* ── Items ── */
+.osx-items { list-style: none; margin: 0; padding: 0; }
+.osx-item { display: flex; align-items: center; gap: 16px; padding: 14px 22px; }
+.osx-item + .osx-item { border-top: 1px solid var(--osx-line); }
+.osx-thumb {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 1px solid var(--osx-line);
+  background: var(--osx-paper);
+  overflow: hidden;
+  font-size: 26px;
+}
+.osx-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.osx-item-info { flex: 1; min-width: 0; }
+.osx-item-info strong { display: block; font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.osx-item-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.osx-tag { padding: 2px 8px; border-radius: 6px; background: var(--osx-paper); border: 1px solid var(--osx-line); font-size: 11.5px; color: var(--osx-ink-2); }
+.osx-item-price { font-family: var(--font-display); font-weight: 700; font-size: 15px; white-space: nowrap; }
+
+/* ── Summary ── */
+.osx-rows { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.osx-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--osx-ink-2); }
+.osx-row dd { margin: 0; font-weight: 600; color: var(--osx-ink); }
+.osx-row.is-green dd { color: var(--osx-green); }
+.osx-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--osx-line);
+}
+.osx-total span { font-size: 14px; font-weight: 600; }
+.osx-total strong { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--osx-red); }
+
+.osx-info { display: flex; gap: 12px; align-items: flex-start; }
+.osx-info + .osx-info { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--osx-line); }
+.osx-info-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--osx-red-tint);
+  color: var(--osx-red);
+}
+.osx-info-icon.is-green { background: var(--osx-green-tint); color: var(--osx-green); }
+.osx-info strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.osx-info p { margin: 0; font-size: 12.5px; color: var(--osx-muted); line-height: 1.5; }
+
+.osx-help { display: flex; gap: 10px; }
+.osx-help .osx-btn { flex: 1; height: 42px; font-size: 13px; padding: 0 12px; }
+
+.osx-empty { padding: 28px 22px; text-align: center; color: var(--osx-muted); font-size: 14px; }
+
+@keyframes osx-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes osx-draw { to { stroke-dashoffset: 0; } }
+
+@media (max-width: 960px) {
+  .osx-grid { grid-template-columns: 1fr; }
+  .osx-hero { flex-wrap: wrap; }
+  .osx-hero-actions { flex-direction: row; width: 100%; }
+  .osx-hero-actions .osx-btn { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osx-check, .osx-check svg path { animation: none; stroke-dashoffset: 0; }
+}

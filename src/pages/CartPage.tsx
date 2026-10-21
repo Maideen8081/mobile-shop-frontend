@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import './CartPage.css'
 import { productService } from '../services/productService'
 import { cartService, type CartItem } from '../services/cartService'
@@ -299,7 +300,7 @@ export default function CartPage() {
         <header className="cx-head">
           <div>
             <nav className="cx-crumbs" aria-label="Breadcrumb">
-              <Link to="/">Home</Link><span>/</span><span aria-current="page">Cart</span>
+              <Link to="/home">Home</Link><span>/</span><span aria-current="page">Cart</span>
             </nav>
             <h1>Shopping Cart</h1>
             <p className="cx-head-sub">
@@ -316,7 +317,9 @@ export default function CartPage() {
           </ol>
         </header>
 
-        {!loading && cart.length === 0 ? (
+        {loading ? (
+          <DesktopPageLoader text="Loading your cart..." />
+        ) : cart.length === 0 ? (
           <section className="cx-empty">
             <div className="cx-empty-icon"><ShoppingBag size={34} /></div>
             <h2>Your cart is empty</h2>
@@ -353,16 +356,7 @@ export default function CartPage() {
                   )}
                 </div>
 
-                {loading ? (
-                  <ul className="cx-items">
-                    {[0, 1].map((n) => (
-                      <li key={n} className="cx-item cx-skel">
-                        <div className="cx-thumb" />
-                        <div className="cx-skel-lines"><span /><span /><span /></div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
+                {(
                   <ul className="cx-items">
                     {cart.map((item) => {
                       const busy = busyKeys.includes(item.key)

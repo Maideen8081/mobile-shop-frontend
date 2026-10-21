@@ -98,7 +98,7 @@ export default function MobileProfile() {
 
   const goBack = () => {
     if (window.history.length > 1) navigate(-1)
-    else navigate('/')
+    else navigate('/home')
   }
 
   const DETAILS: Record<string, string> = {
@@ -129,7 +129,7 @@ export default function MobileProfile() {
           <span className="absolute top-1/3 right-10 w-20 h-20 rounded-[8px] border border-white/20" />
           <div className="relative z-10 px-5 pt-4 pb-6">
             <div className="flex items-center justify-between">
-              <button onClick={() => navigate('/')} aria-label="Home" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+              <button onClick={() => navigate('/home')} aria-label="Home" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               </button>
               <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
@@ -167,7 +167,7 @@ export default function MobileProfile() {
           </button>
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="mt-6 flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] active:scale-95 transition"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>

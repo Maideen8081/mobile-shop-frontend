@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
-import { addToCartWithAuth } from '../utils/cartAuth'
+import { addManyToCartWithAuth, addToCartWithAuth } from '../utils/cartAuth'
+import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import { useToast } from '../context/ToastContext'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -115,7 +116,7 @@ export default function WishlistPage() {
   const { show: showToast } = useToast()
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [moveProgress, setMoveProgress] = useState<{ done: number; total: number } | null>(null)
+  const [movingAll, setMovingAll] = useState(false)
   const [addingIds, setAddingIds] = useState<number[]>([])
   const [addedIds, setAddedIds] = useState<number[]>([])
   // Saved items whose product could not be fetched. They stay in localStorage
@@ -179,49 +180,48 @@ export default function WishlistPage() {
     }
   }, [addingIds, showToast])
 
-  /** Adds every saved product to the cart and removes the ones that made it. */
+  /**
+   * Adds every saved product to the cart in one request and removes the ones
+   * that made it. The nav badge and the toast update together once the server answers.
+   */
   const moveAllToCart = useCallback(async () => {
-    if (products.length === 0 || moveProgress) return
+    if (products.length === 0 || movingAll) return
 
-    const movedIds: number[] = []
-    const failed: { name: string; reason: string }[] = []
-    setMoveProgress({ done: 0, total: products.length })
+    const nameOf = new Map(products.map((p) => [Number(p.id || p.product_id), getProductName(p)]))
+    const failed: { name: string; reason: string }[] = products
+      .filter(isOutOfStock)
+      .map((p) => ({ name: getProductName(p), reason: 'out of stock' }))
+    const inStock = products.filter((p) => !isOutOfStock(p))
 
-    // Sequential on purpose: each add refreshes the server cart.
-    for (const [i, product] of products.entries()) {
-      const name = getProductName(product)
-      if (isOutOfStock(product)) {
-        failed.push({ name, reason: 'out of stock' })
-      } else {
-        try {
-          const added = await addToCartWithAuth(cartParams(product))
-          if (!added) break // redirected to login
-          movedIds.push(Number(product.id || product.product_id))
-        } catch (err: any) {
-          failed.push({ name, reason: err?.message || 'could not be added' })
-        }
+    setMovingAll(true)
+    try {
+      const result = await addManyToCartWithAuth(inStock.map(cartParams))
+      if (!result) return // redirected to login
+      const movedIds = result.added
+      result.failed.forEach((f) => failed.push({ name: nameOf.get(f.productId) || 'Item', reason: f.message }))
+
+      if (movedIds.length > 0) {
+        writeWishlistIds(readWishlistIds().filter((id) => !movedIds.includes(id)))
+        setProducts((prev) => prev.filter((p) => !movedIds.includes(Number(p.id || p.product_id))))
       }
-      setMoveProgress({ done: i + 1, total: products.length })
-    }
 
-    if (movedIds.length > 0) {
-      writeWishlistIds(readWishlistIds().filter((id) => !movedIds.includes(id)))
-      setProducts((prev) => prev.filter((p) => !movedIds.includes(Number(p.id || p.product_id))))
+      if (failed.length === 0) {
+        showToast(`${movedIds.length} item${movedIds.length !== 1 ? 's' : ''} moved to cart`, 'success')
+      } else {
+        const detail = failed.map((f) => `${f.name} (${f.reason})`).join(', ')
+        showToast(
+          movedIds.length > 0
+            ? `${movedIds.length} moved to cart. Still in wishlist: ${detail}`
+            : `Couldn't move items to cart: ${detail}`,
+          'error',
+        )
+      }
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Couldn’t move items to cart', 'error')
+    } finally {
+      setMovingAll(false)
     }
-    setMoveProgress(null)
-
-    if (failed.length === 0) {
-      showToast(`${movedIds.length} item${movedIds.length !== 1 ? 's' : ''} moved to cart`, 'success')
-    } else {
-      const detail = failed.map((f) => `${f.name} (${f.reason})`).join(', ')
-      showToast(
-        movedIds.length > 0
-          ? `${movedIds.length} moved to cart. Still in wishlist: ${detail}`
-          : `Couldn't move items to cart: ${detail}`,
-        'error',
-      )
-    }
-  }, [products, moveProgress, showToast])
+  }, [products, movingAll, showToast])
 
   const totalValue = products.reduce((sum, p) => sum + getProductPrice(p).current, 0)
 
@@ -231,7 +231,7 @@ export default function WishlistPage() {
       <main className="wishlist-main">
         <header className="wishlist-header">
           <nav className="crumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
+            <Link to="/home">Home</Link>
             <span aria-hidden="true">/</span>
             <strong>Wishlist</strong>
           </nav>
@@ -250,10 +250,7 @@ export default function WishlistPage() {
         </header>
 
         {loading ? (
-          <div className="wishlist-loading" aria-label="Loading wishlist">
-            <div className="loading-spinner"></div>
-            <p>Loading your wishlist...</p>
-          </div>
+          <DesktopPageLoader text="Loading your wishlist..." />
         ) : (
           <div className="wishlist-layout">
             <section className="wishlist-grid-section" aria-labelledby="wishlist-heading">
@@ -317,14 +314,21 @@ export default function WishlistPage() {
               </ul>
               <button 
                 className="btn btn-primary btn-add-all" 
-                disabled={products.length === 0 || moveProgress !== null || products.every(isOutOfStock)}
+                disabled={products.length === 0 || movingAll || products.every(isOutOfStock)}
                 onClick={moveAllToCart}
+                aria-busy={movingAll}
               >
-                <span>{moveProgress ? `Moving ${moveProgress.done}/${moveProgress.total}…` : 'Move all to cart'}</span>
+                <span>{movingAll ? 'Moving to cart…' : 'Move all to cart'}</span>
                 <span className="btn-chip" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6"/>
-                  </svg>
+                  {movingAll ? (
+                    <svg className="animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                      <path d="M21 12a9 9 0 1 1-9-9" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  )}
                 </span>
               </button>
               <button className="btn btn-outline btn-share" onClick={async () => {

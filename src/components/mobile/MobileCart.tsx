@@ -188,8 +188,7 @@ export default function MobileCart() {
       <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <DoubleRingLoader size={48} />
-          <p className="text-[13px] text-[#6B7280] mt-4">Loading your cart…</p>
+          <DoubleRingLoader size={48} label="Loading your cart…" />
         </div>
         {Toast}
       </div>

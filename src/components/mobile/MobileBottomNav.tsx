@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Home, Smartphone, Wrench, LayoutGrid, User, Package } from 'lucide-react'
 
 const tabs = [
-  { name: 'Home', icon: Home, to: '/' },
+  { name: 'Home', icon: Home, to: '/home' },
   { name: 'Products', icon: LayoutGrid, to: '/collection/all' },
   { name: 'Phones', icon: Smartphone, to: '/phones' },
   { name: 'My Orders', icon: Package, to: '/orders' },
@@ -13,7 +13,7 @@ const tabs = [
 export default function MobileBottomNav() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const isActive = (to: string) => (to === '/' ? pathname === '/' : pathname.startsWith(to.split('/').slice(0, 2).join('/')))
+  const isActive = (to: string) => (to === '/home' ? pathname === '/home' : pathname.startsWith(to.split('/').slice(0, 2).join('/')))
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2 pointer-events-none">

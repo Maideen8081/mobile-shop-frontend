@@ -528,7 +528,7 @@ export default function TradeInPage() {
               </div>
               <p className="text-xs text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
               <div className="flex gap-3 justify-center">
-                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null); navigate('/') }}
+                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null); navigate('/home') }}
                   className="inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold px-8 py-3.5 rounded-[8px] hover:scale-105 active:scale-95 transition-all cursor-pointer"
                 >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
                 <button onClick={() => { setSubmitted(false); setSubmittedTrade(null) }}

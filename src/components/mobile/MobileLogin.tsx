@@ -5,6 +5,7 @@ import { useAuthForm } from '../../hooks/useAuthForm'
 import { createValidator, required, email } from '../../utils/validation'
 import { useAuth } from '../../context/AuthContext'
 import { useMobileToast } from './useMobileToast'
+import EyeIcon from '../auth/EyeIcon'
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -30,6 +31,7 @@ export default function MobileLogin() {
   const { show: showToast, Toast } = useMobileToast()
   const { login } = useAuth()
   const [activeSlide, setActiveSlide] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
 
   const { formData, errors, loading, handleChange, handleSubmit } = useAuthForm<LoginFormData>({
     initial: { email: '', password: '' },
@@ -40,7 +42,7 @@ export default function MobileLogin() {
         showToast('Logged in successfully!', 'success')
         const redirect = sessionStorage.getItem('redirect_after_login')
         sessionStorage.removeItem('redirect_after_login')
-        navigate(redirect || '/', { replace: true })
+        navigate(redirect || '/home', { replace: true })
       } catch (err: any) {
         const raw = err?.response?.data
         let backendMsg = ''
@@ -73,8 +75,8 @@ export default function MobileLogin() {
         <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>P</div>
-        <span className="text-[16px] font-extrabold">PhonePremium</span>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
+        <span className="text-[16px] font-extrabold">MobileShop</span>
       </div>
 
       {/* Hero image carousel */}
@@ -120,9 +122,13 @@ export default function MobileLogin() {
               </div>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
-                <input id="password" name="password" type="password" value={formData.password} onChange={handleChange}
-                  placeholder="••••••••" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
+                <input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange}
+                  placeholder="••••••••" autoComplete="current-password" className="w-full h-12 pl-10 pr-12 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
                   style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition" style={{ color: '#6B7280' }}>
+                  <EyeIcon open={showPassword} />
+                </button>
               </div>
               {errors.password && <p className="text-[11px] text-[#EF4444] mt-1">{errors.password}</p>}
             </div>
@@ -130,7 +136,12 @@ export default function MobileLogin() {
             <button type="submit" disabled={loading}
               className="w-full h-13 rounded-2xl text-[15px] font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, height: 52 }}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" opacity=".25" /><path d="M21 12a9 9 0 0 1-9 9" /></svg>
+                  Signing in…
+                </span>
+              ) : 'Sign In'}
             </button>
           </form>
 

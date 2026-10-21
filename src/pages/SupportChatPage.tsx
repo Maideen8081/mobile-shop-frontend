@@ -20,7 +20,7 @@ export default function SupportChatPage() {
       <SiteTopNav />
       <main className="scp-wrap">
         <div className="scp-container">
-          <Link to="/" className="scp-back">
+          <Link to="/home" className="scp-back">
             <ArrowLeft aria-hidden="true" />
             Back to home
           </Link>

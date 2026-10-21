@@ -6,6 +6,8 @@ import BackBar from '../components/ecommerce/BackBar'
 import EcommerceFooter from '../components/ecommerce/Footer'
 import { deviceBrands } from '../data/repairData'
 import { repairService, type RepairService } from '../services/repairService'
+import { authService } from '../services/authService'
+import { addressService, type AddressData } from '../services/addressService'
 import MobileBookRepair from '../components/mobile/MobileBookRepair'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -25,6 +27,23 @@ const issueQuestions: Record<string, string[]> = {
 const defaultQuestions = ['Please describe the issue you are facing', 'How long has this issue been present?', 'Is the device currently usable?', 'Any previous repairs done?']
 
 /* Fixed step labels — questions + 3 extra steps (details, device, photos) */
+const labelStyle: React.CSSProperties = {
+  display: 'block', fontSize: 12.5, fontWeight: 600,
+  color: '#4A403D', marginBottom: 6, letterSpacing: '0.01em',
+}
+
+// Defined at module level: a component declared inside the page would be a new
+// type on every render, remounting its input and dropping focus after each keystroke.
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label style={labelStyle}>{label}</label>
+      {children}
+      {error && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 5 }}>{error}</p>}
+    </div>
+  )
+}
+
 const EXTRA_STEPS = ['Your Details', 'Device Info', 'Photos']
 
 export default function BookRepair() {
@@ -71,6 +90,29 @@ function DesktopBookRepair() {
   useEffect(() => {
     repairService.getServices().then(setServices).catch(() => {})
   }, [])
+
+  // Signed-in customers shouldn't retype what we already know.
+  const [savedAddresses, setSavedAddresses] = useState<AddressData[]>([])
+  useEffect(() => {
+    if (!authService.isAuthenticated()) return
+    let alive = true
+    addressService.list().then((list) => { if (alive) setSavedAddresses(list) }).catch(() => {})
+    authService.getProfile({ skipAuthRedirect: true }).then((p) => {
+      if (!alive) return
+      setName((v) => v || p.fullName || '')
+      setEmail((v) => v || p.email || '')
+      setMobile((v) => v || (p.mobile || '').replace(/\D/g, '').slice(-10))
+    }).catch(() => {})
+    return () => { alive = false }
+  }, [])
+
+  const applySavedAddress = (a: AddressData) => {
+    setName(a.fullName)
+    setMobile(a.mobile.replace(/\D/g, '').slice(-10))
+    setAddress([a.addressLine1, a.addressLine2, a.landmark && `Near ${a.landmark}`, `${a.city}, ${a.state} - ${a.zipCode}`]
+      .filter(Boolean).join(', '))
+    setErrors((p) => ({ ...p, name: '', mobile: '', address: '' }))
+  }
 
   useEffect(() => {
     setSelectedIssue(decodedIssue)
@@ -192,11 +234,6 @@ function DesktopBookRepair() {
     fontFamily: 'var(--font-ui)',
   }
 
-  const labelStyle: React.CSSProperties = {
-    display: 'block', fontSize: 12.5, fontWeight: 600,
-    color: '#4A403D', marginBottom: 6, letterSpacing: '0.01em',
-  }
-
   const btnPrimary: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', gap: 7,
     padding: '11px 22px', borderRadius: 12, fontSize: 13.5, fontWeight: 700,
@@ -215,16 +252,6 @@ function DesktopBookRepair() {
   const cardStyle: React.CSSProperties = {
     background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20,
     padding: '28px 32px', boxShadow: '0 8px 32px -12px rgba(27,18,16,0.12)',
-  }
-
-  function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
-    return (
-      <div>
-        <label style={labelStyle}>{label}</label>
-        {children}
-        {error && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 5 }}>{error}</p>}
-      </div>
-    )
   }
 
   if (result) {
@@ -414,7 +441,7 @@ function DesktopBookRepair() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <Field label="Full Name *" error={touched.name ? errors.name : undefined}>
-                  <input value={name} autoFocus
+                  <input value={name} autoFocus autoComplete="name"
                     onChange={(e) => { setName(e.target.value); if (touched.name) setErrors(p => ({ ...p, name: validateName(e.target.value) })) }}
                     onBlur={() => { setTouched(p => ({ ...p, name: true })); setErrors(p => ({ ...p, name: validateName(name) })) }}
                     style={{ ...inputStyle, borderColor: touched.name && errors.name ? '#ef4444' : '#ECE4E0' }}
@@ -425,7 +452,7 @@ function DesktopBookRepair() {
                 </Field>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <Field label="Mobile Number *" error={touched.mobile ? errors.mobile : undefined}>
-                    <input value={mobile} placeholder="10-digit number"
+                    <input value={mobile} placeholder="10-digit number" inputMode="tel" autoComplete="tel-national"
                       onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setMobile(v); if (touched.mobile) setErrors(p => ({ ...p, mobile: validateMobile(v) })) }}
                       onBlur={() => { setTouched(p => ({ ...p, mobile: true })); setErrors(p => ({ ...p, mobile: validateMobile(mobile) })) }}
                       style={{ ...inputStyle, borderColor: touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0' }}
@@ -434,7 +461,7 @@ function DesktopBookRepair() {
                     />
                   </Field>
                   <Field label="Email Address *" error={touched.email ? errors.email : undefined}>
-                    <input value={email} type="email" placeholder="email@example.com"
+                    <input value={email} type="email" placeholder="email@example.com" autoComplete="email"
                       onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
                       onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }}
                       style={{ ...inputStyle, borderColor: touched.email && errors.email ? '#ef4444' : '#ECE4E0' }}
@@ -444,7 +471,22 @@ function DesktopBookRepair() {
                   </Field>
                 </div>
                 <Field label="Pickup / Delivery Address *" error={touched.address ? errors.address : undefined}>
-                  <textarea value={address} rows={2} placeholder="Your full address for pickup or delivery"
+                  {savedAddresses.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <span style={{ fontSize: 12, color: '#857D79' }}>Use a saved address:</span>
+                      {savedAddresses.slice(0, 3).map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => applySavedAddress(a)}
+                          style={{ fontSize: 12, fontWeight: 600, padding: '5px 11px', borderRadius: 999, border: '1.5px solid #ECE4E0', background: '#fff', color: '#4A403D', cursor: 'pointer' }}
+                        >
+                          {a.addressType} · {a.city}{a.isDefault ? ' (default)' : ''}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <textarea value={address} rows={3} autoComplete="street-address" placeholder="House no., street, area, city and pincode"
                     onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(p => ({ ...p, address: !e.target.value.trim() ? 'Address is required' : '' })) }}
                     onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(p => ({ ...p, address: 'Address is required' })) }}
                     style={{ ...inputStyle, height: 'auto', padding: '11px 15px', resize: 'none', borderColor: touched.address && errors.address ? '#ef4444' : '#ECE4E0' }}

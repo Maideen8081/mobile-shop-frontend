@@ -93,6 +93,45 @@ function apiErrorMessage(err: any, fallback: string): string {
   return data?.message || data?.detail || data?.error || err?.message || fallback
 }
 
+/** Stores a server cart payload as the cached cart. Returns whether it changed. */
+function applyServerCart(body: any): { items: CartItem[]; totals: CartTotals; changed: boolean } {
+  const items = (body?.products || []).map(mapApiItem)
+  const totals: CartTotals = {
+    subtotal: Number(body?.subtotal || 0),
+    tax: Number(body?.tax || 0),
+    shippingCharge: Number(body?.shipping_charge || 0),
+    discount: Number(body?.discount || 0),
+    grandTotal: Number(body?.grand_total || 0),
+    quantity: Number(body?.quantity || 0),
+    cartId: body?.cart_id,
+  }
+  const changed = JSON.stringify(cachedCartItems ?? getLocalCart()) !== JSON.stringify(items)
+  cachedCartItems = items
+  cachedCartTotals = totals
+  cartCacheTimestamp = Date.now()
+  setLocalCart(items)
+  return { items, totals, changed }
+}
+
+export interface BulkAddItem {
+  productId: number
+  variationId: number
+  quantity: number
+  name: string
+  brand?: string
+  price: number
+  image: string
+  storage?: string
+  ram?: string
+  color?: string
+  emoji?: string
+}
+
+export interface BulkAddResult {
+  added: number[]
+  failed: { productId: number; message: string }[]
+}
+
 // 0, null and undefined all mean "no specific variant".
 function sameVariant(a: number | null | undefined, b: number | null | undefined): boolean {
   return (a || null) === (b || null)
@@ -135,24 +174,9 @@ export const cartService = {
     try {
       const res = await api.get('/api/v1/cart/')
       notifyCartErrorListeners(null)
-      const body = res.data?.data || res.data
-      const items = (body.products || []).map(mapApiItem)
-      const totals: CartTotals = {
-        subtotal: Number(body.subtotal || 0),
-        tax: Number(body.tax || 0),
-        shippingCharge: Number(body.shipping_charge || 0),
-        discount: Number(body.discount || 0),
-        grandTotal: Number(body.grand_total || 0),
-        quantity: Number(body.quantity || 0),
-        cartId: body.cart_id,
-      }
       // The server is the source of truth: if it disagrees with what we had
       // cached (e.g. stale local items), let the badge and other views resync.
-      const changed = JSON.stringify(cachedCartItems ?? getLocalCart()) !== JSON.stringify(items)
-      cachedCartItems = items
-      cachedCartTotals = totals
-      cartCacheTimestamp = Date.now()
-      setLocalCart(items)
+      const { items, totals, changed } = applyServerCart(res.data?.data || res.data)
       if (changed) dispatchCartUpdated()
       return { items, totals }
     } catch (err: any) {
@@ -228,14 +252,17 @@ export const cartService = {
       dispatchCartUpdated()
 
       try {
-        await api.post('/api/v1/cart/add/', {
+        const res = await api.post('/api/v1/cart/add/', {
           product_id: params.productId,
           // null lets the server pick the product's default variant.
           variation_id: params.variationId || null,
           quantity: params.quantity,
         })
         notifyCartErrorListeners(null)
-        await this.getCart(true)
+        // The add response already carries the updated cart — no second round trip.
+        const body = res.data?.data
+        if (body?.products) applyServerCart(body)
+        else await this.getCart(true)
         dispatchCartUpdated()
         return
       } catch (err: any) {
@@ -272,6 +299,59 @@ export const cartService = {
     setLocalCart(cart)
     cachedCartItems = cart
     dispatchCartUpdated()
+  },
+
+  /**
+   * Adds several products in one request. The cached cart (and the nav badge)
+   * only change once the server answers, so callers can show their toast in the
+   * same moment the count updates.
+   */
+  async addItems(items: BulkAddItem[]): Promise<BulkAddResult> {
+    if (items.length === 0) return { added: [], failed: [] }
+
+    if (!this.isUsingApi()) {
+      for (const it of items) await this.addItem(it)
+      return { added: items.map((i) => i.productId), failed: [] }
+    }
+
+    try {
+      const res = await api.post('/api/v1/cart/add-bulk/', {
+        items: items.map((i) => ({
+          product_id: i.productId,
+          variation_id: i.variationId || null,
+          quantity: i.quantity || 1,
+        })),
+      })
+      notifyCartErrorListeners(null)
+      if (res.data?.data) applyServerCart(res.data.data)
+      dispatchCartUpdated()
+      return {
+        added: (res.data?.added || []).map(Number),
+        failed: (res.data?.failed || []).map((f: any) => ({
+          productId: Number(f.product_id),
+          message: f.message || 'could not be added',
+        })),
+      }
+    } catch (err: any) {
+      const status = err?.response?.status
+      if (status === 404) {
+        // Backend without the bulk endpoint yet: add one at a time instead.
+        const result: BulkAddResult = { added: [], failed: [] }
+        for (const it of items) {
+          try {
+            await this.addItem(it)
+            result.added.push(it.productId)
+          } catch (e) {
+            result.failed.push({ productId: it.productId, message: e instanceof Error ? e.message : 'could not be added' })
+          }
+        }
+        return result
+      }
+      const message = apiErrorMessage(err, 'Failed to add items to cart')
+      console.error(`[cartService] POST /api/v1/cart/add-bulk/ failed (${status || 'network'}):`, message, err)
+      notifyCartErrorListeners({ message, status, timestamp: Date.now() })
+      throw new Error(message)
+    }
   },
 
   async updateQuantity(productId: number, variantId: number | null | undefined, delta: number): Promise<void> {

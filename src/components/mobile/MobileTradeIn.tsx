@@ -248,7 +248,7 @@ export default function MobileTradeIn() {
             <div className="w-16 h-16 rounded-2xl bg-[#E7FBF0] flex items-center justify-center mb-3" style={{ color: GREEN }}><FiCheck size={30} /></div>
             <h2 className="text-[17px] font-extrabold">Trade-In Submitted!</h2>
             <p className="text-[12px] text-[#6B7280] mt-1 mb-4">We'll review your device and get back within 24 hours with a final quote.</p>
-            <button onClick={() => { setSubmitted(false); navigate('/') }}
+            <button onClick={() => { setSubmitted(false); navigate('/home') }}
               className="inline-flex items-center gap-2 text-white font-bold text-[13px] px-6 py-3 rounded-[8px] active:scale-95 transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
               Back to Home <FiArrowRight size={15} />

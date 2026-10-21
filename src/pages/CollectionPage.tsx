@@ -380,7 +380,7 @@ export default function CollectionPage() {
 
       <div className="wx-page-head">
         <div className="wx-breadcrumb">
-          <Link to="/">Home</Link>
+          <Link to="/home">Home</Link>
           <span className="wx-sep">/</span>
           <Link to="/collection/all">Products</Link>
           <span className="wx-sep">/</span>

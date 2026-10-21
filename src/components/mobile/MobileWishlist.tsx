@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, Trash2, ShoppingCart, Star, RefreshCw } from 'lucide-react'
 import { productService } from '../../services/productService'
-import { addToCartWithAuth } from '../../utils/cartAuth'
+import { addManyToCartWithAuth, addToCartWithAuth } from '../../utils/cartAuth'
 import {
   FALLBACK_IMAGE,
   cartParams,
@@ -34,7 +34,7 @@ export default function MobileWishlist() {
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [addingIds, setAddingIds] = useState<number[]>([])
-  const [moveProgress, setMoveProgress] = useState<{ done: number; total: number } | null>(null)
+  const [movingAll, setMovingAll] = useState(false)
   const [unavailableCount, setUnavailableCount] = useState(0)
   const { show: showToast, Toast } = useMobileToast()
 
@@ -89,38 +89,32 @@ export default function MobileWishlist() {
     }
   }
 
+  // One request for everything, so the cart badge and the toast update together.
   const moveAllToCart = async () => {
-    if (products.length === 0 || moveProgress) return
-    const movedIds: number[] = []
-    let failed = 0
-    setMoveProgress({ done: 0, total: products.length })
+    if (products.length === 0 || movingAll) return
+    const inStock = products.filter((p) => !isOutOfStock(p))
+    let failed = products.length - inStock.length
 
-    // Sequential on purpose: each add refreshes the server cart.
-    for (const [i, product] of products.entries()) {
-      if (isOutOfStock(product)) {
-        failed++
-      } else {
-        try {
-          const added = await addToCartWithAuth(cartParams(product))
-          if (!added) break // redirected to login
-          movedIds.push(productId(product))
-        } catch {
-          failed++
-        }
+    setMovingAll(true)
+    try {
+      const result = await addManyToCartWithAuth(inStock.map(cartParams))
+      if (!result) return // redirected to login
+      const movedIds = result.added
+      failed += result.failed.length
+
+      if (movedIds.length > 0) {
+        writeWishlistIds(readWishlistIds().filter((id) => !movedIds.includes(id)))
+        setProducts((prev) => prev.filter((p) => !movedIds.includes(productId(p))))
       }
-      setMoveProgress({ done: i + 1, total: products.length })
-    }
-
-    if (movedIds.length > 0) {
-      writeWishlistIds(readWishlistIds().filter((id) => !movedIds.includes(id)))
-      setProducts((prev) => prev.filter((p) => !movedIds.includes(productId(p))))
-    }
-    setMoveProgress(null)
-
-    if (failed === 0) {
-      showToast(`${movedIds.length} item${movedIds.length !== 1 ? 's' : ''} moved to cart`, 'success')
-    } else {
-      showToast(`${movedIds.length} moved · ${failed} couldn't be added`, 'error')
+      if (failed === 0) {
+        showToast(`${movedIds.length} item${movedIds.length !== 1 ? 's' : ''} moved to cart`, 'success')
+      } else {
+        showToast(`${movedIds.length} moved · ${failed} couldn't be added`, 'error')
+      }
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Couldn’t move items to cart', 'error')
+    } finally {
+      setMovingAll(false)
     }
   }
 
@@ -134,7 +128,7 @@ export default function MobileWishlist() {
       <div className={`px-4 pt-4 ${products.length > 0 ? 'pb-[calc(180px+env(safe-area-inset-bottom))]' : 'pb-28'}`}>
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <DoubleRingLoader size={48} />
+            <DoubleRingLoader size={48} label="Loading your wishlist…" />
           </div>
         ) : products.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
@@ -216,7 +210,7 @@ export default function MobileWishlist() {
                       </button>
                     </div>
                     <button onClick={() => moveToCart(product)}
-                      disabled={outOfStock || adding || moveProgress !== null}
+                      disabled={outOfStock || adding || movingAll}
                       className="w-full h-10 mt-3 rounded-2xl text-[13px] font-semibold text-white inline-flex items-center justify-center gap-1.5 active:scale-[0.98] transition disabled:opacity-50"
                       style={{ background: outOfStock ? '#9CA3AF' : gradient }}>
                       <ShoppingCart size={15} /> {adding ? 'Adding…' : outOfStock ? 'Unavailable' : 'Move to Cart'}
@@ -243,11 +237,11 @@ export default function MobileWishlist() {
             <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wide">Total Value</p>
             <p className="text-[16px] font-bold text-[#1F2937] truncate">{formatPrice(totalValue)}</p>
           </div>
-          <button onClick={moveAllToCart} disabled={moveProgress !== null || allOutOfStock}
+          <button onClick={moveAllToCart} disabled={movingAll || allOutOfStock}
             className="h-11 px-5 rounded-[8px] text-[13px] font-semibold text-white inline-flex items-center gap-2 flex-shrink-0 disabled:opacity-50"
             style={{ background: gradient }}>
-            <ShoppingCart size={15} />
-            {moveProgress ? `Moving ${moveProgress.done}/${moveProgress.total}…` : `Move All (${products.length})`}
+            {movingAll ? <RefreshCw size={15} className="animate-spin" /> : <ShoppingCart size={15} />}
+            {movingAll ? 'Moving…' : `Move All (${products.length})`}
           </button>
         </div>
       )}

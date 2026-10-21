@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
             <span className="block text-[10px] font-medium text-text-label">Admin Console</span>
           </div>
         </div>
-        <Link to="/" className="flex items-center gap-2 text-sm font-medium text-text-label hover:text-text-primary transition-colors">
+        <Link to="/home" className="flex items-center gap-2 text-sm font-medium text-text-label hover:text-text-primary transition-colors">
           <FiArrowLeft size={15} /> Back to store
         </Link>
       </header>

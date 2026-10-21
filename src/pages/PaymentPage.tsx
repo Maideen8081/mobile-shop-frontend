@@ -12,7 +12,8 @@ import { authService } from '../services/authService'
 import { cartService, type CartItem } from '../services/cartService'
 import { addressService, type AddressData } from '../services/addressService'
 import OrderSummary from '../components/checkout/OrderSummary'
-import { apiErrorMessage, computeTotals, formatINR, readCheckoutCoupon } from '../utils/checkout'
+import { apiErrorMessage, computeTotals, formatINR, readCheckoutCoupon, saveCheckoutCoupon } from '../utils/checkout'
+import ExitIntentOffer from '../components/checkout/ExitIntentOffer'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import './CartPage.css'
@@ -45,7 +46,7 @@ function DesktopPayment() {
   const [method, setMethod] = useState<PaymentMethod>('cod')
   const [placing, setPlacing] = useState(false)
   const [error, setError] = useState('')
-  const [coupon] = useState(readCheckoutCoupon)
+  const [coupon, setCoupon] = useState(readCheckoutCoupon)
   const [addressId] = useState(() => Number(localStorage.getItem('checkout_address_id') || 0) || null)
 
   useEffect(() => {
@@ -157,7 +158,7 @@ function DesktopPayment() {
         <header className="cx-head">
           <div>
             <nav className="cx-crumbs" aria-label="Breadcrumb">
-              <Link to="/">Home</Link><span>/</span><Link to="/cart">Cart</Link><span>/</span>
+              <Link to="/home">Home</Link><span>/</span><Link to="/cart">Cart</Link><span>/</span>
               <Link to="/checkout/address">Address</Link><span>/</span><span aria-current="page">Payment</span>
             </nav>
             <h1>Payment</h1>
@@ -262,6 +263,19 @@ function DesktopPayment() {
           </aside>
         </div>
       </main>
+
+      <ExitIntentOffer
+        productIds={items.map((it) => it.productId)}
+        subtotal={totals.subtotal}
+        cartItems={items}
+        enabled={!loading && !placing && !!address && items.length > 0}
+        appliedCoupon={coupon}
+        onApplyCoupon={(c) => {
+          saveCheckoutCoupon(c)
+          setCoupon(c)
+          showToast(`${c.code} applied — you save ${formatINR(c.discount)}`, 'success')
+        }}
+      />
     </div>
   )
 }

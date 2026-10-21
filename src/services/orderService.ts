@@ -123,7 +123,7 @@ function extractItems(body: unknown): Record<string, unknown>[] {
 
 function normalizeOrder(raw: Record<string, unknown>): OrderResponse {
   return {
-    id: Number(raw.id ?? 0),
+    id: Number(raw.id ?? raw.order_id ?? 0),
     order_id: formatOrderId(String(raw.order_id ?? raw.id ?? '')),
     order_number: String(raw.order_number ?? ''),
     customer_name: String(raw.customer_name ?? ''),
@@ -172,6 +172,16 @@ export const orderService = {
       throw new Error('Invalid order response from server')
     }
     return normalizeOrder(raw)
+  },
+
+  /** The signed-in customer's own orders. (`list` is the admin-only endpoint.) */
+  listMine: async (): Promise<OrderResponse[]> => {
+    try {
+      const r = await api.get('/api/v1/order/user/')
+      return extractItems(r.data).map(i => normalizeOrder(i))
+    } catch {
+      return []
+    }
   },
 
   list: async (params?: Record<string, string>): Promise<OrderResponse[]> => {

@@ -268,7 +268,7 @@ function DesktopCheckoutAddress() {
         <header className="cx-head">
           <div>
             <nav className="cx-crumbs" aria-label="Breadcrumb">
-              <Link to="/">Home</Link><span>/</span><Link to="/cart">Cart</Link><span>/</span><span aria-current="page">Address</span>
+              <Link to="/home">Home</Link><span>/</span><Link to="/cart">Cart</Link><span>/</span><span aria-current="page">Address</span>
             </nav>
             <h1>Delivery address</h1>
             <p className="cx-head-sub">Choose where you’d like your order delivered.</p>

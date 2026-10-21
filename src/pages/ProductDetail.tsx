@@ -782,7 +782,7 @@ function ProductDetailContent() {
 
        {/* ===== BREADCRUMB ===== */}
       <nav className="ax-breadcrumb">
-        <Link to="/">Home</Link>
+        <Link to="/home">Home</Link>
         <span className="sep">/</span>
         {categoryName && (
           <>

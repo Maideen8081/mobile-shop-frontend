@@ -5,6 +5,21 @@ import { useAuthForm } from '../../hooks/useAuthForm'
 import { createValidator, required, email, minLength, passwordStrength } from '../../utils/validation'
 import { useAuth } from '../../context/AuthContext'
 import { useMobileToast } from './useMobileToast'
+import EyeIcon from '../auth/EyeIcon'
+
+const RULES = [
+  { label: '8+ chars', test: (p: string) => p.length >= 8 },
+  { label: 'A-Z', test: (p: string) => /[A-Z]/.test(p) },
+  { label: 'a-z', test: (p: string) => /[a-z]/.test(p) },
+  { label: '0-9', test: (p: string) => /\d/.test(p) },
+]
+const LEVELS = [
+  { label: 'Too weak', color: '#EF4444' },
+  { label: 'Weak', color: '#EF4444' },
+  { label: 'Fair', color: '#F59E0B' },
+  { label: 'Good', color: '#10B981' },
+  { label: 'Strong', color: '#059669' },
+]
 
 const PURPLE = '#CB202D'
 const PURPLE_DEEP = '#A81D2A'
@@ -36,6 +51,8 @@ export default function MobileRegister() {
   const { show: showToast, Toast } = useMobileToast()
   const { register } = useAuth()
   const [activeSlide, setActiveSlide] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const { formData, errors, loading, handleChange, setField, handleSubmit } = useAuthForm<RegisterFormData>({
     initial: { fullName: '', email: '', password: '', confirmPassword: '', agreeTerms: false },
@@ -46,7 +63,7 @@ export default function MobileRegister() {
         showToast('Account created successfully!', 'success')
         const redirect = sessionStorage.getItem('redirect_after_login')
         sessionStorage.removeItem('redirect_after_login')
-        navigate(redirect || '/', { replace: true })
+        navigate(redirect || '/home', { replace: true })
       } catch (err: any) {
         const raw = err?.response?.data
         let backendMsg = ''
@@ -73,6 +90,10 @@ export default function MobileRegister() {
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
   const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition'
+  const passed = RULES.filter(r => r.test(formData.password)).length
+  const level = LEVELS[passed]
+  const confirmMatches = formData.confirmPassword.length > 0 && formData.confirmPassword === formData.password
+  const eyeBtnCls = 'absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition'
 
   return (
     <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
@@ -80,8 +101,8 @@ export default function MobileRegister() {
         <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>P</div>
-        <span className="text-[16px] font-extrabold">PhonePremium</span>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
+        <span className="text-[16px] font-extrabold">MobileShop</span>
       </div>
 
       <div className="relative mx-4 h-[150px] rounded-[24px] overflow-hidden">
@@ -121,8 +142,27 @@ export default function MobileRegister() {
               <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Password</label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
-                <input id="password" name="password" type="password" value={formData.password} onChange={handleChange} placeholder="••••••••" className={`${inputCls} pl-10`} style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                <input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={formData.password} onChange={handleChange} placeholder="Create a password" className={`${inputCls} pl-10 pr-12`} style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'} className={eyeBtnCls} style={{ color: '#6B7280' }}>
+                  <EyeIcon open={showPassword} />
+                </button>
               </div>
+              {formData.password && (
+                <div className="mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 grid grid-cols-4 gap-1">
+                      {RULES.map((_, i) => <div key={i} className="h-1.5 rounded-full transition-colors" style={{ background: i < passed ? level.color : '#E5E7EB' }} />)}
+                    </div>
+                    <span className="text-[11px] font-bold w-14 text-right" style={{ color: level.color }}>{level.label}</span>
+                  </div>
+                  <div className="flex gap-2 mt-1.5">
+                    {RULES.map(r => {
+                      const ok = r.test(formData.password)
+                      return <span key={r.label} className="text-[10px] font-semibold px-2 py-0.5 rounded-full transition-colors" style={{ background: ok ? '#D1FAE5' : '#F3F4F6', color: ok ? '#059669' : '#9CA3AF' }}>{ok ? '✓ ' : ''}{r.label}</span>
+                    })}
+                  </div>
+                </div>
+              )}
               {errors.password && <p className="text-[11px] text-[#EF4444] mt-1">{errors.password}</p>}
             </div>
 
@@ -130,8 +170,12 @@ export default function MobileRegister() {
               <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Confirm Password</label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
-                <input id="confirmPassword" name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••" className={`${inputCls} pl-10`} style={{ borderColor: errors.confirmPassword ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                <input id="confirmPassword" name="confirmPassword" type={showConfirm ? 'text' : 'password'} autoComplete="new-password" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter password" className={`${inputCls} pl-10 pr-12`} style={{ borderColor: errors.confirmPassword ? '#EF4444' : confirmMatches ? '#10B981' : '#E5E7EB', color: '#1F2937' }} />
+                <button type="button" onClick={() => setShowConfirm(v => !v)} aria-label={showConfirm ? 'Hide password' : 'Show password'} className={eyeBtnCls} style={{ color: '#6B7280' }}>
+                  <EyeIcon open={showConfirm} />
+                </button>
               </div>
+              {confirmMatches && !errors.confirmPassword && <p className="text-[11px] text-[#059669] mt-1 font-semibold">✓ Passwords match</p>}
               {errors.confirmPassword && <p className="text-[11px] text-[#EF4444] mt-1">{errors.confirmPassword}</p>}
             </div>
 
@@ -148,7 +192,12 @@ export default function MobileRegister() {
             <button type="submit" disabled={loading}
               className="w-full rounded-2xl text-[15px] font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, height: 52 }}>
-              {loading ? 'Creating account...' : 'Register'}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" opacity=".25" /><path d="M21 12a9 9 0 0 1-9 9" /></svg>
+                  Creating account…
+                </span>
+              ) : 'Create Account'}
             </button>
           </form>
 

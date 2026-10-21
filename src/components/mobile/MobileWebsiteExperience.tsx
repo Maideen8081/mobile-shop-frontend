@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import ScrollEndRedirect from "../ScrollEndRedirect";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -774,6 +775,8 @@ export default function MobileWebsiteExperience() {
           </Link>
         </div>
       </div>
+
+      <ScrollEndRedirect to="/home" bottomOffset={92} />
     </div>
   );
 }

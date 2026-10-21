@@ -35,10 +35,6 @@ function lsWrite(data: AddressData[]) {
   localStorage.setItem(LS_KEY, JSON.stringify(data))
 }
 
-function now(): string {
-  return new Date().toISOString()
-}
-
 function toSnake( data: Record<string, unknown> ): Record<string, unknown> {
   const out: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(data)) {
@@ -116,6 +112,8 @@ export const addressService = {
     return created
   },
 
+  // Server failures are thrown (with the server's message), never papered over
+  // with a local-only change that would silently revert on the next load.
   update: async (id: number, data: Partial<AddressData>): Promise<AddressData> => {
     try {
       const r = await api.put(`${BASE}/update/${id}/`, toSnake(data as Record<string, unknown>))
@@ -127,41 +125,47 @@ export const addressService = {
       all.push(updated)
       lsWrite(all)
       return updated
-    } catch {
-      const all = lsRead()
-      const idx = all.findIndex(a => a.id === id)
-      if (idx === -1) throw new Error('Address not found')
-      if (data.isDefault) all.forEach(a => { a.isDefault = false })
-      all[idx] = { ...all[idx], ...data, updatedAt: now() }
-      lsWrite(all)
-      return all[idx]
+    } catch (err) {
+      throw new Error(serverMessage(err, 'Couldn’t update the address. Please try again.'), { cause: err })
     }
   },
 
   delete: async (id: number): Promise<void> => {
     const numId = Number(id)
-    lsWrite(lsRead().filter(a => Number(a.id) !== numId))
     try {
-      await api.delete(`${BASE}/delete/${numId}/`, { timeout: 5000 })
-    } catch { /* already removed locally */ }
+      await api.delete(`${BASE}/delete/${numId}/`, { timeout: 8000 })
+    } catch (err) {
+      // Already gone on the server counts as deleted.
+      if ((err as { response?: { status?: number } })?.response?.status !== 404) {
+        throw new Error(serverMessage(err, 'Couldn’t delete the address. Please try again.'), { cause: err })
+      }
+    }
+    lsWrite(lsRead().filter(a => Number(a.id) !== numId))
   },
 
   setDefault: async (id: number): Promise<AddressData> => {
     try {
       await api.put(`${BASE}/set-default/${id}/`, {})
-      const all = lsRead()
-      const target = all.find(a => Number(a.id) === Number(id))
-      if (!target) throw new Error('Address not found')
-      all.forEach(a => { a.isDefault = Number(a.id) === Number(id) })
-      lsWrite(all)
-      return { ...target, isDefault: true }
-    } catch {
-      const all = lsRead()
-      if (!all.some(a => Number(a.id) === Number(id))) throw new Error('Address not found')
-      all.forEach(a => { a.isDefault = Number(a.id) === Number(id) })
-      lsWrite(all)
-      const found = all.find(a => Number(a.id) === Number(id))!
-      return { ...found, isDefault: true }
+    } catch (err) {
+      throw new Error(serverMessage(err, 'Couldn’t set the default address. Please try again.'), { cause: err })
     }
+    const all = lsRead()
+    all.forEach(a => { a.isDefault = Number(a.id) === Number(id) })
+    lsWrite(all)
+    const found = all.find(a => Number(a.id) === Number(id))
+    if (!found) throw new Error('Address not found')
+    return { ...found, isDefault: true }
   },
+}
+
+function serverMessage(err: unknown, fallback: string): string {
+  const data = (err as { response?: { data?: unknown } })?.response?.data
+  if (data && typeof data === 'object') {
+    const d = data as Record<string, unknown>
+    if (typeof d.message === 'string' && d.message) return d.message
+    if (typeof d.detail === 'string') return d.detail
+    const first = Object.values(d).flat()[0]
+    if (typeof first === 'string') return first
+  }
+  return fallback
 }

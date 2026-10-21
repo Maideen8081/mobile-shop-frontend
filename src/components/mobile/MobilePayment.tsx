@@ -5,6 +5,8 @@ import { useMobileToast } from './useMobileToast'
 import { orderService } from '../../services/orderService'
 import { authService } from '../../services/authService'
 import { cartService } from '../../services/cartService'
+import { readCheckoutCoupon, saveCheckoutCoupon } from '../../utils/checkout'
+import ExitIntentOffer from '../checkout/ExitIntentOffer'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const PURPLE = '#CB202D'
@@ -78,9 +80,7 @@ export default function MobilePayment() {
     try { return Number(localStorage.getItem('checkout_address_id') || '0') || null } catch { return null }
   }, [])
 
-  const checkoutCoupon = useMemo(() => {
-    try { return JSON.parse(localStorage.getItem('checkout_coupon') || 'null') } catch { return null }
-  }, [])
+  const [checkoutCoupon, setCheckoutCoupon] = useState(readCheckoutCoupon)
 
   const subtotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items])
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
@@ -380,6 +380,18 @@ export default function MobilePayment() {
           </div>
         </div>
       )}
+      <ExitIntentOffer
+        productIds={items.map((it) => Number(it.productId)).filter(Boolean)}
+        subtotal={subtotal}
+        cartItems={items}
+        enabled={!processing && !success && items.length > 0}
+        appliedCoupon={checkoutCoupon}
+        onApplyCoupon={(c) => {
+          saveCheckoutCoupon(c)
+          setCheckoutCoupon(c)
+          showToast(`${c.code} applied — you save ${formatPrice(c.discount)}`, 'success')
+        }}
+      />
       {Toast}
     </div>
   )

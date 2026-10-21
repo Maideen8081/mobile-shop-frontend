@@ -20,15 +20,19 @@ const services = [
 ]
 
 const brands = [
-  { name: 'Apple', icon: 'phone_iphone', color: '#1d1d1f' },
-  { name: 'Samsung', icon: 'smartphone', color: '#1428A0' },
-  { name: 'Google', icon: 'google_home_devices', color: '#4285F4' },
-  { name: 'OnePlus', icon: 'mobile_friendly', color: '#F5010C' },
-  { name: 'Xiaomi', icon: 'devices', color: '#FF6900' },
-  { name: 'Oppo', icon: 'phone_android', color: '#1D6FA4' },
-  { name: 'Realme', icon: 'stay_current_portrait', color: '#FFD700' },
-  { name: 'Motorola', icon: 'tap_and_play', color: '#E1000F' },
+  { name: 'Apple', models: 'iPhone 8 – iPhone 16 Pro Max', color: '#1d1d1f', tint: '#f2f2f4' },
+  { name: 'Samsung', models: 'Galaxy S, Z Fold/Flip, A & M series', color: '#1428A0', tint: '#eef1fb' },
+  { name: 'Google', models: 'Pixel 4 – Pixel 9 Pro', color: '#4285F4', tint: '#edf3fe' },
+  { name: 'OnePlus', models: 'OnePlus 7 – 13, Nord series', color: '#EB0029', tint: '#fdecef' },
+  { name: 'Xiaomi', models: 'Xiaomi, Redmi & Poco', color: '#FF6900', tint: '#fff2e9' },
+  { name: 'Oppo', models: 'Find, Reno, A & F series', color: '#1D6F42', tint: '#ebf5ef' },
+  { name: 'Realme', models: 'Number, GT, Narzo & C series', color: '#C79B00', tint: '#fcf6e3' },
+  { name: 'Motorola', models: 'Edge, Razr & Moto G series', color: '#5C88DA', tint: '#eff4fc' },
 ]
+
+const moreBrands = ['Vivo', 'iQOO', 'Nothing', 'Honor', 'Nokia', 'Asus', 'Infinix', 'Tecno', 'Lava']
+
+const brandFixes = ['Screen', 'Battery', 'Charging port', 'Camera']
 
 /* Hero copy that rotates over a single looping repair clip, the same way the
    landing page rotates its copy over its video. */
@@ -328,40 +332,83 @@ function DesktopRepairs() {
       </section>
 
       {/* ─── BRANDS ─── */}
-      <section className="py-20 px-6 md:px-12 scroll-reveal" style={{ background: 'linear-gradient(135deg, #0f0c0c 0%, #1a0a0d 50%, #0f0c0c 100%)' }}>
-        <div className="max-w-[1440px] mx-auto">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-[8px] bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-xs font-bold tracking-[0.15em] uppercase mb-5">
-              <span className="material-symbols-outlined text-sm">verified</span>
-              Brands
-            </div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-              Brands We <span className="text-[#D91E36]">Service</span>
-            </h2>
-            <p className="text-white/60 text-base max-w-xl mx-auto">We work on all major smartphone brands. Don't see yours? Give us a call.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {brands.map((brand) => (
-              <div
-                key={brand.name}
-                className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl border border-white/8 bg-white/3 hover:bg-white/8 hover:border-[#D91E36]/40 transition-all duration-300 cursor-pointer overflow-hidden"
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `radial-gradient(circle at center, ${brand.color}10 0%, transparent 70%)` }} />
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 relative z-10"
-                  style={{ background: `${brand.color}20`, border: `1px solid ${brand.color}40` }}
-                >
-                  <span className="material-symbols-outlined text-2xl" style={{ color: brand.color }}>{brand.icon}</span>
-                </div>
-                <span className="text-white font-bold text-base relative z-10">{brand.name}</span>
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, transparent, ${brand.color}, transparent)` }} />
+      <section className="py-20 px-6 md:px-12 scroll-reveal bg-white border-t border-[#ece4e0]">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDECEE] text-[#D91E36] text-[11px] font-bold tracking-[0.14em] uppercase mb-4">
+                <span className="material-symbols-outlined text-[15px]">verified</span>
+                Brands we service
               </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-[#1b1210] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                Every major phone brand, <span className="text-[#D91E36]">fixed right</span>
+              </h2>
+              <p className="text-[#857d79] text-base mt-3 max-w-xl">
+                Genuine-grade parts, trained technicians and a 6-month warranty, whichever phone you carry.
+              </p>
+            </div>
+            <Link
+              to="/book-repair"
+              className="inline-flex items-center gap-2 self-start md:self-auto h-12 px-6 rounded-xl text-white text-sm font-bold shadow-[0_8px_20px_rgba(217,30,54,0.28)] hover:shadow-[0_12px_26px_rgba(217,30,54,0.38)] transition-shadow"
+              style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)' }}
+            >
+              <span className="material-symbols-outlined text-[18px]">build</span>
+              Book a repair
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {brands.map((brand) => (
+              <Link
+                key={brand.name}
+                to="/book-repair"
+                aria-label={`Book a ${brand.name} repair`}
+                className="group relative flex flex-col p-5 rounded-2xl border-[1.5px] border-[#ece4e0] bg-white hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(27,18,16,0.10)] transition-all duration-200 overflow-hidden"
+                style={{ ['--brand' as string]: brand.color }}
+              >
+                <span className="absolute inset-x-0 top-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: brand.color }} />
+                <div className="flex items-center justify-between mb-4">
+                  <span
+                    className="inline-flex items-center justify-center h-11 px-4 rounded-xl text-[19px] font-extrabold tracking-tight"
+                    style={{ background: brand.tint, color: brand.color, fontFamily: 'var(--font-display)' }}
+                  >
+                    {brand.name}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#e7f6f0] px-2 py-1 rounded-full">
+                    <span className="material-symbols-outlined text-[13px]">bolt</span>
+                    Same day
+                  </span>
+                </div>
+                <p className="text-[13px] text-[#4a403d] font-medium mb-3">{brand.models}</p>
+                <div className="flex flex-wrap gap-1.5 mb-5">
+                  {brandFixes.map((fix) => (
+                    <span key={fix} className="text-[11px] text-[#857d79] bg-[#fbf8f6] border border-[#ece4e0] px-2 py-0.5 rounded-md">{fix}</span>
+                  ))}
+                </div>
+                <span className="mt-auto inline-flex items-center gap-1 text-[13px] font-bold text-[#D91E36]">
+                  Book {brand.name} repair
+                  <span className="material-symbols-outlined text-[17px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                </span>
+              </Link>
             ))}
           </div>
-          <div className="mt-10 text-center">
-            <p className="text-white/40 text-sm">Don't see your brand? <Link to="/about" className="text-[#D91E36] hover:text-[#E53E4E] font-semibold transition-colors">Contact us</Link> — we service most devices.</p>
+
+          <div className="mt-6 flex flex-col lg:flex-row lg:items-center gap-4 p-5 rounded-2xl bg-[#fbf8f6] border border-[#ece4e0]">
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="w-10 h-10 rounded-xl bg-[#FDECEE] text-[#D91E36] flex items-center justify-center">
+                <span className="material-symbols-outlined text-[20px]">devices_other</span>
+              </span>
+              <span className="text-sm font-bold text-[#1b1210]">We also repair</span>
+            </div>
+            <div className="flex flex-wrap gap-2 flex-1">
+              {moreBrands.map((b) => (
+                <span key={b} className="text-[13px] font-semibold text-[#4a403d] bg-white border border-[#ece4e0] px-3 py-1.5 rounded-full">{b}</span>
+              ))}
+            </div>
+            <p className="text-sm text-[#857d79] shrink-0">
+              Brand not listed?{' '}
+              <Link to="/support" className="text-[#D91E36] font-bold hover:underline">Ask us</Link>
+            </p>
           </div>
         </div>
       </section>

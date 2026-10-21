@@ -593,7 +593,7 @@ export default function OrderTracking() {
       `}</style>
 
       <SiteTopNav />
-      <BackBar label="Back to Home" to="/" />
+      <BackBar label="Back to Home" to="/home" />
 
       <main className="max-w-[1200px] mx-auto px-4 md:px-8 pt-4 pb-16">
         <div className="rounded-xl p-6 md:p-8" style={{

@@ -157,7 +157,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
             <FiLogOut size={14} /> Logout
           </button>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="flex items-center justify-center gap-2 h-9 px-3 rounded-lg bg-surface-lighter border border-border text-sm font-medium text-text-secondary hover:text-text-primary hover:border-primary/40 transition-colors"
             title="Back to storefront"
           >
