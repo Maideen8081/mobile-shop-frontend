@@ -24,6 +24,13 @@ export interface RepairStatusHistory {
   id: number
   status: string
   notes: string
+  updated_by: string
+  created_at: string
+}
+
+export interface RepairLastUpdate {
+  status: string
+  notes: string
   created_at: string
 }
 
@@ -71,6 +78,9 @@ export interface RepairTicket {
   statusHistory: RepairStatusHistory[]
   courier: CourierDetails | null
   adminNotes: string
+  thumbnail: string | null
+  photoCount: number
+  lastUpdate: RepairLastUpdate | null
 }
 
 export interface RepairDashboardCounts {
@@ -114,6 +124,15 @@ function mapBackendStatus(status: string, statusLabel: string): string {
   return statusLabel || status || 'Received'
 }
 
+function lastUpdateFrom(h: any): RepairLastUpdate | null {
+  if (!h) return null
+  return {
+    status: mapBackendStatus(h.status ?? '', h.status_label),
+    notes: h.notes ?? '',
+    created_at: h.created_at ?? '',
+  }
+}
+
 function normalizeTicket(raw: any): RepairTicket {
   return {
     id: raw.id,
@@ -141,14 +160,14 @@ function normalizeTicket(raw: any): RepairTicket {
     password: raw.device_password ?? raw.password ?? '',
     status: mapBackendStatus(raw.status, raw.status_label),
     estimatedCost: Number(raw.estimated_cost ?? raw.estimatedCost ?? 0),
-    estimatedDays: Number(raw.estimated_days ?? raw.estimatedDays ?? 1),
+    estimatedDays: Number(raw.estimated_completion_days ?? raw.estimated_days ?? raw.estimatedDays ?? 0),
     technicianId: raw.assigned_technician ?? raw.technician_id ?? raw.technicianId ?? null,
     technicianName: raw.technician_name ?? raw.technicianName ?? '',
     source: raw.source ?? 'online',
     createdAt: raw.created_at ?? raw.createdAt ?? '',
     updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
     images: Array.isArray(raw.photos)
-      ? raw.photos.map((img: any) => (typeof img === 'string' ? img : img.image ?? img.photo ?? ''))
+      ? raw.photos.map((img: any) => (typeof img === 'string' ? img : img.image_url ?? img.image ?? img.photo ?? '')).filter(Boolean)
       : Array.isArray(raw.images)
         ? raw.images.map((img: any) => (typeof img === 'string' ? img : img.image ?? ''))
         : [],
@@ -164,15 +183,26 @@ function normalizeTicket(raw: any): RepairTicket {
     statusHistory: Array.isArray(raw.status_history)
       ? raw.status_history.map((h: any) => ({
           id: h.id,
-          status: h.status ?? '',
+          status: h.status ? mapBackendStatus(h.status, h.status_label) : '',
           notes: h.notes ?? '',
+          updated_by: h.updated_by ?? '',
           created_at: h.created_at ?? '',
         }))
       : Array.isArray(raw.statusHistory)
         ? raw.statusHistory
         : [],
-    courier: raw.courier_details || raw.courier || null,
+    courier: raw.courier_details || raw.courier || (raw.courier_company || raw.courier_tracking_number
+      ? {
+          courier_name: raw.courier_company ?? '',
+          tracking_number: raw.courier_tracking_number ?? '',
+          courier_date: raw.courier_pickup_date ?? '',
+          courier_notes: '',
+        }
+      : null),
     adminNotes: raw.admin_notes || '',
+    thumbnail: raw.thumbnail ?? null,
+    photoCount: Number(raw.photo_count ?? (Array.isArray(raw.photos) ? raw.photos.length : 0)),
+    lastUpdate: lastUpdateFrom(raw.last_update ?? (Array.isArray(raw.status_history) ? raw.status_history[0] : null)),
   }
 }
 
@@ -282,8 +312,24 @@ export const repairService = {
       }
     }),
 
-  submitCourier: (ticketId: number, courier: CourierDetails) =>
-    api.put(`${REPAIRS_URL}/${ticketId}/courier/`, courier).then((r) =>
+  // Customer-scoped actions: only work on tickets owned by the signed-in user.
+  sendMyNote: (ticketId: number, message: string) =>
+    api.post(`${REPAIRS_URL}/my-tickets/${ticketId}/notes/`, { message }).then((r) =>
+      normalizeTicket(unwrapData<any>(r as any)),
+    ),
+
+  submitMyCourier: (ticketId: number, courier: CourierDetails) =>
+    api.post(`${REPAIRS_URL}/my-tickets/${ticketId}/courier/`, {
+      courier_company: courier.courier_name,
+      courier_tracking_number: courier.tracking_number,
+      courier_pickup_date: courier.courier_date || null,
+      notes: courier.courier_notes,
+    }).then((r) =>
+      normalizeTicket(unwrapData<any>(r as any)),
+    ),
+
+  cancelMyTicket: (ticketId: number, reason?: string) =>
+    api.post(`${REPAIRS_URL}/my-tickets/${ticketId}/cancel/`, { reason: reason ?? '' }).then((r) =>
       normalizeTicket(unwrapData<any>(r as any)),
     ),
 

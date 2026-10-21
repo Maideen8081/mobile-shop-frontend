@@ -1,1947 +1,408 @@
-import { useState, useEffect, useMemo, useCallback, Component } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiLoader } from 'react-icons/fi'
-import { useNavigate, Link } from 'react-router-dom'
-import { useIsMobile } from '../components/mobile/helpers'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import EcommerceFooter from '../components/ecommerce/Footer'
-import { repairService, type RepairTicket } from '../services/repairService'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import { BRAND, C } from '../components/mobile/theme'
+import '../components/repair/repairTracking.css'
+import { repairService, type RepairTicket } from '../services/repairService'
+import {
+  FILTERS,
+  type FilterKey,
+  formatDate,
+  formatPrice,
+  isClosed,
+  isCompleted,
+  lastActivity,
+  matchesFilter,
+  needsAction,
+  statusMeta,
+  ticketAmount,
+  timeAgo,
+} from '../components/repair/repairStatus'
+import {
+  DeviceThumb,
+  Icon,
+  StageTracker,
+  StatusPill,
+  TicketActions,
+} from '../components/repair/RepairTrackingUI'
+import { useRepairActions, type RepairActions } from '../components/repair/useRepairActions'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const REFRESH_MS = 60_000
 
-function formatPrice(n: number): string {
-  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+type SortKey = 'updated' | 'newest' | 'oldest'
+
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: 'updated', label: 'Recently updated' },
+  { key: 'newest', label: 'Newest first' },
+  { key: 'oldest', label: 'Oldest first' },
+]
+
+function isFilterKey(v: string | null): v is FilterKey {
+  return FILTERS.some(f => f.key === v)
 }
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—'
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-const PRIORITY_COLORS: Record<string, string> = {
-  Low: '#22c55e',
-  Medium: '#f59e0b',
-  High: '#ef4444',
-  Urgent: '#dc2626',
-}
-
-const PRIORITY_BG: Record<string, string> = {
-  Low: 'rgba(34,197,94,0.12)',
-  Medium: 'rgba(245,158,11,0.12)',
-  High: 'rgba(239,68,68,0.12)',
-  Urgent: 'rgba(220,38,38,0.15)',
-}
-
-const STATUS_BADGES: Record<string, { label: string; color: string }> = {
-  Submitted: { label: 'Submitted', color: '#6366f1' },
-  Accepted: { label: 'Accepted', color: '#22c55e' },
-  Rejected: { label: 'Rejected', color: '#ef4444' },
-  Received: { label: 'Device Received', color: '#f59e0b' },
-  'Awaiting Approval': { label: 'Awaiting Approval', color: '#D91E36' },
-  Diagnosing: { label: 'Under Inspection', color: '#3b82f6' },
-  'Waiting for Parts': { label: 'Waiting for Parts', color: '#f97316' },
-  'Repair In Progress': { label: 'Repair Started', color: '#8b5cf6' },
-  'Quality Check': { label: 'Quality Check', color: '#06b6d4' },
-  'Ready for Delivery': { label: 'Ready for Pickup', color: '#22c55e' },
-  Delivered: { label: 'Delivered', color: '#D91E36' },
-  Cancelled: { label: 'Cancelled', color: '#6b7280' },
-}
-
-const FILTER_OPTIONS = ['All', 'Pending', 'In Progress', 'Completed', 'Rejected'] as const
-
-function getAuthEmail(): string | null {
-  try {
-    const raw = localStorage.getItem('user_profile')
-    if (!raw) return null
-    const profile = JSON.parse(raw)
-    return profile?.email || null
-  } catch {
-    return null
-  }
-}
-
-async function fetchMyRepairs(): Promise<RepairTicket[]> {
-  try {
-    const data = await repairService.myTickets()
-    console.log('[CustomerRepairTracking] myTickets response:', data)
-    if (data.length > 0) return data
-  } catch (e) {
-    console.error('[CustomerRepairTracking] myTickets failed:', e)
-  }
-  try {
-    const all = await repairService.list()
-    const email = getAuthEmail()
-    if (!email) return []
-    return all.filter(t => t.customerEmail?.toLowerCase() === email.toLowerCase())
-  } catch (e) {
-    console.error('[CustomerRepairTracking] list fallback failed:', e)
-    return []
-  }
-}
-
-const PIPELINE_STEPS = [
-  { key: 'submitted', label: 'Submitted', icon: 'send' },
-  { key: 'accepted', label: 'Accepted', icon: 'check_circle' },
-  { key: 'received', label: 'Received', icon: 'inventory_2' },
-  { key: 'awaiting_approval', label: 'Awaiting Approval', icon: 'handshake' },
-  { key: 'diagnosing', label: 'Diagnosing', icon: 'search' },
-  { key: 'repair', label: 'Repair In Progress', icon: 'precision_manufacturing' },
-  { key: 'quality', label: 'Quality Check', icon: 'verified' },
-  { key: 'ready', label: 'Ready for Delivery', icon: 'rocket_launch' },
-  { key: 'delivered', label: 'Delivered', icon: 'done_all' },
-] as const
-
-const TICKET_TO_PIPELINE: Record<string, number> = {
-  Submitted: 0,
-  Accepted: 1,
-  Received: 2,
-  'Awaiting Approval': 3,
-  Diagnosing: 4,
-  'Waiting for Parts': 4,
-  'Repair In Progress': 5,
-  'Quality Check': 6,
-  'Ready for Delivery': 7,
-  Delivered: 8,
-  Rejected: -1,
-  Cancelled: -1,
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const badge = STATUS_BADGES[status] || { label: status, color: '#6b7280' }
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[8px] text-[10px] font-bold tracking-wider uppercase"
-      style={{ background: `${badge.color}12`, color: badge.color, border: `1px solid ${badge.color}20` }}
-    >
-      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: badge.color }} />
-      {badge.label}
-    </span>
-  )
-}
-
-function PriorityBadge({ priority }: { priority: string }) {
-  const color = PRIORITY_COLORS[priority] || '#6b7280'
-  const bg = PRIORITY_BG[priority] || 'rgba(107,114,128,0.12)'
-  return (
-    <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold tracking-wider uppercase"
-      style={{ background: bg, color, border: `1px solid ${color}15` }}
-    >
-      {priority}
-    </span>
-  )
-}
-
-function PipelineProgress({ ticket }: { ticket: RepairTicket }) {
-  const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
-  const isCancelled = ticket.status === 'Cancelled'
-  const isRejected = ticket.status === 'Rejected'
-  const isFailed = isCancelled || isRejected
-  const progressPct = isFailed ? 0 : stepIdx >= 0 ? Math.round(((stepIdx + 1) / PIPELINE_STEPS.length) * 100) : 0
-
-  return (
-    <section className="pp-pipeline-wrap">
-      {/* Header bar */}
-      <div className="pp-pipeline-header">
-        <div className="pp-pipeline-header-left">
-          <span className="pp-pipeline-dot" style={{ background: isFailed ? '#9CA3AF' : '#22C55E' }} />
-          <span className="pp-pipeline-label">
-            {isFailed ? ticket.status : stepIdx >= PIPELINE_STEPS.length - 1 ? 'Repair Complete' : 'Repair In Progress'}
-          </span>
-        </div>
-        <span className="pp-pipeline-pct">
-          {isFailed ? '—' : `${progressPct}%`}
-        </span>
-      </div>
-
-      {/* Progress bar */}
-      <div className="pp-pipeline-bar-track">
-        <div
-          className="pp-pipeline-bar-fill"
-          style={{
-            width: `${progressPct}%`,
-            background: isFailed
-              ? 'linear-gradient(90deg, #9CA3AF, #D1D5DB)'
-              : 'linear-gradient(90deg, #22C55E, #16A34A)',
-          }}
-        />
-      </div>
-
-      {/* Step indicators */}
-      <div className="pp-pipeline-steps">
-        {PIPELINE_STEPS.map((s, idx) => {
-          const isPast = !isFailed && idx < stepIdx
-          const isCurrent = !isFailed && idx === stepIdx
-          const isFuture = isFailed || idx > stepIdx
-
-          return (
-            <div key={s.key} className="pp-pipeline-step">
-              <div
-                className={`pp-step-circle ${isPast ? 'done' : ''} ${isCurrent ? 'current' : ''} ${isFuture ? 'future' : ''}`}
-              >
-                {isPast ? (
-                  <span className="material-symbols-outlined" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}>check</span>
-                ) : isCurrent ? (
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{s.icon}</span>
-                ) : (
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{s.icon}</span>
-                )}
-              </div>
-              <span className={`pp-step-label ${isPast ? 'done' : ''} ${isCurrent ? 'current' : ''}`}>
-                {s.label}
-              </span>
-              {isCurrent && <span className="pp-step-now-badge">NOW</span>}
-            </div>
-          )
-        })}
-      </div>
-    </section>
-  )
-}
-
-function RepairCard({ ticket, onSelect }: { ticket: RepairTicket; onSelect: (t: RepairTicket) => void }) {
-  const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
-  const isDelivered = ticket.status === 'Delivered'
-  const progressPct = isDelivered ? 100 : stepIdx >= 0 ? Math.round((stepIdx / (PIPELINE_STEPS.length - 1)) * 100) : 0
-  const navigate = useNavigate()
-
-  return (
-    <>
-      {/* Mobile card */}
-      <motion.div
-        onClick={() => onSelect(ticket)}
-        whileTap={{ scale: 0.97 }}
-        className="md:hidden flex gap-3 p-3 rounded-2xl cursor-pointer active:scale-[0.97] transition-all"
-        style={{
-          background: '#ffffff',
-          border: `1px solid ${BRAND.line}`,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
-        }}
-      >
-        <div className="relative w-[80px] h-[80px] rounded-xl overflow-hidden shrink-0 self-center" style={{ background: '#FFFBFB', border: `1px solid ${BRAND.line}` }}>
-          {ticket.images && ticket.images.length > 0 ? (
-            <img
-              src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
-              alt={ticket.deviceModel}
-              className="w-full h-full object-contain p-1.5"
-              loading="lazy"
-              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '📱' }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-2xl">📱</div>
-          )}
-          <span className="absolute top-1 left-1 text-[8px] font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: isDelivered ? '#059669' : BRAND.primary }}>{isDelivered ? 'Done' : 'Active'}</span>
-        </div>
-        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-          <div className="flex items-start justify-between gap-1">
-            <div className="min-w-0">
-              <h3 className="text-[13px] font-bold leading-snug truncate" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</h3>
-              <p className="text-[10px] font-semibold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[9.5px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: 'rgba(217,30,54,0.08)', color: BRAND.primary }}>{ticket.issueCategory}</span>
-            <PriorityBadge priority={ticket.priority} />
-            {ticket.estimatedCost > 0 && (
-              <span className="text-[11px] font-extrabold" style={{ color: BRAND.primary }}>{formatPrice(ticket.estimatedCost)}</span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <StatusBadge status={ticket.status} />
-            <span className="text-[9px]" style={{ color: BRAND.muted }}>{formatDate(ticket.createdAt)}</span>
-          </div>
-          <div className="mt-1 w-full h-1.5 rounded-[8px] overflow-hidden" style={{ background: 'rgba(237,238,239,0.8)' }}>
-            <div className="h-full rounded-[8px] transition-all duration-700" style={{
-              width: `${progressPct}%`,
-              background: isDelivered ? 'linear-gradient(90deg, #22C55E, #16A34A)' : 'linear-gradient(90deg, #D2172E, #FF5A65)',
-            }} />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Desktop card */}
-      <div
-        onClick={() => navigate(`/my-repairs/${ticket.id}`)}
-        className={`hidden md:grid ticket-card ${isDelivered ? 'st-completed' : progressPct <= 0 ? 'st-pending' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'st-rejected' : 'st-progress'}`}
-      >
-        <div className="device-thumb">
-          {ticket.images && ticket.images.length > 0 ? (
-            <img
-              src={ticket.images[0].startsWith('http') ? ticket.images[0] : `${API_BASE_URL}/${ticket.images[0].replace(/^\//, '')}`}
-              alt={ticket.deviceModel}
-              className="w-full h-full object-contain p-3"
-              style={{ opacity: 0.85 }}
-              loading="lazy"
-              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:40px;height:40px;color:var(--red-dark);opacity:.85"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 5.2h4" stroke-linecap="round"/></svg>' }}
-            />
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 40, height: 40, color: '#9C0F22', opacity: 0.85 }}><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M10 5.2h4" strokeLinecap="round" /></svg>
-          )}
-          <span className={`state-tag ${isDelivered ? 'completed' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'rejected' : progressPct <= 0 ? 'pending' : 'active'}`}>
-            <span className="d" />
-            {isDelivered ? 'Delivered' : ticket.status === 'Rejected' ? 'Rejected' : ticket.status === 'Cancelled' ? 'Cancelled' : progressPct <= 0 ? 'Queued' : 'Active'}
-          </span>
-        </div>
-
-        <div className="ticket-mid">
-          <div className="ticket-topline">
-            <span className="ticket-id-label">Ticket</span>
-            <span className="ticket-id mono">{ticket.repairId}</span>
-          </div>
-          <h3 className="device-name">{ticket.deviceBrand} {ticket.deviceModel}</h3>
-          <div className="ticket-date">Logged {formatDate(ticket.createdAt)}</div>
-          <div className="vitals-label"><span>Hardware Integrity Protocol</span></div>
-          <div className="vitals-track">
-            <div className="vitals-fill" style={{ width: `${progressPct}%` }} />
-            <span className="vitals-pct">{progressPct >= 100 ? '100%' : stepIdx < 0 ? (ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'Halted' : 'Awaiting') : `${progressPct}%`}</span>
-          </div>
-          <div className="tag-row">
-            <span className="tag">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 12, height: 12 }}><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M9 22v-4h6v4" /></svg>
-              {ticket.issueCategory}
-            </span>
-            <span className={`tag priority-${ticket.priority === 'Urgent' ? 'critical' : ticket.priority.toLowerCase()}`}>{ticket.priority}</span>
-            <span className="tag price">{ticket.estimatedCost > 0 ? formatPrice(ticket.estimatedCost) : 'Quote pending'}</span>
-          </div>
-        </div>
-
-        <div className="ticket-right">
-          <span className={`status-pill ${isDelivered ? 'completed' : ticket.status === 'Rejected' || ticket.status === 'Cancelled' ? 'rejected' : progressPct <= 0 ? 'pending' : 'progress'}`}>
-            <span className="d" />
-            {STATUS_BADGES[ticket.status]?.label || ticket.status}
-          </span>
-          <span className="chevron">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}><path d="M9 6l6 6-6 6" /></svg>
-          </span>
-        </div>
-      </div>
-    </>
-  )
-}
-
-function ImageGallery({ images }: { images: string[] }) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-
-  const resolvedImages = useMemo(() => {
-    return images.map(img => {
-      if (img.startsWith('http') || img.startsWith('data:')) return img
-      return `${API_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`
-    })
-  }, [images])
-
-  if (selectedIndex !== null) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center"
-        onClick={() => setSelectedIndex(null)}
-      >
-        <button onClick={() => setSelectedIndex(null)} className="absolute top-6 right-6 text-white/80 hover:text-white z-10 cursor-pointer">
-          <span className="material-symbols-outlined text-3xl">close</span>
-        </button>
-        {resolvedImages.length > 1 && (
-          <>
-            <button onClick={(e) => { e.stopPropagation(); setSelectedIndex(i => i === null ? 0 : Math.max(0, i - 1)) }}
-              className="absolute left-6 text-white/80 hover:text-white cursor-pointer z-10">
-              <span className="material-symbols-outlined text-4xl">chevron_left</span>
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); setSelectedIndex(i => i === null ? 0 : Math.min(resolvedImages.length - 1, i + 1)) }}
-              className="absolute right-6 text-white/80 hover:text-white cursor-pointer z-10">
-              <span className="material-symbols-outlined text-4xl">chevron_right</span>
-            </button>
-          </>
-        )}
-        <motion.img key={selectedIndex} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          src={resolvedImages[selectedIndex]} alt={`Photo ${selectedIndex + 1}`}
-          className="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl" onClick={(e) => e.stopPropagation()} />
-        <div className="absolute bottom-6 text-white/60 text-sm">{selectedIndex + 1} / {resolvedImages.length}</div>
-      </motion.div>
-    )
-  }
-
-  if (resolvedImages.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-28 rounded-xl" style={{ background: 'rgba(237,238,239,0.5)', border: '1px dashed rgba(185,203,185,0.3)' }}>
-        <p className="text-xs" style={{ color: 'rgba(59,75,61,0.5)' }}>No photos available</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="grid grid-cols-3 gap-2.5">
-      {resolvedImages.slice(0, 6).map((url, idx) => (
-        <motion.button key={idx} whileHover={{ scale: 1.03 }}
-          onClick={() => setSelectedIndex(idx)}
-          className="aspect-square rounded-xl overflow-hidden cursor-pointer group relative"
-          style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
-          <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-          {idx === 5 && resolvedImages.length > 6 && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="text-white font-bold text-base">+{resolvedImages.length - 5}</span>
-            </div>
-          )}
-        </motion.button>
-      ))}
-    </div>
-  )
-}
-
-function RepairDetailModal({
-  ticket: initialTicket,
-  onClose,
-  onApprove,
-  onNotify,
-}: {
-  ticket: RepairTicket
-  onClose: () => void
-  onApprove: (approved: boolean) => void
-  onNotify: (msg: string, type: 'success' | 'error') => void
-}) {
-  const [ticket, setTicket] = useState(initialTicket)
-  const [message, setMessage] = useState('')
-  const [sendingMsg, setSendingMsg] = useState(false)
-  const [courierName, setCourierName] = useState('')
-  const [trackingNumber, setTrackingNumber] = useState('')
-  const [courierDate, setCourierDate] = useState('')
-  const [courierNotes, setCourierNotes] = useState('')
-  const [submittingCourier, setSubmittingCourier] = useState(false)
-  const [showFullDetail, setShowFullDetail] = useState(false)
-  const [approving, setApproving] = useState(false)
-  const navigate = useNavigate()
-  const needsApproval = ticket.status === 'Awaiting Approval'
-  const canSendCourier = ticket.status === 'Accepted' && !ticket.courier
-  const courierSent = ticket.status === 'Accepted' && ticket.courier
-
-  const sendMessage = async () => {
-    const text = message.trim()
-    if (!text) return
-    setSendingMsg(true)
-    try {
-      await repairService.createNote(ticket.id, text, ticket.customerName || 'Customer', false)
-      setMessage('')
-      const updated = await repairService.getById(ticket.id)
-      setTicket(updated)
-    } catch { /* ignore */ }
-    setSendingMsg(false)
-  }
-
-  const handleSendCourier = async () => {
-    if (!courierName.trim() || !trackingNumber.trim()) {
-      onNotify('Please fill courier name and tracking number', 'error')
-      return
-    }
-    setSubmittingCourier(true)
-    try {
-      await repairService.submitCourier(ticket.id, {
-        courier_name: courierName.trim(),
-        tracking_number: trackingNumber.trim(),
-        courier_date: courierDate || new Date().toISOString().split('T')[0],
-        courier_notes: courierNotes.trim(),
-      })
-      await repairService.updateStatus(ticket.id, 'Received', `Courier received: ${courierName.trim()} - ${trackingNumber.trim()}`)
-      const updated = await repairService.getById(ticket.id)
-      setTicket(updated)
-      onNotify('Courier details submitted successfully!', 'success')
-    } catch {
-      onNotify('Failed to submit courier details', 'error')
-    }
-    setSubmittingCourier(false)
-  }
-
-  const isMobileDetail = useIsMobile()
-
-  if (isMobileDetail) {
-    const stepIdx = TICKET_TO_PIPELINE[ticket.status] ?? -1
-    const isCancelled = ticket.status === 'Cancelled'
-    const isFailed = ticket.status === 'Rejected' || isCancelled
-    if (showFullDetail) {
-      return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-white overflow-y-auto"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <div className="sticky top-0 z-10 w-full" style={{ background: 'linear-gradient(135deg,#D91E36 0%,#A3122A 100%)' }}>
-            <div className="flex items-center gap-2 px-3.5 h-12">
-              <button onClick={() => setShowFullDetail(false)} aria-label="Back" className="w-8 h-8 rounded-[8px] bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
-                <span className="material-symbols-outlined text-lg text-white">arrow_back</span>
-              </button>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-[15px] font-bold text-white truncate">Full Details</h1>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-3.5 mt-3 space-y-3 pb-24">
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Ticket Summary</span>
-                <span className="text-[10px]" style={{ color: BRAND.muted }}>{formatDate(ticket.createdAt)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <p className="text-[17px] font-extrabold" style={{ color: BRAND.primary }}>{ticket.repairId}</p>
-                  <p className="text-[12px] font-medium" style={{ color: BRAND.ink }}>{ticket.deviceBrand} {ticket.deviceModel}</p>
-                </div>
-                <PriorityBadge priority={ticket.priority} />
-              </div>
-              {ticket.estimatedCost > 0 && (
-                <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: `1px solid ${BRAND.line}` }}>
-                  <span className="text-[11px] font-semibold" style={{ color: BRAND.muted }}>Estimated Cost</span>
-                  <span className="text-[15px] font-extrabold" style={{ color: BRAND.primary }}>{formatPrice(ticket.estimatedCost)}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>person</span>
-                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Customer</h3>
-              </div>
-              <div className="space-y-2">
-                <MobileInfoRow label="Name" value={ticket.customerName} />
-                <MobileInfoRow label="Mobile" value={ticket.customerMobile} />
-                <MobileInfoRow label="Email" value={ticket.customerEmail} />
-                <MobileInfoRow label="Address" value={ticket.customerAddress} />
-              </div>
-            </div>
-
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>devices</span>
-                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Device</h3>
-              </div>
-              <div className="space-y-2">
-                <MobileInfoRow label="Brand" value={ticket.deviceBrand} />
-                <MobileInfoRow label="Model" value={ticket.deviceModel} />
-                <MobileInfoRow label="Category" value={ticket.deviceCategory} />
-                <MobileInfoRow label="IMEI" value={ticket.imei || '—'} />
-                <MobileInfoRow label="Color" value={ticket.deviceColor} />
-                <MobileInfoRow label="Warranty" value={ticket.warranty} />
-              </div>
-            </div>
-
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>build</span>
-                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Issue</h3>
-              </div>
-              <div className="space-y-2">
-                <MobileInfoRow label="Category" value={ticket.issueCategory} />
-                {ticket.description && (
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Description</span>
-                    <div className="mt-1 space-y-2">
-                      {ticket.description.split(/\n(?=Q:)/).map((block, i) => {
-                        const parts = block.split(/\nA:\s*/)
-                        if (parts.length === 2) {
-                          return (
-                            <div key={i} className="rounded-xl p-3" style={{ background: '#F8FAFC', border: `1px solid ${BRAND.line}` }}>
-                              <p className="text-[11px] font-bold" style={{ color: BRAND.primaryDark }}>{parts[0]}</p>
-                              <p className="text-[12.5px] mt-1 leading-relaxed" style={{ color: BRAND.ink }}>{parts[1]}</p>
-                            </div>
-                          )
-                        }
-                        return <p key={i} className="text-[12.5px] leading-relaxed whitespace-pre-wrap" style={{ color: BRAND.ink }}>{block}</p>
-                      })}
-                    </div>
-                  </div>
-                )}
-                <MobileInfoRow label="Priority" value={ticket.priority} />
-                <MobileInfoRow label="Accessories" value={ticket.accessories || 'None'} />
-                <MobileInfoRow label="Password" value={ticket.password || 'Not required'} />
-              </div>
-            </div>
-
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>receipt_long</span>
-                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Estimation</h3>
-              </div>
-              <div className="space-y-2">
-                <MobileInfoRow label="Estimated Cost" value={formatPrice(ticket.estimatedCost)} highlight />
-                <MobileInfoRow label="Est. Completion" value={ticket.estimatedDays ? `${ticket.estimatedDays} day${ticket.estimatedDays > 1 ? 's' : ''}` : '—'} />
-                <MobileInfoRow label="Technician" value={ticket.technicianId ? `Technician #${ticket.technicianId}` : 'Not assigned'} />
-              </div>
-            </div>
-
-            {needsApproval && (
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(217,30,54,0.05)', border: '1px solid rgba(217,30,54,0.18)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div className="flex items-center gap-1.5 mb-3">
-                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>handshake</span>
-                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Repair Estimate</h3>
-                </div>
-                <div className="space-y-3 p-3 rounded-xl mb-3" style={{ background: 'rgba(255,255,255,0.7)' }}>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: BRAND.muted }}>Reason</p>
-                    <p className="text-[13px] font-medium" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
-                  </div>
-                  <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid ${BRAND.line}` }}>
-                    <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Charge</p>
-                    <p className="text-[17px] font-extrabold" style={{ color: BRAND.primary }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
-                  </div>
-                </div>
-                <div className="flex gap-2.5">
-                  <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
-                    disabled={approving}
-                    className="flex-1 h-11 rounded-xl text-[12.5px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
-                    style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
-                  >{approving ? 'Processing...' : 'Approve'} ✅</button>
-                  <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
-                    disabled={approving}
-                    className="flex-1 h-11 rounded-xl text-[12.5px] font-semibold active:scale-[0.97] transition disabled:opacity-50"
-                    style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
-                  >{approving ? 'Processing...' : 'Decline'} ❌</button>
-                </div>
-              </div>
-            )}
-
-            {ticket.images && ticket.images.length > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div className="flex items-center gap-1.5 mb-3">
-                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>photo_camera</span>
-                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Photos</h3>
-                </div>
-                <ImageGallery images={ticket.images} />
-              </div>
-            )}
-
-            {canSendCourier && (
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="material-symbols-outlined text-lg" style={{ color: '#6366f1' }}>local_shipping</span>
-                  <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Send via Courier</h3>
-                </div>
-                <p className="text-[11px] mb-3" style={{ color: BRAND.muted }}>Your repair has been accepted. Share your courier details below.</p>
-                <div className="space-y-2.5">
-                  <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="Courier name (e.g. DTDC)" className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
-                  <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="Tracking number" className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
-                  <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)} className="w-full h-10 px-3.5 rounded-xl text-[12.5px] outline-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
-                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Additional notes..." className="w-full px-3.5 py-2.5 rounded-xl text-[12.5px] outline-none resize-none" style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }} />
-                  <button onClick={handleSendCourier} disabled={submittingCourier} className="w-full h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50" style={{ background: '#6366f1' }}>
-                    {submittingCourier ? 'Submitting...' : 'Submit Courier Details'}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {courierSent && ticket.courier && (
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(34,197,94,0.06)', border: '1px solid rgba(34,197,94,0.2)', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="material-symbols-outlined text-lg" style={{ color: '#22c55e' }}>check_circle</span>
-                  <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Courier Sent</h3>
-                </div>
-                <div className="space-y-1.5">
-                  <MobileInfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
-                  <MobileInfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
-                  <MobileInfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
-                  {ticket.courier.courier_notes && <MobileInfoRow label="Notes" value={ticket.courier.courier_notes} />}
-                </div>
-              </div>
-            )}
-
-            {ticket.statusHistory && ticket.statusHistory.length > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div className="flex items-center gap-1.5 mb-3">
-                  <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>history</span>
-                  <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Status History</h3>
-                </div>
-                <div className="relative">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(163,18,42,0.12)' }} />
-                  <div className="space-y-0">
-                    {ticket.statusHistory.map((h, idx) => {
-                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
-                      return (
-                        <div key={h.id || idx} className="flex items-start gap-3 py-2">
-                          <div className="relative z-10 w-6 h-6 rounded-[8px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}18` }}>
-                            <div className="w-2 h-2 rounded-[8px]" style={{ background: badge.color }} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[12px] font-bold" style={{ color: badge.color }}>{badge.label}</span>
-                              <span className="text-[10px]" style={{ color: BRAND.muted }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
-                            </div>
-                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: BRAND.muted }}>{h.notes}</p>}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="rounded-2xl p-4" style={{ background: '#ffffff', border: `1px solid ${BRAND.line}`, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-              <div className="flex items-center gap-1.5 mb-3">
-                <span className="material-symbols-outlined text-base" style={{ color: BRAND.primary }}>chat</span>
-                <h3 className="text-[12px] font-bold uppercase tracking-wider" style={{ color: BRAND.ink }}>Messages</h3>
-              </div>
-              {ticket.notes && ticket.notes.length > 0 ? (
-                <div className="space-y-3 max-h-52 overflow-y-auto mb-3">
-                  {ticket.notes.map((note) => (
-                    <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                        style={{ background: note.is_admin ? '#F1F5F9' : BRAND.primary, color: note.is_admin ? BRAND.ink : '#fff' }}
-                      >
-                        <p className="text-[10px] font-bold mb-0.5 opacity-70">{note.is_admin ? 'Admin' : 'You'}</p>
-                        <p className="text-[12.5px] leading-relaxed whitespace-pre-wrap">{note.message}</p>
-                        <p className="text-[9px] mt-1 opacity-50 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-[12px] text-center py-3" style={{ color: BRAND.muted }}>No messages yet.</p>
-              )}
-              <div className="flex gap-2 items-end">
-                <input value={message} onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Type a message..." className="flex-1 h-10 px-3.5 rounded-xl text-[12.5px] outline-none"
-                  style={{ background: '#F8FAFC', border: `1px solid ${BRAND.line}`, color: BRAND.ink }}
-                />
-                <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 active:scale-90 flex-shrink-0"
-                  style={{ background: BRAND.primary }}
-                >
-                  {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )
-    }
-
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-[#FFFBFB] flex flex-col font-sans"
-        style={{ fontFamily: 'var(--font-ui)' }}
-      >
-        {/* Fixed header */}
-        <div className="flex-shrink-0 w-full px-4 h-14 flex items-center gap-3" style={{ background: C.grad }}>
-          <button onClick={onClose} aria-label="Back" className="w-8 h-8 rounded-[8px] bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <span className="material-symbols-outlined text-lg text-white">arrow_back</span>
-          </button>
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-bold text-white truncate">{ticket.repairId}</p>
-            <p className="text-[9px] text-white/70 truncate -mt-0.5">{ticket.deviceBrand} {ticket.deviceModel}</p>
-          </div>
-          <span className="flex-shrink-0"><StatusBadge status={ticket.status} /></span>
-        </div>
-
-        {/* Main tracking area */}
-        <div className="flex-1 flex flex-col px-4 min-h-0" style={{ paddingTop: '12px', paddingBottom: '12px' }}>
-
-          {/* Current status hero */}
-          <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'linear-gradient(135deg, rgba(217,30,54,0.08), rgba(163,18,42,0.04))', border: '1px solid rgba(217,30,54,0.15)' }}>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.primary }}>Current Status</p>
-                <p className="text-[18px] font-extrabold mt-0.5" style={{ color: BRAND.ink }}>
-                  {STATUS_BADGES[ticket.status]?.label || ticket.status}
-                </p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: BRAND.primarySoft }}>
-                <span className="material-symbols-outlined text-2xl" style={{ color: BRAND.primary, fontVariationSettings: "'FILL' 1" }}>
-                  {stepIdx >= PIPELINE_STEPS.length - 1 ? 'check_circle' : PIPELINE_STEPS[Math.max(0, stepIdx)]?.icon || 'precision_manufacturing'}
-                </span>
-              </div>
-            </div>
-            <div className="mt-3 w-full h-2 rounded-[8px] overflow-hidden" style={{ background: 'rgba(217,30,54,0.12)' }}>
-              <div className="h-full rounded-[8px] transition-all duration-700" style={{
-                width: isFailed ? '0%' : `${Math.round(((stepIdx + 1) / PIPELINE_STEPS.length) * 100)}%`,
-                background: isFailed ? 'linear-gradient(90deg, #9CA3AF, #D1D5DB)' : 'linear-gradient(90deg, #22C55E, #16A34A)',
-              }} />
-            </div>
-            <p className="text-[10px] font-semibold mt-1.5 text-right" style={{ color: BRAND.muted }}>
-              {isFailed ? ticket.status : `Step ${stepIdx + 1} of ${PIPELINE_STEPS.length}`}
-            </p>
-          </div>
-
-          {/* Repair Estimate — shown inline on mobile when awaiting approval */}
-          {needsApproval && (
-            <div className="flex-shrink-0 rounded-2xl px-4 py-3.5 mb-3" style={{ background: 'rgba(217,30,54,0.06)', border: '1.5px solid rgba(217,30,54,0.15)' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-lg" style={{ color: '#D91E36' }}>handshake</span>
-                <h3 className="text-[13px] font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
-              </div>
-              <p className="text-[10px] mb-2.5" style={{ color: BRAND.muted }}>Please review the diagnosis and estimated cost below.</p>
-              <div className="space-y-2 p-3 rounded-xl mb-3" style={{ background: 'rgba(255,255,255,0.6)' }}>
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5" style={{ color: BRAND.muted }}>Repair Reason</p>
-                  <p className="text-[12.5px] font-medium leading-snug" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
-                </div>
-                <div className="flex items-center justify-between pt-1.5" style={{ borderTop: `1px solid ${BRAND.line}` }}>
-                  <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
-                  <p className="text-base font-extrabold" style={{ color: '#D91E36' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
-                  disabled={approving}
-                  className="flex-1 h-10 rounded-xl text-[12px] font-bold text-white active:scale-[0.97] transition disabled:opacity-50"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
-                >{approving ? 'Processing...' : 'Approve'} ✅</button>
-                <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
-                  disabled={approving}
-                  className="flex-1 h-10 rounded-xl text-[12px] font-semibold active:scale-[0.97] transition disabled:opacity-50"
-                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
-                >{approving ? 'Processing...' : 'Decline'} ❌</button>
-              </div>
-            </div>
-          )}
-
-          {/* Timeline steps */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="flex flex-col">
-              {PIPELINE_STEPS.map((s, idx) => {
-                const active = !isFailed && idx <= stepIdx
-                const current = idx === stepIdx && !isFailed
-                const past = idx < stepIdx && !isFailed
-
-                return (
-                  <div key={s.key} className="flex items-center gap-3 py-2.5">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className="w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 transition-all duration-500"
-                        style={{
-                          background: active ? (past ? '#059669' : BRAND.primary) : '#F1F5F9',
-                          boxShadow: current ? `0 0 0 3px ${BRAND.primarySoft}` : 'none',
-                        }}
-                      >
-                        {past || (active && idx === PIPELINE_STEPS.length - 1) ? (
-                          <span className="material-symbols-outlined text-xs text-white" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            check
-                          </span>
-                        ) : current ? (
-                          <div className="w-2 h-2 rounded-[8px] bg-white" />
-                        ) : (
-                          <span className="material-symbols-outlined text-xs" style={{ color: BRAND.muted }}>
-                            {s.icon}
-                          </span>
-                        )}
-                      </div>
-                      {idx < PIPELINE_STEPS.length - 1 && (
-                        <div className="w-[2px] flex-1 min-h-[6px]" style={{ background: past ? '#059669' : BRAND.line }} />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0 flex items-center justify-between">
-                      <div>
-                        <p className="text-[13px] font-semibold leading-tight" style={{ color: active ? BRAND.ink : BRAND.muted }}>
-                          {s.label}
-                        </p>
-                        <p className="text-[9px] font-medium mt-0.5" style={{ color: current ? BRAND.primary : past ? '#059669' : BRAND.muted }}>
-                          {past ? 'Completed' : current ? 'In Progress' : isFailed && idx === 0 ? ticket.status : ''}
-                        </p>
-                      </div>
-                      {current && (
-                        <div className="flex-shrink-0 ml-2">
-                          <div className="px-2 py-0.5 rounded-[8px] text-[8px] font-bold text-white" style={{ background: BRAND.primary }}>
-                            NOW
-                          </div>
-                        </div>
-                      )}
-                      {past && (
-                        <span className="material-symbols-outlined text-base flex-shrink-0" style={{ color: '#059669', fontVariationSettings: "'FILL' 1" }}>
-                          check_circle
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Bottom bar */}
-          <div className="flex-shrink-0 flex items-center gap-2 pt-3" style={{ borderTop: '1px solid rgba(217,30,54,0.08)' }}>
-            <button
-              onClick={() => setShowFullDetail(true)}
-              className="flex-1 h-11 rounded-xl text-[13px] font-bold text-white active:scale-[0.97] transition shadow-lg shadow-[rgba(217,30,54,0.25)]"
-              style={{ background: C.grad }}
-            >
-              Full Details
-            </button>
-            <button
-              onClick={() => navigate('/repairs')}
-              className="flex-1 h-11 rounded-xl text-[13px] font-semibold active:scale-[0.97] transition"
-              style={{ background: '#fff', border: `1px solid ${BRAND.line}`, color: BRAND.ink }}
-            >
-              Book New
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    )
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto pt-16 pb-16 px-4"
-      style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(12px)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 30, scale: 0.97 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="w-full max-w-4xl rounded-2xl overflow-hidden relative"
-        style={{
-          background: 'rgba(255,255,255,0.92)',
-          backdropFilter: 'blur(40px)',
-          border: '1px solid rgba(255,255,255,0.7)',
-          boxShadow: '0 25px 80px rgba(0,0,0,0.2)',
-        }}
-      >
-        <button onClick={onClose} className="absolute top-5 right-5 w-9 h-9 rounded-[8px] flex items-center justify-center z-10 cursor-pointer transition-all duration-200 hover:bg-black/5" style={{ background: 'rgba(255,255,255,0.7)' }}>
-          <span className="material-symbols-outlined text-base" style={{ color: BRAND.muted }}>close</span>
-        </button>
-
-        {/* Modal Header */}
-        <div className="px-8 pt-8 pb-6" style={{ borderBottom: '1px solid rgba(229,231,235,0.5)' }}>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2.5 mb-1">
-                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: BRAND.muted }}>Ticket</span>
-                <span className="text-xl font-extrabold" style={{ color: BRAND.primaryDark }}>{ticket.repairId}</span>
-              </div>
-              <p className="text-sm" style={{ color: BRAND.muted }}>{ticket.deviceBrand} {ticket.deviceModel} · Created {formatDate(ticket.createdAt)}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusBadge status={ticket.status} />
-              <PriorityBadge priority={ticket.priority} />
-            </div>
-          </div>
-        </div>
-
-        <div className="p-8">
-          <div className="mb-8">
-            <PipelineProgress ticket={ticket} />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">person</span>
-                Customer Information
-              </h3>
-              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <InfoRow label="Name" value={ticket.customerName} />
-                <InfoRow label="Mobile" value={ticket.customerMobile} />
-                <InfoRow label="Email" value={ticket.customerEmail} />
-                <InfoRow label="Address" value={ticket.customerAddress} />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">devices</span>
-                Device Information
-              </h3>
-              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <InfoRow label="Category" value={ticket.deviceCategory} />
-                <InfoRow label="Brand" value={ticket.deviceBrand} />
-                <InfoRow label="Model" value={ticket.deviceModel} />
-                <InfoRow label="IMEI" value={ticket.imei ? ticket.imei.replace(/(\d{4})(?=\d)/g, '$1 ') : '—'} />
-                <InfoRow label="Serial No." value={ticket.serialNumber} />
-                <InfoRow label="Color" value={ticket.deviceColor} />
-                <InfoRow label="Warranty" value={ticket.warranty} />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">build</span>
-                Issue Details
-              </h3>
-              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <InfoRow label="Category" value={ticket.issueCategory} />
-                <div>
-                  <p className="text-[9px] tracking-wider font-bold uppercase mb-1" style={{ color: BRAND.muted }}>Description</p>
-                  <p className="text-sm leading-relaxed" style={{ color: BRAND.ink }}>{ticket.description}</p>
-                </div>
-                <InfoRow label="Priority" value={ticket.priority} />
-                <InfoRow label="Accessories" value={ticket.accessories || 'None'} />
-                <InfoRow label="Password" value={ticket.password || 'Not required'} />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">receipt_long</span>
-                Repair Estimation
-              </h3>
-              <div className="space-y-2.5 p-4 rounded-xl" style={{ background: 'rgba(241,245,249,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <InfoRow label="Estimated Cost" value={formatPrice(ticket.estimatedCost)} highlight />
-                <InfoRow label="Est. Completion" value={ticket.estimatedDays ? `${ticket.estimatedDays} day${ticket.estimatedDays > 1 ? 's' : ''}` : '—'} />
-                <InfoRow label="Technician" value={ticket.technicianId ? `Technician #${ticket.technicianId}` : 'Not assigned'} />
-              </div>
-            </div>
-          </div>
-
-          {needsApproval && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 rounded-2xl"
-              style={{ background: 'rgba(217,30,54,0.04)', border: '1.5px solid rgba(217,30,54,0.12)' }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(217,30,54,0.1)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#D91E36' }}>handshake</span>
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Repair Estimate — Awaiting Your Approval</h3>
-                  <p className="text-[11px]" style={{ color: BRAND.muted }}>Please review the diagnosis and estimated cost below.</p>
-                </div>
-              </div>
-              <div className="space-y-3 p-4 rounded-xl mb-4" style={{ background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: BRAND.muted }}>Repair Reason</p>
-                  <p className="text-sm font-medium" style={{ color: BRAND.ink }}>{ticket.repairReason || 'No diagnosis provided'}</p>
-                </div>
-                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(229,231,235,0.5)' }}>
-                  <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: BRAND.muted }}>Estimated Charge</p>
-                  <p className="text-xl font-extrabold" style={{ color: '#D91E36' }}>{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <button onClick={async () => { setApproving(true); try { await onApprove(true) } finally { setApproving(false) } }}
-                  disabled={approving}
-                  className="flex-1 h-12 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer hover:shadow-lg"
-                  style={{ background: approving ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 6px 20px rgba(217,30,54,0.3)' }}
-                >{approving ? 'Processing...' : 'Approve & Start Repair'}</button>
-                <button onClick={async () => { setApproving(true); try { await onApprove(false) } finally { setApproving(false) } }}
-                  disabled={approving}
-                  className="flex-1 h-12 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                  style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)', color: '#EF4444' }}
-                >{approving ? 'Processing...' : 'Decline'}</button>
-              </div>
-            </motion.div>
-          )}
-
-          {ticket.images && ticket.images.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">photo_camera</span>
-                Device Photos
-              </h3>
-              <ImageGallery images={ticket.images} />
-            </div>
-          )}
-
-          <div className="mb-8">
-            <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-              <span className="material-symbols-outlined text-sm">chat</span>
-              Conversation with Admin
-            </h3>
-            <div className="rounded-2xl p-5" style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
-              {ticket.notes && ticket.notes.length > 0 ? (
-                <div className="space-y-3 max-h-52 overflow-y-auto mb-4 pr-1">
-                  {ticket.notes.map((note) => (
-                    <div key={note.id} className={`flex ${note.is_admin ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${note.is_admin ? 'rounded-bl-sm' : 'rounded-br-sm'}`}
-                        style={{ background: note.is_admin ? 'rgba(255,255,255,0.9)' : 'linear-gradient(135deg, #A3122A, #D91E36)', color: note.is_admin ? BRAND.ink : '#ffffff', border: note.is_admin ? '1px solid rgba(229,231,235,0.5)' : 'none' }}
-                      >
-                        <p className="text-[10px] font-bold mb-0.5 opacity-60">{note.is_admin ? 'Admin' : 'You'}</p>
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{note.message}</p>
-                        <p className="text-[9px] mt-1.5 opacity-40 text-right">{note.created_at ? formatDate(note.created_at) : ''}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-xs text-center py-4" style={{ color: BRAND.muted }}>No messages yet. Send a message to the admin team.</p>
-              )}
-              <div className="flex gap-2">
-                <input value={message} onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Type your message..." className="flex-1 h-11 px-4 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(217,30,54,0.1)]"
-                  style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
-                />
-                <button onClick={sendMessage} disabled={sendingMsg || !message.trim()}
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white transition-all duration-200 disabled:opacity-40 cursor-pointer hover:shadow-lg active:scale-95"
-                  style={{ background: 'linear-gradient(135deg, #A3122A, #D91E36)', boxShadow: '0 4px 12px rgba(217,30,54,0.25)' }}
-                >
-                  {sendingMsg ? <FiLoader size={14} className="animate-spin" /> : <span className="material-symbols-outlined text-lg">send</span>}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {canSendCourier && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8 p-6 rounded-2xl"
-              style={{ background: 'rgba(99,102,241,0.04)', border: '1px solid rgba(99,102,241,0.15)' }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.1)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#6366f1' }}>local_shipping</span>
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Send Device via Courier</h3>
-                  <p className="text-[11px]" style={{ color: BRAND.muted }}>Your repair has been accepted. Please send the device and share courier details.</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Courier Name *</label>
-                    <input value={courierName} onChange={(e) => setCourierName(e.target.value)} placeholder="e.g. DTDC, Blue Dart"
-                      className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
-                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Tracking Number *</label>
-                    <input value={trackingNumber} onChange={(e) => setTrackingNumber(e.target.value)} placeholder="e.g. DTDC123456789"
-                      className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
-                      style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Shipment Date</label>
-                  <input type="date" value={courierDate} onChange={(e) => setCourierDate(e.target.value)}
-                    className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
-                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: BRAND.muted }}>Additional Notes</label>
-                  <textarea value={courierNotes} onChange={(e) => setCourierNotes(e.target.value)} rows={2} placeholder="Any special instructions for the courier..."
-                    className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none resize-none transition-all duration-200 focus:shadow-[0_0_0_3px_rgba(99,102,241,0.1)]"
-                    style={{ background: 'rgba(255,255,255,0.8)', border: '1px solid rgba(229,231,235,0.5)', color: BRAND.ink }}
-                  />
-                </div>
-                <button onClick={handleSendCourier} disabled={submittingCourier}
-                  className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] cursor-pointer disabled:opacity-50 hover:shadow-lg"
-                  style={{ background: '#6366f1', boxShadow: '0 6px 20px rgba(99,102,241,0.25)' }}
-                >
-                  {submittingCourier ? 'Submitting...' : 'Submit Courier Details'}
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {courierSent && ticket.courier && (
-            <div className="mb-8 p-6 rounded-2xl" style={{ background: 'rgba(34,197,94,0.04)', border: '1px solid rgba(34,197,94,0.15)' }}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34,197,94,0.1)' }}>
-                  <span className="material-symbols-outlined text-xl" style={{ color: '#22c55e' }}>check_circle</span>
-                </div>
-                <h3 className="text-sm font-bold" style={{ color: BRAND.ink }}>Courier Sent</h3>
-              </div>
-              <div className="space-y-1.5 ml-[52px]">
-                <InfoRow label="Courier" value={ticket.courier.courier_name || '—'} />
-                <InfoRow label="Tracking" value={ticket.courier.tracking_number || '—'} />
-                <InfoRow label="Date" value={ticket.courier.courier_date ? formatDate(ticket.courier.courier_date) : '—'} />
-                {ticket.courier.courier_notes && <InfoRow label="Notes" value={ticket.courier.courier_notes} />}
-              </div>
-            </div>
-          )}
-
-          {ticket.statusHistory && ticket.statusHistory.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-[10px] font-bold tracking-wider uppercase mb-3 flex items-center gap-1.5" style={{ color: BRAND.primaryDark }}>
-                <span className="material-symbols-outlined text-sm">history</span>
-                Status History
-              </h3>
-              <div className="rounded-2xl p-5" style={{ background: 'rgba(241,245,249,0.5)', border: '1px solid rgba(229,231,235,0.5)' }}>
-                <div className="relative">
-                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5" style={{ background: 'rgba(217,30,54,0.1)' }} />
-                  <div className="space-y-0">
-                    {ticket.statusHistory.map((h, idx) => {
-                      const badge = STATUS_BADGES[h.status] || { label: h.status, color: '#6b7280' }
-                      return (
-                        <div key={h.id || idx} className="flex items-start gap-3 py-2.5">
-                          <div className="relative z-10 w-6 h-6 rounded-[8px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: `${badge.color}15` }}>
-                            <div className="w-2 h-2 rounded-[8px]" style={{ background: badge.color }} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold" style={{ color: badge.color }}>{badge.label}</span>
-                              <span className="text-[10px]" style={{ color: BRAND.muted }}>{h.created_at ? formatDate(h.created_at) : ''}</span>
-                            </div>
-                            {h.notes && <p className="text-[11px] mt-0.5" style={{ color: BRAND.muted }}>{h.notes}</p>}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-      <div className="lg:hidden"><EcommerceFooter compact /></div>
-      </motion.div>
-    </motion.div>
-  )
-}
-
-function ErrorFallback({ error, resetError }: { error: Error; resetError: () => void }) {
-  return (
-    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-8">
-      <div className="bg-white rounded-xl p-8 max-w-md mx-auto text-center">
-        <h2 className="text-xl font-bold text-red-600 mb-4">Component Error</h2>
-        <pre className="text-left text-sm text-red-600 p-4 bg-red-50 rounded overflow-auto">{error.message}</pre>
-        <div className="mt-4 flex gap-3 justify-center">
-          <button onClick={resetError} className="px-6 py-2 bg-[#D91E36] text-white rounded">Retry</button>
-          <button onClick={() => window.location.reload()} className="px-6 py-2 bg-gray-600 text-white rounded">Reload Page</button>
-        </div>
-</div>
-    </div>
-  )
-}
-
-class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props)
-    this.state = { hasError: false, error: null }
-  }
-  static getDerivedStateFromError(error: Error) { return { hasError: true, error } }
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback error={this.state.error!} resetError={() => this.setState({ hasError: false, error: null })} />
-    }
-    return this.props.children
-  }
-}
-
-function InfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className="flex justify-between items-start gap-3">
-      <span className="text-[10px] tracking-wider font-bold uppercase flex-shrink-0" style={{ color: BRAND.muted }}>{label}</span>
-      <span className="text-[13px] text-right font-semibold" style={{ color: highlight ? '#059669' : BRAND.ink, fontWeight: highlight ? 700 : 600 }}>{value || '—'}</span>
-    </div>
-  )
-}
-
-function MobileInfoRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="text-[11px] font-medium flex-shrink-0" style={{ color: BRAND.muted }}>{label}</span>
-      <span className="text-[12.5px] text-right font-semibold truncate max-w-[60%]" style={{ color: highlight ? '#059669' : BRAND.ink }}>{value || '—'}</span>
-    </div>
-  )
+function isSortKey(v: string | null): v is SortKey {
+  return SORTS.some(s => s.key === v)
 }
 
 export default function CustomerRepairTracking() {
   const navigate = useNavigate()
-  const isMobile = useIsMobile()
+  const [params, setParams] = useSearchParams()
   const [tickets, setTickets] = useState<RepairTicket[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('All')
-  const [selectedTicket, setSelectedTicket] = useState<RepairTicket | null>(null)
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const [error, setError] = useState(false)
+  const [syncedAt, setSyncedAt] = useState<number | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  const inFlight = useRef(false)
+
+  const filter: FilterKey = isFilterKey(params.get('status')) ? params.get('status') as FilterKey : 'all'
+  const sort: SortKey = isSortKey(params.get('sort')) ? params.get('sort') as SortKey : 'updated'
+  const query = params.get('q') ?? ''
+
+  const setParam = (key: string, value: string, fallback: string) => {
+    setParams(prev => {
+      const next = new URLSearchParams(prev)
+      if (!value || value === fallback) next.delete(key)
+      else next.set(key, value)
+      return next
+    }, { replace: true })
+  }
+
+  const load = useCallback(async (mode: 'manual' | 'silent') => {
+    if (inFlight.current) return
+    inFlight.current = true
+    try {
+      const data = await repairService.myTickets()
+      setTickets(data)
+      setError(false)
+      setSyncedAt(Date.now())
+    } catch {
+      // Keep showing the last good data on a background refresh failure.
+      if (mode !== 'silent') setError(true)
+    } finally {
+      inFlight.current = false
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }, [])
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const data = await fetchMyRepairs()
-        setTickets(data)
-      } catch (e) {
-        console.error('[CustomerRepairTracking] fetchTickets error:', e)
-        setTickets([])
-      }
-      setLoading(false)
+    inFlight.current = true
+    repairService.myTickets()
+      .then(data => { setTickets(data); setSyncedAt(Date.now()) })
+      .catch(() => setError(true))
+      .finally(() => { inFlight.current = false; setLoading(false) })
+    const tick = () => {
+      setNow(Date.now())
+      if (document.visibilityState === 'visible') load('silent')
     }
-    fetchTickets()
-  }, [])
-
-  const showNotification = useCallback((message: string, type: 'success' | 'error') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 3000)
-  }, [])
-
-  const filteredTickets = useMemo(() => {
-    let result = tickets
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      result = result.filter(t =>
-        t.repairId.toLowerCase().includes(q) ||
-        t.deviceModel.toLowerCase().includes(q) ||
-        t.deviceBrand.toLowerCase().includes(q) ||
-        t.imei.toLowerCase().includes(q),
-      )
+    const id = window.setInterval(tick, REFRESH_MS)
+    const onFocus = () => load('silent')
+    window.addEventListener('focus', onFocus)
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener('focus', onFocus)
     }
-    if (statusFilter !== 'All') {
-      if (statusFilter === 'Pending') result = result.filter(t => ['Submitted', 'Accepted', 'Received'].includes(t.status))
-      else if (statusFilter === 'In Progress') result = result.filter(t => ['Diagnosing', 'Waiting for Parts', 'Repair In Progress', 'Quality Check', 'Ready for Delivery'].includes(t.status))
-      else if (statusFilter === 'Completed') result = result.filter(t => t.status === 'Delivered')
-      else if (statusFilter === 'Rejected') result = result.filter(t => ['Rejected', 'Cancelled'].includes(t.status))
-    }
-    return result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  }, [tickets, searchQuery, statusFilter])
+  }, [load])
 
-  const dashboardStats = useMemo(() => {
-    const total = tickets.length
-    const active = tickets.filter(t => !['Delivered', 'Cancelled'].includes(t.status)).length
-    const completed = tickets.filter(t => t.status === 'Delivered').length
-    return { total, active, completed }
+  const refresh = () => {
+    setRefreshing(true)
+    load('manual')
+  }
+
+  const replaceTicket = useCallback((updated: RepairTicket) => {
+    setTickets(prev => prev.map(t => (t.id === updated.id
+      ? { ...t, ...updated, thumbnail: t.thumbnail ?? updated.thumbnail, lastUpdate: updated.lastUpdate ?? t.lastUpdate }
+      : t)))
+    // The detail payload has no last_update; fetch the list again so the row stays accurate.
+    load('silent')
+  }, [load])
+
+  const actions = useRepairActions(replaceTicket)
+
+  const counts = useMemo(() => {
+    const c = {} as Record<FilterKey, number>
+    for (const f of FILTERS) c[f.key] = tickets.filter(t => matchesFilter(t, f.key)).length
+    return c
   }, [tickets])
 
-   const handleApprove = async (approved: boolean) => {
-     if (!selectedTicket) return
-     try {
-       if (approved) {
-         await repairService.customerApprove(selectedTicket.id)
-         showNotification('Repair approved! Work will begin shortly.', 'success')
-       } else {
-         await repairService.customerDecline(selectedTicket.id)
-         showNotification('Repair estimate declined. A representative will contact you.', 'error')
-       }
-       try {
-         const detail = await repairService.getById(selectedTicket.id)
-         setSelectedTicket(detail)
-         const updated = await fetchMyRepairs()
-         setTickets(updated.map(t => t.id === detail.id ? detail : t))
-       } catch { /* refresh non-critical */ }
-     } catch {
-       showNotification('Failed to update. Please try again.', 'error')
-     }
-   }
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    const rows = tickets.filter(t => {
+      if (!matchesFilter(t, filter)) return false
+      if (!q) return true
+      return [t.repairId, t.deviceBrand, t.deviceModel, `${t.deviceBrand} ${t.deviceModel}`, t.imei, t.issueCategory]
+        .some(v => v?.toLowerCase().includes(q))
+    })
+    const time = (s: string) => new Date(s).getTime() || 0
+    return rows.sort((a, b) => {
+      if (sort === 'oldest') return time(a.createdAt) - time(b.createdAt)
+      if (sort === 'newest') return time(b.createdAt) - time(a.createdAt)
+      // Things that need the customer float to the top of "recently updated".
+      const pa = needsAction(a) ? 1 : 0
+      const pb = needsAction(b) ? 1 : 0
+      return pb - pa || time(lastActivity(b)) - time(lastActivity(a))
+    })
+  }, [tickets, filter, query, sort])
+
+  const activeCount = counts.active
+  const hasFilters = filter !== 'all' || query.trim() !== ''
 
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen" style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', WebkitFontSmoothing: 'antialiased' }}>
-      <style>{`
-        .pulse-rail {
-          height: 4px; width: 100%;
-          background: linear-gradient(90deg, #A3122A, #D91E36 45%, #E8304A 55%, #A3122A);
-          background-size: 220% 100%;
-          animation: railmove 6s ease-in-out infinite;
-          position: sticky; top: 0; z-index: 50;
-        }
-        @keyframes railmove {
-          0%, 100% { background-position: 0% 0; }
-          50% { background-position: 100% 0; }
-        }
-        .shell { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
-        header.hero {
-          position: relative; padding: 56px 0 40px; overflow: hidden;
-          border-bottom: 1px solid #ECE4E0;
-          background: radial-gradient(560px 260px at 88% -10%, rgba(217,30,54,0.04) 0%, transparent 70%), #FBF8F6;
-        }
-        .hero-inner { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
-        .eyebrow {
-          display: inline-flex; align-items: center; gap: 8px;
-          font-size: 12.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-          color: #A3122A; margin-bottom: 14px;
-        }
-        .eyebrow .dot {
-          width: 7px; height: 7px; border-radius: 8px; background: #D91E36;
-          box-shadow: 0 0 0 4px rgba(217,30,54,0.12);
-          animation: blip 1.8s ease-in-out infinite;
-        }
-        @keyframes blip { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-        h1.title {
-          font-family:var(--font-display);
-          font-weight: 700; font-size: clamp(36px, 5vw, 52px);
-          line-height: 1.05; letter-spacing: -0.01em; margin: 0;
-        }
-        h1.title em { font-style: normal; color: #D91E36; }
-        .subline { margin: 14px 0 0; max-width: 460px; color: #857D79; font-size: 15px; line-height: 1.6; }
-        .stat-chip-row { display: flex; gap: 12px; flex-wrap: wrap; }
-        .stat-chip {
-          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 16px;
-          padding: 14px 20px; min-width: 128px;
-          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
-        }
-        .stat-chip .label { font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: #5A5550; font-weight: 600; margin-bottom: 4px; }
-        .stat-chip .num { font-family:var(--font-display); font-size: 30px; font-weight: 700; color: #1B1210; line-height: 1; }
-        .stat-chip.accent .num { color: #D91E36; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 36px 0 28px; }
-        .stat-card {
-          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px;
-          padding: 22px 22px 20px;
-          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
-          position: relative; overflow: hidden;
-        }
-        .stat-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #D91E36; opacity: 0; transition: opacity .2s; }
-        .stat-card:hover::before { opacity: 1; }
-        .stat-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
-        .stat-card .icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(217,30,54,0.06); color: #D91E36; }
-        .stat-card .value { font-family:var(--font-display); font-size: 38px; font-weight: 700; margin-top: 14px; line-height: 1; }
-        .stat-card .caption { margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: #5A5550; }
-        .stat-card.total .value { color: #1B1210; }
-        .stat-card.total .icon { background: rgba(27,18,16,0.05); color: #4A403D; }
-        .stat-card.active .value { color: #D91E36; }
-        .stat-card.active .icon { background: rgba(217,30,54,0.08); color: #D91E36; }
-        .stat-card.completed .value { color: #059669; }
-        .stat-card.completed .icon { background: rgba(5,150,105,0.08); color: #059669; }
-        .stat-card.rejected .value { color: #857D79; }
-        .stat-card.rejected .icon { background: rgba(107,114,128,0.08); color: #857D79; }
-        .control-panel { background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08); padding: 18px 20px; margin-bottom: 28px; }
-        .search-row { display: flex; align-items: center; gap: 10px; background: #FBF8F6; border: 1px solid #ECE4E0; border-radius: 12px; padding: 11px 14px; margin-bottom: 14px; }
-        .search-row input { border: none; background: transparent; outline: none; font-family:var(--font-ui); font-size: 14px; width: 100%; color: #1B1210; }
-        .search-row input::placeholder { color: #857D79; }
-        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .filter-pill { border: 1px solid #ECE4E0; background: #FFFFFF; color: #4A403D; font-family:var(--font-ui); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all .15s ease; }
-        .filter-pill:hover { border-color: #D91E36; color: #D91E36; }
-        .filter-pill.is-active { background: linear-gradient(135deg, #D91E36, #A3122A); background-color: #A3122A; border-color: #D91E36; color: #fff; }
-        .ticket-list { display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
-        .ticket-card {
-          display: grid; grid-template-columns: 104px 1fr auto; gap: 22px; align-items: center;
-          background: #FFFFFF; border: 1px solid #ECE4E0; border-radius: 20px; padding: 18px 20px;
-          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
-          cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-        }
-        .ticket-card:hover { transform: translateY(-2px); border-color: rgba(217,30,54,0.2); box-shadow: 0 8px 24px -12px rgba(217,30,54,0.15); }
-        .device-thumb {
-          width: 104px; height: 104px; border-radius: 14px;
-          background: rgba(217,30,54,0.04);
-          display: flex; align-items: center; justify-content: center;
-          position: relative; overflow: hidden; flex-shrink: 0;
-        }
-        .device-thumb .state-tag {
-          position: absolute; left: 8px; bottom: 8px;
-          font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-          padding: 3px 8px; border-radius: 8px;
-          background: rgba(27,18,16,0.72); color: #fff;
-          display: flex; align-items: center; gap: 4px;
-        }
-        .device-thumb .state-tag .d { width: 5px; height: 5px; border-radius: 8px; background: #fff; }
-        .device-thumb .state-tag.active .d { background: #FF6B7C; animation: blip 1.6s infinite; }
-        .device-thumb .state-tag.completed .d { background: #6FE39A; }
-        .device-thumb .state-tag.rejected .d { background: #C9C4CB; }
-        .device-thumb .state-tag.pending .d { background: #FFD28A; }
-        .ticket-mid { min-width: 0; }
-        .ticket-topline { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; flex-wrap: wrap; }
-        .ticket-id-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #857D79; }
-        .ticket-id { font-size: 13px; font-weight: 700; color: #A3122A; }
-        .device-name { font-family:var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 4px; }
-        .ticket-date { font-size: 12.5px; color: #857D79; margin-bottom: 12px; }
-        .vitals-label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: #857D79; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-        .vitals-track {
-          position: relative; height: 22px; border-radius: 8px;
-          background: #F5F0EC; overflow: hidden;
-          border: 1px solid rgba(236,228,224,0.6);
-        }
-        .vitals-fill {
-          position: absolute; inset: 0; height: 100%; border-radius: 8px;
-          background: linear-gradient(90deg, #D91E36, #E8304A);
-          transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-        }
-        .vitals-fill::after {
-          content: ''; position: absolute; inset: 0;
-          background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
-          border-radius: 8px;
-        }
-        .ticket-card.st-completed .vitals-fill {
-          background: linear-gradient(90deg, #16A34A, #22C55E);
-        }
-        .ticket-card.st-completed .vitals-fill::after {
-          background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%);
-        }
-        .ticket-card.st-rejected .vitals-fill {
-          background: linear-gradient(90deg, #9CA3AF, #D1D5DB);
-        }
-        .vitals-pct {
-          position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-          font-size: 10px; font-weight: 700; color: #fff;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        .ticket-card.st-completed .vitals-pct { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.15); }
-        .ticket-card.st-rejected .vitals-pct { color: #4A403D; text-shadow: none; }
-        .tag-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-        .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 8px; border: 1px solid #ECE4E0; color: #4A403D; }
-        .tag.priority-low { color: #059669; border-color: #D1FAE5; background: #ECFDF5; }
-        .tag.priority-medium { color: #D97706; border-color: #FEF3C7; background: #FFFBEB; }
-        .tag.priority-high { color: #A3122A; border-color: #FECDD3; background: rgba(217,30,54,0.04); }
-        .tag.priority-critical { color: #fff; background: #D91E36; border-color: #D91E36; }
-        .tag.price { font-family:var(--font-display); color: #1B1210; }
-        .ticket-right { display: flex; align-items: center; gap: 18px; flex-direction: column; align-self: stretch; justify-content: space-between; padding: 2px 0; }
-        .status-pill { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 6px 13px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-        .status-pill .d { width: 6px; height: 6px; border-radius: 8px; }
-        .status-pill.pending { background: #FFFBEB; color: #D97706; }
-        .status-pill.pending .d { background: #D97706; }
-        .status-pill.progress { background: rgba(217,30,54,0.06); color: #A3122A; }
-        .status-pill.progress .d { background: #D91E36; animation: blip 1.6s infinite; }
-        .status-pill.completed { background: #ECFDF5; color: #059669; }
-        .status-pill.completed .d { background: #059669; }
-        .status-pill.rejected { background: #F5F0EC; color: #857D79; }
-        .status-pill.rejected .d { background: #857D79; }
-        .chevron { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #ECE4E0; display: flex; align-items: center; justify-content: center; color: #A3122A; transition: background .15s, transform .15s, border-color .15s; }
-        .ticket-card:hover .chevron { background: linear-gradient(135deg, #D91E36, #A3122A); border-color: #D91E36; color: #fff; transform: translateX(3px); }
-        .empty-state { text-align: center; padding: 60px 20px 80px; color: #857D79; }
-        .empty-state .empty-icon { width: 72px; height: 72px; border-radius: 20px; background: rgba(217,30,54,0.06); border: 1px solid rgba(217,30,54,0.12); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .empty-state h3 { font-family:var(--font-display); font-size: 22px; color: #1B1210; margin: 0 0 6px; font-weight: 700; }
-        .empty-state p { font-size: 13.5px; margin: 0 0 22px; color: #5A5550; line-height: 1.5; }
-        .empty-state .book-repair-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg,#D91E36,#A3122A); color: #fff; font-family:var(--font-ui); font-size: 13.5px; font-weight: 700; padding: 12px 22px; border-radius: 12px; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 4px 16px rgba(217,30,54,0.25); transition: transform .15s, box-shadow .15s; letter-spacing: 0.01em; }
-        .empty-state .book-repair-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(217,30,54,0.35); }
-        footer { border-top: 1px solid #ECE4E0; padding: 22px 0 40px; text-align: center; color: #5A5550; font-size: 12px; }
-        footer .mono { color: #D91E36; font-weight: 600; }
-        @media (max-width: 880px) {
-          .shell { padding: 0 18px; }
-          .stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .hero-inner { flex-direction: column; align-items: flex-start; }
-          .ticket-card { grid-template-columns: 76px 1fr; }
-          .device-thumb { width: 76px; height: 76px; }
-          .device-name { font-size: 17px; }
-          .ticket-right { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; padding-top: 10px; border-top: 1px dashed #ECE4E0; margin-top: 10px; }
-        }
-        @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
-        :focus-visible { outline: 2px solid #D91E36; outline-offset: 2px; }
-
-        /* ===== Pipeline Progress ===== */
-        .pp-pipeline-wrap {
-          background: #fff; border: 1px solid #ECE4E0; border-radius: 20px;
-          padding: 24px 28px 20px; position: relative; overflow: hidden;
-          box-shadow: 0 8px 24px -12px rgba(27,18,16,0.08);
-        }
-        .pp-pipeline-wrap::before {
-          content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-          background: linear-gradient(90deg, #22C55E, #16A34A);
-          opacity: 0.15;
-        }
-        .pp-pipeline-header {
-          display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
-        }
-        .pp-pipeline-header-left { display: flex; align-items: center; gap: 8px; }
-        .pp-pipeline-dot { width: 8px; height: 8px; border-radius: 8px; flex-shrink: 0; }
-        .pp-pipeline-label { font-size: 13px; font-weight: 700; color: #1B1210; letter-spacing: 0.01em; }
-        .pp-pipeline-pct { font-size: 13px; font-weight: 600; color: #22C55E; }
-
-        .pp-pipeline-bar-track {
-          height: 6px; border-radius: 8px; background: #F5F0EC; overflow: hidden; margin-bottom: 24px;
-        }
-        .pp-pipeline-bar-fill {
-          height: 100%; border-radius: 8px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-        }
-
-        .pp-pipeline-steps {
-          display: flex; justify-content: space-between; gap: 4px;
-        }
-        .pp-pipeline-step {
-          display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; position: relative;
-        }
-        .pp-step-circle {
-          width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-          transition: all 0.3s ease; margin-bottom: 8px; flex-shrink: 0;
-        }
-        .pp-step-circle.done {
-          background: #22C55E; color: #fff;
-          box-shadow: 0 2px 8px rgba(34,197,94,0.25);
-        }
-        .pp-step-circle.current {
-          background: #D91E36; color: #fff;
-          box-shadow: 0 0 0 4px rgba(217,30,54,0.12), 0 2px 8px rgba(217,30,54,0.25);
-          animation: pp-pulse 2s ease-in-out infinite;
-        }
-        @keyframes pp-pulse {
-          0%, 100% { box-shadow: 0 0 0 4px rgba(217,30,54,0.12), 0 2px 8px rgba(217,30,54,0.25); }
-          50% { box-shadow: 0 0 0 8px rgba(217,30,54,0.06), 0 2px 12px rgba(217,30,54,0.3); }
-        }
-        .pp-step-circle.future {
-          background: #F5F0EC; color: #857D79;
-          border: 1px solid #ECE4E0;
-        }
-        .pp-step-label {
-          font-size: 9.5px; font-weight: 600; color: #857D79; line-height: 1.2; max-width: 80px;
-        }
-        .pp-step-label.done { color: #16A34A; }
-        .pp-step-label.current { color: #D91E36; font-weight: 700; }
-        .pp-step-now-badge {
-          position: absolute; top: -2px; right: 4px;
-          font-size: 7px; font-weight: 800; letter-spacing: 0.08em; color: #fff;
-          background: #D91E36; padding: 2px 5px; border-radius: 8px;
-          line-height: 1;
-        }
-
-        @media (max-width: 768px) {
-          .pp-pipeline-wrap { padding: 18px 16px 16px; }
-          .pp-step-circle { width: 26px; height: 26px; }
-          .pp-step-label { font-size: 8px; max-width: 56px; }
-          .pp-step-now-badge { font-size: 6px; padding: 1.5px 4px; top: -4px; }
-        }
-      `}</style>
-
-      {/* SiteTopNav for desktop */}
-      <div className="hidden lg:block">
-        <SiteTopNav />
-      </div>
+    <div className="rt">
+      {/* Desktop nav */}
+      <div className="hidden lg:block"><SiteTopNav /></div>
 
       {/* Mobile header */}
-      <div className="lg:hidden relative z-30 w-full">
-        <header className="relative w-full px-4 pt-3 pb-5 text-white overflow-hidden" style={{ background: 'linear-gradient(135deg,#D91E36 0%,#A3122A 100%)', borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0">
-              <span className="material-symbols-outlined text-lg">arrow_back</span>
-            </button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-[17px] font-bold leading-tight truncate">My Repairs</h1>
-              <p className="text-[11px] text-white/80 mt-0.5 truncate">{loading ? '' : `${dashboardStats.active} active`}</p>
-            </div>
+      <header className="rt-mhead lg:hidden">
+        <div className="rt-mhead-row">
+          <button type="button" className="rt-mhead-btn" onClick={() => navigate(-1)} aria-label="Go back">
+            <Icon name="arrow_back" />
+          </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1>My Repairs</h1>
+            <p>{loading ? 'Loading…' : `${activeCount} in progress · ${counts.completed} completed`}</p>
           </div>
-        </header>
-      </div>
-
-      <main className="w-full px-4 sm:px-6 md:px-8 py-4 pb-16 sm:py-6 sm:pb-20 lg:py-0 lg:pb-0" style={isMobile ? { paddingTop: '0.75rem' } : {}} aria-label="My repairs">
-        <div className="max-w-[1180px] mx-auto" style={isMobile ? {} : { padding: '0 32px' }}>
-
-          {/* ========== DESKTOP UI (lg+) ========== */}
-          {!isMobile && (
-            <>
-              {/* Pulse Rail */}
-              <div className="pulse-rail" aria-hidden="true" />
-
-              {/* Hero */}
-              <header className="hero">
-                <div className="shell hero-inner">
-                  <div>
-                    <div className="eyebrow" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
-                      <span className="dot" />
-                      {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`} · Live Manifest
-                    </div>
-                    <h1 className="title" style={{ backgroundColor: 'transparent' }}>
-                      Diagnostics<br /><em style={{ backgroundColor: 'transparent' }}>Protocol</em> Manifest
-                    </h1>
-                    <p className="subline" style={{ backgroundColor: 'transparent' }}>
-                      Every device on the bench, tracked like a vital sign — intake to delivery, one pulse line at a time.
-                    </p>
-                    <Link
-                      to="/repairs"
-                      style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20,
-                        background: 'linear-gradient(135deg,#D91E36,#A3122A)', color: '#fff',
-                        fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700,
-                        padding: '10px 20px', borderRadius: 10, textDecoration: 'none',
-                        boxShadow: '0 4px 14px rgba(217,30,54,0.25)', letterSpacing: '0.01em',
-                      }}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 15, height: 15 }}><path d="M12 5v14m-7-7h14" /></svg>
-                      Book New Repair
-                    </Link>
-                  </div>
-                  <div className="stat-chip-row">
-                    <div className="stat-chip">
-                      <div className="label">Total Tickets</div>
-                      <div className="num">{String(dashboardStats.total).padStart(2, '0')}</div>
-                    </div>
-                    <div className="stat-chip accent">
-                      <div className="label">Completed</div>
-                      <div className="num">{String(dashboardStats.completed).padStart(2, '0')}</div>
-                    </div>
-                  </div>
-                </div>
-              </header>
-
-              <div className="shell">
-                {/* Stats Grid */}
-                <section className="stats-grid" aria-label="Repair summary">
-                  {[
-                    { label: 'Total Repairs', value: dashboardStats.total, cls: 'total', svg: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h16"/></> },
-                    { label: 'Active', value: dashboardStats.active, cls: 'active', svg: <><path d="M2 12h5l2-7 4 14 2-7h7"/></> },
-                    { label: 'Completed', value: dashboardStats.completed, cls: 'completed', svg: <><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></> },
-                    { label: 'Rejected', value: tickets.filter(t => ['Rejected', 'Cancelled'].includes(t.status)).length, cls: 'rejected', svg: <><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5l5 5m0-5l-5 5"/></> },
-                  ].map((s) => (
-                    <div key={s.label} className={`stat-card ${s.cls}`}>
-                      <div className="top-row">
-                        <div className="icon">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 19, height: 19 }}>{s.svg}</svg>
-                        </div>
-                      </div>
-                      <div className="value">{s.value}</div>
-                      <div className="caption">{s.label}</div>
-                    </div>
-                  ))}
-                </section>
-
-                {/* Control Panel */}
-                <section className="control-panel" aria-label="Search and filter">
-                  <div className="search-row">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 17, height: 17, color: '#857D79', flexShrink: 0 }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-                    <input
-                      id="searchInput"
-                      type="text"
-                      placeholder="Search by ticket ID, device, or IMEI…"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <div className="filter-row" id="filterRow">
-                    {(['all', 'pending', 'progress', 'completed', 'rejected'] as const).map(f => {
-                      const label = f === 'all' ? 'All' : f === 'pending' ? 'Pending' : f === 'progress' ? 'In Progress' : f === 'completed' ? 'Completed' : 'Rejected'
-                      const isActive = (f === 'all' && statusFilter === 'All') ||
-                        (f === 'pending' && statusFilter === 'Pending') ||
-                        (f === 'progress' && statusFilter === 'In Progress') ||
-                        (f === 'completed' && statusFilter === 'Completed') ||
-                        (f === 'rejected' && statusFilter === 'Rejected')
-                      return (
-                        <button
-                          key={f}
-                          className={`filter-pill${isActive ? ' is-active' : ''}`}
-                          data-filter={f}
-                          onClick={() => {
-                            const map: Record<string, string> = { all: 'All', pending: 'Pending', progress: 'In Progress', completed: 'Completed', rejected: 'Rejected' }
-                            setStatusFilter(map[f])
-                          }}
-                        >
-                          {label}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </section>
-
-                {/* Ticket List */}
-                {loading ? (
-                  <section className="ticket-list" aria-label="Repair tickets">
-                    {[1, 2, 3].map(i => (
-                      <div key={i} className="ticket-card" style={{ animation: 'none', cursor: 'default' }}>
-                        <div className="device-thumb" style={{ background: '#F5F0EC' }} />
-                        <div className="ticket-mid">
-                          <div className="h-3 w-24 rounded" style={{ background: '#ECE4E0', marginBottom: 8 }} />
-                          <div className="h-5 w-40 rounded" style={{ background: '#ECE4E0', marginBottom: 8 }} />
-                          <div className="h-3 w-32 rounded" style={{ background: '#ECE4E0', marginBottom: 12 }} />
-                          <div className="vitals-track"><div className="vitals-fill" style={{ width: '30%' }} /></div>
-                        </div>
-                        <div className="ticket-right">
-                          <div className="h-6 w-24 rounded-[8px]" style={{ background: '#EAE5E6' }} />
-                          <div className="chevron" style={{ borderColor: '#ECE4E0' }} />
-                        </div>
-                      </div>
-                    ))}
-                  </section>
-                ) : filteredTickets.length === 0 ? (
-                  <>
-                    <section className="ticket-list" aria-label="Repair tickets" style={{ display: 'none' }} />
-                    <div className="empty-state">
-                      <div className="empty-icon">
-                        {searchQuery.trim() || statusFilter !== 'All'
-                          ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 32, height: 32, color: '#D91E36' }}><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
-                          : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 32, height: 32, color: '#D91E36' }}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
-                        }
-                      </div>
-                      <h3>{searchQuery.trim() || statusFilter !== 'All' ? 'No matching tickets' : 'No repair tickets yet'}</h3>
-                      <p>{searchQuery.trim() || statusFilter !== 'All'
-                        ? 'Try a different ticket ID, device name, or filter.'
-                        : 'Your repair history will appear here once you book your first repair.'
-                      }</p>
-                      {!(searchQuery.trim() || statusFilter !== 'All') && (
-                        <Link to="/repairs" className="book-repair-btn">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 16, height: 16 }}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>
-                          Book Your First Repair
-                        </Link>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <section className="ticket-list" aria-label="Repair tickets">
-                    {filteredTickets.map((ticket) => (
-                      <RepairCard key={ticket.id} ticket={ticket} onSelect={setSelectedTicket} />
-                    ))}
-                  </section>
-                )}
-
-                <footer>
-                  <span className="mono">MANIFEST//</span> updated automatically as repairs move through the bench.
-                </footer>
-              </div>
-            </>
-          )}
-
-          {/* ========== MOBILE UI (below lg) ========== */}
-          {isMobile && (
-            <>
-              {/* Mobile header */}
-              <header className="mb-5">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="flex h-1.5 w-1.5 rounded-[8px]" style={{ background: BRAND.primary }} />
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest" style={{ color: BRAND.primaryDark }}>
-                    {loading ? 'Loading...' : `${dashboardStats.active} Active Repairs`}
-                  </span>
-                </div>
-                <h1 className="text-xl font-extrabold tracking-tight" style={{ fontFamily: 'var(--font-display)', color: BRAND.ink }}>
-                  My Repairs
-                </h1>
-              </header>
-
-              {/* Stats Cards - Mobile */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mb-6">
-                {[
-                  { label: 'Total Repairs', value: dashboardStats.total, icon: 'inventory_2', color: BRAND.primary },
-                  { label: 'Active', value: dashboardStats.active, icon: 'precision_manufacturing', color: '#0EA5E9' },
-                  { label: 'Completed', value: dashboardStats.completed, icon: 'check_circle', color: '#059669' },
-                ].map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                    className={`${C.card} p-3 sm:p-3.5 cursor-default`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="material-symbols-outlined text-base sm:text-lg" style={{ color: s.color }}>{s.icon}</span>
-                      <motion.span initial={{ scale: 1.3 }} animate={{ scale: 1 }}
-                        className="text-lg sm:text-xl font-extrabold" style={{ color: s.color }}>{s.value}</motion.span>
-                    </div>
-                    <p className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase truncate" style={{ color: BRAND.muted }}>{s.label}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Search & Filter - Mobile */}
-              <div className="mb-5">
-                <div className={`${C.card} p-3 sm:p-3.5`}>
-                  <div className="flex flex-col sm:flex-row gap-3 mb-3">
-                    <div className="flex-1 relative">
-                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base" style={{ color: BRAND.muted }}>search</span>
-                      <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search by Ticket ID, Device, or IMEI..."
-                        className="w-full pl-9 pr-3 h-10 rounded-xl text-sm font-medium outline-none transition-all"
-                        style={{
-                          background: 'rgba(237,238,239,0.6)',
-                          border: `1.5px solid ${BRAND.line}`,
-                          color: BRAND.ink,
-                        }}
-                        onFocus={e => e.currentTarget.style.borderColor = BRAND.primary}
-                        onBlur={e => e.currentTarget.style.borderColor = BRAND.line}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {FILTER_OPTIONS.map(opt => (
-                      <button key={opt} onClick={() => setStatusFilter(opt)}
-                        className="px-3.5 h-8 rounded-xl text-[10px] sm:text-[11px] font-bold tracking-wider transition-all active:scale-95 cursor-pointer"
-                        style={{
-                          background: statusFilter === opt ? BRAND.primary : 'rgba(237,238,239,0.6)',
-                          color: statusFilter === opt ? '#fff' : BRAND.muted,
-                        }}
-                      >{opt}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: '#fff', border: '1px solid #ECE4E0' }}>
-                      <div className="flex gap-5">
-                        <div className="w-20 h-20 rounded-xl" style={{ background: '#F5F0EC' }} />
-                        <div className="flex-1 space-y-3">
-                          <div className="h-4 w-32 rounded-lg" style={{ background: '#ECE4E0' }} />
-                          <div className="h-3.5 w-48 rounded-lg" style={{ background: '#ECE4E0' }} />
-                          <div className="h-2 w-full rounded-[8px]" style={{ background: '#ECE4E0' }} />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : filteredTickets.length === 0 ? (
-                <div className="rounded-2xl p-8" style={{ background: '#fff', border: '1px solid #ECE4E0' }}>
-                  <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                      className="w-24 h-24 rounded-[2rem] flex items-center justify-center mb-6"
-                      style={{ background: 'rgba(217,30,54,0.06)', border: '1px solid rgba(217,30,54,0.1)' }}
-                    >
-                      <span className="material-symbols-outlined text-5xl" style={{ color: '#D91E36' }}>build</span>
-                    </motion.div>
-                    <motion.h2
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15 }}
-                      className="text-2xl font-bold mb-2" style={{ color: '#1B1210', fontFamily: 'var(--font-display)' }}
-                    >
-                      No Repair Requests Found
-                    </motion.h2>
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.25 }}
-                      className="text-sm mb-8 max-w-sm"
-                      style={{ color: '#857D79' }}
-                    >
-                      You currently don't have any repair tickets. If you need a repair, please visit our store or contact support.
-                    </motion.p>
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.35 }}
-                      onClick={() => navigate('/repairs')}
-                      className="px-8 h-12 rounded-xl text-sm font-bold text-white cursor-pointer transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
-                      style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 6px 20px rgba(217,30,54,0.3)' }}
-                    >
-                      Book a Repair
-                    </motion.button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {filteredTickets.map((ticket, idx) => (
-                    <motion.div key={ticket.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04, duration: 0.4 }}>
-                      <RepairCard ticket={ticket} onSelect={setSelectedTicket} />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
-        </div>
-      </main>
-
-      <AnimatePresence>
-        {selectedTicket && (
-          <RepairDetailModal ticket={selectedTicket} onClose={() => setSelectedTicket(null)} onApprove={handleApprove} onNotify={showNotification} />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {notification && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: '-50%' }}
-            animate={{ opacity: 1, y: 0, x: '-50%' }}
-            exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className="fixed bottom-8 left-1/2 z-[150] px-6 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5"
-            style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(229,231,235,0.5)', boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}
-          >
-            <span className="material-symbols-outlined text-base" style={{ color: notification.type === 'success' ? '#059669' : '#EF4444' }}>{notification.type === 'success' ? 'check_circle' : 'error'}</span>
-            <span className="text-sm font-bold" style={{ color: BRAND.ink }}>{notification.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="hidden lg:block"><EcommerceFooter compact /></div>
-      </div>
-
-      {/* Mobile sticky bottom bar — hidden on desktop */}
-      <motion.div
-        initial={{ y: 80 }}
-        animate={{ y: 0 }}
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
-        style={{ background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderTop: `1px solid ${BRAND.line}` }}
-      >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/repairs')}
-            className={C.primaryBtn + ' flex-1 h-12 rounded-xl text-[13px] font-bold flex items-center justify-center gap-2'}
-          >
-            <span className="material-symbols-outlined text-lg">add_circle</span>
-            Book a Repair
+          <button type="button" className="rt-mhead-btn" onClick={refresh} aria-label="Refresh" disabled={refreshing}>
+            <Icon name="refresh" className={refreshing ? 'animate-spin' : ''} />
           </button>
         </div>
-      </motion.div>
-    </ErrorBoundary>
+      </header>
+
+      {/* Desktop hero */}
+      <section className="rt-hero hidden lg:block">
+        <div className="rt-shell rt-hero-inner">
+          <div>
+            <div className="rt-eyebrow"><Icon name="build_circle" /> Repair center</div>
+            <h1 className="rt-title">My Repairs</h1>
+            <p className="rt-sub">Follow each device from booking to delivery, approve estimates, and message our technicians — all in one place.</p>
+          </div>
+          <div className="rt-hero-side">
+            <div className="rt-kpis" aria-label="Repair summary">
+              <div className="rt-kpi">
+                <div className="rt-kpi-num">{loading ? '–' : activeCount}</div>
+                <div className="rt-kpi-label">In progress</div>
+              </div>
+              <div className={`rt-kpi${counts.action ? ' is-action' : ''}`}>
+                <div className="rt-kpi-num">{loading ? '–' : counts.action}</div>
+                <div className="rt-kpi-label">Needs your action</div>
+              </div>
+              <div className="rt-kpi is-done">
+                <div className="rt-kpi-num">{loading ? '–' : counts.completed}</div>
+                <div className="rt-kpi-label">Completed</div>
+              </div>
+            </div>
+            <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add" /> Book a repair</Link>
+          </div>
+        </div>
+      </section>
+
+      <main className="rt-shell" aria-label="My repairs">
+        {/* Search / sort / refresh */}
+        <div className="rt-toolbar">
+          <label className="rt-search">
+            <Icon name="search" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setParam('q', e.target.value, '')}
+              placeholder="Search by ticket ID, device or IMEI"
+              aria-label="Search repairs"
+            />
+            {query && (
+              <button type="button" className="rt-btn rt-btn-ghost rt-btn-sm rt-icon-btn" onClick={() => setParam('q', '', '')} aria-label="Clear search">
+                <Icon name="close" />
+              </button>
+            )}
+          </label>
+          <select className="rt-select" value={sort} onChange={(e) => setParam('sort', e.target.value, 'updated')} aria-label="Sort repairs">
+            {SORTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+          </select>
+          <div className="hidden lg:flex" style={{ alignItems: 'center', gap: 10 }}>
+            {syncedAt && <span className="rt-refresh-meta" aria-live="polite">Updated {timeAgo(new Date(syncedAt).toISOString(), now)}</span>}
+            <button type="button" className="rt-btn rt-icon-btn" onClick={refresh} disabled={refreshing} aria-label="Refresh repairs" title="Refresh">
+              <Icon name="refresh" className={refreshing ? 'animate-spin' : ''} />
+            </button>
+          </div>
+        </div>
+
+        {/* Status tabs */}
+        <div className="rt-tabs" role="tablist" aria-label="Filter by status">
+          {FILTERS.map(f => (
+            <button
+              key={f.key}
+              type="button"
+              role="tab"
+              aria-selected={filter === f.key}
+              className={`rt-tab${filter === f.key ? ' is-active' : ''}${f.key === 'action' && counts.action ? ' is-alert' : ''}`}
+              onClick={() => setParam('status', f.key, 'all')}
+            >
+              {f.label}
+              <span className="rt-tab-count">{loading ? '·' : counts[f.key]}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Nudge toward pending customer actions */}
+        {!loading && counts.action > 0 && filter !== 'action' && (
+          <div className="rt-callout" role="status">
+            <div className="rt-callout-icon"><Icon name="notifications_active" /></div>
+            <div className="rt-callout-text">
+              <strong>{counts.action === 1 ? '1 repair needs' : `${counts.action} repairs need`} your attention.</strong>{' '}
+              Approve an estimate or share shipping details to keep things moving.
+            </div>
+            <button type="button" className="rt-btn rt-btn-sm" onClick={() => setParam('status', 'action', 'all')}>Review</button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="rt-list" aria-busy="true">
+            {[0, 1, 2].map(i => (
+              <div key={i} className="rt-card" style={{ padding: 20, display: 'flex', gap: 18 }}>
+                <div className="rt-skel" style={{ width: 76, height: 76, borderRadius: 14, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="rt-skel" style={{ height: 18, width: '40%', marginBottom: 10 }} />
+                  <div className="rt-skel" style={{ height: 12, width: '60%', marginBottom: 18 }} />
+                  <div className="rt-skel" style={{ height: 10, width: '100%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error && tickets.length === 0 ? (
+          <div className="rt-empty" role="alert">
+            <div className="rt-empty-icon"><Icon name="wifi_off" /></div>
+            <h3>We couldn't load your repairs</h3>
+            <p>Check your connection and try again. Your repair requests are safe.</p>
+            <button type="button" className="rt-btn rt-btn-primary" onClick={() => { setLoading(true); load('manual') }}>
+              <Icon name="refresh" /> Try again
+            </button>
+          </div>
+        ) : visible.length === 0 ? (
+          <div className="rt-empty">
+            <div className="rt-empty-icon"><Icon name={hasFilters ? 'search_off' : 'build'} /></div>
+            {tickets.length === 0 ? (
+              <>
+                <h3>No repairs yet</h3>
+                <p>Cracked screen, weak battery or something else? Book a repair and track it here from pickup to delivery.</p>
+                <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add" /> Book your first repair</Link>
+              </>
+            ) : (
+              <>
+                <h3>No matching repairs</h3>
+                <p>{query ? `Nothing matches "${query}"` : 'There are no repairs in this view'}. Try another filter or search term.</p>
+                <button type="button" className="rt-btn" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Clear filters</button>
+              </>
+            )}
+          </div>
+        ) : (
+          <section className="rt-list" aria-label={`${visible.length} repair${visible.length === 1 ? '' : 's'}`}>
+            {visible.map(t => <RepairCard key={t.id} ticket={t} actions={actions} now={now} />)}
+          </section>
+        )}
+
+        <aside className="rt-help">
+          <div className="rt-help-text">
+            <strong>Questions about a repair?</strong>
+            Open any repair to message the technician working on it, or chat with our support team.
+          </div>
+          <Link to="/support" className="rt-btn"><Icon name="support_agent" /> Contact support</Link>
+        </aside>
+      </main>
+
+      {actions.dialog}
+
+      <div className="hidden lg:block"><EcommerceFooter compact /></div>
+
+      {/* Mobile CTA */}
+      <div className="rt-mbar lg:hidden">
+        <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add_circle" /> Book a repair</Link>
+      </div>
+    </div>
+  )
+}
+
+function RepairCard({ ticket, actions, now }: {
+  ticket: RepairTicket
+  actions: RepairActions
+  now: number
+}) {
+  const navigate = useNavigate()
+  const meta = statusMeta(ticket.status)
+  const amount = ticketAmount(ticket)
+  const awaiting = ticket.status === 'Awaiting Approval'
+  const busy = actions.busyId === ticket.id
+  const open = () => navigate(`/my-repairs/${ticket.id}`)
+  const active = !isClosed(ticket) && !isCompleted(ticket)
+
+  const amountLabel = ticket.repairCharge ? (ticket.customerApproved ? 'Approved charge' : 'Quoted charge') : 'Estimate'
+  const update = ticket.lastUpdate
+  const updateText = update
+    ? (update.notes && update.notes !== 'Ticket created.' ? update.notes : `${statusMeta(update.status).label}`)
+    : `Booked on ${formatDate(ticket.createdAt)}`
+
+  return (
+    <article className={`rt-card${needsAction(ticket) ? ' is-action' : ''}`}>
+      <button type="button" className="rt-card-main" onClick={open} aria-label={`Open repair ${ticket.repairId}, ${ticket.deviceBrand} ${ticket.deviceModel}, ${meta.label}`}>
+        <DeviceThumb ticket={ticket} />
+        <div className="rt-card-body">
+          <h3 className="rt-card-title">{ticket.deviceBrand} {ticket.deviceModel}</h3>
+          <div className="rt-meta">
+            <span className="rt-ticket-id">{ticket.repairId}</span>
+            {ticket.issueCategory && <><span className="rt-meta-dot" />{ticket.issueCategory}</>}
+            <span className="rt-meta-dot" />Booked {formatDate(ticket.createdAt)}
+          </div>
+          <StageTracker status={ticket.status} />
+          {meta.hint && <p className="rt-hint">{meta.hint}</p>}
+        </div>
+        <div className="rt-card-side">
+          <StatusPill status={ticket.status} />
+          <div className="rt-amount">
+            {amount !== null ? (
+              <>
+                <div className="rt-amount-num">{formatPrice(amount)}</div>
+                <div className="rt-amount-label">{amountLabel}</div>
+              </>
+            ) : (
+              <div className="rt-amount-label">Quote pending</div>
+            )}
+            {active && ticket.estimatedDays > 0 && (
+              <div className="rt-amount-label">~{ticket.estimatedDays} day{ticket.estimatedDays > 1 ? 's' : ''} to complete</div>
+            )}
+          </div>
+        </div>
+      </button>
+
+      {awaiting && (
+        <div className="rt-estimate">
+          <div>
+            <div className="rt-estimate-label">Estimate awaiting your approval</div>
+            <div className="rt-estimate-reason">{ticket.repairReason || 'Our technician has diagnosed the issue. Open the repair for full details.'}</div>
+          </div>
+          <div className="rt-estimate-price">{ticket.repairCharge ? formatPrice(ticket.repairCharge) : '—'}</div>
+          <div className="rt-estimate-actions">
+            <button type="button" className="rt-btn rt-btn-primary rt-btn-sm" disabled={busy} onClick={() => actions.approve(ticket)}>
+              <Icon name="check" /> {busy ? 'Approving…' : 'Approve & start repair'}
+            </button>
+            <button type="button" className="rt-btn rt-btn-sm" disabled={busy} onClick={() => actions.decline(ticket)}>Decline</button>
+          </div>
+        </div>
+      )}
+
+      <div className="rt-card-foot">
+        <div className="rt-update" title={update?.created_at ? new Date(update.created_at).toLocaleString('en-IN') : undefined}>
+          <Icon name="history" />
+          <span className="text">{updateText}</span>
+          {update?.created_at && <span style={{ whiteSpace: 'nowrap' }}>· {timeAgo(update.created_at, now)}</span>}
+        </div>
+        <div className="rt-actions">
+          <TicketActions ticket={ticket} actions={actions} compact />
+          <button type="button" className="rt-btn rt-btn-sm" onClick={open}>
+            Details <Icon name="chevron_right" />
+          </button>
+        </div>
+      </div>
+    </article>
   )
 }
