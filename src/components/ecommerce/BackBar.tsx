@@ -20,7 +20,7 @@ export default function BackBar({ label = 'Back', to }: BackBarProps) {
             className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
             style={{ background: 'rgba(163,18,42,0.08)', color: '#A3122A' }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_back</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 'var(--text-body)' }}>arrow_back</span>
           </span>
           <span
             className="text-xs font-semibold transition-colors duration-200 group-hover:text-[#A3122A]"

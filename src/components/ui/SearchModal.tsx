@@ -112,7 +112,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                   <FiCommand size={14} />
                 </button>
               )}
-              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-text-label bg-white/[0.04] rounded-md flex-shrink-0 border border-border">
+              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-micro font-medium text-text-label bg-white/[0.04] rounded-md flex-shrink-0 border border-border">
                 ESC
               </kbd>
             </div>
@@ -120,7 +120,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             {hasResults ? (
               <div className="p-2 max-h-72 overflow-y-auto">
                 <div className="px-3 py-1.5">
-                  <span className="text-[11px] font-medium text-text-label uppercase tracking-wider">
+                  <span className="text-micro font-medium text-text-label uppercase tracking-wider">
                     Results ({allResults.length})
                   </span>
                 </div>
@@ -139,9 +139,9 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-text-primary truncate">{result.label}</p>
-                        <p className="text-[10px] text-text-label">{result.type}</p>
+                        <p className="text-micro text-text-label">{result.type}</p>
                       </div>
-                      <kbd className="text-[10px] text-text-label bg-white/[0.04] px-1.5 py-0.5 rounded font-mono flex-shrink-0">
+                      <kbd className="text-micro text-text-label bg-white/[0.04] px-1.5 py-0.5 rounded font-mono flex-shrink-0">
                         ⌘{i + 1}
                       </kbd>
                     </button>
@@ -161,7 +161,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                 <div>
                   <div className="flex items-center gap-2 px-2 py-1.5">
                     <FiClock size={13} className="text-text-label" />
-                    <span className="text-[11px] font-medium text-text-label uppercase tracking-wider">Recent</span>
+                    <span className="text-micro font-medium text-text-label uppercase tracking-wider">Recent</span>
                   </div>
                   {['iPhone 16 Pro Max', 'Galaxy S25 Ultra', 'REP-2026-0428'].map(item => (
                     <button
@@ -178,7 +178,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                 <div>
                   <div className="flex items-center gap-2 px-2 py-1.5">
                     <FiTrendingUp size={13} className="text-text-label" />
-                    <span className="text-[11px] font-medium text-text-label uppercase tracking-wider">Quick Actions</span>
+                    <span className="text-micro font-medium text-text-label uppercase tracking-wider">Quick Actions</span>
                   </div>
                   {quickActions.map(action => {
                     const Icon = action.icon
@@ -191,7 +191,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
                           <Icon size={14} className="text-text-label shrink-0" />
                           <span className="text-sm text-text-muted">{action.label}</span>
                         </div>
-                        <kbd className="text-[10px] text-text-label bg-white/[0.04] px-1.5 py-0.5 rounded font-mono">{action.shortcut}</kbd>
+                        <kbd className="text-micro text-text-label bg-white/[0.04] px-1.5 py-0.5 rounded font-mono">{action.shortcut}</kbd>
                       </button>
                     )
                   })}
@@ -200,15 +200,15 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             )}
 
             <div className="flex items-center gap-3 px-4 py-2.5 border-t border-border bg-white/[0.02]">
-              <div className="flex items-center gap-1.5 text-[10px] text-text-label">
+              <div className="flex items-center gap-1.5 text-micro text-text-label">
                 <kbd className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-border font-mono">↑↓</kbd>
                 <span>Navigate</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-text-label">
+              <div className="flex items-center gap-1.5 text-micro text-text-label">
                 <kbd className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-border font-mono">↵</kbd>
                 <span>Open</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-text-label">
+              <div className="flex items-center gap-1.5 text-micro text-text-label">
                 <kbd className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-border font-mono">ESC</kbd>
                 <span>Close</span>
               </div>

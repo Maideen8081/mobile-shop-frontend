@@ -1,0 +1,224 @@
+- generic [ref=f17e3]:
+  - complementary [ref=f17e4]:
+    - generic [ref=f17e5]:
+      - generic [ref=f17e6]: MobileShop
+      - navigation "Admin" [ref=f17e11]:
+        - button "Dashboard" [ref=f17e13]
+        - generic [ref=f17e20]:
+          - button "Product" [ref=f17e21]
+          - button "Category" [ref=f17e27]
+        - generic [ref=f17e31]:
+          - button "Order" [ref=f17e32]
+          - button "Customer" [ref=f17e38]
+          - button "Trade-in" [ref=f17e45]
+        - generic [ref=f17e52]:
+          - button "Repairs" [ref=f17e53]
+          - button "Online booking" [ref=f17e57]
+          - button "New repair ticket" [ref=f17e62]
+      - button "Log out" [ref=f17e67]
+  - generic [ref=f17e71]:
+    - banner [ref=f17e72]:
+      - generic [ref=f17e73]:
+        - button "Search ⌘K" [ref=f17e74]:
+          - generic [ref=f17e78]: Search
+          - generic [ref=f17e79]: ⌘K
+        - button "Online bookings" [ref=f17e80]
+        - button "Online orders" [ref=f17e84]
+        - button "Account menu" [ref=f17e89]:
+          - generic [ref=f17e90]: M
+          - generic [ref=f17e91]:
+            - generic [ref=f17e92]: Maideen
+            - generic [ref=f17e93]: admin@local.test
+    - main [ref=f17e96]:
+      - link "Back to products" [ref=f17e97] [cursor=pointer]:
+        - /url: /admin/products
+      - generic [ref=f17e101]:
+        - heading "iPhone 15 Pro" [level=2] [ref=f17e102]
+        - paragraph [ref=f17e103]: Apple · IPHONE-15-PRO. Changes go live on the storefront when you save.
+      - generic [ref=f17e105]:
+        - generic [ref=f17e107]:
+          - generic [ref=f17e108]:
+            - heading "Add New Product" [level=3] [ref=f17e109]
+            - paragraph [ref=f17e110]: Fields marked * are required
+          - generic [ref=f17e111]:
+            - generic [ref=f17e112]:
+              - heading "Basic Information" [level=4] [ref=f17e113]
+              - generic [ref=f17e114]:
+                - generic [ref=f17e115]:
+                  - generic [ref=f17e116]:
+                    - generic [ref=f17e117]: Product Name *
+                    - generic [ref=f17e118]: 13/200
+                  - textbox "Product Name * 13/200" [ref=f17e119]:
+                    - /placeholder: e.g. iPhone 15 Pro Max
+                    - text: iPhone 15 Pro
+                - generic [ref=f17e121]:
+                  - generic [ref=f17e122]: Brand *
+                  - button "Apple" [ref=f17e123] [cursor=pointer]
+                - generic [ref=f17e128]:
+                  - generic [ref=f17e129]: Model Number *
+                  - textbox "Model Number *" [ref=f17e130]:
+                    - /placeholder: e.g. A2849
+                    - text: IPHONE-15-PRO
+                - generic [ref=f17e132]:
+                  - generic [ref=f17e133]: Category *
+                  - button "Smartphones" [ref=f17e134] [cursor=pointer]
+                - generic [ref=f17e140]:
+                  - generic [ref=f17e141]: Sub Category
+                  - paragraph [ref=f17e142]: Smartphones has no sub categories
+            - generic [ref=f17e143]:
+              - heading "Cover Image (optional — used on listing cards)" [level=4] [ref=f17e144]
+              - generic [ref=f17e151]:
+                - button "Upload" [ref=f17e153] [cursor=pointer]
+                - paragraph [ref=f17e158]: JPG, PNG or WebP, up to 5MB. Without one, the first variant image is used.
+            - generic [ref=f17e160]:
+              - generic [ref=f17e161]:
+                - generic [ref=f17e162]: Description
+                - generic [ref=f17e163]: 23/5000
+              - textbox "Description 23/5000" [ref=f17e164]:
+                - /placeholder: Detailed product description...
+                - text: iPhone 15 Pro by Apple.
+            - generic [ref=f17e165]:
+              - heading "Visibility & Tags" [level=4] [ref=f17e166]
+              - generic [ref=f17e167]:
+                - switch [checked] [ref=f17e168] [cursor=pointer]
+                - switch "Trending" [ref=f17e171] [cursor=pointer]
+                - switch "New arrival" [ref=f17e173] [cursor=pointer]
+                - switch "Best selling" [ref=f17e175] [cursor=pointer]
+                - switch "Featured" [ref=f17e177] [cursor=pointer]
+                - switch "Refurbished" [ref=f17e179] [cursor=pointer]
+            - generic [ref=f17e181]:
+              - generic [ref=f17e182]:
+                - generic [ref=f17e183]:
+                  - generic [ref=f17e184]:
+                    - text: Features
+                    - generic [ref=f17e185]: (0/20)
+                  - button "Add" [ref=f17e186] [cursor=pointer]
+                - paragraph [ref=f17e188]: None added
+              - generic [ref=f17e189]:
+                - generic [ref=f17e190]:
+                  - generic [ref=f17e191]:
+                    - text: Care Instructions
+                    - generic [ref=f17e192]: (0/20)
+                  - button "Add Instruction" [ref=f17e193] [cursor=pointer]
+                - paragraph [ref=f17e195]: None added
+            - generic [ref=f17e196]:
+              - generic [ref=f17e197]:
+                - generic [ref=f17e198]:
+                  - heading "Variants (2/20) *" [level=4] [ref=f17e199]
+                  - paragraph [ref=f17e200]: Each variant is a unique color + RAM + storage with its own price, stock and images
+                - button "Add Variant" [ref=f17e201] [cursor=pointer]
+              - generic [ref=f17e203]:
+                - generic [ref=f17e204]:
+                  - button "1 128GB Black 8GB • 128GB • Black • ₹1,29,900" [expanded] [ref=f17e205] [cursor=pointer]:
+                    - generic [ref=f17e206]:
+                      - generic [ref=f17e207]: "1"
+                      - generic [ref=f17e208]:
+                        - paragraph [ref=f17e209]: 128GB Black
+                        - paragraph [ref=f17e210]: 8GB • 128GB • Black • ₹1,29,900
+                  - generic [ref=f17e216]:
+                    - generic [ref=f17e217]:
+                      - generic [ref=f17e218]:
+                        - generic [ref=f17e219]: Variant Name *
+                        - textbox "Variant Name *" [ref=f17e220]:
+                          - /placeholder: e.g. Midnight Black 256GB
+                          - text: 128GB Black
+                      - generic [ref=f17e221]:
+                        - generic [ref=f17e222]: Color *
+                        - textbox "Color *" [ref=f17e223]:
+                          - /placeholder: e.g. Midnight Black
+                          - text: Black
+                    - generic [ref=f17e224]:
+                      - heading "Specifications" [level=5] [ref=f17e225]
+                      - generic [ref=f17e226]:
+                        - generic [ref=f17e227]:
+                          - generic [ref=f17e228]: RAM Size *
+                          - button "8GB" [ref=f17e229] [cursor=pointer]
+                        - generic [ref=f17e234]:
+                          - generic [ref=f17e235]: Storage Size *
+                          - button "128GB" [ref=f17e236] [cursor=pointer]
+                        - generic [ref=f17e241]:
+                          - generic [ref=f17e242]: Battery (mAh) *
+                          - spinbutton "Battery (mAh) *" [ref=f17e243]
+                      - generic [ref=f17e244]:
+                        - generic [ref=f17e245]:
+                          - generic [ref=f17e246]: Processor *
+                          - textbox "Processor *" [ref=f17e247]:
+                            - /placeholder: e.g. A17 Pro
+                        - generic [ref=f17e248]:
+                          - generic [ref=f17e249]: Display Size *
+                          - textbox "Display Size *" [ref=f17e250]:
+                            - /placeholder: e.g. 6.7" OLED
+                        - generic [ref=f17e251]:
+                          - generic [ref=f17e252]: Camera Details *
+                          - textbox "Camera Details *" [ref=f17e253]:
+                            - /placeholder: e.g. 48MP + 12MP
+                    - generic [ref=f17e254]:
+                      - heading "Pricing & Stock" [level=5] [ref=f17e255]
+                      - generic [ref=f17e256]:
+                        - generic [ref=f17e257]:
+                          - generic [ref=f17e258]: Price (₹) *
+                          - spinbutton "Price (₹) *" [ref=f17e259]: "129900"
+                        - generic [ref=f17e260]:
+                          - generic [ref=f17e261]: Discount Price (₹)
+                          - spinbutton "Discount Price (₹)" [ref=f17e262]
+                        - generic [ref=f17e263]:
+                          - generic [ref=f17e264]: Stock *
+                          - spinbutton "Stock *" [ref=f17e265]: "12"
+                        - generic [ref=f17e266]:
+                          - generic [ref=f17e267]: Low Stock Alert
+                          - spinbutton "Low Stock Alert" [ref=f17e268]: "5"
+                      - generic [ref=f17e269]: In stock
+                    - generic [ref=f17e271]:
+                      - heading "Images (0/10) *First image is the main one" [level=5] [ref=f17e272]
+                      - button "Upload images for variant 1" [ref=f17e273] [cursor=pointer]:
+                        - generic [ref=f17e274]:
+                          - paragraph [ref=f17e279]: Drop images or click to upload
+                          - paragraph [ref=f17e280]: JPG, PNG or WebP, up to 5MB each
+                    - generic [ref=f17e281]:
+                      - button "Duplicate" [ref=f17e282] [cursor=pointer]
+                      - button "Remove variant" [ref=f17e286] [cursor=pointer]
+                - button "2 256GB Silver 8GB • 256GB • Silver • ₹1,39,900" [ref=f17e290] [cursor=pointer]:
+                  - generic [ref=f17e291]:
+                    - generic [ref=f17e292]: "2"
+                    - generic [ref=f17e293]:
+                      - paragraph [ref=f17e294]: 256GB Silver
+                      - paragraph [ref=f17e295]: 8GB • 256GB • Silver • ₹1,39,900
+          - generic [ref=f17e301]:
+            - button "Save Changes" [ref=f17e302] [cursor=pointer]
+            - button "Cancel" [ref=f17e307] [cursor=pointer]
+            - button "Discard changes" [ref=f17e308] [cursor=pointer]
+        - generic [ref=f17e314]:
+          - generic [ref=f17e315]:
+            - generic [ref=f17e316]:
+              - heading "Live Preview" [level=4] [ref=f17e317]
+              - combobox "Preview variant" [ref=f17e318] [cursor=pointer]:
+                - option "128GB Black" [selected]
+                - option "256GB Silver"
+            - generic [ref=f17e319]:
+              - generic [ref=f17e320]:
+                - generic [ref=f17e321]: 📱
+                - generic [ref=f17e322]: 100% OFF
+              - generic [ref=f17e323]:
+                - generic [ref=f17e324]:
+                  - paragraph [ref=f17e325]: Apple • Smartphones
+                  - paragraph [ref=f17e326]: iPhone 15 Pro
+                  - paragraph [ref=f17e327]: Black
+                - generic [ref=f17e328]: 8GB · 128GB
+                - generic [ref=f17e334]: ₹1,29,900
+                - generic [ref=f17e336]: 12 in stock
+                - button "View Product" [ref=f17e338] [cursor=pointer]
+          - generic [ref=f17e342]:
+            - heading "Summary" [level=4] [ref=f17e343]
+            - generic [ref=f17e344]:
+              - generic [ref=f17e345]:
+                - term [ref=f17e346]: Variants
+                - definition [ref=f17e347]: "2"
+              - generic [ref=f17e348]:
+                - term [ref=f17e349]: Total stock
+                - definition [ref=f17e350]: "15"
+              - generic [ref=f17e351]:
+                - term [ref=f17e352]: Price range
+                - definition [ref=f17e353]: ₹1,29,900 – ₹1,39,900
+              - generic [ref=f17e354]:
+                - term [ref=f17e355]: Status
+                - definition [ref=f17e356]: Published

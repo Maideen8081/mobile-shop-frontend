@@ -1,534 +1,462 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiUser, FiSmartphone, FiAlertCircle, FiCamera, FiDollarSign, FiCheckCircle, FiArrowLeft, FiArrowRight, FiSend, FiSave, FiCheck, FiX, FiImage, FiEdit3 } from 'react-icons/fi'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  FiCamera, FiCheckCircle, FiDollarSign, FiEdit3, FiImage, FiPlus, FiRotateCcw, FiSmartphone, FiTool, FiUser, FiX,
+} from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
-import { deviceCategories, deviceBrands, issueCategories, repairTechnicians } from '../data/repairData'
+import { Btn, ErrorBanner, Field, PageHeader, Panel, apiErrorMessage, apiFieldErrors, formatINR, inputBase, textareaBase } from '../components/admin/AdminUI'
+import { deviceBrands, deviceCategories, issueCategories } from '../data/repairData'
 import { repairService } from '../services/repairService'
-import RepairTicketManagement from '../components/repair/RepairTicketManagement'
-import CreatableSelect from '../components/ui/CreatableSelect'
+import { focusFirstError, rules, validate, validateField, type Schema } from '../utils/adminValidation'
+import { useToast } from '../context/ToastContext'
 
-const steps = [
-  { id: 1, label: 'Customer', icon: FiUser },
-  { id: 2, label: 'Device', icon: FiSmartphone },
-  { id: 3, label: 'Issue', icon: FiEdit3 },
-  { id: 4, label: 'Photos', icon: FiCamera },
-  { id: 5, label: 'Estimate', icon: FiDollarSign },
-  { id: 6, label: 'Submit', icon: FiCheckCircle },
-]
+type FormKey =
+  | 'customerName' | 'customerMobile' | 'customerAlt' | 'customerEmail' | 'customerAddress'
+  | 'deviceCategory' | 'deviceBrand' | 'deviceModel' | 'imei' | 'serial' | 'deviceColor' | 'warranty'
+  | 'issueCategory' | 'description' | 'priority' | 'accessories' | 'password' | 'internalNote'
+  | 'estimatedCost' | 'estimatedDays' | 'technician'
 
-const initialForm = {
+type FormState = Record<FormKey, string>
+
+const EMPTY: FormState = {
   customerName: '', customerMobile: '', customerAlt: '', customerEmail: '', customerAddress: '',
-  deviceCategory: '', deviceBrand: '', deviceModel: '', imei: '', serial: '', deviceColor: '',
-  deviceCondition: '', warranty: '', purchaseDate: '',
-  issueCategory: '', description: '', priority: 'Medium', accessories: '', password: '',
-  userQuestions: '',
+  deviceCategory: 'Mobile', deviceBrand: '', deviceModel: '', imei: '', serial: '', deviceColor: '', warranty: 'unknown',
+  issueCategory: '', description: '', priority: 'medium', accessories: '', password: '', internalNote: '',
+  estimatedCost: '', estimatedDays: '2', technician: '',
 }
 
-function AnimatedInput({ label, value, onChange, placeholder, type = 'text', required, error, rows }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; required?: boolean; error?: string; rows?: number
-}) {
-  const Tag = rows ? 'textarea' as any : 'input'
-  const inputProps = rows ? { rows } : { type }
+const DRAFT_KEY = 'admin:new-repair-draft'
+const MAX_PHOTOS = 10
+const MAX_PHOTO_MB = 5
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
-  const shakeKey = error ? 'shake' : 'no-shake'
-
-  return (
-    <motion.div key={shakeKey} animate={error ? { x: [0, -4, 4, -4, 4, -2, 2, 0] } : {}} transition={{ duration: 0.4 }}>
-      <label className="block text-xs font-semibold text-text-secondary mb-1.5">
-        {label} {required && <span className="text-danger">*</span>}
-      </label>
-      <Tag
-        {...inputProps}
-        value={value}
-        onChange={(e: any) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={`w-full ${rows ? 'px-4 py-3 resize-none' : 'h-11 px-4'} rounded-xl border text-sm text-text-primary placeholder-text-muted outline-none transition-all focus:border-primary/50 ${
-          error ? 'border-danger shadow-[0_0_0_3px_rgba(239,68,68,0.15)]' : 'border-border hover:border-primary/30'
-        } bg-white shadow-sm`}
-      />
-      {error && <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-danger mt-1 flex items-center gap-1"><FiAlertCircle size={10} />{error}</motion.p>}
-    </motion.div>
-  )
+const schema: Schema<FormKey> = {
+  customerName: [rules.required('Customer name'), rules.personName('Customer name'), rules.maxLength('Customer name', 100)],
+  customerMobile: [rules.required('Mobile number'), rules.phone10to15('Mobile number')],
+  customerAlt: [rules.phone10to15('Alternate number')],
+  customerEmail: [rules.email()],
+  customerAddress: [rules.maxLength('Address', 500)],
+  deviceBrand: [rules.required('Brand'), rules.maxLength('Brand', 100)],
+  deviceModel: [rules.required('Model'), rules.maxLength('Model', 100)],
+  imei: [rules.imei()],
+  serial: [rules.maxLength('Serial number', 100)],
+  deviceColor: [rules.maxLength('Colour', 50)],
+  issueCategory: [rules.required('Issue category')],
+  description: [rules.required('Problem description'), rules.minLength('Problem description', 10), rules.maxLength('Problem description', 2000)],
+  accessories: [rules.maxLength('Accessories', 255)],
+  internalNote: [rules.maxLength('Internal note', 1000)],
+  estimatedCost: [rules.amount('Estimated cost', { allowZero: true, max: 500000 })],
+  estimatedDays: [rules.required('Completion time'), rules.intRange('Completion time', 1, 60)],
+  technician: [rules.maxLength('Technician name', 100)],
 }
 
-function PhotoUpload({ files, setFiles }: { files: File[]; setFiles: (f: File[]) => void }) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [dragOver, setDragOver] = useState(false)
-  const [previews, setPreviews] = useState<string[]>([])
+// Server field → form field, so DRF errors land on the right input.
+const serverFieldMap: Record<string, FormKey> = {
+  customer_name: 'customerName', mobile_number: 'customerMobile', customer_mobile: 'customerMobile',
+  alternate_number: 'customerAlt', email: 'customerEmail', address: 'customerAddress',
+  device_brand: 'deviceBrand', device_model: 'deviceModel', imei_number: 'imei', serial_number: 'serial',
+  device_color: 'deviceColor', issue_category: 'issueCategory', problem_description: 'description',
+  estimated_cost: 'estimatedCost', estimated_completion_days: 'estimatedDays', assigned_technician: 'technician',
+  accessories_submitted: 'accessories',
+}
 
-  useEffect(() => {
-    const urls = files.map((f) => URL.createObjectURL(f))
-    setPreviews(urls)
-    return () => urls.forEach((u) => URL.revokeObjectURL(u))
-  }, [files])
-
-  const handleFiles = useCallback((fileList: FileList) => {
-    const remaining = 10 - files.length
-    if (remaining <= 0) return
-    const toAdd = Math.min(fileList.length, remaining)
-    const newFiles = Array.from(fileList).slice(0, toAdd)
-    setFiles([...files, ...newFiles])
-  }, [files, setFiles])
-
-  const removeFile = (idx: number) => {
-    URL.revokeObjectURL(previews[idx])
-    setFiles(files.filter((_, i) => i !== idx))
+function readDraft(): FormState | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    return raw ? { ...EMPTY, ...JSON.parse(raw) } : null
+  } catch {
+    return null
   }
+}
 
+function SectionTitle({ icon, title, hint }: { icon: React.ReactNode; title: string; hint?: string }) {
   return (
-    <div>
-      <div onDragOver={(e) => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-        onDrop={(e) => { e.preventDefault(); setDragOver(false); if (e.dataTransfer.files) handleFiles(e.dataTransfer.files) }}
-        onClick={() => inputRef.current?.click()}
-        className={`rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${
-          dragOver ? 'border-primary bg-primary/10' : 'border-primary/20 hover:border-primary/40'
-        } bg-white shadow-sm`}
-      >
-        <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) handleFiles(e.target.files); e.target.value = '' }} />
-        <motion.div animate={{ y: dragOver ? -4 : 0 }} className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <FiCamera size={24} className="text-primary" />
-          </div>
-          <p className="text-sm font-semibold text-text-secondary">Drop images or click to upload</p>
-          <p className="text-xs text-text-muted">Show device front, back, and damage areas (max 10)</p>
-        </motion.div>
-      </div>
-      {files.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 mt-3">
-          <AnimatePresence>
-            {files.map((_, i) => (
-              <motion.div key={`${i}-${files[i].name}`} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                className="relative group aspect-square rounded-xl bg-gray-100 border border-border overflow-hidden"
-              >
-                <img src={previews[i] || ''} alt="" className="w-full h-full object-cover" />
-                <button type="button" onClick={() => removeFile(i)}
-                  className="absolute top-1 right-1 w-6 h-6 rounded-lg bg-rose-500/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
-                ><FiX size={12} /></button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {files.length < 10 && (
-            <button type="button" onClick={() => inputRef.current?.click()} className="aspect-square rounded-xl border-2 border-dashed border-primary/20 bg-white flex items-center justify-center text-text-muted hover:text-primary hover:border-primary/40 transition-all cursor-pointer shadow-sm">
-              <FiImage size={20} />
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+    <span className="flex items-center gap-3">
+      <span className="w-8 h-8 rounded-lg bg-surface-lighter ring-1 ring-inset ring-border flex items-center justify-center text-text-secondary">{icon}</span>
+      <span>
+        <span className="block">{title}</span>
+        {hint && <span className="block text-xs font-normal text-text-label mt-0.5">{hint}</span>}
+      </span>
+    </span>
   )
 }
 
 export default function NewRepairTicket() {
-  const [step, setStep] = useState(1)
-  const [form, setForm] = useState({ ...initialForm })
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [estCost, setEstCost] = useState(0)
-  const [estDays, setEstDays] = useState(2)
-  const [technician, setTechnician] = useState(0)
-  const [customerApproval, setCustomerApproval] = useState(true)
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const navigate = useNavigate()
+  const showToast = useToast().show
+  const formRef = useRef<HTMLFormElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [form, setForm] = useState<FormState>(() => readDraft() ?? EMPTY)
+  const [draftRestored] = useState(() => !!readDraft())
+  const [touched, setTouched] = useState<Partial<Record<FormKey, boolean>>>({})
+  const [errors, setErrors] = useState<Partial<Record<FormKey, string>>>({})
+  const [photos, setPhotos] = useState<File[]>([])
+  const [photoError, setPhotoError] = useState('')
+  const [previews, setPreviews] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
-  const [customCategories, setCustomCategories] = useState<string[]>([])
-  const [customBrands, setCustomBrands] = useState<string[]>([])
-  const [customWarranties, setCustomWarranties] = useState<string[]>([])
-  const [customIssues, setCustomIssues] = useState<string[]>([])
-  const [customPriorities, setCustomPriorities] = useState<string[]>([])
-  const [customTechs, setCustomTechs] = useState<{ id: number; name: string }[]>([])
-  const techIdCounter = useRef(100)
-  const allCategories = useMemo(() => [...deviceCategories, ...customCategories], [customCategories])
-  const allBrands = useMemo(() => [...deviceBrands, ...customBrands], [customBrands])
-  const allWarranties = useMemo(() => ['In Warranty', 'Out of Warranty', 'Expired', ...customWarranties], [customWarranties])
-  const allIssues = useMemo(() => [...issueCategories, ...customIssues], [customIssues])
-  const allPriorities = useMemo(() => ['Low', 'Medium', 'High', 'Urgent', ...customPriorities], [customPriorities])
-  const allTechs = useMemo(() => [...repairTechnicians.filter((t) => t.online).map((t) => ({ id: t.id, name: `${t.name} — ${t.speciality}` })), ...customTechs], [customTechs])
+  const [created, setCreated] = useState<{ id: number; ticketNumber: string } | null>(null)
 
-  const update = (key: string, val: string) => {
-    setForm({ ...form, [key]: val })
-    if (errors[key]) {
-      const { [key]: _, ...rest } = errors
-      setErrors(rest)
-    }
+  // Auto-save a draft so a phone call or page refresh doesn't lose a half-filled ticket.
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      try {
+        const dirty = (Object.keys(EMPTY) as FormKey[]).some((k) => form[k] !== EMPTY[k])
+        if (dirty) localStorage.setItem(DRAFT_KEY, JSON.stringify(form))
+        else localStorage.removeItem(DRAFT_KEY)
+      } catch { /* storage unavailable: drafts are a convenience only */ }
+    }, 400)
+    return () => window.clearTimeout(t)
+  }, [form])
+
+  useEffect(() => {
+    const urls = photos.map((f) => URL.createObjectURL(f))
+    setPreviews(urls)
+    return () => urls.forEach((u) => URL.revokeObjectURL(u))
+  }, [photos])
+
+  const set = (key: FormKey, value: string) => {
+    setForm((f) => ({ ...f, [key]: value }))
+    if (touched[key] || errors[key]) setErrors((e) => ({ ...e, [key]: validateField(schema, key, value) || undefined }))
   }
 
-  const validate = (s: number): boolean => {
-    const errs: Record<string, string> = {}
-    if (s >= 1) {
-      if (!form.customerName.trim()) errs.customerName = 'Customer Name is required'
-      if (!form.customerMobile.trim()) errs.customerMobile = 'Mobile Number is required'
-    }
-    if (s >= 2) {
-      if (!form.deviceCategory) errs.deviceCategory = 'Please select device category'
-      if (!form.deviceBrand) errs.deviceBrand = 'Brand is required'
-      if (!form.deviceModel.trim()) errs.deviceModel = 'Model is required'
-    }
-    if (s >= 3) {
-      if (!form.issueCategory) errs.issueCategory = 'Please select issue category'
-      if (!form.description.trim()) errs.description = 'Problem description is required'
-    }
-    if (s >= 4) {
-      if (!form.userQuestions.trim()) errs.userQuestions = 'Questions are required'
-    }
-    setErrors(errs)
-    return Object.keys(errs).length === 0
+  const blur = (key: FormKey) => {
+    setTouched((t) => ({ ...t, [key]: true }))
+    let msg = validateField(schema, key, form[key])
+    if (!msg && key === 'customerAlt') msg = rules.differentFrom(() => form.customerMobile, 'Alternate number must differ from the mobile number')(form.customerAlt)
+    setErrors((e) => ({ ...e, [key]: msg || undefined }))
   }
 
-  const goNext = () => {
-    if (validate(step)) setStep(step + 1)
-  }
+  const bind = (key: FormKey) => ({
+    value: form[key],
+    onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => set(key, e.target.value),
+    onBlur: () => blur(key),
+  })
 
-  const goPrev = () => setStep(Math.max(1, step - 1))
+  const addPhotos = useCallback((list: FileList | null) => {
+    if (!list) return
+    setPhotoError('')
+    const accepted: File[] = []
+    const problems: string[] = []
+    for (const file of Array.from(list)) {
+      if (!PHOTO_TYPES.includes(file.type)) problems.push(`${file.name}: only JPG, PNG or WebP`)
+      else if (file.size > MAX_PHOTO_MB * 1024 * 1024) problems.push(`${file.name}: larger than ${MAX_PHOTO_MB} MB`)
+      else accepted.push(file)
+    }
+    setPhotos((current) => {
+      const room = MAX_PHOTOS - current.length
+      if (accepted.length > room) problems.push(`Only ${MAX_PHOTOS} photos allowed — ${accepted.length - room} skipped`)
+      return [...current, ...accepted.slice(0, Math.max(room, 0))]
+    })
+    if (problems.length) setPhotoError(problems.join(' · '))
+  }, [])
 
-  const handleSubmit = async () => {
-    if (!validate(step)) return
-    setSubmitting(true)
+  const resetForm = () => {
+    setForm(EMPTY)
+    setErrors({})
+    setTouched({})
+    setPhotos([])
+    setPhotoError('')
     setSubmitError('')
+    try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
+  }
 
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitError('')
+    const errs = validate(schema, form)
+    const altMsg = rules.differentFrom(() => form.customerMobile, 'Alternate number must differ from the mobile number')(form.customerAlt)
+    if (altMsg && !errs.customerAlt) errs.customerAlt = altMsg
+    setErrors(errs)
+    setTouched(Object.fromEntries(Object.keys(EMPTY).map((k) => [k, true])))
+    if (Object.keys(errs).length) {
+      setSubmitError(`Please fix ${Object.keys(errs).length} field${Object.keys(errs).length > 1 ? 's' : ''} highlighted below.`)
+      window.setTimeout(() => focusFirstError(formRef.current), 0)
+      return
+    }
+
+    setSubmitting(true)
     try {
       const fd = new FormData()
-      fd.append('customer_name', form.customerName.trim())
-      fd.append('customer_mobile', form.customerMobile.trim())
-      if (form.customerAlt.trim()) fd.append('customer_alternate_mobile', form.customerAlt.trim())
-      if (form.customerEmail.trim()) fd.append('email', form.customerEmail.trim())
-      if (form.customerAddress.trim()) fd.append('address', form.customerAddress.trim())
-      fd.append('device_category', form.deviceCategory)
-      fd.append('device_brand', form.deviceBrand)
-      fd.append('device_model', form.deviceModel.trim())
-      if (form.imei.trim()) fd.append('imei_number', form.imei.trim())
-      if (form.serial.trim()) fd.append('serial_number', form.serial.trim())
-      if (form.deviceColor.trim()) fd.append('device_color', form.deviceColor.trim())
-      if (form.deviceCondition.trim()) fd.append('device_condition', form.deviceCondition.trim())
-      fd.append('issue_category', form.issueCategory)
-      fd.append('problem_description', form.description.trim())
-      fd.append('priority', form.priority.toLowerCase())
-      if (form.accessories.trim()) fd.append('accessories_submitted', form.accessories.trim())
-      if (form.password.trim()) fd.append('device_password', form.password.trim())
-      fd.append('estimated_cost', String(estCost))
-      fd.append('estimated_completion_days', String(estDays))
-      if (technician > 0) fd.append('assigned_technician', String(technician))
-      fd.append('customer_approval_required', String(customerApproval))
+      const put = (k: string, v: string) => v.trim() && fd.append(k, v.trim())
+      put('customer_name', form.customerName)
+      put('mobile_number', form.customerMobile.replace(/\D/g, ''))
+      put('alternate_number', form.customerAlt.replace(/\D/g, ''))
+      put('email', form.customerEmail.toLowerCase())
+      put('address', form.customerAddress)
+      put('device_brand', form.deviceBrand)
+      put('device_model', form.deviceModel)
+      put('imei_number', form.imei.replace(/[\s-]/g, ''))
+      put('serial_number', form.serial)
+      put('device_color', form.deviceColor)
+      put('warranty_status', form.warranty)
+      put('issue_category', form.issueCategory)
+      put('problem_description', `${form.deviceCategory && form.deviceCategory !== 'Mobile' ? `[${form.deviceCategory}] ` : ''}${form.description.trim()}`)
+      put('priority', form.priority)
+      put('accessories_submitted', form.accessories)
+      put('device_password', form.password)
+      put('estimated_cost', form.estimatedCost || '0')
+      put('estimated_completion_days', form.estimatedDays)
+      put('assigned_technician', form.technician)
+      photos.forEach((p) => fd.append('photos', p))
 
-      imageFiles.forEach((file) => fd.append('photos', file))
-
-      const created = await repairService.adminCreate(fd)
-
-      await repairService.createNote(created.id, form.userQuestions.trim(), form.customerName.trim(), false)
-
-      setForm({ ...initialForm })
-      setImageFiles([])
-      setEstCost(0)
-      setEstDays(2)
-      setTechnician(0)
-      setCustomerApproval(true)
-      setStep(1)
-      setSuccessMsg('Repair ticket created successfully! Track it at My Repairs.')
-      setRefreshTrigger((p) => p + 1)
-      setTimeout(() => setSuccessMsg(''), 6000)
-      setSubmitting(false)
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to create repair ticket. Please try again.'
-      setSubmitError(msg)
+      const ticket = await repairService.adminCreate(fd)
+      if (form.internalNote.trim()) {
+        try {
+          await repairService.createNote(ticket.id, form.internalNote.trim(), 'Admin', true)
+        } catch {
+          showToast('Ticket created, but the internal note could not be saved', 'error')
+        }
+      }
+      resetForm()
+      setCreated({ id: ticket.id, ticketNumber: ticket.repairId })
+      showToast('Repair ticket created', 'success')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (err) {
+      const fieldErrs = apiFieldErrors(err)
+      const mapped: Partial<Record<FormKey, string>> = {}
+      for (const [k, v] of Object.entries(fieldErrs)) if (serverFieldMap[k]) mapped[serverFieldMap[k]] = v
+      if (fieldErrs.photos) setPhotoError(fieldErrs.photos)
+      if (Object.keys(mapped).length) {
+        setErrors((e2) => ({ ...e2, ...mapped }))
+        setSubmitError('The server rejected some fields — see the highlighted inputs.')
+        window.setTimeout(() => focusFirstError(formRef.current), 0)
+      } else {
+        setSubmitError(apiErrorMessage(err, 'Could not create the repair ticket. Please try again.'))
+      }
+    } finally {
       setSubmitting(false)
     }
   }
 
-  const summary = [
-    { label: 'Customer', value: form.customerName || '—' },
-    { label: 'Category', value: form.deviceCategory || '—' },
-    { label: 'Device', value: form.deviceBrand && form.deviceModel ? `${form.deviceBrand} ${form.deviceModel}` : '—' },
-    { label: 'Issue', value: form.issueCategory || '—' },
-    { label: 'Est. Cost', value: estCost > 0 ? `₹${estCost.toLocaleString('en-IN')}` : '—' },
-  ]
+  const errorCount = useMemo(() => Object.values(errors).filter(Boolean).length, [errors])
+  const requiredDone = (['customerName', 'customerMobile', 'deviceBrand', 'deviceModel', 'issueCategory', 'description'] as FormKey[])
+    .filter((k) => form[k].trim() && !errors[k]).length
+
+  if (created) {
+    return (
+      <PageLayout title="New repair ticket">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="admin-card max-w-xl mx-auto mt-6 p-8 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#ecfdf3] text-[#079455] flex items-center justify-center mx-auto mb-4">
+            <FiCheckCircle size={26} />
+          </div>
+          <h2 className="text-xl font-bold text-text-primary" style={{ fontFamily: 'var(--font-display)' }}>Ticket {created.ticketNumber} created</h2>
+          <p className="mt-2 text-sm text-text-label">The customer has been notified. You can track progress and update the status from Repairs.</p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-2 justify-center">
+            <Btn variant="primary" icon={<FiTool size={15} />} onClick={() => navigate('/admin/repair-dashboard')}>Open in Repairs</Btn>
+            <Btn icon={<FiPlus size={15} />} onClick={() => setCreated(null)}>Create another</Btn>
+          </div>
+        </motion.div>
+      </PageLayout>
+    )
+  }
+
+  const err = (k: FormKey) => (touched[k] || errors[k] ? errors[k] : undefined)
 
   return (
-    <PageLayout title="New Repair Ticket">
-      {successMsg && (
-        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-          className="mb-4 flex items-center gap-3 px-5 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-lg"
-        >
-          <FiCheckCircle size={18} className="shrink-0" />
-          <span className="text-sm font-semibold flex-1">{successMsg}</span>
-          <Link to="/my-repairs"
-            className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-colors shrink-0"
-          >
-            Track Repairs
-          </Link>
-        </motion.div>
+    <PageLayout title="New repair ticket">
+      <PageHeader
+        title="New repair ticket"
+        description="Book in a walk-in device. Fields marked * are required; everything else can be added later from the ticket."
+        actions={
+          <Btn icon={<FiRotateCcw size={15} />} onClick={resetForm} disabled={submitting}>
+            Clear form
+          </Btn>
+        }
+      />
+
+      {draftRestored && (
+        <div className="mb-4 rounded-xl bg-[#eff8ff] ring-1 ring-inset ring-[#b2ddff] px-4 py-2.5 text-sm text-[#175cd3] flex items-center gap-2">
+          <FiEdit3 size={14} /> We restored your unsaved draft. Use “Clear form” to start fresh.
+        </div>
       )}
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 min-w-0">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-              <div>
-                <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-                  <span className="hover:text-text-secondary transition-colors cursor-pointer">Repairs</span>
-                  <span>/</span>
-                  <span className="text-text-secondary font-medium">New Ticket</span>
-                </div>
-                <h1 className="text-xl lg:text-2xl font-bold text-text-primary tracking-tight">New Repair Ticket</h1>
-                <p className="text-sm text-text-muted mt-0.5">Create a new repair ticket with device details and customer information.</p>
-              </div>
+
+      <form ref={formRef} onSubmit={submit} noValidate className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6 items-start">
+        <div className="space-y-5">
+          <Panel title={<SectionTitle icon={<FiUser size={15} />} title="Customer" hint="Who should we contact about this repair?" />} bodyClassName="p-5 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="Full name" required error={err('customerName')} className="md:col-span-2">
+                {(a) => <input {...a} {...bind('customerName')} autoComplete="off" maxLength={100} placeholder="e.g. Ravi Kumar" className={inputBase} />}
+              </Field>
+              <Field label="Mobile number" required error={err('customerMobile')} hint="10–15 digits; spaces and dashes are fine">
+                {(a) => <input {...a} {...bind('customerMobile')} inputMode="tel" placeholder="98765 43210" className={inputBase} />}
+              </Field>
+              <Field label="Alternate number" error={err('customerAlt')}>
+                {(a) => <input {...a} {...bind('customerAlt')} inputMode="tel" placeholder="Optional" className={inputBase} />}
+              </Field>
+              <Field label="Email" error={err('customerEmail')} hint="Status updates are sent here">
+                {(a) => <input {...a} {...bind('customerEmail')} type="email" inputMode="email" placeholder="name@example.com" className={inputBase} />}
+              </Field>
+              <Field label="Address" error={err('customerAddress')}>
+                {(a) => <input {...a} {...bind('customerAddress')} placeholder="Optional" className={inputBase} />}
+              </Field>
             </div>
-          </motion.div>
+          </Panel>
 
-          <div className="flex items-center gap-0 p-1 rounded-xl bg-white border border-border shadow-sm overflow-x-auto mb-5">
-            {steps.map((s, i) => {
-              const Icon = s.icon
-              const isActive = step === s.id
-              const isDone = step > s.id
-              return (
-                <button key={s.id} onClick={() => setStep(s.id)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all cursor-pointer relative ${
-                    isActive ? 'text-white' : isDone ? 'text-success' : 'text-text-muted hover:text-text-secondary'
-                  }`}
-                >
-                  {isActive && (
-                    <motion.div layoutId="stepGlow" className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary to-blue-500 shadow-lg shadow-primary/30" />
-                  )}
-                  <span className="relative z-10 flex items-center gap-1.5">
-                    {isDone ? (
-                      <span className="w-5 h-5 rounded-[8px] bg-success/20 flex items-center justify-center"><FiCheck size={11} className="text-success" /></span>
-                    ) : (
-                      <Icon size={13} className={isActive ? 'text-white' : ''} />
-                    )}
-                    <span className={`hidden sm:inline ${isActive ? 'text-white' : ''}`}>{s.label}</span>
-                  </span>
-                  {i < steps.length - 1 && (
-                    <div className={`absolute right-0 top-1/2 -translate-y-1/2 w-4 h-px hidden sm:block ${isDone ? 'bg-success/50' : 'bg-border'}`} />
-                  )}
-                </button>
-              )
-            })}
-          </div>
+          <Panel title={<SectionTitle icon={<FiSmartphone size={15} />} title="Device" hint="What has been handed over?" />} bodyClassName="p-5 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Field label="Category">
+                {(a) => (
+                  <select {...a} {...bind('deviceCategory')} className={inputBase}>
+                    {deviceCategories.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                )}
+              </Field>
+              <Field label="Brand" required error={err('deviceBrand')}>
+                {(a) => (
+                  <>
+                    <input {...a} {...bind('deviceBrand')} list="repair-brands" placeholder="Select or type" className={inputBase} />
+                    <datalist id="repair-brands">{deviceBrands.map((b) => <option key={b} value={b} />)}</datalist>
+                  </>
+                )}
+              </Field>
+              <Field label="Model" required error={err('deviceModel')}>
+                {(a) => <input {...a} {...bind('deviceModel')} placeholder="e.g. iPhone 13 Pro" className={inputBase} />}
+              </Field>
+              <Field label="IMEI" error={err('imei')} hint="Dial *#06# on the device" counter={form.imei ? { value: form.imei.replace(/[\s-]/g, '').length, max: 15 } : undefined}>
+                {(a) => <input {...a} {...bind('imei')} inputMode="numeric" placeholder="15 digits" className={`${inputBase} tabular`} />}
+              </Field>
+              <Field label="Serial number" error={err('serial')}>
+                {(a) => <input {...a} {...bind('serial')} placeholder="Optional" className={inputBase} />}
+              </Field>
+              <Field label="Colour" error={err('deviceColor')}>
+                {(a) => <input {...a} {...bind('deviceColor')} placeholder="e.g. Graphite" className={inputBase} />}
+              </Field>
+              <Field label="Warranty">
+                {(a) => (
+                  <select {...a} {...bind('warranty')} className={inputBase}>
+                    <option value="unknown">Not sure</option>
+                    <option value="in_warranty">In warranty</option>
+                    <option value="out_of_warranty">Out of warranty</option>
+                  </select>
+                )}
+              </Field>
+              <Field label="Accessories received" error={err('accessories')} className="md:col-span-2">
+                {(a) => <input {...a} {...bind('accessories')} placeholder="e.g. Box, charger, case" className={inputBase} />}
+              </Field>
+            </div>
+          </Panel>
 
-          <AnimatePresence mode="wait">
-            <motion.div key={`step-${step}`}
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -24 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-2xl bg-white border border-border p-5 lg:p-6 shadow-sm"
+          <Panel title={<SectionTitle icon={<FiEdit3 size={15} />} title="Problem" hint="Describe what the customer reported" />} bodyClassName="p-5 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="Issue category" required error={err('issueCategory')}>
+                {(a) => (
+                  <select {...a} {...bind('issueCategory')} className={inputBase}>
+                    <option value="">Select an issue</option>
+                    {issueCategories.map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                )}
+              </Field>
+              <Field label="Priority">
+                {(a) => (
+                  <select {...a} {...bind('priority')} className={inputBase}>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                )}
+              </Field>
+              <Field label="Problem description" required error={err('description')} className="md:col-span-2"
+                counter={{ value: form.description.trim().length, max: 2000 }} hint="At least 10 characters — symptoms, when it started, anything already tried">
+                {(a) => <textarea {...a} {...bind('description')} rows={4} placeholder="e.g. Screen cracked after a drop; touch stops responding on the left edge." className={textareaBase} />}
+              </Field>
+              <Field label="Device passcode" hint="Only if the customer agreed to share it">
+                {(a) => <input {...a} {...bind('password')} autoComplete="off" placeholder="Optional" className={inputBase} />}
+              </Field>
+              <Field label="Internal note" error={err('internalNote')} hint="Visible to staff only">
+                {(a) => <input {...a} {...bind('internalNote')} placeholder="Optional" className={inputBase} />}
+              </Field>
+            </div>
+          </Panel>
+
+          <Panel title={<SectionTitle icon={<FiCamera size={15} />} title="Condition photos" hint={`Up to ${MAX_PHOTOS} · JPG, PNG or WebP · ${MAX_PHOTO_MB} MB each`} />} bodyClassName="p-5 pt-4">
+            <input ref={fileRef} type="file" accept={PHOTO_TYPES.join(',')} multiple className="hidden" onChange={(e) => { addPhotos(e.target.files); e.target.value = '' }} />
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => fileRef.current?.click()}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files) }}
+              className="rounded-xl border-2 border-dashed border-border-dark hover:border-primary/50 hover:bg-[#fdecee]/30 transition-colors p-6 text-center cursor-pointer"
             >
-              {step === 1 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><FiUser size={15} className="text-primary" /></div>
-                    <h3 className="text-sm font-bold text-text-primary">Customer Details</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <AnimatedInput label="Customer Name" value={form.customerName} onChange={(v) => update('customerName', v)} placeholder="Full name" required error={errors.customerName} />
-                    </div>
-                    <AnimatedInput label="Mobile Number" value={form.customerMobile} onChange={(v) => update('customerMobile', v)} placeholder="+91 98765 43210" required error={errors.customerMobile} />
-                    <AnimatedInput label="Alternate Number" value={form.customerAlt} onChange={(v) => update('customerAlt', v)} placeholder="+91 ..." />
-                    <AnimatedInput label="Email" value={form.customerEmail} onChange={(v) => update('customerEmail', v)} placeholder="email@example.com" type="email" />
-                    <AnimatedInput label="Address" value={form.customerAddress} onChange={(v) => update('customerAddress', v)} placeholder="Customer address" />
-                  </div>
-                </div>
-              )}
-
-              {step === 2 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><FiSmartphone size={15} className="text-primary" /></div>
-                    <h3 className="text-sm font-bold text-text-primary">Device Information</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <CreatableSelect label="Device Category" options={allCategories} value={form.deviceCategory} onChange={(v) => update('deviceCategory', v)} placeholder="Select device category" required error={errors.deviceCategory}
-                        onCreate={(v) => setCustomCategories((p) => [...p, v])} />
-                    </div>
-                    <CreatableSelect label="Device Brand" options={allBrands} value={form.deviceBrand} onChange={(v) => update('deviceBrand', v)} placeholder="Select brand" required error={errors.deviceBrand}
-                      onCreate={(v) => setCustomBrands((p) => [...p, v])} />
-                    <AnimatedInput label="Device Model" value={form.deviceModel} onChange={(v) => update('deviceModel', v)} placeholder="e.g. iPhone 15 Pro Max" required error={errors.deviceModel} />
-                    <AnimatedInput label="IMEI Number" value={form.imei} onChange={(v) => update('imei', v)} placeholder="15 digit IMEI" />
-                    <AnimatedInput label="Serial Number" value={form.serial} onChange={(v) => update('serial', v)} placeholder="Serial number" />
-                    <AnimatedInput label="Device Color" value={form.deviceColor} onChange={(v) => update('deviceColor', v)} placeholder="e.g. Space Gray" />
-                    <CreatableSelect label="Warranty Status" options={allWarranties} value={form.warranty} onChange={(v) => update('warranty', v)} placeholder="Select"
-                      onCreate={(v) => setCustomWarranties((p) => [...p, v])} />
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><FiEdit3 size={15} className="text-primary" /></div>
-                    <h3 className="text-sm font-bold text-text-primary">Issue Details</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <CreatableSelect label="Issue Category" options={allIssues} value={form.issueCategory} onChange={(v) => update('issueCategory', v)} placeholder="Select issue" required error={errors.issueCategory}
-                        onCreate={(v) => setCustomIssues((p) => [...p, v])} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <AnimatedInput label="Problem Description" value={form.description} onChange={(v) => update('description', v)} placeholder="Describe the issue in detail..." required error={errors.description} rows={4} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 mb-3">
-                        <p className="text-xs font-semibold text-primary flex items-center gap-2">
-                          <span className="material-symbols-outlined text-sm">help</span>
-                          Questions for the Admin Team
-                        </p>
-                        <p className="text-[10px] text-text-muted mt-1">Have any questions about the repair process, cost, parts, or timeline? Let us know below and our team will respond to you.</p>
-                      </div>
-                      <AnimatedInput label="Your Questions" value={form.userQuestions} onChange={(v) => update('userQuestions', v)} placeholder="e.g. How long will the repair take? Do you use original parts? Is there a warranty on the repair?" rows={3} error={errors.userQuestions} />
-                    </div>
-                    <CreatableSelect label="Priority" options={allPriorities} value={form.priority} onChange={(v) => update('priority', v)}
-                      onCreate={(v) => setCustomPriorities((p) => [...p, v])} />
-                    <AnimatedInput label="Accessories Submitted" value={form.accessories} onChange={(v) => update('accessories', v)} placeholder="Box, Charger, Cable" />
-                    <AnimatedInput label="Device Password" value={form.password} onChange={(v) => update('password', v)} placeholder="Provided / N/A" />
-                  </div>
-                </div>
-              )}
-
-              {step === 4 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><FiCamera size={15} className="text-primary" /></div>
-                    <h3 className="text-sm font-bold text-text-primary">Device Condition Photos</h3>
-                  </div>
-                  <PhotoUpload files={imageFiles} setFiles={setImageFiles} />
-                </div>
-              )}
-
-              {step === 5 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"><FiDollarSign size={15} className="text-primary" /></div>
-                    <h3 className="text-sm font-bold text-text-primary">Repair Estimation</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <AnimatedInput label="Estimated Cost (₹)" value={String(estCost || '')} onChange={(v) => setEstCost(Number(v) || 0)} placeholder="0" type="number" />
-                    <AnimatedInput label="Est. Completion (Days)" value={String(estDays)} onChange={(v) => setEstDays(Number(v) || 2)} type="number" />
-                    <div className="md:col-span-2">
-                      <CreatableSelect label="Assign Technician" options={allTechs.map((t) => t.name)} value={technician === 0 ? '' : allTechs.find((t) => t.id === technician)?.name || ''}
-                        onChange={(v) => {
-                          const found = allTechs.find((t) => t.name === v)
-                          setTechnician(found ? found.id : 0)
-                        }}
-                        onCreate={(v) => {
-                          const newId = techIdCounter.current++
-                          setCustomTechs((p) => [...p, { id: newId, name: v }])
-                          setTechnician(newId)
-                        }}
-                        placeholder="Auto Assign" creatable
-                      />
-                    </div>
-                    <div className="flex items-center pt-2">
-                      <label className="flex items-center gap-2.5 text-xs font-semibold text-text-secondary cursor-pointer">
-                        <input type="checkbox" checked={customerApproval} onChange={(e) => setCustomerApproval(e.target.checked)} className="w-4 h-4 rounded border-primary/20 text-primary focus:ring-primary bg-white" />
-                        Customer Approval Required
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {step === 6 && (
-                <div className="text-center py-6">
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                    className="w-20 h-20 rounded-3xl bg-success/10 flex items-center justify-center mx-auto mb-4"
-                  >
-                    <FiCheckCircle size={36} className="text-success" />
-                  </motion.div>
-                  <h3 className="text-lg font-bold text-text-primary">Ready to Create Ticket</h3>
-                  <p className="text-sm text-text-muted mt-1 max-w-md mx-auto">Review and confirm the repair ticket details before submission.</p>
-                  <div className="max-w-sm mx-auto mt-6 space-y-2 text-left">
-                    {[
-                      ['Customer', form.customerName],
-                      ['Mobile', form.customerMobile],
-                      ['Category', form.deviceCategory],
-                      ['Device', `${form.deviceBrand} ${form.deviceModel}`],
-                      ['Issue', form.issueCategory],
-                      ['Cost', `₹${estCost.toLocaleString('en-IN')}`],
-                      ['Technician', technician ? repairTechnicians.find((t) => t.id === technician)?.name || 'Auto Assign' : 'Auto Assign'],
-                      ...(form.userQuestions.trim() ? [['Questions', form.userQuestions.trim()]] : []),
-                    ].map(([label, val], i) => (
-                      <motion.div key={label} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                        className="flex justify-between items-center px-4 py-2.5 rounded-xl bg-white border border-border text-sm shadow-sm"
-                      >
-                        <span className="text-text-muted">{label}</span>
-                        <span className="font-semibold text-text-primary text-right truncate ml-4">{val || '—'}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-
-          {submitError && (
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 px-4 py-3 rounded-xl bg-danger/10 border border-danger/20 text-sm text-danger mt-4"
-            ><FiAlertCircle size={14} /> {submitError}</motion.div>
-          )}
-          <div className="flex items-center justify-between gap-3 mt-4">
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={goPrev} disabled={step === 1}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[rgba(15,23,42,0.8)] border border-border text-sm font-semibold text-text-secondary hover:border-primary/30 hover:text-text-primary transition-all disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
-            ><FiArrowLeft size={14} /> Previous</motion.button>
-            <div className="flex items-center gap-2">
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-semibold text-amber-400 hover:bg-amber-500/20 transition-all cursor-pointer"
-              ><FiSave size={13} /> Save Draft</motion.button>
-              {step < 6 ? (
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={goNext}
-                  className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-blue-600 text-white text-sm font-semibold shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all cursor-pointer"
-                >Next <FiArrowRight size={14} /></motion.button>
-              ) : (
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={submitting} onClick={handleSubmit}
-                  className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-gradient-to-r from-success to-emerald-600 text-white text-sm font-semibold shadow-lg shadow-success/25 hover:shadow-success/40 transition-all disabled:opacity-50 cursor-pointer"
-                ><FiSend size={14} /> {submitting ? 'Creating...' : 'Generate Ticket'}</motion.button>
-              )}
+              <FiImage className="mx-auto text-text-muted mb-2" size={22} />
+              <p className="text-sm font-medium text-text-primary">Drop photos here or <span className="text-primary">browse</span></p>
+              <p className="text-xs text-text-label mt-1">Front, back and every damaged area — this protects you and the customer.</p>
             </div>
-          </div>
+            {photoError && <p role="alert" className="mt-2 text-xs font-medium text-danger">{photoError}</p>}
+            {photos.length > 0 && (
+              <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2 mt-3">
+                <AnimatePresence>
+                  {photos.map((p, i) => (
+                    <motion.div key={`${p.name}-${p.lastModified}-${i}`} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                      className="relative group aspect-square rounded-lg overflow-hidden ring-1 ring-border bg-surface-lighter">
+                      <img src={previews[i]} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                      <button type="button" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-md bg-[#101828]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition">
+                        <FiX size={12} />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </Panel>
+
+          <Panel title={<SectionTitle icon={<FiDollarSign size={15} />} title="Estimate & assignment" hint="Can be revised after diagnosis" />} bodyClassName="p-5 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Field label="Estimated cost (₹)" error={err('estimatedCost')} hint="Leave blank if not quoted yet">
+                {(a) => <input {...a} {...bind('estimatedCost')} inputMode="decimal" placeholder="0" className={`${inputBase} tabular`} />}
+              </Field>
+              <Field label="Ready in (days)" required error={err('estimatedDays')}>
+                {(a) => <input {...a} {...bind('estimatedDays')} inputMode="numeric" className={`${inputBase} tabular`} />}
+              </Field>
+              <Field label="Technician" error={err('technician')} hint="Leave blank to assign later">
+                {(a) => <input {...a} {...bind('technician')} placeholder="e.g. Suresh" className={inputBase} />}
+              </Field>
+            </div>
+          </Panel>
         </div>
 
-        <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-          className="hidden lg:block w-72 flex-shrink-0"
-        >
-          <div className="sticky top-24 space-y-4">
-            <div className="rounded-2xl bg-bg-card border border-border p-5 shadow-lg">
-              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-4">Ticket Summary</h4>
-              <div className="space-y-3">
-                {summary.map((item) => (
-                  <div key={item.label}>
-                    <p className="text-[10px] text-text-muted font-medium">{item.label}</p>
-                    <motion.p key={item.value} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      className="text-sm font-semibold text-text-primary truncate"
-                    >{item.value}</motion.p>
-                  </div>
-                ))}
+        <aside className="xl:sticky xl:top-24 space-y-4">
+          <div className="admin-card p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-text-label">Ticket summary</p>
+            <dl className="mt-4 space-y-3 text-sm">
+              {[
+                ['Customer', form.customerName || '—'],
+                ['Mobile', form.customerMobile || '—'],
+                ['Device', [form.deviceBrand, form.deviceModel].filter(Boolean).join(' ') || '—'],
+                ['Issue', form.issueCategory || '—'],
+                ['Priority', form.priority[0].toUpperCase() + form.priority.slice(1)],
+                ['Estimate', form.estimatedCost && !errors.estimatedCost ? formatINR(Number(form.estimatedCost)) : '—'],
+                ['Photos', `${photos.length} attached`],
+              ].map(([k, v]) => (
+                <div key={k} className="flex justify-between gap-3">
+                  <dt className="text-text-label">{k}</dt>
+                  <dd className="font-medium text-text-primary text-right truncate">{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="mt-5 pt-4 border-t border-border-light">
+              <div className="flex justify-between text-xs mb-1.5">
+                <span className="text-text-label">Required fields</span>
+                <span className="font-semibold text-text-primary tabular">{requiredDone}/6</span>
               </div>
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-text-muted font-medium">Progress</span>
-                  <span className="text-xs font-bold text-primary">{Math.round((step / 6) * 100)}%</span>
-                </div>
-                <div className="mt-2 h-1.5 rounded-[8px] bg-[rgba(15,23,42,0.8)] overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${(step / 6) * 100}%` }}
-                    className="h-full rounded-[8px] bg-gradient-to-r from-primary to-blue-500"
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                  />
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-center gap-2 text-xs text-text-muted">
-                  <FiCamera size={12} />
-                  <span>{imageFiles.length} photo{imageFiles.length !== 1 ? 's' : ''} attached</span>
-                </div>
+              <div className="h-1.5 rounded-full bg-surface-lighter overflow-hidden">
+                <div className="h-full rounded-full bg-[#17b26a] transition-all duration-300" style={{ width: `${(requiredDone / 6) * 100}%` }} />
               </div>
             </div>
+            {submitError && <div className="mt-4"><ErrorBanner message={submitError} /></div>}
+            <Btn type="submit" variant="primary" size="lg" loading={submitting} className="w-full mt-4" icon={<FiCheckCircle size={16} />}>
+              {submitting ? 'Creating ticket…' : 'Create ticket'}
+            </Btn>
+            {errorCount > 0 && !submitError && <p className="mt-2 text-xs text-danger text-center">{errorCount} field{errorCount > 1 ? 's need' : ' needs'} attention</p>}
+            <p className="mt-3 text-[11px] text-text-muted text-center">Draft saves automatically on this device.</p>
           </div>
-        </motion.div>
-      </div>
-
-      <div className="mt-10 pt-8 border-t border-border">
-        <RepairTicketManagement refreshTrigger={refreshTrigger} onRefresh={() => setRefreshTrigger((p) => p + 1)} />
-      </div>
+        </aside>
+      </form>
     </PageLayout>
   )
 }

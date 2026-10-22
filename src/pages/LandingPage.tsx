@@ -17,6 +17,8 @@ import YouTubeLite from '../components/ui/YouTubeLite'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 import explodingViewVideo from '../assets/Orange_smartphone_exploding_view_1080p_20261002155324.mp4'
 import internalComponentsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
+import explodingViewPoster from '../assets/hero-exploding-view-poster.jpg'
+import internalComponentsPoster from '../assets/hero-internal-components-poster.jpg'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG =
@@ -110,9 +112,10 @@ const VIDEO_FEATURES = [
  */
 type HeroCopy = { tag: string; title: [string, string, string]; desc: string }
 
-const heroSlides: { video: string; copies: HeroCopy[] }[] = [
+const heroSlides: { video: string; poster: string; copies: HeroCopy[] }[] = [
   {
     video: explodingViewVideo,
+    poster: explodingViewPoster,
     copies: [
       {
         tag: 'Inside The Repair',
@@ -133,6 +136,7 @@ const heroSlides: { video: string; copies: HeroCopy[] }[] = [
   },
   {
     video: internalComponentsVideo,
+    poster: internalComponentsPoster,
     copies: [
       {
         tag: 'Board-Level Repair',
@@ -795,6 +799,7 @@ export default function LandingPage() {
                   autoPlay
                   muted
                   playsInline
+                  poster={slide.poster}
                   preload={i === 0 ? 'auto' : 'metadata'}
                   aria-hidden="true"
                   tabIndex={-1}

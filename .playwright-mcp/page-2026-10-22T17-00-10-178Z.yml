@@ -1,0 +1,86 @@
+- generic [ref=f18e3]:
+  - complementary [ref=f18e4]:
+    - generic [ref=f18e5]:
+      - generic [ref=f18e6]: MobileShop
+      - navigation "Admin" [ref=f18e11]:
+        - button "Dashboard" [ref=f18e13]
+        - generic [ref=f18e20]:
+          - button "Product" [ref=f18e21]
+          - button "Category" [ref=f18e27]
+        - generic [ref=f18e31]:
+          - button "Order" [ref=f18e32]
+          - button "Customer" [ref=f18e38]
+          - button "Trade-in" [ref=f18e45]
+        - generic [ref=f18e52]:
+          - button "Repairs" [ref=f18e53]
+          - button "Online booking" [ref=f18e57]
+          - button "New repair ticket" [ref=f18e62]
+      - button "Log out" [ref=f18e67]
+  - generic [ref=f18e71]:
+    - banner [ref=f18e72]:
+      - generic [ref=f18e73]:
+        - button "Search ⌘K" [ref=f18e74]:
+          - generic [ref=f18e78]: Search
+          - generic [ref=f18e79]: ⌘K
+        - button "Online bookings" [ref=f18e80]
+        - button "Online orders" [ref=f18e84]
+        - button "Account menu" [ref=f18e89]:
+          - generic [ref=f18e90]: M
+          - generic [ref=f18e91]:
+            - generic [ref=f18e92]: Maideen
+            - generic [ref=f18e93]: admin@local.test
+    - main [ref=f18e96]:
+      - link "Back to categories" [ref=f18e97] [cursor=pointer]:
+        - /url: /admin/categories
+      - generic [ref=f18e101]:
+        - heading "Add category" [level=2] [ref=f18e102]
+        - paragraph [ref=f18e103]: Create a new category to organise products on the storefront.
+      - generic [ref=f18e104]:
+        - generic [ref=f18e106]:
+          - generic [ref=f18e107]:
+            - generic [ref=f18e108]:
+              - heading "Create Category" [level=3] [ref=f18e109]
+              - paragraph [ref=f18e110]: Add a new product category to your store
+            - switch "Category active" [checked] [ref=f18e111] [cursor=pointer]:
+              - generic [ref=f18e112]: Active
+          - generic [ref=f18e177]:
+            - generic [ref=f18e178]:
+              - generic [ref=f18e179]:
+                - generic [ref=f18e180]: Category Name *
+                - generic [ref=f18e181]: 0/60
+              - textbox "Category Name *" [invalid] [ref=f18e182]:
+                - /placeholder: e.g. Smartphones
+              - alert [ref=f18e183]: Category name is required
+            - generic [ref=f18e186]:
+              - generic [ref=f18e187]: Category Image *
+              - button "Choose category image" [ref=f18e188] [cursor=pointer]:
+                - paragraph [ref=f18e194]: Drop image here or click to browse
+                - paragraph [ref=f18e195]: JPG, PNG or WebP, up to 2MB
+              - alert [ref=f18e196]: Category image is required
+            - generic [ref=f18e199]:
+              - generic [ref=f18e200]:
+                - generic [ref=f18e201]: Sub Categories (optional)
+                - generic [ref=f18e202]: 0/5
+              - generic [ref=f18e203]:
+                - textbox "Sub Categories (optional)" [ref=f18e204]:
+                  - /placeholder: e.g. Android Phones
+                - button "Add" [disabled] [ref=f18e205]
+              - paragraph [ref=f18e207]: Products in this category will be grouped under these.
+            - generic [ref=f18e208]:
+              - button "Create Category" [ref=f18e209] [cursor=pointer]
+              - button "Reset" [ref=f18e211] [cursor=pointer]
+        - complementary [ref=f18e148]:
+          - paragraph [ref=f18e149]: Good to know
+          - list [ref=f18e150]:
+            - listitem [ref=f18e151]:
+              - generic [ref=f18e156]:
+                - generic [ref=f18e157]: Name it the way shoppers search
+                - generic [ref=f18e158]: Short and plural, e.g. “Smartphones”, “Power Banks”. Names must be unique.
+            - listitem [ref=f18e159]:
+              - generic [ref=f18e165]:
+                - generic [ref=f18e166]: Use a clean square image
+                - generic [ref=f18e167]: Shown on the storefront category tiles. JPG, PNG or WebP up to 2 MB.
+            - listitem [ref=f18e168]:
+              - generic [ref=f18e174]:
+                - generic [ref=f18e175]: Add sub categories now or later
+                - generic [ref=f18e176]: Up to 5 here; you can add, rename or remove them from the list page.

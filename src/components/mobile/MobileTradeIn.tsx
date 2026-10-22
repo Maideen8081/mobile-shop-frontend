@@ -129,7 +129,7 @@ export default function MobileTradeIn() {
   }
 
   const inputClass = (field: string) =>
-    `w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FEE2E6] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
+    `w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FEE2E6] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
 
   const filteredRows = estimateRows.filter(r => !selectedBrand || r.device.toLowerCase().includes(selectedBrand.toLowerCase()))
 
@@ -143,16 +143,16 @@ export default function MobileTradeIn() {
             <div className="absolute -top-10 -right-8 w-48 h-48 rounded-[8px] bg-white/10 blur-2xl" />
             <div className="absolute -bottom-12 -left-10 w-56 h-56 rounded-[8px] bg-white/10 blur-3xl" />
             <div className="relative h-full px-6 flex flex-col justify-center">
-              <span className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-[8px] bg-white/15 text-white text-[11px] font-bold uppercase tracking-wider mb-4">
+              <span className="inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-[8px] bg-white/15 text-white text-micro font-bold uppercase tracking-wider mb-4">
                 <span className="w-1.5 h-1.5 rounded-[8px] bg-[#00ff88] animate-pulse" /> {slide.tag}
               </span>
-              <h1 className="text-[28px] font-extrabold leading-[1.1] text-white">
+              <h1 className="text-heading font-extrabold leading-[1.1] text-white">
                 {slide.title[0]}<br />
                 <span className="text-[#00ff88]">{slide.title[1]}</span>
               </h1>
-              <p className="text-[13px] text-white/75 mt-3 leading-relaxed max-w-[300px]">{slide.desc}</p>
+              <p className="text-label text-white/75 mt-3 leading-relaxed max-w-[300px]">{slide.desc}</p>
               <button onClick={() => { setShowForm(true); setSubmitted(false); setFormErrors({}) }}
-                className="mt-5 self-start inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-[14px] px-6 py-3 rounded-[8px] active:scale-95 transition">
+                className="mt-5 self-start inline-flex items-center gap-2 bg-[#00ff88] text-[#00391c] font-bold text-body-sm px-6 py-3 rounded-[8px] active:scale-95 transition">
                 Get Your Quote <FiArrowRight size={16} />
               </button>
             </div>
@@ -169,8 +169,8 @@ export default function MobileTradeIn() {
       {/* How it works */}
       <section className="px-3 mt-4">
         <div className="text-center mb-4">
-          <h2 className="text-[18px] font-extrabold">How Trade-In Works</h2>
-          <p className="text-[12px] text-[#6B7280] mt-1">Four simple steps to turn your old device into savings.</p>
+          <h2 className="text-title-sm font-extrabold">How Trade-In Works</h2>
+          <p className="text-caption text-[#6B7280] mt-1">Four simple steps to turn your old device into savings.</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {steps.map((step, idx) => {
@@ -180,9 +180,9 @@ export default function MobileTradeIn() {
                 <div className="w-11 h-11 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
                   <Icon size={20} />
                 </div>
-                <span className="text-[11px] font-bold" style={{ color: PURPLE }}>STEP {idx + 1}</span>
-                <h3 className="text-[13px] font-bold mt-1 mb-1">{step.title}</h3>
-                <p className="text-[11px] text-[#6B7280] leading-snug">{step.desc}</p>
+                <span className="text-micro font-bold" style={{ color: PURPLE }}>STEP {idx + 1}</span>
+                <h3 className="text-label font-bold mt-1 mb-1">{step.title}</h3>
+                <p className="text-micro text-[#6B7280] leading-snug">{step.desc}</p>
               </div>
             )
           })}
@@ -192,12 +192,12 @@ export default function MobileTradeIn() {
       {/* Estimate */}
       <section className="px-3 mt-4">
         <div className={`${card} p-4`}>
-          <h2 className="text-[16px] font-extrabold mb-1">Estimate Your Trade-In Value</h2>
-          <p className="text-[12px] text-[#6B7280] mb-3">Pick a brand to see estimated values.</p>
+          <h2 className="text-body font-extrabold mb-1">Estimate Your Trade-In Value</h2>
+          <p className="text-caption text-[#6B7280] mb-3">Pick a brand to see estimated values.</p>
           <div className="flex flex-wrap gap-2 mb-3">
             {brands.map((brand) => (
               <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                className={`px-3.5 h-9 rounded-[8px] text-[12px] font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
+                className={`px-3.5 h-9 rounded-[8px] text-caption font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
                 style={selectedBrand === brand ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                 {brand}
               </button>
@@ -206,16 +206,16 @@ export default function MobileTradeIn() {
           <div className="space-y-2">
             {filteredRows.map((item) => (
               <div key={item.device} className="flex items-center justify-between bg-[#F7F8FC] rounded-xl px-3 py-2.5">
-                <span className="text-[12px] font-bold">{item.device}</span>
-                <span className="text-[12px] font-bold" style={{ color: GREEN }}>{item.value}</span>
+                <span className="text-caption font-bold">{item.device}</span>
+                <span className="text-caption font-bold" style={{ color: GREEN }}>{item.value}</span>
               </div>
             ))}
-            {filteredRows.length === 0 && <p className="text-[12px] text-[#6B7280] text-center py-3">No devices found for this brand.</p>}
+            {filteredRows.length === 0 && <p className="text-caption text-[#6B7280] text-center py-3">No devices found for this brand.</p>}
           </div>
         </div>
 
         <div className={`${card} p-4 mt-3`}>
-          <h3 className="text-[14px] font-extrabold mb-3">Why Trade With Us?</h3>
+          <h3 className="text-body-sm font-extrabold mb-3">Why Trade With Us?</h3>
           <ul className="space-y-2.5">
             {[
               { icon: FiStar, text: 'Competitive market-based pricing' },
@@ -228,13 +228,13 @@ export default function MobileTradeIn() {
               return (
                 <li key={i} className="flex items-center gap-2.5">
                   <span className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
-                  <span className="text-[12px] text-[#4B5563]">{item.text}</span>
+                  <span className="text-caption text-[#4B5563]">{item.text}</span>
                 </li>
               )
             })}
           </ul>
           <button onClick={() => { setShowForm(true); setSubmitted(false); setFormErrors({}) }}
-            className="mt-4 w-full h-12 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2 active:scale-95 transition"
+            className="mt-4 w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-95 transition"
             style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
             Start Trade-In <FiArrowRight size={16} />
           </button>
@@ -246,10 +246,10 @@ export default function MobileTradeIn() {
         <section className="px-3 mt-4">
           <div className={`${card} p-6 flex flex-col items-center text-center`}>
             <div className="w-16 h-16 rounded-2xl bg-[#E7FBF0] flex items-center justify-center mb-3" style={{ color: GREEN }}><FiCheck size={30} /></div>
-            <h2 className="text-[17px] font-extrabold">Trade-In Submitted!</h2>
-            <p className="text-[12px] text-[#6B7280] mt-1 mb-4">We'll review your device and get back within 24 hours with a final quote.</p>
+            <h2 className="text-title-sm font-extrabold">Trade-In Submitted!</h2>
+            <p className="text-caption text-[#6B7280] mt-1 mb-4">We'll review your device and get back within 24 hours with a final quote.</p>
             <button onClick={() => { setSubmitted(false); navigate('/home') }}
-              className="inline-flex items-center gap-2 text-white font-bold text-[13px] px-6 py-3 rounded-[8px] active:scale-95 transition"
+              className="inline-flex items-center gap-2 text-white font-bold text-label px-6 py-3 rounded-[8px] active:scale-95 transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
               Back to Home <FiArrowRight size={15} />
             </button>
@@ -265,95 +265,95 @@ export default function MobileTradeIn() {
             <div className="px-4 pt-4 pb-2 flex-shrink-0">
               <div className="w-10 h-1 rounded-[8px] bg-[#D9D9E3] mx-auto mb-3" />
               <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
-              <p className="text-[15px] font-extrabold">Sell Your Phone</p>
-              <p className="text-[12px] text-[#6B7280] mt-0.5">Fill details — we'll analyze the value instantly.</p>
+              <p className="text-body font-extrabold">Sell Your Phone</p>
+              <p className="text-caption text-[#6B7280] mt-0.5">Fill details — we'll analyze the value instantly.</p>
             </div>
             <div className="px-4 overflow-y-auto flex-1 space-y-3">
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Brand <span className="text-[#EF4444]">*</span></label>
+                <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Brand <span className="text-[#EF4444]">*</span></label>
                 <select value={formBrand} onChange={(e) => { setFormBrand(e.target.value); if (formErrors.formBrand) setFormErrors(p => ({ ...p, formBrand: '' })) }} className={inputClass('formBrand')}>
                   <option value="">Select brand</option>
                   {brands.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
-                {formErrors.formBrand && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formBrand}</p>}
+                {formErrors.formBrand && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formBrand}</p>}
               </div>
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Model <span className="text-[#EF4444]">*</span></label>
+                <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Model <span className="text-[#EF4444]">*</span></label>
                 <input value={formModel} onChange={(e) => { setFormModel(e.target.value); if (formErrors.formModel) setFormErrors(p => ({ ...p, formModel: '' })) }} className={inputClass('formModel')} placeholder="e.g. iPhone 15 Pro Max" />
-                {formErrors.formModel && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formModel}</p>}
+                {formErrors.formModel && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formModel}</p>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Storage</label>
+                  <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Storage</label>
                   <select value={formStorage} onChange={(e) => setFormStorage(e.target.value)} className={inputClass('formStorage')}>
                     <option value="">Select</option>
                     {storageOptions.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Condition <span className="text-[#EF4444]">*</span></label>
+                  <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Condition <span className="text-[#EF4444]">*</span></label>
                   <select value={formCondition} onChange={(e) => { setFormCondition(e.target.value); if (formErrors.formCondition) setFormErrors(p => ({ ...p, formCondition: '' })) }} className={inputClass('formCondition')}>
                     <option value="">Select</option>
                     {deviceConditions.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
-                  {formErrors.formCondition && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formCondition}</p>}
+                  {formErrors.formCondition && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formCondition}</p>}
                 </div>
               </div>
               <div className="border-t border-[#EEF1F4] pt-3">
-                <p className="text-[12px] font-bold text-[#4B5563] mb-2">Your Contact Info</p>
+                <p className="text-caption font-bold text-[#4B5563] mb-2">Your Contact Info</p>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Full Name <span className="text-[#EF4444]">*</span></label>
+                    <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Full Name <span className="text-[#EF4444]">*</span></label>
                     <input value={formName} onChange={(e) => { setFormName(e.target.value); if (formErrors.formName) setFormErrors(p => ({ ...p, formName: '' })) }} className={inputClass('formName')} placeholder="Your name" />
-                    {formErrors.formName && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formName}</p>}
+                    {formErrors.formName && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formName}</p>}
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Mobile <span className="text-[#EF4444]">*</span></label>
+                    <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Mobile <span className="text-[#EF4444]">*</span></label>
                     <input value={formMobile} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setFormMobile(v); if (formErrors.formMobile) setFormErrors(p => ({ ...p, formMobile: '' })) }} className={inputClass('formMobile')} placeholder="98765 43210" />
-                    {formErrors.formMobile && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formMobile}</p>}
+                    {formErrors.formMobile && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formMobile}</p>}
                   </div>
                   <div>
-                    <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email</label>
+                    <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email</label>
                     <input value={formEmail} onChange={(e) => { setFormEmail(e.target.value); if (formErrors.formEmail) setFormErrors(p => ({ ...p, formEmail: '' })) }} className={inputClass('formEmail')} placeholder="email@example.com" />
-                    {formErrors.formEmail && <p className="text-[11px] text-[#EF4444] mt-1">{formErrors.formEmail}</p>}
+                    {formErrors.formEmail && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formEmail}</p>}
                   </div>
                 </div>
               </div>
 
               {/* Value analysis */}
               <div className={`${card} p-4`}>
-                <h3 className="text-[14px] font-extrabold flex items-center gap-2 mb-3" style={{ color: GREEN }}>
+                <h3 className="text-body-sm font-extrabold flex items-center gap-2 mb-3" style={{ color: GREEN }}>
                   <FiShield size={16} /> Value Analysis
                 </h3>
                 {analysis ? (
                   <div>
                     <div className="text-center mb-3">
-                      <p className="text-[11px] text-[#6B7280]">Estimated Trade-In Value</p>
-                      <p className="text-[30px] font-extrabold" style={{ color: GREEN }}>₹{analysis.finalValue.toLocaleString('en-IN')}</p>
+                      <p className="text-micro text-[#6B7280]">Estimated Trade-In Value</p>
+                      <p className="text-heading font-extrabold" style={{ color: GREEN }}>₹{analysis.finalValue.toLocaleString('en-IN')}</p>
                     </div>
                     <div className="space-y-1.5">
                       {analysis.breakdown.map((item) => (
                         <div key={item.label} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#F7F8FC]">
-                          <span className="text-[11px] text-[#6B7280]">{item.label}</span>
-                          <span className={`text-[12px] font-bold ${item.amount >= 0 ? 'text-[#1F2937]' : 'text-[#EF4444]'}`}>
+                          <span className="text-micro text-[#6B7280]">{item.label}</span>
+                          <span className={`text-caption font-bold ${item.amount >= 0 ? 'text-[#1F2937]' : 'text-[#EF4444]'}`}>
                             {item.amount >= 0 ? '+' : ''}₹{item.amount.toLocaleString('en-IN')}
                           </span>
                         </div>
                       ))}
                     </div>
                     <div className="mt-3 p-2.5 rounded-lg bg-[#E7FBF0]">
-                      <p className="text-[11px] text-[#1F7A4D]">This is an estimate. Final value after physical inspection.</p>
+                      <p className="text-micro text-[#1F7A4D]">This is an estimate. Final value after physical inspection.</p>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[12px] text-[#6B7280] text-center py-4">Select a brand and condition to see your estimated value.</p>
+                  <p className="text-caption text-[#6B7280] text-center py-4">Select a brand and condition to see your estimated value.</p>
                 )}
               </div>
             </div>
             <div className="flex gap-2.5 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)] bg-[#F7F8FC] border-t border-[#EEF1F4] flex-shrink-0">
-              <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-2xl text-[14px] font-bold border border-[#E5E7EB] text-[#6B7280]">Cancel</button>
+              <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-2xl text-body-sm font-bold border border-[#E5E7EB] text-[#6B7280]">Cancel</button>
               <button onClick={handleFormSubmit} disabled={submitting || !analysis}
-                className="flex-[1.4] h-12 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition"
+                className="flex-[1.4] h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition"
                 style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
                 {submitting ? <FiLoader size={16} className="animate-spin" /> : 'Submit Trade-In'}
               </button>

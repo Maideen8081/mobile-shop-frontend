@@ -29,6 +29,7 @@ export default function AdminLoginPage() {
     e.preventDefault()
     const nextErrors: typeof errors = {}
     if (!email.trim()) nextErrors.email = 'Email is required.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) nextErrors.email = 'Enter a valid email address.'
     if (!password) nextErrors.password = 'Password is required.'
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return

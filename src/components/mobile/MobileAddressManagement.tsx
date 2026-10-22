@@ -23,16 +23,16 @@ function Field({ label, value, onChange, error, type = 'text', maxLength }: {
 }) {
   return (
     <div>
-      <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">{label}</label>
+      <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">{label}</label>
       <input
         type={type}
         value={value}
         maxLength={maxLength}
         onChange={e => onChange(e.target.value)}
-        className="w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FEE2E6] border outline-none transition focus:bg-white"
+        className="w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FEE2E6] border outline-none transition focus:bg-white"
         style={{ borderColor: error ? '#EF4444' : '#E5E7EB', color: '#1F2937' }}
       />
-      {error && <p className="text-[11px] text-[#EF4444] mt-1">{error}</p>}
+      {error && <p className="text-micro text-[#EF4444] mt-1">{error}</p>}
     </div>
   )
 }
@@ -144,8 +144,8 @@ export default function MobileAddressManagement() {
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div>
-          <p className="text-[16px] font-bold leading-tight">Manage Addresses</p>
-          <p className="text-[11px] text-[#6B7280]">{addresses.length} saved</p>
+          <p className="text-body font-bold leading-tight">Manage Addresses</p>
+          <p className="text-micro text-[#6B7280]">{addresses.length} saved</p>
         </div>
       </div>
 
@@ -158,8 +158,8 @@ export default function MobileAddressManagement() {
             <FiTruck size={20} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-bold leading-tight">Where should we deliver?</p>
-            <p className="text-[12px] text-white/80 mt-0.5">Add or pick a saved address for faster checkout</p>
+            <p className="text-body-sm font-bold leading-tight">Where should we deliver?</p>
+            <p className="text-caption text-white/80 mt-0.5">Add or pick a saved address for faster checkout</p>
           </div>
         </div>
       </div>
@@ -170,9 +170,9 @@ export default function MobileAddressManagement() {
         ) : addresses.length === 0 ? (
           <div className={`${card} p-6 flex flex-col items-center text-center`}>
             <div className="w-16 h-16 rounded-2xl bg-[#FEE2E6] flex items-center justify-center mb-3" style={{ color: PURPLE }}><FiHome size={26} /></div>
-            <p className="text-[15px] font-bold">No addresses yet</p>
-            <p className="text-[12px] text-[#6B7280] mt-1 mb-4">Add your first delivery address to get started</p>
-            <button onClick={() => openForm()} className="px-6 h-11 rounded-2xl text-[13px] font-bold text-white flex items-center gap-1.5" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}><FiPlus size={15} /> Add Address</button>
+            <p className="text-body font-bold">No addresses yet</p>
+            <p className="text-caption text-[#6B7280] mt-1 mb-4">Add your first delivery address to get started</p>
+            <button onClick={() => openForm()} className="px-6 h-11 rounded-2xl text-label font-bold text-white flex items-center gap-1.5" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}><FiPlus size={15} /> Add Address</button>
           </div>
         ) : (
           addresses.map(addr => (
@@ -183,13 +183,13 @@ export default function MobileAddressManagement() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-[14px] font-bold">{addr.fullName}</p>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-[8px] bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
-                    {addr.isDefault && <span className="text-[9px] font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
+                    <p className="text-body-sm font-bold">{addr.fullName}</p>
+                    <span className="text-micro font-semibold px-2 py-0.5 rounded-[8px] bg-[#FEE2E6]" style={{ color: PURPLE }}>{addr.addressType}</span>
+                    {addr.isDefault && <span className="text-micro font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>DEFAULT</span>}
                   </div>
-                  <p className="text-[12px] text-[#6B7280] flex items-center gap-1 mt-0.5"><FiPhone size={11} /> {addr.mobile}</p>
-                  <p className="text-[12px] text-[#4B5563] mt-1 leading-snug">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
-                  <p className="text-[12px] font-semibold text-[#1F2937]">{addr.city}, {addr.state} - {addr.zipCode}</p>
+                  <p className="text-caption text-[#6B7280] flex items-center gap-1 mt-0.5"><FiPhone size={11} /> {addr.mobile}</p>
+                  <p className="text-caption text-[#4B5563] mt-1 leading-snug">{addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}</p>
+                  <p className="text-caption font-semibold text-[#1F2937]">{addr.city}, {addr.state} - {addr.zipCode}</p>
                 </div>
                 <div className="flex flex-col gap-2 flex-shrink-0">
                   <button onClick={() => openForm(addr)} className="w-8 h-8 rounded-xl bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]">
@@ -202,11 +202,11 @@ export default function MobileAddressManagement() {
               </div>
               <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#EEF1F4]">
                 {!addr.isDefault ? (
-                  <button onClick={() => handleSetDefault(addr.id!)} className="flex items-center gap-1.5 text-[12px] font-semibold" style={{ color: PURPLE }}>
+                  <button onClick={() => handleSetDefault(addr.id!)} className="flex items-center gap-1.5 text-caption font-semibold" style={{ color: PURPLE }}>
                     <FiStar size={13} /> Set as default
                   </button>
                 ) : (
-                  <span className="flex items-center gap-1.5 text-[12px] font-semibold text-[#16A34A]">
+                  <span className="flex items-center gap-1.5 text-caption font-semibold text-[#16A34A]">
                     <FiCheck size={13} /> Default delivery address
                   </span>
                 )}
@@ -222,7 +222,7 @@ export default function MobileAddressManagement() {
             <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
               <div className="px-4 pt-4 pb-2 flex-shrink-0">
                 <div className="w-10 h-1 rounded-[8px] bg-[#D9D9E3] mx-auto mb-3" />
-                <p className="text-[15px] font-extrabold">{editing ? 'Edit Address' : 'Add New Address'}</p>
+                <p className="text-body font-extrabold">{editing ? 'Edit Address' : 'Add New Address'}</p>
               </div>
               <div className="px-4 overflow-y-auto flex-1 space-y-3">
                 <Field label="Full Name" value={form.fullName} onChange={v => set('fullName', v)} error={errors.fullName} />
@@ -236,7 +236,7 @@ export default function MobileAddressManagement() {
                 </div>
                 <Field label="Pincode" value={form.zipCode} onChange={v => set('zipCode', v)} error={errors.zipCode} type="tel" maxLength={6} />
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-2">Address Type</p>
+                  <p className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-2">Address Type</p>
                   <div className="grid grid-cols-3 gap-2">
                     {(['Home', 'Office', 'Other'] as const).map(t => {
                       const active = form.addressType === t
@@ -247,7 +247,7 @@ export default function MobileAddressManagement() {
                           <span className={`w-8 h-8 rounded-[8px] flex items-center justify-center ${active ? 'bg-white/20' : 'bg-[#FEE2E6]'}`} style={active ? undefined : { color: PURPLE }}>
                             {typeIcons[t]}
                           </span>
-                          <span className="text-[12px] font-bold">{t}</span>
+                          <span className="text-caption font-bold">{t}</span>
                           {active && (
                             <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-[8px] bg-white flex items-center justify-center" style={{ color: PURPLE }}>
                               <FiCheck size={10} />
@@ -262,12 +262,12 @@ export default function MobileAddressManagement() {
                   <span onClick={() => set('isDefault', !form.isDefault)} className={`w-5 h-5 rounded flex items-center justify-center transition ${form.isDefault ? 'text-white' : ''}`} style={{ background: form.isDefault ? PURPLE : '#FEE2E6', border: form.isDefault ? 'none' : '1px solid #E5E7EB' }}>
                     {form.isDefault && <FiCheck size={12} />}
                   </span>
-                  <span className="text-[13px] text-[#4B5563]">Set as default address</span>
+                  <span className="text-label text-[#4B5563]">Set as default address</span>
                 </label>
               </div>
               <div className="flex gap-2.5 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)] bg-[#F7F8FC] border-t border-[#EEF1F4] flex-shrink-0">
-                <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-2xl text-[14px] font-bold border border-[#E5E7EB] text-[#6B7280]">Cancel</button>
-                <button onClick={saveForm} disabled={saving} className="flex-[1.4] h-12 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2 disabled:opacity-60" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
+                <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-2xl text-body-sm font-bold border border-[#E5E7EB] text-[#6B7280]">Cancel</button>
+                <button onClick={saveForm} disabled={saving} className="flex-[1.4] h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 disabled:opacity-60" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
                   {saving ? <FiLoader size={16} className="animate-spin" /> : 'Save Address'}
                 </button>
               </div>
@@ -279,7 +279,7 @@ export default function MobileAddressManagement() {
       {/* Zepto/Zomato style persistent add-address bar */}
       {!showForm && (
         <div className="fixed bottom-[76px] left-1/2 -translate-x-1/2 z-30 w-full max-w-[480px] px-3 pt-3 pb-1 bg-gradient-to-t from-[#F7F8FC] via-[#F7F8FC] to-transparent">
-          <button onClick={() => openForm()} className="w-full h-12 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
+          <button onClick={() => openForm()} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
             <FiPlus size={18} /> Add New Address
           </button>
         </div>

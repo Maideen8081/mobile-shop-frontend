@@ -29,10 +29,10 @@ function getFriendlyLoginError(msg: string): string {
 }
 
 const carouselSlides = [
-  { src: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&h=900&fit=crop&auto=format', label: 'Smartphones', desc: 'Flagship mobile devices at your fingertips' },
-  { src: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&h=900&fit=crop&auto=format', label: 'TWS Earbuds', desc: 'True wireless audio, redefined' },
-  { src: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&h=900&fit=crop&auto=format', label: 'Smart Watches', desc: 'Wearable innovation on your wrist' },
-  { src: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=900&fit=crop&auto=format', label: 'Headphones', desc: 'Premium audio for every moment' },
+  { src: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=1200&q=80&auto=format', label: 'Smartphones', desc: 'Flagship mobile devices at your fingertips' },
+  { src: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1200&q=80&auto=format', label: 'TWS Earbuds', desc: 'True wireless audio, redefined' },
+  { src: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80&auto=format', label: 'Smart Watches', desc: 'Wearable innovation on your wrist' },
+  { src: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80&auto=format', label: 'Headphones', desc: 'Premium audio for every moment' },
 ]
 
 function DesktopLogin() {
@@ -75,34 +75,34 @@ function DesktopLogin() {
   return (
     <div className="min-h-screen flex" style={{ background: '#FBF8F6', fontFamily: 'var(--font-ui)' }}>
       {/* Left – image carousel */}
-      <div className="hidden lg:flex lg:w-[52%] relative overflow-hidden">
-        {carouselSlides.map((slide, i) => (
-          <div
-            key={slide.label}
-            className="absolute inset-0 transition-all duration-700"
-            style={{ opacity: i === activeSlide ? 1 : 0, transform: i === activeSlide ? 'scale(1)' : 'scale(1.04)' }}
-          >
-            <img src={slide.src} alt={slide.label} className="w-full h-full object-cover" loading="lazy" />
-          </div>
-        ))}
-        {/* overlay */}
-        <div className="absolute inset-0 z-10" style={{ background: 'linear-gradient(170deg, rgba(163,18,42,0.55) 0%, rgba(0,0,0,0.65) 100%)' }} />
+      <div className="hidden lg:flex lg:flex-col lg:w-[52%] h-screen sticky top-0 overflow-hidden" style={{ background: '#151110' }}>
         {/* brand */}
-        <div className="absolute top-10 left-10 z-20 flex items-center gap-2">
+        <div className="flex items-center gap-2 px-10 pt-10 pb-6 shrink-0">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#D91E36' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
           </div>
           <span className="text-white font-bold text-lg" style={{ fontFamily: 'var(--font-display)' }}>MobileShop</span>
         </div>
+        <div className="relative flex-1 min-h-0 mx-10 mb-8 rounded-3xl overflow-hidden" style={{ background: '#1f1a18' }}>
+          {carouselSlides.map((slide, i) => (
+            <div
+              key={slide.label}
+              className="absolute inset-0 transition-all duration-700"
+              style={{ opacity: i === activeSlide ? 1 : 0, transform: i === activeSlide ? 'scale(1)' : 'scale(1.03)' }}
+            >
+              <img src={slide.src} alt={slide.label} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          ))}
+        </div>
         {/* slide info */}
-        <div className="absolute bottom-12 left-10 right-10 z-20">
+        <div className="px-10 pb-10 shrink-0">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] mb-3 block" style={{ color: 'rgba(255,255,255,0.6)' }}>
             Premium Collection
           </span>
-          <h2 className="text-white font-extrabold mb-2" style={{ fontSize: '40px', fontFamily: 'var(--font-display)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+          <h2 className="text-white font-extrabold mb-2" style={{ fontSize: 'var(--text-headline)', fontFamily: 'var(--font-display)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
             {carouselSlides[activeSlide].label}
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '15px', lineHeight: 1.6 }}>
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'var(--text-body)', lineHeight: 1.6 }}>
             {carouselSlides[activeSlide].desc}
           </p>
           <div className="flex gap-2 mt-6">
@@ -131,10 +131,10 @@ function DesktopLogin() {
         <div className="w-full max-w-[480px]">
           {/* Heading */}
           <div className="mb-8">
-            <h1 className="font-extrabold mb-2" style={{ fontSize: '32px', fontFamily: 'var(--font-display)', lineHeight: 1.2, letterSpacing: '-0.02em', color: '#1b1210' }}>
+            <h1 className="font-extrabold mb-2" style={{ fontSize: 'var(--text-heading)', fontFamily: 'var(--font-display)', lineHeight: 1.2, letterSpacing: '-0.02em', color: '#1b1210' }}>
               Welcome back
             </h1>
-            <p style={{ color: '#857d79', fontSize: '15px', lineHeight: 1.6 }}>
+            <p style={{ color: '#857d79', fontSize: 'var(--text-body)', lineHeight: 1.6 }}>
               Sign in to your account to continue shopping.
             </p>
           </div>

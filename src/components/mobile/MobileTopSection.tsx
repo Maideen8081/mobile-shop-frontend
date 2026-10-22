@@ -37,8 +37,8 @@ export default function MobileTopSection({
             <ArrowLeft size={18} />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-[18px] font-bold leading-tight truncate">{title}</h1>
-            {subtitle && <p className="text-[11px] text-white/80 mt-0.5 truncate">{subtitle}</p>}
+            <h1 className="text-title-sm font-bold leading-tight truncate">{title}</h1>
+            {subtitle && <p className="text-micro text-white/80 mt-0.5 truncate">{subtitle}</p>}
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">

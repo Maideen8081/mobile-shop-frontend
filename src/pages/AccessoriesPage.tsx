@@ -301,7 +301,7 @@ export default function AccessoriesPage() {
                         </div>
                       )}
                       {tags.length > 0 && (
-                        <span className="absolute top-3 left-3 bg-[#D91E36] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
+                        <span className="absolute top-3 left-3 bg-[#D91E36] text-white text-micro font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
                           {tags[0]}
                         </span>
                       )}
@@ -313,7 +313,7 @@ export default function AccessoriesPage() {
                       </button>
                     </div>
                     <div className="px-1 pb-1">
-                      {product.brand && <p className="text-on-surface-variant text-[11px] uppercase tracking-widest mb-1 font-bold">{product.brand}</p>}
+                      {product.brand && <p className="text-on-surface-variant text-micro uppercase tracking-widest mb-1 font-bold">{product.brand}</p>}
                       <h3 className="font-bold text-base md:text-lg text-on-surface mb-1.5 leading-snug">{product.name}</h3>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -323,7 +323,7 @@ export default function AccessoriesPage() {
                         <div className="flex items-center gap-1">
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((s) => (
-                              <span key={s} className={`material-symbols-outlined text-[14px] ${s <= 4 ? 'text-[#e5c364]' : 'text-[#e5c364]/40'}`}>star</span>
+                              <span key={s} className={`material-symbols-outlined text-body-sm ${s <= 4 ? 'text-[#e5c364]' : 'text-[#e5c364]/40'}`}>star</span>
                             ))}
                           </div>
                           <span className="text-xs font-bold text-on-surface-variant">{product.rating || '4.9'}</span>

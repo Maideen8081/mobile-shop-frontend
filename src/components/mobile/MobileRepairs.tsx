@@ -58,8 +58,8 @@ function ServiceCard({ service, index, onBook }: { service: typeof services[0]; 
           <Icon size={22} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-[14px] font-bold leading-tight" style={{ color: BRAND.ink }}>{service.title}</h3>
-          <p className="text-[11.5px] mt-0.5 leading-snug line-clamp-2" style={{ color: BRAND.muted }}>{service.desc}</p>
+          <h3 className="text-body-sm font-bold leading-tight" style={{ color: BRAND.ink }}>{service.title}</h3>
+          <p className="text-caption mt-0.5 leading-snug line-clamp-2" style={{ color: BRAND.muted }}>{service.desc}</p>
         </div>
         <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)' }}>
           <ArrowRight size={14} style={{ color: BRAND.primary }} />
@@ -90,8 +90,8 @@ function StepCard({ item, idx, active }: { item: typeof steps[0]; idx: number; a
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className="text-[14px] font-bold" style={{ color: BRAND.ink }}>{item.title}</h3>
-        <p className="text-[11.5px] mt-0.5 leading-snug" style={{ color: BRAND.muted }}>{item.desc}</p>
+        <h3 className="text-body-sm font-bold" style={{ color: BRAND.ink }}>{item.title}</h3>
+        <p className="text-caption mt-0.5 leading-snug" style={{ color: BRAND.muted }}>{item.desc}</p>
       </div>
     </motion.div>
   )
@@ -137,8 +137,8 @@ export default function MobileRepairs() {
               <span className="material-symbols-outlined text-lg">arrow_back</span>
             </button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-[18px] font-bold leading-tight truncate">Repair Services</h1>
-              <p className="text-[11px] text-white/80 mt-0.5 truncate">Professional device repair — fast & guaranteed</p>
+              <h1 className="text-title-sm font-bold leading-tight truncate">Repair Services</h1>
+              <p className="text-micro text-white/80 mt-0.5 truncate">Professional device repair — fast & guaranteed</p>
             </div>
           </div>
 
@@ -152,11 +152,11 @@ export default function MobileRepairs() {
                   </motion.div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-[17px] font-extrabold text-white leading-tight">We Fix It, Fast</h2>
-                  <p className="text-[11px] text-white/80 mt-0.5">Screen, battery, water damage & more</p>
+                  <h2 className="text-title-sm font-extrabold text-white leading-tight">We Fix It, Fast</h2>
+                  <p className="text-micro text-white/80 mt-0.5">Screen, battery, water damage & more</p>
                 </div>
                 <div className="flex items-center gap-1 px-2.5 py-1 rounded-[8px]" style={{ background: 'rgba(255,255,255,0.2)' }}>
-                  <span className="text-[10px] font-bold text-white">4.8</span>
+                  <span className="text-micro font-bold text-white">4.8</span>
                   <Star size={11} className="text-white fill-white" />
                 </div>
               </div>
@@ -167,8 +167,8 @@ export default function MobileRepairs() {
                   return (
                     <div key={s.label} className="text-center">
                       <SIcon size={14} className="mx-auto text-white/80" />
-                      <p className="text-[11px] font-extrabold text-white mt-0.5">{s.value}</p>
-                      <p className="text-[8px] text-white/60 uppercase tracking-wider">{s.label}</p>
+                      <p className="text-micro font-bold text-white mt-0.5">{s.value}</p>
+                      <p className="text-micro text-white/60 uppercase tracking-wider">{s.label}</p>
                     </div>
                   )
                 })}
@@ -182,10 +182,10 @@ export default function MobileRepairs() {
       <div className="px-4 mt-5">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Our Services</h2>
-            <p className="text-[11px] mt-0.5" style={{ color: BRAND.muted }}>Choose a repair type to get started</p>
+            <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Our Services</h2>
+            <p className="text-micro mt-0.5" style={{ color: BRAND.muted }}>Choose a repair type to get started</p>
           </div>
-          <button onClick={() => handleBook()} className="text-[12px] font-bold flex items-center gap-0.5 active:opacity-70" style={{ color: BRAND.primary }}>
+          <button onClick={() => handleBook()} className="text-caption font-bold flex items-center gap-0.5 active:opacity-70" style={{ color: BRAND.primary }}>
             View All <ArrowRight size={13} />
           </button>
         </div>
@@ -202,8 +202,8 @@ export default function MobileRepairs() {
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
-            <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>How It Works</h2>
-            <p className="text-[11px]" style={{ color: BRAND.muted }}>Four simple steps to get your device fixed</p>
+            <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>How It Works</h2>
+            <p className="text-micro" style={{ color: BRAND.muted }}>Four simple steps to get your device fixed</p>
           </div>
         </div>
         <AnimatePresence mode="wait">
@@ -220,8 +220,8 @@ export default function MobileRepairs() {
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
-            <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Brands We Service</h2>
-            <p className="text-[11px]" style={{ color: BRAND.muted }}>All major brands supported</p>
+            <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Brands We Service</h2>
+            <p className="text-micro" style={{ color: BRAND.muted }}>All major brands supported</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -231,7 +231,7 @@ export default function MobileRepairs() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.04 }}
-              className="rounded-xl px-4 py-2.5 font-bold text-[13px]"
+              className="rounded-xl px-4 py-2.5 font-bold text-label"
               style={{
                 background: '#ffffff',
                 border: `1px solid ${BRAND.line}`,
@@ -250,8 +250,8 @@ export default function MobileRepairs() {
         <div className="flex items-center gap-2 mb-3">
           <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
           <div>
-            <h2 className="text-[17px] font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Quick FAQs</h2>
-            <p className="text-[11px]" style={{ color: BRAND.muted }}>Common questions answered</p>
+            <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Quick FAQs</h2>
+            <p className="text-micro" style={{ color: BRAND.muted }}>Common questions answered</p>
           </div>
         </div>
         <div className="space-y-2">
@@ -276,7 +276,7 @@ export default function MobileRepairs() {
                 }}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-[13px] font-bold flex-1" style={{ color: BRAND.ink }}>{faq.q}</h3>
+                  <h3 className="text-label font-bold flex-1" style={{ color: BRAND.ink }}>{faq.q}</h3>
                   <motion.span
                     animate={{ rotate: activeFaq === i ? 180 : 0 }}
                     className="material-symbols-outlined text-lg flex-shrink-0" style={{ color: BRAND.primary }}
@@ -291,7 +291,7 @@ export default function MobileRepairs() {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-[12px] mt-2 leading-relaxed overflow-hidden" style={{ color: BRAND.muted }}
+                      className="text-caption mt-2 leading-relaxed overflow-hidden" style={{ color: BRAND.muted }}
                     >
                       {faq.a}
                     </motion.p>
@@ -308,7 +308,7 @@ export default function MobileRepairs() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => handleBook()}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl text-white text-[15px] font-bold shadow-lg"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl text-white text-body font-bold shadow-lg"
           style={{
             background: 'linear-gradient(135deg,#CB202D,#A81D2A)',
             boxShadow: '0 8px 28px rgba(203,32,45,0.3)',
@@ -321,7 +321,7 @@ export default function MobileRepairs() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => navigate('/my-repairs')}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl text-[15px] font-bold mt-3"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl text-body font-bold mt-3"
           style={{
             background: '#ffffff',
             border: `1.5px solid ${BRAND.primary}`,
@@ -332,7 +332,7 @@ export default function MobileRepairs() {
           <span className="material-symbols-outlined text-lg">history</span>
           My Repairs
         </motion.button>
-        <p className="text-[10px] text-center mt-2" style={{ color: BRAND.muted }}>Free diagnosis — pay only if you approve the repair</p>
+        <p className="text-micro text-center mt-2" style={{ color: BRAND.muted }}>Free diagnosis — pay only if you approve the repair</p>
       </div>
     </div>
   )

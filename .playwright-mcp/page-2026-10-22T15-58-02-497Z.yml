@@ -1,0 +1,55 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - link "MobileShop" [ref=e5] [cursor=pointer]:
+      - /url: /home
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - heading "Create your account" [level=1] [ref=e12]
+        - paragraph [ref=e13]: It only takes a minute. Start shopping and tracking repairs.
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: Full Name
+          - textbox "Full Name" [ref=e18]:
+            - /placeholder: John Doe
+        - generic [ref=e19]:
+          - generic [ref=e20]: Email Address
+          - textbox "Email Address" [ref=e22]:
+            - /placeholder: you@example.com
+        - generic [ref=e24]:
+          - generic [ref=e25]: Password
+          - generic [ref=e26]:
+            - textbox "Password" [ref=e27]:
+              - /placeholder: Create a password
+            - button "Show password" [ref=e29] [cursor=pointer]
+        - generic [ref=e33]:
+          - generic [ref=e34]: Confirm Password
+          - generic [ref=e35]:
+            - textbox "Confirm Password" [ref=e36]:
+              - /placeholder: Re-enter your password
+            - button "Show password" [ref=e39] [cursor=pointer]
+        - generic [ref=e44] [cursor=pointer]:
+          - checkbox "I agree to the Terms & Conditions and Privacy Policy" [ref=e45]
+          - generic [ref=e47]:
+            - text: I agree to the
+            - link "Terms & Conditions" [ref=e48]:
+              - /url: /signup
+            - text: and
+            - link "Privacy Policy" [ref=e49]:
+              - /url: /signup
+        - button "Create Account" [ref=e50]
+      - paragraph [ref=e51]:
+        - text: Already have an account?
+        - link "Sign in" [ref=e52] [cursor=pointer]:
+          - /url: /login
+      - generic [ref=e53]:
+        - generic [ref=e54]: Secure & encrypted
+        - generic [ref=e57]: 24/7 support
+  - generic [ref=e61]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=e62]

@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: MobileShop
+        - generic [ref=e11]: Admin Console
+      - link "Back to store" [ref=e12] [cursor=pointer]:
+        - /url: /home
+    - main [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - heading "Admin sign in" [level=1] [ref=e19]
+            - paragraph [ref=e20]: Restricted area. Only authorized administrators can access this console.
+          - generic [ref=e21]:
+            - generic [ref=e22]:
+              - generic [ref=e23]: EMAIL ADDRESS
+              - textbox "admin@example.com" [ref=e28]
+            - generic [ref=e29]:
+              - generic [ref=e30]: PASSWORD
+              - textbox "••••••••" [ref=e35]
+            - button "Sign In" [ref=e36]
+        - paragraph [ref=e37]: Administrators are provisioned by the platform owner. No self-service admin signup exists.
+  - generic [ref=e38]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=e39]

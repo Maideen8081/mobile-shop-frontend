@@ -1,0 +1,681 @@
+- generic [ref=f9e1]:
+  - generic [ref=f9e3]:
+    - complementary [ref=f9e4]:
+      - generic [ref=f9e5]:
+        - generic [ref=f9e6]: MobileShop
+        - navigation "Admin" [ref=f9e11]:
+          - button "Dashboard" [ref=f9e13]
+          - generic [ref=f9e20]:
+            - button "Product" [ref=f9e21]
+            - button "Category" [ref=f9e27]
+          - generic [ref=f9e31]:
+            - button "Order" [ref=f9e32]
+            - button "Customer" [ref=f9e38]
+            - button "Trade-in" [ref=f9e45]
+          - generic [ref=f9e52]:
+            - button "Repairs" [ref=f9e53]
+            - button "Online booking" [ref=f9e57]
+            - button "New repair ticket" [ref=f9e62]
+        - button "Log out" [ref=f9e67]
+    - generic [ref=f9e71]:
+      - banner [ref=f9e72]:
+        - generic [ref=f9e73]:
+          - button "Search ⌘K" [ref=f9e74]:
+            - generic [ref=f9e78]: Search
+            - generic [ref=f9e79]: ⌘K
+          - button "Online bookings" [ref=f9e80]
+          - button "Online orders" [ref=f9e84]
+          - button "Account menu" [ref=f9e89]:
+            - generic [ref=f9e90]: M
+            - generic [ref=f9e91]:
+              - generic [ref=f9e92]: Maideen
+              - generic [ref=f9e93]: admin@local.test
+      - main [ref=f9e96]:
+        - generic [ref=f9e97]:
+          - generic [ref=f9e98]:
+            - heading "Orders" [level=2] [ref=f9e99]
+            - paragraph [ref=f9e100]: Move online orders through packing, shipping and delivery.
+          - button "Refresh" [ref=f9e102]
+        - generic [ref=f9e107]:
+          - button "To fulfil 16 placed, accepted or packing" [ref=f9e108] [cursor=pointer]:
+            - generic [ref=f9e109]: To fulfil
+            - generic [ref=f9e115]:
+              - generic [ref=f9e116]: "16"
+              - generic [ref=f9e117]: placed, accepted or packing
+          - button "In transit 10" [ref=f9e119] [cursor=pointer]:
+            - generic [ref=f9e120]: In transit
+            - generic [ref=f9e128]: "10"
+          - button "Delivered 15" [ref=f9e131] [cursor=pointer]:
+            - generic [ref=f9e132]: Delivered
+            - generic [ref=f9e137]: "15"
+          - generic [ref=f9e140]:
+            - generic [ref=f9e141]: Order value
+            - generic [ref=f9e146]:
+              - generic [ref=f9e147]: ₹33.5L
+              - generic [ref=f9e148]: excluding cancelled
+        - generic [ref=f9e150]:
+          - generic [ref=f9e151]:
+            - tablist [ref=f9e152]:
+              - tab "All 46" [selected] [ref=f9e153]:
+                - text: All
+                - generic [ref=f9e154]: "46"
+              - tab "To fulfil 16" [ref=f9e155]:
+                - text: To fulfil
+                - generic [ref=f9e156]: "16"
+              - tab "In transit 10" [ref=f9e157]:
+                - text: In transit
+                - generic [ref=f9e158]: "10"
+              - tab "Delivered 15" [ref=f9e159]:
+                - text: Delivered
+                - generic [ref=f9e160]: "15"
+              - tab "Cancelled 5" [ref=f9e161]:
+                - text: Cancelled
+                - generic [ref=f9e162]: "5"
+            - generic [ref=f9e163]:
+              - combobox "Payment status" [ref=f9e164]:
+                - option "Any payment" [selected]
+                - option "Paid"
+                - option "Pending"
+                - option "Failed"
+              - searchbox "Search orders" [ref=f9e166]
+          - table [ref=f9e168]:
+            - rowgroup [ref=f9e169]:
+              - row [ref=f9e170]:
+                - columnheader "Order" [ref=f9e171]
+                - columnheader "Customer" [ref=f9e172]
+                - columnheader "Items" [ref=f9e173]
+                - columnheader "Total" [ref=f9e174]
+                - columnheader "Payment" [ref=f9e175]
+                - columnheader "Status" [ref=f9e176]
+            - rowgroup [ref=f9e177]:
+              - row [active] [ref=f9e178] [cursor=pointer]:
+                - cell "ORD261022162328UO9B 22 Oct" [ref=f9e179]:
+                  - generic [ref=f9e180]: ORD261022162328UO9B
+                  - generic [ref=f9e181]: 22 Oct
+                - cell "Rohan Gupta 9819375836" [ref=f9e182]:
+                  - generic [ref=f9e183]: Rohan Gupta
+                  - generic [ref=f9e184]: "9819375836"
+                - cell "iPhone 15 Pro" [ref=f9e185]
+                - cell "₹1,39,900" [ref=f9e187]
+                - cell "Pending" [ref=f9e188]
+                - cell "Placed" [ref=f9e190]
+              - row [ref=f9e192] [cursor=pointer]:
+                - cell "ORD261022162328Q7NI 22 Oct" [ref=f9e193]:
+                  - generic [ref=f9e194]: ORD261022162328Q7NI
+                  - generic [ref=f9e195]: 22 Oct
+                - cell "Ananya Reddy 9822175294" [ref=f9e196]:
+                  - generic [ref=f9e197]: Ananya Reddy
+                  - generic [ref=f9e198]: "9822175294"
+                - cell "Apple Watch Series 9" [ref=f9e199]
+                - cell "₹83,800" [ref=f9e201]
+                - cell "Paid" [ref=f9e202]
+                - cell "Delivered" [ref=f9e204]
+              - row [ref=f9e206] [cursor=pointer]:
+                - cell "ORD261022162328DZUW 22 Oct" [ref=f9e207]:
+                  - generic [ref=f9e208]: ORD261022162328DZUW
+                  - generic [ref=f9e209]: 22 Oct
+                - cell "Rohan Gupta 9819375836" [ref=f9e210]:
+                  - generic [ref=f9e211]: Rohan Gupta
+                  - generic [ref=f9e212]: "9819375836"
+                - cell "65W USB-C Charger" [ref=f9e213]
+                - cell "₹12,999" [ref=f9e215]
+                - cell "Paid" [ref=f9e216]
+                - cell "Delivered" [ref=f9e218]
+              - row [ref=f9e220] [cursor=pointer]:
+                - cell "ORD261022162328EL3G 22 Oct" [ref=f9e221]:
+                  - generic [ref=f9e222]: ORD261022162328EL3G
+                  - generic [ref=f9e223]: 22 Oct
+                - cell "Fatima Khan 9859081935" [ref=f9e224]:
+                  - generic [ref=f9e225]: Fatima Khan
+                  - generic [ref=f9e226]: "9859081935"
+                - cell "AirPods Pro 2" [ref=f9e227]
+                - cell "₹24,900" [ref=f9e229]
+                - cell "Failed" [ref=f9e230]
+                - cell "Cancelled" [ref=f9e232]
+              - row [ref=f9e234] [cursor=pointer]:
+                - cell "ORD261022162328AFDN 16 Oct" [ref=f9e235]:
+                  - generic [ref=f9e236]: ORD261022162328AFDN
+                  - generic [ref=f9e237]: 16 Oct
+                - cell "Arjun Nair 9817784483" [ref=f9e238]:
+                  - generic [ref=f9e239]: Arjun Nair
+                  - generic [ref=f9e240]: "9817784483"
+                - cell "65W USB-C Charger" [ref=f9e241]
+                - cell "₹2,999" [ref=f9e243]
+                - cell "Pending" [ref=f9e244]
+                - cell "Accepted" [ref=f9e246]
+              - row [ref=f9e248] [cursor=pointer]:
+                - cell "ORD2610221623280ISM 15 Oct" [ref=f9e249]:
+                  - generic [ref=f9e250]: ORD2610221623280ISM
+                  - generic [ref=f9e251]: 15 Oct
+                - cell "Rohan Gupta 9819375836" [ref=f9e252]:
+                  - generic [ref=f9e253]: Rohan Gupta
+                  - generic [ref=f9e254]: "9819375836"
+                - cell "Galaxy S24 Ultra" [ref=f9e255]
+                - cell "₹1,34,999" [ref=f9e257]
+                - cell "Paid" [ref=f9e258]
+                - cell "Delivered" [ref=f9e260]
+              - row [ref=f9e262] [cursor=pointer]:
+                - cell "ORD261022162328BDQB 6 Oct" [ref=f9e263]:
+                  - generic [ref=f9e264]: ORD261022162328BDQB
+                  - generic [ref=f9e265]: 6 Oct
+                - cell "Asha Rao 9853464097" [ref=f9e266]:
+                  - generic [ref=f9e267]: Asha Rao
+                  - generic [ref=f9e268]: "9853464097"
+                - cell "Galaxy S24 Ultra" [ref=f9e269]
+                - cell "₹1,34,999" [ref=f9e271]
+                - cell "Pending" [ref=f9e272]
+                - cell "Out for delivery" [ref=f9e274]
+              - row [ref=f9e276] [cursor=pointer]:
+                - cell "ORD261022162328RMQV 4 Oct" [ref=f9e277]:
+                  - generic [ref=f9e278]: ORD261022162328RMQV
+                  - generic [ref=f9e279]: 4 Oct
+                - cell "Karthik Iyer 9881924865" [ref=f9e280]:
+                  - generic [ref=f9e281]: Karthik Iyer
+                  - generic [ref=f9e282]: "9881924865"
+                - cell "iPhone 15 Pro" [ref=f9e283]
+                - cell "₹1,39,900" [ref=f9e285]
+                - cell "Failed" [ref=f9e286]
+                - cell "Cancelled" [ref=f9e288]
+              - row [ref=f9e290] [cursor=pointer]:
+                - cell "ORD261022162328DCYP 4 Oct" [ref=f9e291]:
+                  - generic [ref=f9e292]: ORD261022162328DCYP
+                  - generic [ref=f9e293]: 4 Oct
+                - cell "Priya Sharma 9816480894" [ref=f9e294]:
+                  - generic [ref=f9e295]: Priya Sharma
+                  - generic [ref=f9e296]: "9816480894"
+                - cell "Apple Watch Series 9" [ref=f9e297]
+                - cell "₹83,800" [ref=f9e299]
+                - cell "Paid" [ref=f9e300]
+                - cell "Delivered" [ref=f9e302]
+              - row [ref=f9e304] [cursor=pointer]:
+                - cell "ORD26102216232828OO 1 Oct" [ref=f9e305]:
+                  - generic [ref=f9e306]: ORD26102216232828OO
+                  - generic [ref=f9e307]: 1 Oct
+                - cell "Priya Sharma 9816480894" [ref=f9e308]:
+                  - generic [ref=f9e309]: Priya Sharma
+                  - generic [ref=f9e310]: "9816480894"
+                - cell "AirPods Pro 2" [ref=f9e311]
+                - cell "₹24,900" [ref=f9e313]
+                - cell "Pending" [ref=f9e314]
+                - cell "Accepted" [ref=f9e316]
+              - row [ref=f9e318] [cursor=pointer]:
+                - cell "ORD261022162328TA20 26 Sept" [ref=f9e319]:
+                  - generic [ref=f9e320]: ORD261022162328TA20
+                  - generic [ref=f9e321]: 26 Sept
+                - cell "Ananya Reddy 9822175294" [ref=f9e322]:
+                  - generic [ref=f9e323]: Ananya Reddy
+                  - generic [ref=f9e324]: "9822175294"
+                - cell "OnePlus 12" [ref=f9e325]
+                - cell "₹64,999" [ref=f9e327]
+                - cell "Failed" [ref=f9e328]
+                - cell "Cancelled" [ref=f9e330]
+              - row [ref=f9e332] [cursor=pointer]:
+                - cell "ORD261022162328CYTR 25 Sept" [ref=f9e333]:
+                  - generic [ref=f9e334]: ORD261022162328CYTR
+                  - generic [ref=f9e335]: 25 Sept
+                - cell "Priya Sharma 9816480894" [ref=f9e336]:
+                  - generic [ref=f9e337]: Priya Sharma
+                  - generic [ref=f9e338]: "9816480894"
+                - cell "Galaxy Buds2 Pro" [ref=f9e339]
+                - cell "₹17,999" [ref=f9e341]
+                - cell "Failed" [ref=f9e342]
+                - cell "Cancelled" [ref=f9e344]
+              - row [ref=f9e346] [cursor=pointer]:
+                - cell "ORD261022162328W8VR 23 Sept" [ref=f9e347]:
+                  - generic [ref=f9e348]: ORD261022162328W8VR
+                  - generic [ref=f9e349]: 23 Sept
+                - cell "Karthik Iyer 9881924865" [ref=f9e350]:
+                  - generic [ref=f9e351]: Karthik Iyer
+                  - generic [ref=f9e352]: "9881924865"
+                - cell "65W USB-C Charger" [ref=f9e353]
+                - cell "₹5,998" [ref=f9e355]
+                - cell "Pending" [ref=f9e356]
+                - cell "Packing" [ref=f9e358]
+              - row [ref=f9e360] [cursor=pointer]:
+                - cell "ORD261022162328FTVL 20 Sept" [ref=f9e361]:
+                  - generic [ref=f9e362]: ORD261022162328FTVL
+                  - generic [ref=f9e363]: 20 Sept
+                - cell "Priya Sharma 9816480894" [ref=f9e364]:
+                  - generic [ref=f9e365]: Priya Sharma
+                  - generic [ref=f9e366]: "9816480894"
+                - cell "Pixel 8" [ref=f9e367]
+                - cell "₹75,999" [ref=f9e369]
+                - cell "Pending" [ref=f9e370]
+                - cell "Placed" [ref=f9e372]
+              - row [ref=f9e374] [cursor=pointer]:
+                - cell "ORD2610221623286FZX 16 Sept" [ref=f9e375]:
+                  - generic [ref=f9e376]: ORD2610221623286FZX
+                  - generic [ref=f9e377]: 16 Sept
+                - cell "Karthik Iyer 9881924865" [ref=f9e378]:
+                  - generic [ref=f9e379]: Karthik Iyer
+                  - generic [ref=f9e380]: "9881924865"
+                - cell "65W USB-C Charger" [ref=f9e381]
+                - cell "₹12,999" [ref=f9e383]
+                - cell "Pending" [ref=f9e384]
+                - cell "Accepted" [ref=f9e386]
+              - row [ref=f9e388] [cursor=pointer]:
+                - cell "ORD261022162328S51V 14 Sept" [ref=f9e389]:
+                  - generic [ref=f9e390]: ORD261022162328S51V
+                  - generic [ref=f9e391]: 14 Sept
+                - cell "Meera Das 9868202938" [ref=f9e392]:
+                  - generic [ref=f9e393]: Meera Das
+                  - generic [ref=f9e394]: "9868202938"
+                - cell "Galaxy S24 Ultra" [ref=f9e395]
+                - cell "₹1,24,999" [ref=f9e397]
+                - cell "Failed" [ref=f9e398]
+                - cell "Cancelled" [ref=f9e400]
+              - row [ref=f9e402] [cursor=pointer]:
+                - cell "ORD261022162328WCCH 11 Sept" [ref=f9e403]:
+                  - generic [ref=f9e404]: ORD261022162328WCCH
+                  - generic [ref=f9e405]: 11 Sept
+                - cell "Sneha Patel 9878106871" [ref=f9e406]:
+                  - generic [ref=f9e407]: Sneha Patel
+                  - generic [ref=f9e408]: "9878106871"
+                - cell "AirPods Pro 2" [ref=f9e409]
+                - cell "₹24,900" [ref=f9e411]
+                - cell "Paid" [ref=f9e412]
+                - cell "Delivered" [ref=f9e414]
+              - row [ref=f9e416] [cursor=pointer]:
+                - cell "ORD261022162328WBZ7 11 Sept" [ref=f9e417]:
+                  - generic [ref=f9e418]: ORD261022162328WBZ7
+                  - generic [ref=f9e419]: 11 Sept
+                - cell "Arjun Nair 9817784483" [ref=f9e420]:
+                  - generic [ref=f9e421]: Arjun Nair
+                  - generic [ref=f9e422]: "9817784483"
+                - cell "Apple Watch Series 9" [ref=f9e423]
+                - cell "₹83,800" [ref=f9e425]
+                - cell "Pending" [ref=f9e426]
+                - cell "Out for delivery" [ref=f9e428]
+              - row [ref=f9e430] [cursor=pointer]:
+                - cell "ORD261022162328OR93 11 Sept" [ref=f9e431]:
+                  - generic [ref=f9e432]: ORD261022162328OR93
+                  - generic [ref=f9e433]: 11 Sept
+                - cell "Priya Sharma 9816480894" [ref=f9e434]:
+                  - generic [ref=f9e435]: Priya Sharma
+                  - generic [ref=f9e436]: "9816480894"
+                - cell "Galaxy Buds2 Pro" [ref=f9e437]
+                - cell "₹17,999" [ref=f9e439]
+                - cell "Pending" [ref=f9e440]
+                - cell "Accepted" [ref=f9e442]
+              - row [ref=f9e444] [cursor=pointer]:
+                - cell "ORD261022162328DDMJ 11 Sept" [ref=f9e445]:
+                  - generic [ref=f9e446]: ORD261022162328DDMJ
+                  - generic [ref=f9e447]: 11 Sept
+                - cell "Vikram Singh 9815032582" [ref=f9e448]:
+                  - generic [ref=f9e449]: Vikram Singh
+                  - generic [ref=f9e450]: "9815032582"
+                - cell "Galaxy Buds2 Pro" [ref=f9e451]
+                - cell "₹35,998" [ref=f9e453]
+                - cell "Pending" [ref=f9e454]
+                - cell "Out for delivery" [ref=f9e456]
+              - row [ref=f9e458] [cursor=pointer]:
+                - cell "ORD261022162328WTHQ 7 Sept" [ref=f9e459]:
+                  - generic [ref=f9e460]: ORD261022162328WTHQ
+                  - generic [ref=f9e461]: 7 Sept
+                - cell "Asha Rao 9853464097" [ref=f9e462]:
+                  - generic [ref=f9e463]: Asha Rao
+                  - generic [ref=f9e464]: "9853464097"
+                - cell "Galaxy S24 Ultra" [ref=f9e465]
+                - cell "₹1,24,999" [ref=f9e467]
+                - cell "Pending" [ref=f9e468]
+                - cell "Out for delivery" [ref=f9e470]
+              - row [ref=f9e472] [cursor=pointer]:
+                - cell "ORD2610221623284ENZ 1 Sept" [ref=f9e473]:
+                  - generic [ref=f9e474]: ORD2610221623284ENZ
+                  - generic [ref=f9e475]: 1 Sept
+                - cell "Vikram Singh 9815032582" [ref=f9e476]:
+                  - generic [ref=f9e477]: Vikram Singh
+                  - generic [ref=f9e478]: "9815032582"
+                - cell "65W USB-C Charger" [ref=f9e479]
+                - cell "₹12,999" [ref=f9e481]
+                - cell "Pending" [ref=f9e482]
+                - cell "Accepted" [ref=f9e484]
+              - row [ref=f9e486] [cursor=pointer]:
+                - cell "ORD261022162328T58L 28 Aug" [ref=f9e487]:
+                  - generic [ref=f9e488]: ORD261022162328T58L
+                  - generic [ref=f9e489]: 28 Aug
+                - cell "Vikram Singh 9815032582" [ref=f9e490]:
+                  - generic [ref=f9e491]: Vikram Singh
+                  - generic [ref=f9e492]: "9815032582"
+                - cell "iPhone 15 Pro" [ref=f9e493]
+                - cell "₹2,79,800" [ref=f9e495]
+                - cell "Paid" [ref=f9e496]
+                - cell "Delivered" [ref=f9e498]
+              - row [ref=f9e500] [cursor=pointer]:
+                - cell "ORD261022162328SK8E 25 Aug" [ref=f9e501]:
+                  - generic [ref=f9e502]: ORD261022162328SK8E
+                  - generic [ref=f9e503]: 25 Aug
+                - cell "Vikram Singh 9815032582" [ref=f9e504]:
+                  - generic [ref=f9e505]: Vikram Singh
+                  - generic [ref=f9e506]: "9815032582"
+                - cell "iPhone 15 Pro" [ref=f9e507]
+                - cell "₹2,59,800" [ref=f9e509]
+                - cell "Paid" [ref=f9e510]
+                - cell "Delivered" [ref=f9e512]
+              - row [ref=f9e514] [cursor=pointer]:
+                - cell "ORD2610221623286G13 17 Aug" [ref=f9e515]:
+                  - generic [ref=f9e516]: ORD2610221623286G13
+                  - generic [ref=f9e517]: 17 Aug
+                - cell "Rahul Verma 9862992312" [ref=f9e518]:
+                  - generic [ref=f9e519]: Rahul Verma
+                  - generic [ref=f9e520]: "9862992312"
+                - cell "Pixel 8" [ref=f9e521]
+                - cell "₹75,999" [ref=f9e523]
+                - cell "Pending" [ref=f9e524]
+                - cell "Placed" [ref=f9e526]
+              - row [ref=f9e528] [cursor=pointer]:
+                - cell "ORD261022162328T535 12 Aug" [ref=f9e529]:
+                  - generic [ref=f9e530]: ORD261022162328T535
+                  - generic [ref=f9e531]: 12 Aug
+                - cell "Rahul Verma 9862992312" [ref=f9e532]:
+                  - generic [ref=f9e533]: Rahul Verma
+                  - generic [ref=f9e534]: "9862992312"
+                - cell "Galaxy S24 Ultra" [ref=f9e535]
+                - cell "₹2,49,998" [ref=f9e537]
+                - cell "Paid" [ref=f9e538]
+                - cell "Delivered" [ref=f9e540]
+              - row [ref=f9e542] [cursor=pointer]:
+                - cell "ORD261022162328BHS1 31 Jul" [ref=f9e543]:
+                  - generic [ref=f9e544]: ORD261022162328BHS1
+                  - generic [ref=f9e545]: 31 Jul
+                - cell "Priya Sharma 9816480894" [ref=f9e546]:
+                  - generic [ref=f9e547]: Priya Sharma
+                  - generic [ref=f9e548]: "9816480894"
+                - cell "AirPods Pro 2" [ref=f9e549]
+                - cell "₹24,900" [ref=f9e551]
+                - cell "Pending" [ref=f9e552]
+                - cell "Shipped" [ref=f9e554]
+              - row [ref=f9e556] [cursor=pointer]:
+                - cell "ORD261022162328Y8Q7 25 Jul" [ref=f9e557]:
+                  - generic [ref=f9e558]: ORD261022162328Y8Q7
+                  - generic [ref=f9e559]: 25 Jul
+                - cell "Fatima Khan 9859081935" [ref=f9e560]:
+                  - generic [ref=f9e561]: Fatima Khan
+                  - generic [ref=f9e562]: "9859081935"
+                - cell "Galaxy Buds2 Pro" [ref=f9e563]
+                - cell "₹17,999" [ref=f9e565]
+                - cell "Pending" [ref=f9e566]
+                - cell "Shipped" [ref=f9e568]
+              - row [ref=f9e570] [cursor=pointer]:
+                - cell "ORD2610221623286252 14 Jul" [ref=f9e571]:
+                  - generic [ref=f9e572]: ORD2610221623286252
+                  - generic [ref=f9e573]: 14 Jul
+                - cell "Rohan Gupta 9819375836" [ref=f9e574]:
+                  - generic [ref=f9e575]: Rohan Gupta
+                  - generic [ref=f9e576]: "9819375836"
+                - cell "65W USB-C Charger" [ref=f9e577]
+                - cell "₹12,999" [ref=f9e579]
+                - cell "Paid" [ref=f9e580]
+                - cell "Delivered" [ref=f9e582]
+              - row [ref=f9e584] [cursor=pointer]:
+                - cell "ORD261022162328C1EI 14 Jul" [ref=f9e585]:
+                  - generic [ref=f9e586]: ORD261022162328C1EI
+                  - generic [ref=f9e587]: 14 Jul
+                - cell "Priya Sharma 9816480894" [ref=f9e588]:
+                  - generic [ref=f9e589]: Priya Sharma
+                  - generic [ref=f9e590]: "9816480894"
+                - cell "65W USB-C Charger" [ref=f9e591]
+                - cell "₹2,999" [ref=f9e593]
+                - cell "Paid" [ref=f9e594]
+                - cell "Delivered" [ref=f9e596]
+              - row [ref=f9e598] [cursor=pointer]:
+                - cell "ORD261022162328OOLY 5 Jul" [ref=f9e599]:
+                  - generic [ref=f9e600]: ORD261022162328OOLY
+                  - generic [ref=f9e601]: 5 Jul
+                - cell "Meera Das 9868202938" [ref=f9e602]:
+                  - generic [ref=f9e603]: Meera Das
+                  - generic [ref=f9e604]: "9868202938"
+                - cell "Galaxy S24 Ultra" [ref=f9e605]
+                - cell "₹2,69,998" [ref=f9e607]
+                - cell "Pending" [ref=f9e608]
+                - cell "Packing" [ref=f9e610]
+              - row [ref=f9e612] [cursor=pointer]:
+                - cell "ORD261022162328D4C5 28 Jun" [ref=f9e613]:
+                  - generic [ref=f9e614]: ORD261022162328D4C5
+                  - generic [ref=f9e615]: 28 Jun
+                - cell "Asha Rao 9853464097" [ref=f9e616]:
+                  - generic [ref=f9e617]: Asha Rao
+                  - generic [ref=f9e618]: "9853464097"
+                - cell "65W USB-C Charger" [ref=f9e619]
+                - cell "₹12,999" [ref=f9e621]
+                - cell "Pending" [ref=f9e622]
+                - cell "Out for delivery" [ref=f9e624]
+              - row [ref=f9e626] [cursor=pointer]:
+                - cell "ORD261022162328KNYA 26 Jun" [ref=f9e627]:
+                  - generic [ref=f9e628]: ORD261022162328KNYA
+                  - generic [ref=f9e629]: 26 Jun
+                - cell "Rahul Verma 9862992312" [ref=f9e630]:
+                  - generic [ref=f9e631]: Rahul Verma
+                  - generic [ref=f9e632]: "9862992312"
+                - cell "iPhone 15 Pro" [ref=f9e633]
+                - cell "₹1,29,900" [ref=f9e635]
+                - cell "Paid" [ref=f9e636]
+                - cell "Delivered" [ref=f9e638]
+              - row [ref=f9e640] [cursor=pointer]:
+                - cell "ORD261022162328A0TG 23 Jun" [ref=f9e641]:
+                  - generic [ref=f9e642]: ORD261022162328A0TG
+                  - generic [ref=f9e643]: 23 Jun
+                - cell "Arjun Nair 9817784483" [ref=f9e644]:
+                  - generic [ref=f9e645]: Arjun Nair
+                  - generic [ref=f9e646]: "9817784483"
+                - cell "iPhone 15 Pro" [ref=f9e647]
+                - cell "₹1,29,900" [ref=f9e649]
+                - cell "Pending" [ref=f9e650]
+                - cell "Placed" [ref=f9e652]
+              - row [ref=f9e654] [cursor=pointer]:
+                - cell "ORD261022162328UQ48 23 Jun" [ref=f9e655]:
+                  - generic [ref=f9e656]: ORD261022162328UQ48
+                  - generic [ref=f9e657]: 23 Jun
+                - cell "Arjun Nair 9817784483" [ref=f9e658]:
+                  - generic [ref=f9e659]: Arjun Nair
+                  - generic [ref=f9e660]: "9817784483"
+                - cell "OnePlus 12" [ref=f9e661]
+                - cell "₹64,999" [ref=f9e663]
+                - cell "Paid" [ref=f9e664]
+                - cell "Delivered" [ref=f9e666]
+              - row [ref=f9e668] [cursor=pointer]:
+                - cell "ORD261022162328FGII 20 Jun" [ref=f9e669]:
+                  - generic [ref=f9e670]: ORD261022162328FGII
+                  - generic [ref=f9e671]: 20 Jun
+                - cell "Arjun Nair 9817784483" [ref=f9e672]:
+                  - generic [ref=f9e673]: Arjun Nair
+                  - generic [ref=f9e674]: "9817784483"
+                - cell "65W USB-C Charger" [ref=f9e675]
+                - cell "₹25,998" [ref=f9e677]
+                - cell "Pending" [ref=f9e678]
+                - cell "Shipped" [ref=f9e680]
+              - row [ref=f9e682] [cursor=pointer]:
+                - cell "ORD2610221623286MQV 12 Jun" [ref=f9e683]:
+                  - generic [ref=f9e684]: ORD2610221623286MQV
+                  - generic [ref=f9e685]: 12 Jun
+                - cell "Meera Das 9868202938" [ref=f9e686]:
+                  - generic [ref=f9e687]: Meera Das
+                  - generic [ref=f9e688]: "9868202938"
+                - cell "AirPods Pro 2" [ref=f9e689]
+                - cell "₹24,900" [ref=f9e691]
+                - cell "Pending" [ref=f9e692]
+                - cell "Placed" [ref=f9e694]
+              - row [ref=f9e696] [cursor=pointer]:
+                - cell "ORD261022162328QTR7 11 Jun" [ref=f9e697]:
+                  - generic [ref=f9e698]: ORD261022162328QTR7
+                  - generic [ref=f9e699]: 11 Jun
+                - cell "Arjun Nair 9817784483" [ref=f9e700]:
+                  - generic [ref=f9e701]: Arjun Nair
+                  - generic [ref=f9e702]: "9817784483"
+                - cell "65W USB-C Charger" [ref=f9e703]
+                - cell "₹2,999" [ref=f9e705]
+                - cell "Pending" [ref=f9e706]
+                - cell "Out for delivery" [ref=f9e708]
+              - row [ref=f9e710] [cursor=pointer]:
+                - cell "ORD261022162328HLZA 3 Jun" [ref=f9e711]:
+                  - generic [ref=f9e712]: ORD261022162328HLZA
+                  - generic [ref=f9e713]: 3 Jun
+                - cell "Meera Das 9868202938" [ref=f9e714]:
+                  - generic [ref=f9e715]: Meera Das
+                  - generic [ref=f9e716]: "9868202938"
+                - cell "AirPods Pro 2" [ref=f9e717]
+                - cell "₹24,900" [ref=f9e719]
+                - cell "Paid" [ref=f9e720]
+                - cell "Delivered" [ref=f9e722]
+              - row [ref=f9e724] [cursor=pointer]:
+                - cell "ORD261022162328FRBY 2 Jun" [ref=f9e725]:
+                  - generic [ref=f9e726]: ORD261022162328FRBY
+                  - generic [ref=f9e727]: 2 Jun
+                - cell "Meera Das 9868202938" [ref=f9e728]:
+                  - generic [ref=f9e729]: Meera Das
+                  - generic [ref=f9e730]: "9868202938"
+                - cell "AirPods Pro 2" [ref=f9e731]
+                - cell "₹24,900" [ref=f9e733]
+                - cell "Paid" [ref=f9e734]
+                - cell "Delivered" [ref=f9e736]
+              - row [ref=f9e738] [cursor=pointer]:
+                - cell "ORD261022162328VQXW 23 May" [ref=f9e739]:
+                  - generic [ref=f9e740]: ORD261022162328VQXW
+                  - generic [ref=f9e741]: 23 May
+                - cell "Priya Sharma 9816480894" [ref=f9e742]:
+                  - generic [ref=f9e743]: Priya Sharma
+                  - generic [ref=f9e744]: "9816480894"
+                - cell "Galaxy S24 Ultra" [ref=f9e745]
+                - cell "₹1,24,999" [ref=f9e747]
+                - cell "Pending" [ref=f9e748]
+                - cell "Packing" [ref=f9e750]
+              - row [ref=f9e752] [cursor=pointer]:
+                - cell "ORD261022162328XNS8 22 May" [ref=f9e753]:
+                  - generic [ref=f9e754]: ORD261022162328XNS8
+                  - generic [ref=f9e755]: 22 May
+                - cell "Sneha Patel 9878106871" [ref=f9e756]:
+                  - generic [ref=f9e757]: Sneha Patel
+                  - generic [ref=f9e758]: "9878106871"
+                - cell "Galaxy S24 Ultra" [ref=f9e759]
+                - cell "₹1,24,999" [ref=f9e761]
+                - cell "Pending" [ref=f9e762]
+                - cell "Accepted" [ref=f9e764]
+              - row [ref=f9e766] [cursor=pointer]:
+                - cell "ORD261022162328QMR9 19 May" [ref=f9e767]:
+                  - generic [ref=f9e768]: ORD261022162328QMR9
+                  - generic [ref=f9e769]: 19 May
+                - cell "Rahul Verma 9862992312" [ref=f9e770]:
+                  - generic [ref=f9e771]: Rahul Verma
+                  - generic [ref=f9e772]: "9862992312"
+                - cell "Galaxy S24 Ultra" [ref=f9e773]
+                - cell "₹1,34,999" [ref=f9e775]
+                - cell "Pending" [ref=f9e776]
+                - cell "Shipped" [ref=f9e778]
+              - row [ref=f9e780] [cursor=pointer]:
+                - cell "ORD261022162328994A 15 May" [ref=f9e781]:
+                  - generic [ref=f9e782]: ORD261022162328994A
+                  - generic [ref=f9e783]: 15 May
+                - cell "Arjun Nair 9817784483" [ref=f9e784]:
+                  - generic [ref=f9e785]: Arjun Nair
+                  - generic [ref=f9e786]: "9817784483"
+                - cell "Galaxy S24 Ultra" [ref=f9e787]
+                - cell "₹1,34,999" [ref=f9e789]
+                - cell "Paid" [ref=f9e790]
+                - cell "Delivered" [ref=f9e792]
+              - row [ref=f9e794] [cursor=pointer]:
+                - cell "ORD261022162328MITS 13 May" [ref=f9e795]:
+                  - generic [ref=f9e796]: ORD261022162328MITS
+                  - generic [ref=f9e797]: 13 May
+                - cell "Fatima Khan 9859081935" [ref=f9e798]:
+                  - generic [ref=f9e799]: Fatima Khan
+                  - generic [ref=f9e800]: "9859081935"
+                - cell "Apple Watch Series 9" [ref=f9e801]
+                - cell "₹41,900" [ref=f9e803]
+                - cell "Pending" [ref=f9e804]
+                - cell "Packing" [ref=f9e806]
+              - row [ref=f9e808] [cursor=pointer]:
+                - cell "ORD261022162328Y61K 11 May" [ref=f9e809]:
+                  - generic [ref=f9e810]: ORD261022162328Y61K
+                  - generic [ref=f9e811]: 11 May
+                - cell "Asha Rao 9853464097" [ref=f9e812]:
+                  - generic [ref=f9e813]: Asha Rao
+                  - generic [ref=f9e814]: "9853464097"
+                - cell "Galaxy S24 Ultra" [ref=f9e815]
+                - cell "₹1,34,999" [ref=f9e817]
+                - cell "Pending" [ref=f9e818]
+                - cell "Packing" [ref=f9e820]
+          - paragraph [ref=f9e822]: Showing 46 of 46 orders
+  - dialog "Order ORD261022162328UO9B" [ref=f9e826]:
+    - generic [ref=f9e827]:
+      - generic [ref=f9e828]:
+        - paragraph [ref=f9e829]: ORD261022162328UO9B
+        - generic [ref=f9e830]: Placed
+      - button "Close" [ref=f9e831]
+    - generic [ref=f9e835]:
+      - generic [ref=f9e836]:
+        - heading "Fulfilment" [level=4] [ref=f9e837]
+        - list [ref=f9e838]:
+          - listitem [ref=f9e839]:
+            - generic [ref=f9e844]: PlacedCurrent
+          - listitem [ref=f9e845]:
+            - generic [ref=f9e847]: "2"
+            - generic [ref=f9e848]: Accepted
+          - listitem [ref=f9e849]:
+            - generic [ref=f9e851]: "3"
+            - generic [ref=f9e852]: Packing
+          - listitem [ref=f9e853]:
+            - generic [ref=f9e855]: "4"
+            - generic [ref=f9e856]: Shipped
+          - listitem [ref=f9e857]:
+            - generic [ref=f9e859]: "5"
+            - generic [ref=f9e860]: Out for delivery
+          - listitem [ref=f9e861]:
+            - generic [ref=f9e862]: "6"
+            - generic [ref=f9e863]: Delivered
+        - generic [ref=f9e864]:
+          - button "Mark as accepted" [ref=f9e865]
+          - combobox "Skip ahead to" [ref=f9e871]:
+            - option "Skip ahead…" [selected]
+            - option "Packing"
+            - option "Shipped"
+            - option "Out for delivery"
+            - option "Delivered"
+          - button "Cancel order" [ref=f9e872]
+      - generic [ref=f9e873]:
+        - heading "Customer" [level=4] [ref=f9e874]
+        - generic [ref=f9e875]:
+          - paragraph [ref=f9e876]:
+            - generic [ref=f9e880]: Rohan Gupta
+          - paragraph [ref=f9e881]:
+            - link "9819375836" [ref=f9e884] [cursor=pointer]:
+              - /url: tel:9819375836
+          - paragraph [ref=f9e885]: Chennai
+      - generic [ref=f9e889]:
+        - heading "Items (1)" [level=4] [ref=f9e890]
+        - list [ref=f9e891]:
+          - listitem [ref=f9e892]:
+            - generic [ref=f9e898]:
+              - generic [ref=f9e899]: iPhone 15 Pro
+              - generic [ref=f9e900]: ₹1,39,900 × 1
+            - generic [ref=f9e901]: ₹1,39,900
+        - generic [ref=f9e902]:
+          - generic [ref=f9e903]:
+            - term [ref=f9e904]: Subtotal
+            - definition [ref=f9e905]: ₹1,39,900
+          - generic [ref=f9e906]:
+            - term [ref=f9e907]: Shipping
+            - definition [ref=f9e908]: Free
+          - generic [ref=f9e909]:
+            - term [ref=f9e910]: Total
+            - definition [ref=f9e911]: ₹1,39,900
+      - generic [ref=f9e912]:
+        - heading "Payment & delivery" [level=4] [ref=f9e913]
+        - generic [ref=f9e914]:
+          - generic [ref=f9e915]:
+            - paragraph [ref=f9e916]: Payment
+            - generic [ref=f9e917]: Pending
+          - generic [ref=f9e919]:
+            - paragraph [ref=f9e920]: Method
+            - generic [ref=f9e921]: razorpay
+          - generic [ref=f9e922]:
+            - paragraph [ref=f9e923]: Courier
+            - generic [ref=f9e924]: Standard Delivery
+          - generic [ref=f9e925]:
+            - paragraph [ref=f9e926]: Tracking
+            - generic [ref=f9e927]: —
+          - generic [ref=f9e928]:
+            - paragraph [ref=f9e929]: Placed
+            - generic [ref=f9e930]: 22 Oct 2026, 7:53 pm
+          - generic [ref=f9e931]:
+            - paragraph [ref=f9e932]: Est. delivery
+            - generic [ref=f9e933]: 27 Oct 2026

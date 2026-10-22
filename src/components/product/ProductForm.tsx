@@ -292,11 +292,11 @@ export default function ProductForm({
         <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-3">Visibility & Tags</h4>
         <div className="flex flex-wrap gap-2">
           {toggle(draft.published ? '● Published' : '○ Hidden from shop', draft.published, (v) => set('published', v))}
-          {toggle('🔥 Trending', draft.trending, (v) => set('trending', v))}
-          {toggle('✨ New Arrival', draft.newArrival, (v) => set('newArrival', v))}
-          {toggle('🏆 Best Selling', draft.bestSelling, (v) => set('bestSelling', v))}
-          {toggle('⭐ Featured', draft.featured, (v) => set('featured', v))}
-          {toggle('♻️ Refurbished', draft.refurbished, (v) => set('refurbished', v))}
+          {toggle('Trending', draft.trending, (v) => set('trending', v))}
+          {toggle('New arrival', draft.newArrival, (v) => set('newArrival', v))}
+          {toggle('Best selling', draft.bestSelling, (v) => set('bestSelling', v))}
+          {toggle('Featured', draft.featured, (v) => set('featured', v))}
+          {toggle('Refurbished', draft.refurbished, (v) => set('refurbished', v))}
         </div>
       </section>
 
@@ -371,7 +371,7 @@ export default function ProductForm({
         <div className="lg:col-span-2">
           <GlassCard className="p-5 lg:p-6">
             <div className="mb-6">
-              <h3 className="text-sm font-bold text-text-primary tracking-tight">Add New Product</h3>
+              <h3 className="text-sm font-bold text-text-primary tracking-tight">{mode === 'edit' ? 'Product details' : 'Add New Product'}</h3>
               <p className="text-xs text-text-muted mt-0.5">Fields marked * are required</p>
             </div>
             {form}

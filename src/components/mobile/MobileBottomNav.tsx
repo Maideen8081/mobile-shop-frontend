@@ -36,7 +36,7 @@ export default function MobileBottomNav() {
               >
                 <Icon size={19} />
               </span>
-              <span className={`text-[8px] font-semibold transition-colors ${active ? 'text-[#CB202D]' : 'text-[#9CA3AF]'}`}>
+              <span className={`text-micro font-semibold transition-colors ${active ? 'text-[#CB202D]' : 'text-[#9CA3AF]'}`}>
                 {tab.name}
               </span>
             </button>

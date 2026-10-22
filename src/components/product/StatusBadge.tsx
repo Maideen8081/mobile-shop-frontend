@@ -1,21 +1,11 @@
-import { motion } from 'framer-motion'
+import { StatusPill } from '../admin/AdminUI'
 
 interface StatusBadgeProps {
   status: 'active' | 'inactive'
 }
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-  const isActive = status === 'active'
-  return (
-    <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold ${
-        isActive ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-white text-text-secondary border border-border'
-      }`}
-    >
-      <span className={`w-1.5 h-1.5 rounded-[8px] ${isActive ? 'bg-primary' : 'bg-text-muted'}`} />
-      {isActive ? 'Active' : 'Inactive'}
-    </motion.span>
-  )
+  return <StatusPill tone={status === 'active' ? 'success' : 'danger'}>{status === 'active' ? 'Active' : 'Inactive'}</StatusPill>
 }
 
 interface TagBadgeProps {
@@ -23,15 +13,16 @@ interface TagBadgeProps {
   color?: string
 }
 
+const tagColors: Record<string, string> = {
+  trending: 'bg-[#fdecee] text-[#cb202d]',
+  new: 'bg-[#dcebff] text-[#2f7cf6]',
+  bestseller: 'bg-[#efe3ff] text-[#9b51e0]',
+  featured: 'bg-[#ffe8c7] text-[#c26a05]',
+}
+
 export function TagBadge({ label, color }: TagBadgeProps) {
-  const colors: Record<string, string> = {
-    trending: 'bg-primary/10 text-primary border-primary/20',
-    new: 'bg-primary/10 text-primary border-primary/20',
-    bestseller: 'bg-primary/10 text-primary border-primary/20',
-    featured: 'bg-primary text-white border-primary',
-  }
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider border ${colors[color ?? ''] || 'bg-bg text-text-secondary border-border'}`}>
+    <span className={`inline-flex items-center px-1.5 py-px rounded-md text-[10px] font-semibold whitespace-nowrap ${tagColors[color ?? ''] || 'bg-[#f2f4f7] text-[#344054]'}`}>
       {label}
     </span>
   )

@@ -82,13 +82,13 @@ export default function MobileHomeLoader() {
             <ShoppingBag size={20} className="text-white" strokeWidth={2} />
           </div>
           <div>
-            <p className="text-white text-[16px] font-extrabold tracking-[-0.02em]">PhoneFix Pro</p>
-            <p className="text-white/40 text-[10px] font-semibold tracking-[0.08em] uppercase">Your Tech Store</p>
+            <p className="text-white text-body font-extrabold tracking-[-0.02em]">PhoneFix Pro</p>
+            <p className="text-white/40 text-micro font-semibold tracking-[0.08em] uppercase">Your Tech Store</p>
           </div>
         </div>
         <div className="flex items-center gap-1 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-[8px] border border-white/8">
           <div className="w-1.5 h-1.5 rounded-[8px] bg-emerald-400 animate-pulse" />
-          <span className="text-white/70 text-[10px] font-semibold">Live</span>
+          <span className="text-white/70 text-micro font-semibold">Live</span>
         </div>
       </div>
 
@@ -157,8 +157,8 @@ export default function MobileHomeLoader() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3 }}
             >
-              <p className="text-white text-[17px] font-bold tracking-[-0.01em]">{text}</p>
-              <p className="text-white/40 text-[12px] font-medium mt-1">{sub}</p>
+              <p className="text-white text-title-sm font-bold tracking-[-0.01em]">{text}</p>
+              <p className="text-white/40 text-caption font-medium mt-1">{sub}</p>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -187,7 +187,7 @@ export default function MobileHomeLoader() {
               >
                 <BadgeIcon size={15} style={{ color }} strokeWidth={2} />
               </div>
-              <span className="text-white/35 text-[8px] font-semibold tracking-wide text-center leading-tight max-w-[60px]">{label}</span>
+              <span className="text-white/35 text-micro font-semibold tracking-wide text-center leading-tight max-w-[60px]">{label}</span>
             </div>
           ))}
         </div>

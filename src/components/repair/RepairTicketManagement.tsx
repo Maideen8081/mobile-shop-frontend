@@ -1,14 +1,18 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  FiSearch, FiGrid, FiList, FiEye, FiEdit2, FiTrash2, FiX, FiClock, FiCheckCircle,
-  FiAlertTriangle, FiTool, FiSmartphone, FiDollarSign, FiUser, FiCalendar, FiChevronDown,
-  FiRefreshCw, FiPhone, FiMail, FiStar, FiTrendingUp, FiBarChart2, FiPackage, FiSave,
+  FiSearch, FiEye, FiEdit2, FiTrash2, FiX, FiClock, FiCheckCircle,
+  FiAlertTriangle, FiTool, FiSmartphone, FiDollarSign, FiUser, 
+  FiRefreshCw, FiPhone, FiMail, FiStar, FiBarChart2, FiPackage, FiSave,
   FiMapPin, FiCamera, FiImage, FiSend,
 } from 'react-icons/fi'
 import { repairService, type RepairTicket } from '../../services/repairService'
 import { deviceCategories, deviceBrands, issueCategories, repairTechnicians } from '../../data/repairData'
 import CreatableSelect from '../ui/CreatableSelect'
+import {
+  Btn, EmptyState, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu, SearchBox, ShowingSelect,
+  Skeleton, SortTh, StatusPill, Thumb, exportCsv, toneForStatus, useTable,
+} from '../admin/AdminUI'
 import { useLockBodyScroll } from '../../hooks/useLockBodyScroll'
 
 const STATUS_TRANSITIONS: Record<string, string[]> = {
@@ -75,57 +79,10 @@ const getTechName = (id: number | null): string => {
   return t ? `${t.name} — ${t.speciality}` : 'Auto Assign'
 }
 
-const statCards = [
-  { key: 'total', label: 'Total Tickets', icon: FiBarChart2, color: '#CB202D', bg: 'rgba(203,32,45,0.12)' },
-  { key: 'Submitted', label: 'Submitted', icon: FiSend, color: '#CB202D', bg: 'rgba(203,32,45,0.12)' },
-  { key: 'Accepted', label: 'Accepted', icon: FiCheckCircle, color: '#A81D2A', bg: 'rgba(203,32,45,0.10)' },
-  { key: 'Received', label: 'Pending', icon: FiClock, color: '#CB202D', bg: 'rgba(203,32,45,0.08)' },
-  { key: 'Repair In Progress', label: 'In Progress', icon: FiTool, color: '#CB202D', bg: 'rgba(203,32,45,0.06)' },
-  { key: 'Delivered', label: 'Delivered', icon: FiCheckCircle, color: '#A81D2A', bg: 'rgba(203,32,45,0.12)' },
-  { key: 'completed', label: 'Completed', icon: FiTrendingUp, color: '#A81D2A', bg: 'rgba(203,32,45,0.10)' },
-  { key: 'Rejected', label: 'Rejected', icon: FiX, color: '#CB202D', bg: 'rgba(203,32,45,0.08)' },
-  { key: 'Cancelled', label: 'Cancelled', icon: FiAlertTriangle, color: '#CB202D', bg: 'rgba(203,32,45,0.06)' },
-]
-
 const timelineSteps = ['Submitted', 'Accepted', 'Received', 'Diagnosing', 'Repair In Progress', 'Quality Check', 'Ready for Delivery', 'Delivered']
 
-function StatCard({ label, value, icon: Icon, color, bg, index }: { label: string; value: number; icon: any; color: string; bg: string; index: number }) {
-  const [display, setDisplay] = useState(0)
-  useEffect(() => {
-    if (value === 0) { setDisplay(0); return }
-    const duration = 800; const steps = 30; const increment = value / steps; let current = 0
-    const timer = setInterval(() => { current += increment; if (current >= value) { setDisplay(value); clearInterval(timer) } else setDisplay(Math.floor(current)) }, duration / steps)
-    return () => clearInterval(timer)
-  }, [value])
-  return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: index * 0.06 }} className="relative group">
-      <div className="relative rounded-2xl border border-border bg-white p-4 shadow-sm overflow-hidden transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md">
-        <div className="flex items-start justify-between mb-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}><Icon size={18} style={{ color }} /></div>
-          <span className="text-[10px] font-semibold text-text-muted">This Month</span>
-        </div>
-        <p className="text-2xl font-bold text-text-primary mb-0.5 font-mono">{display.toLocaleString()}</p>
-        <p className="text-xs font-semibold" style={{ color: color }}>{label}</p>
-      </div>
-    </motion.div>
-  )
-}
-
 function StatusBadge({ status }: { status: string }) {
-  const cfg = statusConfig[status] || statusConfig.Received
-  return (
-    <motion.span whileHover={{ scale: 1.05 }}
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${cfg.bg} ${cfg.border} ${cfg.color} whitespace-nowrap`}
-    >{cfg.icon}{cfg.label}</motion.span>
-  )
-}
-
-function LoadingSkeleton() {
-  return (
-    <div className="space-y-4">
-      {[1, 2, 3].map((i) => <div key={i} className="h-16 rounded-xl bg-gray-100 border border-border animate-pulse" />)}
-    </div>
-  )
+  return <StatusPill tone={toneForStatus(status)}>{statusConfig[status]?.label ?? status}</StatusPill>
 }
 
 function Toast({ message, type = 'success', onClose }: { message: string; type?: string; onClose: () => void }) {
@@ -161,11 +118,11 @@ function PhotoThumbnails({ images, className }: { images: string[]; className?: 
 export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { refreshTrigger: number; onRefresh: () => void }) {
   const [tickets, setTickets] = useState<RepairTicket[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
   const [filterCategory, setFilterCategory] = useState('')
-  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
+  // Newest first by default; column headers re-sort from there.
+  const sortOrder = 'newest' as 'newest' | 'oldest'
   const [selectedTicket, setSelectedTicket] = useState<RepairTicket | null>(null)
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -223,7 +180,7 @@ export default function RepairTicketManagement({ refreshTrigger, onRefresh }: { 
       ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     return result
-  }, [tickets, search, filterStatus, sortOrder])
+  }, [tickets, search, filterStatus, filterCategory, sortOrder])
 
 const counts = useMemo(() => {
     const total = tickets.length
@@ -306,7 +263,28 @@ const counts = useMemo(() => {
     finally { setSaving(false) }
   }
 
-  const tableHeaders = ['Ticket', 'Customer', 'Mobile', 'Category', 'Device', 'Issue', 'Technician', 'Cost', 'Status', 'Created', 'Actions']
+  const table = useTable(filteredTickets, {
+    resetKey: `${search}|${filterStatus}|${filterCategory}`,
+    sorters: {
+      id: (t) => t.repairId,
+      customer: (t) => t.customerName,
+      device: (t) => `${t.deviceBrand} ${t.deviceModel}`,
+      issue: (t) => t.issueCategory,
+      tech: (t) => getTechName(t.technicianId),
+      cost: (t) => t.estimatedCost,
+      created: (t) => new Date(t.createdAt).getTime() || 0,
+      status: (t) => statusConfig[t.status]?.label ?? t.status,
+    },
+  })
+  const th = { sort: table.sort, onSort: table.toggleSort }
+
+  const exportTickets = () =>
+    exportCsv(
+      'online-bookings',
+      ['Ticket ID', 'Customer', 'Mobile', 'Category', 'Brand', 'Model', 'Issue', 'Technician', 'Estimated cost (INR)', 'Status', 'Created'],
+      table.sorted.map((t) => [t.repairId, t.customerName, t.customerMobile, t.deviceCategory, t.deviceBrand, t.deviceModel, t.issueCategory,
+        getTechName(t.technicianId), t.estimatedCost, statusConfig[t.status]?.label ?? t.status, t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-IN') : '']),
+    )
 
   const openViewModal = async (ticket: RepairTicket) => {
     try { const full = await repairService.getById(ticket.id); setSelectedTicket(full) }
@@ -323,191 +301,103 @@ const counts = useMemo(() => {
     <div className="space-y-6">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {statCards.map((card, i) => {
-          const { key: statKey, ...cardProps } = card
-          return <StatCard key={statKey} {...cardProps} value={counts[statKey as keyof typeof counts] || 0} index={i} />
-        })}
+      <PageHeader
+        title="Online Booking"
+        actions={
+          <>
+            <SearchBox value={search} onChange={setSearch} placeholder="Search ticket, customer, device" />
+            <ShowingSelect value={table.pageSize} onChange={table.setPageSize} />
+            <FilterMenu
+              activeCount={(filterStatus ? 1 : 0) + (filterCategory ? 1 : 0)}
+              onReset={() => { setFilterStatus(''); setFilterCategory('') }}
+            >
+              <FilterSelect label="Status" value={filterStatus} onChange={setFilterStatus}
+                options={[{ value: '', label: 'All status' }, ...statusOptions.map((s) => ({ value: s, label: statusConfig[s].label }))]} />
+              <FilterSelect label="Device category" value={filterCategory} onChange={setFilterCategory}
+                options={[{ value: '', label: 'All categories' }, ...deviceCategories.map((c) => ({ value: c, label: c }))]} />
+            </FilterMenu>
+            <ExportBtn onClick={exportTickets} disabled={filteredTickets.length === 0} />
+            <Btn variant="primary" className="h-11 px-5" icon={<FiRefreshCw size={16} className={loading ? 'animate-spin' : ''} />}
+              onClick={() => { fetchTickets(); onRefresh() }}>
+              Refresh
+            </Btn>
+          </>
+        }
+      />
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+        <KpiCard loading={loading && !tickets.length} label="Total bookings" tone="brand" icon={<FiBarChart2 size={16} />} value={counts.total} />
+        <KpiCard loading={loading && !tickets.length} label="New requests" tone="warning" icon={<FiSend size={16} />} value={counts.Submitted} hint="Waiting for review" />
+        <KpiCard loading={loading && !tickets.length} label="In progress" tone="info" icon={<FiTool size={16} />} value={counts['Repair In Progress'] + counts.Accepted + counts.Received} />
+        <KpiCard loading={loading && !tickets.length} label="Delivered" tone="success" icon={<FiCheckCircle size={16} />} value={counts.Delivered} />
+        <KpiCard loading={loading && !tickets.length} label="Rejected / cancelled" tone="danger" icon={<FiX size={16} />} value={counts.Rejected + counts.Cancelled} />
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-text-primary">Repair Tickets Management</h2>
-          <p className="text-sm text-text-muted">Manage all customer repair tickets efficiently.</p>
-        </div>
-        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-          onClick={() => { fetchTickets(); onRefresh() }}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-border text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-gray-50 transition-all shadow-sm"
-        ><FiRefreshCw size={14} /> Refresh</motion.button>
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-3">
-        <div className="relative flex-1">
-          <FiSearch size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by ticket ID, customer, device..."
-            className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-border text-sm text-text-primary placeholder-text-muted outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
-          />
-          {search && <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"><FiX size={14} /></button>}
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <div className="relative">
-            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-              className="h-11 px-4 pr-10 rounded-xl bg-white border border-border text-sm text-text-primary outline-none appearance-none cursor-pointer focus:border-primary/40 transition-all shadow-sm"
-            >
-              <option value="">All Status</option>
-              {statusOptions.map((s) => <option key={s} value={s}>{statusConfig[s].label}</option>)}
-            </select>
-            <FiChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-          </div>
-          <div className="relative">
-            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}
-              className="h-11 px-4 pr-10 rounded-xl bg-white border border-border text-sm text-text-primary outline-none appearance-none cursor-pointer focus:border-primary/40 transition-all shadow-sm"
-            >
-              <option value="">All Categories</option>
-              {deviceCategories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <FiChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-          </div>
-          <div className="relative">
-            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as any)}
-              className="h-11 px-4 pr-10 rounded-xl bg-white border border-border text-sm text-text-primary outline-none appearance-none cursor-pointer focus:border-primary/40 transition-all shadow-sm"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-            <FiChevronDown size={12} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-          </div>
-          <div className="flex bg-white border border-border rounded-xl overflow-hidden shadow-sm">
-            <button onClick={() => setViewMode('table')}
-              className={`p-2.5 transition-all ${viewMode === 'table' ? 'bg-primary/10 text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}`}
-            ><FiList size={16} /></button>
-            <button onClick={() => setViewMode('cards')}
-              className={`p-2.5 transition-all ${viewMode === 'cards' ? 'bg-primary/10 text-primary font-semibold' : 'text-text-muted hover:text-text-primary'}`}
-            ><FiGrid size={16} /></button>
-          </div>
-        </div>
-      </div>
-
-      {loading ? (
-        <LoadingSkeleton />
+      {loading && !tickets.length ? (
+        <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
       ) : filteredTickets.length === 0 ? (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-16 rounded-2xl bg-white border border-border shadow-sm"
-        >
-          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mb-4"><FiTool size={32} className="text-primary/60" /></div>
-          <h3 className="text-lg font-semibold text-text-primary mb-1">No Repair Tickets Found</h3>
-          <p className="text-sm text-text-muted">{search || filterStatus ? 'Try adjusting your search or filters' : 'Create your first repair ticket to get started.'}</p>
-        </motion.div>
-      ) : viewMode === 'table' ? (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-white shadow-sm">
-          <table className="w-full min-w-[1100px]">
-            <thead>
-              <tr className="border-b border-border bg-gray-50/80">
-                {tableHeaders.map((h) => (
-                  <th key={h} className="text-left px-3.5 py-3.5 text-[11px] font-bold uppercase tracking-wider text-text-muted whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence>
-                {filteredTickets.map((ticket, i) => (
-                  <motion.tr key={ticket.id} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.03 }}
-                    className="border-b border-border hover:bg-gray-50/70 transition-colors bg-white"
-                  >
-                    <td className="px-3.5 py-3.5"><span className="text-xs font-mono font-bold text-primary">{ticket.repairId}</span></td>
-                    <td className="px-3.5 py-3.5">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                          {ticket.customerName.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
-                        </div>
-                        <span className="text-sm font-semibold text-text-primary truncate max-w-[130px]">{ticket.customerName}</span>
-                      </div>
-                    </td>
-                    <td className="px-3.5 py-3.5 text-sm text-text-muted whitespace-nowrap">{ticket.customerMobile}</td>
-                    <td className="px-3.5 py-3.5"><span className="text-xs text-text-secondary">{ticket.deviceCategory || ticket.deviceBrand}</span></td>
-                    <td className="px-3.5 py-3.5">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-text-primary">{ticket.deviceBrand}</span>
-                        <span className="text-[11px] text-text-muted">{ticket.deviceModel}</span>
-                      </div>
-                    </td>
-                    <td className="px-3.5 py-3.5"><span className="text-xs text-text-secondary truncate max-w-[100px] inline-block" title={ticket.issueCategory}>{ticket.issueCategory}</span></td>
-                    <td className="px-3.5 py-3.5"><span className="text-xs text-text-muted whitespace-nowrap">{getTechName(ticket.technicianId)}</span></td>
-                    <td className="px-3.5 py-3.5 text-sm font-bold text-primary whitespace-nowrap">₹{ticket.estimatedCost.toLocaleString('en-IN')}</td>
-                    <td className="px-3.5 py-3.5"><StatusBadge status={ticket.status} /></td>
-                    <td className="px-3.5 py-3.5 text-xs text-text-muted whitespace-nowrap">
-                      {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
-                    </td>
-                    <td className="px-3.5 py-3.5">
-                      <div className="flex items-center gap-1">
-                        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                          onClick={() => openViewModal(ticket)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-all" title="View Details"
-                        ><FiEye size={13} /> View</motion.button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
+        <div className="table-wrap">
+          <EmptyState
+            icon={<FiTool size={20} />}
+            title="No bookings found"
+            description={search || filterStatus || filterCategory ? 'Try adjusting your search or filters.' : 'Repair bookings from the storefront appear here.'}
+          />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <AnimatePresence>
-            {filteredTickets.map((ticket, i) => (
-              <motion.div key={ticket.id} initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.3, delay: i * 0.04 }} whileHover={{ y: -4 }}
-                className="group relative rounded-2xl border border-border bg-white shadow-sm p-5 hover:border-primary/30 hover:shadow-md transition-all duration-300"
-              >
-                <div className="relative">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <FiSmartphone size={18} className="text-primary" />
+        <div className="table-wrap">
+          <div className="table-scroll">
+            <table className="min-w-[1000px] [&_td]:!px-4 [&_th]:!px-4">
+              <thead>
+                <tr>
+                  <SortTh label="Ticket ID" sortKey="id" {...th} />
+                  <SortTh label="Customer" sortKey="customer" {...th} />
+                  <SortTh label="Device" sortKey="device" {...th} />
+                  <SortTh label="Issue" sortKey="issue" {...th} />
+                  <SortTh label="Technician" sortKey="tech" {...th} />
+                  <SortTh label="Cost" sortKey="cost" {...th} />
+                  <SortTh label="Created" sortKey="created" {...th} />
+                  <SortTh label="Status" sortKey="status" {...th} />
+                  <SortTh label="Action" align="center" />
+                </tr>
+              </thead>
+              <tbody>
+                {table.rows.map((ticket) => (
+                  <tr key={ticket.id} className="cursor-pointer" onClick={() => openViewModal(ticket)}>
+                    <td className="whitespace-nowrap">#{ticket.repairId}</td>
+                    <td>
+                      <div className="flex items-center gap-3 min-w-[180px]">
+                        <Thumb name={ticket.customerName} />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-text-primary truncate max-w-[160px]">{ticket.customerName}</p>
+                          <p className="text-xs text-text-muted">{ticket.customerMobile}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-mono font-bold text-primary">{ticket.repairId}</p>
-                        <p className="text-sm font-semibold text-text-primary">{ticket.customerName}</p>
-                        <p className="text-[11px] text-text-muted flex items-center gap-1"><FiPhone size={10} />{ticket.customerMobile}</p>
-                      </div>
-                    </div>
-                    <StatusBadge status={ticket.status} />
-                  </div>
-                  <div className="space-y-1.5 mb-4">
-                    <div className="flex items-center gap-2 text-xs text-text-muted">
-                      <FiSmartphone size={12} />
-                      <span className="font-medium text-text-secondary">{ticket.deviceCategory || ticket.deviceBrand}</span>
-                      <span>{ticket.deviceBrand} {ticket.deviceModel}</span>
-                    </div>
-                    <div className="flex items-start gap-2 text-xs text-text-muted">
-                      <FiAlertTriangle size={12} className="mt-0.5 shrink-0" />
-                      <span className="line-clamp-2">{ticket.issueCategory}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-text-muted flex-wrap">
-                      <span className="flex items-center gap-1"><FiDollarSign size={12} /><span className="text-primary font-semibold">₹{ticket.estimatedCost.toLocaleString('en-IN')}</span></span>
-                      <span className="flex items-center gap-1"><FiUser size={12} /><span className="truncate max-w-[100px]">{getTechName(ticket.technicianId)}</span></span>
-                      <span className="flex items-center gap-1"><FiCalendar size={12} />{ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : '—'}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 pt-3 border-t border-border">
-                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                      onClick={() => openViewModal(ticket)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-semibold hover:bg-primary/20 transition-all"
-                    ><FiEye size={13} /> View Details</motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                    </td>
+                    <td className="whitespace-nowrap">
+                      <p className="text-text-primary">{ticket.deviceBrand} {ticket.deviceModel}</p>
+                      <p className="text-xs text-text-muted">{ticket.deviceCategory || '—'}</p>
+                    </td>
+                    <td><span className="inline-block truncate max-w-[130px] align-middle" title={ticket.issueCategory}>{ticket.issueCategory}</span></td>
+                    <td className="whitespace-nowrap">{getTechName(ticket.technicianId)}</td>
+                    <td className="whitespace-nowrap">₹{ticket.estimatedCost.toLocaleString('en-IN')}</td>
+                    <td className="whitespace-nowrap">
+                      {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    </td>
+                    <td><StatusBadge status={ticket.status} /></td>
+                    <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                      <RowMenu
+                        label={`Actions for ${ticket.repairId}`}
+                        items={[{ label: 'View details', icon: <FiEye size={15} />, onClick: () => openViewModal(ticket) }]}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination page={table.page} totalPages={table.totalPages} onPage={table.setPage} summary={`${table.total} of ${tickets.length} bookings`} />
         </div>
       )}
-
-      <div className="flex items-center justify-between text-xs text-text-muted pt-2">
-        <span>Showing {filteredTickets.length} of {tickets.length} tickets</span>
-      </div>
 
       {/* VIEW MODAL */}
       <AnimatePresence>

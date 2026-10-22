@@ -63,26 +63,26 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
           <div className="col-span-2 md:col-span-1 flex flex-col gap-3">
             <Link to="/home" className="flex items-center gap-2.5 w-fit">
               <span className="w-9 h-9 rounded-lg bg-[#D91E36] flex items-center justify-center shadow-lg shadow-black/30">
-                <span className="font-black text-white text-[13px] tracking-tight">PF</span>
+                <span className="font-bold text-white text-label tracking-tight">PF</span>
               </span>
               <span className="leading-tight">
-                <span className="block font-bold text-[15px]" style={{ fontFamily: 'var(--font-display)' }}>PhoneFix Pro</span>
-                <span className="block text-white/45 text-[10px] tracking-[0.12em]">PHONES · ACCESSORIES · REPAIRS</span>
+                <span className="block font-bold text-body" style={{ fontFamily: 'var(--font-display)' }}>PhoneFix Pro</span>
+                <span className="block text-white/45 text-micro tracking-[0.12em]">PHONES · ACCESSORIES · REPAIRS</span>
               </span>
             </Link>
-            <p className="text-white/60 text-[12.5px] leading-relaxed max-w-[300px]">
+            <p className="text-white/60 text-caption leading-relaxed max-w-[300px]">
               Genuine devices and same-day repairs, with honest pricing and a warranty on every fix.
             </p>
             <ul className="flex flex-col gap-1.5">
               {contacts.map((c) => {
                 const content = (
                   <>
-                    <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: '15px' }}>{c.icon}</span>
+                    <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: 'var(--text-body)' }}>{c.icon}</span>
                     {c.text}
                   </>
                 )
                 return (
-                  <li key={c.icon} className="text-white/65 text-[12px]">
+                  <li key={c.icon} className="text-white/65 text-caption">
                     {c.href ? (
                       <a href={c.href} className="inline-flex items-center gap-2 hover:text-white transition-colors">{content}</a>
                     ) : (
@@ -97,12 +97,12 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
           {/* Links */}
           {linkColumns.map((col) => (
             <nav key={col.title} aria-label={col.title} className="flex flex-col gap-2">
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8a98] mb-0.5">{col.title}</h2>
+              <h2 className="text-micro font-bold uppercase tracking-[0.14em] text-[#ff8a98] mb-0.5">{col.title}</h2>
               {col.links.map((link) => (
                 <Link
                   key={link.label}
                   to={link.to}
-                  className="text-white/65 hover:text-white text-[13px] w-fit transition-colors"
+                  className="text-white/65 hover:text-white text-label w-fit transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -117,13 +117,13 @@ export default function EcommerceFooter({ compact = false }: EcommerceFooterProp
         <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-3 flex flex-col lg:flex-row items-center justify-between gap-3">
           <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {promises.map((p) => (
-              <li key={p.label} className="flex items-center gap-1.5 text-white/60 text-[11.5px] font-medium">
-                <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: '15px' }}>{p.icon}</span>
+              <li key={p.label} className="flex items-center gap-1.5 text-white/60 text-caption font-medium">
+                <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: 'var(--text-body)' }}>{p.icon}</span>
                 {p.label}
               </li>
             ))}
           </ul>
-          <p className="text-white/45 text-[11.5px]">
+          <p className="text-white/45 text-caption">
             &copy; {new Date().getFullYear()} PhoneFix Pro. All rights reserved.
           </p>
         </div>

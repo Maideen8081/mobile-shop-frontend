@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ChatAssistantIcon from './ChatAssistantIcon'
 import { useIsMobile } from '../mobile/helpers'
+import { isAdminPath } from '../../route/adminPaths'
 import './SupportChatButton.css'
 
 const STORAGE_KEY = 'support-chat-btn-pos'
@@ -122,7 +123,8 @@ export default function SupportChatButton() {
   const popupOnLeft = pos.x > window.innerWidth / 2
 
   // The mobile website has its own chat link in the top bar.
-  if (pathname === '/support' || (isMobile && pathname === '/')) return null
+  // Shopper-facing assistant: hidden in the admin console, where it covers table actions.
+  if (pathname === '/support' || isAdminPath(pathname) || (isMobile && pathname === '/')) return null
 
   const showPopup = hovered && !dragging.current
 
@@ -156,7 +158,7 @@ export default function SupportChatButton() {
           transition: 'opacity 0.22s ease, transform 0.22s ease',
           pointerEvents: showPopup ? 'auto' : 'none',
           zIndex: 9999,
-          fontFamily: "'Inter','Segoe UI',system-ui,sans-serif",
+          fontFamily: 'var(--font-ui)',
         }}
         aria-hidden={!showPopup}
       >
@@ -177,7 +179,7 @@ export default function SupportChatButton() {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
           <span style={{
-            fontSize: 9, fontWeight: 700, letterSpacing: '0.08em',
+            fontSize: 'var(--text-micro)', fontWeight: 700, letterSpacing: '0.08em',
             color: '#0ea5e9', background: 'rgba(14,165,233,0.1)',
             padding: '2px 7px', borderRadius: 20, textTransform: 'uppercase',
           }}>AI COMPANION</span>
@@ -185,13 +187,13 @@ export default function SupportChatButton() {
             width: 6, height: 6, borderRadius: '50%', background: '#22c55e',
             boxShadow: '0 0 6px rgba(34,197,94,0.7)', flexShrink: 0, display: 'inline-block',
           }} />
-          <span style={{ fontSize: 10, fontWeight: 500, color: '#22c55e' }}>Online</span>
+          <span style={{ fontSize: 'var(--text-micro)', fontWeight: 500, color: '#22c55e' }}>Online</span>
         </div>
 
-        <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>
+        <p style={{ margin: '0 0 4px', fontSize: 'var(--text-body-sm)', fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>
           Hey there! 👋
         </p>
-        <p style={{ margin: '0 0 12px', fontSize: 11.5, color: '#64748b', lineHeight: 1.5 }}>
+        <p style={{ margin: '0 0 12px', fontSize: 'var(--text-caption)', color: '#64748b', lineHeight: 1.5 }}>
           I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
         </p>
         <button
@@ -199,7 +201,7 @@ export default function SupportChatButton() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             width: '100%', padding: '8px 14px',
             background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-            color: '#ffffff', fontSize: 12, fontWeight: 600,
+            color: '#ffffff', fontSize: 'var(--text-caption)', fontWeight: 600,
             border: 'none', borderRadius: 10, cursor: 'pointer',
             fontFamily: 'inherit', letterSpacing: '0.02em',
             transition: 'opacity 0.15s ease',

@@ -89,7 +89,7 @@ export default function MobileRegister() {
   const nextSlide = useCallback(() => setActiveSlide(p => (p + 1) % slides.length), [])
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
-  const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition'
+  const inputCls = 'w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FFFBFB] border outline-none transition'
   const passed = RULES.filter(r => r.test(formData.password)).length
   const level = LEVELS[passed]
   const confirmMatches = formData.confirmPassword.length > 0 && formData.confirmPassword === formData.password
@@ -102,7 +102,7 @@ export default function MobileRegister() {
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
-        <span className="text-[16px] font-extrabold">MobileShop</span>
+        <span className="text-body font-extrabold">MobileShop</span>
       </div>
 
       <div className="relative mx-4 h-[150px] rounded-[24px] overflow-hidden">
@@ -112,34 +112,34 @@ export default function MobileRegister() {
           </div>
         ))}
         <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(203,32,45,0.85), transparent)' }}>
-          <p className="text-white text-[20px] font-bold leading-tight">{slides[activeSlide].label}</p>
-          <p className="text-white/80 text-[12px]">Join the premium club</p>
+          <p className="text-white text-title font-bold leading-tight">{slides[activeSlide].label}</p>
+          <p className="text-white/80 text-caption">Join the premium club</p>
         </div>
       </div>
 
       <div className="flex-1 px-4 mt-4">
         <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-5">
-          <h1 className="text-[24px] font-extrabold">Create Account</h1>
-          <p className="text-[13px] text-[#6B7280] mt-1 mb-5">Sign up for exclusive privileges</p>
+          <h1 className="text-heading font-extrabold">Create Account</h1>
+          <p className="text-label text-[#6B7280] mt-1 mb-5">Sign up for exclusive privileges</p>
 
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Full Name</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Full Name</label>
               <input id="fullName" name="fullName" type="text" value={formData.fullName} onChange={handleChange} placeholder="John Doe" className={inputCls} style={{ borderColor: errors.fullName ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
-              {errors.fullName && <p className="text-[11px] text-[#EF4444] mt-1">{errors.fullName}</p>}
+              {errors.fullName && <p className="text-micro text-[#EF4444] mt-1">{errors.fullName}</p>}
             </div>
 
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" className={`${inputCls} pl-10`} style={{ borderColor: errors.email ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
               </div>
-              {errors.email && <p className="text-[11px] text-[#EF4444] mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-micro text-[#EF4444] mt-1">{errors.email}</p>}
             </div>
 
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Password</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Password</label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="password" name="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={formData.password} onChange={handleChange} placeholder="Create a password" className={`${inputCls} pl-10 pr-12`} style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
@@ -153,21 +153,21 @@ export default function MobileRegister() {
                     <div className="flex-1 grid grid-cols-4 gap-1">
                       {RULES.map((_, i) => <div key={i} className="h-1.5 rounded-full transition-colors" style={{ background: i < passed ? level.color : '#E5E7EB' }} />)}
                     </div>
-                    <span className="text-[11px] font-bold w-14 text-right" style={{ color: level.color }}>{level.label}</span>
+                    <span className="text-micro font-bold w-14 text-right" style={{ color: level.color }}>{level.label}</span>
                   </div>
                   <div className="flex gap-2 mt-1.5">
                     {RULES.map(r => {
                       const ok = r.test(formData.password)
-                      return <span key={r.label} className="text-[10px] font-semibold px-2 py-0.5 rounded-full transition-colors" style={{ background: ok ? '#D1FAE5' : '#F3F4F6', color: ok ? '#059669' : '#9CA3AF' }}>{ok ? '✓ ' : ''}{r.label}</span>
+                      return <span key={r.label} className="text-micro font-semibold px-2 py-0.5 rounded-full transition-colors" style={{ background: ok ? '#D1FAE5' : '#F3F4F6', color: ok ? '#059669' : '#9CA3AF' }}>{ok ? '✓ ' : ''}{r.label}</span>
                     })}
                   </div>
                 </div>
               )}
-              {errors.password && <p className="text-[11px] text-[#EF4444] mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-micro text-[#EF4444] mt-1">{errors.password}</p>}
             </div>
 
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Confirm Password</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Confirm Password</label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="confirmPassword" name="confirmPassword" type={showConfirm ? 'text' : 'password'} autoComplete="new-password" value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter password" className={`${inputCls} pl-10 pr-12`} style={{ borderColor: errors.confirmPassword ? '#EF4444' : confirmMatches ? '#10B981' : '#E5E7EB', color: '#1F2937' }} />
@@ -175,22 +175,22 @@ export default function MobileRegister() {
                   <EyeIcon open={showConfirm} />
                 </button>
               </div>
-              {confirmMatches && !errors.confirmPassword && <p className="text-[11px] text-[#059669] mt-1 font-semibold">✓ Passwords match</p>}
-              {errors.confirmPassword && <p className="text-[11px] text-[#EF4444] mt-1">{errors.confirmPassword}</p>}
+              {confirmMatches && !errors.confirmPassword && <p className="text-micro text-[#059669] mt-1 font-semibold">✓ Passwords match</p>}
+              {errors.confirmPassword && <p className="text-micro text-[#EF4444] mt-1">{errors.confirmPassword}</p>}
             </div>
 
             <div className="flex items-start gap-2.5 pt-1">
               <span onClick={() => setField('agreeTerms', !formData.agreeTerms)} className={`w-5 h-5 rounded mt-0.5 flex items-center justify-center transition flex-shrink-0 ${formData.agreeTerms ? 'text-white' : ''}`} style={{ background: formData.agreeTerms ? PURPLE : '#FFFBFB', border: formData.agreeTerms ? 'none' : '1px solid #E5E7EB' }}>
                 {formData.agreeTerms && <FiCheck size={12} />}
               </span>
-              <label className="text-[12px] text-[#4B5563] cursor-pointer" onClick={() => setField('agreeTerms', !formData.agreeTerms)}>
+              <label className="text-caption text-[#4B5563] cursor-pointer" onClick={() => setField('agreeTerms', !formData.agreeTerms)}>
                 I agree to the <Link to="#" className="font-semibold" style={{ color: PURPLE }}>Terms &amp; Conditions</Link>
               </label>
             </div>
-            {errors.agreeTerms && <p className="text-[11px] text-[#EF4444] -mt-2">{errors.agreeTerms}</p>}
+            {errors.agreeTerms && <p className="text-micro text-[#EF4444] -mt-2">{errors.agreeTerms}</p>}
 
             <button type="submit" disabled={loading}
-              className="w-full rounded-2xl text-[15px] font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
+              className="w-full rounded-2xl text-body font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, height: 52 }}>
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -201,7 +201,7 @@ export default function MobileRegister() {
             </button>
           </form>
 
-          <p className="text-center text-[13px] text-[#6B7280] mt-5">
+          <p className="text-center text-label text-[#6B7280] mt-5">
             Already have an account?{' '}
             <Link to="/login" className="font-bold" style={{ color: PURPLE }}>Login</Link>
           </p>

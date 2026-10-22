@@ -46,9 +46,9 @@
 
 .ca-addr-body { min-width: 0; }
 .ca-addr-top { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; padding-right: 140px; }
-.ca-addr-top strong { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
-.ca-addr-body p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--cx-ink-2); }
-.ca-phone { display: flex; align-items: center; gap: 6px; margin-top: 6px !important; color: var(--cx-muted) !important; font-size: 13px !important; }
+.ca-addr-top strong { font-family: var(--font-display); font-size: var(--text-body); font-weight: 600; }
+.ca-addr-body p { margin: 0; font-size: var(--text-body-sm); line-height: 1.55; color: var(--cx-ink-2); }
+.ca-phone { display: flex; align-items: center; gap: 6px; margin-top: 6px !important; color: var(--cx-muted) !important; font-size: var(--text-label) !important; }
 
 .ca-chip {
   display: inline-flex;
@@ -58,7 +58,7 @@
   border-radius: 999px;
   background: var(--cx-bg);
   color: var(--cx-ink-2);
-  font-size: 11.5px;
+  font-size: var(--text-caption);
   font-weight: 600;
 }
 .ca-chip.is-default { background: var(--cx-green-tint); color: var(--cx-green); }
@@ -74,13 +74,13 @@
   border-radius: 999px;
   background: var(--cx-red);
   color: #fff;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 700;
 }
 
 .ca-addr-actions,
 .ca-confirm { display: flex; align-items: center; gap: 18px; margin-top: 12px; }
-.ca-confirm span { font-size: 13px; font-weight: 600; color: var(--cx-red); }
+.ca-confirm span { font-size: var(--text-label); font-weight: 600; color: var(--cx-red); }
 .ca-danger {
   display: inline-flex;
   align-items: center;
@@ -91,7 +91,7 @@
   border-radius: var(--radius-md, 8px);
   background: var(--cx-red);
   color: #fff;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 700;
 }
 .ca-danger:hover:not(:disabled) { background: var(--cx-red-dark); }
@@ -108,7 +108,7 @@
   border-radius: var(--radius-lg, 12px);
   background: transparent;
   color: var(--cx-ink-2);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 600;
 }
 .ca-add:hover { border-color: var(--cx-red); color: var(--cx-red); background: var(--cx-red-tint); }
@@ -126,12 +126,12 @@
 .ca-list + .ca-form { margin-top: 4px; }
 .cx-card-head + .ca-form { border-top: 0; }
 .ca-form-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.ca-form-head h3 { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+.ca-form-head h3 { margin: 0; font-family: var(--font-display); font-size: var(--text-body); font-weight: 600; }
 
 .ca-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
 .ca-field { display: flex; flex-direction: column; gap: 6px; }
 .ca-field.is-wide { grid-column: 1 / -1; }
-.ca-field label { font-size: 13px; font-weight: 600; color: var(--cx-ink-2); }
+.ca-field label { font-size: var(--text-label); font-weight: 600; color: var(--cx-ink-2); }
 .ca-field label span { font-weight: 500; color: var(--cx-muted); }
 .ca-field input {
   height: 46px;
@@ -140,16 +140,16 @@
   border-radius: var(--radius-md, 8px);
   background: #fff;
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--text-body-sm);
   color: var(--cx-ink);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .ca-field input:focus { outline: none; border-color: var(--cx-red); box-shadow: 0 0 0 3px var(--cx-red-tint); }
 .ca-field.has-error input { border-color: var(--cx-red); }
-.ca-field-err { margin: 0; font-size: 12.5px; color: var(--cx-red); font-weight: 500; }
+.ca-field-err { margin: 0; font-size: var(--text-caption); color: var(--cx-red); font-weight: 500; }
 
 .ca-type { border: 0; margin: 18px 0 0; padding: 0; }
-.ca-type legend { padding: 0; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--cx-ink-2); }
+.ca-type legend { padding: 0; margin-bottom: 8px; font-size: var(--text-label); font-weight: 600; color: var(--cx-ink-2); }
 .ca-type div { display: flex; gap: 10px; }
 .ca-type button {
   display: inline-flex;
@@ -161,13 +161,13 @@
   border-radius: 999px;
   background: #fff;
   color: var(--cx-ink-2);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
 }
 .ca-type button:hover { border-color: var(--cx-red); color: var(--cx-red); }
 .ca-type button.is-active { border-color: var(--cx-red); background: var(--cx-red-tint); color: var(--cx-red); }
 
-.ca-check { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; color: var(--cx-ink-2); cursor: pointer; }
+.ca-check { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; font-size: var(--text-body-sm); color: var(--cx-ink-2); cursor: pointer; }
 .ca-check input { position: absolute; opacity: 0; pointer-events: none; }
 .ca-check-box {
   display: grid;

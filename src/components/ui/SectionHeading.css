@@ -44,12 +44,12 @@
   color: var(--color-pf-red-dark);
   font-family: var(--font-ui);
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: var(--text-caption);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .sec-eyebrow__ic {
-  font-size: 16px;
+  font-size: var(--text-body);
   line-height: 1;
 }
 
@@ -67,12 +67,12 @@
   margin: 14px 0 0;
   color: var(--color-on-surface-variant);
   font-family: var(--font-ui);
-  font-size: 1rem;
+  font-size: var(--text-body);
   line-height: 1.55;
 }
 @media (min-width: 768px) {
   .sec-sub {
-    font-size: 1.125rem;
+    font-size: var(--text-title-sm);
   }
 }
 .sec-head--center .sec-sub {

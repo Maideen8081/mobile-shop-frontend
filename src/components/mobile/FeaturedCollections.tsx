@@ -55,9 +55,9 @@ export default function FeaturedCollections() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-3 text-left">
-                <h3 className="text-white text-[14px] font-extrabold leading-tight drop-shadow">{c.name}</h3>
+                <h3 className="text-white text-body-sm font-extrabold leading-tight drop-shadow">{c.name}</h3>
                 {typeof c.products === 'number' && (
-                  <p className="text-white/85 text-[10.5px] mt-0.5 font-medium">{c.products} products</p>
+                  <p className="text-white/85 text-micro mt-0.5 font-medium">{c.products} products</p>
                 )}
               </div>
             </button>

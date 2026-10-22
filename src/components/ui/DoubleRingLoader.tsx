@@ -55,7 +55,7 @@ export default function DoubleRingLoader({ size = 48, color = '#D91E36', classNa
       </div>
 
       {label && (
-        <p className="mt-3 text-[13px] font-semibold text-[#6B7280]">{label}</p>
+        <p className="mt-3 text-label font-semibold text-[#6B7280]">{label}</p>
       )}
 
       <style>{`

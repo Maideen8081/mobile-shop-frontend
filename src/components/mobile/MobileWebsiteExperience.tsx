@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ChatAssistantIcon from "../ecommerce/ChatAssistantIcon";
+import { useRingStepper } from "../../hooks/useRingStepper";
 import { WEB_PRODUCTS, WEB_REVIEWS, inr, shopUrl } from "../../data/websiteCatalog";
 import "../../styles/website-experience.css";
 
@@ -155,15 +157,15 @@ function DeckCard({ r, depth, onSwipe }: { r: Review; depth: number; onSwipe: ()
         <div className="mb-3 text-lg tracking-widest" style={{ color: C.accent }}>
           {"★".repeat(r.stars)}<span style={{ color: C.border }}>{"★".repeat(5 - r.stars)}</span>
         </div>
-        <p className="text-[17px] leading-relaxed">"{r.text}"</p>
+        <p className="text-title-sm leading-relaxed">"{r.text}"</p>
       </div>
       <div className="mt-5 flex items-center gap-3">
         <span className="flex h-11 w-11 items-center justify-center rounded-full font-display text-lg font-bold" style={{ background: `linear-gradient(to bottom right, ${C.primary}, ${C.magenta})` }}>
           {r.name[0]}
         </span>
         <div>
-          <div className="text-[15px] font-medium">{r.name}</div>
-          <div className="text-[13px]" style={{ color: C.muted }}>{r.item}</div>
+          <div className="text-body font-medium">{r.name}</div>
+          <div className="text-label" style={{ color: C.muted }}>{r.item}</div>
         </div>
       </div>
     </motion.article>
@@ -188,11 +190,11 @@ function ReviewDeck() {
             <span key={r.name} className="h-1.5 rounded-full transition-all duration-500" style={{ width: i === front ? 28 : 6, background: i === front ? C.primary : C.border }} />
           ))}
         </div>
-        <button onClick={() => { buzz(); next(); }} className="flex h-10 items-center gap-2 rounded-full px-4 text-[13px] font-semibold transition active:scale-95" style={{ border: `1px solid ${C.border}` }}>
+        <button onClick={() => { buzz(); next(); }} className="flex h-10 items-center gap-2 rounded-full px-4 text-label font-semibold transition active:scale-95" style={{ border: `1px solid ${C.border}` }}>
           Next review <span aria-hidden="true">→</span>
         </button>
       </div>
-      <p className="mt-3 text-center text-[11px] uppercase tracking-[0.3em]" style={{ color: C.muted }}>Swipe the card</p>
+      <p className="mt-3 text-center text-micro uppercase tracking-[0.3em]" style={{ color: C.muted }}>Swipe the card</p>
     </div>
   );
 }
@@ -204,6 +206,8 @@ export default function MobileWebsiteExperience() {
   const [count, setCount] = useState(0);
   const [tag, setTag] = useState("All");
   const [active, setActive] = useState(0);
+  const lineupStage = useRef<HTMLDivElement>(null);
+  const { attach: attachRing, sync: syncRing, snap: snapRing, step: stepRing } = useRingStepper(WEB_PRODUCTS.length, lineupStage);
   const [showBar, setShowBar] = useState(false);
   const products = tag === "All" ? WEB_PRODUCTS : WEB_PRODUCTS.filter((p) => p.tag === tag);
   const { ref: shelfRef, idx: shelfIdx, goTo: shelfGoTo } = useCoverflow(tag);
@@ -344,17 +348,19 @@ export default function MobileWebsiteExperience() {
             (it.firstElementChild as HTMLElement).style.opacity = String(Math.max(0, c) ** 1.6);
           });
           const front = (((Math.round(-spin.r / step) % N) + N) % N);
+          syncRing(front);
           if (front !== last) { last = front; setActive(front); }
         };
         render();
-        gsap.to(spin, {
+        const spinTween = gsap.to(spin, {
           r: -(N - 1) * step, ease: "none", onUpdate: render,
           scrollTrigger: {
             trigger: ".wem-lineup", start: "top top", end: () => `+=${N * 55}%`,
             pin: true, scrub: 0.7, anticipatePin: 1,
-            snap: { snapTo: 1 / (N - 1), duration: { min: 0.2, max: 0.5 }, delay: 0.05, ease: "power2.inOut" },
+            snap: { snapTo: snapRing, duration: { min: 0.2, max: 0.5 }, delay: 0.05, ease: "power2.inOut" },
           },
         });
+        attachRing(spinTween.scrollTrigger);
         gsap.to(".wem-lineup-bar", { scaleX: 1, ease: "none", scrollTrigger: { trigger: ".wem-lineup", start: "top top", end: () => `+=${N * 55}%`, scrub: true } });
       }
 
@@ -430,7 +436,7 @@ export default function MobileWebsiteExperience() {
     const bar = ScrollTrigger.create({ trigger: "#products", start: "top 70%", end: "max", onToggle: (s) => setShowBar(s.isActive) });
 
     return () => { bar.kill(); cleanups.forEach((fn) => fn()); ctx.revert(); };
-  }, [reduce]);
+  }, [reduce, attachRing, syncRing, snapRing]);
 
   return (
     <div ref={root} className="we wem relative min-h-screen" style={{ background: C.bg, color: C.fg }}>
@@ -441,7 +447,7 @@ export default function MobileWebsiteExperience() {
           <div className="mt-3 h-[3px] w-40 overflow-hidden rounded-full" style={{ background: "rgba(7,4,10,0.2)" }}>
             <div className="h-full rounded-full" style={{ width: `${count}%`, background: C.bg }} />
           </div>
-          <p className="mt-3 text-[11px] uppercase tracking-[0.3em]">Powering up the store</p>
+          <p className="mt-3 text-micro uppercase tracking-[0.3em]">Powering up the store</p>
         </div>
       </div>
 
@@ -457,7 +463,7 @@ export default function MobileWebsiteExperience() {
           <Link to="/support" aria-label="Chat with PhoneFix Assistant" className="flex h-9 w-9 items-center justify-center rounded-full active:scale-90 transition" style={{ background: "rgba(246,239,233,0.08)", border: `1px solid ${C.border}` }}>
             <ChatAssistantIcon size={20} />
           </Link>
-          <Link to="/home" className="wem-shine relative overflow-hidden rounded-full px-4 py-2 text-[13px] font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
+          <Link to="/home" className="wem-shine relative overflow-hidden rounded-full px-4 py-2 text-label font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
             Shop now
           </Link>
         </div>
@@ -505,26 +511,26 @@ export default function MobileWebsiteExperience() {
           </div>
         </div>
 
-        <p className="wem-hero-fade relative z-10 mt-4 max-w-[19rem] text-center text-[15px] leading-relaxed" style={{ color: C.muted }}>
+        <p className="wem-hero-fade relative z-10 mt-4 max-w-[19rem] text-center text-body leading-relaxed" style={{ color: C.muted }}>
           Phones, accessories and same-day repairs, all under one roof.
         </p>
         <div className="wem-hero-fade relative z-10 mt-6 grid w-full max-w-sm grid-cols-2 gap-3">
-          <Link to="/home" className="wem-shine relative flex h-12 items-center justify-center overflow-hidden rounded-full text-[15px] font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg, boxShadow: "0 12px 30px rgba(255,59,78,0.35)" }}>
+          <Link to="/home" className="wem-shine relative flex h-12 items-center justify-center overflow-hidden rounded-full text-body font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg, boxShadow: "0 12px 30px rgba(255,59,78,0.35)" }}>
             Shop now →
           </Link>
-          <Link to="/book-repair" className="flex h-12 items-center justify-center rounded-full text-[15px] font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, color: C.fg, background: "rgba(246,239,233,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+          <Link to="/book-repair" className="flex h-12 items-center justify-center rounded-full text-body font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, color: C.fg, background: "rgba(246,239,233,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
             Book repair
           </Link>
         </div>
         <div className="wem-hero-fade relative z-10 mt-6 flex flex-col items-center gap-2">
           {needsMotionPermission && !reduce ? (
-            <button onClick={enableMotion} className="rounded-full px-4 py-2 text-[12px] font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, background: "rgba(246,239,233,0.06)" }}>
+            <button onClick={enableMotion} className="rounded-full px-4 py-2 text-caption font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, background: "rgba(246,239,233,0.06)" }}>
               ✦ Enable 3D motion
             </button>
           ) : (
-            !reduce && <span className="text-[10px] uppercase tracking-[0.3em]" style={{ color: C.muted }}>Tilt or drag to explore</span>
+            !reduce && <span className="text-micro uppercase tracking-[0.3em]" style={{ color: C.muted }}>Tilt or drag to explore</span>
           )}
-          <a href={reduce ? "#products" : "#lineup"} className="flex flex-col items-center gap-1 text-[10px] uppercase tracking-[0.3em]" style={{ color: C.muted }}>
+          <a href={reduce ? "#products" : "#lineup"} className="flex flex-col items-center gap-1 text-micro uppercase tracking-[0.3em]" style={{ color: C.muted }}>
             Swipe up
             <span className="wem-bob text-base" style={{ color: C.fg }}>↓</span>
           </a>
@@ -564,24 +570,36 @@ export default function MobileWebsiteExperience() {
         <section id="lineup" className="wem-lineup relative flex h-[100svh] flex-col overflow-hidden pt-[calc(env(safe-area-inset-top)+72px)] pb-[calc(env(safe-area-inset-bottom)+20px)]">
           <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 40% at 50% 55%, rgba(194,24,91,0.35), transparent 70%)" }} />
           <div className="relative px-5">
-            <div className="mb-2 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em]" style={{ color: C.primary }}>
+            <div className="mb-2 flex items-center gap-3 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>
               <span className="h-px w-10" style={{ background: C.primary }} />Chapter 01
             </div>
             <Split text="THE LINEUP" className="wem-rv block font-display font-extrabold leading-[0.9] tracking-tighter" style={{ fontSize: "clamp(44px, 14vw, 84px)" }} />
           </div>
 
-          <div className="relative flex flex-1 items-center justify-center" style={{ perspective: 900 }}>
+          <div ref={lineupStage} className="relative flex flex-1 select-none items-center justify-center" style={{ perspective: 900, touchAction: "pan-y" }}>
             <div className="wem-ring p3d relative h-0 w-0">
               {WEB_PRODUCTS.map((p) => (
                 <div key={p.slug} className="wem-ring-item p3d absolute" style={{ width: "44vw", maxWidth: 210, height: "min(58vw, 280px)", left: "calc(min(44vw, 210px) / -2)", top: "calc(min(58vw, 280px) / -2)" }}>
                   <Link to={shopUrl(p.slug)} className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[26px] p-3" style={{ background: `linear-gradient(160deg, #2a111d, ${C.card} 65%)`, border: `1px solid ${C.border}`, backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
                     <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,59,78,0.45), transparent 70%)" }} />
                     <img src={p.src} alt={p.name} loading="lazy" draggable={false} className="max-h-[75%] max-w-[85%] object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]" />
-                    <span className="absolute bottom-3 left-3 rounded-full px-2.5 py-0.5 text-[10px] font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
+                    <span className="absolute bottom-3 left-3 rounded-full px-2.5 py-0.5 text-micro font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
                   </Link>
                 </div>
               ))}
             </div>
+            {([["prev", -1, ChevronLeft, "left-3"], ["next", 1, ChevronRight, "right-3"]] as const).map(([label, dir, Icon, side]) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => stepRing(dir)}
+                aria-label={label === "prev" ? "Previous product" : "Next product"}
+                className={`absolute top-1/2 z-20 -mt-[22px] flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition active:scale-90 ${side}`}
+                style={{ background: "rgba(7,4,10,0.45)", border: `1px solid ${C.border}`, color: C.fg }}
+              >
+                <Icon size={22} strokeWidth={2} />
+              </button>
+            ))}
             {/* reflective floor */}
             <div className="pointer-events-none absolute bottom-[6%] left-1/2 h-10 w-[70vw] -translate-x-1/2 rounded-[50%] blur-xl" style={{ background: "rgba(255,59,78,0.35)" }} />
           </div>
@@ -589,11 +607,11 @@ export default function MobileWebsiteExperience() {
           <div className="relative px-5" style={{ perspective: 600 }}>
             <motion.div key={active} initial={{ opacity: 0, y: 24, rotateX: -60 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="flex items-end justify-between gap-3" style={{ transformOrigin: "50% 100%" }}>
               <div className="min-w-0">
-                <p className="text-[11px] uppercase tracking-[0.25em]" style={{ color: C.muted }}>{String(active + 1).padStart(2, "0")} / {String(WEB_PRODUCTS.length).padStart(2, "0")} · {lineupProduct.tag}</p>
+                <p className="text-micro uppercase tracking-[0.25em]" style={{ color: C.muted }}>{String(active + 1).padStart(2, "0")} / {String(WEB_PRODUCTS.length).padStart(2, "0")} · {lineupProduct.tag}</p>
                 <h3 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">{lineupProduct.name}</h3>
                 <p className="font-display text-xl font-bold" style={{ color: C.primary }}>{inr(lineupProduct.price)}</p>
               </div>
-              <Link to={shopUrl(lineupProduct.slug)} className="wem-shine relative flex h-12 shrink-0 items-center overflow-hidden rounded-full px-5 text-[14px] font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
+              <Link to={shopUrl(lineupProduct.slug)} className="wem-shine relative flex h-12 shrink-0 items-center overflow-hidden rounded-full px-5 text-body-sm font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
                 Buy →
               </Link>
             </motion.div>
@@ -607,11 +625,11 @@ export default function MobileWebsiteExperience() {
       {/* ══ SHOP: coverflow shelf ══ */}
       <section id="products" className="relative pt-14 pb-14">
         <div className="px-5">
-          <div className="wem-reveal mb-3 flex items-center gap-3 text-[11px] uppercase tracking-[0.3em]" style={{ color: C.primary }}>
+          <div className="wem-reveal mb-3 flex items-center gap-3 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>
             <span className="h-px w-10" style={{ background: C.primary }} />Chapter 02
           </div>
           <Split text="PRODUCTS" className="wem-rv block font-display font-extrabold leading-[0.9] tracking-tighter" style={{ fontSize: "clamp(52px, 17vw, 96px)" }} />
-          <p className="wem-reveal mt-3 max-w-sm text-[15px]" style={{ color: C.muted }}>New phones, audio and charging gear. Swipe through and pick what you like.</p>
+          <p className="wem-reveal mt-3 max-w-sm text-body" style={{ color: C.muted }}>New phones, audio and charging gear. Swipe through and pick what you like.</p>
         </div>
 
         <div className="wem-noscroll wem-reveal mt-6 flex gap-2 overflow-x-auto px-5" role="tablist" aria-label="Product categories">
@@ -621,7 +639,7 @@ export default function MobileWebsiteExperience() {
               role="tab"
               aria-selected={tag === t}
               onClick={() => { buzz(); setTag(t); }}
-              className="relative h-9 shrink-0 rounded-full px-4 text-[13px] font-semibold transition active:scale-95"
+              className="relative h-9 shrink-0 rounded-full px-4 text-label font-semibold transition active:scale-95"
               style={tag === t ? { color: C.bg } : { border: `1px solid ${C.border}`, color: C.fg }}
             >
               {tag === t && <motion.span layoutId="wem-chip" className="absolute inset-0 rounded-full" style={{ background: C.fg }} transition={{ type: "spring", stiffness: 420, damping: 32 }} />}
@@ -636,12 +654,12 @@ export default function MobileWebsiteExperience() {
               <div className="h-full will-change-transform" style={{ transformStyle: "preserve-3d" }}>
                 <article className="wem-card-in relative flex h-full flex-col overflow-hidden rounded-[26px] p-4" style={{ animationDelay: `${Math.min(i, 3) * 70}ms`, background: `linear-gradient(160deg, #22101a, ${C.card} 60%)`, border: `1px solid ${C.border}`, boxShadow: "0 24px 50px rgba(0,0,0,0.5)" }}>
                   <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,59,78,0.35), transparent 70%)" }} />
-                  <span className="relative z-10 self-start rounded-full px-3 py-1 text-[11px] font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
+                  <span className="relative z-10 self-start rounded-full px-3 py-1 text-micro font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
                   <div className="relative z-10 flex h-[38vw] max-h-[180px] items-center justify-center py-3">
                     <img src={p.src} alt={p.name} loading="lazy" draggable={false} className={`max-h-full max-w-[80%] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)] transition-transform duration-700 ${i === shelfIdx ? "scale-110 -rotate-3" : ""}`} />
                   </div>
                   <h3 className="relative z-10 font-display text-xl font-bold leading-tight tracking-tight">{p.name}</h3>
-                  <p className="relative z-10 mt-1 line-clamp-2 text-[13px]" style={{ color: C.muted }}>{p.blurb}</p>
+                  <p className="relative z-10 mt-1 line-clamp-2 text-label" style={{ color: C.muted }}>{p.blurb}</p>
                   <div className="relative z-10 mt-4 flex items-center justify-between">
                     <span className="font-display text-2xl font-bold" style={{ color: C.primary }}>{inr(p.price)}</span>
                     <Link to={shopUrl(p.slug)} aria-label={`Buy ${p.name}`} className="flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold active:scale-90 transition" style={{ background: C.primary, color: C.bg }}>
@@ -663,8 +681,8 @@ export default function MobileWebsiteExperience() {
       {/* ══ HOW IT WORKS: stacking 3D cards ══ */}
       <section className="px-4 pb-16">
         <div className="px-1">
-          <p className="wem-reveal mb-2 text-[11px] uppercase tracking-[0.3em]" style={{ color: C.primary }}>How it works</p>
-          <Split text="Fixed in three steps." className="wem-rv mb-8 block font-display text-[40px] font-bold leading-[1.02] tracking-tight" />
+          <p className="wem-reveal mb-2 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>How it works</p>
+          <Split text="Fixed in three steps." className="wem-rv mb-8 block font-display text-headline font-bold leading-[1.02] tracking-tight" />
         </div>
         {STEPS.map(([n, t, d, img, bg], i) => (
           <div key={n} className="wem-step sticky mb-5" style={{ top: `calc(env(safe-area-inset-top) + ${76 + i * 16}px)`, perspective: 1000 }}>
@@ -672,7 +690,7 @@ export default function MobileWebsiteExperience() {
               <div className="relative z-10 max-w-[62%]">
                 <div className="font-display text-[72px] font-extrabold leading-[0.85] tracking-tighter" style={{ color: "transparent", WebkitTextStroke: `1.5px ${i === 2 ? C.bg : C.fg}` }}>{n}</div>
                 <h3 className="mt-4 font-display text-2xl font-bold">{t}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed" style={{ color: i === 2 ? "rgba(255,255,255,0.85)" : C.muted }}>{d}</p>
+                <p className="mt-2 text-body-sm leading-relaxed" style={{ color: i === 2 ? "rgba(255,255,255,0.85)" : C.muted }}>{d}</p>
               </div>
               <img src={img} alt="" loading="lazy" className="wem-step-img pointer-events-none absolute -right-6 bottom-2 h-[210px] w-auto object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)]" />
               <div className="wem-step-shade pointer-events-none absolute inset-0 z-20 bg-black opacity-0" />
@@ -683,10 +701,10 @@ export default function MobileWebsiteExperience() {
         <div className="mt-8 grid grid-cols-3 gap-2" style={{ perspective: 800 }}>
           {STATS.map(([n, pre, suf, t]) => (
             <div key={t} className="wem-flip rounded-2xl px-2 py-4 text-center" style={{ background: C.card, border: `1px solid ${C.border}` }}>
-              <div className="font-display text-[32px] font-extrabold leading-none tracking-tight" style={{ color: C.primary }}>
+              <div className="font-display text-heading font-extrabold leading-none tracking-tight" style={{ color: C.primary }}>
                 {pre}<span className="wem-count" data-to={n}>{n}</span><span className="text-lg">{suf}</span>
               </div>
-              <p className="mt-2 text-[11px] leading-tight" style={{ color: C.muted }}>{t}</p>
+              <p className="mt-2 text-micro leading-tight" style={{ color: C.muted }}>{t}</p>
             </div>
           ))}
         </div>
@@ -694,9 +712,9 @@ export default function MobileWebsiteExperience() {
         <div className="wem-reveal mt-6" style={{ perspective: 900 }}>
           <Link to="/book-repair" className="wem-tilt wem-glow-card relative flex items-center gap-4 rounded-[26px] p-5" style={{ background: `linear-gradient(135deg, ${C.primary}, ${C.magenta})`, color: C.fg, transformStyle: "preserve-3d" }}>
             <div className="relative flex-1" style={{ transform: "translateZ(30px)" }}>
-              <p className="text-[11px] uppercase tracking-[0.25em] opacity-80">Same-day repair</p>
+              <p className="text-micro uppercase tracking-[0.25em] opacity-80">Same-day repair</p>
               <p className="mt-1 font-display text-xl font-bold leading-tight">Cracked screen? Dead battery?</p>
-              <p className="mt-2 text-[13px] font-semibold">Book a slot →</p>
+              <p className="mt-2 text-label font-semibold">Book a slot →</p>
             </div>
             <img src="/phones/ios-b.png" alt="" className="relative h-28 w-auto drop-shadow-[0_16px_24px_rgba(0,0,0,0.45)]" style={{ transform: "translateZ(60px) rotate(12deg)" }} />
           </Link>
@@ -706,15 +724,15 @@ export default function MobileWebsiteExperience() {
       {/* ══ REVIEWS: swipe deck ══ */}
       <section id="reviews" className="pb-16" style={{ background: "linear-gradient(to bottom, transparent, #14060c 18%, #14060c 82%, transparent)" }}>
         <div className="px-5 pt-6">
-          <p className="wem-reveal mb-2 text-[11px] uppercase tracking-[0.3em]" style={{ color: C.primary }}>Customer reviews</p>
-          <Split text="Loved by the neighbourhood." className="wem-rv block font-display text-[40px] font-bold leading-[1.02] tracking-tight" />
+          <p className="wem-reveal mb-2 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>Customer reviews</p>
+          <Split text="Loved by the neighbourhood." className="wem-rv block font-display text-headline font-bold leading-[1.02] tracking-tight" />
           <div className="wem-reveal mt-5 mb-8 flex items-center gap-4">
             <div className="font-display text-6xl font-extrabold" style={{ color: C.primary }}>
               <span className="wem-count" data-to="4.9" data-dec="1">4.9</span>
             </div>
             <div>
               <div className="text-lg tracking-widest" style={{ color: C.accent }}>★★★★★</div>
-              <div className="text-[13px]" style={{ color: C.muted }}><span className="wem-count" data-to="1200">1,200</span>+ happy customers</div>
+              <div className="text-label" style={{ color: C.muted }}><span className="wem-count" data-to="1200">1,200</span>+ happy customers</div>
             </div>
           </div>
         </div>
@@ -744,16 +762,16 @@ export default function MobileWebsiteExperience() {
             <Split text="Drop in." className="wem-rv block" />
             <Split text="Power up." className="wem-rv block" style={{ color: "transparent", WebkitTextStroke: `2px ${C.fg}` }} />
           </h2>
-          <p className="wem-reveal mx-auto mt-4 max-w-[17rem] text-[15px]" style={{ color: C.muted }}>Found something you like? Pick up where you left off.</p>
+          <p className="wem-reveal mx-auto mt-4 max-w-[17rem] text-body" style={{ color: C.muted }}>Found something you like? Pick up where you left off.</p>
           <div className="wem-reveal relative mt-8 inline-block">
             <span className="wem-pulse absolute inset-0 rounded-full" style={{ background: C.primary }} aria-hidden="true" />
-            <Link to="/home" className="wem-shine relative inline-flex h-14 items-center overflow-hidden rounded-full px-9 text-[16px] font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
+            <Link to="/home" className="wem-shine relative inline-flex h-14 items-center overflow-hidden rounded-full px-9 text-body font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
               Continue purchase →
             </Link>
           </div>
         </div>
 
-        <footer className="absolute inset-x-0 bottom-0 z-10 flex justify-between px-5 pb-[calc(env(safe-area-inset-bottom)+88px)] text-[11px]" style={{ color: C.muted }}>
+        <footer className="absolute inset-x-0 bottom-0 z-10 flex justify-between px-5 pb-[calc(env(safe-area-inset-bottom)+88px)] text-micro" style={{ color: C.muted }}>
           <span>© {new Date().getFullYear()} mobileshop</span>
           <span>Phones · Accessories</span>
         </footer>
@@ -767,10 +785,10 @@ export default function MobileWebsiteExperience() {
       >
         <div className="flex items-center gap-3 rounded-full p-1.5 pl-5 shadow-[0_16px_40px_rgba(0,0,0,0.6)]" style={{ background: "rgba(26,11,18,0.88)", border: `1px solid ${C.border}`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-semibold">Phones, audio & repairs</p>
-            <p className="text-[11px]" style={{ color: C.muted }}>Free diagnosis · 6-mo warranty</p>
+            <p className="truncate text-label font-semibold">Phones, audio & repairs</p>
+            <p className="text-micro" style={{ color: C.muted }}>Free diagnosis · 6-mo warranty</p>
           </div>
-          <Link to="/home" tabIndex={showBar ? 0 : -1} className="wem-shine relative flex h-11 shrink-0 items-center overflow-hidden rounded-full px-5 text-[14px] font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
+          <Link to="/home" tabIndex={showBar ? 0 : -1} className="wem-shine relative flex h-11 shrink-0 items-center overflow-hidden rounded-full px-5 text-body-sm font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
             Shop now →
           </Link>
         </div>

@@ -11,7 +11,7 @@ export default function MobileSearchBar() {
         aria-label="Search"
       >
         <Search size={20} className="text-[#CB202D] flex-shrink-0" />
-        <span className="flex-1 text-left text-[14px] text-[#6B7280] truncate font-medium">
+        <span className="flex-1 text-left text-body-sm text-[#6B7280] truncate font-medium">
           Search products, brands, categories...
         </span>
         <span className="flex items-center gap-2.5 pl-1">

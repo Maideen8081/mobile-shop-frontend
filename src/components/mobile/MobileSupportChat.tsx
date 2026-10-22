@@ -36,8 +36,8 @@ export default function MobileSupportChat() {
             <ChatAssistantIcon size={22} />
           </span>
           <div className="flex-1 min-w-0">
-            <h1 className="text-[16px] font-bold leading-tight truncate">PhoneFix Assistant</h1>
-            <p className="text-[11px] text-white/85 mt-0.5 flex items-center gap-1.5 truncate">
+            <h1 className="text-body font-bold leading-tight truncate">PhoneFix Assistant</h1>
+            <p className="text-micro text-white/85 mt-0.5 flex items-center gap-1.5 truncate">
               <i className="w-2 h-2 rounded-full bg-[#22C55E] inline-block flex-shrink-0" aria-hidden="true" />
               Online · replies instantly
             </p>
@@ -61,15 +61,15 @@ export default function MobileSupportChat() {
                 <ChatAssistantIcon size={16} />
               </span>
               <div className="bg-white rounded-2xl rounded-bl-[6px] px-3.5 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] min-w-0">
-                <p className="text-[14px] leading-snug text-[#1F2937] whitespace-pre-wrap break-words">{m.text}</p>
-                <time className="block text-[10px] text-[#9CA3AF] mt-1">{m.time}</time>
+                <p className="text-body-sm leading-snug text-[#1F2937] whitespace-pre-wrap break-words">{m.text}</p>
+                <time className="block text-micro text-[#9CA3AF] mt-1">{m.time}</time>
               </div>
             </div>
           ) : (
             <div key={m.id} className="flex justify-end">
               <div className="max-w-[80%] rounded-2xl rounded-br-[6px] px-3.5 py-2.5 text-white shadow-[0_4px_14px_rgba(203,32,45,0.25)]" style={{ background: gradient }}>
-                <p className="text-[14px] leading-snug whitespace-pre-wrap break-words">{m.text}</p>
-                <time className="block text-[10px] text-white/75 mt-1 text-right">{m.time}</time>
+                <p className="text-body-sm leading-snug whitespace-pre-wrap break-words">{m.text}</p>
+                <time className="block text-micro text-white/75 mt-1 text-right">{m.time}</time>
               </div>
             </div>
           ),
@@ -90,7 +90,7 @@ export default function MobileSupportChat() {
 
         {showStarters && (
           <div className="pt-3">
-            <h2 className="text-[11px] font-semibold uppercase tracking-wide text-[#6B7280] mb-2">Popular help</h2>
+            <h2 className="text-micro font-semibold uppercase tracking-wide text-[#6B7280] mb-2">Popular help</h2>
             <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] divide-y divide-[#F3F4F6] overflow-hidden">
               {helpLinks.map((item) => {
                 const Icon = item.icon
@@ -100,8 +100,8 @@ export default function MobileSupportChat() {
                       <Icon size={17} />
                     </span>
                     <span className="flex-1 min-w-0">
-                      <strong className="block text-[13px] font-semibold text-[#1F2937] truncate">{item.title}</strong>
-                      <em className="block not-italic text-[11px] text-[#6B7280] truncate">{item.desc}</em>
+                      <strong className="block text-label font-semibold text-[#1F2937] truncate">{item.title}</strong>
+                      <em className="block not-italic text-micro text-[#6B7280] truncate">{item.desc}</em>
                     </span>
                     <ChevronRight size={16} className="text-[#D1D5DB] flex-shrink-0" />
                   </Link>
@@ -120,7 +120,7 @@ export default function MobileSupportChat() {
               key={q}
               type="button"
               onClick={() => send(q)}
-              className="flex-shrink-0 h-9 px-3.5 rounded-full bg-white border text-[12px] font-semibold whitespace-nowrap active:scale-95 transition"
+              className="flex-shrink-0 h-9 px-3.5 rounded-full bg-white border text-caption font-semibold whitespace-nowrap active:scale-95 transition"
               style={{ borderColor: 'rgba(203,32,45,0.3)', color: PURPLE }}
             >
               {q}
@@ -145,7 +145,7 @@ export default function MobileSupportChat() {
             aria-label="Type your message"
             autoComplete="off"
             enterKeyHint="send"
-            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#EEF0F6] text-[16px] text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#CB202D]"
+            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#EEF0F6] text-body text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#CB202D]"
           />
           <button
             type="submit"
@@ -157,7 +157,7 @@ export default function MobileSupportChat() {
             <Send size={18} />
           </button>
         </form>
-        <p className="text-[10px] text-[#9CA3AF] text-center mt-1.5">
+        <p className="text-micro text-[#9CA3AF] text-center mt-1.5">
           Automated assistant · urgent help:{' '}
           <a href={`tel:${SUPPORT_PHONE_DIAL}`} className="font-semibold" style={{ color: PURPLE }}>{SUPPORT_PHONE}</a>
         </p>

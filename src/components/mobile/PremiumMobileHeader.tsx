@@ -192,7 +192,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn-red relative">
               <Heart size={18} className="text-white" />
               {wishlistCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -201,7 +201,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn-red relative">
               <ShoppingBag size={18} className="text-white" />
               {cartCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-[10px] font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -250,10 +250,10 @@ export default function PremiumMobileHeader({
                     {img ? (
                       <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-[8px]" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                     ) : (
-                      <span className="text-[24px] leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
+                      <span className="text-heading leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                     )}
                   </div>
-                  <span className={`text-[10px] text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#CB202D]' : 'text-[#1F2937]'}`}>
+                  <span className={`text-micro text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#CB202D]' : 'text-[#1F2937]'}`}>
                     {cat.name}
                   </span>
                 </button>

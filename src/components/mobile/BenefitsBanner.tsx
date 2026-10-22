@@ -20,7 +20,7 @@ export default function BenefitsBanner() {
     <section className="mt-6 px-3.5">
       <div className="flex items-center gap-1.5 mb-2.5 px-0.5">
         <Sparkles size={14} className="text-[#CB202D]" />
-        <h2 className="text-[13px] font-extrabold text-[#0F172A] tracking-tight">Why shop with us</h2>
+        <h2 className="text-label font-bold text-[#0F172A] tracking-tight">Why shop with us</h2>
       </div>
 
       {/* Static 2x2 grid — full text, no scroll, Zepto-style colorful chips */}
@@ -39,8 +39,8 @@ export default function BenefitsBanner() {
                 <Icon size={20} style={{ color: b.iconColor }} strokeWidth={2.2} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-[12.5px] font-bold text-[#0F172A] leading-tight">{b.title}</h3>
-                <p className="text-[10.5px] text-[#64748B] leading-tight mt-0.5">{b.subtitle}</p>
+                <h3 className="text-caption font-bold text-[#0F172A] leading-tight">{b.title}</h3>
+                <p className="text-micro text-[#64748B] leading-tight mt-0.5">{b.subtitle}</p>
               </div>
             </div>
           )

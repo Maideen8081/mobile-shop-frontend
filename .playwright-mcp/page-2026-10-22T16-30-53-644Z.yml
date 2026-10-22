@@ -1,0 +1,264 @@
+- generic [active] [ref=f5e59]:
+  - generic [ref=f5e61]:
+    - complementary [ref=f5e62]:
+      - generic [ref=f5e63]:
+        - generic [ref=f5e68]:
+          - generic [ref=f5e69]: MobileShop
+          - generic [ref=f5e70]: Admin console
+        - button "Jump to… ⌘K" [ref=f5e72]:
+          - generic [ref=f5e75]: Jump to…
+          - generic [ref=f5e76]: ⌘K
+        - navigation "Admin" [ref=f5e77]:
+          - generic [ref=f5e78]:
+            - paragraph [ref=f5e79]: Overview
+            - button "Dashboard" [ref=f5e80]
+          - generic [ref=f5e87]:
+            - paragraph [ref=f5e88]: Catalog
+            - button "Products" [ref=f5e89]
+            - button "Categories" [ref=f5e96]
+          - generic [ref=f5e100]:
+            - paragraph [ref=f5e101]: Sales
+            - button "Orders" [ref=f5e102]
+            - button "Trade-ins" [ref=f5e107]
+            - button "Customers" [ref=f5e114]
+          - generic [ref=f5e121]:
+            - paragraph [ref=f5e122]: Service
+            - button "Repairs" [ref=f5e123]
+            - button "Online bookings" [ref=f5e127]
+            - button "New repair ticket" [ref=f5e132]
+        - generic [ref=f5e136]:
+          - generic [ref=f5e137]:
+            - generic [ref=f5e138]: M
+            - generic [ref=f5e139]:
+              - paragraph [ref=f5e140]: Maideen
+              - paragraph [ref=f5e141]: admin@local.test
+          - generic [ref=f5e142]:
+            - button "Storefront" [ref=f5e143]
+            - button "Sign out" [ref=f5e148]
+    - generic [ref=f5e152]:
+      - banner [ref=f5e153]:
+        - generic [ref=f5e154]:
+          - navigation "Breadcrumb" [ref=f5e155]:
+            - generic [ref=f5e156]: Catalog
+            - generic [ref=f5e159]: Product Management
+          - button "Search… ⌘K" [ref=f5e160]:
+            - generic [ref=f5e164]: Search…
+            - generic [ref=f5e165]: ⌘K
+          - button "New" [ref=f5e167]
+          - button "Account menu" [ref=f5e171]: M
+      - main [ref=f5e172]:
+        - generic [ref=f5e173]:
+          - generic [ref=f5e174]:
+            - heading "Products" [level=2] [ref=f5e175]
+            - paragraph [ref=f5e176]: Add and manage phones, accessories and their variants. Changes go live on the storefront immediately.
+          - generic [ref=f5e177]:
+            - button "Refresh" [ref=f5e178]
+            - button "Add product" [ref=f5e183]
+        - generic [ref=f5e185]:
+          - generic [ref=f5e186]:
+            - generic [ref=f5e187]:
+              - generic [ref=f5e188]: Total products
+              - generic [ref=f5e195]: "8"
+            - generic [ref=f5e198]:
+              - generic [ref=f5e199]: Published
+              - generic [ref=f5e205]: "8"
+            - generic [ref=f5e208]:
+              - generic [ref=f5e209]: Trending
+              - generic [ref=f5e215]: "0"
+            - generic [ref=f5e218]:
+              - generic [ref=f5e219]: Best selling
+              - generic [ref=f5e225]: "0"
+            - generic [ref=f5e228]:
+              - generic [ref=f5e229]: Low stock
+              - generic [ref=f5e234]: "4"
+            - generic [ref=f5e237]:
+              - generic [ref=f5e238]: Variants
+              - generic [ref=f5e245]: "11"
+          - generic [ref=f5e248]:
+            - generic [ref=f5e250]:
+              - textbox "Search products..." [ref=f5e255]
+              - generic [ref=f5e256]:
+                - button "all" [ref=f5e258] [cursor=pointer]
+                - combobox [ref=f5e263] [cursor=pointer]:
+                  - option "Newest" [selected]
+                  - option "Oldest"
+                  - 'option "Price: Low"'
+                  - 'option "Price: High"'
+            - generic [ref=f5e264]:
+              - button "Table" [pressed] [ref=f5e265] [cursor=pointer]
+              - button "Cards" [ref=f5e268] [cursor=pointer]
+          - generic [ref=f5e275]:
+            - button "All 8" [pressed] [ref=f5e276] [cursor=pointer]:
+              - text: All
+              - generic [ref=f5e277]: "8"
+            - button "Trending 0" [ref=f5e278] [cursor=pointer]:
+              - text: Trending
+              - generic [ref=f5e279]: "0"
+            - button "New arrival 0" [ref=f5e280] [cursor=pointer]:
+              - text: New arrival
+              - generic [ref=f5e281]: "0"
+            - button "Best selling 0" [ref=f5e282] [cursor=pointer]:
+              - text: Best selling
+              - generic [ref=f5e283]: "0"
+            - button "Featured 0" [ref=f5e284] [cursor=pointer]:
+              - text: Featured
+              - generic [ref=f5e285]: "0"
+            - button "Hidden 0" [ref=f5e286] [cursor=pointer]:
+              - text: Hidden
+              - generic [ref=f5e287]: "0"
+          - table [ref=f5e289]:
+            - rowgroup [ref=f5e290]:
+              - row [ref=f5e291]:
+                - columnheader "#" [ref=f5e292]
+                - columnheader "Product" [ref=f5e293]
+                - columnheader "Category" [ref=f5e294]
+                - columnheader "Variants" [ref=f5e295]
+                - columnheader "Stock" [ref=f5e296]
+                - columnheader "Price from" [ref=f5e297]
+                - columnheader "Status" [ref=f5e298]
+                - columnheader [ref=f5e299]
+            - rowgroup [ref=f5e300]:
+              - row [ref=f5e301]:
+                - cell "01" [ref=f5e302]
+                - cell [ref=f5e303]:
+                  - generic [ref=f5e310]:
+                    - paragraph [ref=f5e312]: 65W USB-C Charger
+                    - paragraph [ref=f5e313]: Anker · 65W-USB-C-CHARGER
+                - cell "Accessories" [ref=f5e314]
+                - cell "2" [ref=f5e315]
+                - cell "61" [ref=f5e316]
+                - cell [ref=f5e319]:
+                  - generic [ref=f5e320]:
+                    - paragraph [ref=f5e321]: ₹2,999
+                    - paragraph [ref=f5e322]: ₹12,999
+                - cell "Published" [ref=f5e323]
+                - cell [ref=f5e326]:
+                  - generic [ref=f5e327]:
+                    - button "Edit 65W USB-C Charger" [ref=f5e328] [cursor=pointer]
+                    - button "Delete 65W USB-C Charger" [ref=f5e331] [cursor=pointer]
+              - row [ref=f5e334]:
+                - cell "02" [ref=f5e335]
+                - cell [ref=f5e336]:
+                  - generic [ref=f5e343]:
+                    - paragraph [ref=f5e345]: Apple Watch Series 9
+                    - paragraph [ref=f5e346]: Apple · APPLE-WATCH-SERIES-9
+                - cell "Wearables" [ref=f5e347]
+                - cell "1" [ref=f5e348]
+                - cell "9" [ref=f5e349]
+                - cell [ref=f5e351]:
+                  - paragraph [ref=f5e353]: ₹41,900
+                - cell "Published" [ref=f5e354]
+                - cell [ref=f5e357]:
+                  - generic [ref=f5e358]:
+                    - button "Edit Apple Watch Series 9" [ref=f5e359] [cursor=pointer]
+                    - button "Delete Apple Watch Series 9" [ref=f5e362] [cursor=pointer]
+              - row [ref=f5e365]:
+                - cell "03" [ref=f5e366]
+                - cell [ref=f5e367]:
+                  - generic [ref=f5e374]:
+                    - paragraph [ref=f5e376]: Galaxy Buds2 Pro
+                    - paragraph [ref=f5e377]: Samsung · GALAXY-BUDS2-PRO
+                - cell "Audio" [ref=f5e378]
+                - cell "1" [ref=f5e379]
+                - cell "2" [ref=f5e380]
+                - cell [ref=f5e383]:
+                  - paragraph [ref=f5e385]: ₹17,999
+                - cell "Published" [ref=f5e386]
+                - cell [ref=f5e389]:
+                  - generic [ref=f5e390]:
+                    - button "Edit Galaxy Buds2 Pro" [ref=f5e391] [cursor=pointer]
+                    - button "Delete Galaxy Buds2 Pro" [ref=f5e394] [cursor=pointer]
+              - row [ref=f5e397]:
+                - cell "04" [ref=f5e398]
+                - cell [ref=f5e399]:
+                  - generic [ref=f5e406]:
+                    - paragraph [ref=f5e408]: AirPods Pro 2
+                    - paragraph [ref=f5e409]: Apple · AIRPODS-PRO-2
+                - cell "Audio" [ref=f5e410]
+                - cell "1" [ref=f5e411]
+                - cell "30" [ref=f5e412]
+                - cell [ref=f5e414]:
+                  - paragraph [ref=f5e416]: ₹24,900
+                - cell "Published" [ref=f5e417]
+                - cell [ref=f5e420]:
+                  - generic [ref=f5e421]:
+                    - button "Edit AirPods Pro 2" [ref=f5e422] [cursor=pointer]
+                    - button "Delete AirPods Pro 2" [ref=f5e425] [cursor=pointer]
+              - row [ref=f5e428]:
+                - cell "05" [ref=f5e429]
+                - cell [ref=f5e430]:
+                  - generic [ref=f5e437]:
+                    - paragraph [ref=f5e439]: OnePlus 12
+                    - paragraph [ref=f5e440]: OnePlus · ONEPLUS-12
+                - cell "Smartphones" [ref=f5e441]
+                - cell "1" [ref=f5e442]
+                - cell "4" [ref=f5e443]
+                - cell [ref=f5e446]:
+                  - paragraph [ref=f5e448]: ₹64,999
+                - cell "Published" [ref=f5e449]
+                - cell [ref=f5e452]:
+                  - generic [ref=f5e453]:
+                    - button "Edit OnePlus 12" [ref=f5e454] [cursor=pointer]
+                    - button "Delete OnePlus 12" [ref=f5e457] [cursor=pointer]
+              - row [ref=f5e460]:
+                - cell "06" [ref=f5e461]
+                - cell [ref=f5e462]:
+                  - generic [ref=f5e469]:
+                    - paragraph [ref=f5e471]: Pixel 8
+                    - paragraph [ref=f5e472]: Google · PIXEL-8
+                - cell "Smartphones" [ref=f5e473]
+                - cell "1" [ref=f5e474]
+                - cell "15" [ref=f5e475]
+                - cell [ref=f5e477]:
+                  - paragraph [ref=f5e479]: ₹75,999
+                - cell "Published" [ref=f5e480]
+                - cell [ref=f5e483]:
+                  - generic [ref=f5e484]:
+                    - button "Edit Pixel 8" [ref=f5e485] [cursor=pointer]
+                    - button "Delete Pixel 8" [ref=f5e488] [cursor=pointer]
+              - row [ref=f5e491]:
+                - cell "07" [ref=f5e492]
+                - cell [ref=f5e493]:
+                  - generic [ref=f5e500]:
+                    - paragraph [ref=f5e502]: Galaxy S24 Ultra
+                    - paragraph [ref=f5e503]: Samsung · GALAXY-S24-ULTRA
+                - cell "Smartphones" [ref=f5e504]
+                - cell "2" [ref=f5e505]
+                - cell "8" [ref=f5e506]
+                - cell [ref=f5e509]:
+                  - generic [ref=f5e510]:
+                    - paragraph [ref=f5e511]: ₹1,24,999
+                    - paragraph [ref=f5e512]: ₹1,34,999
+                - cell "Published" [ref=f5e513]
+                - cell [ref=f5e516]:
+                  - generic [ref=f5e517]:
+                    - button "Edit Galaxy S24 Ultra" [ref=f5e518] [cursor=pointer]
+                    - button "Delete Galaxy S24 Ultra" [ref=f5e521] [cursor=pointer]
+              - row [ref=f5e524]:
+                - cell "08" [ref=f5e525]
+                - cell [ref=f5e526]:
+                  - generic [ref=f5e533]:
+                    - paragraph [ref=f5e535]: iPhone 15 Pro
+                    - paragraph [ref=f5e536]: Apple · IPHONE-15-PRO
+                - cell "Smartphones" [ref=f5e537]
+                - cell "2" [ref=f5e538]
+                - cell "15" [ref=f5e539]
+                - cell [ref=f5e542]:
+                  - generic [ref=f5e543]:
+                    - paragraph [ref=f5e544]: ₹1,29,900
+                    - paragraph [ref=f5e545]: ₹1,39,900
+                - cell "Published" [ref=f5e546]
+                - cell [ref=f5e549]:
+                  - generic [ref=f5e550]:
+                    - button "Edit iPhone 15 Pro" [ref=f5e551] [cursor=pointer]
+                    - button "Delete iPhone 15 Pro" [ref=f5e554] [cursor=pointer]
+          - paragraph [ref=f5e557]: Showing 8 of 8 products
+  - generic [ref=f5e1]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f5e2]

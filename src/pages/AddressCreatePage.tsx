@@ -125,7 +125,7 @@ export default function AddressCreatePage() {
             >
               <FiArrowLeft size={18} />
             </button>
-            <h1 className="font-bold tracking-tight" style={{ fontSize: '28px', fontFamily: 'var(--font-display)', color: '#191c1d' }}>
+            <h1 className="font-bold tracking-tight" style={{ fontSize: 'var(--text-heading)', fontFamily: 'var(--font-display)', color: '#191c1d' }}>
               Add New Address
             </h1>
           </div>

@@ -76,7 +76,7 @@ export default function MobileLogin() {
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
-        <span className="text-[16px] font-extrabold">MobileShop</span>
+        <span className="text-body font-extrabold">MobileShop</span>
       </div>
 
       {/* Hero image carousel */}
@@ -87,8 +87,8 @@ export default function MobileLogin() {
           </div>
         ))}
         <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(203,32,45,0.85), transparent)' }}>
-          <p className="text-white text-[20px] font-bold leading-tight">{slides[activeSlide].label}</p>
-          <p className="text-white/80 text-[12px]">Premium mobile engineering</p>
+          <p className="text-white text-title font-bold leading-tight">{slides[activeSlide].label}</p>
+          <p className="text-white/80 text-caption">Premium mobile engineering</p>
         </div>
         <div className="absolute top-3 right-3 flex gap-1.5">
           {slides.map((_, i) => (
@@ -100,41 +100,41 @@ export default function MobileLogin() {
       {/* Form card */}
       <div className="flex-1 px-4 mt-4">
         <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-5">
-          <h1 className="text-[24px] font-extrabold">Welcome back</h1>
-          <p className="text-[13px] text-[#6B7280] mt-1 mb-5">Log in to your premium account</p>
+          <h1 className="text-heading font-extrabold">Welcome back</h1>
+          <p className="text-label text-[#6B7280] mt-1 mb-5">Log in to your premium account</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="email" name="email" type="email" value={formData.email} onChange={handleChange}
-                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
+                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-body-sm bg-[#FFFBFB] border outline-none transition"
                   style={{ borderColor: errors.email ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
               </div>
-              {errors.email && <p className="text-[11px] text-[#EF4444] mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-micro text-[#EF4444] mt-1">{errors.email}</p>}
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-[11px] font-bold uppercase tracking-wide text-[#6B7280]">Password</label>
-                <Link to="#" className="text-[12px] font-semibold" style={{ color: PURPLE }}>Forgot Password?</Link>
+                <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280]">Password</label>
+                <Link to="#" className="text-caption font-semibold" style={{ color: PURPLE }}>Forgot Password?</Link>
               </div>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
                 <input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange}
-                  placeholder="••••••••" autoComplete="current-password" className="w-full h-12 pl-10 pr-12 rounded-2xl text-[14px] bg-[#FFFBFB] border outline-none transition"
+                  placeholder="••••••••" autoComplete="current-password" className="w-full h-12 pl-10 pr-12 rounded-2xl text-body-sm bg-[#FFFBFB] border outline-none transition"
                   style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
                 <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition" style={{ color: '#6B7280' }}>
                   <EyeIcon open={showPassword} />
                 </button>
               </div>
-              {errors.password && <p className="text-[11px] text-[#EF4444] mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-micro text-[#EF4444] mt-1">{errors.password}</p>}
             </div>
 
             <button type="submit" disabled={loading}
-              className="w-full h-13 rounded-2xl text-[15px] font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
+              className="w-full h-13 rounded-2xl text-body font-bold text-white flex items-center justify-center disabled:opacity-60 active:scale-[0.98] transition"
               style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})`, height: 52 }}>
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -146,12 +146,12 @@ export default function MobileLogin() {
           </form>
 
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-[13px] font-semibold text-[#1F2937]">G Google</button>
-            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-[13px] font-semibold text-[#1F2937]"> Apple</button>
+            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-label font-semibold text-[#1F2937]">G Google</button>
+            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-label font-semibold text-[#1F2937]"> Apple</button>
           </div>
         </div>
 
-        <p className="text-center text-[13px] text-[#6B7280] mt-5">
+        <p className="text-center text-label text-[#6B7280] mt-5">
           Don't have an account?{' '}
           <Link to="/signup" className="font-bold" style={{ color: PURPLE }}>Register</Link>
         </p>

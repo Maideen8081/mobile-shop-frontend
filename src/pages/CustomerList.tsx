@@ -1,195 +1,431 @@
-import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { FiSearch, FiEye, FiEdit2, FiMessageCircle, FiStar, FiShoppingBag, FiDownload, FiChevronLeft, FiChevronRight, FiUserCheck } from 'react-icons/fi'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  FiEye, FiMail, FiMapPin, FiPhone, FiRefreshCw, FiShoppingBag,
+  FiTool, FiUserCheck, FiUserPlus, FiUsers, FiUserX, FiX,
+} from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
-import CustomerCard from '../components/crm/CustomerCard'
-import { customers } from '../data/crmData'
+import {
+  ConfirmDialog, EmptyState, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu,
+  SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, ToolbarBtn,
+  apiErrorMessage, exportCsv, formatDate, formatINR, timeAgo, toneForStatus, type SortState,
+} from '../components/admin/AdminUI'
+import { adminService, type AdminCustomer, type AdminCustomerDetail, type CustomerPage, type CustomerQuery } from '../services/adminService'
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import Portal from '../components/ui/Portal'
+import { useToast } from '../context/ToastContext'
 
-const ITEMS_PER_PAGE = 6
+function Avatar({ name, email, size = 'md' }: { name: string; email: string; size?: 'md' | 'lg' }) {
+  const label = (name || email).trim()
+  const initials = label.split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((p) => p[0]?.toUpperCase()).join('')
+  const hue = [...label].reduce((h, c) => h + c.charCodeAt(0), 0) % 360
+  const dims = size === 'lg' ? 'w-14 h-14 text-lg' : 'w-9 h-9 text-xs'
+  return (
+    <span
+      className={`${dims} rounded-full flex items-center justify-center font-semibold shrink-0 ring-1 ring-inset ring-black/5`}
+      style={{ background: `hsl(${hue} 70% 95%)`, color: `hsl(${hue} 45% 35%)` }}
+    >
+      {initials || '?'}
+    </span>
+  )
+}
 
-const tierColors: Record<string, string> = {
-  Platinum: 'text-primary bg-primary/10',
-  Gold: 'text-primary bg-primary/10',
-  Silver: 'text-text-secondary bg-gray-100',
-  Bronze: 'text-orange-700 bg-orange-100',
+function CustomerDrawer({
+  customerId,
+  onClose,
+  onChanged,
+}: {
+  customerId: number | null
+  onClose: () => void
+  onChanged: (c: AdminCustomer) => void
+}) {
+  useLockBodyScroll(customerId != null)
+  const showToast = useToast().show
+  const [detail, setDetail] = useState<AdminCustomerDetail | null>(null)
+  const [error, setError] = useState('')
+  const [confirming, setConfirming] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (customerId == null) return
+    setDetail(null)
+    setError('')
+    adminService.customer(customerId).then(setDetail).catch((e) => setError(apiErrorMessage(e, 'Could not load this customer.')))
+  }, [customerId])
+
+  useEffect(() => {
+    if (customerId == null) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && !confirming && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [customerId, confirming, onClose])
+
+  const toggleActive = async () => {
+    if (!detail) return
+    setSaving(true)
+    try {
+      const updated = await adminService.setCustomerActive(detail.id, !detail.isActive)
+      setDetail({ ...detail, isActive: updated.isActive })
+      onChanged(updated)
+      showToast(updated.isActive ? 'Customer re-activated' : 'Customer deactivated — they can no longer sign in', 'success')
+      setConfirming(false)
+    } catch (e) {
+      showToast(apiErrorMessage(e), 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Portal>
+    <AnimatePresence>
+      {customerId != null && (
+        <motion.div className="fixed inset-0 z-[70]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div className="absolute inset-0 bg-[#0c111d]/40" onClick={onClose} />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Customer details"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+            className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-[var(--shadow-pop)] flex flex-col"
+          >
+            <div className="flex items-center justify-between px-6 h-16 border-b border-border-light shrink-0">
+              <p className="text-sm font-semibold text-text-primary">Customer</p>
+              <button type="button" onClick={onClose} aria-label="Close" className="w-8 h-8 rounded-lg flex items-center justify-center text-text-label hover:bg-surface-hover">
+                <FiX size={18} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              {error && <div className="p-6"><ErrorBanner message={error} /></div>}
+              {!detail && !error && (
+                <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-4"><Skeleton className="w-14 h-14 !rounded-full" /><div className="space-y-2 flex-1"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-56" /></div></div>
+                  <Skeleton className="h-20" /><Skeleton className="h-32" /><Skeleton className="h-32" />
+                </div>
+              )}
+              {detail && (
+                <>
+                  <div className="p-6 border-b border-border-light">
+                    <div className="flex items-center gap-4">
+                      <Avatar name={detail.name} email={detail.email} size="lg" />
+                      <div className="min-w-0">
+                        <p className="text-lg font-semibold text-text-primary truncate">{detail.name || 'Unnamed customer'}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <StatusPill tone={detail.isActive ? 'success' : 'danger'}>{detail.isActive ? 'Active' : 'Deactivated'}</StatusPill>
+                          {detail.isVerified && <StatusPill tone="info" dot={false}>Verified</StatusPill>}
+                        </div>
+                      </div>
+                    </div>
+                    <dl className="mt-5 space-y-2.5 text-sm">
+                      <div className="flex items-center gap-3 text-text-secondary"><FiMail className="text-text-muted shrink-0" /><a className="hover:text-primary truncate" href={`mailto:${detail.email}`}>{detail.email}</a></div>
+                      <div className="flex items-center gap-3 text-text-secondary"><FiPhone className="text-text-muted shrink-0" />{detail.mobile ? <a className="hover:text-primary" href={`tel:${detail.mobile}`}>{detail.mobile}</a> : <span className="text-text-muted">No mobile number</span>}</div>
+                      <div className="flex items-center gap-3 text-text-secondary"><FiUserPlus className="text-text-muted shrink-0" />Joined {formatDate(detail.dateJoined)}</div>
+                    </dl>
+                    <div className="grid grid-cols-3 gap-2 mt-5">
+                      {[
+                        { label: 'Orders', value: detail.ordersCount },
+                        { label: 'Spent', value: formatINR(detail.totalSpent, true) },
+                        { label: 'Repairs', value: detail.repairsCount },
+                      ].map((s) => (
+                        <div key={s.label} className="rounded-xl bg-surface-lighter px-3 py-2.5 text-center">
+                          <p className="text-base font-bold text-text-primary tabular">{s.value}</p>
+                          <p className="text-[11px] text-text-label">{s.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <section className="p-6 border-b border-border-light">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Recent orders</h4>
+                    {detail.orders.length === 0 ? (
+                      <p className="text-sm text-text-muted">No orders yet.</p>
+                    ) : (
+                      <ul className="divide-y divide-border-light">
+                        {detail.orders.map((o) => (
+                          <li key={o.orderNumber} className="py-2.5 flex items-center gap-3">
+                            <FiShoppingBag className="text-text-muted shrink-0" />
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-sm font-medium text-text-primary">{o.orderNumber}</span>
+                              <span className="block text-xs text-text-label">{o.items} item{o.items === 1 ? '' : 's'} · {formatDate(o.createdAt)}</span>
+                            </span>
+                            <span className="text-right">
+                              <span className="block text-sm font-semibold text-text-primary tabular">{formatINR(o.total)}</span>
+                              <StatusPill tone={toneForStatus(o.status)} dot={false}>{o.statusLabel}</StatusPill>
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </section>
+
+                  <section className="p-6 border-b border-border-light">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Repairs</h4>
+                    {detail.repairs.length === 0 ? (
+                      <p className="text-sm text-text-muted">No repair tickets.</p>
+                    ) : (
+                      <ul className="divide-y divide-border-light">
+                        {detail.repairs.map((r) => (
+                          <li key={r.id} className="py-2.5 flex items-center gap-3">
+                            <FiTool className="text-text-muted shrink-0" />
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-sm font-medium text-text-primary truncate">{r.device}</span>
+                              <span className="block text-xs text-text-label">{r.ticketNumber} · {formatDate(r.createdAt)}</span>
+                            </span>
+                            <StatusPill tone={toneForStatus(r.status)}>{r.statusLabel}</StatusPill>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </section>
+
+                  <section className="p-6">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Saved addresses</h4>
+                    {detail.addresses.length === 0 ? (
+                      <p className="text-sm text-text-muted">No saved addresses.</p>
+                    ) : (
+                      <ul className="space-y-2.5">
+                        {detail.addresses.map((a) => (
+                          <li key={a.id} className="rounded-xl ring-1 ring-inset ring-border p-3 text-sm">
+                            <div className="flex items-center gap-2 mb-1">
+                              <FiMapPin size={13} className="text-text-muted" />
+                              <span className="font-medium text-text-primary">{a.fullName}</span>
+                              <span className="text-xs text-text-label">· {a.type}</span>
+                              {a.isDefault && <StatusPill tone="neutral" dot={false}>Default</StatusPill>}
+                            </div>
+                            <p className="text-text-secondary">{a.line}, {a.city}, {a.state} {a.pincode}</p>
+                            <p className="text-xs text-text-label mt-0.5">{a.mobile}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </section>
+                </>
+              )}
+            </div>
+
+            {detail && (
+              <div className="p-4 border-t border-border-light bg-[#fcfcfd] shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setConfirming(true)}
+                  className={`w-full h-10 rounded-[10px] text-sm font-semibold inline-flex items-center justify-center gap-2 transition ${
+                    detail.isActive
+                      ? 'bg-white text-danger ring-1 ring-inset ring-[#fecdca] hover:bg-[#fef3f2]'
+                      : 'bg-[#101828] text-white hover:bg-[#1d2939]'
+                  }`}
+                >
+                  {detail.isActive ? <><FiUserX /> Deactivate account</> : <><FiUserCheck /> Re-activate account</>}
+                </button>
+              </div>
+            )}
+          </motion.aside>
+
+          <ConfirmDialog
+            open={confirming}
+            tone={detail?.isActive ? 'danger' : 'primary'}
+            title={detail?.isActive ? 'Deactivate this customer?' : 'Re-activate this customer?'}
+            description={
+              detail?.isActive
+                ? `${detail?.name || detail?.email} will be signed out and unable to sign in or place orders. Their order history is kept.`
+                : `${detail?.name || detail?.email} will be able to sign in and place orders again.`
+            }
+            confirmLabel={detail?.isActive ? 'Deactivate' : 'Re-activate'}
+            loading={saving}
+            onConfirm={toggleActive}
+            onClose={() => setConfirming(false)}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </Portal>
+  )
+}
+
+// Column → server sort. Columns without a server sort aren't sortable.
+const SORT_FOR: Record<string, { asc: CustomerQuery['sort']; desc: CustomerQuery['sort'] }> = {
+  name: { asc: 'name', desc: 'name' },
+  orders: { asc: 'orders', desc: 'orders' },
+  spent: { asc: 'spent', desc: 'spent' },
+  joined: { asc: 'oldest', desc: 'newest' },
 }
 
 export default function CustomerList() {
-  const [search, setSearch] = useState('')
-  const [filterTier, setFilterTier] = useState('all')
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
-  const [page, setPage] = useState(1)
-  const navigate = useNavigate()
+  const [searchInput, setSearchInput] = useState('')
+  const [query, setQuery] = useState<CustomerQuery>({ search: '', status: '', sort: 'newest', page: 1, page_size: 10 })
+  const [data, setData] = useState<CustomerPage | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [openId, setOpenId] = useState<number | null>(null)
 
-  const filtered = useMemo(() => {
-    let result = customers.filter((c) => {
-      const matchSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) || c.mobile.includes(search) || c.email.toLowerCase().includes(search.toLowerCase())
-      const matchTier = filterTier === 'all' || c.loyaltyTier === filterTier
-      return matchSearch && matchTier
-    })
-    return result
-  }, [search, filterTier])
+  // Debounce typing so we don't hit the API on every keystroke.
+  useEffect(() => {
+    const t = window.setTimeout(() => setQuery((q) => (q.search === searchInput.trim() ? q : { ...q, search: searchInput.trim(), page: 1 })), 300)
+    return () => window.clearTimeout(t)
+  }, [searchInput])
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      setData(await adminService.customers(query))
+    } catch (e) {
+      setError(apiErrorMessage(e, 'Could not load customers.'))
+    } finally {
+      setLoading(false)
+    }
+  }, [query])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  const pageSize = query.page_size ?? 10
+  const totalPages = data ? Math.max(1, Math.ceil(data.count / pageSize)) : 1
+  const page = query.page ?? 1
+  const filtered = !!(query.search || query.status)
+
+  // Present the server sort as a SortTh state.
+  const sortState: SortState = (() => {
+    switch (query.sort) {
+      case 'name': return { key: 'name', dir: 'asc' }
+      case 'orders': return { key: 'orders', dir: 'desc' }
+      case 'spent': return { key: 'spent', dir: 'desc' }
+      case 'oldest': return { key: 'joined', dir: 'asc' }
+      default: return { key: 'joined', dir: 'desc' }
+    }
+  })()
+  const onSort = (key: string) => {
+    const map = SORT_FOR[key]
+    if (!map) return
+    const nextDir = sortState?.key === key && sortState.dir === 'desc' ? 'asc' : 'desc'
+    setQuery((q) => ({ ...q, sort: map[nextDir], page: 1 }))
+  }
+
+  const onChanged = (c: AdminCustomer) =>
+    setData((d) => (d ? { ...d, results: d.results.map((r) => (r.id === c.id ? { ...r, isActive: c.isActive } : r)) } : d))
+
+  const exportPage = () =>
+    exportCsv(
+      `customers-${new Date().toISOString().slice(0, 10)}`,
+      ['Name', 'Email', 'Mobile', 'Orders', 'Total spent (INR)', 'Repairs', 'Last order', 'Joined', 'Status'],
+      (data?.results ?? []).map((c) => [
+        c.name, c.email, c.mobile, c.ordersCount, c.totalSpent, c.repairsCount,
+        c.lastOrderAt ? new Date(c.lastOrderAt).toLocaleDateString('en-IN') : '', new Date(c.dateJoined).toLocaleDateString('en-IN'),
+        c.isActive ? 'Active' : 'Deactivated',
+      ]),
+    )
+
+  const th = { sort: sortState, onSort }
 
   return (
-    <PageLayout title="Customers">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-              <span>CRM</span><span>/</span><span className="text-text-secondary font-medium">Customers</span>
-            </div>
-            <h1 className="text-xl lg:text-2xl font-bold text-text-primary">Customers</h1>
-            <p className="text-sm text-text-muted mt-0.5">{customers.length} total customers</p>
-          </div>
-        </div>
-      </motion.div>
+    <PageLayout title="Customer">
+      <PageHeader
+        title="Customer"
+        actions={
+          <>
+            <SearchBox value={searchInput} onChange={setSearchInput} placeholder="Search customers" />
+            <ShowingSelect value={pageSize} onChange={(n) => setQuery((q) => ({ ...q, page_size: n, page: 1 }))} />
+            <FilterMenu activeCount={query.status ? 1 : 0} onReset={() => setQuery((q) => ({ ...q, status: '', page: 1 }))}>
+              <FilterSelect label="Account status" value={query.status ?? ''}
+                onChange={(v) => setQuery((q) => ({ ...q, status: v as CustomerQuery['status'], page: 1 }))}
+                options={[{ value: '', label: 'All accounts' }, { value: 'active', label: 'Active' }, { value: 'inactive', label: 'Deactivated' }]} />
+            </FilterMenu>
+            <ExportBtn onClick={exportPage} disabled={!data?.results.length} />
+            <ToolbarBtn onClick={load} aria-label="Refresh" title="Refresh" className="!px-3" icon={<FiRefreshCw size={15} className={loading ? 'animate-spin' : ''} />} />
+          </>
+        }
+      />
 
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        <div className="relative flex-1 w-full">
-          <FiSearch size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input type="text" placeholder="Search by name, mobile, or email..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="w-full h-11 pl-10 pr-4 rounded-2xl bg-bg-card border border-border text-sm outline-none focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.08)]"
-          />
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          <KpiCard loading={!data} label="Total customers" tone="violet" icon={<FiUsers size={16} />} value={data?.summary.total.toLocaleString('en-IN') ?? 0}
+            onClick={() => setQuery((q) => ({ ...q, status: '', page: 1 }))} />
+          <KpiCard loading={!data} label="Active accounts" tone="success" icon={<FiUserCheck size={16} />} value={data?.summary.active.toLocaleString('en-IN') ?? 0}
+            hint={data ? `${data.summary.total - data.summary.active} deactivated` : ''} onClick={() => setQuery((q) => ({ ...q, status: 'active', page: 1 }))} />
+          <KpiCard loading={!data} label="Joined this month" tone="info" icon={<FiUserPlus size={16} />} value={data?.summary.newThisMonth ?? 0}
+            onClick={() => setQuery((q) => ({ ...q, sort: 'newest', page: 1 }))} />
+          <KpiCard loading={!data} label="Have ordered" tone="brand" icon={<FiShoppingBag size={16} />} value={data?.summary.withOrders ?? 0}
+            hint={data && data.summary.total ? `${Math.round((data.summary.withOrders / data.summary.total) * 100)}% of customers` : ''}
+            onClick={() => setQuery((q) => ({ ...q, sort: 'spent', page: 1 }))} />
         </div>
-        <select value={filterTier} onChange={(e) => { setFilterTier(e.target.value); setPage(1) }}
-          className="h-11 px-4 rounded-2xl bg-bg-card border border-border text-sm outline-none appearance-none cursor-pointer focus:border-primary/50"
-        >
-          <option value="all">All Tiers</option>
-          <option value="Platinum">Platinum</option>
-          <option value="Gold">Gold</option>
-          <option value="Silver">Silver</option>
-          <option value="Bronze">Bronze</option>
-        </select>
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-bg-card border border-border shadow-sm">
-          {(['table', 'cards'] as const).map((mode) => (
-            <button key={mode} onClick={() => setViewMode(mode)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-xl capitalize transition-all cursor-pointer ${viewMode === mode ? 'bg-primary text-white shadow-md' : 'text-text-muted hover:text-text-secondary'}`}
-            >{mode}</button>
-          ))}
-        </div>
-        <button className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl bg-bg-card border border-border text-xs font-semibold text-text-secondary hover:bg-primary/10 transition-all cursor-pointer">
-          <FiDownload size={13} /> Export
-        </button>
+
+        {error ? (
+          <ErrorBanner message={error} onRetry={load} />
+        ) : !data && loading ? (
+          <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+        ) : data && data.results.length === 0 ? (
+          <div className="table-wrap">
+            <EmptyState
+              icon={<FiUsers size={20} />}
+              title={filtered ? 'No customers match your filters' : 'No customers yet'}
+              description={filtered ? 'Try a different search or clear the status filter.' : 'Customers appear here as soon as they create a storefront account.'}
+              action={filtered ? (
+                <button type="button" className="text-sm font-semibold text-primary" onClick={() => { setSearchInput(''); setQuery((q) => ({ ...q, search: '', status: '', page: 1 })) }}>
+                  Clear filters
+                </button>
+              ) : undefined}
+            />
+          </div>
+        ) : data && (
+          <div className="table-wrap">
+            <div className={`table-scroll transition-opacity ${loading ? 'opacity-60' : ''}`}>
+              <table className="min-w-[900px]">
+                <thead>
+                  <tr>
+                    <SortTh label="Customer" sortKey="name" {...th} />
+                    <SortTh label="Mobile" />
+                    <SortTh label="Orders" sortKey="orders" align="right" {...th} />
+                    <SortTh label="Total spent" sortKey="spent" align="right" {...th} />
+                    <SortTh label="Last order" />
+                    <SortTh label="Joined" sortKey="joined" {...th} />
+                    <SortTh label="Status" />
+                    <SortTh label="Action" align="center" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.results.map((c) => (
+                    <tr key={c.id} className="cursor-pointer" onClick={() => setOpenId(c.id)}>
+                      <td>
+                        <div className="flex items-center gap-3 min-w-[220px]">
+                          <Avatar name={c.name} email={c.email} />
+                          <div className="min-w-0">
+                            <p className="font-medium text-text-primary truncate">{c.name || '—'}</p>
+                            <p className="text-xs text-text-label truncate">{c.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{c.mobile || <span className="text-text-muted">—</span>}</td>
+                      <td className="text-right">{c.ordersCount}</td>
+                      <td className="text-right font-semibold text-text-primary">{formatINR(c.totalSpent)}</td>
+                      <td className="text-text-label">{c.lastOrderAt ? timeAgo(c.lastOrderAt) : '—'}</td>
+                      <td className="text-text-label">{formatDate(c.dateJoined)}</td>
+                      <td><StatusPill tone={c.isActive ? 'success' : 'danger'}>{c.isActive ? 'Active' : 'Deactivated'}</StatusPill></td>
+                      <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                        <RowMenu
+                          label={`Actions for ${c.name || c.email}`}
+                          items={[
+                            { label: 'View profile', icon: <FiEye size={15} />, onClick: () => setOpenId(c.id) },
+                            { label: 'Email', icon: <FiMail size={15} />, onClick: () => { window.location.href = `mailto:${c.email}` } },
+                            ...(c.mobile ? [{ label: 'Call', icon: <FiPhone size={15} />, onClick: () => { window.location.href = `tel:${c.mobile}` } }] : []),
+                          ]}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={page} totalPages={totalPages} onPage={(p) => setQuery((q) => ({ ...q, page: p }))}
+              summary={`${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, data.count)} of ${data.count} customers`} />
+          </div>
+        )}
       </div>
 
-      {paged.length === 0 ? (
-        <div className="text-center py-16">
-          <FiUserCheck size={48} className="mx-auto text-text-muted mb-3" />
-          <p className="text-sm text-text-muted">No customers found</p>
-        </div>
-      ) : viewMode === 'table' ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-x-auto rounded-xl bg-bg-card border border-border shadow-lg">
-          <table className="w-full min-w-[900px]">
-            <thead>
-              <tr className="border-b border-primary/6">
-                {['Customer', 'Mobile', 'Purchases', 'Repairs', 'Loyalty Pts', 'Tier', 'Last Visit', 'Status', 'Actions'].map((h) => (
-                  <th key={h} className="text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider px-4 py-3.5">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {paged.map((c, i) => (
-                <motion.tr key={c.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-                  className="border-b border-primary/20 hover:bg-primary/5 transition-colors group cursor-pointer"
-                  onClick={() => navigate(`/customer-profile?id=${c.id}`)}
-                >
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-xs font-bold text-white shadow-sm">{c.avatar}</div>
-                      <div>
-                        <p className="text-sm font-semibold text-text-primary">{c.name}</p>
-                        <p className="text-[10px] text-text-muted">{c.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3.5"><span className="text-xs text-text-muted">{c.mobile}</span></td>
-                  <td className="px-4 py-3.5"><span className="text-sm font-semibold text-text-secondary">{c.totalPurchases}</span></td>
-                  <td className="px-4 py-3.5"><span className="text-sm text-text-secondary">{c.repairCount}</span></td>
-                  <td className="px-4 py-3.5"><span className="text-sm font-semibold text-primary">{c.loyaltyPoints.toLocaleString()}</span></td>
-                  <td className="px-4 py-3.5">
-                    <span className={`px-2 py-0.5 rounded-lg text-[9px] font-semibold ${tierColors[c.loyaltyTier] || tierColors.Bronze}`}>
-                      {c.loyaltyTier}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3.5"><span className="text-xs text-text-muted">{c.lastVisit}</span></td>
-                  <td className="px-4 py-3.5">
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] font-semibold ${c.status === 'active' ? 'bg-primary/10 text-primary' : c.status === 'inactive' ? 'bg-gray-100 text-text-muted' : 'bg-red-100 text-red-700'}`}>
-                      <span className={`w-1.5 h-1.5 rounded-[8px] ${c.status === 'active' ? 'bg-success/100' : c.status === 'inactive' ? 'bg-gray-400' : 'bg-danger/100'}`} />
-                      {c.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {[
-                        { icon: FiEye, label: 'View', color: 'text-info bg-info/10' },
-                        { icon: FiEdit2, label: 'Edit', color: 'text-primary bg-primary/10' },
-                        { icon: FiMessageCircle, label: 'WhatsApp', color: 'text-success bg-success/10' },
-                        { icon: FiStar, label: 'Loyalty', color: 'text-warning bg-warning/10' },
-                        { icon: FiShoppingBag, label: 'Purchases', color: 'text-info bg-info/10' },
-                      ].map((btn) => (
-                        <button key={btn.label} onClick={(e) => { e.stopPropagation(); if (btn.label === 'View') navigate(`/customer-profile?id=${c.id}`) }}
-                          className={`w-7 h-7 rounded-lg ${btn.color} flex items-center justify-center cursor-pointer`} title={btn.label}>
-                          <btn.icon size={12} />
-                        </button>
-                      ))}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="flex items-center justify-between px-4 py-3 border-t border-primary/6">
-            <p className="text-xs text-text-muted">Showing {(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length}</p>
-            <div className="flex items-center gap-1">
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}
-                className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center disabled:opacity-30 cursor-pointer">
-                <FiChevronLeft size={14} className="text-text-secondary" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button key={p} onClick={() => setPage(p)}
-                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-primary/10'}`}>
-                  {p}
-                </button>
-              ))}
-              <button disabled={page === totalPages} onClick={() => setPage(page + 1)}
-                className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center disabled:opacity-30 cursor-pointer">
-                <FiChevronRight size={14} className="text-text-secondary" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      ) : (
-        <>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paged.map((c, i) => (
-              <CustomerCard key={c.id} customer={c} index={i} onClick={() => navigate(`/customer-profile?id=${c.id}`)} />
-            ))}
-          </motion.div>
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-text-muted">Showing {(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length}</p>
-            <div className="flex items-center gap-1">
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}
-                className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center disabled:opacity-30 cursor-pointer">
-                <FiChevronLeft size={14} className="text-text-secondary" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button key={p} onClick={() => setPage(p)}
-                  className={`w-8 h-8 rounded-xl text-xs font-semibold cursor-pointer ${page === p ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-primary/10'}`}>
-                  {p}
-                </button>
-              ))}
-              <button disabled={page === totalPages} onClick={() => setPage(page + 1)}
-                className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center disabled:opacity-30 cursor-pointer">
-                <FiChevronRight size={14} className="text-text-secondary" />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      <CustomerDrawer customerId={openId} onClose={() => setOpenId(null)} onChanged={onChanged} />
     </PageLayout>
   )
 }

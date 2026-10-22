@@ -217,24 +217,24 @@ export default function MobileCollection() {
                 <Sparkles size={26} className="text-white" />
               </div>
               <div className="relative z-10 flex flex-col justify-center h-full max-w-[78%]">
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90">
+                <span className="flex items-center gap-1 text-micro font-bold uppercase tracking-[0.18em] text-white/90">
                   {tab === 'all' ? 'Collection' : TABS.find((t) => t.key === tab)?.label}
                 </span>
-                <h2 className="text-[21px] font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
-                <p className="text-[11.5px] text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
+                <h2 className="text-title font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
+                <p className="text-caption text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
               </div>
             </div>
 
             <div className="flex items-center justify-between mt-3 mb-1">
-              <p className="text-[12px] font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
+              <p className="text-caption font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
             </div>
           </div>
 
           <div className="px-3.5">
             {products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <p className="text-[15px] font-bold text-[#0F172A]">No products found</p>
-                <p className="text-[13px] text-[#64748B] mt-1">Try a different filter or category.</p>
+                <p className="text-body font-bold text-[#0F172A]">No products found</p>
+                <p className="text-label text-[#64748B] mt-1">Try a different filter or category.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2.5">
@@ -262,7 +262,7 @@ export default function MobileCollection() {
 
             {hasMore && !productsLoading && (
               <button onClick={() => load(page + 1, false)} disabled={loadingMore}
-                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#EEF1F4] text-[13px] font-bold text-[#CB202D] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
+                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#EEF1F4] text-label font-bold text-[#CB202D] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
                 {loadingMore ? 'Loading…' : 'Load More'}
               </button>
             )}

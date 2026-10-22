@@ -2,7 +2,7 @@
 
 .osum-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
 .osum-head h2 { margin: 0 !important; }
-.osum-head span { font-size: 13px; font-weight: 600; color: var(--cx-muted); }
+.osum-head span { font-size: var(--text-label); font-weight: 600; color: var(--cx-muted); }
 
 .osum-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .osum-items li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
@@ -17,7 +17,7 @@
 .osum-img img { width: 100%; height: 100%; object-fit: contain; }
 .osum-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .osum-name {
-  font-size: 13.5px;
+  font-size: var(--text-label);
   font-weight: 600;
   line-height: 1.35;
   color: var(--cx-ink);
@@ -26,8 +26,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.osum-meta { font-size: 12px; color: var(--cx-muted); }
-.osum-price { font-size: 14px; font-weight: 700; white-space: nowrap; }
+.osum-meta { font-size: var(--text-caption); color: var(--cx-muted); }
+.osum-price { font-size: var(--text-body-sm); font-weight: 700; white-space: nowrap; }
 
 .osum-toggle {
   display: inline-flex;
@@ -37,7 +37,7 @@
   padding: 0;
   border: 0;
   background: none;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--cx-red);
 }
@@ -63,7 +63,7 @@
   padding: 12px 14px;
   border-radius: var(--radius-md, 8px);
   background: var(--cx-bg);
-  font-size: 13px;
+  font-size: var(--text-label);
 }
 .osum-deliver svg { color: var(--cx-red); flex-shrink: 0; margin-top: 1px; }
 .osum-deliver div { display: flex; flex-direction: column; gap: 2px; color: var(--cx-ink-2); }

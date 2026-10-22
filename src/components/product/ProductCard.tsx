@@ -12,9 +12,13 @@ interface ProductCardProps {
 
 export default function ProductCard({ product: p, index, onEdit, onDelete }: ProductCardProps) {
   const totalStock = p.variants.reduce((s, v) => s + (v.stock || 0), 0)
-  const prices = p.variants.map((v) => v.discountPrice || v.price).filter(Boolean)
-  const minPrice = prices.length > 0 ? Math.min(...prices) : 0
-  const maxOriginal = Math.max(...p.variants.map((v) => v.price || 0))
+  // "From" price = the cheapest variant's selling price; only strike through
+  // that same variant's MRP when it is actually discounted.
+  const cheapest = p.variants
+    .filter((v) => (v.discountPrice || v.price) > 0)
+    .reduce<typeof p.variants[number] | null>((best, v) => (!best || (v.discountPrice || v.price) < (best.discountPrice || best.price) ? v : best), null)
+  const minPrice = cheapest ? cheapest.discountPrice || cheapest.price : 0
+  const maxOriginal = cheapest?.discountPrice ? cheapest.price : 0
   const thumb = p.images?.[0] || p.variants[0]?.images?.[0] || ''
   const isLowStock = p.variants.some((v) => v.lowStockAlert && v.stock <= v.lowStockAlert)
   const firstVar = p.variants[0]
@@ -32,7 +36,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
 
       <div className="relative z-10">
         <div className="flex items-start gap-3 mb-4">
-          <div className="w-16 h-16 rounded-xl bg-[#0F172A] flex items-center justify-center text-3xl shadow-sm flex-shrink-0 border border-border overflow-hidden relative">
+          <div className="w-16 h-16 rounded-xl bg-surface-lighter flex items-center justify-center text-3xl shadow-sm flex-shrink-0 border border-border overflow-hidden relative">
             <FiImage size={20} className="text-text-muted" />
             {thumb ? (
               <img src={thumb} alt="" className="absolute inset-0 w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
@@ -68,7 +72,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
         )}
 
         <div className="grid grid-cols-3 gap-3 mb-4">
-          <div className="rounded-xl bg-[#0F172A]/80 border border-border/50 p-2.5 text-center">
+          <div className="rounded-xl bg-surface-lighter ring-1 ring-inset ring-border p-2.5 text-center">
             <p className="text-[10px] text-text-muted font-medium">Variants</p>
             <p className="text-sm font-bold text-text-primary">{p.variants.length}</p>
           </div>
@@ -76,11 +80,11 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
             totalStock === 0 ? 'bg-rose-950/30' : isLowStock ? 'bg-amber-950/30' : 'bg-emerald-950/30'
           }`}>
             <p className="text-[10px] text-text-muted font-medium">Stock</p>
-            <p className={`text-sm font-bold ${totalStock === 0 ? 'text-rose-400' : isLowStock ? 'text-amber-400' : 'text-emerald-400'}`}>
+            <p className={`text-sm font-bold ${totalStock === 0 ? 'text-rose-400' : isLowStock ? 'text-amber-400' : 'text-success'}`}>
               {totalStock}
             </p>
           </div>
-          <div className="rounded-xl bg-[#0F172A]/80 border border-border/50 p-2.5 text-center">
+          <div className="rounded-xl bg-surface-lighter ring-1 ring-inset ring-border p-2.5 text-center">
             <p className="text-[10px] text-text-muted font-medium">Price</p>
             <p className="text-sm font-bold text-text-primary">{minPrice > 0 ? `₹${minPrice.toLocaleString('en-IN')}` : '—'}</p>
           </div>
@@ -88,7 +92,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
 
         {maxOriginal > minPrice && (
           <div className="flex items-center gap-2 mb-3 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-950/40 to-teal-950/40 border border-emerald-900/30">
-            <span className="text-[10px] font-semibold text-emerald-400">{minPrice > 0 ? Math.round((1 - minPrice / maxOriginal) * 100) : 0}% OFF</span>
+            <span className="text-[10px] font-semibold text-success">{minPrice > 0 ? Math.round((1 - minPrice / maxOriginal) * 100) : 0}% OFF</span>
             {maxOriginal > 0 && <span className="text-[10px] text-text-muted line-through">₹{maxOriginal.toLocaleString('en-IN')}</span>}
             <span className="flex items-center gap-0.5 text-[10px] text-text-muted ml-auto">
               <FiClock size={10} /> {p.sold} sold

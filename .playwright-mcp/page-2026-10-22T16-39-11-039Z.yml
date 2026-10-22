@@ -1,0 +1,132 @@
+- generic [ref=f10e3]:
+  - complementary [ref=f10e4]:
+    - generic [ref=f10e5]:
+      - generic [ref=f10e6]: MobileShop
+      - navigation "Admin" [ref=f10e11]:
+        - button "Dashboard" [ref=f10e13]
+        - generic [ref=f10e20]:
+          - button "Product" [ref=f10e21]
+          - button "Category" [ref=f10e27]
+        - generic [ref=f10e31]:
+          - button "Order" [ref=f10e32]
+          - button "Customer" [ref=f10e38]
+          - button "Trade-in" [ref=f10e45]
+        - generic [ref=f10e52]:
+          - button "Repairs" [ref=f10e53]
+          - button "Online booking" [ref=f10e57]
+          - button "New repair ticket" [ref=f10e62]
+      - button "Log out" [ref=f10e67]
+  - generic [ref=f10e71]:
+    - banner [ref=f10e72]:
+      - generic [ref=f10e73]:
+        - button "Search ⌘K" [ref=f10e74]:
+          - generic [ref=f10e78]: Search
+          - generic [ref=f10e79]: ⌘K
+        - button "Online bookings" [ref=f10e80]
+        - button "Online orders" [ref=f10e84]
+        - button "Account menu" [ref=f10e89]:
+          - generic [ref=f10e90]: M
+          - generic [ref=f10e91]:
+            - generic [ref=f10e92]: Maideen
+            - generic [ref=f10e93]: admin@local.test
+    - main [ref=f10e96]:
+      - generic [ref=f10e98]:
+        - generic [ref=f10e99]:
+          - generic [ref=f10e100]:
+            - generic [ref=f10e101] [cursor=pointer]: Dashboard
+            - generic [ref=f10e102]: /
+            - generic [ref=f10e103]: Category Management
+          - heading "Category Management" [level=1] [ref=f10e104]
+          - paragraph [ref=f10e105]: Create and manage product categories and subcategories for your mobile shop inventory.
+        - generic [ref=f10e106]:
+          - button "Create Category" [ref=f10e107] [cursor=pointer]
+          - button "Refresh" [ref=f10e109] [cursor=pointer]
+      - generic [ref=f10e114]:
+        - generic [ref=f10e117]:
+          - paragraph [ref=f10e118]: Total Categories
+          - paragraph [ref=f10e119]: "4"
+        - generic [ref=f10e126]:
+          - paragraph [ref=f10e127]: Sub Categories
+          - paragraph [ref=f10e128]: "0"
+        - generic [ref=f10e138]:
+          - paragraph [ref=f10e139]: Active Categories
+          - paragraph [ref=f10e140]: "4"
+        - generic [ref=f10e148]:
+          - paragraph [ref=f10e149]: Inactive
+          - paragraph [ref=f10e150]: "0"
+      - generic [ref=f10e157]:
+        - textbox "Search categories..." [ref=f10e162]
+        - generic [ref=f10e163]:
+          - combobox [ref=f10e165] [cursor=pointer]:
+            - option "All Status" [selected]
+            - option "Active"
+            - option "Inactive"
+          - combobox [ref=f10e166] [cursor=pointer]:
+            - option "Newest" [selected]
+            - option "Oldest"
+            - option "Name A-Z"
+      - generic [ref=f10e167]:
+        - button "table" [ref=f10e168] [cursor=pointer]
+        - button "cards" [ref=f10e170] [cursor=pointer]
+      - table [ref=f10e178]:
+        - rowgroup [ref=f10e179]:
+          - row [ref=f10e180]:
+            - columnheader "Category Name" [ref=f10e181]
+            - columnheader "Category ID" [ref=f10e182]
+            - columnheader "Sub Categories" [ref=f10e183]
+            - columnheader "Products" [ref=f10e184]
+            - columnheader "Created" [ref=f10e185]
+            - columnheader "Status" [ref=f10e186]
+            - columnheader "Action" [ref=f10e187]
+        - rowgroup [ref=f10e188]:
+          - row [ref=f10e189]:
+            - cell "S Smartphones" [ref=f10e190]:
+              - generic [ref=f10e191]:
+                - generic [ref=f10e192]: S
+                - paragraph [ref=f10e193]: Smartphones
+            - cell "#CAT0001" [ref=f10e194]
+            - cell "0" [ref=f10e195]
+            - cell "4" [ref=f10e196]
+            - cell "2026-10-22 21:53:28" [ref=f10e197]
+            - cell "Active" [ref=f10e198]
+            - cell [ref=f10e200]:
+              - button "Actions for Smartphones" [ref=f10e201]
+          - row [ref=f10e206]:
+            - cell "A Audio" [ref=f10e207]:
+              - generic [ref=f10e208]:
+                - generic [ref=f10e209]: A
+                - paragraph [ref=f10e210]: Audio
+            - cell "#CAT0002" [ref=f10e211]
+            - cell "0" [ref=f10e212]
+            - cell "2" [ref=f10e213]
+            - cell "2026-10-22 21:53:28" [ref=f10e214]
+            - cell "Active" [ref=f10e215]
+            - cell [ref=f10e217]:
+              - button "Actions for Audio" [ref=f10e218]
+          - row [ref=f10e223]:
+            - cell "W Wearables" [ref=f10e224]:
+              - generic [ref=f10e225]:
+                - generic [ref=f10e226]: W
+                - paragraph [ref=f10e227]: Wearables
+            - cell "#CAT0003" [ref=f10e228]
+            - cell "0" [ref=f10e229]
+            - cell "1" [ref=f10e230]
+            - cell "2026-10-22 21:53:28" [ref=f10e231]
+            - cell "Active" [ref=f10e232]
+            - cell [ref=f10e234]:
+              - button "Actions for Wearables" [ref=f10e235]
+          - row [ref=f10e240]:
+            - cell "A Accessories" [ref=f10e241]:
+              - generic [ref=f10e242]:
+                - generic [ref=f10e243]: A
+                - paragraph [ref=f10e244]: Accessories
+            - cell "#CAT0004" [ref=f10e245]
+            - cell "0" [ref=f10e246]
+            - cell "1" [ref=f10e247]
+            - cell "2026-10-22 21:53:28" [ref=f10e248]
+            - cell "Active" [ref=f10e249]
+            - cell [ref=f10e251]:
+              - button "Actions for Accessories" [ref=f10e252]
+      - generic [ref=f10e257]:
+        - generic [ref=f10e258]: Showing 4 of 4 categories
+        - generic [ref=f10e259]: Mobile Shop Management

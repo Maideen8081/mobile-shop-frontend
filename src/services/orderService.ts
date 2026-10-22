@@ -205,6 +205,19 @@ export const orderService = {
     }
   },
 
+  /** Admin list: unlike `list`, errors propagate so the UI can show them. */
+  adminList: async (): Promise<OrderResponse[]> => {
+    const r = await api.get(`${BASE}/list/`)
+    return extractItems(r.data).map((i) => normalizeOrder(i))
+  },
+
+  /** Admin status change: throws with the server's message on rejection. */
+  adminUpdateStatus: async (orderNumber: string, orderStatus: string): Promise<OrderResponse> => {
+    const r = await api.put(`${BASE}/update-status/${orderNumber}/`, { status: orderStatus })
+    const body = r.data
+    return normalizeOrder(body?.success === true && 'data' in body ? body.data : body)
+  },
+
   updateStatus: async (orderNumber: string, orderStatus: string): Promise<OrderResponse | null> => {
     try {
       const r = await api.put(`${BASE}/update-status/${orderNumber}/`, { status: orderStatus })

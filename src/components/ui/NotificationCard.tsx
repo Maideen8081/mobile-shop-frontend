@@ -40,7 +40,7 @@ export default function NotificationCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h4 className="text-sm font-semibold text-text-primary">{title}</h4>
-              {time && <span className="text-[10px] text-text-label whitespace-nowrap">{time}</span>}
+              {time && <span className="text-micro text-text-label whitespace-nowrap">{time}</span>}
             </div>
             <p className="text-xs text-text-secondary mt-1 leading-relaxed">{description}</p>
           </div>

@@ -189,9 +189,9 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
             <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <Package size={36} style={{ color: PURPLE }} />
             </div>
-            <h2 className="text-[17px] font-bold text-[#1F2937]">No orders yet</h2>
-            <p className="text-[12.5px] text-[#6B7280] mt-1.5 max-w-[240px]">Complete your first purchase to see orders here.</p>
-            <button onClick={() => navigate('/collection/all')} className="mt-5 h-11 px-7 rounded-[8px] text-white text-[13px] font-bold active:scale-95 transition"
+            <h2 className="text-title-sm font-bold text-[#1F2937]">No orders yet</h2>
+            <p className="text-caption text-[#6B7280] mt-1.5 max-w-[240px]">Complete your first purchase to see orders here.</p>
+            <button onClick={() => navigate('/collection/all')} className="mt-5 h-11 px-7 rounded-[8px] text-white text-label font-bold active:scale-95 transition"
               style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
               Browse Products
             </button>
@@ -218,19 +218,19 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[13px] font-bold text-[#1F2937] truncate">{order.displayOrderId || order.orderId}</span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-[8px] flex-shrink-0" style={{ background: `${badge.color}1A`, color: badge.color }}>{badge.label}</span>
+                      <span className="text-label font-bold text-[#1F2937] truncate">{order.displayOrderId || order.orderId}</span>
+                      <span className="text-micro font-bold px-1.5 py-0.5 rounded-[8px] flex-shrink-0" style={{ background: `${badge.color}1A`, color: badge.color }}>{badge.label}</span>
                     </div>
-                    <p className="text-[11px] text-[#6B7280] truncate">{first?.name || 'Order'}</p>
+                    <p className="text-micro text-[#6B7280] truncate">{first?.name || 'Order'}</p>
                     <div className="flex items-center gap-1.5 mt-1.5">
                       <div className="flex-1 h-1.5 rounded-[8px] bg-[#E5E7EB] overflow-hidden max-w-[140px]">
                         <div className="h-full rounded-[8px]" style={{ width: `${((currentStepIndex + 1) / STEPS.length) * 100}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
                       </div>
-                      <span className="text-[10px] font-semibold text-[#6B7280] flex-shrink-0">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
+                      <span className="text-micro font-semibold text-[#6B7280] flex-shrink-0">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-[13px] font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</p>
+                    <p className="text-label font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</p>
                     <ChevronRight size={16} className="text-[#C4C7D0] ml-auto mt-1" />
                   </div>
                 </motion.button>
@@ -280,8 +280,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
             <Truck size={22} className="text-white" />
           </div>
           <div>
-            <p className="text-white/80 text-[11px] font-semibold uppercase tracking-wide">Status</p>
-            <p className="text-white text-[18px] font-bold leading-tight">{badge.label}</p>
+            <p className="text-white/80 text-micro font-semibold uppercase tracking-wide">Status</p>
+            <p className="text-white text-title-sm font-bold leading-tight">{badge.label}</p>
           </div>
         </div>
 
@@ -307,8 +307,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
                   )}
                 </div>
                 <div className={`pb-5 ${state === 'pending' ? 'opacity-55' : ''}`}>
-                  <p className="text-[13.5px] font-bold leading-tight" style={{ color: idx <= currentStepIndex ? '#fff' : 'rgba(255,255,255,0.7)' }}>{step.label}</p>
-                  <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.8)' }}>{step.desc}</p>
+                  <p className="text-label font-bold leading-tight" style={{ color: idx <= currentStepIndex ? '#fff' : 'rgba(255,255,255,0.7)' }}>{step.label}</p>
+                  <p className="text-micro mt-0.5" style={{ color: 'rgba(255,255,255,0.8)' }}>{step.desc}</p>
                 </div>
               </div>
             )
@@ -321,10 +321,10 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
         <div className={`${card} p-4`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
-              <p className="text-[15px] font-bold text-[#1F2937]">{order.displayOrderId || order.orderId}</p>
+              <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
+              <p className="text-body font-bold text-[#1F2937]">{order.displayOrderId || order.orderId}</p>
             </div>
-            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-[8px] text-[12px] font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
               {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
@@ -334,14 +334,14 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
               <MapPin size={20} style={{ color: PURPLE }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-[#6B7280] font-semibold uppercase tracking-wide">Estimated Delivery</p>
-              <p className="text-[13.5px] font-bold text-[#1F2937] truncate">{order.deliveryDate || '—'}</p>
+              <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Estimated Delivery</p>
+              <p className="text-label font-bold text-[#1F2937] truncate">{order.deliveryDate || '—'}</p>
             </div>
           </div>
           <div className="mt-3">
             <div className="flex justify-between items-end mb-1">
-              <span className="text-[11px] font-semibold text-[#6B7280]">{isDelivered ? 'Completed' : 'Order Progress'}</span>
-              <span className="text-[12px] font-bold" style={{ color: PURPLE }}>{progressPct}%</span>
+              <span className="text-micro font-semibold text-[#6B7280]">{isDelivered ? 'Completed' : 'Order Progress'}</span>
+              <span className="text-caption font-bold" style={{ color: PURPLE }}>{progressPct}%</span>
             </div>
             <div className="h-2 w-full rounded-[8px] bg-[#E5E7EB] overflow-hidden">
               <motion.div initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 1, ease: 'easeOut' }}
@@ -352,7 +352,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
         {/* Items */}
         <div className={`${card} p-4`}>
-          <p className="text-[14px] font-bold text-[#1F2937] mb-3">Items ({itemCount})</p>
+          <p className="text-body-sm font-bold text-[#1F2937] mb-3">Items ({itemCount})</p>
           <div className="space-y-1">
             {items.map((item, idx) => {
               const imgUrl = resolveImage(item)
@@ -369,10 +369,10 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-[#1F2937] truncate">{item.name}</p>
-                      <p className="text-[11px] text-[#6B7280] mt-0.5">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.color ? ` · ${item.color}` : ''}</p>
+                      <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>
+                      <p className="text-micro text-[#6B7280] mt-0.5">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.color ? ` · ${item.color}` : ''}</p>
                     </div>
-                    <span className="text-[13px] font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                    <span className="text-label font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 </div>
               )
@@ -382,7 +382,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
         {/* Price summary */}
         <div className={`${card} p-4`}>
-          <p className="text-[14px] font-bold text-[#1F2937] mb-3">Price Summary</p>
+          <p className="text-body-sm font-bold text-[#1F2937] mb-3">Price Summary</p>
           <div className="space-y-2.5">
             <Row label="Subtotal" value={formatPrice(order.subtotal)} />
             <Row label="Shipping" value={Number(order.shipping) === 0 ? 'FREE' : formatPrice(order.shipping)} highlight={Number(order.shipping) === 0} />
@@ -390,8 +390,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
             {order.discount ? <Row label={`Coupon (${order.couponCode})`} value={`-${formatPrice(order.discount)}`} highlight /> : null}
             <div className="h-px bg-[#EEF0F6] my-1" />
             <div className="flex justify-between items-center">
-              <span className="text-[13px] font-bold text-[#1F2937]">Total Paid</span>
-              <span className="text-[17px] font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</span>
+              <span className="text-label font-bold text-[#1F2937]">Total Paid</span>
+              <span className="text-title-sm font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</span>
             </div>
           </div>
         </div>
@@ -408,8 +408,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
           }} className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}>
             <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><Star size={18} /></div>
             <div className="flex-1 text-left">
-              <p className="text-[13px] font-semibold text-[#1F2937]">Rate your experience</p>
-              <p className="text-[11px] text-[#6B7280]">Help others by reviewing your purchase</p>
+              <p className="text-label font-semibold text-[#1F2937]">Rate your experience</p>
+              <p className="text-micro text-[#6B7280]">Help others by reviewing your purchase</p>
             </div>
             <ChevronRight size={16} className="text-[#C4C7D0]" />
           </button>
@@ -431,8 +431,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
         >
           <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}><Receipt size={18} /></div>
           <div className="flex-1 text-left">
-            <p className="text-[13px] font-semibold text-[#1F2937]">Digital Receipt</p>
-            <p className="text-[11px] text-[#6B7280]">Download order summary</p>
+            <p className="text-label font-semibold text-[#1F2937]">Digital Receipt</p>
+            <p className="text-micro text-[#6B7280]">Download order summary</p>
           </div>
           <ChevronRight size={16} className="text-[#C4C7D0]" />
         </button>
@@ -440,10 +440,10 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
       {/* Sticky CTAs */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5 pb-[calc(env(safe-area-inset-bottom)+12px)]">
-        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2 active:scale-95 transition">
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2 active:scale-95 transition">
           <ShoppingBag size={15} /> Shop More
         </button>
-        <button onClick={onShowAll} className="flex-1 h-12 rounded-[8px] text-[14px] font-semibold text-white inline-flex items-center justify-center gap-2 active:scale-95 transition"
+        <button onClick={onShowAll} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold text-white inline-flex items-center justify-center gap-2 active:scale-95 transition"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           <Package size={15} /> All Orders
         </button>
@@ -454,7 +454,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
 function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex justify-between items-center text-[12.5px]">
+    <div className="flex justify-between items-center text-caption">
       <span className="text-[#6B7280]">{label}</span>
       <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#1F2937]'}`}>{value}</span>
     </div>
@@ -468,7 +468,7 @@ function MobileHeader({ title, onBack }: { title: string; onBack: () => void }) 
         <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
           <ChevronLeft size={22} className="text-[#1F2937]" />
         </button>
-        <h1 className="text-[16px] font-bold text-[#1F2937]">{title}</h1>
+        <h1 className="text-body font-bold text-[#1F2937]">{title}</h1>
       </div>
     </div>
   )

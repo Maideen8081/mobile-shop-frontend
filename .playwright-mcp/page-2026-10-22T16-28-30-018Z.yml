@@ -1,0 +1,68 @@
+- generic [active] [ref=f2e59]:
+  - generic [ref=f2e60]:
+    - generic [ref=f2e61]:
+      - complementary [ref=f2e62]:
+        - generic [ref=f2e63]:
+          - generic [ref=f2e68]:
+            - generic [ref=f2e69]: MobileShop
+            - generic [ref=f2e70]: Admin console
+          - button "Jump to… ⌘K" [ref=f2e72]:
+            - generic [ref=f2e75]: Jump to…
+            - generic [ref=f2e76]: ⌘K
+          - navigation "Admin" [ref=f2e77]:
+            - generic [ref=f2e78]:
+              - paragraph [ref=f2e79]: Overview
+              - button "Dashboard" [ref=f2e80]
+            - generic [ref=f2e87]:
+              - paragraph [ref=f2e88]: Catalog
+              - button "Products" [ref=f2e89]
+              - button "Categories" [ref=f2e95]
+            - generic [ref=f2e99]:
+              - paragraph [ref=f2e100]: Sales
+              - button "Orders" [ref=f2e101]
+              - button "Trade-ins" [ref=f2e106]
+              - button "Customers" [ref=f2e113]
+            - generic [ref=f2e120]:
+              - paragraph [ref=f2e121]: Service
+              - button "Repairs" [ref=f2e122]
+              - button "Online bookings" [ref=f2e126]
+              - button "New repair ticket" [ref=f2e131]
+          - generic [ref=f2e136]:
+            - generic [ref=f2e137]:
+              - generic [ref=f2e138]: M
+              - generic [ref=f2e139]:
+                - paragraph [ref=f2e140]: Maideen
+                - paragraph [ref=f2e141]: admin@local.test
+            - generic [ref=f2e142]:
+              - button "Storefront" [ref=f2e143]
+              - button "Sign out" [ref=f2e148]
+      - generic [ref=f2e152]:
+        - banner [ref=f2e153]:
+          - generic [ref=f2e154]:
+            - navigation "Breadcrumb" [ref=f2e155]:
+              - generic [ref=f2e156]: Service
+              - generic [ref=f2e159]: New repair ticket
+            - button "Search… ⌘K" [ref=f2e160]:
+              - generic [ref=f2e164]: Search…
+              - generic [ref=f2e165]: ⌘K
+            - button "New" [ref=f2e167]
+            - button "Account menu" [ref=f2e171]: M
+        - main [ref=f2e172]:
+          - generic [ref=f2e409]:
+            - heading "Ticket RPR-2026-0019 created" [level=2] [ref=f2e414]
+            - paragraph [ref=f2e415]: The customer has been notified. You can track progress and update the status from Repairs.
+            - generic [ref=f2e416]:
+              - button "Open in Repairs" [ref=f2e417]
+              - button "Create another" [ref=f2e420]
+    - generic [ref=f2e422]:
+      - generic [ref=f2e423]: check_circle
+      - generic [ref=f2e424]: Repair ticket created
+  - generic [ref=f2e1]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f2e2]

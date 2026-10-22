@@ -40,9 +40,9 @@ export default function CouponsOffers() {
             <div className="relative w-7 h-7 rounded-[8px] bg-[#CB202D] flex items-center justify-center shrink-0">
               <Tag size={14} className="text-white" />
             </div>
-            <p className="relative text-[20px] font-extrabold text-[#0F172A] leading-tight mt-1.5">{c.label}</p>
+            <p className="relative text-title font-extrabold text-[#0F172A] leading-tight mt-1.5">{c.label}</p>
             <div className="relative mt-auto">
-              <span className="text-[10px] font-bold text-[#CB202D] bg-[#FEE2E6] rounded px-1.5 py-0.5 inline-block">
+              <span className="text-micro font-bold text-[#CB202D] bg-[#FEE2E6] rounded px-1.5 py-0.5 inline-block">
                 {c.code}
               </span>
             </div>

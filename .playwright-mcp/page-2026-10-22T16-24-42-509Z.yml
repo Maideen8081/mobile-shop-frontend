@@ -1,0 +1,344 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e100]:
+      - banner [ref=e101]:
+        - generic [ref=e102]:
+          - button "Open menu" [ref=e103]
+          - navigation "Breadcrumb" [ref=e105]:
+            - generic [ref=e106]: Overview
+            - generic [ref=e109]: Dashboard
+          - button "Search… ⌘K" [ref=e110]:
+            - generic [ref=e114]: Search…
+            - generic [ref=e115]: ⌘K
+          - button "New" [ref=e117]
+          - button "Account menu" [ref=e121]: M
+      - main [ref=e122]:
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - paragraph [ref=e125]: Thursday, 22 October
+            - heading "Good evening, Maideen" [level=2] [ref=e126]
+            - paragraph [ref=e127]: Here’s what is happening across your store, workshop and trade-ins today.
+          - button "Refresh" [ref=e129]
+        - generic [ref=e134]:
+          - generic [ref=e135]: Needs attention
+          - generic [ref=e139]:
+            - button "7 high-priority repairs open" [ref=e140]
+            - button "1 variant out of stock" [ref=e143]
+            - button "5 running low on stock" [ref=e146]
+            - button "26 orders to fulfil" [ref=e149]
+            - button "3 trade-ins awaiting review" [ref=e152]
+            - button "1 repair ready for pickup" [ref=e155]
+        - generic [ref=e158]:
+          - generic [ref=e159]:
+            - generic [ref=e160]: Today’s sales
+            - generic [ref=e165]:
+              - generic [ref=e166]: ₹2,36,699
+              - generic [ref=e167]:
+                - generic [ref=e168]: ↑ 100%
+                - generic [ref=e169]: vs yesterday
+          - generic [ref=e170]:
+            - generic [ref=e171]: Revenue this month
+            - generic [ref=e177]:
+              - generic [ref=e178]: ₹6.2L
+              - generic [ref=e179]:
+                - generic [ref=e180]: ↑ 56.3%
+                - generic [ref=e181]: vs last month
+          - button "Orders to fulfil 26 4 placed today · 46 all time" [ref=e182] [cursor=pointer]:
+            - generic [ref=e183]: Orders to fulfil
+            - generic [ref=e189]:
+              - generic [ref=e190]: "26"
+              - generic [ref=e191]: 4 placed today · 46 all time
+          - button "Open repairs 15 1 booked today · 7 urgent" [ref=e193] [cursor=pointer]:
+            - generic [ref=e194]: Open repairs
+            - generic [ref=e199]:
+              - generic [ref=e200]: "15"
+              - generic [ref=e201]: 1 booked today · 7 urgent
+          - button "Customers 12 +5 this month" [ref=e203] [cursor=pointer]:
+            - generic [ref=e204]: Customers
+            - generic [ref=e212]:
+              - generic [ref=e213]: "12"
+              - generic [ref=e214]: +5 this month
+          - button "Published products 8 144 units in stock" [ref=e216] [cursor=pointer]:
+            - generic [ref=e217]: Published products
+            - generic [ref=e224]:
+              - generic [ref=e225]: "8"
+              - generic [ref=e226]: 144 units in stock
+          - button "Stock alerts 5 1 out of stock" [ref=e228] [cursor=pointer]:
+            - generic [ref=e229]: Stock alerts
+            - generic [ref=e235]:
+              - generic [ref=e236]: "5"
+              - generic [ref=e237]: 1 out of stock
+          - button "Trade-ins to review 3 pending or quoted" [ref=e239] [cursor=pointer]:
+            - generic [ref=e240]: Trade-ins to review
+            - generic [ref=e248]:
+              - generic [ref=e249]: "3"
+              - generic [ref=e250]: pending or quoted
+        - generic [ref=e252]:
+          - generic [ref=e253]:
+            - generic [ref=e255]:
+              - heading "Sales, last 14 days" [level=3] [ref=e256]
+              - paragraph [ref=e257]: ₹3,74,697 from 5 orders (cancelled excluded)
+            - application [ref=e262]:
+              - generic [ref=e273]:
+                - generic [ref=e274]:
+                  - generic [ref=e275]: 9 Oct
+                  - generic [ref=e277]: 10 Oct
+                  - generic [ref=e279]: 11 Oct
+                  - generic [ref=e281]: 12 Oct
+                  - generic [ref=e283]: 13 Oct
+                  - generic [ref=e285]: 14 Oct
+                  - generic [ref=e287]: 16 Oct
+                  - generic [ref=e289]: 17 Oct
+                  - generic [ref=e291]: 18 Oct
+                  - generic [ref=e293]: 19 Oct
+                  - generic [ref=e295]: 22 Oct
+                - generic [ref=e297]:
+                  - generic [ref=e298]: ₹0
+                  - generic [ref=e300]: ₹60,000
+                  - generic [ref=e302]: ₹1.2L
+                  - generic [ref=e304]: ₹1.8L
+                  - generic [ref=e306]: ₹2.4L
+          - generic [ref=e308]:
+            - generic [ref=e309]:
+              - generic [ref=e310]:
+                - heading "Orders by status" [level=3] [ref=e311]
+                - paragraph [ref=e312]: All time
+              - button "Manage" [ref=e314]
+            - list [ref=e318]:
+              - listitem [ref=e319]:
+                - generic [ref=e320]:
+                  - generic [ref=e321]: Order Placed
+                  - generic [ref=e322]: "5"
+              - listitem [ref=e325]:
+                - generic [ref=e326]:
+                  - generic [ref=e327]: Accepted
+                  - generic [ref=e328]: "6"
+              - listitem [ref=e331]:
+                - generic [ref=e332]:
+                  - generic [ref=e333]: Processing
+                  - generic [ref=e334]: "5"
+              - listitem [ref=e337]:
+                - generic [ref=e338]:
+                  - generic [ref=e339]: Shipped
+                  - generic [ref=e340]: "4"
+              - listitem [ref=e343]:
+                - generic [ref=e344]:
+                  - generic [ref=e345]: Out for Delivery
+                  - generic [ref=e346]: "6"
+              - listitem [ref=e349]:
+                - generic [ref=e350]:
+                  - generic [ref=e351]: Delivered
+                  - generic [ref=e352]: "15"
+              - listitem [ref=e355]:
+                - generic [ref=e356]:
+                  - generic [ref=e357]: Cancelled
+                  - generic [ref=e358]: "5"
+        - generic [ref=e361]:
+          - generic [ref=e362]:
+            - generic [ref=e364]:
+              - heading "Monthly revenue" [level=3] [ref=e365]
+              - paragraph [ref=e366]: Last 6 months
+            - application [ref=e371]:
+              - generic [ref=e375]:
+                - generic [ref=e376]:
+                  - generic [ref=e377]: May
+                  - generic [ref=e379]: Jun
+                  - generic [ref=e381]: Jul
+                  - generic [ref=e383]: Aug
+                  - generic [ref=e385]: Sep
+                  - generic [ref=e387]: Oct
+                - generic [ref=e389]:
+                  - generic [ref=e390]: ₹0
+                  - generic [ref=e392]: ₹2.5L
+                  - generic [ref=e394]: ₹5L
+                  - generic [ref=e396]: ₹7.5L
+                  - generic [ref=e398]: ₹10L
+          - generic [ref=e400]:
+            - generic [ref=e402]:
+              - heading "Best sellers" [level=3] [ref=e403]
+              - paragraph [ref=e404]: By units sold
+            - list [ref=e406]:
+              - listitem [ref=e407]:
+                - generic [ref=e408]: "1"
+                - generic [ref=e409]:
+                  - generic [ref=e410]: Galaxy S24 Ultra
+                  - generic [ref=e411]: 12 sold
+                - generic [ref=e412]: ₹15,69,988
+              - listitem [ref=e413]:
+                - generic [ref=e414]: "2"
+                - generic [ref=e415]:
+                  - generic [ref=e416]: 65W USB-C Charger
+                  - generic [ref=e417]: 12 sold
+                - generic [ref=e418]: ₹1,05,988
+              - listitem [ref=e419]:
+                - generic [ref=e420]: "3"
+                - generic [ref=e421]:
+                  - generic [ref=e422]: iPhone 15 Pro
+                  - generic [ref=e423]: 7 sold
+                - generic [ref=e424]: ₹9,39,300
+              - listitem [ref=e425]:
+                - generic [ref=e426]: "4"
+                - generic [ref=e427]:
+                  - generic [ref=e428]: Apple Watch Series 9
+                  - generic [ref=e429]: 7 sold
+                - generic [ref=e430]: ₹2,93,300
+              - listitem [ref=e431]:
+                - generic [ref=e432]: "5"
+                - generic [ref=e433]:
+                  - generic [ref=e434]: AirPods Pro 2
+                  - generic [ref=e435]: 6 sold
+                - generic [ref=e436]: ₹1,49,400
+          - generic [ref=e437]:
+            - generic [ref=e438]:
+              - generic [ref=e439]:
+                - heading "Low stock" [level=3] [ref=e440]
+                - paragraph [ref=e441]: At or below alert level
+              - button "Restock" [ref=e443]
+            - list [ref=e447]:
+              - listitem [ref=e448]:
+                - generic [ref=e449]:
+                  - generic [ref=e450]: Galaxy S24 Ultra
+                  - generic [ref=e451]: 256GB Silver
+                - generic [ref=e452]: Out of stock
+              - listitem [ref=e454]:
+                - generic [ref=e455]:
+                  - generic [ref=e456]: 65W USB-C Charger
+                  - generic [ref=e457]: 256GB Silver
+                - generic [ref=e458]: 1 left
+              - listitem [ref=e460]:
+                - generic [ref=e461]:
+                  - generic [ref=e462]: Galaxy Buds2 Pro
+                  - generic [ref=e463]: 128GB Black
+                - generic [ref=e464]: 2 left
+              - listitem [ref=e466]:
+                - generic [ref=e467]:
+                  - generic [ref=e468]: iPhone 15 Pro
+                  - generic [ref=e469]: 256GB Silver
+                - generic [ref=e470]: 3 left
+              - listitem [ref=e472]:
+                - generic [ref=e473]:
+                  - generic [ref=e474]: OnePlus 12
+                  - generic [ref=e475]: 128GB Black
+                - generic [ref=e476]: 4 left
+        - generic [ref=e478]:
+          - generic [ref=e479]:
+            - generic [ref=e480]:
+              - heading "Recent orders" [level=3] [ref=e482]
+              - button "View all" [ref=e484]
+            - table [ref=e489]:
+              - rowgroup [ref=e490]:
+                - row [ref=e491]:
+                  - columnheader "Order" [ref=e492]
+                  - columnheader "Customer" [ref=e493]
+                  - columnheader "Total" [ref=e494]
+                  - columnheader "Status" [ref=e495]
+              - rowgroup [ref=e496]:
+                - row [ref=e497] [cursor=pointer]:
+                  - cell "ORD261022162328UO9B 2h ago" [ref=e498]:
+                    - generic [ref=e499]: ORD261022162328UO9B
+                    - generic [ref=e500]: 2h ago
+                  - cell "Rohan Gupta" [ref=e501]
+                  - cell "₹1,39,900" [ref=e502]
+                  - cell "Order Placed" [ref=e503]
+                - row [ref=e506] [cursor=pointer]:
+                  - cell "ORD261022162328Q7NI 2h ago" [ref=e507]:
+                    - generic [ref=e508]: ORD261022162328Q7NI
+                    - generic [ref=e509]: 2h ago
+                  - cell "Ananya Reddy" [ref=e510]
+                  - cell "₹83,800" [ref=e511]
+                  - cell "Delivered" [ref=e512]
+                - row [ref=e515] [cursor=pointer]:
+                  - cell "ORD261022162328DZUW 7h ago" [ref=e516]:
+                    - generic [ref=e517]: ORD261022162328DZUW
+                    - generic [ref=e518]: 7h ago
+                  - cell "Rohan Gupta" [ref=e519]
+                  - cell "₹12,999" [ref=e520]
+                  - cell "Delivered" [ref=e521]
+                - row [ref=e524] [cursor=pointer]:
+                  - cell "ORD261022162328EL3G 9h ago" [ref=e525]:
+                    - generic [ref=e526]: ORD261022162328EL3G
+                    - generic [ref=e527]: 9h ago
+                  - cell "Fatima Khan" [ref=e528]
+                  - cell "₹24,900" [ref=e529]
+                  - cell "Cancelled" [ref=e530]
+                - row [ref=e533] [cursor=pointer]:
+                  - cell "ORD261022162328AFDN 6d ago" [ref=e534]:
+                    - generic [ref=e535]: ORD261022162328AFDN
+                    - generic [ref=e536]: 6d ago
+                  - cell "Arjun Nair" [ref=e537]
+                  - cell "₹2,999" [ref=e538]
+                  - cell "Accepted" [ref=e539]
+                - row [ref=e542] [cursor=pointer]:
+                  - cell "ORD2610221623280ISM 15 Oct 2026" [ref=e543]:
+                    - generic [ref=e544]: ORD2610221623280ISM
+                    - generic [ref=e545]: 15 Oct 2026
+                  - cell "Rohan Gupta" [ref=e546]
+                  - cell "₹1,34,999" [ref=e547]
+                  - cell "Delivered" [ref=e548]
+          - generic [ref=e551]:
+            - generic [ref=e552]:
+              - heading "Latest repair tickets" [level=3] [ref=e554]
+              - button "View all" [ref=e556]
+            - table [ref=e561]:
+              - rowgroup [ref=e562]:
+                - row [ref=e563]:
+                  - columnheader "Ticket" [ref=e564]
+                  - columnheader "Device" [ref=e565]
+                  - columnheader "Priority" [ref=e566]
+                  - columnheader "Status" [ref=e567]
+              - rowgroup [ref=e568]:
+                - row [ref=e569] [cursor=pointer]:
+                  - cell "RPR-2026-0016 Ananya Reddy · 1m ago" [ref=e570]:
+                    - generic [ref=e571]: RPR-2026-0016
+                    - generic [ref=e572]: Ananya Reddy · 1m ago
+                  - cell "OnePlus 11R" [ref=e573]
+                  - cell "urgent" [ref=e574]
+                  - cell "Completed" [ref=e578]
+                - row [ref=e581] [cursor=pointer]:
+                  - cell "RPR-2026-0010 Rahul Verma · 3d ago" [ref=e582]:
+                    - generic [ref=e583]: RPR-2026-0010
+                    - generic [ref=e584]: Rahul Verma · 3d ago
+                  - cell "Samsung Galaxy S22" [ref=e585]
+                  - cell "medium" [ref=e586]
+                  - cell "Pending" [ref=e591]
+                - row [ref=e594] [cursor=pointer]:
+                  - cell "RPR-2026-0002 Fatima Khan · 15 Oct 2026" [ref=e595]:
+                    - generic [ref=e596]: RPR-2026-0002
+                    - generic [ref=e597]: Fatima Khan · 15 Oct 2026
+                  - cell "Apple iPhone 13" [ref=e598]
+                  - cell "urgent" [ref=e599]
+                  - cell "Repair In Progress" [ref=e603]
+                - row [ref=e606] [cursor=pointer]:
+                  - cell "RPR-2026-0004 Rahul Verma · 15 Oct 2026" [ref=e607]:
+                    - generic [ref=e608]: RPR-2026-0004
+                    - generic [ref=e609]: Rahul Verma · 15 Oct 2026
+                  - cell "Xiaomi Redmi Note 12" [ref=e610]
+                  - cell "urgent" [ref=e611]
+                  - cell "Waiting for Parts" [ref=e615]
+                - row [ref=e618] [cursor=pointer]:
+                  - cell "RPR-2026-0013 Imran Shaikh · 15 Oct 2026" [ref=e619]:
+                    - generic [ref=e620]: RPR-2026-0013
+                    - generic [ref=e621]: Imran Shaikh · 15 Oct 2026
+                  - cell "Apple iPhone 13" [ref=e622]
+                  - cell "low" [ref=e623]
+                  - cell "Waiting for Parts" [ref=e628]
+                - row [ref=e631] [cursor=pointer]:
+                  - cell "RPR-2026-0003 Fatima Khan · 12 Oct 2026" [ref=e632]:
+                    - generic [ref=e633]: RPR-2026-0003
+                    - generic [ref=e634]: Fatima Khan · 12 Oct 2026
+                  - cell "Apple iPhone 13" [ref=e635]
+                  - cell "medium" [ref=e636]
+                  - cell "Repair In Progress" [ref=e641]
+    - generic [ref=e96]:
+      - generic [ref=e97]: check_circle
+      - generic [ref=e98]: Admin login successful!
+  - generic [ref=e38]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=e39]
+  - generic [aria-hidden] [ref=e644]: ₹2.5L

@@ -240,9 +240,9 @@ export default function TradeInPage() {
                     </a>
                   </div>
                   <div className="flex items-center gap-6 mt-8 text-white/60 text-sm">
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#D91E36]">check_circle</span> Instant Quote</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#D91E36]">check_circle</span> Free Shipping</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px] text-[#D91E36]">check_circle</span> Best Price Guarantee</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Instant Quote</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Free Shipping</span>
+                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Best Price Guarantee</span>
                   </div>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export default function TradeInPage() {
                         </div>
                         <div className="mt-4 p-3 rounded-lg bg-[#D91E36]/5 border border-[#D91E36]/15">
                           <p className="text-xs text-[#434748] flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-[16px] text-[#D91E36]">info</span>
+                            <span className="material-symbols-outlined text-body text-[#D91E36]">info</span>
                             This is an estimate. Final value determined after physical inspection.
                           </p>
                         </div>
@@ -483,7 +483,7 @@ export default function TradeInPage() {
                           'No hidden fees or deductions',
                         ].map((tip) => (
                           <li key={tip} className="flex items-center gap-2 text-xs text-[#434748]">
-                            <span className="material-symbols-outlined text-[14px] text-[#D91E36]">check</span>
+                            <span className="material-symbols-outlined text-body-sm text-[#D91E36]">check</span>
                             {tip}
                           </li>
                         ))}

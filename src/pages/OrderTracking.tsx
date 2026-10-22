@@ -165,7 +165,7 @@ function StageIndicator({ currentStepIndex, order }: { currentStepIndex: number;
                 fontFamily: 'var(--font-ui)',
                 color: isActive ? '#191c1d' : 'rgba(59,75,61,0.4)',
               }}>{step.label}</h3>
-              <p className="text-[10px] mt-1" style={{
+              <p className="text-micro mt-1" style={{
                 fontFamily: 'var(--font-ui)',
                 color: isActive ? '#A3122A' : 'rgba(59,75,61,0.3)',
               }}>
@@ -219,7 +219,7 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
               boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
             }}>
               <div className="absolute top-4 right-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-[10px] font-bold" style={{
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] text-micro font-bold" style={{
                   background: 'rgba(217,30,54,0.1)',
                   border: '1px solid rgba(217,30,54,0.2)',
                   color: '#A3122A',
@@ -252,7 +252,7 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
                     backdropFilter: 'blur(20px)',
                     border: '1px solid rgba(217,30,54,0.3)',
                   }}>
-                    <div className="text-[8px] font-bold mb-0.5" style={{ color: '#A3122A' }}>ORDER ID</div>
+                    <div className="text-micro font-bold mb-0.5" style={{ color: '#A3122A' }}>ORDER ID</div>
                     <div className="text-xs font-mono text-[#191c1d]" style={{ fontFamily: 'var(--font-ui)' }}>{order.displayOrderId || order.orderId}</div>
                   </div>
                 </div>
@@ -289,11 +289,11 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-2.5 rounded-lg" style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}>
-                      <div className="text-[9px] uppercase font-bold mb-0.5" style={{ color: 'rgba(59,75,61,0.7)' }}>Items Count</div>
+                      <div className="text-micro uppercase font-bold mb-0.5" style={{ color: 'rgba(59,75,61,0.7)' }}>Items Count</div>
                       <div className="text-sm font-bold text-[#191c1d]">{items.reduce((s, i) => s + i.quantity, 0)} items</div>
                     </div>
                     <div className="p-2.5 rounded-lg" style={{ background: 'rgba(237,238,239,0.5)', border: '1px solid rgba(185,203,185,0.2)' }}>
-                      <div className="text-[9px] uppercase font-bold mb-0.5" style={{ color: 'rgba(59,75,61,0.7)' }}>Total Value</div>
+                      <div className="text-micro uppercase font-bold mb-0.5" style={{ color: 'rgba(59,75,61,0.7)' }}>Total Value</div>
                       <div className="text-sm font-bold" style={{ color: '#A3122A' }}>{formatPrice(order.total)}</div>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold text-[#191c1d] truncate">{item.name}</p>
-                          <p className="text-[11px] mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>
+                          <p className="text-micro mt-0.5" style={{ color: 'rgba(59,75,61,0.6)' }}>
                             Qty: {item.quantity}
                             {item.storage && ` | ${item.storage}`}
                             {item.ram && ` | ${item.ram}`}
@@ -358,22 +358,22 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
               </h3>
               <div className="space-y-4">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Estimated Delivery</span>
+                  <span className="text-micro uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Estimated Delivery</span>
                   <span className="text-sm font-semibold text-[#191c1d]">{order.deliveryDate}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Shipping Method</span>
+                  <span className="text-micro uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Shipping Method</span>
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-lg" style={{ color: '#A3122A' }}>speed</span>
                     <span className="text-sm font-bold text-[#191c1d]">{order.shipping === 0 ? 'Free Shipping' : 'Express Delivery'}</span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Order Date</span>
+                  <span className="text-micro uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Order Date</span>
                   <span className="text-xs font-mono px-2 py-1 rounded" style={{ background: 'rgba(217,30,54,0.05)', color: '#A3122A' }}>{order.orderDate}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[9px] uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Payment Status</span>
+                  <span className="text-micro uppercase font-bold" style={{ color: 'rgba(59,75,61,0.6)' }}>Payment Status</span>
                   <span className="text-xs italic" style={{ color: '#A3122A' }}>Completed ✓</span>
                 </div>
               </div>
@@ -385,7 +385,7 @@ function OrderDetailView({ order, onBack: _onBack }: { order: OrderData; onBack:
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#191c1d]">PhoneFix Pro</div>
-                    <div className="text-[9px] uppercase" style={{ color: 'rgba(59,75,61,0.6)' }}>Verified Merchant</div>
+                    <div className="text-micro uppercase" style={{ color: 'rgba(59,75,61,0.6)' }}>Verified Merchant</div>
                   </div>
                 </div>
               </div>
@@ -498,7 +498,7 @@ function StatusBadge({ status }: { status: string }) {
   const badge = STATUS_BADGE[status] || { label: 'Confirmed', color: '#A3122A' }
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[10px] font-bold tracking-wider uppercase"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-micro font-bold tracking-wider uppercase"
       style={{ background: `${badge.color}25`, color: badge.color }}
     >
       <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: badge.color }} />
@@ -640,13 +640,13 @@ export default function OrderTracking() {
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.8)' }}>Order</span>
+                          <span className="text-micro font-bold uppercase tracking-wider" style={{ color: 'rgba(59,75,61,0.8)' }}>Order</span>
                           <span className="text-sm font-bold" style={{ color: '#A3122A' }}>{order.displayOrderId || order.orderId}</span>
                           <StatusBadge status={order.status} />
                         </div>
                         <p className="text-xs mb-2" style={{ color: 'rgba(59,75,61,0.8)' }}>{order.orderDate}</p>
                         <div className="flex items-center gap-4">
-                          <span className="text-[11px]" style={{ color: 'rgba(59,75,61,0.8)' }}>
+                          <span className="text-micro" style={{ color: 'rgba(59,75,61,0.8)' }}>
                             {itemCount} {itemCount === 1 ? 'item' : 'items'}
                           </span>
                           <div className="flex items-center gap-1.5 flex-1 max-w-[200px]">
@@ -667,7 +667,7 @@ export default function OrderTracking() {
                       <div className="text-right flex-shrink-0 flex items-center gap-4">
                         <div>
                           <p className="text-base font-extrabold" style={{ color: '#A3122A' }}>{formatPrice(order.total)}</p>
-                          <p className="text-[10px]" style={{ color: 'rgba(59,75,61,0.8)' }}>
+                          <p className="text-micro" style={{ color: 'rgba(59,75,61,0.8)' }}>
                             {STEPS[Math.min(currentStepIndex, STEPS.length - 1)]?.label || 'Confirmed'}
                           </p>
                         </div>

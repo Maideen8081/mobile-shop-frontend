@@ -48,10 +48,10 @@ export default function CategoryCarousel({ categories }: { categories: Category[
                 {img ? (
                   <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-[8px]" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                 ) : (
-                  <span className="text-[28px] leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
+                  <span className="text-heading leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                 )}
               </div>
-              <span className={`text-[11px] text-center leading-tight max-w-[76px] truncate font-semibold ${active ? 'text-[#CB202D]' : 'text-[#1F2937]'}`}>
+              <span className={`text-micro text-center leading-tight max-w-[76px] truncate font-semibold ${active ? 'text-[#CB202D]' : 'text-[#1F2937]'}`}>
                 {cat.name}
               </span>
             </Link>

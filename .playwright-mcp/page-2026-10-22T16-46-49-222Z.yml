@@ -1,0 +1,479 @@
+- generic [active] [ref=f13e1]:
+  - generic [ref=f13e3]:
+    - complementary [ref=f13e4]:
+      - generic [ref=f13e5]:
+        - generic [ref=f13e6]: MobileShop
+        - navigation "Admin" [ref=f13e11]:
+          - button "Dashboard" [ref=f13e13]
+          - generic [ref=f13e20]:
+            - button "Product" [ref=f13e21]
+            - button "Category" [ref=f13e27]
+          - generic [ref=f13e31]:
+            - button "Order" [ref=f13e32]
+            - button "Customer" [ref=f13e38]
+            - button "Trade-in" [ref=f13e45]
+          - generic [ref=f13e52]:
+            - button "Repairs" [ref=f13e53]
+            - button "Online booking" [ref=f13e57]
+            - button "New repair ticket" [ref=f13e62]
+        - button "Log out" [ref=f13e67]
+    - generic [ref=f13e71]:
+      - banner [ref=f13e72]:
+        - generic [ref=f13e73]:
+          - button "Search ⌘K" [ref=f13e74]:
+            - generic [ref=f13e78]: Search
+            - generic [ref=f13e79]: ⌘K
+          - button "Online bookings" [ref=f13e80]
+          - button "Online orders" [ref=f13e84]
+          - button "Account menu" [ref=f13e89]:
+            - generic [ref=f13e90]: M
+            - generic [ref=f13e91]:
+              - generic [ref=f13e92]: Maideen
+              - generic [ref=f13e93]: admin@local.test
+      - main [ref=f13e96]:
+        - generic [ref=f13e98]:
+          - generic [ref=f13e99]:
+            - generic [ref=f13e100]:
+              - generic [ref=f13e101] [cursor=pointer]: Repairs
+              - generic [ref=f13e102]: /
+              - generic [ref=f13e103]: Dashboard
+            - heading "Repair Service Dashboard" [level=1] [ref=f13e104]
+            - paragraph [ref=f13e105]: Monitor customer repair bookings, manage workflow, and track device service status.
+          - button "Filter" [ref=f13e107] [cursor=pointer]
+        - generic [ref=f13e110]:
+          - generic [ref=f13e111]:
+            - generic [ref=f13e113]: Total Bookings
+            - generic [ref=f13e116]:
+              - generic [ref=f13e117]: "19"
+              - generic [ref=f13e118]:
+                - generic [ref=f13e119]: ↑
+                - text: 0%
+            - paragraph [ref=f13e120]: All time
+          - generic [ref=f13e123]:
+            - generic [ref=f13e125]: Pending Review
+            - generic [ref=f13e128]:
+              - generic [ref=f13e129]: "4"
+              - generic [ref=f13e130]:
+                - generic [ref=f13e131]: ↑
+                - text: 0%
+            - paragraph [ref=f13e132]: Awaiting acceptance
+          - generic [ref=f13e134]:
+            - generic [ref=f13e136]: In Progress
+            - generic [ref=f13e139]:
+              - generic [ref=f13e140]: "4"
+              - generic [ref=f13e141]:
+                - generic [ref=f13e142]: ↑
+                - text: 0%
+            - paragraph [ref=f13e143]: Active repairs
+          - generic [ref=f13e146]:
+            - generic [ref=f13e148]: Completed
+            - generic [ref=f13e151]:
+              - generic [ref=f13e152]: "3"
+              - generic [ref=f13e153]:
+                - generic [ref=f13e154]: ↑
+                - text: 0%
+            - paragraph [ref=f13e155]: Delivered
+        - generic [ref=f13e157]:
+          - generic [ref=f13e158]:
+            - generic [ref=f13e159]:
+              - generic [ref=f13e161]:
+                - heading "Repair Workflow" [level=3] [ref=f13e162]
+                - paragraph [ref=f13e163]: Current pipeline status
+              - generic [ref=f13e164]:
+                - generic [ref=f13e165]: Received
+                - generic [ref=f13e173]: Diagnosing
+                - generic [ref=f13e181]: Waiting for Parts
+                - generic [ref=f13e190]: Repair In Progress
+                - generic [ref=f13e198]:
+                  - generic [ref=f13e199]: "5"
+                  - generic [ref=f13e200]: Quality Check
+                - generic [ref=f13e203]:
+                  - generic [ref=f13e204]: "6"
+                  - generic [ref=f13e205]: Ready for Delivery
+                - generic [ref=f13e208]:
+                  - generic [ref=f13e209]: "7"
+                  - generic [ref=f13e210]: Delivered
+            - generic [ref=f13e211]:
+              - generic [ref=f13e212]:
+                - generic [ref=f13e214]:
+                  - heading "Monthly Repairs" [level=3] [ref=f13e215]
+                  - paragraph [ref=f13e216]: Completed vs Received
+                - application [ref=f13e220]:
+                  - generic [ref=f13e238]:
+                    - generic [ref=f13e239]:
+                      - generic [ref=f13e240]: Jan
+                      - generic [ref=f13e469]: Feb
+                      - generic [ref=f13e471]: Mar
+                      - generic [ref=f13e473]: Apr
+                      - generic [ref=f13e475]: May
+                      - generic [ref=f13e477]: Jun
+                    - generic [ref=f13e252]:
+                      - generic [ref=f13e253]: "0"
+                      - generic [ref=f13e255]: "30"
+                      - generic [ref=f13e257]: "60"
+                      - generic [ref=f13e259]: "90"
+                      - generic [ref=f13e261]: "120"
+              - generic [ref=f13e263]:
+                - generic [ref=f13e265]:
+                  - heading "Issue Distribution" [level=3] [ref=f13e266]
+                  - paragraph [ref=f13e267]: Common repair categories
+                - application [ref=f13e271]
+                - generic [ref=f13e272]:
+                  - generic [ref=f13e273]: Screen Repair
+                  - generic [ref=f13e276]: Battery
+                  - generic [ref=f13e279]: Software
+                  - generic [ref=f13e282]: Camera
+                  - generic [ref=f13e285]: Charging
+                  - generic [ref=f13e288]: Other
+            - generic [ref=f13e291]:
+              - generic [ref=f13e292]:
+                - heading "Active Repairs" [level=3] [ref=f13e293]
+                - generic [ref=f13e294]:
+                  - button "All" [ref=f13e295] [cursor=pointer]
+                  - button "Received" [ref=f13e296] [cursor=pointer]
+                  - button "Diagnosing" [ref=f13e297] [cursor=pointer]
+                  - button "Waiting for Parts" [ref=f13e298] [cursor=pointer]
+                  - button "Repair In Progress" [ref=f13e299] [cursor=pointer]
+                  - button "Quality Check" [ref=f13e300] [cursor=pointer]
+                  - button "Ready for Delivery" [ref=f13e301] [cursor=pointer]
+              - generic [ref=f13e302]:
+                - generic [ref=f13e502] [cursor=pointer]:
+                  - generic [ref=f13e503]:
+                    - generic [ref=f13e504]:
+                      - generic [ref=f13e505]: 📱
+                      - generic [ref=f13e506]:
+                        - paragraph [ref=f13e507]: RPR-2026-0019
+                        - paragraph [ref=f13e508]: Samsung Galaxy S23
+                    - generic [ref=f13e509]: Submitted
+                  - generic [ref=f13e513]:
+                    - generic [ref=f13e514]: Ravi Kumar
+                    - generic [ref=f13e519]: 2026-10-22 21:58:28
+                    - generic [ref=f13e523]: Medium
+                - generic [ref=f13e530] [cursor=pointer]:
+                  - generic [ref=f13e531]:
+                    - generic [ref=f13e532]:
+                      - generic [ref=f13e533]: 📱
+                      - generic [ref=f13e534]:
+                        - paragraph [ref=f13e535]: RPR-2026-0010
+                        - paragraph [ref=f13e536]: Samsung Galaxy S22
+                    - generic [ref=f13e537]: Submitted
+                  - generic [ref=f13e541]:
+                    - generic [ref=f13e542]: Rahul Verma
+                    - generic [ref=f13e547]: 2026-10-19 21:53:28
+                    - generic [ref=f13e551]: Medium
+                - generic [ref=f13e558] [cursor=pointer]:
+                  - generic [ref=f13e559]:
+                    - generic [ref=f13e560]:
+                      - generic [ref=f13e561]: 🍎
+                      - generic [ref=f13e562]:
+                        - paragraph [ref=f13e563]: RPR-2026-0002
+                        - paragraph [ref=f13e564]: Apple iPhone 13
+                    - generic [ref=f13e565]: Repair In Progress
+                  - generic [ref=f13e568]:
+                    - generic [ref=f13e569]: Fatima Khan
+                    - generic [ref=f13e574]: 2026-10-15 21:53:28
+                    - generic [ref=f13e578]: Urgent
+                - generic [ref=f13e585] [cursor=pointer]:
+                  - generic [ref=f13e586]:
+                    - generic [ref=f13e587]:
+                      - generic [ref=f13e588]: 📱
+                      - generic [ref=f13e589]:
+                        - paragraph [ref=f13e590]: RPR-2026-0004
+                        - paragraph [ref=f13e591]: Xiaomi Redmi Note 12
+                    - generic [ref=f13e592]: Waiting for Parts
+                  - generic [ref=f13e597]:
+                    - generic [ref=f13e598]: Rahul Verma
+                    - generic [ref=f13e603]: 2026-10-15 21:53:28
+                    - generic [ref=f13e607]: Urgent
+                - generic [ref=f13e614] [cursor=pointer]:
+                  - generic [ref=f13e615]:
+                    - generic [ref=f13e616]:
+                      - generic [ref=f13e617]: 🍎
+                      - generic [ref=f13e618]:
+                        - paragraph [ref=f13e619]: RPR-2026-0013
+                        - paragraph [ref=f13e620]: Apple iPhone 13
+                    - generic [ref=f13e621]: Waiting for Parts
+                  - generic [ref=f13e626]:
+                    - generic [ref=f13e627]: Imran Shaikh
+                    - generic [ref=f13e632]: 2026-10-15 21:53:28
+                    - generic [ref=f13e636]: Low
+                - generic [ref=f13e643] [cursor=pointer]:
+                  - generic [ref=f13e644]:
+                    - generic [ref=f13e645]:
+                      - generic [ref=f13e646]: 🍎
+                      - generic [ref=f13e647]:
+                        - paragraph [ref=f13e648]: RPR-2026-0003
+                        - paragraph [ref=f13e649]: Apple iPhone 13
+                    - generic [ref=f13e650]: Repair In Progress
+                  - generic [ref=f13e653]:
+                    - generic [ref=f13e654]: Fatima Khan
+                    - generic [ref=f13e659]: 2026-10-12 21:53:28
+                    - generic [ref=f13e663]: Medium
+          - generic [ref=f13e309]:
+            - generic [ref=f13e310]:
+              - generic [ref=f13e311]:
+                - generic [ref=f13e312]:
+                  - heading "Live Activity" [level=3] [ref=f13e313]
+                  - paragraph [ref=f13e314]: Real-time repair updates
+                - generic [ref=f13e315]: Live
+              - generic [ref=f13e318]:
+                - generic [ref=f13e325]:
+                  - paragraph [ref=f13e326]: "New repair ticket #RPR-1010 created for Galaxy A55"
+                  - generic [ref=f13e327]:
+                    - generic [ref=f13e328]: 10 min ago
+                    - generic [ref=f13e330]: Admin
+                - generic [ref=f13e337]:
+                  - paragraph [ref=f13e338]: "Priya Sharma started diagnosing #RPR-1007 - Redmi Note 13 Pro"
+                  - generic [ref=f13e339]:
+                    - generic [ref=f13e340]: 25 min ago
+                    - generic [ref=f13e342]: Priya
+                - generic [ref=f13e350]:
+                  - paragraph [ref=f13e351]: "#RPR-1004 iPhone 14 passed Quality Check"
+                  - generic [ref=f13e352]:
+                    - generic [ref=f13e353]: 45 min ago
+                    - generic [ref=f13e355]: Deepika
+                - generic [ref=f13e363]:
+                  - paragraph [ref=f13e364]: "#RPR-1008 iPhone 13 marked Ready for Delivery"
+                  - generic [ref=f13e365]:
+                    - generic [ref=f13e366]: 1 hour ago
+                    - generic [ref=f13e368]: Rajesh
+                - generic [ref=f13e377]:
+                  - paragraph [ref=f13e378]: "Parts ordered for #RPR-1003 OnePlus 12 charging port"
+                  - generic [ref=f13e379]:
+                    - generic [ref=f13e380]: 2 hours ago
+                    - generic [ref=f13e382]: Admin
+                - generic [ref=f13e389]:
+                  - paragraph [ref=f13e390]: "#RPR-1005 Galaxy S23 water damage repair started"
+                  - generic [ref=f13e391]:
+                    - generic [ref=f13e392]: 3 hours ago
+                    - generic [ref=f13e394]: Vikram
+                - generic [ref=f13e400]:
+                  - paragraph [ref=f13e401]: "Customer Karan approved repair estimate for #RPR-1003"
+                  - generic [ref=f13e402]:
+                    - generic [ref=f13e403]: 4 hours ago
+                    - generic [ref=f13e405]: System
+            - generic [ref=f13e406]:
+              - heading "Technicians" [level=3] [ref=f13e407]
+              - generic [ref=f13e408]:
+                - generic [ref=f13e412]:
+                  - generic [ref=f13e413]: RK
+                  - generic [ref=f13e417]:
+                    - paragraph [ref=f13e418]: Rajesh Kumar
+                    - paragraph [ref=f13e419]: Senior Technician • Hardware
+                - generic [ref=f13e423]:
+                  - generic [ref=f13e424]: PS
+                  - generic [ref=f13e428]:
+                    - paragraph [ref=f13e429]: Priya Sharma
+                    - paragraph [ref=f13e430]: Technician • Software
+                - generic [ref=f13e434]:
+                  - generic [ref=f13e435]: AS
+                  - generic [ref=f13e439]:
+                    - paragraph [ref=f13e440]: Amit Singh
+                    - paragraph [ref=f13e441]: Technician • Display
+                - generic [ref=f13e445]:
+                  - generic [ref=f13e446]: SP
+                  - generic [ref=f13e450]:
+                    - paragraph [ref=f13e451]: Sneha Patel
+                    - paragraph [ref=f13e452]: Junior Technician • Battery
+        - generic [ref=f13e453]:
+          - generic [ref=f13e455]:
+            - heading "All Repair Bookings" [level=3] [ref=f13e456]
+            - paragraph [ref=f13e457]:
+              - text: 19 total bookings ·
+              - generic [ref=f13e458]: 4 pending review
+          - table [ref=f13e668]:
+            - rowgroup [ref=f13e669]:
+              - row [ref=f13e670]:
+                - columnheader "ID" [ref=f13e671]
+                - columnheader "Customer" [ref=f13e672]
+                - columnheader "Device" [ref=f13e673]
+                - columnheader "Issue" [ref=f13e674]
+                - columnheader "Status" [ref=f13e675]
+                - columnheader "Cost" [ref=f13e676]
+                - columnheader "Date" [ref=f13e677]
+                - columnheader "Actions" [ref=f13e678]
+            - rowgroup [ref=f13e679]:
+              - row [ref=f13e680] [cursor=pointer]:
+                - cell "RPR-2026-0019" [ref=f13e681]
+                - cell "Ravi Kumar" [ref=f13e682]
+                - cell "Galaxy S23" [ref=f13e683]
+                - cell "Screen Replacement" [ref=f13e684]
+                - cell "Submitted" [ref=f13e685]
+                - cell "₹4,500" [ref=f13e690]
+                - cell "2026-10-22 21:58:28" [ref=f13e692]
+                - cell [ref=f13e693]:
+                  - generic [ref=f13e694]:
+                    - button "Accept" [ref=f13e695]
+                    - button "Reject" [ref=f13e698]
+              - row [ref=f13e702] [cursor=pointer]:
+                - cell "RPR-2026-0016" [ref=f13e703]
+                - cell "Ananya Reddy" [ref=f13e704]
+                - cell "11R" [ref=f13e705]
+                - cell "Charging Port" [ref=f13e706]
+                - cell "Delivered" [ref=f13e707]
+                - cell "₹2,500" [ref=f13e714]
+                - cell "2026-10-22 21:53:28" [ref=f13e716]
+                - cell "Delivered" [ref=f13e717]
+              - row [ref=f13e718] [cursor=pointer]:
+                - cell "RPR-2026-0010" [ref=f13e719]
+                - cell "Rahul Verma" [ref=f13e720]
+                - cell "Galaxy S22" [ref=f13e721]
+                - cell "Battery Replacement" [ref=f13e722]
+                - cell "Submitted" [ref=f13e723]
+                - cell "₹4,999" [ref=f13e728]
+                - cell "2026-10-19 21:53:28" [ref=f13e730]
+                - cell [ref=f13e731]:
+                  - generic [ref=f13e732]:
+                    - button "Accept" [ref=f13e733]
+                    - button "Reject" [ref=f13e736]
+              - row [ref=f13e740] [cursor=pointer]:
+                - cell "RPR-2026-0002" [ref=f13e741]
+                - cell "Fatima Khan" [ref=f13e742]
+                - cell "iPhone 13" [ref=f13e743]
+                - cell "Screen Repair" [ref=f13e744]
+                - cell "Repair In Progress" [ref=f13e745]
+                - cell "₹4,999" [ref=f13e749]
+                - cell "2026-10-15 21:53:28" [ref=f13e751]
+                - cell "Repair In Progress" [ref=f13e752]
+              - row [ref=f13e753] [cursor=pointer]:
+                - cell "RPR-2026-0004" [ref=f13e754]
+                - cell "Rahul Verma" [ref=f13e755]
+                - cell "Redmi Note 12" [ref=f13e756]
+                - cell "Water Damage" [ref=f13e757]
+                - cell "Waiting for Parts" [ref=f13e758]
+                - cell "₹2,500" [ref=f13e764]
+                - cell "2026-10-15 21:53:28" [ref=f13e766]
+                - cell "Waiting for Parts" [ref=f13e767]
+              - row [ref=f13e768] [cursor=pointer]:
+                - cell "RPR-2026-0013" [ref=f13e769]
+                - cell "Imran Shaikh" [ref=f13e770]
+                - cell "iPhone 13" [ref=f13e771]
+                - cell "Screen Repair" [ref=f13e772]
+                - cell "Waiting for Parts" [ref=f13e773]
+                - cell "₹4,999" [ref=f13e779]
+                - cell "2026-10-15 21:53:28" [ref=f13e781]
+                - cell "Waiting for Parts" [ref=f13e782]
+              - row [ref=f13e783] [cursor=pointer]:
+                - cell "RPR-2026-0003" [ref=f13e784]
+                - cell "Fatima Khan" [ref=f13e785]
+                - cell "iPhone 13" [ref=f13e786]
+                - cell "Screen Repair" [ref=f13e787]
+                - cell "Repair In Progress" [ref=f13e788]
+                - cell "₹1,500" [ref=f13e792]
+                - cell "2026-10-12 21:53:28" [ref=f13e794]
+                - cell "Repair In Progress" [ref=f13e795]
+              - row [ref=f13e796] [cursor=pointer]:
+                - cell "RPR-2026-0007" [ref=f13e797]
+                - cell "Rahul Verma" [ref=f13e798]
+                - cell "Galaxy S22" [ref=f13e799]
+                - cell "Battery Replacement" [ref=f13e800]
+                - cell "Delivered" [ref=f13e801]
+                - cell "₹8,900" [ref=f13e808]
+                - cell "2026-10-12 21:53:28" [ref=f13e810]
+                - cell "Delivered" [ref=f13e811]
+              - row [ref=f13e812] [cursor=pointer]:
+                - cell "RPR-2026-0015" [ref=f13e813]
+                - cell "Asha Rao" [ref=f13e814]
+                - cell "11R" [ref=f13e815]
+                - cell "Charging Port" [ref=f13e816]
+                - cell "Accepted" [ref=f13e817]
+                - cell "₹2,500" [ref=f13e821]
+                - cell "2026-10-12 21:53:28" [ref=f13e823]
+                - cell "Accepted" [ref=f13e824]
+              - row [ref=f13e825] [cursor=pointer]:
+                - cell "RPR-2026-0005" [ref=f13e826]
+                - cell "Asha Rao" [ref=f13e827]
+                - cell "Pixel 7" [ref=f13e828]
+                - cell "Camera Repair" [ref=f13e829]
+                - cell "Waiting for Parts" [ref=f13e830]
+                - cell "₹2,500" [ref=f13e836]
+                - cell "2026-10-10 21:53:28" [ref=f13e838]
+                - cell "Waiting for Parts" [ref=f13e839]
+              - row [ref=f13e840] [cursor=pointer]:
+                - cell "RPR-2026-0001" [ref=f13e841]
+                - cell "Asha Rao" [ref=f13e842]
+                - cell "11R" [ref=f13e843]
+                - cell "Charging Port" [ref=f13e844]
+                - cell "Received" [ref=f13e845]
+                - cell "₹4,999" [ref=f13e850]
+                - cell "2026-10-08 21:53:28" [ref=f13e852]
+                - cell "Received" [ref=f13e853]
+              - row [ref=f13e854] [cursor=pointer]:
+                - cell "RPR-2026-0018" [ref=f13e855]
+                - cell "Imran Shaikh" [ref=f13e856]
+                - cell "11R" [ref=f13e857]
+                - cell "Charging Port" [ref=f13e858]
+                - cell "Waiting for Parts" [ref=f13e859]
+                - cell "₹8,900" [ref=f13e865]
+                - cell "2026-10-08 21:53:28" [ref=f13e867]
+                - cell "Waiting for Parts" [ref=f13e868]
+              - row [ref=f13e869] [cursor=pointer]:
+                - cell "RPR-2026-0011" [ref=f13e870]
+                - cell "Vikram Singh" [ref=f13e871]
+                - cell "Redmi Note 12" [ref=f13e872]
+                - cell "Water Damage" [ref=f13e873]
+                - cell "Submitted" [ref=f13e874]
+                - cell "₹2,500" [ref=f13e879]
+                - cell "2026-10-07 21:53:28" [ref=f13e881]
+                - cell [ref=f13e882]:
+                  - generic [ref=f13e883]:
+                    - button "Accept" [ref=f13e884]
+                    - button "Reject" [ref=f13e887]
+              - row [ref=f13e891] [cursor=pointer]:
+                - cell "RPR-2026-0014" [ref=f13e892]
+                - cell "Karthik Iyer" [ref=f13e893]
+                - cell "Galaxy S22" [ref=f13e894]
+                - cell "Battery Replacement" [ref=f13e895]
+                - cell "Ready for Delivery" [ref=f13e896]
+                - cell "₹1,500" [ref=f13e901]
+                - cell "2026-10-07 21:53:28" [ref=f13e903]
+                - cell "Ready for Delivery" [ref=f13e904]
+              - row [ref=f13e905] [cursor=pointer]:
+                - cell "RPR-2026-0017" [ref=f13e906]
+                - cell "Asha Rao" [ref=f13e907]
+                - cell "Redmi Note 12" [ref=f13e908]
+                - cell "Water Damage" [ref=f13e909]
+                - cell "Waiting for Parts" [ref=f13e910]
+                - cell "₹2,500" [ref=f13e916]
+                - cell "2026-10-07 21:53:28" [ref=f13e918]
+                - cell "Waiting for Parts" [ref=f13e919]
+              - row [ref=f13e920] [cursor=pointer]:
+                - cell "RPR-2026-0008" [ref=f13e921]
+                - cell "Priya Sharma" [ref=f13e922]
+                - cell "Redmi Note 12" [ref=f13e923]
+                - cell "Water Damage" [ref=f13e924]
+                - cell "Delivered" [ref=f13e925]
+                - cell "₹1,500" [ref=f13e932]
+                - cell "2026-10-06 21:53:28" [ref=f13e934]
+                - cell "Delivered" [ref=f13e935]
+              - row [ref=f13e936] [cursor=pointer]:
+                - cell "RPR-2026-0012" [ref=f13e937]
+                - cell "Asha Rao" [ref=f13e938]
+                - cell "11R" [ref=f13e939]
+                - cell "Charging Port" [ref=f13e940]
+                - cell "Accepted" [ref=f13e941]
+                - cell "₹1,500" [ref=f13e945]
+                - cell "2026-10-06 21:53:28" [ref=f13e947]
+                - cell "Accepted" [ref=f13e948]
+              - row [ref=f13e949] [cursor=pointer]:
+                - cell "RPR-2026-0009" [ref=f13e950]
+                - cell "Imran Shaikh" [ref=f13e951]
+                - cell "Redmi Note 12" [ref=f13e952]
+                - cell "Water Damage" [ref=f13e953]
+                - cell "Received" [ref=f13e954]
+                - cell "₹1,500" [ref=f13e959]
+                - cell "2026-10-04 21:53:28" [ref=f13e961]
+                - cell "Received" [ref=f13e962]
+              - row [ref=f13e963] [cursor=pointer]:
+                - cell "RPR-2026-0006" [ref=f13e964]
+                - cell "Asha Rao" [ref=f13e965]
+                - cell "Pixel 7" [ref=f13e966]
+                - cell "Camera Repair" [ref=f13e967]
+                - cell "Submitted" [ref=f13e968]
+                - cell "₹4,999" [ref=f13e973]
+                - cell "2026-10-02 21:53:28" [ref=f13e975]
+                - cell [ref=f13e976]:
+                  - generic [ref=f13e977]:
+                    - button "Accept" [ref=f13e978]
+                    - button "Reject" [ref=f13e981]
+  - generic [aria-hidden] [ref=f13e460]: "0"

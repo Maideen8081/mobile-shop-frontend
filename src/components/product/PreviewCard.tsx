@@ -27,7 +27,10 @@ interface PreviewCardProps {
 }
 
 export default function PreviewCard({ product }: PreviewCardProps) {
-  const discount = product.originalPrice > 0 ? Math.round((1 - product.discountPrice / product.originalPrice) * 100) : 0
+  // Only a real markdown counts: a missing (0) discount price used to show "100% OFF".
+  const discount = product.originalPrice > 0 && product.discountPrice > 0 && product.discountPrice < product.originalPrice
+    ? Math.round((1 - product.discountPrice / product.originalPrice) * 100)
+    : 0
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}

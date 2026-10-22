@@ -1,0 +1,296 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - generic [ref=f2e97]:
+      - complementary [ref=f2e98]:
+        - generic [ref=f2e99]:
+          - generic [ref=f2e104]:
+            - generic [ref=f2e105]: MobileShop
+            - generic [ref=f2e106]: Admin Console
+          - textbox "Search menu..." [ref=f2e112]
+          - generic [ref=f2e113]:
+            - generic [ref=f2e114]:
+              - paragraph [ref=f2e115]: Main
+              - button "Dashboard" [ref=f2e116]
+              - button "Products" [ref=f2e123]
+              - button "Categories" [ref=f2e130]
+            - generic [ref=f2e135]:
+              - paragraph [ref=f2e136]: Repairs
+              - button "User Bookings" [ref=f2e137]
+              - button "New Repair Ticket" [ref=f2e144]
+              - button "Repairs" [ref=f2e148]
+            - generic [ref=f2e153]:
+              - paragraph [ref=f2e154]: Customers
+              - button "Customers" [ref=f2e155]
+            - generic [ref=f2e162]:
+              - paragraph [ref=f2e163]: Orders
+              - button "Online Orders" [ref=f2e164]
+              - button "Trade-In Management" [ref=f2e170]
+          - generic [ref=f2e177]:
+            - generic [ref=f2e178]:
+              - generic [ref=f2e179]: M
+              - generic [ref=f2e180]:
+                - paragraph [ref=f2e181]: maideen8081@gmail.com
+                - paragraph [ref=f2e182]: maideen8081@gmail.com
+            - generic [ref=f2e183]:
+              - button "Logout" [ref=f2e184]
+              - button "Store" [ref=f2e188]
+      - generic [ref=f2e191]:
+        - banner [ref=f2e192]:
+          - generic [ref=f2e193]:
+            - heading "Dashboard" [level=1] [ref=f2e195]
+            - generic [ref=f2e196]: M
+        - main [ref=f2e198]:
+          - generic [ref=f2e199]:
+            - generic [ref=f2e200]:
+              - heading "Overview" [level=2] [ref=f2e201]
+              - paragraph [ref=f2e202]: Your store performance at a glance
+            - generic [ref=f2e203]:
+              - generic [ref=f2e205]:
+                - generic [ref=f2e211]:
+                  - generic [ref=f2e212]: ↑
+                  - text: 12.5%
+                - generic [ref=f2e213]:
+                  - paragraph [ref=f2e214]: ₹28,450
+                  - paragraph [ref=f2e215]: Today's Sales
+                  - paragraph [ref=f2e216]: vs yesterday
+              - generic [ref=f2e218]:
+                - generic [ref=f2e223]:
+                  - generic [ref=f2e224]: ↑
+                  - text: 8.2%
+                - generic [ref=f2e225]:
+                  - paragraph [ref=f2e226]: "18"
+                  - paragraph [ref=f2e227]: Today's Repairs
+                  - paragraph [ref=f2e228]: 94% completion
+              - generic [ref=f2e230]:
+                - generic [ref=f2e236]:
+                  - generic [ref=f2e237]: ↓
+                  - text: 3.1%
+                - generic [ref=f2e238]:
+                  - paragraph [ref=f2e239]: "7"
+                  - paragraph [ref=f2e240]: Pending Repairs
+                  - paragraph [ref=f2e241]: 2 urgent alerts
+              - generic [ref=f2e243]:
+                - generic [ref=f2e248]:
+                  - generic [ref=f2e249]: ↑
+                  - text: 18.7%
+                - generic [ref=f2e250]:
+                  - paragraph [ref=f2e251]: ₹58,42,000
+                  - paragraph [ref=f2e252]: Total Revenue
+                  - paragraph [ref=f2e253]: this month
+              - generic [ref=f2e255]:
+                - generic [ref=f2e261]:
+                  - generic [ref=f2e262]: ↑
+                  - text: 22.3%
+                - generic [ref=f2e263]:
+                  - paragraph [ref=f2e264]: ₹14,28,000
+                  - paragraph [ref=f2e265]: Net Profit
+                  - paragraph [ref=f2e266]: margin 24.5%
+              - generic [ref=f2e268]:
+                - generic [ref=f2e275]:
+                  - generic [ref=f2e276]: ↑
+                  - text: 2.1%
+                - generic [ref=f2e277]:
+                  - paragraph [ref=f2e278]: 3,842
+                  - paragraph [ref=f2e279]: Total Stock
+                  - paragraph [ref=f2e280]: 152 categories
+              - generic [ref=f2e282]:
+                - generic [ref=f2e287]:
+                  - generic [ref=f2e288]: ↑
+                  - text: 5.4%
+                - generic [ref=f2e289]:
+                  - paragraph [ref=f2e290]: "12"
+                  - paragraph [ref=f2e291]: Low Stock Alerts
+                  - paragraph [ref=f2e292]: "critical: 4 items"
+              - generic [ref=f2e294]:
+                - generic [ref=f2e299]:
+                  - generic [ref=f2e300]: ↑
+                  - text: 0.3%
+                - generic [ref=f2e301]:
+                  - paragraph [ref=f2e302]: "5"
+                  - paragraph [ref=f2e303]: Customer Rating
+                  - paragraph [ref=f2e304]: from 1,247 reviews
+            - generic [ref=f2e305]:
+              - generic [ref=f2e306]:
+                - generic [ref=f2e307]:
+                  - generic [ref=f2e308]:
+                    - generic [ref=f2e309]:
+                      - heading "Sales Overview" [level=3] [ref=f2e310]
+                      - paragraph [ref=f2e311]: Weekly sales and revenue
+                    - button "View Report" [ref=f2e312] [cursor=pointer]
+                  - application [ref=f2e318]:
+                    - generic [ref=f2e332]:
+                      - generic [ref=f2e333]:
+                        - generic [ref=f2e334]: Mon
+                        - generic [ref=f2e336]: Tue
+                        - generic [ref=f2e338]: Wed
+                        - generic [ref=f2e340]: Thu
+                        - generic [ref=f2e342]: Fri
+                        - generic [ref=f2e344]: Sat
+                        - generic [ref=f2e346]: Sun
+                      - generic [ref=f2e348]:
+                        - generic [ref=f2e349]: "0"
+                        - generic [ref=f2e351]: "20000"
+                        - generic [ref=f2e353]: "40000"
+                        - generic [ref=f2e355]: "60000"
+                        - generic [ref=f2e357]: "80000"
+                - generic [ref=f2e359]:
+                  - generic [ref=f2e360]:
+                    - heading "Revenue & Profit" [level=3] [ref=f2e361]
+                    - application [ref=f2e365]:
+                      - generic [ref=f2e413]:
+                        - generic [ref=f2e414]:
+                          - generic [ref=f2e415]: Jul
+                          - generic [ref=f2e417]: Aug
+                          - generic [ref=f2e419]: Sep
+                          - generic [ref=f2e421]: Oct
+                          - generic [ref=f2e423]: Nov
+                          - generic [ref=f2e425]: Dec
+                        - generic [ref=f2e427]:
+                          - generic [ref=f2e428]: "0"
+                          - generic [ref=f2e430]: "250000"
+                          - generic [ref=f2e432]: "500000"
+                          - generic [ref=f2e434]: "750000"
+                          - generic [ref=f2e436]: "1000000"
+                  - generic [ref=f2e438]:
+                    - heading "Categories" [level=3] [ref=f2e439]
+                    - application [ref=f2e443]
+                    - generic [ref=f2e462]:
+                      - generic [ref=f2e463]: Smartphones
+                      - generic [ref=f2e466]: Accessories
+                      - generic [ref=f2e469]: Tablets
+                      - generic [ref=f2e472]: Wearables
+                      - generic [ref=f2e475]: Audio
+                - generic [ref=f2e478]:
+                  - heading "Customer Growth" [level=3] [ref=f2e479]
+                  - application [ref=f2e483]:
+                    - generic [ref=f2e497]:
+                      - generic [ref=f2e498]:
+                        - generic [ref=f2e499]: Jan
+                        - generic [ref=f2e501]: Feb
+                        - generic [ref=f2e503]: Mar
+                        - generic [ref=f2e505]: Apr
+                        - generic [ref=f2e507]: May
+                        - generic [ref=f2e509]: Jun
+                        - generic [ref=f2e511]: Jul
+                        - generic [ref=f2e513]: Aug
+                        - generic [ref=f2e515]: Sep
+                        - generic [ref=f2e517]: Oct
+                        - generic [ref=f2e519]: Nov
+                        - generic [ref=f2e521]: Dec
+                      - generic [ref=f2e523]:
+                        - generic [ref=f2e524]: "0"
+                        - generic [ref=f2e526]: "50"
+                        - generic [ref=f2e528]: "100"
+                        - generic [ref=f2e530]: "150"
+                        - generic [ref=f2e532]: "200"
+              - generic [ref=f2e534]:
+                - generic [ref=f2e535]:
+                  - heading "Quick Actions" [level=3] [ref=f2e536]
+                  - generic [ref=f2e537]:
+                    - button "💰 Add Sale" [ref=f2e538] [cursor=pointer]:
+                      - generic [ref=f2e539]: 💰
+                      - generic [ref=f2e540]: Add Sale
+                    - button "🔧 Create Repair" [ref=f2e541] [cursor=pointer]:
+                      - generic [ref=f2e542]: 🔧
+                      - generic [ref=f2e543]: Create Repair
+                    - button "📦 Add Product" [ref=f2e544] [cursor=pointer]:
+                      - generic [ref=f2e545]: 📦
+                      - generic [ref=f2e546]: Add Product
+                    - button "👤 Add Customer" [ref=f2e547] [cursor=pointer]:
+                      - generic [ref=f2e548]: 👤
+                      - generic [ref=f2e549]: Add Customer
+                    - button "📄 Generate Invoice" [ref=f2e550] [cursor=pointer]:
+                      - generic [ref=f2e551]: 📄
+                      - generic [ref=f2e552]: Generate Invoice
+                    - button "🎉 Send Offer" [ref=f2e553] [cursor=pointer]:
+                      - generic [ref=f2e554]: 🎉
+                      - generic [ref=f2e555]: Send Offer
+                - generic [ref=f2e556]:
+                  - heading "Top Products" [level=3] [ref=f2e557]
+                  - generic [ref=f2e558]:
+                    - generic [ref=f2e559]:
+                      - generic [ref=f2e560]:
+                        - generic [ref=f2e561]: 📱
+                        - generic [ref=f2e562]:
+                          - paragraph [ref=f2e563]: iPhone 15 Pro Max
+                          - paragraph [ref=f2e564]: Apple · 245 sold
+                      - generic [ref=f2e565]: +12%
+                    - generic [ref=f2e566]:
+                      - generic [ref=f2e567]:
+                        - generic [ref=f2e568]: 📱
+                        - generic [ref=f2e569]:
+                          - paragraph [ref=f2e570]: Samsung Galaxy S24 Ultra
+                          - paragraph [ref=f2e571]: Samsung · 212 sold
+                      - generic [ref=f2e572]: +8%
+                    - generic [ref=f2e573]:
+                      - generic [ref=f2e574]:
+                        - generic [ref=f2e575]: 📱
+                        - generic [ref=f2e576]:
+                          - paragraph [ref=f2e577]: OnePlus 12
+                          - paragraph [ref=f2e578]: OnePlus · 178 sold
+                      - generic [ref=f2e579]: +15%
+                    - generic [ref=f2e580]:
+                      - generic [ref=f2e581]:
+                        - generic [ref=f2e582]: 🎧
+                        - generic [ref=f2e583]:
+                          - paragraph [ref=f2e584]: AirPods Pro 2
+                          - paragraph [ref=f2e585]: Apple · 156 sold
+                      - generic [ref=f2e586]: +5%
+                - generic [ref=f2e587]:
+                  - heading "Low Stock" [level=3] [ref=f2e588]
+                  - generic [ref=f2e589]:
+                    - generic [ref=f2e590]:
+                      - generic [ref=f2e591]:
+                        - generic [ref=f2e592]: 📱
+                        - generic [ref=f2e593]:
+                          - paragraph [ref=f2e594]: iPhone 15 Pro Max
+                          - paragraph [ref=f2e595]: APL-IP15PM
+                      - generic [ref=f2e596]:
+                        - paragraph [ref=f2e597]: "3"
+                        - paragraph [ref=f2e598]: "10"
+                    - generic [ref=f2e599]:
+                      - generic [ref=f2e600]:
+                        - generic [ref=f2e601]: 🎧
+                        - generic [ref=f2e602]:
+                          - paragraph [ref=f2e603]: Samsung Buds 2 Pro
+                          - paragraph [ref=f2e604]: SAM-BUDS2P
+                      - generic [ref=f2e605]:
+                        - paragraph [ref=f2e606]: "5"
+                        - paragraph [ref=f2e607]: "15"
+                    - generic [ref=f2e608]:
+                      - generic [ref=f2e609]:
+                        - generic [ref=f2e610]: 🔌
+                        - generic [ref=f2e611]:
+                          - paragraph [ref=f2e612]: USB-C Charger 65W
+                          - paragraph [ref=f2e613]: ACC-USB65
+                      - generic [ref=f2e614]:
+                        - paragraph [ref=f2e615]: "2"
+                        - paragraph [ref=f2e616]: "20"
+                - generic [ref=f2e617]:
+                  - heading "Activity" [level=3] [ref=f2e618]
+                  - generic [ref=f2e619]:
+                    - generic [ref=f2e622]:
+                      - paragraph [ref=f2e623]: "New sale completed: iPhone 15 Pro Max (256GB)"
+                      - paragraph [ref=f2e624]: 2 min ago
+                    - generic [ref=f2e627]:
+                      - paragraph [ref=f2e628]: "Repair request #R-1042 created - Samsung S24 screen"
+                      - paragraph [ref=f2e629]: 8 min ago
+                    - generic [ref=f2e632]:
+                      - paragraph [ref=f2e633]: "Product restocked: AirPods Pro 2 (50 units)"
+                      - paragraph [ref=f2e634]: 15 min ago
+                    - generic [ref=f2e637]:
+                      - paragraph [ref=f2e638]: "New review: 5★ - Excellent service!"
+                      - paragraph [ref=f2e639]: 28 min ago
+    - generic [ref=f2e640]:
+      - generic [ref=f2e641]: check_circle
+      - generic [ref=f2e642]: Admin login successful!
+  - generic [ref=f2e38]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f2e39]
+  - generic [aria-hidden] [ref=f2e643]: "50"

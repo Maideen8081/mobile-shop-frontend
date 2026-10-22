@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { repairStatuses, type RepairStatus } from '../../data/repairData'
-import { FiCheckCircle, FiClock, FiTool, FiSearch, FiPackage, FiShield, FiTruck } from 'react-icons/fi'
+import { FiCheckCircle, FiClock, FiTool, FiSearch, FiPackage, FiShield, FiTruck, FiXCircle, FiInbox, FiThumbsUp, FiAlertCircle } from 'react-icons/fi'
 
 const statusConfig: Record<RepairStatus, { icon: React.ComponentType<{ size?: number }>; color: string; bg: string; gradient: string }> = {
   'Received': { icon: FiClock, color: 'text-info', bg: 'bg-info/10', gradient: 'from-primary to-primary-hover' },
@@ -12,11 +12,27 @@ const statusConfig: Record<RepairStatus, { icon: React.ComponentType<{ size?: nu
   'Delivered': { icon: FiTruck, color: 'text-teal-600', bg: 'bg-teal-100', gradient: 'from-teal-500 to-teal-400' },
 }
 
-export function RepairStatusBadge({ status, size = 'md' }: { status: RepairStatus; size?: 'sm' | 'md' }) {
-  const cfg = statusConfig[status]
-  const sizes = size === 'sm' ? 'px-2 py-0.5 text-[9px]' : 'px-2.5 py-1 text-[10px]'
+type StatusStyle = { icon: React.ComponentType<{ size?: number }>; color: string; bg: string; gradient: string }
+
+// Statuses the backend can return beyond the workshop stages above. Without
+// these the badge read `.bg` of undefined and crashed the whole Repairs page.
+const extraStatusConfig: Record<string, StatusStyle> = {
+  Submitted: { icon: FiInbox, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-primary to-primary-hover' },
+  Pending: { icon: FiInbox, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-primary to-primary-hover' },
+  Accepted: { icon: FiThumbsUp, color: 'text-info', bg: 'bg-info/10', gradient: 'from-primary to-primary-hover' },
+  'Awaiting Approval': { icon: FiAlertCircle, color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-primary to-primary-hover' },
+  Shipped: { icon: FiTruck, color: 'text-info', bg: 'bg-info/10', gradient: 'from-primary to-primary-hover' },
+  Completed: { icon: FiCheckCircle, color: 'text-success', bg: 'bg-success/10', gradient: 'from-primary to-primary-hover' },
+  Rejected: { icon: FiXCircle, color: 'text-danger', bg: 'bg-danger/10', gradient: 'from-primary to-primary-hover' },
+  Cancelled: { icon: FiXCircle, color: 'text-danger', bg: 'bg-danger/10', gradient: 'from-primary to-primary-hover' },
+}
+const fallbackStatus: StatusStyle = { icon: FiClock, color: 'text-text-secondary', bg: 'bg-surface-lighter', gradient: 'from-primary to-primary-hover' }
+
+export function RepairStatusBadge({ status, size = 'md' }: { status: RepairStatus | string; size?: 'sm' | 'md' }) {
+  const cfg = statusConfig[status as RepairStatus] ?? extraStatusConfig[status] ?? fallbackStatus
+  const sizes = size === 'sm' ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-xs'
   return (
-    <span className={`inline-flex items-center gap-1 ${sizes} rounded-lg font-semibold ${cfg.bg} ${cfg.color} border border-white/20`}>
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap ${sizes} rounded-full font-medium ${cfg.bg} ${cfg.color}`}>
       <cfg.icon size={size === 'sm' ? 10 : 12} />
       {status}
     </span>

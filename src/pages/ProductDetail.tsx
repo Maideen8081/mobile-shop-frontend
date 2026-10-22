@@ -1411,7 +1411,7 @@ function ProductDetailContent() {
                       <div className="ax-review-score">
                         <div className="ax-big">{rating.toFixed(1)}</div>
                         <Stars score={rating} />
-                        <div style={{ fontSize: 12, color: 'var(--slate)' }}>{ratingCount || 0} ratings</div>
+                        <div style={{ fontSize: 'var(--text-caption)', color: 'var(--slate)' }}>{ratingCount || 0} ratings</div>
                       </div>
                       <RatingBars distribution={productRating.distribution} count={productRating.count} />
                     </div>

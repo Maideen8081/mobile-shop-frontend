@@ -135,9 +135,9 @@ export default function MobileWishlist() {
             <div className="w-20 h-20 rounded-[8px] mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <Heart size={34} style={{ color: PURPLE }} />
             </div>
-            <h2 className="text-[18px] font-bold text-[#1F2937] mb-1">Your wishlist is empty</h2>
-            <p className="text-[13px] text-[#6B7280] mb-6">Save your favorite products to find them easily later.</p>
-            <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-[14px] font-semibold text-white inline-flex items-center gap-2"
+            <h2 className="text-title-sm font-bold text-[#1F2937] mb-1">Your wishlist is empty</h2>
+            <p className="text-label text-[#6B7280] mb-6">Save your favorite products to find them easily later.</p>
+            <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-body-sm font-semibold text-white inline-flex items-center gap-2"
               style={{ background: gradient }}>
               <ShoppingCart size={16} /> Browse Products
             </button>
@@ -146,10 +146,10 @@ export default function MobileWishlist() {
           <>
             {unavailableCount > 0 && (
               <div className="mb-3 px-4 py-3 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] flex items-center justify-between gap-3" role="alert">
-                <span className="text-[12px] font-medium text-[#991B1B]">
+                <span className="text-caption font-medium text-[#991B1B]">
                   {unavailableCount} saved {unavailableCount === 1 ? 'item' : 'items'} could not be loaded.
                 </span>
-                <button onClick={loadWishlist} className="flex items-center gap-1 text-[12px] font-semibold flex-shrink-0" style={{ color: PURPLE }}>
+                <button onClick={loadWishlist} className="flex items-center gap-1 text-caption font-semibold flex-shrink-0" style={{ color: PURPLE }}>
                   <RefreshCw size={13} /> Retry
                 </button>
               </div>
@@ -179,25 +179,25 @@ export default function MobileWishlist() {
                         />
                       </button>
                       <div className="flex-1 min-w-0 flex flex-col">
-                        {brand && <span className="text-[10px] font-semibold uppercase tracking-wide mb-0.5" style={{ color: PURPLE }}>{brand}</span>}
-                        <h3 className="text-[14px] font-semibold text-[#1F2937] leading-tight line-clamp-2" onClick={() => navigate(`/product/${id}`)}>{name}</h3>
+                        {brand && <span className="text-micro font-semibold uppercase tracking-wide mb-0.5" style={{ color: PURPLE }}>{brand}</span>}
+                        <h3 className="text-body-sm font-semibold text-[#1F2937] leading-tight line-clamp-2" onClick={() => navigate(`/product/${id}`)}>{name}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           {rating > 0 && (
                             <span className="flex items-center gap-1">
                               <Star size={12} style={{ color: '#F59E0B' }} fill="#F59E0B" />
-                              <span className="text-[11px] font-semibold text-[#1F2937]">{rating.toFixed(1)}</span>
+                              <span className="text-micro font-semibold text-[#1F2937]">{rating.toFixed(1)}</span>
                             </span>
                           )}
-                          <span className={`text-[11px] font-semibold ${outOfStock ? 'text-[#EF4444]' : 'text-[#16A34A]'}`}>
+                          <span className={`text-micro font-semibold ${outOfStock ? 'text-[#EF4444]' : 'text-[#16A34A]'}`}>
                             {outOfStock ? 'Out of stock' : 'In stock'}
                           </span>
                         </div>
                         <div className="flex items-baseline flex-wrap gap-x-2 mt-auto pt-1">
-                          <span className="text-[16px] font-bold text-[#1F2937]">{formatPrice(price)}</span>
+                          <span className="text-body font-bold text-[#1F2937]">{formatPrice(price)}</span>
                           {off > 0 && (
                             <>
-                              <span className="text-[11px] text-[#9CA3AF] line-through">{formatPrice(old!)}</span>
-                              <span className="text-[11px] font-semibold text-[#16A34A]">{off}% off</span>
+                              <span className="text-micro text-[#9CA3AF] line-through">{formatPrice(old!)}</span>
+                              <span className="text-micro font-semibold text-[#16A34A]">{off}% off</span>
                             </>
                           )}
                         </div>
@@ -211,7 +211,7 @@ export default function MobileWishlist() {
                     </div>
                     <button onClick={() => moveToCart(product)}
                       disabled={outOfStock || adding || movingAll}
-                      className="w-full h-10 mt-3 rounded-2xl text-[13px] font-semibold text-white inline-flex items-center justify-center gap-1.5 active:scale-[0.98] transition disabled:opacity-50"
+                      className="w-full h-10 mt-3 rounded-2xl text-label font-semibold text-white inline-flex items-center justify-center gap-1.5 active:scale-[0.98] transition disabled:opacity-50"
                       style={{ background: outOfStock ? '#9CA3AF' : gradient }}>
                       <ShoppingCart size={15} /> {adding ? 'Adding…' : outOfStock ? 'Unavailable' : 'Move to Cart'}
                     </button>
@@ -224,8 +224,8 @@ export default function MobileWishlist() {
               <div className="w-12 h-12 rounded-[8px] mb-2 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
                 <Heart size={22} style={{ color: PURPLE }} />
               </div>
-              <h3 className="text-[14px] font-bold text-[#1F2937] w-full text-center">Discover More</h3>
-              <p className="text-[12px] text-[#6B7280] w-full text-center">Browse our latest collection</p>
+              <h3 className="text-body-sm font-bold text-[#1F2937] w-full text-center">Discover More</h3>
+              <p className="text-caption text-[#6B7280] w-full text-center">Browse our latest collection</p>
             </button>
           </>
         )}
@@ -234,11 +234,11 @@ export default function MobileWishlist() {
       {products.length > 0 && (
         <div className="fixed bottom-[calc(88px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 max-w-[456px] z-40 bg-white w-[calc(100%-24px)] rounded-2xl border border-[#EEF0F6] shadow-[0_8px_24px_rgba(0,0,0,0.10)] px-4 py-3 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wide">Total Value</p>
-            <p className="text-[16px] font-bold text-[#1F2937] truncate">{formatPrice(totalValue)}</p>
+            <p className="text-micro font-semibold text-[#6B7280] uppercase tracking-wide">Total Value</p>
+            <p className="text-body font-bold text-[#1F2937] truncate">{formatPrice(totalValue)}</p>
           </div>
           <button onClick={moveAllToCart} disabled={movingAll || allOutOfStock}
-            className="h-11 px-5 rounded-[8px] text-[13px] font-semibold text-white inline-flex items-center gap-2 flex-shrink-0 disabled:opacity-50"
+            className="h-11 px-5 rounded-[8px] text-label font-semibold text-white inline-flex items-center gap-2 flex-shrink-0 disabled:opacity-50"
             style={{ background: gradient }}>
             {movingAll ? <RefreshCw size={15} className="animate-spin" /> : <ShoppingCart size={15} />}
             {movingAll ? 'Moving…' : `Move All (${products.length})`}

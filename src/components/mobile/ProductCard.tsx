@@ -41,7 +41,7 @@ export default function ProductCard({ product }: { product: any }) {
             {tags.map((t) => (
               <span
                 key={t.label}
-                className={`text-[8.5px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-[8px] leading-none ${t.cls}`}
+                className={`text-micro font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-[8px] leading-none ${t.cls}`}
               >
                 {t.label}
               </span>
@@ -52,11 +52,11 @@ export default function ProductCard({ product }: { product: any }) {
 
       <div className="px-0.5 pt-1.5">
         {product.brand && (
-          <span className="block text-[9px] font-semibold uppercase tracking-wider text-[#FF5A65] truncate mb-0.5">
+          <span className="block text-micro font-semibold uppercase tracking-wider text-[#FF5A65] truncate mb-0.5">
             {product.brand}
           </span>
         )}
-        <h3 className="text-[11.5px] font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#CB202D] transition-colors">
+        <h3 className="text-caption font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#CB202D] transition-colors">
           {product.name}
         </h3>
       </div>

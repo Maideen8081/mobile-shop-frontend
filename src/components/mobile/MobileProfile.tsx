@@ -132,7 +132,7 @@ export default function MobileProfile() {
               <button onClick={() => navigate('/home')} aria-label="Home" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               </button>
-              <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
+              <h1 className="text-body font-semibold text-white/90">My Profile</h1>
               <div className="w-9 h-9" />
             </div>
           </div>
@@ -144,14 +144,14 @@ export default function MobileProfile() {
             <FiUser size={40} style={{ color: PRIMARY }} />
           </div>
 
-          <h2 className="text-[22px] font-bold text-[#1F2937] mb-1.5">Welcome!</h2>
-          <p className="text-[13px] text-[#6B7280] text-center mb-8 leading-relaxed max-w-[260px]">
+          <h2 className="text-title font-bold text-[#1F2937] mb-1.5">Welcome!</h2>
+          <p className="text-label text-[#6B7280] text-center mb-8 leading-relaxed max-w-[260px]">
             Sign in to access your profile, orders, wishlist and more.
           </p>
 
           <button
             onClick={() => navigate('/login')}
-            className="w-full h-13 rounded-[8px] text-[15px] font-semibold text-white flex items-center justify-center gap-2 mb-3"
+            className="w-full h-13 rounded-[8px] text-body font-semibold text-white flex items-center justify-center gap-2 mb-3"
             style={{ background: grad, boxShadow: '0 6px 20px rgba(203,32,45,0.3)' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -160,7 +160,7 @@ export default function MobileProfile() {
 
           <button
             onClick={() => navigate('/signup')}
-            className="w-full h-13 rounded-[8px] text-[15px] font-semibold text-[#CB202D] flex items-center justify-center gap-2"
+            className="w-full h-13 rounded-[8px] text-body font-semibold text-[#CB202D] flex items-center justify-center gap-2"
             style={{ background: 'rgba(203,32,45,0.08)', border: '1.5px solid rgba(203,32,45,0.2)' }}
           >
             Create Account
@@ -168,7 +168,7 @@ export default function MobileProfile() {
 
           <button
             onClick={() => navigate('/home')}
-            className="mt-6 flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] active:scale-95 transition"
+            className="mt-6 flex items-center gap-1.5 text-label font-medium text-[#6B7280] active:scale-95 transition"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             Back to Home
@@ -248,7 +248,7 @@ export default function MobileProfile() {
           <button onClick={goBack} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
             <FiChevronLeft size={20} className="text-white" />
           </button>
-          <h1 className="text-[16px] font-semibold text-white/90">My Profile</h1>
+          <h1 className="text-body font-semibold text-white/90">My Profile</h1>
           <button onClick={openEdit} aria-label="Edit Profile" className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
             <FiEdit3 size={17} className="text-white" />
           </button>
@@ -256,17 +256,17 @@ export default function MobileProfile() {
 
         <div className="relative z-10 flex flex-col items-center text-center pt-4 pb-8">
           <div className="relative">
-            <div className="w-[90px] h-[90px] rounded-[8px] flex items-center justify-center text-[30px] font-bold text-white border-[3px] border-white shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
+            <div className="w-[90px] h-[90px] rounded-[8px] flex items-center justify-center text-heading font-bold text-white border-[3px] border-white shadow-[0_8px_24px_rgba(0,0,0,0.22)]"
               style={{ background: 'rgba(255,255,255,0.18)' }}>
               {initials}
             </div>
             <span className="absolute bottom-1 right-1 w-5 h-5 rounded-[8px] bg-[#22C55E] border-2 border-white" />
           </div>
-          <h2 className="text-[20px] font-bold text-white mt-3 leading-tight tracking-tight px-4">{user.fullName || 'User'}</h2>
-          {user.email && <p className="text-[14px] text-white/70 mt-0.5 truncate max-w-[280px] px-4">{user.email}</p>}
+          <h2 className="text-title font-bold text-white mt-3 leading-tight tracking-tight px-4">{user.fullName || 'User'}</h2>
+          {user.email && <p className="text-body-sm text-white/70 mt-0.5 truncate max-w-[280px] px-4">{user.email}</p>}
           <div className="flex items-center gap-1.5 mt-2 px-3 py-1 rounded-[8px] bg-white/15 backdrop-blur">
             <FiCheckCircle size={13} className="text-[#FCD34D]" />
-            <span className="text-[11px] font-semibold text-white/90">Verified User</span>
+            <span className="text-micro font-semibold text-white/90">Verified User</span>
           </div>
         </div>
       </div>
@@ -275,13 +275,13 @@ export default function MobileProfile() {
         {/* ── Profile completion floating card ── */}
         <div className={`${card} rounded-[20px] p-4`}>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[13px] font-semibold" style={{ color: INK }}>Profile Completion</p>
-            <span className="text-[13px] font-bold" style={{ color: PRIMARY }}>{completion}%</span>
+            <p className="text-label font-semibold" style={{ color: INK }}>Profile Completion</p>
+            <span className="text-label font-bold" style={{ color: PRIMARY }}>{completion}%</span>
           </div>
           <div className="h-2 w-full rounded-[8px] bg-[#EEF1F4] overflow-hidden">
             <div className="h-full rounded-[8px] transition-all duration-700" style={{ width: `${completion}%`, background: grad }} />
           </div>
-          <button onClick={openEdit} className={`w-full mt-3 h-10 rounded-[8px] text-[13px] font-semibold text-white ${press}`} style={{ background: grad }}>
+          <button onClick={openEdit} className={`w-full mt-3 h-10 rounded-[8px] text-label font-semibold text-white ${press}`} style={{ background: grad }}>
             Complete Profile
           </button>
         </div>
@@ -295,8 +295,8 @@ export default function MobileProfile() {
                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.10)', color: PRIMARY }}>
                   <Icon size={19} />
                 </div>
-                <span className="text-[12px] font-semibold leading-tight" style={{ color: INK }}>{a.label}</span>
-                <span className="text-[10px] leading-tight truncate w-full" style={{ color: MUTED }}>{a.sub}</span>
+                <span className="text-caption font-semibold leading-tight" style={{ color: INK }}>{a.label}</span>
+                <span className="text-micro leading-tight truncate w-full" style={{ color: MUTED }}>{a.sub}</span>
               </button>
             )
           })}
@@ -313,8 +313,8 @@ export default function MobileProfile() {
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px]" style={{ color: MUTED }}>{r.label}</p>
-                  <p className="text-[14px] font-semibold truncate" style={{ color: INK }}>{r.value}</p>
+                  <p className="text-micro" style={{ color: MUTED }}>{r.label}</p>
+                  <p className="text-body-sm font-semibold truncate" style={{ color: INK }}>{r.value}</p>
                 </div>
                 <FiChevronLeft size={18} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
               </button>
@@ -336,8 +336,8 @@ export default function MobileProfile() {
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="text-[14px] font-semibold" style={{ color: INK }}>{s.label}</p>
-                  <p className="text-[11px]" style={{ color: MUTED }}>{s.sub}</p>
+                  <p className="text-body-sm font-semibold" style={{ color: INK }}>{s.label}</p>
+                  <p className="text-micro" style={{ color: MUTED }}>{s.sub}</p>
                 </div>
                 <FiChevronLeft size={18} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
               </button>
@@ -353,7 +353,7 @@ export default function MobileProfile() {
             return (
               <button key={s.label} onClick={() => setDetail({ title: s.label, body: DETAILS[s.label] || 'Details coming soon.' })} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < support.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
                 <Icon size={18} className="text-[#9CA3AF] flex-shrink-0" />
-                <span className="flex-1 text-left text-[14px] font-medium" style={{ color: INK }}>{s.label}</span>
+                <span className="flex-1 text-left text-body-sm font-medium" style={{ color: INK }}>{s.label}</span>
                 <FiChevronLeft size={18} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
               </button>
             )
@@ -369,8 +369,8 @@ export default function MobileProfile() {
               <button key={s.label} onClick={() => setDetail({ title: s.label, body: DETAILS[s.label] || 'Details coming soon.' })} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < about.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
                 <Icon size={18} className="text-[#9CA3AF] flex-shrink-0" />
                 <div className="flex-1 text-left">
-                  <span className="text-[14px] font-medium" style={{ color: INK }}>{s.label}</span>
-                  {s.sub && <p className="text-[11px]" style={{ color: MUTED }}>{s.sub}</p>}
+                  <span className="text-body-sm font-medium" style={{ color: INK }}>{s.label}</span>
+                  {s.sub && <p className="text-micro" style={{ color: MUTED }}>{s.sub}</p>}
                 </div>
                 <FiChevronLeft size={18} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
               </button>
@@ -379,7 +379,7 @@ export default function MobileProfile() {
         </div>
 
         {/* ── Logout ── */}
-        <button onClick={() => setShowLogout(true)} className={`${card} ${press} w-full flex items-center justify-center gap-2 mt-4 h-12 rounded-[18px] text-[14px] font-semibold`} style={{ color: DANGER }}>
+        <button onClick={() => setShowLogout(true)} className={`${card} ${press} w-full flex items-center justify-center gap-2 mt-4 h-12 rounded-[18px] text-body-sm font-semibold`} style={{ color: DANGER }}>
           <FiLogOut size={17} /> Logout
         </button>
 
@@ -387,26 +387,26 @@ export default function MobileProfile() {
         <div className="mt-4 rounded-[20px] p-4 border" style={{ background: '#FFFBFB', borderColor: '#FFD5D5' }}>
           <div className="flex items-center gap-2 mb-2">
             <FiAlertTriangle size={16} style={{ color: DANGER }} />
-            <p className="text-[13px] font-semibold" style={{ color: DANGER }}>Delete Account</p>
+            <p className="text-label font-semibold" style={{ color: DANGER }}>Delete Account</p>
           </div>
-          <p className="text-[12px] mb-3" style={{ color: '#B91C1C' }}>Permanently remove your account and all associated data.</p>
-          <button onClick={() => setShowDelete(true)} className="w-full h-11 rounded-[8px] text-[13px] font-semibold text-white" style={{ background: DANGER }}>
+          <p className="text-caption mb-3" style={{ color: '#B91C1C' }}>Permanently remove your account and all associated data.</p>
+          <button onClick={() => setShowDelete(true)} className="w-full h-11 rounded-[8px] text-label font-semibold text-white" style={{ background: DANGER }}>
             Delete Account
           </button>
         </div>
 
-        <p className="text-center text-[11px] mt-5" style={{ color: MUTED }}>Mobile Shop • v1.0.0</p>
+        <p className="text-center text-micro mt-5" style={{ color: MUTED }}>Mobile Shop • v1.0.0</p>
       </div>
 
       {/* ── Logout bottom sheet ── */}
       <Sheet open={showLogout} onClose={() => setShowLogout(false)}>
         <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
-        <h3 className="text-[18px] font-bold text-center" style={{ color: INK }}>Logout?</h3>
-        <p className="text-[13px] text-center mt-1 mb-5" style={{ color: MUTED }}>You'll need to sign in again to access your account.</p>
-        <button onClick={() => setShowLogout(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <h3 className="text-title-sm font-bold text-center" style={{ color: INK }}>Logout?</h3>
+        <p className="text-label text-center mt-1 mb-5" style={{ color: MUTED }}>You'll need to sign in again to access your account.</p>
+        <button onClick={() => setShowLogout(false)} className="w-full h-12 rounded-[8px] text-body-sm font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleLogout} className="w-full h-12 rounded-[8px] text-[14px] font-semibold text-white" style={{ background: grad }}>
+        <button onClick={handleLogout} className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white" style={{ background: grad }}>
           Yes, Logout
         </button>
       </Sheet>
@@ -416,13 +416,13 @@ export default function MobileProfile() {
         <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
         <div className="flex items-center gap-2 justify-center mb-2">
           <FiAlertTriangle size={18} style={{ color: DANGER }} />
-          <h3 className="text-[18px] font-bold" style={{ color: DANGER }}>Delete Account</h3>
+          <h3 className="text-title-sm font-bold" style={{ color: DANGER }}>Delete Account</h3>
         </div>
-        <p className="text-[13px] text-center mt-1 mb-5" style={{ color: MUTED }}>This action is permanent and cannot be undone.</p>
-        <button onClick={() => setShowDelete(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <p className="text-label text-center mt-1 mb-5" style={{ color: MUTED }}>This action is permanent and cannot be undone.</p>
+        <button onClick={() => setShowDelete(false)} className="w-full h-12 rounded-[8px] text-body-sm font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleDelete} disabled={deleting} className="w-full h-12 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-60" style={{ background: DANGER }}>
+        <button onClick={handleDelete} disabled={deleting} className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white disabled:opacity-60" style={{ background: DANGER }}>
           {deleting ? 'Deleting…' : 'Delete Permanently'}
         </button>
       </Sheet>
@@ -430,13 +430,13 @@ export default function MobileProfile() {
       {/* ── Edit profile sheet ── */}
       <Sheet open={editing} onClose={() => setEditing(false)}>
         <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
-        <h3 className="text-[18px] font-bold mb-4" style={{ color: INK }}>Edit Profile</h3>
+        <h3 className="text-title-sm font-bold mb-4" style={{ color: INK }}>Edit Profile</h3>
         <div className="space-y-3">
           <Field label="Full Name">
             <input
               value={editForm.fullName}
               onChange={(e) => setEditForm((f) => ({ ...f, fullName: e.target.value }))}
-              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] font-medium"
+              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium"
               style={{ color: INK }}
             />
           </Field>
@@ -444,7 +444,7 @@ export default function MobileProfile() {
             <input
               value={editForm.email}
               onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] font-medium"
+              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium"
               style={{ color: INK }}
             />
           </Field>
@@ -452,15 +452,15 @@ export default function MobileProfile() {
             <input
               value={editForm.mobile}
               onChange={(e) => setEditForm((f) => ({ ...f, mobile: e.target.value }))}
-              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-[14px] font-medium"
+              className="w-full h-11 px-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium"
               style={{ color: INK }}
             />
           </Field>
         </div>
-        <button onClick={() => setEditing(false)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>
+        <button onClick={() => setEditing(false)} className="w-full h-12 rounded-[8px] text-body-sm font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>
           Cancel
         </button>
-        <button onClick={handleSaveProfile} disabled={saving} className={`w-full h-12 rounded-[8px] text-[14px] font-semibold text-white disabled:opacity-60 ${press}`} style={{ background: grad }}>
+        <button onClick={handleSaveProfile} disabled={saving} className={`w-full h-12 rounded-[8px] text-body-sm font-semibold text-white disabled:opacity-60 ${press}`} style={{ background: grad }}>
           {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </Sheet>
@@ -468,9 +468,9 @@ export default function MobileProfile() {
       {/* ── Detail sheet ── */}
       <Sheet open={detail !== null} onClose={() => setDetail(null)}>
         <div className="w-12 h-1.5 rounded-[8px] bg-[#E5E7EB] mx-auto mb-4" />
-        <h3 className="text-[18px] font-bold mb-3" style={{ color: INK }}>{detail?.title}</h3>
-        <p className="text-[14px] leading-relaxed" style={{ color: MUTED }}>{detail?.body}</p>
-        <button onClick={() => setDetail(null)} className="w-full h-12 rounded-[8px] text-[14px] font-semibold mt-5" style={{ background: grad, color: '#fff' }}>
+        <h3 className="text-title-sm font-bold mb-3" style={{ color: INK }}>{detail?.title}</h3>
+        <p className="text-body-sm leading-relaxed" style={{ color: MUTED }}>{detail?.body}</p>
+        <button onClick={() => setDetail(null)} className="w-full h-12 rounded-[8px] text-body-sm font-semibold mt-5" style={{ background: grad, color: '#fff' }}>
           Close
         </button>
       </Sheet>
@@ -485,14 +485,14 @@ export default function MobileProfile() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-[12px] font-semibold mb-1.5 px-0.5" style={{ color: MUTED }}>{label}</p>
+      <p className="text-caption font-semibold mb-1.5 px-0.5" style={{ color: MUTED }}>{label}</p>
       {children}
     </div>
   )
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-[18px] font-semibold mt-6 mb-2.5 px-0.5" style={{ color: INK }}>{children}</h2>
+  return <h2 className="text-title-sm font-semibold mt-6 mb-2.5 px-0.5" style={{ color: INK }}>{children}</h2>
 }
 
 function Sheet({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {

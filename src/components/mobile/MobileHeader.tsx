@@ -52,11 +52,11 @@ export default function MobileHeader() {
             className="w-11 h-11 rounded-[8px] border-2 border-white/40 object-cover flex-shrink-0"
           />
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] text-white/75 leading-tight">Good morning 👋</p>
-            <p className="text-[15px] font-bold leading-tight truncate">{displayName}</p>
+            <p className="text-micro text-white/75 leading-tight">Good morning 👋</p>
+            <p className="text-body font-bold leading-tight truncate">{displayName}</p>
             <button className="flex items-center gap-0.5 min-w-0 active:opacity-70 mt-1" aria-label="Delivery location">
               <MapPin size={12} className="text-[#4DA3FF] flex-shrink-0" />
-              <span className="text-[11px] text-white/80 font-medium truncate max-w-[130px]">Deliver to {location}</span>
+              <span className="text-micro text-white/80 font-medium truncate max-w-[130px]">Deliver to {location}</span>
             </button>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className={iconBtn}>
             <Heart size={18} />
             {wishlistCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-[#22C55E] text-white text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-[#22C55E] text-white text-micro font-bold flex items-center justify-center">
                 {badge(wishlistCount)}
               </span>
             )}
@@ -77,7 +77,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/cart')} aria-label="Cart" className={iconBtn}>
             <ShoppingBag size={18} />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-white text-[#CB202D] text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
                 {badge(cartCount)}
               </span>
             )}

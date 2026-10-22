@@ -13,7 +13,7 @@ export default function RepairServices() {
     <section className="mt-7">
       <div className="px-3.5 mb-3">
         <h2 className={C.sectionTitle}>Precision Repair Services</h2>
-        <p className="text-[12px] text-[#64748B] mt-0.5 font-medium">From micro-soldering to full restoration.</p>
+        <p className="text-caption text-[#64748B] mt-0.5 font-medium">From micro-soldering to full restoration.</p>
       </div>
       <div className="grid grid-cols-1 gap-3 px-3.5">
         {services.map((s) => {
@@ -28,8 +28,8 @@ export default function RepairServices() {
                 <Icon size={24} className="text-[#CB202D]" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-[14px] font-bold text-[#0F172A]">{s.title}</h3>
-                <p className="text-[11.5px] text-[#64748B] leading-snug mt-0.5">{s.desc}</p>
+                <h3 className="text-body-sm font-bold text-[#0F172A]">{s.title}</h3>
+                <p className="text-caption text-[#64748B] leading-snug mt-0.5">{s.desc}</p>
               </div>
             </Link>
           )

@@ -314,7 +314,7 @@ function DesktopRepairs() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-[#191c1d]">90-Day Warranty</div>
-                  <div className="text-[10px] text-gray-500">On all repairs</div>
+                  <div className="text-micro text-gray-500">On all repairs</div>
                 </div>
               </div>
               <div className="absolute -top-4 -right-4 bg-[#D91E36] rounded-2xl shadow-xl px-5 py-3 flex items-center gap-3 z-10">
@@ -323,7 +323,7 @@ function DesktopRepairs() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-white">60-Min Repairs</div>
-                  <div className="text-[10px] text-white/80">Screen & battery</div>
+                  <div className="text-micro text-white/80">Screen & battery</div>
                 </div>
               </div>
             </div>
@@ -336,8 +336,8 @@ function DesktopRepairs() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDECEE] text-[#D91E36] text-[11px] font-bold tracking-[0.14em] uppercase mb-4">
-                <span className="material-symbols-outlined text-[15px]">verified</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FDECEE] text-[#D91E36] text-micro font-bold tracking-[0.14em] uppercase mb-4">
+                <span className="material-symbols-outlined text-body">verified</span>
                 Brands we service
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#1b1210] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
@@ -352,7 +352,7 @@ function DesktopRepairs() {
               className="inline-flex items-center gap-2 self-start md:self-auto h-12 px-6 rounded-xl text-white text-sm font-bold shadow-[0_8px_20px_rgba(217,30,54,0.28)] hover:shadow-[0_12px_26px_rgba(217,30,54,0.38)] transition-shadow"
               style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)' }}
             >
-              <span className="material-symbols-outlined text-[18px]">build</span>
+              <span className="material-symbols-outlined text-title-sm">build</span>
               Book a repair
             </Link>
           </div>
@@ -369,25 +369,25 @@ function DesktopRepairs() {
                 <span className="absolute inset-x-0 top-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: brand.color }} />
                 <div className="flex items-center justify-between mb-4">
                   <span
-                    className="inline-flex items-center justify-center h-11 px-4 rounded-xl text-[19px] font-extrabold tracking-tight"
+                    className="inline-flex items-center justify-center h-11 px-4 rounded-xl text-title font-extrabold tracking-tight"
                     style={{ background: brand.tint, color: brand.color, fontFamily: 'var(--font-display)' }}
                   >
                     {brand.name}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] bg-[#e7f6f0] px-2 py-1 rounded-full">
-                    <span className="material-symbols-outlined text-[13px]">bolt</span>
+                  <span className="inline-flex items-center gap-1 text-micro font-semibold text-[#059669] bg-[#e7f6f0] px-2 py-1 rounded-full">
+                    <span className="material-symbols-outlined text-label">bolt</span>
                     Same day
                   </span>
                 </div>
-                <p className="text-[13px] text-[#4a403d] font-medium mb-3">{brand.models}</p>
+                <p className="text-label text-[#4a403d] font-medium mb-3">{brand.models}</p>
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {brandFixes.map((fix) => (
-                    <span key={fix} className="text-[11px] text-[#857d79] bg-[#fbf8f6] border border-[#ece4e0] px-2 py-0.5 rounded-md">{fix}</span>
+                    <span key={fix} className="text-micro text-[#857d79] bg-[#fbf8f6] border border-[#ece4e0] px-2 py-0.5 rounded-md">{fix}</span>
                   ))}
                 </div>
-                <span className="mt-auto inline-flex items-center gap-1 text-[13px] font-bold text-[#D91E36]">
+                <span className="mt-auto inline-flex items-center gap-1 text-label font-bold text-[#D91E36]">
                   Book {brand.name} repair
-                  <span className="material-symbols-outlined text-[17px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                  <span className="material-symbols-outlined text-title-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
                 </span>
               </Link>
             ))}
@@ -396,13 +396,13 @@ function DesktopRepairs() {
           <div className="mt-6 flex flex-col lg:flex-row lg:items-center gap-4 p-5 rounded-2xl bg-[#fbf8f6] border border-[#ece4e0]">
             <div className="flex items-center gap-3 shrink-0">
               <span className="w-10 h-10 rounded-xl bg-[#FDECEE] text-[#D91E36] flex items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">devices_other</span>
+                <span className="material-symbols-outlined text-title">devices_other</span>
               </span>
               <span className="text-sm font-bold text-[#1b1210]">We also repair</span>
             </div>
             <div className="flex flex-wrap gap-2 flex-1">
               {moreBrands.map((b) => (
-                <span key={b} className="text-[13px] font-semibold text-[#4a403d] bg-white border border-[#ece4e0] px-3 py-1.5 rounded-full">{b}</span>
+                <span key={b} className="text-label font-semibold text-[#4a403d] bg-white border border-[#ece4e0] px-3 py-1.5 rounded-full">{b}</span>
               ))}
             </div>
             <p className="text-sm text-[#857d79] shrink-0">

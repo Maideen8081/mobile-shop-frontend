@@ -9,7 +9,7 @@
   align-items: start;
   padding: 20px 24px;
 }
-.pp-address p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--cx-ink-2); }
+.pp-address p { margin: 0; font-size: var(--text-body-sm); line-height: 1.55; color: var(--cx-ink-2); }
 .pp-address .ca-addr-top { padding-right: 0; }
 .pp-address-icon {
   display: grid;
@@ -28,12 +28,12 @@
   border-radius: 999px;
   background: var(--cx-green-tint);
   color: var(--cx-green);
-  font-size: 12.5px;
+  font-size: var(--text-caption);
   font-weight: 600;
   white-space: nowrap;
 }
 
-.pp-secure { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--cx-green); }
+.pp-secure { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: 600; color: var(--cx-green); }
 
 .pp-methods { display: flex; flex-direction: column; gap: 10px; padding: 20px 24px 8px; }
 .pp-method {
@@ -70,14 +70,14 @@
 }
 .pp-method.is-selected .pp-method-icon { background: var(--cx-red-tint); color: var(--cx-red); }
 .pp-method-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.pp-method-text strong { font-size: 15px; font-weight: 600; color: var(--cx-ink); }
-.pp-method-text span { font-size: 13px; color: var(--cx-muted); }
+.pp-method-text strong { font-size: var(--text-body); font-weight: 600; color: var(--cx-ink); }
+.pp-method-text span { font-size: var(--text-label); color: var(--cx-muted); }
 .pp-soon {
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--cx-bg);
   color: var(--cx-muted);
-  font-size: 11.5px;
+  font-size: var(--text-caption);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -87,7 +87,7 @@
   padding: 12px 14px;
   border-radius: var(--radius-md, 8px);
   background: var(--cx-bg);
-  font-size: 13.5px;
+  font-size: var(--text-label);
   color: var(--cx-ink-2);
 }
 
@@ -97,8 +97,8 @@
   border-radius: var(--radius-md, 8px);
   background: var(--cx-red-tint);
   color: var(--cx-red-dark);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
 }
-.pp-terms { margin: 12px 0 0; text-align: center; font-size: 12px; color: var(--cx-muted); }
+.pp-terms { margin: 12px 0 0; text-align: center; font-size: var(--text-caption); color: var(--cx-muted); }
 .pp-terms a { color: var(--cx-ink-2); }

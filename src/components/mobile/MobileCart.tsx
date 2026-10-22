@@ -204,8 +204,8 @@ export default function MobileCart() {
             <ShoppingBag size={44} style={{ color: PURPLE }} />
           </div>
           <h2 className="text-xl font-bold text-[#1F2937]">Your cart is empty</h2>
-          <p className="text-[13px] text-[#6B7280] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
-          <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-[14px] font-bold active:scale-95 transition"
+          <p className="text-label text-[#6B7280] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
+          <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-body-sm font-bold active:scale-95 transition"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
             Start Shopping
           </button>
@@ -222,8 +222,8 @@ export default function MobileCart() {
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3.5 pt-3 pb-4 space-y-3">
         {/* Cart items */}
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-[15px] font-bold text-[#1F2937]">Your Cart</h3>
-          <span className="text-[11px] text-[#6B7280] font-medium">{totalItems} {totalItems === 1 ? 'item' : 'items'}</span>
+          <h3 className="text-body font-bold text-[#1F2937]">Your Cart</h3>
+          <span className="text-micro text-[#6B7280] font-medium">{totalItems} {totalItems === 1 ? 'item' : 'items'}</span>
         </div>
         {items.map((item) => {
           const img = resolveImage(item)
@@ -243,17 +243,17 @@ export default function MobileCart() {
             <div key={key} className={`${card} p-2.5 flex gap-2.5`}>
               <button onClick={() => navigate(`/product/${item.productId}`)} className="relative w-[76px] h-[76px] rounded-xl bg-[#FFFBFB] overflow-hidden flex-shrink-0 active:scale-95 transition self-center">
                 {img ? <img src={img} alt={item.name} className="w-full h-full object-contain p-1.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center text-[#64748B] text-2xl">📦</div>}
-                <span className="absolute top-1 left-1 text-[9px] font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: PURPLE }}>×{item.quantity}</span>
+                <span className="absolute top-1 left-1 text-micro font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: PURPLE }}>×{item.quantity}</span>
               </button>
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="flex items-start justify-between gap-1.5">
                   <button onClick={() => navigate(`/product/${item.productId}`)} className="text-left min-w-0">
-                    <h3 className="text-[13px] font-semibold text-[#1F2937] leading-snug line-clamp-1">{item.name}</h3>
+                    <h3 className="text-label font-semibold text-[#1F2937] leading-snug line-clamp-1">{item.name}</h3>
                     <div className="flex items-center gap-1 mt-1 flex-wrap">
-                      {item.brand && <span className="text-[9.5px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.brand}</span>}
-                      {item.storage && <span className="text-[9.5px] px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.storage}</span>}
-                      {item.ram && <span className="text-[9.5px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
-                      {item.color && <span className="text-[9.5px] px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.color}</span>}
+                      {item.brand && <span className="text-micro font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.brand}</span>}
+                      {item.storage && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.storage}</span>}
+                      {item.ram && <span className="text-micro px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
+                      {item.color && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.color}</span>}
                     </div>
                   </button>
                   <button onClick={() => handleRemoveItem(item)} aria-label="Remove" className="text-[#94A3B8] hover:text-[#EF4444] active:scale-90 transition flex-shrink-0 -mr-1">
@@ -262,14 +262,14 @@ export default function MobileCart() {
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <div className="min-w-0">
-                    <span className="text-[15px] font-extrabold leading-none" style={{ color: PURPLE }}>₹{item.price.toLocaleString('en-IN')}</span>
-                    <p className="text-[9.5px] font-semibold mt-0.5" style={{ color: stockColor }}>{stockLabel}</p>
+                    <span className="text-body font-extrabold leading-none" style={{ color: PURPLE }}>₹{item.price.toLocaleString('en-IN')}</span>
+                    <p className="text-micro font-semibold mt-0.5" style={{ color: stockColor }}>{stockLabel}</p>
                   </div>
                   <div className="flex items-center gap-1 rounded-[8px] bg-[#FFFBFB] border border-[#E2E8F0] px-1 py-0.5">
                     <button onClick={() => handleUpdateQty(item, -1)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[#0F172A] active:scale-90 transition">
                       <Minus size={14} />
                     </button>
-                    <span className="font-bold w-6 text-center text-[13px]">{item.quantity}</span>
+                    <span className="font-bold w-6 text-center text-label">{item.quantity}</span>
                     <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
                       <Plus size={14} />
                     </button>
@@ -285,8 +285,8 @@ export default function MobileCart() {
           <div className="flex items-center gap-2 px-1 mb-3">
             <div className="w-1 h-4 rounded-[8px]" style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
             <div>
-              <h3 className="text-[15px] font-bold text-[#1F2937] leading-none">Recommended for You</h3>
-              <p className="text-[11px] text-[#6B7280] mt-0.5">Frequently bought together</p>
+              <h3 className="text-body font-bold text-[#1F2937] leading-none">Recommended for You</h3>
+              <p className="text-micro text-[#6B7280] mt-0.5">Frequently bought together</p>
             </div>
           </div>
           {recLoading ? (
@@ -320,12 +320,12 @@ export default function MobileCart() {
               <Tag size={16} style={{ color: PURPLE }} />
             </div>
             <div>
-              <p className="text-[13px] font-bold text-[#1F2937] leading-none">Apply Coupon</p>
-              <p className="text-[11px] text-[#6B7280] mt-0.5">Save more on your order</p>
+              <p className="text-label font-bold text-[#1F2937] leading-none">Apply Coupon</p>
+              <p className="text-micro text-[#6B7280] mt-0.5">Save more on your order</p>
             </div>
           </div>
           {couponApplied && activeCoupon ? (
-            <div className="flex items-center justify-between pl-3 pr-2 py-2.5 rounded-2xl text-[12px] font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#16A34A' }}>
+            <div className="flex items-center justify-between pl-3 pr-2 py-2.5 rounded-2xl text-caption font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#16A34A' }}>
               <span className="flex items-center gap-1.5"><Check size={14} /> {activeCoupon} applied — {VALID_COUPONS[activeCoupon]?.label}</span>
               <button onClick={() => { setCouponApplied(false); setActiveCoupon(null); setCouponCode('') }} className="text-[#64748B] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
             </div>
@@ -337,17 +337,17 @@ export default function MobileCart() {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                   placeholder="Enter coupon code"
-                  className="flex-1 h-full bg-transparent outline-none text-[14px] font-semibold tracking-wide text-[#1F2937] placeholder:text-[#9CA3AF] placeholder:font-medium placeholder:tracking-normal"
+                  className="flex-1 h-full bg-transparent outline-none text-body-sm font-semibold tracking-wide text-[#1F2937] placeholder:text-[#9CA3AF] placeholder:font-medium placeholder:tracking-normal"
                 />
               </div>
-              <button onClick={handleApplyCoupon} className="w-full h-12 rounded-2xl text-[14px] font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)`, boxShadow: '0 8px 20px rgba(203,32,45,0.32)' }}>
+              <button onClick={handleApplyCoupon} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)`, boxShadow: '0 8px 20px rgba(203,32,45,0.32)' }}>
                 <Tag size={16} /> Apply Coupon
               </button>
             </div>
           )}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {Object.entries(VALID_COUPONS).slice(0, 3).map(([code, c]) => (
-              <button key={code} onClick={() => setCouponCode(code)} disabled={couponApplied} className="text-[10px] font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
+              <button key={code} onClick={() => setCouponCode(code)} disabled={couponApplied} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
                 {code} · {c.label}
               </button>
             ))}
@@ -356,7 +356,7 @@ export default function MobileCart() {
 
         {/* Shipping progress */}
         <div className={`${card} p-3`}>
-          <div className="flex items-center justify-between text-[11px] mb-2 font-semibold" style={{ color: PURPLE }}>
+          <div className="flex items-center justify-between text-micro mb-2 font-semibold" style={{ color: PURPLE }}>
             <span>Free Shipping</span>
             <span>{shipping === 0 ? 'Unlocked' : `₹${(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString('en-IN')} left`}</span>
           </div>
@@ -376,8 +376,8 @@ export default function MobileCart() {
             <SummaryRow label={`Coupon (${activeCoupon})`} value={`-₹${discount.toLocaleString('en-IN')}`} highlight />
           )}
           <div className="pt-2 border-t border-[#EEF1F4] flex items-center justify-between">
-            <span className="text-[13px] font-bold text-[#1F2937]">Grand Total</span>
-            <span className="text-[18px] font-bold" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</span>
+            <span className="text-label font-bold text-[#1F2937]">Grand Total</span>
+            <span className="text-title-sm font-bold" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
@@ -396,8 +396,8 @@ export default function MobileCart() {
       <div className="flex-shrink-0 z-50 w-full bg-white/95 backdrop-blur-xl border-t border-[#EEF1F4] px-3.5 py-2.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10.5px] text-[#64748B]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
-            <p className="text-[17px] font-extrabold leading-none" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</p>
+            <p className="text-micro text-[#64748B]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
+            <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</p>
           </div>
           <button
             onClick={() => {
@@ -409,7 +409,7 @@ export default function MobileCart() {
               localStorage.setItem('checkout_delivery_tip', String(deliveryTip))
               navigate('/checkout/address')
             }}
-            className="flex-shrink-0 h-11 px-6 rounded-xl text-white text-[14px] font-bold active:scale-95 transition flex items-center justify-center gap-2"
+            className="flex-shrink-0 h-11 px-6 rounded-xl text-white text-body-sm font-bold active:scale-95 transition flex items-center justify-center gap-2"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}
           >
             Checkout <ArrowLeft size={16} className="rotate-180" />
@@ -470,7 +470,7 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
             style={{ userSelect: 'none' }}
           >
             {off > 0 && (
-              <span className="absolute top-2 left-2 z-10 text-[9px] font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>
+              <span className="absolute top-2 left-2 z-10 text-micro font-bold px-2 py-0.5 rounded-[8px] text-white" style={{ background: SUCCESS }}>
                 {off}% OFF
               </span>
             )}
@@ -488,18 +488,18 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
               {img ? <img src={img} alt={name} className="w-full h-full object-contain p-2" loading="lazy" draggable={false} /> : <span className="text-3xl">📦</span>}
             </button>
             <div className="flex-1 px-2.5 pt-2 flex flex-col min-h-0">
-              {brand && <span className="text-[9px] font-bold uppercase truncate" style={{ color: PURPLE }}>{brand}</span>}
-              <p className="text-[11.5px] font-semibold text-[#1F2937] leading-tight line-clamp-2">{name}</p>
+              {brand && <span className="text-micro font-bold uppercase truncate" style={{ color: PURPLE }}>{brand}</span>}
+              <p className="text-caption font-semibold text-[#1F2937] leading-tight line-clamp-2">{name}</p>
               {rating > 0 && (
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <Star size={10} style={{ color: '#F59E0B' }} fill="#F59E0B" />
-                  <span className="text-[10px] font-semibold text-[#1F2937]">{rating.toFixed(1)}</span>
+                  <span className="text-micro font-semibold text-[#1F2937]">{rating.toFixed(1)}</span>
                 </div>
               )}
               <div className="mt-auto flex items-center justify-between gap-1 pt-1">
                 <div className="min-w-0">
-                  <p className="text-[13px] font-bold text-[#1F2937] leading-none">₹{cur.toLocaleString('en-IN')}</p>
-                  {mrp > cur && <p className="text-[9px] text-[#9CA3AF] line-through leading-none">₹{mrp.toLocaleString('en-IN')}</p>}
+                  <p className="text-label font-bold text-[#1F2937] leading-none">₹{cur.toLocaleString('en-IN')}</p>
+                  {mrp > cur && <p className="text-micro text-[#9CA3AF] line-through leading-none">₹{mrp.toLocaleString('en-IN')}</p>}
                 </div>
                 <button
                   onClick={() => onAdd(p)}
@@ -530,11 +530,11 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
     <div className="rounded-[20px] p-4" style={{ background: '#F5F3FF' }}>
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-[15px] font-bold text-[#1F2937] flex items-center gap-1.5">
+          <h3 className="text-body font-bold text-[#1F2937] flex items-center gap-1.5">
             <span>Support Your Delivery Partner</span>
             <span className="text-[#EC4899]">❤️</span>
           </h3>
-          <p className="text-[11.5px] text-[#6B7280] mt-0.5">100% of your tip goes directly to the delivery partner.</p>
+          <p className="text-caption text-[#6B7280] mt-0.5">100% of your tip goes directly to the delivery partner.</p>
         </div>
         {/* Rider illustration */}
         <motion.div
@@ -556,7 +556,7 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
               key={t}
               whileTap={{ scale: 0.92 }}
               onClick={() => selectTip(t)}
-              className="h-11 rounded-2xl text-[13px] font-bold border-2 transition"
+              className="h-11 rounded-2xl text-label font-bold border-2 transition"
               style={active
                 ? { background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)`, color: '#fff', borderColor: 'transparent' }
                 : { background: '#fff', color: PURPLE, borderColor: '#FDD' }}
@@ -570,17 +570,17 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
       {/* Custom tip */}
       <div className="mt-2">
         <div className="flex items-center gap-1 px-3 h-11 w-full rounded-2xl bg-white border-2" style={{ borderColor: customTip || activeTip > 0 ? PURPLE : '#E5E7EB' }}>
-          <span className="text-[13px] font-bold text-[#6B7280]">₹</span>
+          <span className="text-label font-bold text-[#6B7280]">₹</span>
           <input
             value={customTip}
             onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 4); setCustomTip(v); if (v) setTip(null) }}
             inputMode="numeric"
             placeholder="Enter custom tip amount"
-            className="flex-1 min-w-0 h-full bg-transparent outline-none text-[13px] font-semibold text-[#1F2937] placeholder:text-[#9CA3AF]"
+            className="flex-1 min-w-0 h-full bg-transparent outline-none text-label font-semibold text-[#1F2937] placeholder:text-[#9CA3AF]"
           />
         </div>
         {activeTip > 0 && (
-          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-[11px] font-semibold text-white" style={{ background: SUCCESS }}>
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-micro font-semibold text-white" style={{ background: SUCCESS }}>
             <Check size={13} /> Thank you for supporting your delivery partner!
           </motion.div>
         )}
@@ -591,14 +591,14 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
         value={instructions}
         onChange={(e) => setInstructions(e.target.value.slice(0, 200))}
         placeholder="Add delivery instructions (e.g. Leave at the door)"
-        className="w-full h-11 px-3 mt-2 rounded-2xl bg-white border border-[#E5E7EB] outline-none text-[12.5px] text-[#1F2937]"
+        className="w-full h-11 px-3 mt-2 rounded-2xl bg-white border border-[#E5E7EB] outline-none text-caption text-[#1F2937]"
       />
-      <p className="text-[10px] text-[#9CA3AF] mt-1 text-right">{instructions.length}/200</p>
+      <p className="text-micro text-[#9CA3AF] mt-1 text-right">{instructions.length}/200</p>
 
       {/* Safety message */}
       <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-2xl bg-white/70">
         <ShieldCheck size={16} style={{ color: SUCCESS }} />
-        <p className="text-[11px] text-[#4B5563]">Your tip is transferred entirely to the delivery partner.</p>
+        <p className="text-micro text-[#4B5563]">Your tip is transferred entirely to the delivery partner.</p>
       </div>
     </div>
   )
@@ -607,7 +607,7 @@ function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, s
 /* ---------- Header & rows ---------- */
 function SummaryRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="flex items-center justify-between text-[12.5px]">
+    <div className="flex items-center justify-between text-caption">
       <span className="text-[#64748B]">{label}</span>
       <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#111827]'}`}>{value}</span>
     </div>

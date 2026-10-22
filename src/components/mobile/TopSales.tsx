@@ -22,7 +22,7 @@ function TopProduct({ product, index = 0 }: { product: any; index?: number }) {
       className="group relative flex flex-col h-full cursor-pointer overflow-hidden rounded-2xl bg-white shadow-[0_6px_18px_rgba(203,32,45,0.10)]"
     >
       {discountPct > 0 && (
-        <span className="absolute top-1.5 left-1.5 z-10 text-[9px] font-extrabold text-white px-1.5 py-0.5 rounded-[8px] bg-[#EF4444] shadow-sm">
+        <span className="absolute top-1.5 left-1.5 z-10 text-micro font-bold text-white px-1.5 py-0.5 rounded-[8px] bg-[#EF4444] shadow-sm">
           −{discountPct}%
         </span>
       )}
@@ -89,8 +89,8 @@ function Banner({ slide }: { slide: Slide | undefined }) {
 
       {(slide.title || slide.subtitle) && (
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent flex flex-col justify-end p-3.5">
-          {slide.title && <h3 className="text-white text-[15px] font-extrabold leading-tight drop-shadow-sm">{slide.title}</h3>}
-          {slide.subtitle && <p className="text-white/90 text-[11px] mt-0.5 font-medium">{slide.subtitle}</p>}
+          {slide.title && <h3 className="text-white text-body font-extrabold leading-tight drop-shadow-sm">{slide.title}</h3>}
+          {slide.subtitle && <p className="text-white/90 text-micro mt-0.5 font-medium">{slide.subtitle}</p>}
         </div>
       )}
     </motion.div>
@@ -133,9 +133,9 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
             >
               <Flame size={18} fill="currentColor" />
             </motion.span>
-            <h2 className="text-[17px] font-extrabold text-[#A81D2A] tracking-tight">Top Sales</h2>
+            <h2 className="text-title-sm font-extrabold text-[#A81D2A] tracking-tight">Top Sales</h2>
             <motion.span
-              className="text-[10px] font-bold text-white px-2 py-0.5 rounded-[8px] flex items-center gap-1 shadow-sm"
+              className="text-micro font-bold text-white px-2 py-0.5 rounded-[8px] flex items-center gap-1 shadow-sm"
               style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
               animate={{ scale: [1, 1.06, 1] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
@@ -159,7 +159,7 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         {/* Animated deal marquee */}
         <div className="relative mb-3 overflow-hidden rounded-[8px] bg-white/70 border border-[#E0E7FF] py-1.5 px-3">
           <motion.div
-            className="flex items-center gap-4 whitespace-nowrap text-[10.5px] font-bold text-[#A81D2A]"
+            className="flex items-center gap-4 whitespace-nowrap text-micro font-bold text-[#A81D2A]"
             animate={{ x: ['0%', '-50%'] }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
           >
@@ -191,7 +191,7 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         <motion.button
           onClick={() => navigate(viewAll)}
           whileTap={{ scale: 0.97 }}
-          className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-[13px] font-bold text-white shadow-[0_8px_20px_rgba(203,32,45,0.30)]"
+          className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-label font-bold text-white shadow-[0_8px_20px_rgba(203,32,45,0.30)]"
           style={{ background: 'linear-gradient(135deg,#CB202D,#CB202D)' }}
         >
           Explore All Top Deals <ArrowRight size={15} />

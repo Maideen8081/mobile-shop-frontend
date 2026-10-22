@@ -28,7 +28,7 @@ const defaultQuestions = ['Please describe the issue you are facing', 'How long 
 
 /* Fixed step labels — questions + 3 extra steps (details, device, photos) */
 const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 12.5, fontWeight: 600,
+  display: 'block', fontSize: 'var(--text-caption)', fontWeight: 600,
   color: '#4A403D', marginBottom: 6, letterSpacing: '0.01em',
 }
 
@@ -39,7 +39,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
     <div>
       <label style={labelStyle}>{label}</label>
       {children}
-      {error && <p style={{ fontSize: 12, color: '#ef4444', marginTop: 5 }}>{error}</p>}
+      {error && <p style={{ fontSize: 'var(--text-caption)', color: '#ef4444', marginTop: 5 }}>{error}</p>}
     </div>
   )
 }
@@ -228,7 +228,7 @@ function DesktopBookRepair() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%', height: 44, padding: '0 15px', borderRadius: 11,
-    border: '1.5px solid #ECE4E0', fontSize: 14, color: '#1B1210',
+    border: '1.5px solid #ECE4E0', fontSize: 'var(--text-body-sm)', color: '#1B1210',
     background: '#FBF8F6', outline: 'none',
     transition: 'border-color .16s ease, background .16s ease',
     fontFamily: 'var(--font-ui)',
@@ -236,7 +236,7 @@ function DesktopBookRepair() {
 
   const btnPrimary: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', gap: 7,
-    padding: '11px 22px', borderRadius: 12, fontSize: 13.5, fontWeight: 700,
+    padding: '11px 22px', borderRadius: 12, fontSize: 'var(--text-label)', fontWeight: 700,
     color: '#fff', background: 'linear-gradient(135deg, #D91E36, #A3122A)',
     border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px rgba(217,30,54,0.28)',
     transition: 'transform .16s ease, box-shadow .16s ease',
@@ -244,7 +244,7 @@ function DesktopBookRepair() {
 
   const btnGhost: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', gap: 7,
-    padding: '11px 20px', borderRadius: 12, fontSize: 13.5, fontWeight: 600,
+    padding: '11px 20px', borderRadius: 12, fontSize: 'var(--text-label)', fontWeight: 600,
     color: '#4A403D', background: '#F5F0EC', border: '1.5px solid #ECE4E0',
     cursor: 'pointer', transition: 'all .16s ease',
   }
@@ -264,12 +264,12 @@ function DesktopBookRepair() {
             <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(5,150,105,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: '1px solid rgba(5,150,105,0.15)' }}>
               <FiCheckCircle size={40} style={{ color: '#059669' }} />
             </div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 700, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
-            <p style={{ fontSize: 14, color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully. We'll contact you shortly.</p>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
+            <p style={{ fontSize: 'var(--text-body-sm)', color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully. We'll contact you shortly.</p>
             <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 28, marginBottom: 28, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: '#857D79', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Your Tracking ID</p>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 700, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
-              <p style={{ fontSize: 12, color: '#857D79', marginTop: 10 }}>Save this ID to track your repair status.</p>
+              <p style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#857D79', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Your Tracking ID</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
+              <p style={{ fontSize: 'var(--text-caption)', color: '#857D79', marginTop: 10 }}>Save this ID to track your repair status.</p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/my-repairs" style={{ ...btnPrimary, textDecoration: 'none', justifyContent: 'center' }}>
@@ -297,11 +297,11 @@ function DesktopBookRepair() {
         <div style={{ marginBottom: 28 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.06)', border: '1px solid rgba(217,30,54,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#D91E36' }}>build</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 'var(--text-title)', color: '#D91E36' }}>build</span>
             </div>
             <div>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 700, color: '#1B1210', lineHeight: 1.1 }}>Book a Repair</h1>
-              <p style={{ fontSize: 13, color: '#857D79', marginTop: 2 }}>Complete the steps below to book your repair.</p>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#1B1210', lineHeight: 1.1 }}>Book a Repair</h1>
+              <p style={{ fontSize: 'var(--text-label)', color: '#857D79', marginTop: 2 }}>Complete the steps below to book your repair.</p>
             </div>
           </div>
         </div>
@@ -312,10 +312,10 @@ function DesktopBookRepair() {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#D91E36' }}>medical_services</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 'var(--text-title-sm)', color: '#D91E36' }}>medical_services</span>
               <div>
-                <p style={{ fontSize: 10.5, fontWeight: 700, color: '#857D79', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 1 }}>Service Type</p>
-                <p style={{ fontSize: 14, fontWeight: 600, color: selectedIssue ? '#1B1210' : '#857D79' }}>
+                <p style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#857D79', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 1 }}>Service Type</p>
+                <p style={{ fontSize: 'var(--text-body-sm)', fontWeight: 600, color: selectedIssue ? '#1B1210' : '#857D79' }}>
                   {selectedIssue || 'Select a repair service…'}
                 </p>
               </div>
@@ -337,7 +337,7 @@ function DesktopBookRepair() {
                     <button key={s.id} type="button"
                       onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
                       style={{
-                        textAlign: 'left', padding: '10px 14px', fontSize: 13, fontWeight: 500,
+                        textAlign: 'left', padding: '10px 14px', fontSize: 'var(--text-label)', fontWeight: 500,
                         borderRadius: 10, border: selectedIssue === s.name ? '1.5px solid #D91E36' : '1px solid #ECE4E0',
                         cursor: 'pointer', transition: 'all .15s ease',
                         background: selectedIssue === s.name ? 'rgba(217,30,54,0.06)' : '#FBF8F6',
@@ -352,7 +352,7 @@ function DesktopBookRepair() {
                     </button>
                   ))}
                   {services.filter(s => s.is_active).length === 0 && (
-                    <p style={{ gridColumn: '1/-1', fontSize: 13, color: '#857D79', padding: '4px 0' }}>Loading services…</p>
+                    <p style={{ gridColumn: '1/-1', fontSize: 'var(--text-label)', color: '#857D79', padding: '4px 0' }}>Loading services…</p>
                   )}
                 </div>
               </motion.div>
@@ -375,7 +375,7 @@ function DesktopBookRepair() {
                     transition: 'background .3s ease',
                   }} />
                   <span style={{
-                    fontSize: 9, fontWeight: 700, letterSpacing: '0.04em',
+                    fontSize: 'var(--text-micro)', fontWeight: 700, letterSpacing: '0.04em',
                     color: done ? '#16a34a' : active ? '#D91E36' : '#C4BBB8',
                     textTransform: 'uppercase',
                     transition: 'color .3s ease',
@@ -384,7 +384,7 @@ function DesktopBookRepair() {
               )
             })}
           </div>
-          <p style={{ fontSize: 12, color: '#857D79', fontWeight: 500 }}>
+          <p style={{ fontSize: 'var(--text-caption)', color: '#857D79', fontWeight: 500 }}>
             Step {step} of {totalSteps} —{' '}
             <span style={{ color: '#1B1210', fontWeight: 600 }}>{stepLabels[step - 1]}</span>
           </p>
@@ -397,13 +397,13 @@ function DesktopBookRepair() {
             <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(217,30,54,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: '#D91E36' }}>{step}</span>
+                  <span style={{ fontSize: 'var(--text-caption)', fontWeight: 800, color: '#D91E36' }}>{step}</span>
                 </div>
-                <span style={{ fontSize: 10.5, fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                <span style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   Question {step} of {questions.length}
                 </span>
               </div>
-              <p style={{ fontSize: 16, fontWeight: 600, color: '#1B1210', margin: '14px 0 16px', lineHeight: 1.4 }}>{questions[step - 1]}</p>
+              <p style={{ fontSize: 'var(--text-body)', fontWeight: 600, color: '#1B1210', margin: '14px 0 16px', lineHeight: 1.4 }}>{questions[step - 1]}</p>
               <textarea
                 value={answers[step - 1]}
                 onChange={(e) => { updateAnswer(step - 1, e.target.value); if (qErrors[step - 1] && e.target.value.trim()) setQErrors(p => { const n = { ...p }; delete n[step - 1]; return n }) }}
@@ -415,7 +415,7 @@ function DesktopBookRepair() {
                 onBlur={(e) => { e.currentTarget.style.borderColor = qErrors[step - 1] ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
               />
               {qErrors[step - 1] && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 12.5, color: '#ef4444' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 'var(--text-caption)', color: '#ef4444' }}>
                   <FiAlertCircle size={13} /> {qErrors[step - 1]}
                 </div>
               )}
@@ -437,7 +437,7 @@ function DesktopBookRepair() {
                 <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <FiUser size={16} style={{ color: '#D91E36' }} />
                 </div>
-                <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Your Details</span>
+                <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Your Details</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <Field label="Full Name *" error={touched.name ? errors.name : undefined}>
@@ -473,13 +473,13 @@ function DesktopBookRepair() {
                 <Field label="Pickup / Delivery Address *" error={touched.address ? errors.address : undefined}>
                   {savedAddresses.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: 12, color: '#857D79' }}>Use a saved address:</span>
+                      <span style={{ fontSize: 'var(--text-caption)', color: '#857D79' }}>Use a saved address:</span>
                       {savedAddresses.slice(0, 3).map((a) => (
                         <button
                           key={a.id}
                           type="button"
                           onClick={() => applySavedAddress(a)}
-                          style={{ fontSize: 12, fontWeight: 600, padding: '5px 11px', borderRadius: 999, border: '1.5px solid #ECE4E0', background: '#fff', color: '#4A403D', cursor: 'pointer' }}
+                          style={{ fontSize: 'var(--text-caption)', fontWeight: 600, padding: '5px 11px', borderRadius: 999, border: '1.5px solid #ECE4E0', background: '#fff', color: '#4A403D', cursor: 'pointer' }}
                         >
                           {a.addressType} · {a.city}{a.isDefault ? ' (default)' : ''}
                         </button>
@@ -508,7 +508,7 @@ function DesktopBookRepair() {
                 <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <FiSmartphone size={16} style={{ color: '#D91E36' }} />
                 </div>
-                <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Device Information</span>
+                <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Device Information</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -594,8 +594,8 @@ function DesktopBookRepair() {
                   <FiImage size={16} style={{ color: '#D91E36' }} />
                 </div>
                 <div>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
-                  <span style={{ fontSize: 12.5, color: '#857D79', marginLeft: 8, fontWeight: 400 }}>(optional)</span>
+                  <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
+                  <span style={{ fontSize: 'var(--text-caption)', color: '#857D79', marginLeft: 8, fontWeight: 400 }}>(optional)</span>
                 </div>
               </div>
 
@@ -610,8 +610,8 @@ function DesktopBookRepair() {
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                   <FiImage size={20} style={{ color: '#D91E36' }} />
                 </div>
-                <p style={{ fontSize: 13.5, fontWeight: 600, color: '#1B1210', marginBottom: 4 }}>Click to upload photos</p>
-                <p style={{ fontSize: 12, color: '#857D79' }}>Show the damage area for faster diagnosis. PNG, JPG, HEIC supported.</p>
+                <p style={{ fontSize: 'var(--text-label)', fontWeight: 600, color: '#1B1210', marginBottom: 4 }}>Click to upload photos</p>
+                <p style={{ fontSize: 'var(--text-caption)', color: '#857D79' }}>Show the damage area for faster diagnosis. PNG, JPG, HEIC supported.</p>
               </div>
 
               {previews.length > 0 && (
@@ -629,7 +629,7 @@ function DesktopBookRepair() {
               )}
 
               {submitError && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)', fontSize: 13, color: '#ef4444', marginTop: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)', fontSize: 'var(--text-label)', color: '#ef4444', marginTop: 14 }}>
                   <FiAlertCircle size={14} /> {submitError}
                 </div>
               )}
@@ -639,7 +639,7 @@ function DesktopBookRepair() {
                 <button onClick={handleSubmit} disabled={submitting}
                   style={{ ...btnPrimary, opacity: submitting ? 0.6 : 1, cursor: submitting ? 'not-allowed' : 'pointer', background: submitting ? 'linear-gradient(135deg,#9CA3AF,#6B7280)' : 'linear-gradient(135deg,#D91E36,#A3122A)' }}>
                   {submitting
-                    ? <><span className="material-symbols-outlined" style={{ fontSize: 16, animation: 'spin 1s linear infinite' }}>progress_activity</span> Booking…</>
+                    ? <><span className="material-symbols-outlined" style={{ fontSize: 'var(--text-body)', animation: 'spin 1s linear infinite' }}>progress_activity</span> Booking…</>
                     : <><FiSend size={14} /> Book Now</>
                   }
                 </button>

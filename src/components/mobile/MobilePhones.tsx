@@ -183,24 +183,24 @@ export default function MobilePhones() {
                 <Sparkles size={26} className="text-white" />
               </div>
               <div className="relative z-10 flex flex-col justify-center h-full max-w-[78%]">
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/90">
+                <span className="flex items-center gap-1 text-micro font-bold uppercase tracking-[0.18em] text-white/90">
                   {tab === 'all' ? 'Collection' : TABS.find((t) => t.key === tab)?.label}
                 </span>
-                <h2 className="text-[21px] font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
-                <p className="text-[11.5px] text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
+                <h2 className="text-title font-extrabold text-white leading-tight mt-1 drop-shadow-sm">{hero.title}</h2>
+                <p className="text-caption text-white/90 mt-0.5 leading-snug">{hero.subtitle}</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center justify-between px-3.5 mt-3 mb-1">
-            <p className="text-[12px] font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
+            <p className="text-caption font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
           </div>
 
           <div className="px-3.5">
             {products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <p className="text-[15px] font-bold text-[#0F172A]">No phones found</p>
-                <p className="text-[13px] text-[#64748B] mt-1">Try a different filter or category.</p>
+                <p className="text-body font-bold text-[#0F172A]">No phones found</p>
+                <p className="text-label text-[#64748B] mt-1">Try a different filter or category.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2.5">
@@ -230,8 +230,8 @@ export default function MobilePhones() {
           <div className="px-3.5 mt-5">
             <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(203,32,45,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#A81D2A,#CB202D)' }}>
               <div className="min-w-0">
-                <p className="text-[13px] font-extrabold text-white leading-tight">Upgrade & Save Up To ₹30,000</p>
-                <p className="text-[11px] text-white/80 mt-0.5">Trade in your old device for instant credit.</p>
+                <p className="text-label font-bold text-white leading-tight">Upgrade & Save Up To ₹30,000</p>
+                <p className="text-micro text-white/80 mt-0.5">Trade in your old device for instant credit.</p>
               </div>
               <span className="w-10 h-10 rounded-[8px] bg-white/20 flex items-center justify-center flex-shrink-0 text-white">
                 <Sparkles size={18} />

@@ -59,11 +59,11 @@
 .eo-hero h2 {
   margin: 0 0 6px;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--text-title);
   font-weight: 800;
   letter-spacing: -0.01em;
 }
-.eo-hero p { margin: 0; font-size: 14px; opacity: 0.85; }
+.eo-hero p { margin: 0; font-size: var(--text-body-sm); opacity: 0.85; }
 
 .eo-body { padding: 22px 24px 4px; display: flex; flex-direction: column; gap: 16px; }
 
@@ -81,9 +81,9 @@
   display: flex;
   flex-direction: column;
 }
-.eo-coupon-amount span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a3122a; }
-.eo-coupon-amount strong { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: #d91e36; line-height: 1.15; }
-.eo-coupon-amount small { font-size: 12px; color: #857d79; }
+.eo-coupon-amount span { font-size: var(--text-caption); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a3122a; }
+.eo-coupon-amount strong { font-family: var(--font-display); font-size: var(--text-heading); font-weight: 800; color: #d91e36; line-height: 1.15; }
+.eo-coupon-amount small { font-size: var(--text-caption); color: #857d79; }
 .eo-coupon-code {
   display: flex;
   flex-direction: column;
@@ -93,7 +93,7 @@
   padding: 0 18px;
   border-left: 2px dashed #f3c2c9;
 }
-.eo-coupon-code span { font-size: 11px; color: #857d79; }
+.eo-coupon-code span { font-size: var(--text-micro); color: #857d79; }
 .eo-coupon-code code,
 .eo-unlock code {
   font-family: var(--font-mono);
@@ -101,7 +101,7 @@
   letter-spacing: 0.06em;
   color: #1b1210;
 }
-.eo-coupon-code code { font-size: 16px; padding: 4px 10px; border-radius: 8px; background: #fff; }
+.eo-coupon-code code { font-size: var(--text-body); padding: 4px 10px; border-radius: 8px; background: #fff; }
 
 .eo-unlock {
   display: flex;
@@ -113,7 +113,7 @@
   color: #92400e;
 }
 .eo-unlock svg { flex-shrink: 0; margin-top: 2px; }
-.eo-unlock p { margin: 0; font-size: 14px; line-height: 1.5; color: #4a403d; }
+.eo-unlock p { margin: 0; font-size: var(--text-body-sm); line-height: 1.5; color: #4a403d; }
 
 .eo-cart {
   display: flex;
@@ -135,27 +135,27 @@
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  font-size: 20px;
+  font-size: var(--text-title);
   overflow: hidden;
 }
 .eo-cart-thumb:first-child { margin-left: 0; }
 .eo-cart-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 .eo-cart-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .eo-cart-text strong {
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   color: #1b1210;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.eo-cart-text span { font-size: 12px; color: #857d79; }
+.eo-cart-text span { font-size: var(--text-caption); color: #857d79; }
 
 .eo-saving {
   display: flex;
   gap: 8px;
   align-items: flex-start;
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: #4a403d;
 }
@@ -164,7 +164,7 @@
 
 .eo-deals h3 {
   margin: 0 0 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -197,18 +197,18 @@
   border-radius: 999px;
   background: #d91e36;
   color: #fff;
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 800;
 }
 .eo-deal-img {
   display: grid;
   place-items: center;
   height: 76px;
-  font-size: 30px;
+  font-size: var(--text-heading);
 }
 .eo-deal-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .eo-deal-name {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   line-height: 1.3;
   color: #1b1210;
@@ -218,10 +218,10 @@
   overflow: hidden;
 }
 .eo-deal-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
-.eo-deal-price strong { font-size: 13px; color: #d91e36; }
-.eo-deal-price s { font-size: 11px; color: #a8a09c; }
+.eo-deal-price strong { font-size: var(--text-label); color: #d91e36; }
+.eo-deal-price s { font-size: var(--text-micro); color: #a8a09c; }
 
-.eo-error { margin: 0; font-size: 13px; color: #d91e36; }
+.eo-error { margin: 0; font-size: var(--text-label); color: #d91e36; }
 
 .eo-actions { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px 24px; }
 .eo-primary {
@@ -234,7 +234,7 @@
   border-radius: 14px;
   background: linear-gradient(135deg, #d91e36 0%, #a3122a 100%);
   color: #fff;
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 700;
   box-shadow: 0 6px 20px rgba(217, 30, 54, 0.3);
   cursor: pointer;
@@ -248,7 +248,7 @@
   border: 0;
   background: none;
   color: #857d79;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   cursor: pointer;
 }
@@ -265,10 +265,10 @@
     animation: eo-sheet 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .eo-hero { padding: 24px 20px 18px; }
-  .eo-hero h2 { font-size: 19px; }
+  .eo-hero h2 { font-size: var(--text-title); }
   .eo-body { padding: 18px 16px 4px; }
   .eo-actions { padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
-  .eo-coupon-amount strong { font-size: 24px; }
+  .eo-coupon-amount strong { font-size: var(--text-heading); }
   .eo-deal-row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 128px; overflow-x: auto; padding-bottom: 4px; }
 }
 

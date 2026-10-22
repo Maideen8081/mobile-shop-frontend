@@ -1,0 +1,201 @@
+- generic [ref=f16e194]:
+  - complementary [ref=f16e195]:
+    - generic [ref=f16e196]:
+      - generic [ref=f16e197]: MobileShop
+      - navigation "Admin" [ref=f16e202]:
+        - button "Dashboard" [ref=f16e204]
+        - generic [ref=f16e211]:
+          - button "Product" [ref=f16e212]
+          - button "Category" [ref=f16e218]
+        - generic [ref=f16e222]:
+          - button "Order" [ref=f16e223]
+          - button "Customer" [ref=f16e229]
+          - button "Trade-in" [ref=f16e236]
+        - generic [ref=f16e243]:
+          - button "Repairs" [ref=f16e244]
+          - button "Online booking" [ref=f16e248]
+          - button "New repair ticket" [ref=f16e253]
+      - button "Log out" [ref=f16e258]
+  - generic [ref=f16e262]:
+    - banner [ref=f16e263]:
+      - generic [ref=f16e264]:
+        - button "Search ⌘K" [ref=f16e265]:
+          - generic [ref=f16e269]: Search
+          - generic [ref=f16e270]: ⌘K
+        - button "Online bookings" [ref=f16e271]
+        - button "Online orders" [ref=f16e275]
+        - button "Account menu" [ref=f16e280]:
+          - generic [ref=f16e281]: M
+          - generic [ref=f16e282]:
+            - generic [ref=f16e283]: Maideen
+            - generic [ref=f16e284]: admin@local.test
+    - main [ref=f16e287]:
+      - link "Back to products" [ref=f16e288] [cursor=pointer]:
+        - /url: /admin/products
+      - generic [ref=f16e292]:
+        - heading "Add product" [level=2] [ref=f16e293]
+        - paragraph [ref=f16e294]: Fill in the basics, then add at least one variant with its price, stock and images.
+      - generic [ref=f16e296]:
+        - generic [ref=f16e298]:
+          - generic [ref=f16e299]:
+            - heading "Add New Product" [level=3] [ref=f16e300]
+            - paragraph [ref=f16e301]: Fields marked * are required
+          - generic [ref=f16e302]:
+            - generic [ref=f16e303]:
+              - heading "Basic Information" [level=4] [ref=f16e304]
+              - generic [ref=f16e305]:
+                - generic [ref=f16e306]:
+                  - generic [ref=f16e307]:
+                    - generic [ref=f16e308]: Product Name *
+                    - generic [ref=f16e309]: 0/200
+                  - textbox "Product Name * 0/200" [ref=f16e310]:
+                    - /placeholder: e.g. iPhone 15 Pro Max
+                - generic [ref=f16e312]:
+                  - generic [ref=f16e313]: Brand *
+                  - button "Select or type a brand" [ref=f16e314] [cursor=pointer]
+                - generic [ref=f16e319]:
+                  - generic [ref=f16e320]: Model Number *
+                  - textbox "Model Number *" [ref=f16e321]:
+                    - /placeholder: e.g. A2849
+                - generic [ref=f16e323]:
+                  - generic [ref=f16e324]: Category *
+                  - button "Select Category" [ref=f16e325] [cursor=pointer]
+                - generic [ref=f16e331]:
+                  - generic [ref=f16e332]: Sub Category
+                  - button "Select a category first" [ref=f16e333] [cursor=pointer]
+            - generic [ref=f16e338]:
+              - heading "Cover Image (optional — used on listing cards)" [level=4] [ref=f16e339]
+              - generic [ref=f16e346]:
+                - button "Upload" [ref=f16e348] [cursor=pointer]
+                - paragraph [ref=f16e353]: JPG, PNG or WebP, up to 5MB. Without one, the first variant image is used.
+            - generic [ref=f16e355]:
+              - generic [ref=f16e356]:
+                - generic [ref=f16e357]: Description
+                - generic [ref=f16e358]: 0/5000
+              - textbox "Description 0/5000" [ref=f16e359]:
+                - /placeholder: Detailed product description...
+            - generic [ref=f16e360]:
+              - heading "Visibility & Tags" [level=4] [ref=f16e361]
+              - generic [ref=f16e362]:
+                - switch [checked] [ref=f16e363] [cursor=pointer]
+                - switch "Trending" [ref=f16e366] [cursor=pointer]
+                - switch "New arrival" [ref=f16e368] [cursor=pointer]
+                - switch "Best selling" [ref=f16e370] [cursor=pointer]
+                - switch "Featured" [ref=f16e372] [cursor=pointer]
+                - switch "Refurbished" [ref=f16e374] [cursor=pointer]
+            - generic [ref=f16e376]:
+              - generic [ref=f16e377]:
+                - generic [ref=f16e378]:
+                  - generic [ref=f16e379]:
+                    - text: Features
+                    - generic [ref=f16e380]: (0/20)
+                  - button "Add" [ref=f16e381] [cursor=pointer]
+                - paragraph [ref=f16e383]: None added
+              - generic [ref=f16e384]:
+                - generic [ref=f16e385]:
+                  - generic [ref=f16e386]:
+                    - text: Care Instructions
+                    - generic [ref=f16e387]: (0/20)
+                  - button "Add Instruction" [ref=f16e388] [cursor=pointer]
+                - paragraph [ref=f16e390]: None added
+            - generic [ref=f16e391]:
+              - generic [ref=f16e392]:
+                - generic [ref=f16e393]:
+                  - heading "Variants (1/20) *" [level=4] [ref=f16e394]
+                  - paragraph [ref=f16e395]: Each variant is a unique color + RAM + storage with its own price, stock and images
+                - button "Add Variant" [ref=f16e396] [cursor=pointer]
+              - generic [ref=f16e399]:
+                - button "1 Variant 1 RAM • Storage • Color • new" [expanded] [ref=f16e400] [cursor=pointer]:
+                  - generic [ref=f16e401]:
+                    - generic [ref=f16e402]: "1"
+                    - generic [ref=f16e403]:
+                      - paragraph [ref=f16e404]: Variant 1
+                      - paragraph [ref=f16e405]: RAM • Storage • Color • new
+                - generic [ref=f16e411]:
+                  - generic [ref=f16e412]:
+                    - generic [ref=f16e413]:
+                      - generic [ref=f16e414]: Variant Name *
+                      - textbox "Variant Name *" [ref=f16e415]:
+                        - /placeholder: e.g. Midnight Black 256GB
+                    - generic [ref=f16e416]:
+                      - generic [ref=f16e417]: Color *
+                      - textbox "Color *" [ref=f16e418]:
+                        - /placeholder: e.g. Midnight Black
+                  - generic [ref=f16e419]:
+                    - heading "Specifications" [level=5] [ref=f16e420]
+                    - generic [ref=f16e421]:
+                      - generic [ref=f16e422]:
+                        - generic [ref=f16e423]: RAM Size *
+                        - button "Select RAM" [ref=f16e424] [cursor=pointer]
+                      - generic [ref=f16e429]:
+                        - generic [ref=f16e430]: Storage Size *
+                        - button "Select Storage" [ref=f16e431] [cursor=pointer]
+                      - generic [ref=f16e436]:
+                        - generic [ref=f16e437]: Battery (mAh) *
+                        - spinbutton "Battery (mAh) *" [ref=f16e438]
+                    - generic [ref=f16e439]:
+                      - generic [ref=f16e440]:
+                        - generic [ref=f16e441]: Processor *
+                        - textbox "Processor *" [ref=f16e442]:
+                          - /placeholder: e.g. A17 Pro
+                      - generic [ref=f16e443]:
+                        - generic [ref=f16e444]: Display Size *
+                        - textbox "Display Size *" [ref=f16e445]:
+                          - /placeholder: e.g. 6.7" OLED
+                      - generic [ref=f16e446]:
+                        - generic [ref=f16e447]: Camera Details *
+                        - textbox "Camera Details *" [ref=f16e448]:
+                          - /placeholder: e.g. 48MP + 12MP
+                  - generic [ref=f16e449]:
+                    - heading "Pricing & Stock" [level=5] [ref=f16e450]
+                    - generic [ref=f16e451]:
+                      - generic [ref=f16e452]:
+                        - generic [ref=f16e453]: Price (₹) *
+                        - spinbutton "Price (₹) *" [ref=f16e454]
+                      - generic [ref=f16e455]:
+                        - generic [ref=f16e456]: Discount Price (₹)
+                        - spinbutton "Discount Price (₹)" [ref=f16e457]
+                      - generic [ref=f16e458]:
+                        - generic [ref=f16e459]: Stock *
+                        - spinbutton "Stock *" [ref=f16e460]: "0"
+                      - generic [ref=f16e461]:
+                        - generic [ref=f16e462]: Low Stock Alert
+                        - spinbutton "Low Stock Alert" [ref=f16e463]: "5"
+                    - generic [ref=f16e464]: Out of stock
+                  - generic [ref=f16e466]:
+                    - heading "Images (0/10) *First image is the main one" [level=5] [ref=f16e467]
+                    - button "Upload images for variant 1" [ref=f16e468] [cursor=pointer]:
+                      - generic [ref=f16e469]:
+                        - paragraph [ref=f16e474]: Drop images or click to upload
+                        - paragraph [ref=f16e475]: JPG, PNG or WebP, up to 5MB each
+                  - generic [ref=f16e476]:
+                    - button "Duplicate" [ref=f16e477] [cursor=pointer]
+                    - button "Remove variant" [disabled] [ref=f16e481]
+          - generic [ref=f16e485]:
+            - button "Save Product" [ref=f16e486] [cursor=pointer]
+            - button "Cancel" [ref=f16e491] [cursor=pointer]
+            - button "Reset" [ref=f16e492] [cursor=pointer]
+        - generic [ref=f16e498]:
+          - generic [ref=f16e499]:
+            - heading "Live Preview" [level=4] [ref=f16e501]
+            - generic [ref=f16e502]:
+              - generic [ref=f16e503]: 📱
+              - generic [ref=f16e505]:
+                - generic [ref=f16e506]:
+                  - paragraph [ref=f16e507]: •
+                  - paragraph [ref=f16e508]: Product Name
+                - generic [ref=f16e509]: Set price
+                - generic [ref=f16e511]: Out of Stock
+                - button "View Product" [ref=f16e513] [cursor=pointer]
+          - generic [ref=f16e517]:
+            - heading "Summary" [level=4] [ref=f16e518]
+            - generic [ref=f16e519]:
+              - generic [ref=f16e520]:
+                - term [ref=f16e521]: Variants
+                - definition [ref=f16e522]: "1"
+              - generic [ref=f16e523]:
+                - term [ref=f16e524]: Total stock
+                - definition [ref=f16e525]: "0"
+              - generic [ref=f16e526]:
+                - term [ref=f16e527]: Status
+                - definition [ref=f16e528]: Published

@@ -210,12 +210,12 @@
   gap: 2px;
   margin: 0;
   color: var(--rfc-muted);
-  font-size: 0.875rem;
+  font-size: var(--text-body-sm);
   line-height: 1.35;
 }
 .rfc-trust p b {
   color: var(--rfc-ink);
-  font-size: 1rem;
+  font-size: var(--text-body);
   font-weight: 800;
 }
 
@@ -223,7 +223,7 @@
   margin: clamp(44px, 7vw, 76px) 0 0;
   padding: 0 0 34px;
   color: var(--rfc-muted);
-  font-size: 0.75rem;
+  font-size: var(--text-caption);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;

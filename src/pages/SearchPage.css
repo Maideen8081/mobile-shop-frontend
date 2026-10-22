@@ -51,7 +51,7 @@
   align-items: center;
   gap: 8px;
   font-family:var(--font-ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -84,7 +84,7 @@
 }
 
 .sp-hero-sub {
-  font-size: 16px;
+  font-size: var(--text-body);
   color: rgba(255, 255, 255, 0.7);
   margin: 0 0 36px;
   font-weight: 400;
@@ -121,7 +121,7 @@
   flex: 1;
   border: none;
   outline: none;
-  font-size: 16px;
+  font-size: var(--text-body);
   font-family:var(--font-ui);
   color: var(--sp-ink);
   padding: 12px 12px;
@@ -181,7 +181,7 @@
   border: none;
   border-radius: 12px;
   font-family:var(--font-ui);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s;
@@ -221,7 +221,7 @@
 
 .sp-section-title {
   font-family:var(--font-display);
-  font-size: 22px;
+  font-size: var(--text-title);
   font-weight: 700;
   color: var(--sp-ink);
   display: flex;
@@ -238,7 +238,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--sp-red);
   text-decoration: none;
@@ -265,7 +265,7 @@
   border: 1px solid var(--sp-line);
   border-radius: 12px;
   font-family:var(--font-ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--sp-ink);
   cursor: pointer;
@@ -310,7 +310,7 @@
 }
 
 .sp-clear-all {
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: #5a5550;
   background: none;
@@ -357,19 +357,19 @@
 }
 
 .sp-category-icon {
-  font-size: 36px;
+  font-size: var(--text-headline);
   line-height: 1;
 }
 
 .sp-category-name {
   font-family:var(--font-display);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 700;
   text-align: center;
 }
 
 .sp-category-count {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #5a5550;
   font-weight: 600;
 }
@@ -440,7 +440,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: var(--text-micro);
   font-weight: 700;
   letter-spacing: 0.5px;
   color: white;
@@ -491,7 +491,7 @@
 
 .sp-card-name {
   font-family:var(--font-display);
-  font-size: 15px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--sp-ink);
   margin: 0 0 4px;
@@ -503,7 +503,7 @@
 }
 
 .sp-card-brand {
-  font-size: 13px;
+  font-size: var(--text-label);
   color: #5a5550;
   margin: 0 0 8px;
   font-weight: 500;
@@ -518,20 +518,20 @@
 
 .sp-card-price {
   font-family:var(--font-display);
-  font-size: 16px;
+  font-size: var(--text-body);
   font-weight: 700;
   color: var(--sp-ink);
 }
 
 .sp-card-old-price {
   font-family:var(--font-display);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--sp-gray);
   text-decoration: line-through;
 }
 
 .sp-card-discount {
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 700;
   color: var(--sp-ok);
   background: rgba(28, 138, 79, 0.08);
@@ -547,7 +547,7 @@
   gap: 16px;
   padding: 60px 0;
   color: var(--sp-gray);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
 }
 
 .sp-loading-spinner {
@@ -576,14 +576,14 @@
 
 .sp-empty h3 {
   font-family:var(--font-display);
-  font-size: 24px;
+  font-size: var(--text-heading);
   font-weight: 700;
   color: var(--sp-ink);
   margin: 0 0 8px;
 }
 
 .sp-empty p {
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   color: var(--sp-gray);
   margin: 0 0 24px;
 }
@@ -597,7 +597,7 @@
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -621,10 +621,10 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .sp-hero { padding: 120px 16px 40px; }
-  .sp-hero-title { font-size: 32px; }
+  .sp-hero-title { font-size: var(--text-heading); }
   .sp-body { padding: 24px 16px 40px; }
   .sp-category-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
   .sp-product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
   .sp-search-bar { padding: 4px 4px 4px 14px; }
-  .sp-search-btn { padding: 10px 16px; font-size: 13px; }
+  .sp-search-btn { padding: 10px 16px; font-size: var(--text-label); }
 }

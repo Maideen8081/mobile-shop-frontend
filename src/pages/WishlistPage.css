@@ -18,7 +18,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   color: var(--color-on-surface-variant);
   margin-bottom: 16px;
 }
@@ -67,14 +67,14 @@
 
 .wishlist-head-content h1 {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--text-heading);
   font-weight: 700;
   color: var(--color-on-surface);
   margin: 0 0 4px;
 }
 
 .wishlist-count {
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   color: var(--color-on-surface-variant);
   margin: 0;
 }
@@ -160,7 +160,7 @@
   border-radius: var(--radius-full);
   background: var(--color-on-surface);
   color: #fff;
-  font-size: 0.75rem;
+  font-size: var(--text-caption);
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -233,7 +233,7 @@
 }
 
 .wish-card-cat {
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--color-on-surface-variant);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -244,7 +244,7 @@
 .wish-card-name {
   margin: 0 0 10px;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: var(--text-body);
   font-weight: 700;
   line-height: 1.3;
   display: -webkit-box;
@@ -276,7 +276,7 @@
 
 .wish-card-price {
   font-family: var(--font-display);
-  font-size: 1.125rem;
+  font-size: var(--text-title-sm);
   font-weight: 700;
   color: var(--color-on-surface);
   font-variant-numeric: tabular-nums;
@@ -286,7 +286,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: #166534;
   font-weight: 600;
   padding: 3px 8px;
@@ -310,7 +310,7 @@
   border-radius: var(--radius-md);
   background: var(--color-pf-red);
   color: #fff;
-  font-size: 0.8125rem;
+  font-size: var(--text-label);
   font-weight: 700;
   letter-spacing: 0.01em;
   text-decoration: none;
@@ -360,14 +360,14 @@
 
 .wishlist-empty h2 {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: var(--text-title);
   font-weight: 600;
   color: var(--color-on-surface);
   margin: 0 0 8px;
 }
 
 .wishlist-empty p {
-  font-size: 15px;
+  font-size: var(--text-body);
   color: var(--color-on-surface-variant);
   margin: 0 0 24px;
 }
@@ -387,7 +387,7 @@
   border-radius: var(--radius-lg);
   background: var(--color-surface-bright);
   color: var(--color-on-surface);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -412,7 +412,7 @@
 
 .wishlist-summary h2 {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: 600;
   color: var(--color-on-surface-variant);
   text-transform: uppercase;
@@ -431,14 +431,14 @@
 
 .summary-total span {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--text-heading);
   font-weight: 700;
   color: var(--color-on-surface);
   font-variant-numeric: tabular-nums;
 }
 
 .summary-total small {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--color-on-surface-variant);
 }
 
@@ -455,7 +455,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--color-on-surface);
 }
 
@@ -474,7 +474,7 @@
   width: 100%;
   margin-bottom: 10px;
   padding: 12px 16px;
-  font-size: 0.875rem;
+  font-size: var(--text-body-sm);
 }
 
 .btn-add-all:disabled {
@@ -499,7 +499,7 @@
   gap: 8px;
   width: 100%;
   padding: 10px 16px;
-  font-size: 0.8125rem;
+  font-size: var(--text-label);
   /* Global .btn-outline is styled for dark backgrounds. */
   background: #fff;
   color: var(--color-on-surface, #1b1210);
@@ -568,7 +568,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.8125rem;
+  font-size: var(--text-label);
   color: var(--color-on-surface-variant, #6b6764);
 }
 .wish-card-was s {
@@ -590,7 +590,7 @@
   border-radius: var(--radius-lg);
   background: #fff4f4;
   border: 1px solid rgba(217, 30, 54, 0.2);
-  font-size: 0.875rem;
+  font-size: var(--text-body-sm);
   color: var(--color-on-surface);
 }
 .wishlist-notice button {

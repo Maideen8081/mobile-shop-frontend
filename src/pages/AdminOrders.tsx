@@ -1,520 +1,454 @@
-import { useState, useMemo, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiSearch, FiEye, FiX, FiPackage, FiTruck, FiCheck, FiUser, FiPhone, FiMapPin, FiCreditCard, FiShoppingBag, FiChevronDown, FiRefreshCw } from 'react-icons/fi'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  FiCheck, FiClock, FiCreditCard, FiEye, FiMapPin, FiPackage, FiPhone, FiRefreshCw,
+  FiShoppingBag, FiTruck, FiUser, FiX, FiXCircle,
+} from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
+import Portal from '../components/ui/Portal'
+import {
+  Btn, ConfirmDialog, EmptyState, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu,
+  SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, Thumb, ToolbarBtn,
+  apiErrorMessage, exportCsv, formatINR, inputBase, toneForStatus, useTable,
+} from '../components/admin/AdminUI'
 import { orderService, type OrderResponse } from '../services/orderService'
-
-const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  'delivered': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A', dot: '#CB202D' },
-  'out_for_delivery': { bg: 'rgba(203,32,45,0.08)', text: '#CB202D', dot: '#CB202D' },
-  'shipped': { bg: 'rgba(203,32,45,0.06)', text: '#CB202D', dot: '#CB202D' },
-  'processing': { bg: 'rgba(203,32,45,0.04)', text: '#CB202D', dot: '#CB202D' },
-  'accepted': { bg: 'rgba(203,32,45,0.03)', text: '#CB202D', dot: '#CB202D' },
-  'order_placed': { bg: 'rgba(203,32,45,0.02)', text: '#666666', dot: '#666666' },
-  'cancelled': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A', dot: '#CB202D' },
-}
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
+import { useToast } from '../context/ToastContext'
 
 const STATUS_LABELS: Record<string, string> = {
-  order_placed: 'Order Placed',
-  accepted: 'Order Accepted',
-  processing: 'Processing',
+  order_placed: 'Placed',
+  accepted: 'Accepted',
+  processing: 'Packing',
   shipped: 'Shipped',
-  out_for_delivery: 'Out for Delivery',
+  out_for_delivery: 'Out for delivery',
   delivered: 'Delivered',
   cancelled: 'Cancelled',
 }
 
-const PAYMENT_COLORS: Record<string, { bg: string; text: string }> = {
-  'Paid': { bg: 'rgba(203,32,45,0.1)', text: '#A81D2A' },
-  'Pending': { bg: 'rgba(203,32,45,0.05)', text: '#666666' },
-  'Refunded': { bg: 'rgba(203,32,45,0.08)', text: '#CB202D' },
+const FLOW = ['order_placed', 'accepted', 'processing', 'shipped', 'out_for_delivery', 'delivered']
+// Mirrors ORDER_STATUS_TRANSITIONS on the server: cancel only before shipping.
+const CANCELLABLE = new Set(['order_placed', 'accepted', 'processing'])
+
+const TABS = [
+  { key: 'all', label: 'All' },
+  { key: 'open', label: 'To fulfil' },
+  { key: 'transit', label: 'In transit' },
+  { key: 'delivered', label: 'Delivered' },
+  { key: 'cancelled', label: 'Cancelled' },
+] as const
+type TabKey = (typeof TABS)[number]['key']
+
+const inTab = (status: string, tab: TabKey) =>
+  tab === 'all' ||
+  (tab === 'open' && ['order_placed', 'accepted', 'processing'].includes(status)) ||
+  (tab === 'transit' && ['shipped', 'out_for_delivery'].includes(status)) ||
+  (tab === 'delivered' && status === 'delivered') ||
+  (tab === 'cancelled' && status === 'cancelled')
+
+const statusOf = (o: OrderResponse) => o.order_status || o.delivery_status || 'order_placed'
+function addressOf(o: OrderResponse) {
+  const a = o.shipping_address
+  if (a && typeof a === 'object') {
+    const line = [a.full_name, a.house_number, a.street_address, a.landmark, a.city, a.state, a.pincode].filter(Boolean).join(', ')
+    if (line) return line
+  }
+  return o.delivery_address_text && !o.delivery_address_text.trim().startsWith('{') ? o.delivery_address_text : ''
+}
+const paymentLabel = (o: OrderResponse) => o.payment_status_display || o.payment_status || 'Pending'
+
+function OrderDrawer({
+  order,
+  onClose,
+  onUpdated,
+}: {
+  order: OrderResponse | null
+  onClose: () => void
+  onUpdated: (o: OrderResponse) => void
+}) {
+  useLockBodyScroll(!!order)
+  const showToast = useToast().show
+  const [busy, setBusy] = useState<string | null>(null)
+  const [error, setError] = useState('')
+  const [confirmCancel, setConfirmCancel] = useState(false)
+
+  useEffect(() => {
+    setError('')
+    setConfirmCancel(false)
+  }, [order?.order_number])
+
+  useEffect(() => {
+    if (!order) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && !confirmCancel && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [order, confirmCancel, onClose])
+
+  if (!order) return <Portal><AnimatePresence /></Portal>
+
+  const status = statusOf(order)
+  const idx = FLOW.indexOf(status)
+  const next = idx >= 0 && idx < FLOW.length - 1 ? FLOW[idx + 1] : null
+  const later = idx >= 0 ? FLOW.slice(idx + 2) : []
+
+  const move = async (to: string) => {
+    setBusy(to)
+    setError('')
+    try {
+      const updated = await orderService.adminUpdateStatus(order.order_number, to)
+      onUpdated(updated)
+      showToast(`Order marked ${STATUS_LABELS[to].toLowerCase()}`, 'success')
+      setConfirmCancel(false)
+    } catch (e) {
+      setError(apiErrorMessage(e, 'Could not update the order.'))
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const items = order.items ?? []
+  return (
+    <Portal>
+      <AnimatePresence>
+        <motion.div key={order.order_number} className="fixed inset-0 z-[70]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div className="absolute inset-0 bg-[#0c111d]/40" onClick={onClose} />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Order ${order.order_number}`}
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+            className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-[var(--shadow-pop)] flex flex-col"
+          >
+            <div className="flex items-center justify-between gap-3 px-6 h-16 border-b border-border-light shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <p className="text-sm font-semibold text-text-primary truncate">{order.order_number}</p>
+                <StatusPill tone={toneForStatus(status)}>{STATUS_LABELS[status] ?? status}</StatusPill>
+              </div>
+              <button type="button" onClick={onClose} aria-label="Close" className="w-8 h-8 rounded-lg flex items-center justify-center text-text-label hover:bg-surface-hover">
+                <FiX size={18} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <section className="p-6 border-b border-border-light">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-4">Fulfilment</h4>
+                {status === 'cancelled' ? (
+                  <div className="rounded-xl bg-[#fef3f2] text-[#b42318] px-4 py-3 text-sm flex items-center gap-2"><FiXCircle /> This order was cancelled.</div>
+                ) : (
+                  <ol className="relative">
+                    {FLOW.map((s, i) => {
+                      const done = i <= idx
+                      return (
+                        <li key={s} className="flex gap-3 pb-4 last:pb-0 relative">
+                          {i < FLOW.length - 1 && <span className={`absolute left-[11px] top-6 bottom-0 w-px ${i < idx ? 'bg-[#101828]' : 'bg-border'}`} />}
+                          <span className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${
+                            done ? 'bg-[#101828] text-white' : 'bg-white text-text-muted ring-1 ring-inset ring-border-dark'
+                          }`}>{done ? <FiCheck size={12} /> : i + 1}</span>
+                          <span className={`text-sm pt-0.5 ${i === idx ? 'font-semibold text-text-primary' : done ? 'text-text-secondary' : 'text-text-muted'}`}>
+                            {STATUS_LABELS[s]}
+                            {i === idx && <span className="ml-2 text-xs font-medium text-primary">Current</span>}
+                          </span>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                )}
+
+                {error && <div className="mt-4"><ErrorBanner message={error} /></div>}
+
+                {next && (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <Btn variant="primary" loading={busy === next} disabled={!!busy} onClick={() => move(next)} icon={next === 'delivered' ? <FiCheck size={15} /> : <FiTruck size={15} />}>
+                      Mark as {STATUS_LABELS[next].toLowerCase()}
+                    </Btn>
+                    {later.length > 0 && (
+                      <select
+                        aria-label="Skip ahead to"
+                        value=""
+                        disabled={!!busy}
+                        onChange={(e) => e.target.value && move(e.target.value)}
+                        className={`${inputBase} !w-auto text-text-secondary`}
+                      >
+                        <option value="">Skip ahead…</option>
+                        {later.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
+                      </select>
+                    )}
+                    {CANCELLABLE.has(status) && (
+                      <Btn onClick={() => setConfirmCancel(true)} disabled={!!busy} className="!text-danger">Cancel order</Btn>
+                    )}
+                  </div>
+                )}
+                {!CANCELLABLE.has(status) && status !== 'cancelled' && status !== 'delivered' && (
+                  <p className="mt-3 text-xs text-text-label">Shipped orders can no longer be cancelled — arrange a return after delivery instead.</p>
+                )}
+              </section>
+
+              <section className="p-6 border-b border-border-light">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Customer</h4>
+                <div className="space-y-2 text-sm text-text-secondary">
+                  <p className="flex items-center gap-2.5"><FiUser size={14} className="text-text-muted" /><span className="text-text-primary font-medium">{order.customer_name || 'Customer'}</span></p>
+                  {order.customer_mobile && <p className="flex items-center gap-2.5"><FiPhone size={14} className="text-text-muted" /><a className="hover:text-primary" href={`tel:${order.customer_mobile}`}>{order.customer_mobile}</a></p>}
+                  {addressOf(order) && <p className="flex items-start gap-2.5"><FiMapPin size={14} className="text-text-muted mt-0.5 shrink-0" />{addressOf(order)}</p>}
+                </div>
+              </section>
+
+              <section className="p-6 border-b border-border-light">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Items ({items.length})</h4>
+                <ul className="divide-y divide-border-light">
+                  {items.map((it, i) => (
+                    <li key={i} className="py-2.5 flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-lg bg-surface-lighter ring-1 ring-inset ring-border flex items-center justify-center text-text-muted shrink-0"><FiPackage size={15} /></span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-sm font-medium text-text-primary truncate">{it.product_name}</span>
+                        <span className="block text-xs text-text-label">{formatINR(Number(it.price))} × {it.quantity}</span>
+                      </span>
+                      <span className="text-sm font-semibold text-text-primary tabular">{formatINR(Number(it.price) * it.quantity)}</span>
+                    </li>
+                  ))}
+                </ul>
+                <dl className="mt-3 pt-3 border-t border-border-light space-y-1.5 text-sm">
+                  <div className="flex justify-between"><dt className="text-text-label">Subtotal</dt><dd className="tabular">{formatINR(Number(order.subtotal) || 0)}</dd></div>
+                  <div className="flex justify-between"><dt className="text-text-label">Shipping</dt><dd className="tabular">{Number(order.shipping_charge) ? formatINR(Number(order.shipping_charge)) : 'Free'}</dd></div>
+                  {Number(order.tax) > 0 && <div className="flex justify-between"><dt className="text-text-label">Tax</dt><dd className="tabular">{formatINR(Number(order.tax))}</dd></div>}
+                  {Number(order.discount) > 0 && <div className="flex justify-between"><dt className="text-text-label">Discount{order.coupon_code ? ` (${order.coupon_code})` : ''}</dt><dd className="tabular text-success">−{formatINR(Number(order.discount))}</dd></div>}
+                  <div className="flex justify-between pt-1.5 font-semibold text-text-primary"><dt>Total</dt><dd className="tabular">{formatINR(Number(order.grand_total) || 0)}</dd></div>
+                </dl>
+              </section>
+
+              <section className="p-6">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-3">Payment & delivery</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {[
+                    ['Payment', <StatusPill key="p" tone={toneForStatus(order.payment_status)}>{paymentLabel(order)}</StatusPill>],
+                    ['Method', order.payment_method || '—'],
+                    ['Courier', order.delivery_partner || '—'],
+                    ['Tracking', order.tracking_id || '—'],
+                    ['Placed', order.created_at ? new Date(order.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '—'],
+                    ['Est. delivery', order.est_delivery || '—'],
+                  ].map(([k, v]) => (
+                    <div key={k as string} className="rounded-xl bg-surface-lighter px-3 py-2.5 min-w-0">
+                      <p className="text-[11px] text-text-label">{k}</p>
+                      <div className="font-medium text-text-primary truncate">{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          </motion.aside>
+
+          <ConfirmDialog
+            open={confirmCancel}
+            title="Cancel this order?"
+            description={`${order.order_number} for ${formatINR(Number(order.grand_total) || 0)} will be cancelled and its payment marked failed. The customer will see the order as cancelled.`}
+            confirmLabel="Cancel order"
+            loading={busy === 'cancelled'}
+            onConfirm={() => move('cancelled')}
+            onClose={() => setConfirmCancel(false)}
+          />
+        </motion.div>
+      </AnimatePresence>
+    </Portal>
+  )
 }
 
-const DELIVERY_STEPS = ['order_placed', 'accepted', 'processing', 'shipped', 'out_for_delivery', 'delivered']
-const STEP_INDEX: Record<string, number> = { order_placed: 0, accepted: 1, processing: 2, shipped: 3, out_for_delivery: 4, delivered: 5, cancelled: -1 }
-const NEXT_STATUS: Record<string, string | null> = {
-  order_placed: 'accepted',
-  accepted: 'processing',
-  processing: 'shipped',
-  shipped: 'out_for_delivery',
-  out_for_delivery: 'delivered',
-  delivered: null,
-  cancelled: null,
-}
-
-function formatCurrency(n: number) {
-  return '₹' + n.toLocaleString('en-IN')
-}
-
-interface AdminOrder {
-  id: number
-  orderId: string
-  customerName: string
-  customerMobile: string
-  total: number
-  subtotal: number
-  shipping: number
-  tax: number
-  discount: number
-  couponCode: string
-  deliveryStatus: string
-  paymentStatus: string
-  paymentMethod: string
-  products: { name: string; qty: number; price: number }[]
-  deliveryPartner: string
-  trackingId: string
-  deliveryAddress: string
-  estDelivery: string
-  deliveredAt?: string
-  rawOrderId: string
+const orderSorters: Record<string, (o: OrderResponse) => string | number> = {
+  order: (o) => o.created_at || o.order_number,
+  customer: (o) => o.customer_name,
+  items: (o) => (o.items ?? []).length,
+  total: (o) => Number(o.grand_total) || 0,
+  payment: (o) => o.payment_status,
+  status: (o) => FLOW.indexOf(statusOf(o)),
 }
 
 export default function AdminOrders() {
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [paymentFilter, setPaymentFilter] = useState('all')
-  const [selected, setSelected] = useState<AdminOrder | null>(null)
-  const [allOrders, setAllOrders] = useState<AdminOrder[]>([])
+  const [params] = useSearchParams()
+  const [orders, setOrders] = useState<OrderResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
+  const [tab, setTab] = useState<TabKey>('all')
+  const [payment, setPayment] = useState('all')
+  const [search, setSearch] = useState(params.get('q') ?? '')
+  const [selectedNo, setSelectedNo] = useState<string | null>(null)
+  const showToast = useToast().show
 
-  const loadOrders = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     setError('')
     try {
-      const apiOrders = await orderService.list()
-      const mapped: AdminOrder[] = apiOrders.map((o: OrderResponse, i: number) => ({
-        id: o.id || i + 1,
-        orderId: o.order_id,
-        rawOrderId: String(o.order_number || o.id),
-        customerName: o.customer_name || 'Customer',
-        customerMobile: o.customer_mobile || '-',
-        total: Number(o.grand_total) || 0,
-        subtotal: Number(o.subtotal) || 0,
-        shipping: Number(o.shipping_charge) || 0,
-        tax: Number(o.tax) || 0,
-        discount: o.discount || 0,
-        couponCode: o.coupon_code || '',
-        deliveryStatus: o.delivery_status || 'order_placed',
-        paymentStatus: o.payment_status_display || (o.payment_method === 'Cash on Delivery' ? 'Pending' : 'Paid'),
-        paymentMethod: o.payment_method || 'N/A',
-        products: (o.items || []).map((it) => ({ name: it.product_name, qty: it.quantity, price: Number(it.price) })),
-        deliveryPartner: o.delivery_partner || 'N/A',
-        trackingId: o.tracking_id || '-',
-        deliveryAddress: o.delivery_address_text || '-',
-        estDelivery: o.est_delivery || '-',
-        deliveredAt: o.delivered_at || undefined,
-      }))
-      setAllOrders(mapped)
-    } catch {
-      setError('Failed to load orders from server')
+      setOrders(await orderService.adminList())
+    } catch (e) {
+      setError(apiErrorMessage(e, 'Could not load orders.'))
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    loadOrders()
   }, [])
 
-  const handleStatusUpdate = async (order: AdminOrder, newStatus: string) => {
-    setUpdatingStatus(order.rawOrderId)
-    try {
-      const updated = await orderService.updateStatus(order.rawOrderId, newStatus)
-      if (updated) {
-        setAllOrders(prev => prev.map(o =>
-          o.rawOrderId === order.rawOrderId
-            ? { ...o, deliveryStatus: updated.delivery_status }
-            : o
-        ))
-        setSelected(prev => prev && prev.rawOrderId === order.rawOrderId
-          ? { ...prev, deliveryStatus: updated.delivery_status }
-          : prev
-        )
-      }
-    } catch {
-      // status update failed
-    }
-    setUpdatingStatus(null)
-  }
+  useEffect(() => {
+    load()
+  }, [load])
 
-  const mergedOrders = allOrders
+  // Deep link from the dashboard opens the order straight away.
+  useEffect(() => {
+    const q = params.get('q')
+    if (q && orders.some((o) => o.order_number === q)) setSelectedNo(q)
+  }, [params, orders])
 
-  const statuses = useMemo(() => Array.from(new Set(mergedOrders.map(o => o.deliveryStatus))), [mergedOrders])
-  const paymentStatuses = useMemo(() => Array.from(new Set(mergedOrders.map(o => o.paymentStatus))), [mergedOrders])
+  const counts = useMemo(() => Object.fromEntries(TABS.map((t) => [t.key, orders.filter((o) => inTab(statusOf(o), t.key)).length])), [orders])
 
   const filtered = useMemo(() => {
-    return mergedOrders.filter(o => {
-      if (statusFilter !== 'all' && o.deliveryStatus !== statusFilter) return false
-      if (paymentFilter !== 'all' && o.paymentStatus !== paymentFilter) return false
-      if (search.trim()) {
-        const q = search.toLowerCase()
-        return o.orderId.toLowerCase().includes(q) || o.customerName.toLowerCase().includes(q) || o.customerMobile.includes(q)
-      }
-      return true
+    const q = search.trim().toLowerCase()
+    return orders.filter((o) => {
+      if (!inTab(statusOf(o), tab)) return false
+      if (payment !== 'all' && (o.payment_status || '').toLowerCase() !== payment) return false
+      if (!q) return true
+      return [o.order_number, o.customer_name, o.customer_mobile, ...(o.items ?? []).map((i) => i.product_name)].some((v) => v?.toLowerCase().includes(q))
     })
-  }, [mergedOrders, search, statusFilter, paymentFilter])
+  }, [orders, tab, payment, search])
 
-  const stats = useMemo(() => ({
-    total: mergedOrders.length,
-    delivered: mergedOrders.filter(o => o.deliveryStatus === 'delivered').length,
-    inTransit: mergedOrders.filter(o => ['shipped', 'out_for_delivery'].includes(o.deliveryStatus)).length,
-    revenue: mergedOrders.filter(o => o.paymentStatus === 'Paid').reduce((s, o) => s + o.total, 0),
-  }), [mergedOrders])
+  const table = useTable(filtered, { sorters: orderSorters, initialSort: { key: 'order', dir: 'desc' }, resetKey: `${search}|${tab}|${payment}` })
+
+  const revenue = orders.filter((o) => statusOf(o) !== 'cancelled').reduce((s, o) => s + (Number(o.grand_total) || 0), 0)
+  const selected = orders.find((o) => o.order_number === selectedNo) ?? null
+  const activeFilters = (tab !== 'all' ? 1 : 0) + (payment !== 'all' ? 1 : 0)
+
+  const quickMove = async (o: OrderResponse, to: string) => {
+    try {
+      const updated = await orderService.adminUpdateStatus(o.order_number, to)
+      setOrders((os) => os.map((x) => (x.order_number === updated.order_number ? updated : x)))
+      showToast(`${o.order_number} marked ${STATUS_LABELS[to].toLowerCase()}`, 'success')
+    } catch (e) {
+      showToast(apiErrorMessage(e, 'Could not update the order.'), 'error')
+    }
+  }
+
+  const exportOrders = () =>
+    exportCsv(
+      `orders-${new Date().toISOString().slice(0, 10)}`,
+      ['Order', 'Placed', 'Customer', 'Mobile', 'Items', 'Total (INR)', 'Payment', 'Status'],
+      table.sorted.map((o) => [
+        o.order_number,
+        o.created_at ? new Date(o.created_at).toLocaleString('en-IN') : '',
+        o.customer_name,
+        o.customer_mobile,
+        (o.items ?? []).map((i) => `${i.product_name} x${i.quantity}`).join('; '),
+        Number(o.grand_total) || 0,
+        paymentLabel(o),
+        STATUS_LABELS[statusOf(o)] ?? statusOf(o),
+      ]),
+    )
+
+  const th = { sort: table.sort, onSort: table.toggleSort }
 
   return (
-    <PageLayout title="Online Orders">
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: 'Total Orders', value: stats.total, icon: <FiShoppingBag size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.12)' },
-          { label: 'Delivered', value: stats.delivered, icon: <FiCheck size={18} />, color: '#A81D2A', glow: 'rgba(203,32,45,0.12)' },
-          { label: 'In Transit', value: stats.inTransit, icon: <FiTruck size={18} />, color: '#CB202D', glow: 'rgba(203,32,45,0.08)' },
-          { label: 'Revenue', value: formatCurrency(stats.revenue), icon: <FiCreditCard size={18} />, color: '#A81D2A', glow: 'rgba(203,32,45,0.06)' },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-2xl border border-border p-4 flex items-center gap-3 shadow-sm">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: s.glow, color: s.color }}>{s.icon}</div>
-            <div>
-              <p className="text-xl font-bold text-text-primary">{s.value}</p>
-              <p className="text-xs text-text-secondary font-medium">{s.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white rounded-2xl border border-border p-4 mb-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <FiSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search by order ID, customer name, or mobile..."
-              className="w-full h-10 pl-9 pr-3 rounded-xl bg-surface border border-border text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-            />
-          </div>
-          <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              className="h-10 pl-3 pr-8 rounded-xl bg-surface border border-border text-sm text-text-primary appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer"
-            >
-              <option value="all">All Status</option>
-              {statuses.map(s => <option key={s} value={s}>{STATUS_LABELS[s] || s}</option>)}
-            </select>
-            <FiChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
-          </div>
-          <div className="relative">
-            <select
-              value={paymentFilter}
-              onChange={e => setPaymentFilter(e.target.value)}
-              className="h-10 pl-3 pr-8 rounded-xl bg-surface border border-border text-sm text-text-primary appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer"
-            >
-              <option value="all">All Payment</option>
-              {paymentStatuses.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <FiChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
-          </div>
-        </div>
-      </div>
-
-      {/* Orders Table */}
-      <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-surface/50">
-                <th className="text-left px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide">Order ID</th>
-                <th className="text-left px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide">Customer</th>
-                <th className="text-left px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide hidden md:table-cell">Products</th>
-                <th className="text-right px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide">Amount</th>
-                <th className="text-center px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide">Status</th>
-                <th className="text-center px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide hidden lg:table-cell">Payment</th>
-                <th className="text-center px-4 py-3 font-semibold text-text-secondary text-xs uppercase tracking-wide">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-12 text-text-secondary">
-                    <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-[8px] animate-spin mx-auto mb-3" />
-                    <p className="font-medium text-sm">Loading orders from server…</p>
-                  </td>
-                </tr>
-              ) : error ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-12 text-text-secondary">
-                    <FiPackage size={32} className="mx-auto mb-2 opacity-30" />
-                    <p className="font-medium text-red-500">{error}</p>
-                    <p className="text-xs mt-1">Make sure you are logged in as admin</p>
-                  </td>
-                </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-12 text-text-secondary">
-                    <FiPackage size={32} className="mx-auto mb-2 opacity-30" />
-                    <p className="font-medium">No orders yet</p>
-                    <p className="text-xs mt-1">Orders will appear here once customers make purchases</p>
-                  </td>
-                </tr>
-              ) : filtered.map(order => {
-                const sc = STATUS_COLORS[order.deliveryStatus] || STATUS_COLORS['order_placed']
-                const pc = PAYMENT_COLORS[order.paymentStatus] || PAYMENT_COLORS['Pending']
-                return (
-                  <tr key={order.id} className="border-b border-border/50 last:border-b-0 hover:bg-surface/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <span className="font-semibold text-text-primary text-xs">{order.orderId}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-text-primary text-sm truncate max-w-[140px]">{order.customerName}</p>
-                      <p className="text-xs text-text-secondary truncate">{order.customerMobile}</p>
-                    </td>
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <div className="space-y-0.5">
-                        {order.products.map((p: { name: string; qty: number }, i: number) => (
-                          <p key={i} className="text-xs text-text-primary truncate max-w-[200px]">
-                            {p.name} {p.qty > 1 ? <span className="text-text-secondary">×{p.qty}</span> : ''}
-                          </p>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-right font-bold text-text-primary text-sm">{formatCurrency(order.total)}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                        <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
-                        {STATUS_LABELS[order.deliveryStatus] || order.deliveryStatus}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center hidden lg:table-cell">
-                      <span className="inline-flex px-2.5 py-1 rounded-[8px] text-xs font-semibold" style={{ background: pc.bg, color: pc.text }}>
-                        {order.paymentStatus}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => setSelected(order)}
-                        className="w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all flex items-center justify-center mx-auto"
-                        title="View Details"
-                      >
-                        <FiEye size={15} />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="px-4 py-3 border-t border-border bg-surface/30">
-          <p className="text-xs text-text-secondary font-medium">Showing {filtered.length} of {mergedOrders.length} orders</p>
-        </div>
-      </div>
-
-      {/* Order Detail Drawer */}
-      <AnimatePresence>
-        {selected && (
+    <PageLayout title="Order">
+      <PageHeader
+        title="Order"
+        actions={
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-50"
-              onClick={() => setSelected(null)}
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 h-full w-full max-w-[480px] bg-white z-50 shadow-2xl overflow-y-auto"
-            >
-              {/* Header */}
-              <div className="sticky top-0 bg-white border-b border-border px-5 py-4 flex items-center gap-3 z-10">
-                <button onClick={() => setSelected(null)} className="w-9 h-9 rounded-xl bg-surface hover:bg-surface-hover flex items-center justify-center transition-colors">
-                  <FiX size={18} className="text-text-secondary" />
-                </button>
-                <div className="flex-1">
-                  <h2 className="text-lg font-bold text-text-primary">{selected.orderId}</h2>
-                  <p className="text-xs text-text-secondary">{selected.customerName}</p>
-                </div>
-                {(() => {
-                  const sc = STATUS_COLORS[selected.deliveryStatus] || STATUS_COLORS['order_placed']
-                  return (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-xs font-semibold" style={{ background: sc.bg, color: sc.text }}>
-                      <span className="w-1.5 h-1.5 rounded-[8px]" style={{ background: sc.dot }} />
-                      {STATUS_LABELS[selected.deliveryStatus] || selected.deliveryStatus}
-                    </span>
-                  )
-                })()}
-              </div>
-
-              <div className="p-5 space-y-5">
-                {/* Customer Info */}
-                <div className="bg-surface rounded-2xl p-4 space-y-3">
-                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Customer Details</p>
-                  <div className="space-y-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <FiUser size={15} className="text-text-secondary flex-shrink-0" />
-                      <span className="text-sm font-medium text-text-primary">{selected.customerName}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <FiPhone size={15} className="text-text-secondary flex-shrink-0" />
-                      <span className="text-sm text-text-primary">{selected.customerMobile}</span>
-                    </div>
-                    <div className="flex items-start gap-2.5">
-                      <FiMapPin size={15} className="text-text-secondary flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-text-primary">{selected.deliveryAddress}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Products */}
-                <div className="bg-surface rounded-2xl p-4">
-                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-3">Products ({selected.products.length})</p>
-                  <div className="space-y-2">
-                    {selected.products.map((p, i) => (
-                      <div key={i} className="flex items-center justify-between bg-white rounded-xl px-3 py-2.5 border border-border/50">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <FiPackage size={14} className="text-primary" />
-                          </div>
-                          <div>
-                            <span className="text-sm font-medium text-text-primary">{p.name}</span>
-                            {p.price ? <span className="text-xs text-text-secondary ml-1.5">@ {formatCurrency(p.price)}</span> : null}
-                          </div>
-                        </div>
-                        <span className="text-sm font-semibold text-text-secondary">×{p.qty}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Delivery Timeline */}
-                <div className="bg-surface rounded-2xl p-4">
-                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-4">Delivery Progress</p>
-                  <div className="space-y-0">
-                    {DELIVERY_STEPS.map((step, i) => {
-                      const currentIdx = STEP_INDEX[selected.deliveryStatus] ?? 0
-                      const isDone = i <= currentIdx && currentIdx >= 0
-                      const isCurrent = i === currentIdx
-                      const isCancelled = selected.deliveryStatus === 'cancelled'
-                      return (
-                        <div key={step} className="flex items-start gap-3">
-                          <div className="flex flex-col items-center">
-                            <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-xs font-bold transition-all ${
-                              isCancelled ? 'bg-red-50 text-red-400 border-2 border-red-200' :
-                              isDone ? 'bg-primary text-white shadow-md' : 'bg-white text-text-secondary border-2 border-border'
-                            }`}>
-                              {isDone && !isCancelled ? <FiCheck size={13} /> : i + 1}
-                            </div>
-                            {i < DELIVERY_STEPS.length - 1 && (
-                              <div className={`w-0.5 h-6 ${isDone && !isCancelled ? 'bg-primary' : 'bg-border'}`} />
-                            )}
-                          </div>
-                          <div className="pb-4">
-                            <p className={`text-sm font-semibold ${isDone && !isCancelled ? 'text-text-primary' : 'text-text-secondary'}`}>
-                              {STATUS_LABELS[step] || step}
-                            </p>
-                            {isCurrent && !isCancelled && <p className="text-xs text-primary font-medium mt-0.5">Current step</p>}
-                            {isCancelled && i === 0 && <p className="text-xs text-red-400 font-medium mt-0.5">Order was cancelled</p>}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  {selected.deliveredAt && (
-                    <div className="mt-2 p-2.5 bg-primary/10 rounded-xl text-xs text-primary font-medium flex items-center gap-1.5">
-                      <FiCheck size={13} /> Delivered on {selected.deliveredAt}
-                    </div>
-                  )}
-
-                  {/* Status Update */}
-                  {selected.deliveryStatus !== 'delivered' && selected.deliveryStatus !== 'cancelled' && (
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-3">Update Status</p>
-                      <div className="flex flex-wrap gap-2">
-                        {(() => {
-                          const next = NEXT_STATUS[selected.deliveryStatus]
-                          if (!next) return null
-                          const isUpdating = updatingStatus === selected.rawOrderId
-                          return (
-                            <button
-                              onClick={() => handleStatusUpdate(selected, next)}
-                              disabled={isUpdating}
-                              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50"
-                              style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
-                            >
-                              {isUpdating ? (
-                                <FiRefreshCw size={14} className="animate-spin" />
-                              ) : (
-                                <FiChevronDown size={14} />
-                              )}
-                              Mark as {STATUS_LABELS[next]}
-                            </button>
-                          )
-                        })()}
-                        <button
-                          onClick={() => handleStatusUpdate(selected, 'cancelled')}
-                          disabled={updatingStatus === selected.rawOrderId}
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border-2 border-red-200 text-red-500 hover:bg-red-50 transition-all disabled:opacity-50"
-                        >
-                          Cancel Order
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Payment & Shipping */}
-                <div className="bg-surface rounded-2xl p-4 space-y-3">
-                  <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Payment & Shipping</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white rounded-xl p-3 border border-border/50">
-                      <p className="text-[11px] text-text-secondary mb-1">Grand Total</p>
-                      <p className="text-sm font-bold text-text-primary">{formatCurrency(selected.total)}</p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        {(() => {
-                          const pc = PAYMENT_COLORS[selected.paymentStatus] || PAYMENT_COLORS['Pending']
-                          return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-[8px]" style={{ background: pc.bg, color: pc.text }}>{selected.paymentStatus}</span>
-                        })()}
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-xl p-3 border border-border/50">
-                      <p className="text-[11px] text-text-secondary mb-1">Method</p>
-                      <p className="text-sm font-semibold text-text-primary">{selected.paymentMethod}</p>
-                    </div>
-                  </div>
-                  {/* Price Breakdown */}
-                  {(selected.subtotal || selected.shipping || selected.tax || selected.discount) ? (
-                    <div className="bg-white rounded-xl p-3 border border-border/50 space-y-1.5">
-                      <p className="text-[11px] text-text-secondary mb-2 font-semibold uppercase">Price Breakdown</p>
-                      {selected.subtotal ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Subtotal</span><span className="font-medium text-text-primary">{formatCurrency(selected.subtotal)}</span></div> : null}
-                      {selected.shipping != null ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Shipping</span><span className="font-medium" style={{ color: selected.shipping === 0 ? '#A81D2A' : undefined }}>{selected.shipping === 0 ? 'FREE' : formatCurrency(selected.shipping)}</span></div> : null}
-                      {selected.tax ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Tax (GST)</span><span className="font-medium text-text-primary">{formatCurrency(selected.tax)}</span></div> : null}
-                      {selected.discount ? <div className="flex justify-between text-xs"><span className="text-text-secondary">Coupon ({selected.couponCode})</span><span className="font-medium" style={{ color: '#A81D2A' }}>-{formatCurrency(selected.discount)}</span></div> : null}
-                    </div>
-                  ) : null}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white rounded-xl p-3 border border-border/50">
-                      <p className="text-[11px] text-text-secondary mb-1">Delivery Partner</p>
-                      <p className="text-sm font-semibold text-text-primary">{selected.deliveryPartner}</p>
-                    </div>
-                    <div className="bg-white rounded-xl p-3 border border-border/50">
-                      <p className="text-[11px] text-text-secondary mb-1">Tracking ID</p>
-                      <p className="text-sm font-semibold text-primary">{selected.trackingId}</p>
-                    </div>
-                    <div className="bg-white rounded-xl p-3 border border-border/50 col-span-2">
-                      <p className="text-[11px] text-text-secondary mb-1">Estimated Delivery</p>
-                      <p className="text-sm font-semibold text-text-primary">{selected.estDelivery}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            <SearchBox value={search} onChange={setSearch} placeholder="Search orders" />
+            <ShowingSelect value={table.pageSize} onChange={table.setPageSize} />
+            <FilterMenu activeCount={activeFilters} onReset={() => { setTab('all'); setPayment('all') }}>
+              <FilterSelect label="Status" value={tab} onChange={(v) => setTab(v as TabKey)}
+                options={TABS.map((t) => ({ value: t.key, label: `${t.label} (${counts[t.key] ?? 0})` }))} />
+              <FilterSelect label="Payment" value={payment} onChange={setPayment}
+                options={[{ value: 'all', label: 'Any payment' }, { value: 'paid', label: 'Paid' }, { value: 'pending', label: 'Pending' }, { value: 'failed', label: 'Failed' }]} />
+            </FilterMenu>
+            <ExportBtn onClick={exportOrders} disabled={filtered.length === 0} />
+            <ToolbarBtn onClick={load} aria-label="Refresh" title="Refresh" className="!px-3" icon={<FiRefreshCw size={15} className={loading ? 'animate-spin' : ''} />} />
           </>
+        }
+      />
+
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          <KpiCard loading={loading && !orders.length} label="To fulfil" tone="warning" icon={<FiClock size={16} />} value={counts.open ?? 0} hint="placed, accepted or packing" onClick={() => setTab('open')} />
+          <KpiCard loading={loading && !orders.length} label="In transit" tone="info" icon={<FiTruck size={16} />} value={counts.transit ?? 0} onClick={() => setTab('transit')} />
+          <KpiCard loading={loading && !orders.length} label="Delivered" tone="success" icon={<FiCheck size={16} />} value={counts.delivered ?? 0} onClick={() => setTab('delivered')} />
+          <KpiCard loading={loading && !orders.length} label="Order value" tone="brand" icon={<FiCreditCard size={16} />} value={formatINR(revenue, true)} hint="excluding cancelled" />
+        </div>
+
+        {error ? (
+          <ErrorBanner message={error} onRetry={load} />
+        ) : loading && !orders.length ? (
+          <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+        ) : filtered.length === 0 ? (
+          <div className="table-wrap">
+            <EmptyState icon={<FiShoppingBag size={20} />} title={orders.length ? 'No orders match' : 'No orders yet'}
+              description={orders.length ? 'Try another search or clear the filters.' : 'Orders placed on the storefront appear here.'}
+              action={orders.length && (activeFilters || search) ? (
+                <button type="button" className="text-sm font-semibold text-primary" onClick={() => { setTab('all'); setPayment('all'); setSearch('') }}>Clear filters</button>
+              ) : undefined} />
+          </div>
+        ) : (
+          <div className="table-wrap">
+            <div className="table-scroll">
+              <table className="min-w-[920px]">
+                <thead>
+                  <tr>
+                    <SortTh label="Order" sortKey="order" {...th} />
+                    <SortTh label="Customer" sortKey="customer" {...th} />
+                    <SortTh label="Items" sortKey="items" {...th} />
+                    <SortTh label="Total" sortKey="total" align="right" {...th} />
+                    <SortTh label="Payment" sortKey="payment" {...th} />
+                    <SortTh label="Status" sortKey="status" {...th} />
+                    <SortTh label="Action" align="center" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {table.rows.map((o) => {
+                    const st = statusOf(o)
+                    const items = o.items ?? []
+                    const next = FLOW[FLOW.indexOf(st) + 1]
+                    return (
+                      <tr key={o.order_number} className="cursor-pointer" onClick={() => setSelectedNo(o.order_number)}>
+                        <td>
+                          <span className="block font-semibold text-text-primary text-[13px]">{o.order_number}</span>
+                          <span className="block text-xs text-text-muted">{o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
+                        </td>
+                        <td>
+                          <div className="flex items-center gap-3 min-w-[180px]">
+                            <Thumb name={o.customer_name || 'C'} />
+                            <div className="min-w-0">
+                              <span className="block font-medium text-text-primary truncate max-w-[160px]">{o.customer_name || 'Customer'}</span>
+                              <span className="block text-xs text-text-label">{o.customer_mobile}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="max-w-[220px]">
+                          <span className="block truncate">{items[0]?.product_name ?? '—'}</span>
+                          {items.length > 1 && <span className="block text-xs text-text-label">+{items.length - 1} more</span>}
+                        </td>
+                        <td className="text-right font-semibold text-text-primary">{formatINR(Number(o.grand_total) || 0)}</td>
+                        <td><StatusPill tone={toneForStatus(o.payment_status)}>{paymentLabel(o)}</StatusPill></td>
+                        <td><StatusPill tone={toneForStatus(st)}>{STATUS_LABELS[st] ?? st}</StatusPill></td>
+                        <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                          <RowMenu
+                            label={`Actions for ${o.order_number}`}
+                            items={[
+                              { label: 'View details', icon: <FiEye size={15} />, onClick: () => setSelectedNo(o.order_number) },
+                              ...(next && st !== 'cancelled'
+                                ? [{ label: `Mark ${STATUS_LABELS[next].toLowerCase()}`, icon: <FiTruck size={15} />, onClick: () => quickMove(o, next) }]
+                                : []),
+                              ...(CANCELLABLE.has(st)
+                                ? [{ label: 'Cancel order', icon: <FiXCircle size={15} />, danger: true, onClick: () => setSelectedNo(o.order_number) }]
+                                : []),
+                            ]}
+                          />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={table.page} totalPages={table.totalPages} onPage={table.setPage} summary={`${table.total} of ${orders.length} orders`} />
+          </div>
         )}
-      </AnimatePresence>
+      </div>
+
+      <OrderDrawer order={selected} onClose={() => setSelectedNo(null)} onUpdated={(u) => setOrders((os) => os.map((o) => (o.order_number === u.order_number ? u : o)))} />
     </PageLayout>
   )
 }

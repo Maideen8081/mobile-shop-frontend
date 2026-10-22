@@ -221,7 +221,7 @@ export default function PremiumFilterPanel({
               <div>
                 <h2 className="text-base font-bold text-slate-900">Filters</h2>
                 {activeFilterCount > 0 && (
-                  <p className="text-[11px] text-[#CB202D] font-semibold">{activeFilterCount} active</p>
+                  <p className="text-micro text-[#CB202D] font-semibold">{activeFilterCount} active</p>
                 )}
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={cat.value}
                     onClick={() => toggleFilter('categories', cat.value)}
-                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-label font-medium border ${
                       filters.categories.includes(cat.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -266,7 +266,7 @@ export default function PremiumFilterPanel({
                   >
                     {cat.label}
                     {cat.count !== undefined && (
-                      <span className={`text-[10px] font-bold ${
+                      <span className={`text-micro font-bold ${
                         filters.categories.includes(cat.value) ? 'text-white/70' : 'text-slate-400'
                       }`}>
                         {cat.count}
@@ -289,7 +289,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={brand.value}
                     onClick={() => toggleFilter('brands', brand.value)}
-                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center gap-1.5 px-4 py-2 rounded-[8px] text-label font-medium border ${
                       filters.brands.includes(brand.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -297,7 +297,7 @@ export default function PremiumFilterPanel({
                   >
                     {brand.label}
                     {brand.count !== undefined && (
-                      <span className={`text-[10px] font-bold ${
+                      <span className={`text-micro font-bold ${
                         filters.brands.includes(brand.value) ? 'text-white/70' : 'text-slate-400'
                       }`}>
                         {brand.count}
@@ -320,7 +320,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={idx}
                     onClick={() => setPriceRange(filters.priceRange?.min === range.min && filters.priceRange?.max === range.max ? null : range)}
-                    className={`price-btn px-3.5 py-2 rounded-xl text-[13px] font-medium border ${
+                    className={`price-btn px-3.5 py-2 rounded-xl text-label font-medium border ${
                       filters.priceRange?.min === range.min && filters.priceRange?.max === range.max
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -370,7 +370,7 @@ export default function PremiumFilterPanel({
                   <button
                     key={tag.value}
                     onClick={() => toggleFilter('tags', tag.value)}
-                    className={`filter-chip inline-flex items-center px-4 py-2 rounded-[8px] text-[13px] font-medium border ${
+                    className={`filter-chip inline-flex items-center px-4 py-2 rounded-[8px] text-label font-medium border ${
                       filters.tags.includes(tag.value)
                         ? 'active'
                         : 'bg-white border-slate-200 text-slate-700'
@@ -393,7 +393,7 @@ export default function PremiumFilterPanel({
                 <button
                   key={sort.value}
                   onClick={() => setSortBy(sort.value)}
-                  className={`sort-row w-full px-4 py-3 rounded-xl text-left text-[13px] font-medium border flex items-center justify-between ${
+                  className={`sort-row w-full px-4 py-3 rounded-xl text-left text-label font-medium border flex items-center justify-between ${
                     filters.sortBy === sort.value
                       ? 'active'
                       : 'bg-white border-slate-200 text-slate-700'
@@ -448,7 +448,7 @@ function FilterSection({
         className="w-full flex items-center justify-between px-4 py-3.5"
         aria-expanded={expanded}
       >
-        <span className="font-semibold text-[14px] text-slate-800">{title}</span>
+        <span className="font-semibold text-body-sm text-slate-800">{title}</span>
         <div className="text-slate-400">
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </div>

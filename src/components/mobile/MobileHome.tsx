@@ -150,10 +150,10 @@ export default function MobileHome() {
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-[18px] font-extrabold text-[#1F2937] leading-snug tracking-tight">
+        <p className="text-title-sm font-extrabold text-[#1F2937] leading-snug tracking-tight">
           Welcome to Mobile Shop 👋
         </p>
-        <p className="text-[13px] text-[#6B7280] mt-1 leading-snug font-medium">
+        <p className="text-label text-[#6B7280] mt-1 leading-snug font-medium">
           Find the best phones, accessories & deals — all in one place.
         </p>
       </div>

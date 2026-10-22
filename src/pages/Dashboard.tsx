@@ -1,246 +1,343 @@
-import { motion } from 'framer-motion'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
-  FiShoppingBag, FiTool, FiClock, FiDollarSign,
-  FiTrendingUp, FiPackage, FiAlertTriangle, FiStar,
-  FiArrowRight,
+  FiAlertTriangle, FiArrowRight, FiBox, FiClock, FiDollarSign, FiPackage, FiRefreshCw,
+  FiRepeat, FiShoppingBag, FiTool, FiTrendingUp, FiUsers,
 } from 'react-icons/fi'
-import {
-  ResponsiveContainer, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, AreaChart, Area,
-} from 'recharts'
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import PageLayout from '../components/layout/PageLayout'
-import FloatingCard from '../components/ui/FloatingCard'
-import StatCounter from '../components/dashboard/StatCounter'
 import {
-  kpiCards, salesChartData, revenueProfitData, categoryData,
-  topSellingProducts, lowStockItems,
-  recentActivities, quickActions, customerGrowthData,
-} from '../data/dashboardData'
+  Btn, EmptyState, ErrorBanner, KpiCard, PageHeader, Panel, Skeleton, StatusPill,
+  apiErrorMessage, formatINR, timeAgo, toneForStatus,
+} from '../components/admin/AdminUI'
+import { adminService, type DashboardData } from '../services/adminService'
+import { useAuth } from '../context/AuthContext'
 
-const iconMap: Record<string, React.ReactNode> = {
-  FiShoppingBag: <FiShoppingBag size={20} />,
-  FiTool: <FiTool size={20} />,
-  FiClock: <FiClock size={20} />,
-  FiDollarSign: <FiDollarSign size={20} />,
-  FiTrendingUp: <FiTrendingUp size={20} />,
-  FiPackage: <FiPackage size={20} />,
-  FiAlertTriangle: <FiAlertTriangle size={20} />,
-  FiStar: <FiStar size={20} />,
+const BRAND = '#cb202d'
+const axisTick = { fontSize: 11, fill: '#98a2b3' }
+
+function greeting() {
+  const h = new Date().getHours()
+  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+}
+
+function ChartTooltip({ active, payload, label, money = true }: { active?: boolean; payload?: { value: number; name: string }[]; label?: string; money?: boolean }) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="rounded-xl bg-[#101828] text-white px-3 py-2 shadow-lg text-xs">
+      <p className="text-[#98a2b3] mb-0.5">{label}</p>
+      {payload.map((p) => (
+        <p key={p.name} className="font-semibold tabular">
+          {p.name === 'orders' ? `${p.value} orders` : money ? formatINR(p.value) : p.value}
+        </p>
+      ))}
+    </div>
+  )
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError('')
+    try {
+      setData(await adminService.dashboard())
+    } catch (err) {
+      setError(apiErrorMessage(err, 'Could not load dashboard figures.'))
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  const k = data?.kpis
+  const firstName = user?.fullName?.trim().split(' ')[0] || ''
+
+  const alerts = k
+    ? [
+        k.repairsUrgent > 0 && { tone: 'danger' as const, text: `${k.repairsUrgent} high-priority repair${k.repairsUrgent > 1 ? 's' : ''} open`, path: '/admin/repair-dashboard' },
+        k.outOfStockCount > 0 && { tone: 'danger' as const, text: `${k.outOfStockCount} variant${k.outOfStockCount > 1 ? 's' : ''} out of stock`, path: '/admin/products' },
+        k.lowStockCount > 0 && { tone: 'warning' as const, text: `${k.lowStockCount} running low on stock`, path: '/admin/products' },
+        k.ordersOpen > 0 && { tone: 'info' as const, text: `${k.ordersOpen} order${k.ordersOpen > 1 ? 's' : ''} to fulfil`, path: '/admin/online-orders' },
+        k.tradeInsPending > 0 && { tone: 'warning' as const, text: `${k.tradeInsPending} trade-in${k.tradeInsPending > 1 ? 's' : ''} awaiting review`, path: '/admin/trade-in-management' },
+        k.repairsReady > 0 && { tone: 'success' as const, text: `${k.repairsReady} repair${k.repairsReady > 1 ? 's' : ''} ready for pickup`, path: '/admin/repair-dashboard' },
+      ].filter(Boolean) as { tone: 'danger' | 'warning' | 'info' | 'success'; text: string; path: string }[]
+    : []
+
+  const salesTrend = (data?.salesTrend ?? []).map((d) => ({
+    ...d,
+    label: new Date(d.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+  }))
+  const fortnightRevenue = salesTrend.reduce((s, d) => s + d.revenue, 0)
+  const ordersTotalForBars = Math.max(1, ...(data?.ordersByStatus ?? []).map((o) => o.count))
+
   return (
     <PageLayout title="Dashboard">
-      <div className="space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+      <PageHeader
+        eyebrow={new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
+        title={`${greeting()}${firstName ? `, ${firstName}` : ''}`}
+        description="Here’s what is happening across your store, workshop and trade-ins today."
+        actions={
+          <Btn onClick={load} loading={loading && !!data} icon={<FiRefreshCw size={15} />}>
+            Refresh
+          </Btn>
+        }
+      />
+
+      {error && <div className="mb-6"><ErrorBanner message={error} onRetry={load} /></div>}
+
+      {alerts.length > 0 && (
+        <div className="admin-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-text-primary shrink-0">
+            <span className="w-7 h-7 rounded-lg bg-[#fffaeb] text-[#dc6803] flex items-center justify-center"><FiAlertTriangle size={14} /></span>
+            Needs attention
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {alerts.map((a) => (
+              <button key={a.text} type="button" onClick={() => navigate(a.path)} className="transition hover:-translate-y-px">
+                <StatusPill tone={a.tone}>{a.text}</StatusPill>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <KpiCard loading={loading && !data} label="Today’s sales" tone="brand" icon={<FiDollarSign size={16} />}
+          value={formatINR(k?.todaySales ?? 0)} delta={k?.todaySalesGrowth} hint={k?.todaySalesGrowth == null ? 'no sales yesterday to compare' : 'vs yesterday'} />
+        <KpiCard loading={loading && !data} label="Revenue this month" tone="success" icon={<FiTrendingUp size={16} />}
+          value={formatINR(k?.monthRevenue ?? 0, true)} delta={k?.monthRevenueGrowth} hint={k?.monthRevenueGrowth == null ? 'no sales last month to compare' : 'vs last month'} />
+        <KpiCard loading={loading && !data} label="Orders to fulfil" tone="info" icon={<FiShoppingBag size={16} />}
+          value={k?.ordersOpen ?? 0} hint={`${k?.ordersToday ?? 0} placed today · ${k?.ordersTotal ?? 0} all time`}
+          onClick={() => navigate('/admin/online-orders')} />
+        <KpiCard loading={loading && !data} label="Open repairs" tone="warning" icon={<FiTool size={16} />}
+          value={k?.repairsOpen ?? 0} hint={`${k?.repairsToday ?? 0} booked today · ${k?.repairsUrgent ?? 0} urgent`}
+          onClick={() => navigate('/admin/repair-dashboard')} />
+        <KpiCard loading={loading && !data} label="Customers" tone="violet" icon={<FiUsers size={16} />}
+          value={(k?.customersTotal ?? 0).toLocaleString('en-IN')} hint={`+${k?.customersNewThisMonth ?? 0} this month`}
+          onClick={() => navigate('/admin/customer-list')} />
+        <KpiCard loading={loading && !data} label="Published products" tone="neutral" icon={<FiPackage size={16} />}
+          value={k?.productsPublished ?? 0} hint={`${(k?.stockUnits ?? 0).toLocaleString('en-IN')} units in stock`}
+          onClick={() => navigate('/admin/products')} />
+        <KpiCard loading={loading && !data} label="Stock alerts" tone={k && k.outOfStockCount > 0 ? 'danger' : 'warning'} icon={<FiBox size={16} />}
+          value={(k?.lowStockCount ?? 0)} hint={`${k?.outOfStockCount ?? 0} out of stock`}
+          onClick={() => navigate('/admin/products')} />
+        <KpiCard loading={loading && !data} label="Trade-ins to review" tone="neutral" icon={<FiRepeat size={16} />}
+          value={k?.tradeInsPending ?? 0} hint="pending or quoted"
+          onClick={() => navigate('/admin/trade-in-management')} />
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+        <Panel
+          className="xl:col-span-2"
+          title="Sales, last 14 days"
+          subtitle={data ? `${formatINR(fortnightRevenue)} from ${salesTrend.reduce((s, d) => s + d.orders, 0)} orders (cancelled excluded)` : ' '}
         >
-          <h2 className="text-lg font-semibold text-text-primary">Overview</h2>
-          <p className="text-sm text-text-secondary">Your store performance at a glance</p>
-        </motion.div>
+          <div className="h-72 -ml-2">
+            {loading && !data ? (
+              <Skeleton className="h-full w-full" />
+            ) : fortnightRevenue === 0 ? (
+              <EmptyState icon={<FiTrendingUp size={20} />} title="No sales in the last 14 days" description="Orders placed on the storefront will show up here." />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={salesTrend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="dashRev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={BRAND} stopOpacity={0.18} />
+                      <stop offset="100%" stopColor={BRAND} stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} stroke="#eef0f3" />
+                  <XAxis dataKey="label" tick={axisTick} axisLine={false} tickLine={false} interval="preserveStartEnd" minTickGap={24} />
+                  <YAxis tick={axisTick} axisLine={false} tickLine={false} width={56} tickFormatter={(v) => formatINR(v, true)} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#d0d5dd', strokeDasharray: '4 4' }} />
+                  <Area type="monotone" dataKey="revenue" name="revenue" stroke={BRAND} strokeWidth={2.25} fill="url(#dashRev)" activeDot={{ r: 4, strokeWidth: 2, stroke: '#fff' }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Panel>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpiCards.map((card, i) => (
-            <motion.div
-              key={card.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: i * 0.05 }}
-            >
-              <FloatingCard padding="lg">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: card.bgGlow }}>
-                    {iconMap[card.icon] || <FiTrendingUp size={20} style={{ color: card.color }} />}
+        <Panel title="Orders by status" subtitle="All time" action={
+          <button type="button" onClick={() => navigate('/admin/online-orders')} className="text-xs font-semibold text-primary hover:text-primary-hover inline-flex items-center gap-1">
+            Manage <FiArrowRight size={12} />
+          </button>
+        }>
+          {loading && !data ? (
+            <div className="space-y-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-6" />)}</div>
+          ) : (
+            <ul className="space-y-3.5">
+              {(data?.ordersByStatus ?? []).map((o) => (
+                <li key={o.status}>
+                  <div className="flex items-center justify-between text-[13px] mb-1.5">
+                    <span className="text-text-secondary">{o.label}</span>
+                    <span className="font-semibold text-text-primary tabular">{o.count}</span>
                   </div>
-                  <span className={`flex items-center gap-0.5 text-xs font-semibold ${card.trend === 'up' ? 'text-success' : 'text-danger'}`}>
-                    <span>{card.trend === 'up' ? '↑' : '↓'}</span>
-                    {Math.abs(card.growth)}%
+                  <div className="h-1.5 rounded-full bg-surface-lighter overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${(o.count / ordersTotalForBars) * 100}%`,
+                        background: { success: '#17b26a', danger: '#f04438', warning: '#f79009', info: '#2e90fa' }[toneForStatus(o.status) as string] ?? '#98a2b3',
+                      }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
+        <Panel title="Monthly revenue" subtitle="Last 6 months">
+          <div className="h-56 -ml-2">
+            {loading && !data ? (
+              <Skeleton className="h-full w-full" />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data?.revenueTrend ?? []} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid vertical={false} stroke="#eef0f3" />
+                  <XAxis dataKey="month" tick={axisTick} axisLine={false} tickLine={false} />
+                  <YAxis tick={axisTick} axisLine={false} tickLine={false} width={56} tickFormatter={(v) => formatINR(v, true)} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ fill: '#f2f4f7' }} />
+                  <Bar dataKey="revenue" name="revenue" fill={BRAND} radius={[6, 6, 0, 0]} maxBarSize={36} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Panel>
+
+        <Panel title="Best sellers" subtitle="By units sold">
+          {loading && !data ? (
+            <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-9" />)}</div>
+          ) : !data?.topProducts.length ? (
+            <EmptyState icon={<FiPackage size={20} />} title="No sales yet" description="Your best-selling products will be ranked here." />
+          ) : (
+            <ol className="space-y-1">
+              {data.topProducts.map((p, i) => (
+                <li key={p.name} className="flex items-center gap-3 py-2">
+                  <span className={`w-6 h-6 rounded-lg text-[11px] font-bold flex items-center justify-center ${i === 0 ? 'bg-[#fdecee] text-primary' : 'bg-surface-lighter text-text-label'}`}>{i + 1}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sm font-medium text-text-primary truncate">{p.name}</span>
+                    <span className="block text-xs text-text-label">{p.units} sold</span>
                   </span>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-text-primary">
-                    {card.prefix}<StatCounter value={card.value} />{card.suffix}
-                  </p>
-                  <p className="text-xs text-text-secondary">{card.title}</p>
-                  <p className="text-[10px] text-text-muted">{card.subtitle}</p>
-                </div>
-              </FloatingCard>
-            </motion.div>
-          ))}
-        </div>
+                  <span className="text-sm font-semibold text-text-primary tabular">{formatINR(p.revenue)}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </Panel>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 space-y-6">
-              <FloatingCard padding="xl">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-sm font-semibold text-text-primary">Sales Overview</h3>
-                      <p className="text-xs text-text-secondary">Weekly sales and revenue</p>
-                    </div>
-                    <button className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-1 cursor-pointer">
-                      View Report <FiArrowRight size={12} />
-                    </button>
-                  </div>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={salesChartData}>
-                        <defs>
-                          <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#CB202D" stopOpacity={0.12} />
-                            <stop offset="100%" stopColor="#CB202D" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0e6e6" />
-                        <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 11, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #f0e6e6', fontSize: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }} />
-                        <Area type="monotone" dataKey="sales" stroke="#CB202D" strokeWidth={2} fill="url(#salesGrad)" />
-                        <Area type="monotone" dataKey="revenue" stroke="#A81D2A" strokeWidth={2} fill="url(#salesGrad)" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </FloatingCard>
+        <Panel title="Low stock" subtitle="At or below alert level" action={
+          <button type="button" onClick={() => navigate('/admin/products')} className="text-xs font-semibold text-primary hover:text-primary-hover inline-flex items-center gap-1">
+            Restock <FiArrowRight size={12} />
+          </button>
+        }>
+          {loading && !data ? (
+            <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-9" />)}</div>
+          ) : !data?.lowStock.length ? (
+            <EmptyState icon={<FiBox size={20} />} title="Stock levels look healthy" description="Variants that drop to their alert level appear here." />
+          ) : (
+            <ul className="space-y-1">
+              {data.lowStock.map((v) => (
+                <li key={v.id} className="flex items-center gap-3 py-2">
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-sm font-medium text-text-primary truncate">{v.product}</span>
+                    <span className="block text-xs text-text-label truncate">{v.variant}</span>
+                  </span>
+                  <StatusPill tone={v.stock === 0 ? 'danger' : 'warning'}>
+                    {v.stock === 0 ? 'Out of stock' : `${v.stock} left`}
+                  </StatusPill>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <FloatingCard padding="xl">
-                  <h3 className="text-sm font-semibold text-text-primary mb-4">Revenue & Profit</h3>
-                  <div className="h-52">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={revenueProfitData.slice(-6)}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0e6e6" />
-                        <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 10, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #f0e6e6', fontSize: 12 }} />
-                        <Bar dataKey="revenue" fill="#CB202D" radius={[6, 6, 0, 0]} />
-                        <Bar dataKey="profit" fill="#A81D2A" radius={[6, 6, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </FloatingCard>
-
-              <FloatingCard padding="xl">
-                  <h3 className="text-sm font-semibold text-text-primary mb-4">Categories</h3>
-                <div className="h-52 flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={categoryData} cx="50%" cy="50%" innerRadius={50} outerRadius={70} paddingAngle={3} dataKey="value">
-                        {categoryData.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="flex flex-wrap gap-3 mt-2 justify-center">
-                  {categoryData.map((item) => (
-                    <div key={item.name} className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-[8px]" style={{ backgroundColor: item.color }} />
-                      <span className="text-[11px] text-text-secondary">{item.name}</span>
-                    </div>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4">
+        <Panel title="Recent orders" bodyClassName="pt-3" action={
+          <button type="button" onClick={() => navigate('/admin/online-orders')} className="text-xs font-semibold text-primary hover:text-primary-hover inline-flex items-center gap-1">
+            View all <FiArrowRight size={12} />
+          </button>
+        }>
+          {loading && !data ? (
+            <div className="px-5 pb-5 space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
+          ) : !data?.recentOrders.length ? (
+            <EmptyState icon={<FiShoppingBag size={20} />} title="No orders yet" />
+          ) : (
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Order</th><th>Customer</th><th className="!text-right">Total</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  {data.recentOrders.map((o) => (
+                    <tr key={o.orderNumber} className="cursor-pointer" onClick={() => navigate(`/admin/online-orders?q=${encodeURIComponent(o.orderNumber)}`)}>
+                      <td>
+                        <span className="block font-semibold text-text-primary text-[13px]">{o.orderNumber}</span>
+                        <span className="block text-xs text-text-muted">{timeAgo(o.createdAt)}</span>
+                      </td>
+                      <td className="max-w-[160px] truncate">{o.customer}</td>
+                      <td className="text-right font-semibold text-text-primary">{formatINR(o.total)}</td>
+                      <td><StatusPill tone={toneForStatus(o.status)}>{o.statusLabel}</StatusPill></td>
+                    </tr>
                   ))}
-                </div>
-              </FloatingCard>
+                </tbody>
+              </table>
             </div>
+          )}
+        </Panel>
 
-            <FloatingCard padding="xl">
-                  <h3 className="text-sm font-semibold text-text-primary mb-4">Customer Growth</h3>
-                  <div className="h-52">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={customerGrowthData}>
-                        <defs>
-                          <linearGradient id="newGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#CB202D" stopOpacity={0.1} />
-                            <stop offset="100%" stopColor="#CB202D" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0e6e6" />
-                        <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 10, fill: '#999999' }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #f0e6e6', fontSize: 12 }} />
-                        <Area type="monotone" dataKey="new" stroke="#CB202D" strokeWidth={2} fill="url(#newGrad)" />
-                        <Area type="monotone" dataKey="returning" stroke="#A81D2A" strokeWidth={2} fill="url(#newGrad)" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </FloatingCard>
-          </div>
-
-          <div className="space-y-6">
-            <FloatingCard padding="lg">
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">Quick Actions</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {quickActions.map((action) => (
-                      <button
-                        key={action.id}
-                        className="flex flex-col items-center gap-1.5 p-3 rounded-2xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all cursor-pointer"
-                      >
-                        <span className="text-lg">{action.icon}</span>
-                        <span className="text-[11px] font-medium text-text-secondary">{action.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </FloatingCard>
-
-            <FloatingCard padding="lg">
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">Top Products</h3>
-                  <div className="space-y-3">
-                    {topSellingProducts.slice(0, 4).map((product) => (
-                      <div key={product.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="text-lg shrink-0">{product.image}</span>
-                          <div className="min-w-0">
-                            <p className="text-xs font-medium text-text-primary truncate">{product.name}</p>
-                            <p className="text-[10px] text-text-muted">{product.brand} · {product.sold} sold</p>
-                          </div>
-                        </div>
-                        <span className={`text-xs font-semibold ${product.trend === 'up' ? 'text-success' : 'text-danger'}`}>
-                          {product.growth}
+        <Panel title="Latest repair tickets" bodyClassName="pt-3" action={
+          <button type="button" onClick={() => navigate('/admin/repair-dashboard')} className="text-xs font-semibold text-primary hover:text-primary-hover inline-flex items-center gap-1">
+            View all <FiArrowRight size={12} />
+          </button>
+        }>
+          {loading && !data ? (
+            <div className="px-5 pb-5 space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-10" />)}</div>
+          ) : !data?.recentRepairs.length ? (
+            <EmptyState icon={<FiTool size={20} />} title="No repair tickets yet" action={<Btn variant="primary" size="sm" onClick={() => navigate('/admin/new-repair')}>Create ticket</Btn>} />
+          ) : (
+            <div className="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Ticket</th><th>Device</th><th className="hidden 2xl:table-cell">Priority</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  {data.recentRepairs.map((r) => (
+                    <tr key={r.id} className="cursor-pointer" onClick={() => navigate('/admin/repair-dashboard')}>
+                      <td>
+                        <span className="block font-semibold text-text-primary text-[13px]">{r.ticketNumber}</span>
+                        <span className="block text-xs text-text-muted truncate max-w-[140px]">{r.customer} · {timeAgo(r.createdAt)}</span>
+                      </td>
+                      <td className="max-w-[180px] truncate">
+                        {['high', 'urgent'].includes(r.priority) && <FiAlertTriangle size={12} className="inline text-danger mr-1.5 -mt-0.5" aria-label={`${r.priority} priority`} />}
+                        {r.device}
+                      </td>
+                      <td className="hidden 2xl:table-cell">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium capitalize text-text-secondary">
+                          {['high', 'urgent'].includes(r.priority) ? <FiAlertTriangle size={12} className="text-danger" /> : <FiClock size={12} className="text-text-muted" />}
+                          {r.priority}
                         </span>
-                      </div>
-                    ))}
-                  </div>
-                </FloatingCard>
-
-            <FloatingCard padding="lg">
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">Low Stock</h3>
-                  <div className="space-y-3">
-                    {lowStockItems.slice(0, 3).map((item) => (
-                      <div key={item.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="text-lg shrink-0">{item.image}</span>
-                          <div className="min-w-0">
-                            <p className="text-xs font-medium text-text-primary truncate">{item.name}</p>
-                            <p className="text-[10px] text-text-muted">{item.sku}</p>
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className={`text-xs font-bold ${item.critical ? 'text-danger' : 'text-success'}`}>{item.stock}</p>
-                          <p className="text-[10px] text-text-muted">{item.threshold}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </FloatingCard>
-
-            <FloatingCard padding="lg">
-                  <h3 className="text-sm font-semibold text-text-primary mb-3">Activity</h3>
-                  <div className="space-y-2.5">
-                    {recentActivities.slice(0, 4).map((activity) => (
-                      <div key={activity.id} className="flex items-start gap-2.5">
-                        <span className="w-1.5 h-1.5 rounded-[8px] bg-primary mt-1.5 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-xs text-text-secondary leading-relaxed">{activity.text}</p>
-                          <p className="text-[10px] text-text-muted mt-0.5">{activity.time}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </FloatingCard>
-          </div>
-        </div>
+                      </td>
+                      <td><StatusPill tone={toneForStatus(r.status)}>{r.statusLabel}</StatusPill></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Panel>
       </div>
     </PageLayout>
   )

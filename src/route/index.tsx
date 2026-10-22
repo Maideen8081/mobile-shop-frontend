@@ -47,13 +47,19 @@ import MobileNotifications from '../components/mobile/MobileNotifications'
 import AdminOrders from '../pages/AdminOrders'
 import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
 import AdminLoginPage from '../pages/AdminLoginPage'
+import ProductEditorPage from '../pages/ProductEditorPage'
+import CategoryEditorPage from '../pages/CategoryEditorPage'
+import { LEGACY_ADMIN_PATHS } from './adminPaths'
 
 // Admin-only pages. Routed under /admin/* and protected by AdminGuard, which
 // itself is enforced server-side by IsAdminUser on every API call.
 const adminPages: { path: string; element: ReactNode }[] = [
   { path: '/admin/dashboard', element: <Dashboard /> },
   { path: '/admin/categories', element: <CategoryManagement /> },
+  { path: '/admin/categories/new', element: <CategoryEditorPage /> },
   { path: '/admin/products', element: <ProductManagement /> },
+  { path: '/admin/products/new', element: <ProductEditorPage /> },
+  { path: '/admin/products/:id/edit', element: <ProductEditorPage /> },
   { path: '/admin/repair-dashboard', element: <RepairDashboard /> },
   { path: '/admin/new-repair', element: <NewRepairTicket /> },
   { path: '/admin/user-bookings', element: <UserBookings /> },
@@ -73,26 +79,10 @@ const adminPages: { path: string; element: ReactNode }[] = [
 
 // Legacy admin URLs redirect behind the admin guard so stale links cannot open
 // admin pages outside the /admin/* namespace.
-const legacyAdminRedirects: { from: string; to: string }[] = [
-  { from: '/dashboard', to: '/admin/dashboard' },
-  { from: '/categories', to: '/admin/categories' },
-  { from: '/products', to: '/admin/products' },
-  { from: '/repair-dashboard', to: '/admin/repair-dashboard' },
-  { from: '/new-repair', to: '/admin/new-repair' },
-  { from: '/user-bookings', to: '/admin/user-bookings' },
-  { from: '/technician-panel', to: '/admin/technician-panel' },
-  { from: '/device-tracking', to: '/admin/device-tracking' },
-  { from: '/customer-dashboard', to: '/admin/customer-dashboard' },
-  { from: '/customer-list', to: '/admin/customer-list' },
-  { from: '/customer-profile', to: '/admin/customer-profile' },
-  { from: '/warranty-dashboard', to: '/admin/warranty-dashboard' },
-  { from: '/warranty-tracking', to: '/admin/warranty-tracking' },
-  { from: '/warranty-claims', to: '/admin/warranty-claims' },
-  { from: '/expiry-alerts', to: '/admin/expiry-alerts' },
-  { from: '/brand-warranty', to: '/admin/brand-warranty' },
-  { from: '/online-orders', to: '/admin/online-orders' },
-  { from: '/trade-in-management', to: '/admin/trade-in-management' },
-]
+const legacyAdminRedirects: { from: string; to: string }[] = LEGACY_ADMIN_PATHS.map((from) => ({
+  from,
+  to: `/admin${from}`,
+}))
 
 export default function AppRoutes() {
   return (

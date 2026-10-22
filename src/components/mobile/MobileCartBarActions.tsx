@@ -46,14 +46,14 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
                   <img src={it.image || ''} alt={it.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '' }} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-bold text-[#1F2937] leading-tight truncate">{it.name}</p>
-                  <p className="text-[11px] text-[#6B7280]">₹{Number(it.price).toLocaleString('en-IN')}</p>
+                  <p className="text-caption font-bold text-[#1F2937] leading-tight truncate">{it.name}</p>
+                  <p className="text-micro text-[#6B7280]">₹{Number(it.price).toLocaleString('en-IN')}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, -1).then(load)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
                     <Minus size={14} className="text-[#1F2937]" />
                   </button>
-                  <span className="text-[13px] font-bold w-5 text-center">{it.quantity}</span>
+                  <span className="text-label font-bold w-5 text-center">{it.quantity}</span>
                   <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, 1).then(load)} aria-label="Increase" className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
                     <Plus size={14} className="text-[#1F2937]" />
                   </button>
@@ -74,23 +74,23 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
           <span className="flex items-center gap-2.5 min-w-0">
             <span className="relative w-9 h-9 rounded-[8px] bg-white/20 flex items-center justify-center flex-shrink-0">
               <ShoppingBag size={18} />
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-[8px] bg-white text-[#CB202D] text-[10px] font-extrabold flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
                 {totalItems > 99 ? '99+' : totalItems}
               </span>
             </span>
             <span className="text-left min-w-0">
-              <span className="block text-[12px] font-bold leading-none">{totalItems} item{totalItems > 1 ? 's' : ''} added</span>
-              <span className="block text-[11px] text-white/80 leading-none mt-1">Tap to {open ? 'hide' : 'view & edit'}</span>
+              <span className="block text-caption font-bold leading-none">{totalItems} item{totalItems > 1 ? 's' : ''} added</span>
+              <span className="block text-micro text-white/80 leading-none mt-1">Tap to {open ? 'hide' : 'view & edit'}</span>
             </span>
           </span>
-          <span className="flex items-center gap-1.5 bg-white text-[#CB202D] text-[13px] font-extrabold px-4 py-2 rounded-[8px] flex-shrink-0">
+          <span className="flex items-center gap-1.5 bg-white text-[#CB202D] text-label font-bold px-4 py-2 rounded-[8px] flex-shrink-0">
             ₹{subtotal.toLocaleString('en-IN')} <ChevronRight size={15} />
           </span>
         </button>
 
         <button
           onClick={() => setOpen((v) => !v)}
-          className="self-center pointer-events-auto px-4 py-1.5 rounded-[8px] bg-white shadow-[0_6px_18px_rgba(203,32,45,0.12)] border border-[#FEE2E2] text-[12px] font-bold text-[#CB202D] active:scale-95 transition"
+          className="self-center pointer-events-auto px-4 py-1.5 rounded-[8px] bg-white shadow-[0_6px_18px_rgba(203,32,45,0.12)] border border-[#FEE2E2] text-caption font-bold text-[#CB202D] active:scale-95 transition"
         >
           {open ? 'Hide cart' : 'View cart items'}
         </button>

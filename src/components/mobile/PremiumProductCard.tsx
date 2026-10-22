@@ -58,7 +58,7 @@ export default function PremiumProductCard({
           {tags.length > 0 && (
             <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
               {tags.slice(0, 2).map((tag, idx) => (
-                <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-1.5 py-0.5 rounded-[8px]`}>
+                <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-micro font-bold px-1.5 py-0.5 rounded-[8px]`}>
                   {tag.label}
                 </span>
               ))}
@@ -69,7 +69,7 @@ export default function PremiumProductCard({
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             {product.brand && (
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
+              <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
                 {product.brand}
               </span>
             )}
@@ -113,7 +113,7 @@ export default function PremiumProductCard({
 
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {tags.map((tag, idx) => (
-              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[10px] font-bold px-2.5 py-1 rounded-[8px] shadow-sm`}>
+              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-micro font-bold px-2.5 py-1 rounded-[8px] shadow-sm`}>
                 {tag.label}
               </span>
             ))}
@@ -132,7 +132,7 @@ export default function PremiumProductCard({
 
         <div className="p-4">
           {product.brand && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1.5 block">
+            <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1.5 block">
               {product.brand}
             </span>
           )}
@@ -161,7 +161,7 @@ export default function PremiumProductCard({
         {tags.length > 0 && (
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {tags.map((tag, idx) => (
-              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-[9px] font-bold px-2 py-0.5 rounded-[8px] shadow-sm`} style={{ animationDelay: `${idx * 100}ms` }}>
+              <span key={idx} className={`animate-tag-pop ${tag.color} text-white text-micro font-bold px-2 py-0.5 rounded-[8px] shadow-sm`} style={{ animationDelay: `${idx * 100}ms` }}>
                 {tag.label}
               </span>
             ))}
@@ -181,7 +181,7 @@ export default function PremiumProductCard({
 
         <div className="p-3.5">
         {product.brand && (
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
+          <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
             {product.brand}
           </span>
         )}

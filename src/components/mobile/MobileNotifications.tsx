@@ -66,17 +66,17 @@ export default function MobileNotifications() {
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
-            <h1 className="text-[18px] font-bold text-[#1F2937]">Notifications</h1>
-            <p className="text-[11px] text-[#6B7280]">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
+            <h1 className="text-title-sm font-bold text-[#1F2937]">Notifications</h1>
+            <p className="text-micro text-[#6B7280]">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
           </div>
           {unreadCount > 0 && (
-            <button onClick={markAllRead} className="text-[12px] font-semibold" style={{ color: PURPLE }}>Mark all read</button>
+            <button onClick={markAllRead} className="text-caption font-semibold" style={{ color: PURPLE }}>Mark all read</button>
           )}
         </div>
         <div className="flex gap-2 mt-3">
           {(['all', 'unread'] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
-              className="h-9 px-4 rounded-[8px] text-[12px] font-semibold capitalize transition"
+              className="h-9 px-4 rounded-[8px] text-caption font-semibold capitalize transition"
               style={filter === f ? { background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})`, color: '#fff' } : { background: '#fff', color: '#6B7280' }}>
               {f === 'all' ? 'All' : 'Unread'}
             </button>
@@ -90,8 +90,8 @@ export default function MobileNotifications() {
             <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
               <FiBell size={32} style={{ color: PURPLE }} />
             </div>
-            <h2 className="text-[16px] font-bold text-[#1F2937] mb-1">No notifications</h2>
-            <p className="text-[12px] text-[#6B7280]">You're all caught up.</p>
+            <h2 className="text-body font-bold text-[#1F2937] mb-1">No notifications</h2>
+            <p className="text-caption text-[#6B7280]">You're all caught up.</p>
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -102,11 +102,11 @@ export default function MobileNotifications() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-[14px] font-semibold text-[#1F2937] truncate">{n.title}</p>
+                    <p className="text-body-sm font-semibold text-[#1F2937] truncate">{n.title}</p>
                     {n.unread && <span className="w-2 h-2 rounded-[8px] flex-shrink-0" style={{ background: PURPLE }} />}
                   </div>
-                  <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{n.description}</p>
-                  <p className="text-[11px] text-[#9CA3AF] mt-1">{n.time}</p>
+                  <p className="text-caption text-[#6B7280] leading-snug mt-0.5">{n.description}</p>
+                  <p className="text-micro text-[#9CA3AF] mt-1">{n.time}</p>
                 </div>
               </button>
             ))}

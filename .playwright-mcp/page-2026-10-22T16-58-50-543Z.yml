@@ -1,0 +1,54 @@
+- generic [ref=f16e3]:
+  - complementary [ref=f16e4]:
+    - generic [ref=f16e5]:
+      - generic [ref=f16e6]: MobileShop
+      - navigation "Admin" [ref=f16e11]:
+        - button "Dashboard" [ref=f16e13]
+        - generic [ref=f16e20]:
+          - button "Product" [ref=f16e21]
+          - button "Category" [ref=f16e27]
+        - generic [ref=f16e31]:
+          - button "Order" [ref=f16e32]
+          - button "Customer" [ref=f16e38]
+          - button "Trade-in" [ref=f16e45]
+        - generic [ref=f16e52]:
+          - button "Repairs" [ref=f16e53]
+          - button "Online booking" [ref=f16e57]
+          - button "New repair ticket" [ref=f16e62]
+      - button "Log out" [ref=f16e67]
+  - generic [ref=f16e71]:
+    - banner [ref=f16e72]:
+      - generic [ref=f16e73]:
+        - button "Search ⌘K" [ref=f16e74]:
+          - generic [ref=f16e78]: Search
+          - generic [ref=f16e79]: ⌘K
+        - button "Online bookings" [ref=f16e80]
+        - button "Online orders" [ref=f16e84]
+        - button "Account menu" [ref=f16e89]:
+          - generic [ref=f16e90]: M
+          - generic [ref=f16e91]:
+            - generic [ref=f16e92]: Maideen
+            - generic [ref=f16e93]: admin@local.test
+    - main [ref=f16e96]:
+      - generic [ref=f16e97]:
+        - heading "Product" [level=2] [ref=f16e99]
+        - generic [ref=f16e100]:
+          - searchbox "Search products" [ref=f16e102]
+          - generic [ref=f16e103]:
+            - generic [ref=f16e104]: Showing
+            - combobox "Showing" [ref=f16e106] [cursor=pointer]:
+              - option "10" [selected]
+              - option "25"
+              - option "50"
+              - option "100"
+          - button "Filter" [ref=f16e108]
+          - button "Export" [disabled] [ref=f16e111]
+          - button "Refresh" [ref=f16e115]
+          - button "Add New Product" [ref=f16e120]
+      - generic [ref=f16e123]:
+        - generic [ref=f16e124]: Total products
+        - generic [ref=f16e135]: Published
+        - generic [ref=f16e145]: Trending
+        - generic [ref=f16e155]: Best selling
+        - generic [ref=f16e165]: Low stock
+        - generic [ref=f16e174]: Variants

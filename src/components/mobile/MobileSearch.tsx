@@ -62,7 +62,7 @@ export default function MobileSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products, brands, categories..."
-            className="flex-1 bg-transparent outline-none text-[14px] text-[#0F172A] placeholder:text-[#94A3B8]"
+            className="flex-1 bg-transparent outline-none text-body-sm text-[#0F172A] placeholder:text-[#94A3B8]"
           />
           {query && (
             <button onClick={() => setQuery('')} aria-label="Clear" className="text-[#64748B] active:scale-90 transition">
@@ -77,13 +77,13 @@ export default function MobileSearch() {
           <>
             {/* Popular searches */}
             <div className="mt-5">
-              <p className="text-[12px] font-bold text-[#64748B] uppercase tracking-wider mb-2.5">Popular Searches</p>
+              <p className="text-caption font-bold text-[#64748B] uppercase tracking-wider mb-2.5">Popular Searches</p>
               <div className="flex flex-wrap gap-2">
                 {POPULAR_TERMS.map((t) => (
                   <button
                     key={t}
                     onClick={() => runTerm(t)}
-                    className="px-3.5 py-2 rounded-[8px] bg-white border border-[#E5E7EB] text-[13px] font-semibold text-[#0F172A] active:scale-95 transition"
+                    className="px-3.5 py-2 rounded-[8px] bg-white border border-[#E5E7EB] text-label font-semibold text-[#0F172A] active:scale-95 transition"
                   >
                     {t}
                   </button>
@@ -97,7 +97,7 @@ export default function MobileSearch() {
                 <span className="w-8 h-8 rounded-xl bg-[#FEE2E6] text-[#CB202D] flex items-center justify-center">
                   <Flame size={17} />
                 </span>
-                <h2 className="text-[17px] font-extrabold text-[#0F172A] tracking-tight">Top Products</h2>
+                <h2 className="text-title-sm font-extrabold text-[#0F172A] tracking-tight">Top Products</h2>
               </div>
               {suggested.length === 0 ? (
                 <div className="grid grid-cols-2 gap-3">
@@ -122,7 +122,7 @@ export default function MobileSearch() {
           </>
         ) : (
           <>
-            <p className="text-[12px] text-[#64748B] mt-4 mb-3">
+            <p className="text-caption text-[#64748B] mt-4 mb-3">
               {loading ? 'Searching…' : `${results.length} result${results.length === 1 ? '' : 's'} for "${query}"`}
             </p>
             {results.length === 0 && !loading ? (
@@ -130,8 +130,8 @@ export default function MobileSearch() {
                 <div className="w-20 h-20 rounded-3xl bg-[#FEE2E6] flex items-center justify-center mb-4">
                   <Search size={32} className="text-[#CB202D]" />
                 </div>
-                <h3 className="text-[16px] font-bold text-[#0F172A]">No products found</h3>
-                <p className="text-[13px] text-[#64748B] mt-1.5 max-w-[240px]">Try a different keyword or browse popular searches.</p>
+                <h3 className="text-body font-bold text-[#0F172A]">No products found</h3>
+                <p className="text-label text-[#64748B] mt-1.5 max-w-[240px]">Try a different keyword or browse popular searches.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">

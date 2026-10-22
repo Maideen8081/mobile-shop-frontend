@@ -214,25 +214,25 @@ export default function AdCarousel() {
 
                 {/* Text content */}
                 <div className="relative z-10 px-5 sm:px-8 md:px-12 max-w-[80%] flex flex-col gap-1.5">
-                  <span className="text-[10px] sm:text-[12px] font-bold uppercase tracking-[0.18em] text-white/90">
+                  <span className="text-micro sm:text-caption font-bold uppercase tracking-[0.18em] text-white/90">
                     {b.eyebrow}
                   </span>
-                  <h3 className="text-[21px] sm:text-[32px] md:text-[46px] font-extrabold leading-[1.04] tracking-tight text-white drop-shadow-sm">
+                  <h3 className="text-title sm:text-heading md:text-headline font-extrabold leading-[1.04] tracking-tight text-white drop-shadow-sm">
                     {b.title}
                   </h3>
-                  <p className="text-[10px] sm:text-[12.5px] font-medium text-white/90 max-w-[92%] leading-snug">
+                  <p className="text-micro sm:text-caption font-medium text-white/90 max-w-[92%] leading-snug">
                     {b.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2.5 flex-wrap">
                     <span
-                      className="text-[12px] sm:text-[15px] font-extrabold px-3 py-1 rounded-[8px] shadow text-[#0F172A]"
+                      className="text-caption sm:text-body font-bold px-3 py-1 rounded-[8px] shadow text-[#0F172A]"
                       style={{ background: b.accent }}
                     >
                       {b.offer}
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                      className="flex items-center gap-1 text-[11px] sm:text-[13px] font-bold px-3.5 py-1.5 rounded-[8px] bg-white text-[#0F172A] shadow-md active:scale-95 transition"
+                      className="flex items-center gap-1 text-micro sm:text-label font-bold px-3.5 py-1.5 rounded-[8px] bg-white text-[#0F172A] shadow-md active:scale-95 transition"
                     >
                       {b.cta} <ArrowRight size={14} />
                     </button>

@@ -147,6 +147,35 @@
   --text-display-lg-mobile--line-height: 40px;
   --text-display-lg-mobile--letter-spacing: -0.01em;
   --text-display-lg-mobile--font-weight: 700;
+
+  /* ── Storefront type scale ──
+     One scale for mobile + desktop. UI sizes (micro → body-sm) stay fixed so
+     dense UI stays crisp; reading and heading sizes grow fluidly from a 360px
+     phone to a 1440px desktop. 11px is the floor: nothing smaller on screen.
+     Use as Tailwind utilities (text-caption, md:text-heading …) or in CSS via
+     var(--text-*). Weights are not baked in so parent weights still inherit. */
+  --text-micro: 0.6875rem; /* 11px  badges, overlines, nav labels */
+  --text-micro--line-height: 1.35;
+  --text-caption: 0.75rem; /* 12px  meta, helper text, timestamps */
+  --text-caption--line-height: 1.45;
+  --text-label: 0.8125rem; /* 13px  buttons, chips, form labels */
+  --text-label--line-height: 1.45;
+  --text-body-sm: 0.875rem; /* 14px  secondary copy, card text */
+  --text-body-sm--line-height: 1.55;
+  --text-body: clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem); /* 15 → 16 */
+  --text-body--line-height: 1.6;
+  --text-title-sm: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem); /* 16 → 18  card titles */
+  --text-title-sm--line-height: 1.35;
+  --text-title: clamp(1.125rem, 1.0417rem + 0.3704vw, 1.375rem); /* 18 → 22  sub-sections */
+  --text-title--line-height: 1.3;
+  --text-heading: clamp(1.375rem, 1.1667rem + 0.9259vw, 2rem); /* 22 → 32  section headings */
+  --text-heading--line-height: 1.2;
+  --text-headline: clamp(1.75rem, 1.4167rem + 1.4815vw, 2.75rem); /* 28 → 44  page titles */
+  --text-headline--line-height: 1.12;
+  --text-headline--letter-spacing: -0.02em;
+  --text-display: clamp(2.25rem, 1.6667rem + 2.5926vw, 4rem); /* 36 → 64  hero */
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
 }
 
 @layer base {
@@ -220,6 +249,56 @@
   h5,
   h6 {
     @apply tracking-tight;
+  }
+
+  /* Default heading hierarchy — utility classes on the element still win. */
+  h1 {
+    font-size: var(--text-headline);
+    line-height: var(--text-headline--line-height);
+    font-weight: 700;
+  }
+  h2 {
+    font-size: var(--text-heading);
+    line-height: var(--text-heading--line-height);
+    font-weight: 700;
+  }
+  h3 {
+    font-size: var(--text-title);
+    line-height: var(--text-title--line-height);
+    font-weight: 600;
+  }
+  h4 {
+    font-size: var(--text-title-sm);
+    line-height: var(--text-title-sm--line-height);
+    font-weight: 600;
+  }
+  h5,
+  h6 {
+    font-size: var(--text-body);
+    font-weight: 600;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  small {
+    font-size: var(--text-caption);
+  }
+}
+
+/* iOS Safari zooms the page when a focused field is under 16px. Unlayered so
+   it overrides per-field size utilities on phones only. */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
   }
 }
 
@@ -810,50 +889,92 @@
   transform-origin: 50% 50%;
 }
 
-/* ─── Admin panel theme (scoped) ─── */
-.admin-theme {
-  --color-bg: #ffffff;
+/* Register the admin colour tokens with Tailwind so utilities such as
+   text-text-primary, bg-surface-hover, border-border-dark, bg-danger and
+   text-success are generated. Values are re-declared inside .admin-theme;
+   these defaults only exist so the classes compile. */
+@theme {
+  --color-bg: #f5f6f8;
   --color-bg-card: #ffffff;
-  --color-bg-card-hover: #fff5f5;
+  --color-bg-card-hover: #fcfcfd;
+  --color-surface-light: #fafbfc;
+  --color-surface-lighter: #f4f5f7;
+  --color-surface-hover: #f2f4f7;
+  --color-border-light: #eef0f3;
+  --color-border-dark: #d0d5dd;
+  --color-primary-hover: #a91b27;
+  --color-text-primary: #101828;
+  --color-text-secondary: #475467;
+  --color-text-label: #667085;
+  --color-danger: #d92d20;
+  --color-danger-hover: #b42318;
+  --color-on-danger-container: #912018;
+  --color-success: #079455;
+  --color-warning: #dc6803;
+  --color-info: #1570ef;
+}
+
+/* ─── Admin panel theme (scoped) ───
+   Neutral cool-grey surfaces; brand red is reserved for primary actions and
+   the active state so it reads as an accent, not a wash. Semantic colours
+   (success / warning / info / danger) are distinct so status is scannable. */
+.admin-theme {
+  --color-bg: #f5f6f8;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #fcfcfd;
   --color-surface: #ffffff;
-  --color-surface-light: #ffffff;
-  --color-surface-lighter: #fef2f2;
-  --color-surface-hover: #fef2f2;
-  --color-border: #f0e6e6;
-  --color-border-light: #f5efef;
-  --color-border-dark: #e8d8d8;
+  --color-surface-light: #fafbfc;
+  --color-surface-lighter: #f4f5f7;
+  --color-surface-hover: #f2f4f7;
+  --color-border: #e4e7ec;
+  --color-border-light: #eef0f3;
+  --color-border-dark: #d0d5dd;
 
   --color-primary: #cb202d;
-  --color-primary-hover: #a81d2a;
+  --color-primary-hover: #a91b27;
   --color-on-primary: #ffffff;
-  --color-primary-container: #fee2e6;
-  --color-on-primary-container: #a81d2a;
+  --color-primary-container: #fdecee;
+  --color-on-primary-container: #a91b27;
 
-  --color-secondary: #a81d2a;
+  --color-secondary: #344054;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #fee2e6;
+  --color-secondary-container: #f2f4f7;
 
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #4a4a4a;
-  --color-text-label: #666666;
-  --color-text-muted: #999999;
+  --color-text-primary: #101828;
+  --color-text-secondary: #475467;
+  --color-text-label: #667085;
+  --color-text-muted: #98a2b3;
 
-  --color-danger: #cb202d;
-  --color-danger-hover: #a81d2a;
-  --color-on-danger-container: #7f1d1d;
+  --color-danger: #d92d20;
+  --color-danger-hover: #b42318;
+  --color-on-danger-container: #912018;
 
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-info: #2563eb;
+  --color-success: #079455;
+  --color-warning: #dc6803;
+  --color-info: #1570ef;
 
-  --shadow-card: 0 1px 3px rgba(203, 32, 45, 0.06), 0 1px 2px rgba(203, 32, 45, 0.04);
-  --shadow-card-hover: 0 8px 24px rgba(203, 32, 45, 0.1);
-  --shadow-pop: 0 12px 40px rgba(203, 32, 45, 0.14);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --shadow-card-hover: 0 12px 28px -10px rgba(16, 24, 40, 0.16), 0 2px 6px rgba(16, 24, 40, 0.05);
+  --shadow-pop: 0 24px 48px -12px rgba(16, 24, 40, 0.22);
 
   background-color: var(--color-bg);
   color: var(--color-text-secondary);
-  font-family:var(--font-ui);
+  font-family: var(--font-ui);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+.admin-theme ::selection {
+  background: rgba(203, 32, 45, 0.16);
+  color: var(--color-text-primary);
+}
+
+/* Numbers line up in tables, KPIs and totals. */
+.admin-theme .tabular,
+.admin-theme td,
+.admin-theme .kpi-value {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---- Cards ---- */
@@ -869,13 +990,21 @@
 .admin-theme .hover\:shadow-card-hover:hover {
   box-shadow: var(--shadow-card-hover);
 }
-
-/* ---- Tables ---- */
-.admin-theme .table-wrap {
+.admin-theme .admin-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow: var(--shadow-card);
+}
+
+/* ---- Tables ---- */
+/* White card, white header row, sentence-case grey headings and thin
+   row dividers. Applies to every <table> in the admin console. */
+.admin-theme .table-wrap {
+  background: var(--color-bg-card);
+  border: 1px solid #eceef2;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03), 0 4px 16px -6px rgba(16, 24, 40, 0.06);
   overflow: hidden;
 }
 .admin-theme table {
@@ -883,36 +1012,54 @@
   border-collapse: separate;
   border-spacing: 0;
   font-size: 14px;
-  color: var(--color-text-secondary);
+  color: var(--color-text-label);
 }
 .admin-theme thead th {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: #f8f9fa;
-  color: #6b7280;
-  font-weight: 700;
+  background: #ffffff;
+  color: var(--color-text-label);
+  font-weight: 500;
   text-align: left;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 14px 18px;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: 12.5px;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eceef2;
   white-space: nowrap;
 }
 .admin-theme tbody td {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--color-border-light);
+  padding: 13px 20px;
+  border-bottom: 1px solid #f0f1f4;
   vertical-align: middle;
 }
 .admin-theme tbody tr {
   transition: background-color 0.15s ease;
 }
-.admin-theme tbody tr:nth-child(even) {
-  background: #f8f9fa;
-}
 .admin-theme tbody tr:hover {
-  background: #f0f1f3;
+  background: #fdf7f7;
+}
+
+/* Pill search box in a page's title row. */
+/* !important: the base input rule's :not() chain has higher specificity. */
+.admin-theme input.admin-search {
+  border-radius: 999px !important;
+  border-color: #eceef2 !important;
+  background: #ffffff;
+}
+.admin-theme input.admin-search:focus {
+  border-color: var(--color-primary) !important;
+}
+.admin-theme input.admin-search::-webkit-search-cancel-button {
+  display: none;
+}
+/* "Showing [10]" selector: a soft red chip. */
+.admin-theme select.admin-showing {
+  border-radius: 8px;
+  border-color: transparent;
+  background: #fdecee;
+  color: var(--color-primary);
 }
 .admin-theme tbody tr:last-child td {
   border-bottom: none;
@@ -922,22 +1069,58 @@
 }
 
 /* ---- Forms ---- */
-.admin-theme input,
+.admin-theme input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
 .admin-theme select,
 .admin-theme textarea {
   border-radius: 10px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-dark);
   background: #ffffff;
   color: var(--color-text-primary);
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
 }
-.admin-theme input:focus,
+.admin-theme input::placeholder,
+.admin-theme textarea::placeholder {
+  color: var(--color-text-muted);
+}
+.admin-theme input:not([type='checkbox']):not([type='radio']):focus,
 .admin-theme select:focus,
 .admin-theme textarea:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(203, 32, 45, 0.15);
+  box-shadow: 0 0 0 4px rgba(203, 32, 45, 0.1);
+  outline: none;
+}
+.admin-theme input[aria-invalid='true'],
+.admin-theme select[aria-invalid='true'],
+.admin-theme textarea[aria-invalid='true'] {
+  /* !important: the base input rule's :not() chain has higher specificity. */
+  border-color: var(--color-danger) !important;
+  background-color: #fffbfa;
+}
+.admin-theme input[aria-invalid='true']:focus,
+.admin-theme select[aria-invalid='true']:focus,
+.admin-theme textarea[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 4px rgba(217, 45, 32, 0.12) !important;
+}
+.admin-theme input:disabled,
+.admin-theme select:disabled,
+.admin-theme textarea:disabled {
+  background: var(--color-surface-lighter);
+  color: var(--color-text-label);
+  cursor: not-allowed;
+}
+.admin-theme input[type='checkbox'],
+.admin-theme input[type='radio'] {
+  accent-color: var(--color-primary);
+}
+.admin-theme :focus-visible {
+  outline: 2px solid rgba(203, 32, 45, 0.5);
+  outline-offset: 2px;
+}
+.admin-theme input:focus-visible,
+.admin-theme select:focus-visible,
+.admin-theme textarea:focus-visible {
   outline: none;
 }
 
@@ -949,11 +1132,31 @@
 }
 .admin-theme .scrollbar-thin::-webkit-scrollbar-thumb,
 .admin-theme ::-webkit-scrollbar-thumb {
-  background-color: #f0c4c8;
+  background-color: #d0d5dd;
   border-radius: 8px;
 }
 .admin-theme ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.admin-theme .admin-sidebar ::-webkit-scrollbar-thumb {
+  background-color: #eceef2;
+}
+
+/* ---- Skeleton shimmer ---- */
+@keyframes admin-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.admin-theme .admin-skeleton {
+  background: linear-gradient(90deg, #eef0f3 0px, #f7f8fa 160px, #eef0f3 320px);
+  background-size: 800px 100%;
+  animation: admin-shimmer 1.4s linear infinite;
+  border-radius: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-theme .admin-skeleton { animation: none; }
+  .admin-theme .animate-admin-in { animation: none; }
 }
 
 /* ---- Animations ---- */
@@ -968,7 +1171,9 @@
   }
 }
 .admin-theme .animate-admin-in {
-  animation: admin-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* `backwards`, not `both`: a transform left on <main> after the animation
+     would make every position:fixed overlay inside it fixed to <main>. */
+  animation: admin-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 .admin-theme .transition-admin {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);

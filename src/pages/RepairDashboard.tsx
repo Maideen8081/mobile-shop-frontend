@@ -1,15 +1,14 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FiFilter, FiCheck, FiX, FiAlertTriangle, FiDollarSign, FiUser, FiPackage } from 'react-icons/fi'
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts'
+import { FiCheck, FiX, FiAlertTriangle, FiDollarSign, FiUser, FiPackage, FiRefreshCw, FiPlus, FiInbox, FiTool, FiEye } from 'react-icons/fi'
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import PageLayout from '../components/layout/PageLayout'
-import RepairCard from '../components/repair/RepairCard'
-import TechnicianCard from '../components/repair/TechnicianCard'
-import RepairActivityFeed from '../components/repair/RepairActivityFeed'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
-import { WorkflowTracker, RepairStatusBadge } from '../components/repair/WorkflowTracker'
-import { repairTechnicians, repairAnalytics, repairStatuses, type RepairStatus } from '../data/repairData'
+import { RepairStatusBadge } from '../components/repair/WorkflowTracker'
+import { repairStatuses, type RepairStatus } from '../data/repairData'
 import { repairService, type RepairTicket } from '../services/repairService'
+import { Btn, EmptyState, ErrorBanner, Field, KpiCard, Modal, PageHeader, Pagination, Panel, RowMenu, SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, Thumb, ToolbarBtn, apiErrorMessage, formatDate, textareaBase, timeAgo, useTable } from '../components/admin/AdminUI'
 
 const priorityColors: Record<string, string> = { Low: 'text-text-muted', Medium: 'text-primary', High: 'text-primary', Urgent: 'text-danger' }
 
@@ -50,120 +49,6 @@ function parseQAPairs(text: string): { question: string; answer: string }[] {
   })
 }
 
-interface KPI { id: number; title: string; value: number; prefix?: string; suffix?: string; growth: number; trend: 'up' | 'down'; subtitle: string; color: string; bgGlow: string; icon: string; sparkline: number[] }
-
-function StatCard({ title, value, prefix, suffix, growth, trend, subtitle, color, bgGlow, sparkline, delay = 0 }: KPI & { delay?: number }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
-      className="relative rounded-3xl bg-bg-card border border-border shadow-lg shadow-black/[0.03] p-4 lg:p-5 overflow-hidden"
-    >
-      <div className="absolute inset-0 opacity-[0.03]" style={{ background: `radial-gradient(120px at 80% 20%, ${color}, transparent)` }} />
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">{title}</span>
-        <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: bgGlow, color }} />
-      </div>
-      <div className="flex items-baseline gap-1.5 mb-1">
-        <span className="text-xl lg:text-2xl font-bold text-text-primary tracking-tight">{prefix || ''}{value.toLocaleString('en-IN')}{suffix || ''}</span>
-        <span className={`text-[10px] font-semibold flex items-center gap-0.5 ${trend === 'up' ? 'text-success' : 'text-danger'}`}>
-          <span>{trend === 'up' ? '↑' : '↓'}</span> {Math.abs(growth)}%
-        </span>
-      </div>
-      <p className="text-[10px] text-text-muted mb-3">{subtitle}</p>
-      <svg className="w-full h-8" viewBox={`0 0 ${sparkline.length - 1} 100`} preserveAspectRatio="none">
-        <polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          points={sparkline.map((v, i) => `${i},${100 - (v / Math.max(...sparkline)) * 90}`).join(' ')} />
-      </svg>
-    </motion.div>
-  )
-}
-
-const ChartTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null
-  return (
-    <div className="bg-bg-card rounded-xl border border-border shadow-xl px-4 py-3">
-      <p className="text-xs font-semibold text-text-muted mb-2">{label}</p>
-      {payload.map((entry: any, i: number) => (
-        <div key={i} className="flex items-center gap-2 text-xs">
-          <span className="w-2 h-2 rounded-[8px]" style={{ background: entry.color }} />
-          <span className="text-text-muted">{entry.name}: </span>
-          <span className="font-semibold text-text-primary">{entry.value.toLocaleString('en-IN')}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function AreaChartCard({ title, subtitle, data, dataKeys, delay = 0 }: { title: string; subtitle: string; data: any[]; dataKeys: { key: string; color: string; name: string }[]; delay?: number }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
-      className="relative rounded-3xl bg-bg-card border border-border shadow-lg shadow-black/[0.03] p-5 lg:p-6"
-    >
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h3 className="text-sm font-bold text-text-primary tracking-tight">{title}</h3>
-          <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>
-        </div>
-      </div>
-      <div className="h-52">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <defs>
-              {dataKeys.map((dk) => (
-                <linearGradient key={dk.key} id={`grad-${dk.key}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={dk.color} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={dk.color} stopOpacity={0} />
-                </linearGradient>
-              ))}
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e8ecf1" strokeOpacity={0.5} />
-            <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-            <Tooltip content={<ChartTooltip />} />
-            {dataKeys.map((dk) => (
-              <Area key={dk.key} type="monotone" dataKey={dk.key} stroke={dk.color} fill={`url(#grad-${dk.key})`} strokeWidth={2.5} name={dk.name} />
-            ))}
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </motion.div>
-  )
-}
-
-function DonutChartCard({ title, subtitle, data, delay = 0 }: { title: string; subtitle: string; data: { name: string; value: number; color: string }[]; delay?: number }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay }}
-      className="relative rounded-3xl bg-bg-card border border-border shadow-lg shadow-black/[0.03] p-5 lg:p-6"
-    >
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h3 className="text-sm font-bold text-text-primary tracking-tight">{title}</h3>
-          <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>
-        </div>
-      </div>
-      <div className="h-52 flex items-center justify-center">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={85} dataKey="value" paddingAngle={3}>
-              {data.map((entry, i) => (
-                <Cell key={i} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<ChartTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex flex-wrap gap-3 mt-3">
-        {data.map((item, i) => (
-          <div key={i} className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-[8px]" style={{ background: item.color }} />
-            <span className="text-[10px] text-text-muted">{item.name}</span>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  )
-}
-
 export default function RepairDashboard() {
   const [tickets, setTickets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -172,36 +57,97 @@ export default function RepairDashboard() {
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
+  const navigate = useNavigate()
   useLockBodyScroll(selectedTicket !== null)
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const data = await repairService.list()
-        setTickets(data as any[])
-      } catch {
-        setTickets([])
-      }
+  const [loadError, setLoadError] = useState('')
+  const fetchTickets = useCallback(async () => {
+    setLoading(true)
+    setLoadError('')
+    try {
+      setTickets((await repairService.list()) as any[])
+    } catch (err) {
+      setLoadError(apiErrorMessage(err, 'Could not load repair tickets.'))
+    } finally {
       setLoading(false)
     }
-    fetchTickets()
   }, [])
 
-  const kpis = useMemo(() => {
-    const total = tickets.length
-    const submitted = tickets.filter((t: any) => t.status === 'Submitted').length
-    const accepted = tickets.filter((t: any) => t.status === 'Accepted').length
-    const received = tickets.filter((t: any) => t.status === 'Received').length
-    const delivered = tickets.filter((t: any) => t.status === 'Delivered').length
-    return [
-      { id: 1, title: 'Total Bookings', value: total, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'All time', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)', icon: 'FiPackage', sparkline: [3, 5, 4, 7, 6, 8, total] },
-      { id: 2, title: 'Pending Review', value: submitted, suffix: '', growth: 0, trend: submitted > 0 ? 'up' as const : 'down' as const, subtitle: 'Awaiting acceptance', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.12)', icon: 'FiLoader', sparkline: submitted > 0 ? [1, 2, 1, 3, 2, submitted] : [0] },
-      { id: 3, title: 'In Progress', value: accepted + received, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Active repairs', color: '#CB202D', bgGlow: 'rgba(203,32,45,0.10)', icon: 'FiTool', sparkline: [1, 2, 3, 2, 3, accepted + received] },
-      { id: 4, title: 'Completed', value: delivered, suffix: '', growth: 0, trend: 'up' as const, subtitle: 'Delivered', color: '#A81D2A', bgGlow: 'rgba(203,32,45,0.08)', icon: 'FiCheck', sparkline: delivered > 0 ? [0, 1, 2, 2, 3, delivered] : [0] },
-    ]
+  useEffect(() => {
+    fetchTickets()
+  }, [fetchTickets])
+
+  const analytics = useMemo(() => {
+    const by = (statuses: string[]) => tickets.filter((t: any) => statuses.includes(t.status)).length
+    const workshop = ['Accepted', 'Received', 'Awaiting Approval', 'Diagnosing', 'Waiting for Parts', 'Repair In Progress', 'Quality Check']
+
+    // Last 6 calendar months: tickets received vs finished in each.
+    const now = new Date()
+    const months = Array.from({ length: 6 }, (_, i) => new Date(now.getFullYear(), now.getMonth() - 5 + i, 1))
+    const key = (d: Date) => `${d.getFullYear()}-${d.getMonth()}`
+    const monthly = months.map((m) => ({ month: m.toLocaleString('en-IN', { month: 'short' }), received: 0, completed: 0, k: key(m) }))
+    for (const t of tickets as any[]) {
+      const c = new Date(t.createdAt)
+      const row = monthly.find((r) => r.k === key(c))
+      if (row) row.received++
+      if (t.status === 'Delivered') {
+        const u = monthly.find((r) => r.k === key(new Date(t.updatedAt || t.createdAt)))
+        if (u) u.completed++
+      }
+    }
+
+    const palette = ['#cb202d', '#f79009', '#2e90fa', '#17b26a', '#7a5af8', '#98a2b3']
+    const issueCounts: Record<string, number> = {}
+    for (const t of tickets as any[]) issueCounts[t.issueCategory || 'Other'] = (issueCounts[t.issueCategory || 'Other'] ?? 0) + 1
+    const sortedIssues = Object.entries(issueCounts).sort((a, b) => b[1] - a[1])
+    const issues = [...sortedIssues.slice(0, 5), ...(sortedIssues.length > 5 ? [['Other', sortedIssues.slice(5).reduce((s2, [, n]) => s2 + n, 0)] as [string, number]] : [])]
+      .map(([name, value], i) => ({ name, value, color: palette[i % palette.length] }))
+
+    const techLoad: Record<string, { open: number; done: number }> = {}
+    for (const t of tickets as any[]) {
+      const name = (t.technicianName || '').trim() || 'Unassigned'
+      techLoad[name] ??= { open: 0, done: 0 }
+      if (t.status === 'Delivered') techLoad[name].done++
+      else if (!['Rejected', 'Cancelled'].includes(t.status)) techLoad[name].open++
+    }
+
+    return {
+      total: tickets.length,
+      pending: by(['Submitted']),
+      workshop: by(workshop),
+      ready: by(['Ready for Delivery']),
+      done: by(['Delivered']),
+      urgent: (tickets as any[]).filter((t) => ['high', 'urgent'].includes(String(t.priority).toLowerCase()) && !['Delivered', 'Rejected', 'Cancelled'].includes(t.status)).length,
+      monthly,
+      issues,
+      tech: Object.entries(techLoad).sort((a, b) => b[1].open - a[1].open).slice(0, 5),
+      recent: [...(tickets as any[])].sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime()).slice(0, 6),
+      stageCounts: Object.fromEntries(repairStatuses.map((st) => [st, by([st])])),
+    }
   }, [tickets])
 
-  const filteredTickets = filterStatus === 'all' ? tickets : tickets.filter((t) => t.status === filterStatus)
+  const [search, setSearch] = useState('')
+  const filteredTickets = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return tickets.filter((t: any) =>
+      (filterStatus === 'all' || t.status === filterStatus) &&
+      (!q || [t.repairId, t.customerName, t.customerMobile, t.deviceBrand, t.deviceModel, t.issueCategory].some((v) => String(v ?? '').toLowerCase().includes(q))),
+    )
+  }, [tickets, filterStatus, search])
+  const PRIORITY_RANK: Record<string, number> = { urgent: 4, high: 3, medium: 2, low: 1 }
+  const table = useTable(filteredTickets, {
+    sorters: {
+      id: (t: any) => t.id,
+      customer: (t: any) => t.customerName,
+      device: (t: any) => `${t.deviceBrand} ${t.deviceModel}`,
+      priority: (t: any) => PRIORITY_RANK[String(t.priority).toLowerCase()] ?? 0,
+      status: (t: any) => t.status,
+      cost: (t: any) => Number(t.estimatedCost || 0),
+      date: (t: any) => new Date(t.createdAt).getTime() || 0,
+    },
+    initialSort: { key: 'date', dir: 'desc' },
+    resetKey: `${filterStatus}|${search}`,
+  })
 
   const handleAccept = async (ticket: RepairTicket) => {
     setActionLoading(ticket.repairId)
@@ -216,18 +162,44 @@ export default function RepairDashboard() {
     setActionLoading(null)
   }
 
-  const handleReject = async (ticket: RepairTicket) => {
-    const reason = window.prompt('Enter rejection reason:') || 'Not accepted'
-    setActionLoading(ticket.repairId)
-    try {
-      await repairService.rejectTicket(ticket.id, reason)
-      setTickets((prev) => prev.map((t) => (t.id === ticket.id ? { ...t, status: 'Rejected' as const } : t)))
-      setToast({ message: `Ticket ${ticket.repairId} rejected`, type: 'success' })
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || 'Failed to reject ticket'
-      setToast({ message: msg, type: 'error' })
+  // Rejection needs a reason the customer will see; a dialog (not window.prompt)
+  // so closing it really cancels instead of rejecting with a placeholder.
+  const [rejectTarget, setRejectTarget] = useState<RepairTicket | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
+  const [rejectError, setRejectError] = useState('')
+  const [rejecting, setRejecting] = useState(false)
+
+  const handleReject = (ticket: RepairTicket) => {
+    setRejectTarget(ticket)
+    setRejectReason('')
+    setRejectError('')
+  }
+
+  const confirmReject = async () => {
+    if (!rejectTarget) return
+    const reason = rejectReason.trim()
+    if (reason.length < 5) {
+      setRejectError(reason ? 'Reason must be at least 5 characters' : 'Reason is required')
+      return
     }
-    setActionLoading(null)
+    if (reason.length > 1000) {
+      setRejectError('Reason must be at most 1000 characters')
+      return
+    }
+    setRejecting(true)
+    setActionLoading(rejectTarget.repairId)
+    try {
+      await repairService.rejectTicket(rejectTarget.id, reason)
+      setTickets((prev) => prev.map((t) => (t.id === rejectTarget.id ? { ...t, status: 'Rejected' as const } : t)))
+      setToast({ message: `Ticket ${rejectTarget.repairId} rejected`, type: 'success' })
+      setSelectedTicket((cur) => (cur?.id === rejectTarget.id ? null : cur))
+      setRejectTarget(null)
+    } catch (err: any) {
+      setRejectError(err?.response?.data?.notes?.[0] || err?.response?.data?.message || err?.message || 'Failed to reject ticket')
+    } finally {
+      setRejecting(false)
+      setActionLoading(null)
+    }
   }
 
   return (
@@ -237,171 +209,220 @@ export default function RepairDashboard() {
           <span className={`text-sm font-medium ${toast.type === 'success' ? 'text-success' : 'text-danger'}`}>{toast.message}</span>
         </div>
       )}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <PageHeader
+        title="Repairs"
+        actions={
+          <>
+            <ToolbarBtn onClick={fetchTickets} aria-label="Refresh" title="Refresh" className="!px-3" icon={<FiRefreshCw size={15} className={loading ? 'animate-spin' : ''} />} />
+            <Btn variant="primary" className="h-11 px-5" icon={<FiPlus size={16} />} onClick={() => navigate('/admin/new-repair')}>New Repair Ticket</Btn>
+          </>
+        }
+      />
+
+      <div className="space-y-5">
+      {loadError && <ErrorBanner message={loadError} onRetry={fetchTickets} />}
+
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        <KpiCard loading={loading && !tickets.length} label="Awaiting review" tone="warning" icon={<FiInbox size={16} />} value={analytics.pending}
+          hint="new online bookings" onClick={() => navigate('/admin/user-bookings')} />
+        <KpiCard loading={loading && !tickets.length} label="In the workshop" tone="info" icon={<FiTool size={16} />} value={analytics.workshop}
+          hint={`${analytics.urgent} high priority`} onClick={() => setFilterStatus('all')} />
+        <KpiCard loading={loading && !tickets.length} label="Ready for pickup" tone="success" icon={<FiCheck size={16} />} value={analytics.ready}
+          hint="call the customer" onClick={() => setFilterStatus('Ready for Delivery')} />
+        <KpiCard loading={loading && !tickets.length} label="Completed" tone="neutral" icon={<FiPackage size={16} />} value={analytics.done}
+          hint={`${analytics.total} tickets all time`} />
+      </div>
+
+      <Panel title="Workshop pipeline" subtitle="Open tickets at each stage — click a stage to filter the list below">
+        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          {repairStatuses.map((st) => {
+            const n = analytics.stageCounts[st] ?? 0
+            const active = filterStatus === st
+            return (
+              <button key={st} type="button" onClick={() => setFilterStatus(active ? 'all' : st)}
+                className={`rounded-xl px-3 py-3 text-left transition ring-1 ring-inset ${active ? 'bg-primary text-white ring-primary' : 'bg-surface-lighter ring-border hover:ring-border-dark'}`}>
+                <span className={`block text-xl font-bold tabular ${active ? 'text-white' : 'text-text-primary'}`}>{n}</span>
+                <span className={`block text-[11px] leading-tight mt-0.5 ${active ? 'text-white/85' : 'text-text-label'}`}>{st === 'Delivered' ? 'Completed' : st}</span>
+              </button>
+            )
+          })}
+        </div>
+      </Panel>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <Panel title="Monthly repairs" subtitle="Received vs completed, last 6 months" className="xl:col-span-2">
+          <div className="h-60 -ml-2">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={analytics.monthly} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="rp-recv" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#cb202d" stopOpacity={0.16} /><stop offset="100%" stopColor="#cb202d" stopOpacity={0} /></linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="#eef0f3" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#98a2b3' }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#98a2b3' }} axisLine={false} tickLine={false} width={32} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e4e7ec', fontSize: 12 }} />
+                <Area type="monotone" dataKey="received" name="Received" stroke="#cb202d" strokeWidth={2.25} fill="url(#rp-recv)" />
+                <Area type="monotone" dataKey="completed" name="Completed" stroke="#17b26a" strokeWidth={2.25} fill="transparent" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+
+        <Panel title="Issue mix" subtitle="All tickets by issue category">
+          {analytics.issues.length === 0 ? (
+            <p className="text-sm text-text-label py-10 text-center">No tickets yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {analytics.issues.map((it) => (
+                <li key={it.name}>
+                  <div className="flex justify-between text-[13px] mb-1.5">
+                    <span className="text-text-secondary truncate pr-2">{it.name}</span>
+                    <span className="font-semibold text-text-primary tabular">{it.value}</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-surface-lighter overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${(it.value / Math.max(1, analytics.total)) * 100}%`, background: it.color }} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <Panel title="Recently updated" subtitle="Latest changes across all tickets" className="xl:col-span-2" bodyClassName="px-5 pb-3 pt-2">
+          {analytics.recent.length === 0 ? (
+            <p className="text-sm text-text-label py-8 text-center">No activity yet.</p>
+          ) : (
+            <ul className="divide-y divide-border-light">
+              {analytics.recent.map((t: any) => (
+                <li key={t.id}>
+                  <button type="button" onClick={() => setSelectedTicket(t)} className="w-full flex items-center gap-3 py-3 text-left hover:bg-[#f9fafb] -mx-2 px-2 rounded-lg">
+                    <span className="w-9 h-9 rounded-lg bg-surface-lighter ring-1 ring-inset ring-border flex items-center justify-center text-text-muted shrink-0"><FiTool size={15} /></span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-medium text-text-primary truncate">{t.deviceBrand} {t.deviceModel} · {t.issueCategory}</span>
+                      <span className="block text-xs text-text-label truncate">{t.repairId} · {t.customerName} · {timeAgo(t.updatedAt || t.createdAt)}</span>
+                    </span>
+                    <RepairStatusBadge status={t.status} size="sm" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+
+        <Panel title="Technician workload" subtitle="Open vs completed tickets">
+          {analytics.tech.length === 0 ? (
+            <p className="text-sm text-text-label py-8 text-center">No assignments yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {analytics.tech.map(([name, load]) => (
+                <li key={name} className="flex items-center gap-3">
+                  <Thumb name={name} />
+                  <span className="flex-1 min-w-0">
+                    <span className={`block text-sm font-medium truncate ${name === 'Unassigned' ? 'text-warning' : 'text-text-primary'}`}>{name}</span>
+                    <span className="block text-xs text-text-label">{load.done} completed</span>
+                  </span>
+                  <span className="text-sm font-semibold text-text-primary tabular">{load.open}<span className="text-xs font-normal text-text-label"> open</span></span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
+
+      {filterStatus !== 'all' && (
+        <div className="flex items-center gap-2 text-sm text-text-secondary">
+          Showing <StatusPill tone="info">{filterStatus}</StatusPill> tickets
+          <button type="button" className="text-primary font-semibold hover:underline" onClick={() => setFilterStatus('all')}>Show all</button>
+        </div>
+      )}
+      </div>
+
+      <div className="table-wrap mt-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-5 pb-4">
           <div>
-            <div className="flex items-center gap-2 text-xs text-text-muted mb-1">
-              <span className="hover:text-text-secondary transition-colors cursor-pointer">Repairs</span>
-              <span>/</span>
-              <span className="text-text-secondary font-medium">Dashboard</span>
-            </div>
-            <h1 className="text-xl lg:text-2xl font-bold text-text-primary tracking-tight">Repair Service Dashboard</h1>
-            <p className="text-sm text-text-muted mt-0.5">Monitor customer repair bookings, manage workflow, and track device service status.</p>
+            <h3 className="text-[15px] font-semibold text-text-primary">All repair tickets</h3>
+            <p className="text-xs text-text-label mt-0.5">
+              {filteredTickets.length} shown · <span className="text-warning font-semibold">{analytics.pending} awaiting review</span>
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-bg-card border border-border text-xs font-semibold text-text-secondary hover:bg-primary/10 transition-all cursor-pointer">
-              <FiFilter size={13} /> Filter
-            </button>
+            <SearchBox value={search} onChange={setSearch} placeholder="Search tickets" />
+            <ShowingSelect value={table.pageSize} onChange={table.setPageSize} />
           </div>
         </div>
-      </motion.div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((card, i) => (
-          <StatCard key={card.id} {...card} delay={i * 0.05} />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 lg:gap-6">
-        <div className="xl:col-span-3 space-y-4 lg:space-y-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-            className="relative rounded-3xl bg-bg-card border border-border p-5 lg:p-6"
-          >
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h3 className="text-sm font-bold text-text-primary tracking-tight">Repair Workflow</h3>
-                <p className="text-xs text-text-muted mt-0.5">Current pipeline status</p>
-              </div>
-            </div>
-            <WorkflowTracker currentStatus="Repair In Progress" />
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-            <AreaChartCard
-              title="Monthly Repairs"
-              subtitle="Completed vs Received"
-              data={repairAnalytics.monthlyRepairs}
-              dataKeys={[
-                { key: 'completed', color: '#A81D2A', name: 'Completed' },
-                { key: 'received', color: '#CB202D', name: 'Received' },
-              ]}
-              delay={0.2}
-            />
-            <DonutChartCard
-              title="Issue Distribution"
-              subtitle="Common repair categories"
-              data={repairAnalytics.issueDistribution}
-              delay={0.25}
-            />
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-text-primary tracking-tight">Active Repairs</h3>
-              <div className="flex gap-1 overflow-x-auto">
-                {['all', ...repairStatuses.filter((s) => s !== 'Delivered')].map((status) => (
-                  <button key={status} onClick={() => setFilterStatus(status)}
-                    className={`px-2.5 py-1 rounded-lg text-[9px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                      filterStatus === status ? 'bg-primary text-white shadow-md' : 'bg-primary/10 text-text-muted hover:bg-primary/10'
-                    }`}
-                  >
-                    {status === 'all' ? 'All' : status}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-24 rounded-2xl bg-surface-lighter animate-pulse" />
-                ))}
-              </div>
-            ) : tickets.length === 0 ? (
-              <div className="text-center py-8 text-text-muted text-sm">No repair bookings yet</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {filteredTickets.filter((t) => !['Delivered', 'Rejected'].includes(t.status)).slice(0, 6).map((ticket, i) => (
-                  <RepairCard key={ticket.id} ticket={ticket} index={i} onClick={(t) => setSelectedTicket(t as any)} compact />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="xl:col-span-2 space-y-4 lg:space-y-6">
-          <RepairActivityFeed />
-
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-            className="relative rounded-3xl bg-bg-card border border-border p-5 lg:p-6"
-          >
-            <h3 className="text-sm font-bold text-text-primary tracking-tight mb-4">Technicians</h3>
-            <div className="space-y-3">
-              {repairTechnicians.slice(0, 4).map((tech, i) => (
-                <TechnicianCard key={tech.id} tech={tech} delay={i * 0.05} compact />
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-        className="relative rounded-3xl bg-bg-card border border-border p-5 lg:p-6"
-      >
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-sm font-bold text-text-primary tracking-tight">All Repair Bookings</h3>
-            <p className="text-xs text-text-muted mt-0.5">{tickets.length} total bookings · <span className="text-warning font-semibold">{tickets.filter(t => t.status === 'Submitted').length} pending review</span></p>
-          </div>
-        </div>
-        {loading ? (
-          <div className="h-48 rounded-xl bg-surface-lighter animate-pulse" />
+        {loading && !tickets.length ? (
+          <div className="p-4 space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+        ) : table.total === 0 ? (
+          <EmptyState icon={<FiTool size={20} />} title={tickets.length ? 'No tickets match' : 'No repair tickets yet'}
+            description={tickets.length ? 'Try another stage or search.' : 'Walk-in tickets and online bookings appear here.'}
+            action={!tickets.length ? <Btn variant="primary" size="sm" onClick={() => navigate('/admin/new-repair')}>Create ticket</Btn> : undefined} />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[800px]">
-              <thead>
-                <tr className="border-b border-primary/20">
-                  {['ID', 'Customer', 'Device', 'Issue', 'Status', 'Cost', 'Date', 'Actions'].map((h) => (
-                    <th key={h} className="text-left text-[10px] font-semibold text-text-muted uppercase tracking-wider pb-3 px-2">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tickets.slice(0, 20).map((ticket, i) => (
-                  <motion.tr key={ticket.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
-                    className="border-b border-border hover:bg-primary/10 transition-colors cursor-pointer"
-                    onClick={() => setSelectedTicket(selectedTicket?.id === ticket.id ? null : ticket)}
-                  >
-                    <td className="py-3 px-2"><span className="text-xs font-mono font-semibold text-primary">{ticket.repairId}</span></td>
-                    <td className="py-3 px-2"><span className="text-sm font-medium text-text-secondary">{ticket.customerName}</span></td>
-                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.deviceModel}</span></td>
-                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.issueCategory}</span></td>
-                    <td className="py-3 px-2"><RepairStatusBadge status={ticket.status} size="sm" /></td>
-                    <td className="py-3 px-2"><span className="text-xs font-semibold text-text-secondary">₹{(ticket.estimatedCost || ticket.actualCost).toLocaleString('en-IN')}</span></td>
-                    <td className="py-3 px-2"><span className="text-xs text-text-muted">{ticket.createdAt}</span></td>
-                    <td className="py-3 px-2" onClick={(e) => e.stopPropagation()}>
-                      {ticket.status === 'Submitted' && (
-                        <div className="flex gap-1">
-                          <button onClick={() => handleAccept(ticket)} disabled={actionLoading === ticket.repairId}
-                            className="px-2 py-1 rounded-lg bg-success/20 text-success text-[10px] font-semibold hover:bg-success/30 transition-all cursor-pointer disabled:opacity-50">
-                            <FiCheck size={10} /> Accept
-                          </button>
-                          <button onClick={() => handleReject(ticket)} disabled={actionLoading === ticket.repairId}
-                            className="px-2 py-1 rounded-lg bg-danger/20 text-danger text-[10px] font-semibold hover:bg-danger/30 transition-all cursor-pointer disabled:opacity-50">
-                            <FiX size={10} /> Reject
-                          </button>
+          <>
+            <div className="table-scroll">
+              <table className="min-w-[960px]">
+                <thead>
+                  <tr>
+                    <SortTh label="Ticket" sortKey="id" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Customer" sortKey="customer" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Device & issue" sortKey="device" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Priority" sortKey="priority" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Status" sortKey="status" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Estimate" sortKey="cost" align="right" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Booked" sortKey="date" sort={table.sort} onSort={table.toggleSort} />
+                    <SortTh label="Action" align="center" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {table.rows.map((ticket: any) => (
+                    <tr key={ticket.id} className="cursor-pointer" onClick={() => setSelectedTicket(ticket)}>
+                      <td className="whitespace-nowrap font-semibold text-text-primary text-[13px]">{ticket.repairId}</td>
+                      <td>
+                        <div className="flex items-center gap-3 min-w-[160px]">
+                          <Thumb name={ticket.customerName || '?'} />
+                          <div className="min-w-0">
+                            <span className="block font-medium text-text-primary truncate">{ticket.customerName}</span>
+                            <span className="block text-xs text-text-label">{ticket.customerMobile}</span>
+                          </div>
                         </div>
-                      )}
-                      {ticket.status !== 'Submitted' && (
-                        <span className="text-[10px] text-text-muted">{ticket.status}</span>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </td>
+                      <td className="max-w-[220px]">
+                        <span className="block text-text-primary truncate">{[ticket.deviceBrand, ticket.deviceModel].filter(Boolean).join(' ')}</span>
+                        <span className="block text-xs text-text-label truncate">{ticket.issueCategory}</span>
+                      </td>
+                      <td>
+                        <span className={`inline-flex items-center gap-1.5 text-xs font-medium capitalize ${['high', 'urgent'].includes(String(ticket.priority).toLowerCase()) ? 'text-danger' : 'text-text-secondary'}`}>
+                          {['high', 'urgent'].includes(String(ticket.priority).toLowerCase()) && <FiAlertTriangle size={12} />}
+                          {String(ticket.priority || 'medium').toLowerCase()}
+                        </span>
+                      </td>
+                      <td><RepairStatusBadge status={ticket.status} size="sm" /></td>
+                      <td className="text-right font-semibold text-text-primary">₹{Number(ticket.estimatedCost || ticket.actualCost || 0).toLocaleString('en-IN')}</td>
+                      <td className="whitespace-nowrap text-text-label">{formatDate(ticket.createdAt)}</td>
+                      <td className="text-center" onClick={(e) => e.stopPropagation()}>
+                        <RowMenu
+                          label={`Actions for ${ticket.repairId}`}
+                          items={[
+                            { label: 'Open ticket', icon: <FiEye size={15} />, onClick: () => setSelectedTicket(ticket) },
+                            ...(ticket.status === 'Submitted'
+                              ? [
+                                  { label: 'Accept', icon: <FiCheck size={15} />, disabled: actionLoading === ticket.repairId, onClick: () => handleAccept(ticket) },
+                                  { label: 'Reject', icon: <FiX size={15} />, danger: true, disabled: actionLoading === ticket.repairId, onClick: () => handleReject(ticket) },
+                                ]
+                              : []),
+                          ]}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination page={table.page} totalPages={table.totalPages} onPage={table.setPage} summary={`${table.total} of ${tickets.length} tickets`} />
+          </>
         )}
-      </motion.div>
+      </div>
 
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-end lg:items-center justify-center bg-black/20 backdrop-blur-sm" onClick={() => setSelectedTicket(null)}>
@@ -488,18 +509,7 @@ export default function RepairDashboard() {
                       <button key={ns}
                         onClick={async () => {
                           if (ns === 'Rejected') {
-                            const reason = window.prompt('Rejection reason:') || 'Not accepted'
-                            setActionLoading(selectedTicket.repairId)
-                            try {
-                              await repairService.rejectTicket(selectedTicket.id, reason)
-                              setTickets((prev) => prev.map((t) => (t.id === selectedTicket.id ? { ...t, status: 'Rejected' as const } : t)))
-                              setToast({ message: `Ticket ${selectedTicket.repairId} rejected`, type: 'success' })
-                              setSelectedTicket(null)
-                            } catch (err: any) {
-                              const msg = err?.response?.data?.message || err?.message || 'Failed to reject'
-                              setToast({ message: msg, type: 'error' })
-                            }
-                            setActionLoading(null)
+                            handleReject(selectedTicket)
                             return
                           }
                           setActionLoading(selectedTicket.repairId)
@@ -532,6 +542,26 @@ export default function RepairDashboard() {
           </motion.div>
         </div>
       )}
+      <Modal
+        open={!!rejectTarget}
+        onClose={() => !rejecting && setRejectTarget(null)}
+        title={`Reject ${rejectTarget?.repairId ?? 'ticket'}?`}
+        description="The customer is notified with this reason. This can't be undone."
+        size="sm"
+        footer={
+          <>
+            <Btn onClick={() => setRejectTarget(null)} disabled={rejecting}>Keep ticket</Btn>
+            <Btn variant="danger" loading={rejecting} onClick={confirmReject}>Reject ticket</Btn>
+          </>
+        }
+      >
+        <Field label="Reason" required error={rejectError} counter={{ value: rejectReason.trim().length, max: 1000 }}>
+          {(a) => (
+            <textarea {...a} rows={3} value={rejectReason} onChange={(e) => { setRejectReason(e.target.value); setRejectError('') }}
+              placeholder="e.g. Board is water-damaged beyond economical repair." className={textareaBase} />
+          )}
+        </Field>
+      </Modal>
     </PageLayout>
   )
 }

@@ -63,8 +63,8 @@ export default function MobilePhonesLoader() {
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.2 }}
           >
-            <p className="text-[14px] font-bold text-[#1F2937]">{text}</p>
-            <p className="text-[11px] text-[#9CA3AF] mt-0.5">{sub}</p>
+            <p className="text-body-sm font-bold text-[#1F2937]">{text}</p>
+            <p className="text-micro text-[#9CA3AF] mt-0.5">{sub}</p>
           </motion.div>
         </AnimatePresence>
       </div>
@@ -78,7 +78,7 @@ export default function MobilePhonesLoader() {
             transition={{ duration: 0.3 }}
           />
         </div>
-        <p className="text-[9px] text-[#CBD5E1] text-center mt-1.5 font-medium">{(elapsed / 1000).toFixed(1)}s</p>
+        <p className="text-micro text-[#CBD5E1] text-center mt-1.5 font-medium">{(elapsed / 1000).toFixed(1)}s</p>
       </div>
 
       {/* Skeleton cards */}
@@ -105,7 +105,7 @@ export default function MobilePhonesLoader() {
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${color}10` }}>
               <BadgeIcon size={13} style={{ color }} strokeWidth={2} />
             </div>
-            <span className="text-[8px] text-[#94A3B8] font-semibold">{label}</span>
+            <span className="text-micro text-[#94A3B8] font-semibold">{label}</span>
           </div>
         ))}
       </div>
