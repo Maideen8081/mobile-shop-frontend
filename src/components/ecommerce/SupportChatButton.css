@@ -237,6 +237,46 @@
   transform: scale(0.97);
 }
 
+/* ── Compact mobile button: 52px brand-red circle ─────────────────────────── */
+.support-chat-wrapper--compact,
+.support-chat-wrapper--compact .support-chat-button {
+  width: 52px;
+  height: 52px;
+}
+.support-chat-wrapper--compact .support-chat-button {
+  border-radius: 50%;
+  animation-name: support-chat-float-sm;
+}
+.support-chat-wrapper--compact .support-chat-button-inner,
+.support-chat-wrapper--compact .support-chat-button-ring {
+  border-radius: 50%;
+}
+.support-chat-wrapper--compact .support-chat-button-inner {
+  background: linear-gradient(135deg, #e5243b 0%, #a3122a 100%);
+  border: 0;
+  box-shadow:
+    0 8px 20px rgba(163, 18, 42, 0.38),
+    0 0 0 4px rgba(229, 36, 59, 0.12);
+}
+.support-chat-wrapper--compact .support-chat-button-inner::before,
+.support-chat-wrapper--compact .support-chat-button-inner::after {
+  display: none;
+}
+.support-chat-wrapper--compact .support-chat-button-ring {
+  border-color: rgba(229, 36, 59, 0.5);
+}
+.support-chat-wrapper--compact:hover .support-chat-button-inner {
+  transform: none;
+  box-shadow:
+    0 8px 20px rgba(163, 18, 42, 0.38),
+    0 0 0 4px rgba(229, 36, 59, 0.12);
+}
+
+@keyframes support-chat-float-sm {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
 /* ── Animations ────────────────────────────────────────────────────────────── */
 @keyframes support-chat-float {
   0%, 100% { transform: translateY(0); }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import MobileHeader from './MobileHeader'
 import CategoryCarousel from './CategoryCarousel'
 import BenefitsBanner from './BenefitsBanner'
@@ -18,7 +17,7 @@ import Testimonials from './Testimonials'
 import StoreLocation from '../ecommerce/StoreLocation'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
-import MobileHomeLoader from './MobileHomeLoader'
+import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
 import { productsData } from '../../data/productData'
@@ -67,6 +66,8 @@ export default function MobileHome() {
   const [refurbished, setRefurbished] = useState<any[]>(() => sharedCachedData?.refurbished ?? [])
   const [recommended, setRecommended] = useState<any[]>(() => sharedCachedData?.recommended ?? [])
   const [loading, setLoading] = useState(!sharedCachedData)
+  // Stays mounted until the loader's exit animation finishes.
+  const [showLoader, setShowLoader] = useState(!sharedCachedData)
 
   useEffect(() => {
     if (sharedCachedData) return
@@ -128,19 +129,7 @@ export default function MobileHome() {
 
   return (
     <div className="min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
-      {/* Full-screen animated loading overlay — Zepto/Blinkit style */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            key="home-loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <MobileHomeLoader />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showLoader && <LoadingScreen isLoaded={!loading} onExitComplete={() => setShowLoader(false)} />}
 
       {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
       <div className="sticky top-0 z-50 bg-[#FFFBFB] will-change-transform" style={{ transform: 'translateZ(0)' }}>

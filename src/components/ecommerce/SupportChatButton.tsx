@@ -12,7 +12,27 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
 }
 
-function getSavedPos(btnSize: number): { x: number; y: number } {
+// Mobile gets a smaller button that sits above the bottom navigation bar.
+const DESKTOP_SIZE = 80
+const MOBILE_SIZE = 52
+const MOBILE_NAV_CLEARANCE = 100
+
+/** Chat bubble with an AI sparkle, used for the compact mobile button. */
+function ChatSparkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+      <path
+        d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5Z"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path d="M12 7.5l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" fill="#fff" />
+    </svg>
+  )
+}
+
+function getSavedPos(btnSize: number, bottomGap = 28): { x: number; y: number } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
@@ -26,8 +46,8 @@ function getSavedPos(btnSize: number): { x: number; y: number } {
     }
   } catch {}
   return {
-    x: window.innerWidth - btnSize - 24,
-    y: window.innerHeight - btnSize - 28,
+    x: window.innerWidth - btnSize - (bottomGap > 28 ? 16 : 24),
+    y: window.innerHeight - btnSize - bottomGap,
   }
 }
 
@@ -35,9 +55,14 @@ export default function SupportChatButton() {
   const { pathname } = useLocation()
   const isMobile = useIsMobile()
   const navigate = useNavigate()
-  const btnSize = 80
+  const btnSize = isMobile ? MOBILE_SIZE : DESKTOP_SIZE
+  // Lowest the button may sit: on mobile, keep it clear of the bottom nav.
+  const bottomGap = isMobile ? MOBILE_NAV_CLEARANCE : 0
 
-  const [pos, setPos] = useState<{ x: number; y: number }>(() => getSavedPos(btnSize))
+  const [pos, setPos] = useState<{ x: number; y: number }>(() => {
+    const p = getSavedPos(btnSize, isMobile ? MOBILE_NAV_CLEARANCE : 28)
+    return { x: p.x, y: clamp(p.y, 0, window.innerHeight - btnSize - bottomGap) }
+  })
   const [hovered, setHovered] = useState(false)
   const dragging = useRef(false)
   const didDrag = useRef(false)
@@ -50,12 +75,13 @@ export default function SupportChatButton() {
     const onResize = () => {
       setPos((prev) => ({
         x: clamp(prev.x, 0, window.innerWidth - btnSize),
-        y: clamp(prev.y, 0, window.innerHeight - btnSize),
+        y: clamp(prev.y, 0, window.innerHeight - btnSize - bottomGap),
       }))
     }
+    onResize()
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [btnSize])
+  }, [btnSize, bottomGap])
 
   function startDrag(clientX: number, clientY: number) {
     dragging.current = true
@@ -74,7 +100,7 @@ export default function SupportChatButton() {
       didDrag.current = true
     }
     const nextX = clamp(startPos.current.x + dx, 0, window.innerWidth - btnSize)
-    const nextY = clamp(startPos.current.y + dy, 0, window.innerHeight - btnSize)
+    const nextY = clamp(startPos.current.y + dy, 0, window.innerHeight - btnSize - bottomGap)
     setPos({ x: nextX, y: nextY })
   }
 
@@ -136,7 +162,7 @@ export default function SupportChatButton() {
 
   const content = (
     <div
-      className="support-chat-wrapper"
+      className={`support-chat-wrapper${isMobile ? ' support-chat-wrapper--compact' : ''}`}
       style={{ left: pos.x, top: pos.y }}
       onMouseEnter={() => { if (!didDrag.current) setHovered(true) }}
       onMouseLeave={() => setHovered(false)}
@@ -226,7 +252,7 @@ export default function SupportChatButton() {
       >
         <span className="support-chat-button-inner">
           <span className="support-chat-button-ring" aria-hidden="true" />
-          <ChatAssistantIcon size={54} />
+          {isMobile ? <ChatSparkIcon /> : <ChatAssistantIcon size={54} />}
         </span>
       </button>
     </div>

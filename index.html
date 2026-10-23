@@ -11,6 +11,30 @@
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      Instant first paint for the mobile home loader: the dark background and empty bag
+      show before the JS bundle loads. React replaces #root's content on mount, and the
+      real LoadingScreen (src/components/LoadingScreen) takes over from 0%.
+      Mobile + /home only, matching where the React loader appears.
+    -->
+    <script>
+      (function () {
+        var mobile = window.innerWidth <= 481 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!mobile || location.pathname !== '/home') return;
+        var css = '#pf-pre{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;'
+          + 'background:radial-gradient(90% 55% at 50% 42%,#3A0B14 0%,#09090D 70%);color:#F6F6F8;font-family:system-ui,sans-serif}'
+          + '#pf-pre .b{position:relative;width:200px;height:236px}'
+          + '#pf-pre .h{position:absolute;top:0;left:50px;width:100px;height:62px;box-sizing:border-box;border:7px solid #F6F6F8;border-bottom:0;border-radius:50px 50px 0 0}'
+          + '#pf-pre .y{position:absolute;top:56px;left:0;width:200px;height:180px;box-sizing:border-box;border:7px solid #F6F6F8;border-radius:30px;background:rgba(255,255,255,.04);box-shadow:0 30px 60px -18px rgba(229,36,59,.55)}'
+          + '#pf-pre .s{position:absolute;top:16px;left:65px;width:56px;height:28px;box-sizing:border-box;border:6px solid #F6F6F8;border-top:0;border-radius:0 0 28px 28px}'
+          + '#pf-pre .p{font-size:60px;font-weight:800;line-height:1;letter-spacing:-.05em}#pf-pre .p span{font-size:24px;color:#FF6B78}'
+          + '#pf-pre .t{text-align:center;display:flex;flex-direction:column;gap:8px}#pf-pre .t b{font-size:16px}';
+        var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+        document.getElementById('root').innerHTML =
+          '<div id="pf-pre" aria-hidden="true"><div class="b"><div class="h"></div><div class="y"><div class="s"></div></div></div>'
+          + '<div class="t"><div class="p">0<span>%</span></div><b>Warming up the store</b></div></div>';
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
