@@ -9,6 +9,7 @@ import { productsData } from '../data/productData'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import EcommerceFooter from '../components/ecommerce/Footer'
+import StoreLocation from '../components/ecommerce/StoreLocation'
 import { useToast } from '../context/ToastContext'
 import SectionLoader from '../components/ecommerce/SectionLoader'
 import FlashSaleStage, { type FlashSaleCard } from '../components/ecommerce/FlashSaleStage'
@@ -1376,6 +1377,8 @@ export default function LandingPage() {
           </div>
         </Tilt3D>
       </section>
+
+      <StoreLocation />
 
       <EcommerceFooter />
     </div>

@@ -245,6 +245,7 @@ function DesktopPayment() {
               {error && <p className="pp-error" role="alert">{error}</p>}
               <button
                 className="cx-btn cx-btn-primary cx-checkout"
+                data-place-order
                 disabled={loading || placing || !address || items.length === 0}
                 onClick={handlePlaceOrder}
               >

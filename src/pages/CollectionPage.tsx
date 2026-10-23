@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { requireSignInForWishlist } from '../utils/wishlist'
 import { categoryService } from '../services/categoryService'
 import { productService } from '../services/productService'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import { useToast } from '../context/ToastContext'
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { addToCartWithAuth } from '../utils/cartAuth'
@@ -563,7 +562,6 @@ export default function CollectionPage() {
       </div>
       </div>
 
-      <EcommerceFooter compact />
     </>
   )
 }

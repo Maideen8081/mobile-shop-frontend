@@ -47,6 +47,7 @@
 }
 
 .sp-hero-eyebrow {
+  width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 8px;

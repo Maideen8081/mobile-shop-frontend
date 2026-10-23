@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileTradeIn from '../components/mobile/MobileTradeIn'
 import { tradeInService, type TradeInSubmission } from '../services/tradeInService'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
@@ -540,7 +539,6 @@ export default function TradeInPage() {
         )}
       </main>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

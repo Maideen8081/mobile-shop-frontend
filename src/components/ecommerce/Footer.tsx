@@ -1,133 +1,154 @@
+import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { Mail, MapPin, Phone, Wrench } from 'lucide-react'
+import './Footer.css'
 
-const linkColumns = [
+const columns = [
   {
-    title: 'Shop',
+    title: 'Quick Links',
     links: [
-      { label: 'All Products', to: '/collection/all' },
-      { label: 'Smartphones', to: '/phones' },
+      { label: 'Home', to: '/home' },
+      { label: 'Shop Phones', to: '/phones' },
       { label: 'Accessories', to: '/accessories' },
+      { label: 'All Products', to: '/collection/all' },
+    ],
+  },
+  {
+    title: 'Customer Care',
+    links: [
+      { label: 'My Orders', to: '/orders' },
+      { label: 'Track My Repair', to: '/my-repairs' },
+      { label: 'Wishlist', to: '/wishlist' },
+      { label: 'Support Chat', to: '/support' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About Us', to: '/about' },
+      { label: 'Repair Services', to: '/repairs' },
+      { label: 'Book a Repair', to: '/book-repair' },
       { label: 'Trade-In', to: '/trade-in' },
     ],
   },
+]
+
+// Swap these for the shop's own social pages when they exist.
+const socials = [
   {
-    title: 'Repairs',
-    links: [
-      { label: 'Repair Services', to: '/repairs' },
-      { label: 'Book a Repair', to: '/book-repair' },
-      { label: 'Track My Repair', to: '/my-repairs' },
-    ],
+    label: 'WhatsApp',
+    href: 'https://wa.me/919876543210',
+    path: 'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z',
   },
   {
-    title: 'Help',
-    links: [
-      { label: 'My Orders', to: '/orders' },
-      { label: 'Wishlist', to: '/wishlist' },
-      { label: 'Support Chat', to: '/support' },
-      { label: 'About Us', to: '/about' },
-    ],
+    label: 'Instagram',
+    href: 'https://www.instagram.com/',
+    path: 'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4ZM21.9 7.9a6 6 0 0 0-1.6-4.2A6 6 0 0 0 16 2.1C14.4 2 9.6 2 8 2.1a6 6 0 0 0-4.2 1.6A6 6 0 0 0 2.1 8C2 9.6 2 14.4 2.1 16a6 6 0 0 0 1.6 4.2A6 6 0 0 0 8 21.9c1.6.1 6.4.1 8 0a6 6 0 0 0 4.2-1.6 6 6 0 0 0 1.6-4.2c.1-1.6.1-6.4 0-8Zm-2.1 9.9a3.3 3.3 0 0 1-1.9 1.9c-1.3.5-4.4.4-5.9.4s-4.6.1-5.9-.4a3.3 3.3 0 0 1-1.9-1.9c-.5-1.3-.4-4.4-.4-5.8s-.1-4.6.4-5.9a3.3 3.3 0 0 1 1.9-1.9C7.4 3.7 10.5 3.8 12 3.8s4.6-.1 5.9.4a3.3 3.3 0 0 1 1.9 1.9c.5 1.3.4 4.4.4 5.9s.1 4.5-.4 5.8Z',
+  },
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/',
+    path: 'M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z',
+  },
+  {
+    label: 'YouTube',
+    href: 'https://www.youtube.com/',
+    path: 'M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8ZM9.8 15V9l5.8 3-5.8 3Z',
   },
 ]
 
-const contacts = [
-  { icon: 'call', text: '+91 98765 43210', href: 'tel:+919876543210' },
-  { icon: 'mail', text: 'support@phonefixpro.com', href: 'mailto:support@phonefixpro.com' },
-  { icon: 'location_on', text: 'Bengaluru, Karnataka' },
-]
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const promises = [
-  { icon: 'verified_user', label: 'Secure checkout' },
-  { icon: 'local_shipping', label: 'Free delivery over ₹500' },
-  { icon: 'replay', label: '7-day returns' },
-  { icon: 'build_circle', label: '6-month repair warranty' },
-]
+export default function EcommerceFooter() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null)
 
-interface EcommerceFooterProps {
-  compact?: boolean
-}
+  const subscribe = (e: FormEvent) => {
+    e.preventDefault()
+    const value = email.trim()
+    if (!EMAIL_RE.test(value)) {
+      setStatus({ ok: false, text: 'Please enter a valid email address.' })
+      return
+    }
+    // No newsletter API yet: remember the address in this browser only.
+    try { localStorage.setItem('newsletter_email', value) } catch { /* storage blocked */ }
+    setEmail('')
+    setStatus({ ok: true, text: 'Thanks! You’ll hear about new launches and offers first.' })
+  }
 
-export default function EcommerceFooter({ compact = false }: EcommerceFooterProps) {
   return (
-    <footer
-      className="text-white"
-      style={{
-        fontFamily: 'var(--font-ui)',
-        background: '#0b0b0c',
-      }}
-    >
-      <div className="h-[3px] w-full" style={{ background: 'linear-gradient(90deg, #a3122a, #ff5a6e, #a3122a)' }} />
-
-      <div className={`max-w-[1440px] mx-auto px-6 md:px-12 ${compact ? 'py-6' : 'py-8'}`}>
-        <div className="grid grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-x-8 gap-y-6">
-          {/* Brand + contact */}
-          <div className="col-span-2 md:col-span-1 flex flex-col gap-3">
-            <Link to="/home" className="flex items-center gap-2.5 w-fit">
-              <span className="w-9 h-9 rounded-lg bg-[#D91E36] flex items-center justify-center shadow-lg shadow-black/30">
-                <span className="font-bold text-white text-label tracking-tight">PF</span>
-              </span>
-              <span className="leading-tight">
-                <span className="block font-bold text-body" style={{ fontFamily: 'var(--font-display)' }}>PhoneFix Pro</span>
-                <span className="block text-white/45 text-micro tracking-[0.12em]">PHONES · ACCESSORIES · REPAIRS</span>
+    <footer className="pff">
+      <div className="pff-inner">
+        <div className="pff-top">
+          <div className="pff-brand">
+            <Link to="/home" className="pff-logo" aria-label="PhoneFix home">
+              <span className="pff-logo-mark"><Wrench size={22} /></span>
+              <span>
+                <span className="pff-logo-name">PhoneFix<b>.</b></span>
+                <span className="pff-logo-tag">Premium Mobile Store</span>
               </span>
             </Link>
-            <p className="text-white/60 text-caption leading-relaxed max-w-[300px]">
-              Genuine devices and same-day repairs, with honest pricing and a warranty on every fix.
+            <p>
+              PhoneFix is where genuine devices meet honest repairs. We sell original smartphones and
+              accessories, and fix phones with tested parts and a warranty on every repair.
             </p>
-            <ul className="flex flex-col gap-1.5">
-              {contacts.map((c) => {
-                const content = (
-                  <>
-                    <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: 'var(--text-body)' }}>{c.icon}</span>
-                    {c.text}
-                  </>
-                )
-                return (
-                  <li key={c.icon} className="text-white/65 text-caption">
-                    {c.href ? (
-                      <a href={c.href} className="inline-flex items-center gap-2 hover:text-white transition-colors">{content}</a>
-                    ) : (
-                      <span className="inline-flex items-center gap-2">{content}</span>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
           </div>
 
-          {/* Links */}
-          {linkColumns.map((col) => (
-            <nav key={col.title} aria-label={col.title} className="flex flex-col gap-2">
-              <h2 className="text-micro font-bold uppercase tracking-[0.14em] text-[#ff8a98] mb-0.5">{col.title}</h2>
-              {col.links.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.to}
-                  className="text-white/65 hover:text-white text-label w-fit transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+          <form className="pff-news" onSubmit={subscribe} noValidate>
+            <h2>Newsletter</h2>
+            <div className="pff-news-row">
+              <label htmlFor="pff-email" className="pff-sr">Email address</label>
+              <input
+                id="pff-email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="Enter email address"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setStatus(null) }}
+              />
+              <button type="submit">Subscribe</button>
+            </div>
+            {status ? (
+              <p className={status.ok ? 'pff-news-ok' : 'pff-news-err'} role="status">{status.text}</p>
+            ) : (
+              <p>Get updates on new phone launches, exclusive deals and repair tips.</p>
+            )}
+          </form>
+        </div>
+
+        <div className="pff-cols">
+          {columns.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <h2>{col.title}</h2>
+              <ul>
+                {col.links.map((l) => (
+                  <li key={l.label}><Link to={l.to}>{l.label}</Link></li>
+                ))}
+              </ul>
             </nav>
           ))}
+
+          <div className="pff-connect">
+            <h2>Connect With Us</h2>
+            <ul>
+              <li><a href="mailto:support@phonefixpro.com"><Mail size={15} /> support@phonefixpro.com</a></li>
+              <li><a href="tel:+919876543210"><Phone size={15} /> +91 98765 43210</a></li>
+              <li><span><MapPin size={15} /> Chennai, Tamil Nadu</span></li>
+            </ul>
+            <div className="pff-social">
+              {socials.map((s) => (
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={s.path} fill="currentColor" /></svg>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
+
+        <p className="pff-copy">© {new Date().getFullYear()} PhoneFix Pro. All Rights Reserved.</p>
       </div>
 
-      {/* Bottom bar */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: '#000' }}>
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-3 flex flex-col lg:flex-row items-center justify-between gap-3">
-          <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
-            {promises.map((p) => (
-              <li key={p.label} className="flex items-center gap-1.5 text-white/60 text-caption font-medium">
-                <span className="material-symbols-outlined text-[#ff5a6e]" style={{ fontSize: 'var(--text-body)' }}>{p.icon}</span>
-                {p.label}
-              </li>
-            ))}
-          </ul>
-          <p className="text-white/45 text-caption">
-            &copy; {new Date().getFullYear()} PhoneFix Pro. All rights reserved.
-          </p>
-        </div>
-      </div>
     </footer>
   )
 }

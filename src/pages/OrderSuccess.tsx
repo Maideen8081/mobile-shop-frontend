@@ -4,7 +4,6 @@ import {
   Banknote, Calendar, Check, CircleCheck, Home, LifeBuoy, MessageCircle, Package, PackageCheck,
   Receipt, ShoppingBag, Truck,
 } from 'lucide-react'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileOrderSuccess from '../components/mobile/MobileOrderSuccess'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -276,7 +275,6 @@ function DesktopOrderSuccess() {
         </div>
       </main>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

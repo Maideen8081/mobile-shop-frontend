@@ -1,0 +1,175 @@
+.pff {
+  --pff-bg: #fdf4ef;
+  --pff-ink: #1b1210;
+  --pff-text: #5e4f4a;
+  --pff-muted: #8a7a74;
+  --pff-line: #ecd9d0;
+  --pff-red: #d91e36;
+  --pff-red-deep: #a3122a;
+
+  background: var(--pff-bg);
+  color: var(--pff-text);
+  font-family: var(--font-ui);
+  border-top: 1px solid var(--pff-line);
+}
+
+.pff-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 48px 8px;
+}
+
+.pff h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--pff-ink);
+}
+
+/* ── Brand + newsletter ── */
+.pff-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 430px);
+  gap: 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--pff-line);
+}
+
+.pff-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--pff-ink);
+  text-decoration: none;
+}
+.pff-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--pff-red), var(--pff-red-deep));
+  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.25);
+}
+.pff-logo-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.pff-logo-name b { color: var(--pff-red); }
+.pff-logo-tag { display: block; font-size: var(--text-caption); color: var(--pff-muted); }
+
+.pff-brand p {
+  max-width: 620px;
+  margin: 18px 0 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.65;
+}
+
+.pff-news h2 { margin-bottom: 12px; }
+.pff-news-row { display: flex; }
+.pff-news input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--pff-line);
+  border-right: 0;
+  border-radius: 10px 0 0 10px;
+  background: #fff;
+  color: var(--pff-ink);
+  font: inherit;
+  font-size: var(--text-body-sm);
+  outline: none;
+}
+.pff-news input:focus { border-color: var(--pff-red); box-shadow: inset 0 0 0 1px var(--pff-red); }
+.pff-news button {
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 0 10px 10px 0;
+  background: var(--pff-red-deep);
+  color: #fff;
+  font: inherit;
+  font-size: var(--text-body-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pff-news button:hover { background: var(--pff-red); }
+.pff-news p { margin: 12px 0 0; font-size: var(--text-label); line-height: 1.6; }
+.pff-news .pff-news-ok { color: #047857; font-weight: 600; }
+.pff-news .pff-news-err { color: var(--pff-red); font-weight: 600; }
+
+/* ── Link columns ── */
+.pff-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.3fr);
+  gap: 32px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--pff-line);
+}
+.pff-cols ul { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.pff-cols a,
+.pff-cols li > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pff-text);
+  font-size: var(--text-body-sm);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pff-cols nav a:hover,
+.pff-connect li a:hover { color: var(--pff-red); }
+.pff-connect svg { flex-shrink: 0; color: var(--pff-red); }
+
+.pff-social { display: flex; gap: 12px; margin-top: 20px; }
+.pff .pff-social a {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--pff-red-deep);
+  box-shadow: 0 4px 14px rgba(27, 18, 16, 0.06);
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+.pff .pff-social a:hover { background: var(--pff-red); color: #fff; transform: translateY(-2px); }
+.pff .pff-social svg { color: inherit; }
+
+.pff-copy {
+  margin: 0;
+  padding: 18px 0 28px;
+  text-align: center;
+  font-size: var(--text-label);
+  color: var(--pff-muted);
+}
+
+.pff-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .pff-inner { padding: 40px 24px 8px; }
+  .pff-top { grid-template-columns: 1fr; gap: 28px; }
+  .pff-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+}
+
+@media (max-width: 480px) {
+  .pff-inner { padding: 32px 16px 8px; }
+  .pff-logo-name { font-size: 24px; }
+  .pff-news button { padding: 0 16px; }
+  .pff-connect { grid-column: 1 / -1; }
+}

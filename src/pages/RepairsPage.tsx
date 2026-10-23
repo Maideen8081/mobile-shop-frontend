@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import MobileRepairs from '../components/mobile/MobileRepairs'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_20261012230812.mp4'
@@ -413,7 +412,6 @@ function DesktopRepairs() {
         </div>
       </section>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

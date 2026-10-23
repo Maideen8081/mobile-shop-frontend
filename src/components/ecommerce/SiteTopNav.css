@@ -970,11 +970,10 @@
 /* ══════════════════════════════════════════
    SCROLL COMPACT
    ══════════════════════════════════════════ */
+/* The spacer deliberately keeps its expanded height here (see the measure
+   effect in SiteTopNav.tsx): shrinking it made short pages flicker. */
 .pfn-root.pfn-scrolled .pfn-util-bar {
   display: none;
-}
-.pfn-root.pfn-scrolled + .pfn-spacer {
-  height: 124px !important;
 }
 
 /* ══════════════════════════════════════════

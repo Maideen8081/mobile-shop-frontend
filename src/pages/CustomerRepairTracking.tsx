@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import '../components/repair/repairTracking.css'
@@ -313,7 +312,6 @@ export default function CustomerRepairTracking() {
 
       {actions.dialog}
 
-      <div className="hidden lg:block"><EcommerceFooter compact /></div>
 
       {/* Mobile CTA */}
       <div className="rt-mbar lg:hidden">

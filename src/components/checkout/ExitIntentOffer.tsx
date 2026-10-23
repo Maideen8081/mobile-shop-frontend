@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Gift, Loader2, Sparkles, Tag, X } from 'lucide-react'
+import { BadgeCheck, Clock, Gift, Loader2, RotateCcw, ShieldCheck, Sparkles, Tag, Truck, Wallet, X } from 'lucide-react'
 import { offerService, type ExitOffer } from '../../services/offerService'
 import { formatINR, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
 import './ExitIntentOffer.css'
 
-// Once per browser session: the offer is a last nudge, not a nag.
-const SHOWN_KEY = 'checkout_exit_offer_shown'
+// Shown when the shopper does anything on the payment page other than placing
+// the order: ad 1 on the first such click, ad 2 on the next one after closing it.
+// Never more than this per visit.
+const MAX_SHOWS = 2
 const ARM_DELAY_MS = 3000
 
-const wasShown = () => { try { return sessionStorage.getItem(SHOWN_KEY) === '1' } catch { return false } }
-const markShown = () => { try { sessionStorage.setItem(SHOWN_KEY, '1') } catch { /* private mode */ } }
+// Clicks on these are part of the popup or finish the order, so they never open it.
+const IGNORE_SELECTOR = '[data-exit-offer], [data-place-order]'
+// Clicks on these do something, so we hold the action back while the ad is up.
+const ACTION_SELECTOR = 'a[href], button, input, select, textarea, label, summary, [role="button"], [role="radio"], [role="checkbox"], [role="tab"], [role="link"], [role="menuitem"]'
 
 export interface ExitOfferCartItem {
   productId: number
@@ -46,10 +50,20 @@ function hasContent(offer: ExitOffer | null, applied: CheckoutCoupon | null, car
   return Boolean(usableCoupon(offer, applied) || offer.unlock_coupon || offer.cart_savings.length || offer.deals.length || cartCount > 0)
 }
 
+const PERKS = [
+  { icon: Truck, title: 'Free delivery', text: 'Arrives in 3–5 days' },
+  { icon: Wallet, title: 'Cash on Delivery', text: 'Pay when it arrives' },
+  { icon: RotateCcw, title: '7-day returns', text: 'No questions asked' },
+  { icon: ShieldCheck, title: 'Secure checkout', text: 'Details encrypted' },
+]
+
 export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabled, appliedCoupon, onApplyCoupon }: Props) {
   const navigate = useNavigate()
   const [offer, setOffer] = useState<ExitOffer | null>(null)
   const [open, setOpen] = useState(false)
+  // Which ad is showing: 1 = first offer, 2 = "last chance" follow-up.
+  const [variant, setVariant] = useState<1 | 2>(1)
+  const shownCount = useRef(0)
   const [applying, setApplying] = useState(false)
   const [applyError, setApplyError] = useState('')
   const pendingLeave = useRef<(() => void) | null>(null)
@@ -58,12 +72,12 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
   const armed = useRef(false)
 
   const cartCount = cartItems.length
-  const latest = useRef({ enabled, offer, appliedCoupon, cartCount })
-  useLayoutEffect(() => { latest.current = { enabled, offer, appliedCoupon, cartCount } })
+  const latest = useRef({ enabled, offer, appliedCoupon, cartCount, open })
+  useLayoutEffect(() => { latest.current = { enabled, offer, appliedCoupon, cartCount, open } })
 
   const idsKey = productIds.join(',')
   useEffect(() => {
-    if (!enabled || !idsKey || wasShown()) return
+    if (!enabled || !idsKey) return
     let cancelled = false
     offerService
       .getCheckoutExitOffer(idsKey.split(',').map(Number), subtotal)
@@ -73,7 +87,7 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
     return () => { cancelled = true }
   }, [enabled, idsKey, subtotal])
 
-  const ready = enabled && hasContent(offer, appliedCoupon, cartCount) && !wasShown()
+  const ready = enabled && hasContent(offer, appliedCoupon, cartCount)
   // Once the back-button guard entry exists it must stay handled until we leave the page.
   const [guardOn, setGuardOn] = useState(false)
   if (ready && !guardOn) setGuardOn(true)
@@ -86,9 +100,10 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
 
   /** Opens the offer if it's still unseen; returns false when the caller should just carry on leaving. */
   const trigger = useCallback((leave: (() => void) | null) => {
-    const { enabled, offer, appliedCoupon, cartCount } = latest.current
-    if (!enabled || wasShown() || !hasContent(offer, appliedCoupon, cartCount)) return false
-    markShown()
+    const { enabled, offer, appliedCoupon, cartCount, open } = latest.current
+    if (!enabled || open || shownCount.current >= MAX_SHOWS || !hasContent(offer, appliedCoupon, cartCount)) return false
+    shownCount.current += 1
+    setVariant(shownCount.current === 1 ? 1 : 2)
     pendingLeave.current = leave
     setCanLeave(Boolean(leave))
     setApplyError('')
@@ -96,22 +111,34 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
     return true
   }, [])
 
-  // In-app links (header, breadcrumbs, "Back to address"…).
+  // Any click on the page except "Place order": links, buttons, payment options, empty space.
+  // Runs in the capture phase so it sees the click before the page's own handlers.
   useEffect(() => {
     if (!ready) return
     const onClick = (e: MouseEvent) => {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-      const a = (e.target as Element | null)?.closest?.('a[href]') as HTMLAnchorElement | null
-      if (!a || a.closest('[data-exit-offer]') || a.target === '_blank' || a.hasAttribute('download')) return
-      const url = new URL(a.href, window.location.href)
-      if (url.origin !== window.location.origin || url.pathname.startsWith('/checkout')) return
-      const to = url.pathname + url.search + url.hash
-      const leave = () => {
-        const replace = guardActive.current
-        guardActive.current = false
-        navigate(to, { replace })
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      const el = e.target as Element | null
+      if (!el?.closest || el.closest(IGNORE_SELECTOR)) return
+
+      let leave: (() => void) | null = null
+      const a = el.closest('a[href]') as HTMLAnchorElement | null
+      if (a) {
+        if (a.target === '_blank' || a.hasAttribute('download')) return
+        const url = new URL(a.href, window.location.href)
+        if (url.origin !== window.location.origin) return
+        const to = url.pathname + url.search + url.hash
+        if (url.pathname !== window.location.pathname) {
+          leave = () => {
+            const replace = guardActive.current
+            guardActive.current = false
+            navigate(to, { replace })
+          }
+        }
       }
-      if (trigger(leave)) {
+
+      if (!trigger(leave)) return
+      // Hold back whatever the click would have done; the shopper can click again after closing.
+      if (el.closest(ACTION_SELECTOR)) {
         e.preventDefault()
         e.stopPropagation()
       }
@@ -150,7 +177,12 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
   const stay = useCallback(() => {
     pendingLeave.current = null
     setOpen(false)
-  }, [])
+    // The back-button guard is used up once it fires; set it again while an ad is still left.
+    if (guardOn && !guardActive.current && shownCount.current < MAX_SHOWS) {
+      window.history.pushState({ ...window.history.state, exitOfferGuard: true }, '')
+      guardActive.current = true
+    }
+  }, [guardOn])
 
   const leave = () => {
     const go = pendingLeave.current
@@ -200,16 +232,31 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
   const saving = offer.cart_savings[0] ?? localSaving
   const hasOffers = Boolean(coupon || offer.unlock_coupon || offer.deals.length)
   const unlock = offer.unlock_coupon
+  const second = variant === 2
+  // The follow-up ad leads with the biggest discounts so it doesn't repeat the first one.
+  const deals = second
+    ? [...offer.deals].sort((a, b) => b.percent_off - a.percent_off).slice(0, 4)
+    : offer.deals
+  const HeroIcon = second ? Clock : Gift
 
   return (
     <div className="eo-overlay" data-exit-offer onClick={stay}>
-      <div className="eo-card" role="dialog" aria-modal="true" aria-labelledby="eo-title" onClick={(e) => e.stopPropagation()}>
+      <div className={`eo-card${second ? ' eo-card--second' : ''}`} role="dialog" aria-modal="true" aria-labelledby="eo-title" onClick={(e) => e.stopPropagation()}>
         <button type="button" className="eo-close" onClick={stay} aria-label="Close offer"><X size={18} /></button>
 
         <div className="eo-hero">
-          <span className="eo-hero-icon"><Gift size={26} /></span>
-          <h2 id="eo-title">Wait — your order is almost done!</h2>
-          <p>{coupon ? 'Here’s an extra discount to finish checking out.' : hasOffers ? 'Before you go, have a look at these offers.' : 'Your cart is saved — finish your order in one tap.'}</p>
+          <span className="eo-hero-icon"><HeroIcon size={26} /></span>
+          {second ? (
+            <>
+              <h2 id="eo-title">Still thinking it over?</h2>
+              <p>Your cart is saved and ready — here’s why shoppers order today.</p>
+            </>
+          ) : (
+            <>
+              <h2 id="eo-title">Wait — your order is almost done!</h2>
+              <p>{coupon ? 'Here’s an extra discount to finish checking out.' : hasOffers ? 'Before you go, have a look at these offers.' : 'Your cart is saved — finish your order in one tap.'}</p>
+            </>
+          )}
         </div>
 
         <div className="eo-body">
@@ -262,18 +309,29 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
             </div>
           )}
 
-          {saving && (
+          {saving && !second && (
             <p className="eo-saving">
               <Sparkles size={15} />
-              You’re already saving <strong>{saving.percent_off}%</strong> on {saving.name} — prices like this don’t last.
+              <span>You’re already saving <strong>{saving.percent_off}%</strong> on {saving.name} — prices like this don’t last.</span>
             </p>
           )}
 
-          {offer.deals.length > 0 && (
+          {second && (
+            <ul className="eo-perks">
+              {PERKS.map(({ icon: Icon, title, text }) => (
+                <li key={title}>
+                  <Icon size={18} />
+                  <span><strong>{title}</strong>{text}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {deals.length > 0 && (
             <div className="eo-deals">
-              <h3>Deals you might like</h3>
+              <h3>{second ? 'Biggest discounts right now' : 'Deals you might like'}</h3>
               <div className="eo-deal-row">
-                {offer.deals.map((d) => (
+                {deals.map((d) => (
                   <button key={d.variant_id} type="button" className="eo-deal" onClick={() => openDeal(d.product_id, d.variant_id)}>
                     <span className="eo-deal-badge">-{d.percent_off}%</span>
                     <span className="eo-deal-img">
@@ -299,7 +357,9 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
               {applying ? <><Loader2 size={16} className="eo-spin" /> Applying…</> : `Apply ${coupon.code} & complete order`}
             </button>
           ) : (
-            <button type="button" className="eo-primary" onClick={stay} autoFocus>Complete my order</button>
+            <button type="button" className="eo-primary" onClick={stay} autoFocus>
+              {second ? <><BadgeCheck size={16} /> Yes, place my order</> : 'Complete my order'}
+            </button>
           )}
           {canLeave ? (
             <button type="button" className="eo-secondary" onClick={leave}>No thanks, leave checkout</button>

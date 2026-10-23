@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiUser, FiSmartphone, FiAlertCircle, FiCheckCircle, FiArrowRight, FiArrowLeft, FiSend, FiX, FiImage } from 'react-icons/fi'
 import BackBar from '../components/ecommerce/BackBar'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import { deviceBrands } from '../data/repairData'
 import { repairService, type RepairService } from '../services/repairService'
 import { authService } from '../services/authService'
@@ -281,7 +280,6 @@ function DesktopBookRepair() {
             </div>
           </motion.div>
         </main>
-        <EcommerceFooter compact />
       </div>
     )
   }
@@ -651,7 +649,6 @@ function DesktopBookRepair() {
         <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
       </main>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

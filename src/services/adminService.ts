@@ -59,14 +59,22 @@ export interface AdminCustomer {
   name: string
   email: string
   mobile: string
+  /** Google account photo, when the customer has signed in with Google. */
+  avatarUrl: string | null
+  /** 'google' = Google only, 'password' = email + password only, 'both' = linked. */
+  signInMethod: SignInMethod
+  googleLinked: boolean
   isActive: boolean
   isVerified: boolean
   dateJoined: string
+  lastLogin: string | null
   ordersCount: number
   totalSpent: number
   repairsCount: number
   lastOrderAt: string | null
 }
+
+export type SignInMethod = 'google' | 'password' | 'both'
 
 export interface AdminCustomerDetail extends AdminCustomer {
   addresses: {
@@ -97,12 +105,13 @@ export interface CustomerPage {
   count: number
   page: number
   pageSize: number
-  summary: { total: number; active: number; newThisMonth: number; withOrders: number }
+  summary: { total: number; active: number; newThisMonth: number; withOrders: number; google: number }
 }
 
 export interface CustomerQuery {
   search?: string
   status?: '' | 'active' | 'inactive'
+  provider?: '' | 'google' | 'password'
   sort?: 'newest' | 'oldest' | 'spent' | 'orders' | 'name'
   page?: number
   page_size?: number

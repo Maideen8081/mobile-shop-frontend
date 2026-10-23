@@ -5,7 +5,6 @@ import { addManyToCartWithAuth, addToCartWithAuth } from '../utils/cartAuth'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import { useToast } from '../context/ToastContext'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import {
   FALLBACK_IMAGE,
   cartParams,
@@ -252,7 +251,7 @@ export default function WishlistPage() {
         {loading ? (
           <DesktopPageLoader text="Loading your wishlist..." />
         ) : (
-          <div className="wishlist-layout">
+          <div className={`wishlist-layout${products.length === 0 ? ' wishlist-layout--empty' : ''}`}>
             <section className="wishlist-grid-section" aria-labelledby="wishlist-heading">
               <h2 id="wishlist-heading" className="visually-hidden">Wishlist items</h2>
               {products.length === 0 ? (
@@ -301,6 +300,8 @@ export default function WishlistPage() {
               )}
             </section>
 
+            {/* Only worth showing once something is saved. */}
+            {products.length > 0 && (
             <aside className="wishlist-summary" aria-label="Wishlist summary">
               <h2>Total value</h2>
               <div className="summary-total">
@@ -346,11 +347,11 @@ export default function WishlistPage() {
                 Share wishlist
               </button>
             </aside>
+            )}
           </div>
         )}
       </main>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

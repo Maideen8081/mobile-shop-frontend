@@ -162,6 +162,30 @@
 .eo-saving svg { flex-shrink: 0; margin-top: 3px; color: #059669; }
 .eo-saving strong { color: #059669; }
 
+/* Second ad: darker hero so it reads as a different message. */
+.eo-card--second .eo-hero { background: linear-gradient(135deg, #1b1210 0%, #4a1520 100%); }
+
+.eo-perks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.eo-perks li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid #f1e6e3;
+  border-radius: 14px;
+  background: #fffaf9;
+}
+.eo-perks svg { flex-shrink: 0; margin-top: 2px; color: #d91e36; }
+.eo-perks span { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-caption); color: #857d79; }
+.eo-perks strong { font-size: var(--text-label); color: #1b1210; }
+
 .eo-deals h3 {
   margin: 0 0 10px;
   font-size: var(--text-caption);

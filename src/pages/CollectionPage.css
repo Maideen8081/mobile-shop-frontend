@@ -172,13 +172,14 @@
   padding:30px 48px; display:flex; flex-direction:column;
 }
 .wx-hero-eyebrow{
-  display:flex; align-items:center; gap:8px;
+  display:inline-flex; align-items:center; gap:8px;
+  /* Hug the text: the hero text column is a flex column, which would stretch it. */
+  align-self:flex-start; width:fit-content;
   font-size:var(--text-caption); font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   color:#ff8b93; margin-bottom:10px;
   background-color: rgba(0, 0, 0, 0.3); /* Explicit background for contrast */
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
-  display: inline-flex;
 }
 .wx-hero-eyebrow::before{content:''; width:16px; height:2px; background:#ff5a62; display:inline-block;}
 .wx-hero-text h1{

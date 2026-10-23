@@ -61,7 +61,7 @@
 /* ---------- hero ---------- */
 .rt-hero { background: var(--rt-surface); border-bottom: 1px solid var(--rt-line); }
 .rt-hero-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding: 40px 0 32px; flex-wrap: wrap; }
-.rt-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-caption); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--rt-red-dark); margin-bottom: 10px; }
+.rt-eyebrow { width: fit-content; display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-caption); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--rt-red-dark); margin-bottom: 10px; }
 .rt-eyebrow .msi { font-size: var(--text-body); }
 .rt-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.015em; margin: 0; }
 .rt-sub { margin: 10px 0 0; color: var(--rt-muted); font-size: var(--text-body); line-height: 1.55; max-width: 520px; }

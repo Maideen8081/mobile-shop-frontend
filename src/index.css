@@ -1495,3 +1495,17 @@
   background: var(--color-pf-red);
   color: #fff;
 }
+
+/* Indeterminate bar under the Google "Signing you in…" state. */
+@keyframes google-signin-progress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+.google-signin-progress {
+  width: 40%;
+  background: linear-gradient(90deg, transparent, #cb202d, transparent);
+  animation: google-signin-progress 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .google-signin-progress { animation: none; width: 100%; opacity: 0.35; }
+}

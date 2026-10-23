@@ -7,7 +7,6 @@ import { addressService, type AddressData } from '../services/addressService'
 import { reviewService, type Review, type ProductRating } from '../services/reviewService'
 import { cartService } from '../services/cartService'
 import ReviewForm from '../components/ReviewForm'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import { getImageUrl, getProductImage } from '../components/mobile/helpers'
 import { FALLBACK_IMG } from '../components/mobile/fallback'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
@@ -770,7 +769,6 @@ function ProductDetailContent() {
             </div>
           </div>
         </div>
-        <EcommerceFooter compact />
       </div>
     )
   }
@@ -1564,7 +1562,6 @@ function ProductDetailContent() {
         </main>
 
       {/* ===== FOOTER ===== */}
-      <EcommerceFooter compact />
 
       {/* ===== STICKY BUY BAR ===== */}
       <div className={`ax-sticky-bar ${stickyVisible ? 'show' : ''}`}>

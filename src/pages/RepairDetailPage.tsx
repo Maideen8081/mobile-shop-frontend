@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import '../components/ecommerce/SiteTopNav.css'
 import '../components/repair/repairTracking.css'
 import '../components/repair/repairDetail.css'
@@ -99,7 +98,6 @@ export default function RepairDetailPage() {
         {children}
       </main>
       {actions.dialog}
-      <div className="hidden lg:block"><EcommerceFooter compact /></div>
     </div>
   )
 

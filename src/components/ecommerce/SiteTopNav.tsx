@@ -94,6 +94,7 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
   const acctRef = useRef<HTMLDivElement>(null)
   const megaRef = useRef<HTMLDivElement>(null)
   const [navH, setNavH] = useState(0)
+  const utilBarH = useRef(0)
 
   /* ── auth ── */
   useEffect(() => {
@@ -158,7 +159,15 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
   useLayoutEffect(() => {
     const el = rootRef.current
     if (!el) return
-    const measure = () => setNavH(el.offsetHeight)
+    // The spacer keeps the *expanded* height even after the utility bar
+    // collapses on scroll. Shrinking it shortened the page by the bar's height,
+    // which on short pages (e.g. an empty wishlist) pulled scrollY back under
+    // the threshold, re-expanded the bar and made the header flicker.
+    const measure = () => {
+      const util = el.querySelector<HTMLElement>('.pfn-util-bar')
+      if (util) utilBarH.current = util.offsetHeight
+      setNavH(el.offsetHeight + (util ? 0 : utilBarH.current))
+    }
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
     ro?.observe(el)
     window.addEventListener('resize', measure)

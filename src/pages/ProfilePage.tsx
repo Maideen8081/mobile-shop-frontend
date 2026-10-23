@@ -13,7 +13,6 @@ import MobileProfile from '../components/mobile/MobileProfile'
 import { useIsMobile } from '../components/mobile/helpers'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import '../components/ecommerce/SiteTopNav.css'
 import './ProfilePage.css'
 
@@ -290,7 +289,6 @@ function DesktopProfile() {
         </main>
       </div>
 
-      <EcommerceFooter compact />
 
       {modal === 'edit' && (
         <EditProfileModal

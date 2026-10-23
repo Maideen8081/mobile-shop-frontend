@@ -15,6 +15,7 @@ import TopSales from './TopSales'
 import CouponsOffers from './CouponsOffers'
 import Partners from './Partners'
 import Testimonials from './Testimonials'
+import StoreLocation from '../ecommerce/StoreLocation'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 import MobileHomeLoader from './MobileHomeLoader'
@@ -177,6 +178,7 @@ export default function MobileHome() {
         <Partners />
         <Testimonials />
         <ProductSection title="Recommended For You" viewAllTo="/collection/all" products={recommended} />
+        <StoreLocation compact />
       </div>
 
       <MobileBottomNav />

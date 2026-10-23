@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
 
 const team = [
@@ -252,7 +251,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

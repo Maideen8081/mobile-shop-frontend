@@ -5,7 +5,6 @@ import { categoryService } from '../services/categoryService'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import EcommerceFooter from '../components/ecommerce/Footer'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 480%22 fill=%22%23f1eeeb%22%3E%3Crect width=%22400%22 height=%22480%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2218%22 fill=%22%2322C55E%22%3EProduct%3C/text%3E%3C/svg%3E'
@@ -161,7 +160,6 @@ export default function AccessoriesPage() {
       <>
         <SiteTopNav />
         <DesktopPageLoader text="Loading accessories..." />
-        <EcommerceFooter compact />
       </>
     )
   }
@@ -338,7 +336,6 @@ export default function AccessoriesPage() {
         </div>
       </section>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

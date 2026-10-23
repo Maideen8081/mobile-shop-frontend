@@ -317,7 +317,7 @@ export default function MobilePayment() {
               <p className="text-caption font-semibold text-[#6B7280] mb-3">Pay using UPI apps</p>
               <div className="grid grid-cols-4 gap-2.5">
                 {[{ n: 'GPay', e: '🟢' }, { n: 'PhonePe', e: '🟣' }, { n: 'Paytm', e: '🔵' }, { n: 'UPI', e: '🅰️' }].map(a => (
-                  <button key={a.n} onClick={handlePayment} disabled={processing}
+                  <button key={a.n} data-place-order onClick={handlePayment} disabled={processing}
                     className="h-16 rounded-[14px] bg-[#FFFBFB] flex flex-col items-center justify-center gap-1 active:scale-95 transition disabled:opacity-60">
                     <span className="text-xl">{a.e}</span>
                     <span className="text-micro font-semibold text-[#1F2937]">{a.n}</span>
@@ -326,7 +326,7 @@ export default function MobilePayment() {
               </div>
               <div className="flex items-center gap-2 mt-3">
                 <input placeholder="enter UPI ID (name@bank)" className="flex-1 h-11 px-3 rounded-2xl text-label bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
-                <button onClick={handlePayment} disabled={processing} className="h-11 px-5 rounded-2xl text-label font-bold text-white disabled:opacity-60"
+                <button data-place-order onClick={handlePayment} disabled={processing} className="h-11 px-5 rounded-2xl text-label font-bold text-white disabled:opacity-60"
                   style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Pay</button>
               </div>
             </div>
@@ -359,7 +359,7 @@ export default function MobilePayment() {
 
       {/* Fixed pay button */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3">
-        <button onClick={handlePayment} disabled={processing}
+        <button data-place-order onClick={handlePayment} disabled={processing}
           className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           {processing ? <><FiLoader size={18} className="animate-spin" /> PAYING…</> : <>Pay {formatPrice(grandTotal)}</>}

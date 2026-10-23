@@ -33,6 +33,7 @@
 }
 
 .sec-eyebrow {
+  width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 7px;

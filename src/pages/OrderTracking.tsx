@@ -5,7 +5,6 @@ import { orderService } from '../services/orderService'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import BackBar from '../components/ecommerce/BackBar'
-import EcommerceFooter from '../components/ecommerce/Footer'
 
 interface OrderItem {
   productId: number
@@ -577,7 +576,6 @@ export default function OrderTracking() {
         <SiteTopNav />
         <BackBar label="Back to Orders" to="/orders" />
         <OrderDetailView order={selectedOrder} onBack={() => setSelectedOrder(null)} />
-        <EcommerceFooter compact />
       </div>
     )
   }
@@ -688,7 +686,6 @@ export default function OrderTracking() {
         </div>
       </main>
 
-      <EcommerceFooter compact />
     </div>
   )
 }

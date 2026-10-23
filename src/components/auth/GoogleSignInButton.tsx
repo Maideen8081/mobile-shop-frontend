@@ -35,6 +35,9 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
   const slot = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading')
   const [busy, setBusy] = useState(false)
+  // Width Google rendered its button at, so the busy state can take its exact place.
+  const [buttonWidth, setButtonWidth] = useState(0)
+  const elapsed = useElapsedSeconds(busy)
 
   const fail = useCallback((message: string) => {
     if (onError) onError(message)
@@ -49,7 +52,10 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
       toast.show(created ? 'Welcome to PhoneFix! Your account is ready.' : 'Welcome back!', 'success')
       const redirect = sessionStorage.getItem('redirect_after_login')
       sessionStorage.removeItem('redirect_after_login')
-      navigate(redirect || '/home', { replace: true })
+      // A brand-new account has an empty cart and wishlist, so a saved
+      // "return to" page (often left over from browsing while signed out)
+      // is no use to it: start new customers on the home page.
+      navigate(created ? '/home' : redirect || '/home', { replace: true })
     } catch (err) {
       fail(errorMessage(err))
       setBusy(false)
@@ -77,6 +83,7 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
           const width = Math.max(200, Math.min(400, Math.floor(el.clientWidth)))
           if (width === lastWidth) return
           lastWidth = width
+          setButtonWidth(width)
           el.innerHTML = ''
           gis.renderButton(el, {
             type: 'standard',
@@ -106,8 +113,14 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
 
   return (
     <div className={`relative w-full ${className}`} aria-busy={busy || status === 'loading'}>
-      {/* Google renders its own accessible button into this slot. */}
-      <div ref={slot} className="flex justify-center w-full" style={{ minHeight: 44, colorScheme: 'light' }} />
+      {/* Google renders its own accessible button into this slot. It stays
+          mounted (just hidden) while signing in so it doesn't re-render. */}
+      <div
+        ref={slot}
+        className={`flex justify-center w-full transition-opacity duration-200 ${busy ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        style={{ minHeight: 44, colorScheme: 'light' }}
+        aria-hidden={busy || undefined}
+      />
 
       {status === 'loading' && (
         <div className="absolute inset-0 rounded-xl animate-pulse" style={{ background: '#F3EDE9' }} aria-hidden="true" />
@@ -117,15 +130,53 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
           Google sign-in couldn't load. Check your connection or any content blockers, then refresh.
         </p>
       )}
-      {busy && (
-        <div className="absolute inset-0 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
-          style={{ background: 'rgba(255,255,255,0.92)', color: '#1b1210' }} role="status">
-          <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" opacity=".25" /><path d="M21 12a9 9 0 0 1-9 9" />
-          </svg>
-          Signing you in…
-        </div>
-      )}
+      {busy && <SigningInState width={buttonWidth} elapsed={elapsed} />}
+    </div>
+  )
+}
+
+/** Seconds since `active` became true; resets to 0 when it turns false. */
+function useElapsedSeconds(active: boolean) {
+  const [seconds, setSeconds] = useState(0)
+  useEffect(() => {
+    if (!active) return
+    const started = Date.now()
+    const id = window.setInterval(() => setSeconds(Math.floor((Date.now() - started) / 1000)), 500)
+    return () => {
+      window.clearInterval(id)
+      setSeconds(0)
+    }
+  }, [active])
+  return seconds
+}
+
+/**
+ * Takes the Google button's exact place while the API verifies the token.
+ * The API host sleeps when idle, so the first sign-in can take a while; the
+ * copy changes as time passes so a slow wake-up doesn't look like a hang.
+ */
+function SigningInState({ width, elapsed }: { width: number; elapsed: number }) {
+  const [title, hint] =
+    elapsed < 4 ? ['Signing you in…', 'Verifying your Google account']
+    : elapsed < 12 ? ['Still working…', 'Setting up your session']
+    : ['Almost there…', 'The first sign-in can take up to a minute']
+
+  return (
+    <div className="absolute inset-0 flex justify-center" role="status" aria-live="polite">
+      <div
+        className="relative h-11 overflow-hidden flex items-center justify-center gap-3 px-4 bg-white"
+        style={{ width: width || '100%', border: '1px solid #dadce0', borderRadius: 4 }}
+      >
+        <svg className="animate-spin shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="#e8eaed" strokeWidth="3" />
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="#cb202d" strokeWidth="3" strokeLinecap="round" />
+        </svg>
+        <span className="min-w-0 text-left leading-tight">
+          <span className="block text-sm font-semibold truncate" style={{ color: '#1b1210' }}>{title}</span>
+          <span className="block text-[11px] truncate" style={{ color: '#857d79' }}>{hint}</span>
+        </span>
+        <span className="google-signin-progress absolute left-0 bottom-0 h-[2px]" aria-hidden="true" />
+      </div>
     </div>
   )
 }

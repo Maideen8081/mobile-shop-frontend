@@ -6,7 +6,6 @@ import {
 import { addressService, type AddressData } from '../services/addressService'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import EcommerceFooter from '../components/ecommerce/Footer'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
@@ -309,7 +308,6 @@ function DesktopAddressManagement() {
         )}
       </main>
 
-      <EcommerceFooter compact />
 
       {formOpen && (
         <div className="am-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget && !saving) setFormOpen(false) }}>
