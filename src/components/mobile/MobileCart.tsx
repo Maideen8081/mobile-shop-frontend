@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { requireSignInForWishlist } from '../../utils/wishlist'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, Star, Check, Bike } from 'lucide-react'
@@ -173,6 +174,7 @@ export default function MobileCart() {
 
   const toggleWish = (p: any) => {
     const id = p.id || p.product_id
+    if (!requireSignInForWishlist(navigate)) return
     setWishlisted((prev) => {
       const next = new Set(prev)
       const stored: number[] = JSON.parse(localStorage.getItem('wishlist') || '[]')

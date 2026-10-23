@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { categoryService } from '../../services/categoryService'
 import { authService } from '../../services/authService'
+import { getWishlistCount } from '../../utils/wishlist'
 import { cartService } from '../../services/cartService'
 import './SiteTopNav.css'
 
@@ -111,17 +112,14 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
 
   /* ── wishlist ── */
   useEffect(() => {
-    const update = () => {
-      try {
-        const stored = JSON.parse(localStorage.getItem('wishlist') || '[]')
-        setWishlistCount(Array.isArray(stored) ? stored.length : 0)
-      } catch {
-        setWishlistCount(0)
-      }
-    }
+    const update = () => setWishlistCount(getWishlistCount())
     update()
     window.addEventListener('wishlist-updated', update)
-    return () => window.removeEventListener('wishlist-updated', update)
+    window.addEventListener('auth-changed', update)
+    return () => {
+      window.removeEventListener('wishlist-updated', update)
+      window.removeEventListener('auth-changed', update)
+    }
   }, [])
 
   /* ── cart ── */

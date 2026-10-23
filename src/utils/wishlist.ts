@@ -25,8 +25,45 @@ export function getProductName(product: any): string {
   return product.product_name ?? product.name ?? ''
 }
 
+// The wishlist belongs to a signed-in user. Guests never have one.
+export function isSignedIn(): boolean {
+  try {
+    return !!localStorage.getItem('is_authenticated')
+  } catch {
+    return false
+  }
+}
+
+/** Drop wishlist data left behind by a guest or an expired session. */
+export function clearGuestWishlist() {
+  if (isSignedIn()) return
+  try {
+    if (localStorage.getItem('wishlist') === null) return
+    localStorage.removeItem('wishlist')
+  } catch {
+    return
+  }
+  window.dispatchEvent(new Event('wishlist-updated'))
+}
+
+/**
+ * Call before changing the wishlist. Returns true when the user is signed in;
+ * otherwise sends them to login (coming back here afterwards) and returns false.
+ */
+export function requireSignInForWishlist(navigate: (to: string) => void): boolean {
+  if (isSignedIn()) return true
+  sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search)
+  navigate('/login')
+  return false
+}
+
+export function getWishlistCount(): number {
+  return isSignedIn() ? readWishlistIds().length : 0
+}
+
 // Some pages store wishlist entries as ids, others as { id } objects.
 export function readWishlistIds(): number[] {
+  if (!isSignedIn()) return []
   try {
     const stored: any[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
     return [...new Set(stored.map((x) => Number(typeof x === 'object' && x ? x.id : x)).filter(Boolean))]

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams, Link, useNavigate } from 'react-router-dom'
+import { requireSignInForWishlist } from '../utils/wishlist'
 import { Search, X, Clock, ArrowRight, TrendingUp, Sparkles, ShoppingCart, Heart, Eye } from 'lucide-react'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
@@ -83,6 +84,7 @@ function addToHistory(term: string, current: string[]): string[] {
 }
 
 export default function SearchPage() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { show: showToast } = useToast()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -171,6 +173,7 @@ export default function SearchPage() {
   const toggleWishlist = (id: number, e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
+    if (!requireSignInForWishlist(navigate)) return
     const stored: any[] = JSON.parse(localStorage.getItem('wishlist') || '[]')
     const exists = stored.findIndex((p: any) => (p.id || p) === id)
     if (exists >= 0) {

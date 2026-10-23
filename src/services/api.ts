@@ -26,7 +26,9 @@ const USER_KEY = 'user_profile'
 function clearLocalAuthState() {
   localStorage.removeItem(AUTH_FLAG)
   localStorage.removeItem(USER_KEY)
+  localStorage.removeItem('wishlist')
   window.dispatchEvent(new Event('auth-changed'))
+  window.dispatchEvent(new Event('wishlist-updated'))
 }
 
 const api = axios.create({

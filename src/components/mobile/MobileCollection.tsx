@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
+import { getWishlistCount, requireSignInForWishlist } from '../../utils/wishlist'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Sparkles, Flame, TrendingUp, Star, Trophy } from 'lucide-react'
 import { productService } from '../../services/productService'
@@ -78,7 +79,7 @@ export default function MobileCollection() {
   useEffect(() => {
     const updateCart = () => setCartCount(cartService.getCachedCartCount())
     const updateWishlist = () => {
-      try { setWishlistCount((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).length) } catch { setWishlistCount(0) }
+      setWishlistCount(getWishlistCount())
     }
     updateCart()
     updateWishlist()
@@ -246,6 +247,7 @@ export default function MobileCollection() {
                     wishlist={wishlist}
                     onWishlistToggle={(id, e) => {
                       e.stopPropagation()
+                      if (!requireSignInForWishlist(navigate)) return
                       setWishlist((prev) => {
                         const next = new Set(prev)
                         if (next.has(id)) next.delete(id)

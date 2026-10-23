@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { requireSignInForWishlist } from '../utils/wishlist'
 import { categoryService } from '../services/categoryService'
 import { productService } from '../services/productService'
 import EcommerceFooter from '../components/ecommerce/Footer'
@@ -316,6 +317,7 @@ export default function CollectionPage() {
 
   const toggleWishlist = (e: React.MouseEvent, id: number) => {
     e.stopPropagation()
+    if (!requireSignInForWishlist(navigate)) return
     setWishlist((prev) => {
       const next = new Set(prev)
       let added = false

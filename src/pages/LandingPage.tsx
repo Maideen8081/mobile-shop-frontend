@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { requireSignInForWishlist } from '../utils/wishlist'
 import { categoryService } from '../services/categoryService'
 import { productService } from '../services/productService'
 import type { Category } from '../services/categoryService'
@@ -327,6 +328,7 @@ const categoryIconMap: Record<string, string> = {
 
 export default function LandingPage() {
   const { show: showToast } = useToast()
+  const navigate = useNavigate()
   const [wishlist, setWishlist] = useState<Set<number>>(() => {
     try {
       return new Set(JSON.parse(localStorage.getItem('wishlist') || '[]'))
@@ -376,6 +378,7 @@ export default function LandingPage() {
 
   const toggleWishlist = (id: number, e?: React.MouseEvent) => {
     e?.stopPropagation()
+    if (!requireSignInForWishlist(navigate)) return
     setWishlist((prev) => {
       const next = new Set(prev)
       let added = false

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, Bell, ShoppingBag, Heart, Search, Mic, QrCode, Camera } from 'lucide-react'
 import { authService } from '../../services/authService'
+import { getWishlistCount } from '../../utils/wishlist'
 import { cartService } from '../../services/cartService'
 
 export default function MobileHeader() {
@@ -15,7 +16,7 @@ export default function MobileHeader() {
   useEffect(() => {
     const updateCart = () => setCartCount(cartService.getCachedCartCount())
     const updateWishlist = () => {
-      try { setWishlistCount((JSON.parse(localStorage.getItem('wishlist') || '[]') as number[]).length) } catch { setWishlistCount(0) }
+      setWishlistCount(getWishlistCount())
       try {
         const raw = localStorage.getItem('user_profile')
         if (raw) {
