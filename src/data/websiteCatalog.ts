@@ -8,7 +8,7 @@ export type WebProduct = {
 };
 
 export const WEB_PRODUCTS: WebProduct[] = [
-  { slug: "phone-10t", name: "Flagship 5G Phone", tag: "Phones", price: 42999, blurb: "AMOLED display, fast charging, 256GB.", src: "/products/phone-10t.png" },
+  { slug: "phone-10t", name: "Flagship 5G Phone", tag: "Phones", price: 42999, blurb: "AMOLED display, fast charging, 256GB.", src: "/phones/ios-a.png" },
   { slug: "headphones-anc", name: "Cloud ANC Headphones", tag: "Audio", price: 2999, blurb: "Active noise cancelling, soft ear cushions.", src: "/products/headphones-anc.png" },
   { slug: "earbuds-chrome", name: "Chrome ANC Earbuds", tag: "Audio", price: 1999, blurb: "Quad mic, 40-hour playtime with the case.", src: "/products/earbuds-chrome.png" },
   { slug: "powerbank", name: "42,800mAh Power Bank", tag: "Power", price: 2499, blurb: "Four built-in cables, 22.5W PD in and out.", src: "/products/powerbank.png" },

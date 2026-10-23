@@ -48,7 +48,8 @@ export default function WebsiteExperience() {
           onUpdate: (self) => {
             const pos = self.progress * (NR - 1), idx = Math.round(pos);
             ringItems.forEach((el, i) => {
-              const d = Math.abs(i - pos);
+              // circular distance so the ring wraps: first item shows the last one as its left neighbour
+              const raw = Math.abs(i - pos), d = Math.min(raw, NR - raw);
               gsap.set(el.firstElementChild, { opacity: gsap.utils.clamp(0, 1, 1.15 - d * 0.42) });
             });
             sync(idx);

@@ -121,6 +121,17 @@ export const authService = {
     return r.data
   },
 
+  /** Exchange a Google ID token (from Google Identity Services) for a session. */
+  googleLogin: async (credential: string) => {
+    localStorage.removeItem(USER_KEY)
+    const r = await api.post(`${BASE}/google/`, { credential })
+    saveUserProfile(r.data)
+    markAuthenticated()
+    // Login rotates the CSRF secret server-side; pick up the new token.
+    await refreshCsrfToken()
+    return r.data as { data?: { created?: boolean } }
+  },
+
   register: async (data: RegisterData) => {
     localStorage.removeItem(USER_KEY)
     const payload = {

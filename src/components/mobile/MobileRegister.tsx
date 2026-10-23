@@ -6,6 +6,7 @@ import { createValidator, required, email, minLength, passwordStrength } from '.
 import { useAuth } from '../../context/AuthContext'
 import { useMobileToast } from './useMobileToast'
 import EyeIcon from '../auth/EyeIcon'
+import GoogleSignInButton from '../auth/GoogleSignInButton'
 
 const RULES = [
   { label: '8+ chars', test: (p: string) => p.length >= 8 },
@@ -200,6 +201,13 @@ export default function MobileRegister() {
               ) : 'Create Account'}
             </button>
           </form>
+
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-[#E5E7EB]" />
+            <span className="text-micro font-medium text-[#9CA3AF]">or</span>
+            <div className="flex-1 h-px bg-[#E5E7EB]" />
+          </div>
+          <GoogleSignInButton mode="signup" onError={(m) => showToast(m, 'error')} />
 
           <p className="text-center text-label text-[#6B7280] mt-5">
             Already have an account?{' '}

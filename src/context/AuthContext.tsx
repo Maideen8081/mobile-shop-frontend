@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback, type ReactNode } from 'react'
 import { authService, bootstrapCsrf, type UserProfile } from '../services/authService'
+import { googleSignOut } from '../components/auth/googleIdentity'
 
 interface AuthContextValue {
   user: UserProfile | null
@@ -7,6 +8,8 @@ interface AuthContextValue {
   isAdmin: boolean
   loading: boolean
   login: (data: { email: string; password: string }) => Promise<void>
+  /** Resolves true when the Google sign-in created a new account. */
+  googleLogin: (credential: string) => Promise<boolean>
   register: (data: { fullName: string; email: string; password: string; confirmPassword: string }) => Promise<void>
   adminLogin: (data: { email: string; password: string }) => Promise<void>
   logout: () => Promise<void>
@@ -68,6 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await refresh()
   }, [refresh])
 
+  const googleLogin = useCallback(async (credential: string) => {
+    const res = await authService.googleLogin(credential)
+    await refresh()
+    return Boolean(res?.data?.created)
+  }, [refresh])
+
   const register = useCallback(async (data: { fullName: string; email: string; password: string; confirmPassword: string }) => {
     await authService.register(data)
     await refresh()
@@ -83,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await authService.logout()
+    googleSignOut()
     setUser(null)
     setIsAuthenticated(false)
     setIsAdmin(false)
@@ -101,12 +111,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin: isAdmin || Boolean(user?.isAdmin),
     loading: !initialized,
     login,
+    googleLogin,
     register,
     adminLogin,
     logout,
     adminLogout,
     refresh,
-  }), [user, isAuthenticated, isAdmin, initialized, login, register, adminLogin, logout, adminLogout, refresh])
+  }), [user, isAuthenticated, isAdmin, initialized, login, googleLogin, register, adminLogin, logout, adminLogout, refresh])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

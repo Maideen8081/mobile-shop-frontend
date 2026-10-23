@@ -248,17 +248,18 @@ function ProductDetailContent() {
   const handleNotifySubmit = async () => {
     if (!notifyEmail || !validateEmail(notifyEmail)) return
     try {
-      await productService.notifyWhenAvailable(
+      const res = await productService.notifyWhenAvailable(
         apiProduct?.id,
         activeVariant?.id ?? null,
         notifyEmail
       )
-      
       setNotifyOpen(false)
       setNotifyEmail('')
-      showToast('You\'ll be notified when this product is back in stock!')
-    } catch {
-      showToast('Failed to save notification. Please try again.')
+      showToast(res?.message || 'You\'ll be notified when this product is back in stock!')
+    } catch (err: any) {
+      const data = err?.response?.data
+      const fieldError = data?.email?.[0] || data?.variant_id?.[0]
+      showToast(data?.message || fieldError || data?.detail || 'Failed to save notification. Please try again.')
     }
   }
 

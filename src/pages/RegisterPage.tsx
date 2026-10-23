@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext'
 import MobileRegister from '../components/mobile/MobileRegister'
 import { useIsMobile } from '../components/mobile/helpers'
 import EyeIcon from '../components/auth/EyeIcon'
+import GoogleSignInButton from '../components/auth/GoogleSignInButton'
 
 interface RegisterFormData {
   fullName: string
@@ -347,6 +348,13 @@ function DesktopRegister() {
               ) : 'Create Account'}
             </button>
           </form>
+
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px" style={{ background: '#ece4e0' }} />
+            <span className="text-xs font-medium" style={{ color: '#a8a09c' }}>or</span>
+            <div className="flex-1 h-px" style={{ background: '#ece4e0' }} />
+          </div>
+          <GoogleSignInButton mode="signup" />
 
           <p className="text-center text-sm mt-7" style={{ color: '#857d79' }}>
             Already have an account?{' '}

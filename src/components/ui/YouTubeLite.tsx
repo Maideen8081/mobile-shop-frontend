@@ -8,6 +8,15 @@ interface YouTubeLiteProps {
   className?: string
 }
 
+/** Thumbnail sizes from best to always-available. */
+const THUMB_SIZES = ['maxresdefault', 'sddefault', 'hqdefault'] as const
+
+function nextThumb(img: HTMLImageElement, videoId: string) {
+  const current = THUMB_SIZES.findIndex(s => img.src.includes(`/${s}.jpg`))
+  const next = THUMB_SIZES[current + 1]
+  if (next) img.src = `https://img.youtube.com/vi/${videoId}/${next}.jpg`
+}
+
 /**
  * Lightweight YouTube facade: shows the video's thumbnail until the user
  * hovers (plays muted, so autoplay is allowed) or clicks (plays with sound),
@@ -62,10 +71,11 @@ export default function YouTubeLite({ videoId, title, subtitle, className = '' }
           className="absolute inset-0 w-full h-full cursor-pointer"
         >
           <img
-            src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-            onError={(e) => {
-              e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
-            }}
+            src={`https://img.youtube.com/vi/${videoId}/${THUMB_SIZES[0]}.jpg`}
+            // Missing sizes come back as a 404 *with* a valid 120x90 grey placeholder image,
+            // so onError alone never fires; detect the placeholder by size and step down.
+            onLoad={(e) => { if (e.currentTarget.naturalWidth <= 120) nextThumb(e.currentTarget, videoId) }}
+            onError={(e) => nextThumb(e.currentTarget, videoId)}
             alt=""
             loading="lazy"
             className="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"

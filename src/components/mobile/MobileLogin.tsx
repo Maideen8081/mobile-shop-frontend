@@ -4,6 +4,7 @@ import { FiMail, FiLock, FiChevronLeft } from 'react-icons/fi'
 import { useAuthForm } from '../../hooks/useAuthForm'
 import { createValidator, required, email } from '../../utils/validation'
 import { useAuth } from '../../context/AuthContext'
+import GoogleSignInButton from '../auth/GoogleSignInButton'
 import { useMobileToast } from './useMobileToast'
 import EyeIcon from '../auth/EyeIcon'
 
@@ -145,10 +146,12 @@ export default function MobileLogin() {
             </button>
           </form>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-label font-semibold text-[#1F2937]">G Google</button>
-            <button className="flex items-center justify-center gap-2 h-11 rounded-2xl border border-[#E5E7EB] text-label font-semibold text-[#1F2937]"> Apple</button>
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-[#E5E7EB]" />
+            <span className="text-micro font-medium text-[#9CA3AF]">or</span>
+            <div className="flex-1 h-px bg-[#E5E7EB]" />
           </div>
+          <GoogleSignInButton mode="signin" onError={(m) => showToast(m, 'error')} />
         </div>
 
         <p className="text-center text-label text-[#6B7280] mt-5">
