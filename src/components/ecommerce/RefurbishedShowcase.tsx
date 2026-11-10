@@ -21,14 +21,6 @@ interface RefurbishedShowcaseProps {
   loading: boolean
 }
 
-const CHECKS = [
-  'Display and touch',
-  'Battery health',
-  'Cameras',
-  'Speakers and mic',
-  'Buttons and ports',
-  'Network and Wi-Fi',
-]
 
 function Ic({ children, className }: { children: ReactNode; className?: string }) {
   return (
@@ -211,13 +203,15 @@ export default function RefurbishedShowcase({ devices, loading }: RefurbishedSho
                 {devices.map((d, i) => (
                   <ProductCard
                     key={d.id}
-                    {...d}
+                    id={d.id}
+                    name={d.name}
+                    image={d.image}
+                    price={d.price}
+                    mrp={d.mrp}
+                    rating={d.rating}
+                    tag={d.grade}
+                    tone={i % 2 ? 'deep' : 'violet'}
                     order={i}
-                    badge="Refurbished"
-                    overlayTitle="40-point check passed"
-                    checks={CHECKS}
-                    certTitle="Customer rating"
-                    certText="12-month warranty"
                   />
                 ))}
               </div>

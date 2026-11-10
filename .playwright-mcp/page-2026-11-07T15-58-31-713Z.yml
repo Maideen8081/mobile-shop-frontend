@@ -1,0 +1,304 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - generic [ref=f7e5]:
+      - generic [ref=f7e7]:
+        - generic [ref=f7e8]:
+          - generic [ref=f7e14]: Free Delivery
+          - generic [ref=f7e15]: on Orders Over ₹500
+        - generic [ref=f7e16]: 100% Genuine Products
+        - generic [ref=f7e21]: Easy 7-Day Returns
+        - generic [ref=f7e26]: 1-Year Service Support
+        - link "Deals of the Day" [ref=f7e31] [cursor=pointer]:
+          - /url: /collection/all?tab=deals
+      - generic [ref=f7e35]:
+        - link "PhoneFix home" [ref=f7e36] [cursor=pointer]:
+          - /url: /home
+          - generic [ref=f7e40]:
+            - generic [ref=f7e41]: PhoneFix.
+            - generic [ref=f7e42]: Premium Mobile Store
+        - search [ref=f7e43]:
+          - textbox "Search products" [ref=f7e47]:
+            - /placeholder: Search for smartphones, accessories, repairs...
+          - button "Search" [ref=f7e48] [cursor=pointer]
+        - generic [ref=f7e49]:
+          - link "+91 98765 43210" [ref=f7e50] [cursor=pointer]:
+            - /url: tel:+919876543210
+          - generic [ref=f7e53]: Mon – Sat, 10 AM – 8 PM
+        - generic [ref=f7e57]:
+          - button "My account" [ref=f7e59] [cursor=pointer]:
+            - generic [ref=f7e64]: My Account
+          - link "Wishlist" [ref=f7e67] [cursor=pointer]:
+            - /url: /wishlist
+          - link "Cart" [ref=f7e70] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f7e76]:
+        - generic [ref=f7e77]:
+          - button "All Categories" [ref=f7e79] [cursor=pointer]
+          - navigation "Product categories" [ref=f7e85]:
+            - link "Smartphones" [ref=f7e86] [cursor=pointer]:
+              - /url: /collection/Smartphones
+            - link "Tablets" [ref=f7e90] [cursor=pointer]:
+              - /url: /collection/Tablets
+            - link "Smart Watches" [ref=f7e94] [cursor=pointer]:
+              - /url: /collection/Smart%20Watches
+            - link "Earbuds" [ref=f7e101] [cursor=pointer]:
+              - /url: /collection/Earbuds
+            - link "Headphones" [ref=f7e105] [cursor=pointer]:
+              - /url: /collection/Headphones
+            - link "Power Banks" [ref=f7e109] [cursor=pointer]:
+              - /url: /collection/Power%20Banks
+        - generic [ref=f7e115]:
+          - link "Book Repair" [ref=f7e117] [cursor=pointer]:
+            - /url: /book-repair
+          - link "Trade-In" [ref=f7e121] [cursor=pointer]:
+            - /url: /trade-in
+    - main [ref=f7e127]:
+      - region "Featured offers" [ref=f7e128]:
+        - generic [ref=f7e129]:
+          - generic [ref=f7e130]: New Launch
+          - heading "Latest Smartphones Now at PhoneFix" [level=1] [ref=f7e131]: Latest SmartphonesNow at PhoneFix
+          - paragraph [ref=f7e132]: Discover cutting-edge smartphones from top brands with great offers and assured warranty.
+          - list [ref=f7e133]:
+            - listitem [ref=f7e134]:
+              - generic [ref=f7e140]: Up to25% Off
+            - listitem [ref=f7e141]:
+              - generic [ref=f7e145]: No CostEMI
+            - listitem [ref=f7e146]:
+              - generic [ref=f7e151]: BrandWarranty
+          - link "Shop Now" [ref=f7e152] [cursor=pointer]:
+            - /url: /phones
+        - generic [ref=f7e157]:
+          - generic [ref=f7e158]: Limited Time Offer
+          - generic [ref=f7e161]:
+            - generic [ref=f7e162]: Up to
+            - strong [ref=f7e163]: 25% OFF
+        - tablist "Choose slide" [ref=f7e164]:
+          - 'tab "Slide 1: New Launch" [selected] [ref=f7e165] [cursor=pointer]'
+          - 'tab "Slide 2: Expert Repairs" [ref=f7e166] [cursor=pointer]'
+          - 'tab "Slide 3: Accessories" [ref=f7e167] [cursor=pointer]'
+      - generic [ref=f7e168]:
+        - generic [ref=f7e169]:
+          - generic [ref=f7e170]:
+            - heading "Shop by Category" [level=2] [ref=f7e171]
+            - paragraph [ref=f7e172]: Explore our wide range of mobile products and services.
+          - link "View All Categories" [ref=f7e173] [cursor=pointer]:
+            - /url: /collection/all
+        - generic [ref=f7e176]:
+          - link "Smartphones" [ref=f7e177] [cursor=pointer]:
+            - /url: /collection/Smartphones
+          - link "Tablets" [ref=f7e180] [cursor=pointer]:
+            - /url: /collection/Tablets
+          - link "Smart Watches" [ref=f7e185] [cursor=pointer]:
+            - /url: /collection/Smart%20Watches
+          - link "Earbuds" [ref=f7e193] [cursor=pointer]:
+            - /url: /collection/Earbuds
+          - link "Headphones" [ref=f7e196] [cursor=pointer]:
+            - /url: /collection/Headphones
+          - link "Power Banks" [ref=f7e199] [cursor=pointer]:
+            - /url: /collection/Power%20Banks
+          - link "Chargers & Cables" [ref=f7e202] [cursor=pointer]:
+            - /url: /collection/Chargers
+          - link "Mobile Accessories" [ref=f7e205] [cursor=pointer]:
+            - /url: /accessories
+          - link "Phone Repair" [ref=f7e208] [cursor=pointer]:
+            - /url: /book-repair
+      - generic [ref=f7e214]:
+        - generic [ref=f7e215]:
+          - heading "New Arrivals Just Launched" [level=2] [ref=f7e216]:
+            - text: New Arrivals
+            - generic [ref=f7e217]: Just Launched
+          - paragraph [ref=f7e218]: The latest products, now at PhoneFix.
+        - link "View All" [ref=f7e219] [cursor=pointer]:
+          - /url: /collection/all?tab=new
+      - generic [ref=f7e222]:
+        - generic [ref=f7e224]:
+          - text: Phone Repair Services
+          - heading "Your Phone, Fixed by Experts" [level=2] [ref=f7e225]
+          - paragraph [ref=f7e226]: Quick, reliable and affordable repair services for all major mobile brands.
+          - list [ref=f7e227]:
+            - listitem [ref=f7e228]:
+              - generic [ref=f7e231]: ScreenReplacement
+            - listitem [ref=f7e232]:
+              - generic [ref=f7e237]: BatteryReplacement
+            - listitem [ref=f7e238]:
+              - generic [ref=f7e241]: ChargingIssue Fix
+            - listitem [ref=f7e242]:
+              - generic [ref=f7e246]: OtherRepairs
+        - generic [ref=f7e247]:
+          - heading "Book a Repair Today" [level=3] [ref=f7e248]
+          - list [ref=f7e249]:
+            - listitem [ref=f7e250]: Genuine Spare Parts
+            - listitem [ref=f7e253]: Trained Technicians
+            - listitem [ref=f7e256]: Same-Day Service*
+          - link "Book Repair" [ref=f7e261] [cursor=pointer]:
+            - /url: /book-repair
+      - generic [ref=f7e265]:
+        - generic [ref=f7e266]:
+          - heading "Trending Products" [level=2] [ref=f7e267]
+          - paragraph [ref=f7e270]: Most loved products by our customers.
+        - link "View All" [ref=f7e271] [cursor=pointer]:
+          - /url: /collection/all?tab=trending
+      - generic [ref=f7e274]:
+        - generic [ref=f7e275]:
+          - generic [ref=f7e285]:
+            - heading "Refurbished Mobile Phones" [level=2] [ref=f7e286]: RefurbishedMobile Phones
+            - paragraph [ref=f7e287]: Certified, tested and reliable phones at a lower price.
+          - list [ref=f7e288]:
+            - listitem [ref=f7e289]: 12-Month Warranty
+            - listitem [ref=f7e293]: Quality Tested
+            - listitem [ref=f7e297]: Like-New Condition
+        - generic [ref=f7e302]:
+          - heading "Save More with Refurbished Phones" [level=3] [ref=f7e303]: Save More withRefurbished Phones
+          - generic [ref=f7e304]:
+            - generic [ref=f7e305]: Up to
+            - strong [ref=f7e306]: 40% OFF
+          - link "Shop Refurbished" [ref=f7e307] [cursor=pointer]:
+            - /url: /collection/Refurbished%20Devices
+      - generic [ref=f7e310]:
+        - generic [ref=f7e312]:
+          - heading "What Our Customers Say" [level=2] [ref=f7e313]
+          - paragraph [ref=f7e317]: Real feedback from our happy customers.
+        - generic [ref=f7e318]:
+          - button "Previous reviews" [ref=f7e319] [cursor=pointer]
+          - generic [ref=f7e322]:
+            - figure [ref=f7e323]:
+              - generic [aria-hidden] [ref=f7e324]: AS
+              - generic [ref=f7e325]:
+                - generic [ref=f7e326]: Arjun Sharma
+                - generic "5 out of 5 stars" [ref=f7e327]
+                - blockquote [ref=f7e338]: “Fixed my iPhone screen in under 45 minutes at my office. The precision is unmatched.”
+            - figure [ref=f7e339]:
+              - generic [aria-hidden] [ref=f7e340]: PK
+              - generic [ref=f7e341]:
+                - generic [ref=f7e342]: Priya Kapur
+                - generic "5 out of 5 stars" [ref=f7e343]
+                - blockquote [ref=f7e354]: “Bought a refurbished Pixel and it looks brand new. The warranty gives me total peace of mind.”
+            - figure [ref=f7e355]:
+              - generic [aria-hidden] [ref=f7e356]: RM
+              - generic [ref=f7e357]:
+                - generic [ref=f7e358]: Rahul Mehta
+                - generic "5 out of 5 stars" [ref=f7e359]
+                - blockquote [ref=f7e370]: “Excellent diagnostics. Honest people are hard to find. They saved me from an unnecessary repair.”
+          - button "Next reviews" [ref=f7e371] [cursor=pointer]
+        - generic [ref=f7e374]:
+          - button "Show review 1" [ref=f7e375] [cursor=pointer]
+          - button "Show review 2" [ref=f7e376] [cursor=pointer]
+          - button "Show review 3" [ref=f7e377] [cursor=pointer]
+          - button "Show review 4" [ref=f7e378] [cursor=pointer]
+      - list [ref=f7e379]:
+        - listitem [ref=f7e380]:
+          - generic [ref=f7e386]:
+            - generic [ref=f7e387]: Free Delivery
+            - text: on Orders Over ₹500
+        - listitem [ref=f7e388]:
+          - generic [ref=f7e392]:
+            - generic [ref=f7e393]: 100% Genuine
+            - text: Branded Products
+        - listitem [ref=f7e394]:
+          - generic [ref=f7e400]:
+            - generic [ref=f7e401]: Easy 7-Day
+            - text: Returns
+        - listitem [ref=f7e402]:
+          - generic [ref=f7e405]:
+            - generic [ref=f7e406]: 1-Year
+            - text: Service Support
+    - contentinfo [ref=f7e407]:
+      - generic [ref=f7e408]:
+        - generic [ref=f7e409]:
+          - generic [ref=f7e410]:
+            - link "PhoneFix home" [ref=f7e411] [cursor=pointer]:
+              - /url: /home
+              - generic [ref=f7e415]:
+                - generic [ref=f7e416]: PhoneFix.
+                - text: Premium Mobile Store
+            - paragraph [ref=f7e417]: Your one-stop destination for smartphones, accessories, and expert repair services.
+            - generic [ref=f7e418]:
+              - link "WhatsApp" [ref=f7e419] [cursor=pointer]:
+                - /url: https://wa.me/919876543210
+              - link "Instagram" [ref=f7e422] [cursor=pointer]:
+                - /url: https://www.instagram.com/
+              - link "Facebook" [ref=f7e425] [cursor=pointer]:
+                - /url: https://www.facebook.com/
+              - link "YouTube" [ref=f7e428] [cursor=pointer]:
+                - /url: https://www.youtube.com/
+          - navigation "Shop" [ref=f7e431]:
+            - heading "Shop" [level=2] [ref=f7e432]
+            - list [ref=f7e433]:
+              - listitem [ref=f7e434]:
+                - link "Smartphones" [ref=f7e435] [cursor=pointer]:
+                  - /url: /collection/Smartphones
+              - listitem [ref=f7e436]:
+                - link "Tablets" [ref=f7e437] [cursor=pointer]:
+                  - /url: /collection/Tablets
+              - listitem [ref=f7e438]:
+                - link "Smart Watches" [ref=f7e439] [cursor=pointer]:
+                  - /url: /collection/Smart%20Watches
+              - listitem [ref=f7e440]:
+                - link "Earbuds" [ref=f7e441] [cursor=pointer]:
+                  - /url: /collection/Earbuds
+              - listitem [ref=f7e442]:
+                - link "Headphones" [ref=f7e443] [cursor=pointer]:
+                  - /url: /collection/Headphones
+              - listitem [ref=f7e444]:
+                - link "Power Banks" [ref=f7e445] [cursor=pointer]:
+                  - /url: /collection/Power%20Banks
+          - navigation "Services" [ref=f7e446]:
+            - heading "Services" [level=2] [ref=f7e447]
+            - list [ref=f7e448]:
+              - listitem [ref=f7e449]:
+                - link "Phone Repair" [ref=f7e450] [cursor=pointer]:
+                  - /url: /book-repair
+              - listitem [ref=f7e451]:
+                - link "Trade-In" [ref=f7e452] [cursor=pointer]:
+                  - /url: /trade-in
+              - listitem [ref=f7e453]:
+                - link "Refurbished Phones" [ref=f7e454] [cursor=pointer]:
+                  - /url: /collection/Refurbished%20Devices
+              - listitem [ref=f7e455]:
+                - link "Track My Repair" [ref=f7e456] [cursor=pointer]:
+                  - /url: /my-repairs
+              - listitem [ref=f7e457]:
+                - link "Track Your Order" [ref=f7e458] [cursor=pointer]:
+                  - /url: /orders
+          - navigation "Help" [ref=f7e459]:
+            - heading "Help" [level=2] [ref=f7e460]
+            - list [ref=f7e461]:
+              - listitem [ref=f7e462]:
+                - link "Support Chat" [ref=f7e463] [cursor=pointer]:
+                  - /url: /support
+              - listitem [ref=f7e464]:
+                - link "Repair Services" [ref=f7e465] [cursor=pointer]:
+                  - /url: /repairs
+              - listitem [ref=f7e466]:
+                - link "About Us" [ref=f7e467] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=f7e468]:
+                - link "My Account" [ref=f7e469] [cursor=pointer]:
+                  - /url: /profile
+              - listitem [ref=f7e470]:
+                - link "Wishlist" [ref=f7e471] [cursor=pointer]:
+                  - /url: /wishlist
+          - generic [ref=f7e472]:
+            - heading "Stay Updated" [level=2] [ref=f7e473]
+            - paragraph [ref=f7e474]: Subscribe to get the latest deals, new arrivals and exclusive offers.
+            - generic [ref=f7e475]:
+              - generic [ref=f7e476]: Email address
+              - textbox "Email address" [ref=f7e477]:
+                - /placeholder: Enter your email address
+              - button "Subscribe" [ref=f7e478] [cursor=pointer]
+        - generic [ref=f7e481]:
+          - paragraph [ref=f7e482]: © 2026 PhoneFix. All rights reserved.
+          - list "Payment methods we accept" [ref=f7e483]:
+            - listitem [ref=f7e484]: VISA
+            - listitem [ref=f7e485]: Mastercard
+            - listitem [ref=f7e486]: UPI
+            - listitem [ref=f7e487]: RuPay
+  - generic [ref=f7e488]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f7e489]

@@ -14,13 +14,19 @@ import { useToast } from '../context/ToastContext'
 import SectionLoader from '../components/ecommerce/SectionLoader'
 import FlashSaleStage, { type FlashSaleCard } from '../components/ecommerce/FlashSaleStage'
 import RefurbishedShowcase, { type RefurbishedDevice } from '../components/ecommerce/RefurbishedShowcase'
-import ProductCard, { type ProductCardData } from '../components/ecommerce/ProductCard'
+import ProductCard, {
+  cardSpan,
+  swatchesFor,
+  type ProductCardData,
+  type ProductSpec,
+} from '../components/ecommerce/ProductCard'
 import YouTubeLite from '../components/ui/YouTubeLite'
 import SectionHeading, { Accent } from '../components/ui/SectionHeading'
-import explodingViewVideo from '../assets/Orange_smartphone_exploding_view_1080p_20261002155324.mp4'
 import internalComponentsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
-import explodingViewPoster from '../assets/hero-exploding-view-poster.jpg'
 import internalComponentsPoster from '../assets/hero-internal-components-poster.jpg'
+import repairStoryImage from '../assets/hero-exploding-view-poster.jpg'
+import './HomeTheme.css'
+import './HomeEditorial.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG =
@@ -116,8 +122,8 @@ type HeroCopy = { tag: string; title: [string, string, string]; desc: string }
 
 const heroSlides: { video: string; poster: string; copies: HeroCopy[] }[] = [
   {
-    video: explodingViewVideo,
-    poster: explodingViewPoster,
+    video: internalComponentsVideo,
+    poster: internalComponentsPoster,
     copies: [
       {
         tag: 'Inside The Repair',
@@ -134,12 +140,6 @@ const heroSlides: { video: string; poster: string; copies: HeroCopy[] }[] = [
         title: ['Every', 'Component', '\u2014 Verified Before We Close'],
         desc: 'Twenty-one point diagnostics before and after every job, so you know exactly what failed and precisely what we replaced.',
       },
-    ],
-  },
-  {
-    video: internalComponentsVideo,
-    poster: internalComponentsPoster,
-    copies: [
       {
         tag: 'Board-Level Repair',
         title: ['Micro-Soldering', 'On The', 'Board Itself'],
@@ -204,24 +204,6 @@ const DEAL_TABS = [
 ] as const
 
 type DealTabKey = (typeof DEAL_TABS)[number]['key']
-
-/**
- * The hero renders one slide per clip, so a plain <h1> inside the map produced
- * two of them. Only the slide on screen keeps the H1; parked slides fall back
- * to H2 and are aria-hidden, leaving the outline with a single entry point.
- */
-function SlideHeading({
-  isActive,
-  className,
-  children,
-}: {
-  isActive: boolean
-  className?: string
-  children: ReactNode
-}) {
-  const Tag = isActive ? 'h1' : 'h2'
-  return <Tag className={className}>{children}</Tag>
-}
 
 /** Wraps a panel so it tilts in 3D as it crosses the viewport on desktop. */
 function Tilt3D({
@@ -296,6 +278,49 @@ const testimonials = [
   },
 ]
 
+/* Repair "story" steps (reference: numbered orchard story). */
+const REPAIR_STEPS = [
+  {
+    title: 'Express Repair',
+    desc: 'Wait in our comfortable lounge while we fix your screen or battery in under 60 minutes.',
+  },
+  {
+    title: 'Mail-In Service',
+    desc: 'Send your device from anywhere with our secure, prepaid shipping kits and track online.',
+  },
+  {
+    title: 'On-Site Tech',
+    desc: "We'll come to your home or office for specific repairs, ensuring zero downtime for you.",
+  },
+]
+
+/* Store promises shown under the trending grid. */
+const STORE_PROMISES = [
+  {
+    icon: 'verified',
+    title: '100% Genuine Products',
+    desc: 'Sealed flagships and certified parts — every device is checked before it ships.',
+  },
+  {
+    icon: 'local_shipping',
+    title: 'Free Delivery Over ₹500',
+    desc: 'Insured, tracked delivery to your door, with easy 7-day returns.',
+  },
+  {
+    icon: 'shield',
+    title: '1-Year Service Support',
+    desc: 'Warranty on every repair and purchase, backed by our in-house technicians.',
+  },
+]
+
+/* Highlights grid (reference: nutrient density figures). */
+const HIGHLIGHTS = [
+  { label: 'Diagnostics', value: '21', unit: 'point check', note: 'Before and after every repair job' },
+  { label: 'Express Repair', value: '60', unit: 'minutes', note: 'Most screens & batteries, while you wait' },
+  { label: 'Warranty', value: '12', unit: 'months', note: 'On every repair and certified device' },
+  { label: 'Easy Returns', value: '7', unit: 'days', note: 'No-questions-asked return window' },
+]
+
 const partners = [
   'Apple Authorized',
   'Samsung Certified',
@@ -325,6 +350,24 @@ const categoryIconMap: Record<string, string> = {
   Gaming: 'sports_esports',
   Camera: 'camera_alt',
   Cameras: 'camera_alt',
+}
+
+/**
+ * The hero renders one slide per clip, so a plain <h1> inside the map produced
+ * two of them. Only the slide on screen keeps the H1; parked slides fall back
+ * to H2 and are aria-hidden, leaving the outline with a single entry point.
+ */
+function SlideHeading({
+  isActive,
+  className,
+  children,
+}: {
+  isActive: boolean
+  className?: string
+  children: ReactNode
+}) {
+  const Tag = isActive ? 'h1' : 'h2'
+  return <Tag className={className}>{children}</Tag>
 }
 
 export default function LandingPage() {
@@ -465,6 +508,7 @@ export default function LandingPage() {
     }
     setCurrentSlide(target)
   }
+
 
   useEffect(() => {
     let cancelled = false
@@ -666,11 +710,25 @@ export default function LandingPage() {
     return getImageUrl(raw)
   }
 
+  /* Selling price + MRP. List endpoints often omit variants, so fall back to
+     the product-level min/max prices the API sends. */
+  const priceOf = (product: any): { price: number; mrp: number } => {
+    const variant = product?.variants?.[0]
+    const price =
+      Number(variant?.discountPrice) ||
+      Number(variant?.price) ||
+      Number(product?.minPrice) ||
+      Number(product?.rawDiscountPrice) ||
+      Number(product?.discountPrice) ||
+      Number(product?.price) ||
+      0
+    const mrp = Number(variant?.price) || Number(product?.price) || price
+    return { price, mrp: Math.max(mrp, price) }
+  }
+
   const getProductPrice = (product: any): string => {
-    const variant = product.variants?.[0]
-    if (!variant) return ''
-    const price = variant.discountPrice || variant.price
-    return `₹${Number(price).toLocaleString('en-IN')}`
+    const { price } = priceOf(product)
+    return price > 0 ? `₹${price.toLocaleString('en-IN')}` : 'View price'
   }
 
   const getCategoryImage = (cat: Category): string => getImageUrl(cat.image)
@@ -707,9 +765,7 @@ export default function LandingPage() {
   /* Card data for the desktop-only flash sale stage. Pulled from the same
      `dealProducts` pool so real images, names and prices are shown. */
   const dealCards: FlashSaleCard[] = dealProducts.map((product: any): FlashSaleCard => {
-    const variant = product?.variants?.[0] ?? product
-    const price = Number(variant?.discountPrice || variant?.price || 0)
-    const mrp = Number(variant?.price || price)
+    const { price, mrp } = priceOf(product)
     return {
       id: Number(product.id),
       name: String(product.name ?? ''),
@@ -724,8 +780,7 @@ export default function LandingPage() {
      real images, names, prices and derived grade/rating. */
   const refurbishedDevices: RefurbishedDevice[] = refurbished.slice(0, 8).map((product): RefurbishedDevice => {
     const variant = product?.variants?.[0] ?? product
-    const mrp = Number(variant?.price || 0)
-    const price = Number(variant?.discountPrice || variant?.price || 0)
+    const { price, mrp } = priceOf(product)
     const rating = Number(product?.rating || 0)
     return {
       id: Number(product.id),
@@ -740,36 +795,49 @@ export default function LandingPage() {
     }
   })
 
-  /* Card data for the Trending / New Arrivals grids, reusing the shared
-     ProductCard design (same shell as the refurbished rail, adapted to
-     brand-new stock: no condition grade, generic highlights). */
+  /* Card data for the Trending / New Arrivals grids. Everything shown on a
+     card comes from the product itself: brand, colour swatches from the
+     variants, highlights from the variant specs (falling back to features). */
   const toCardData = (product: any, kind: 'trending' | 'new'): ProductCardData => {
-    const variant = product?.variants?.[0] ?? product
-    const mrp = Number(variant?.price || 0)
-    const price = Number(variant?.discountPrice || variant?.price || 0)
+    const variants: any[] = Array.isArray(product?.variants) ? product.variants : []
+    const variant = variants[0] ?? product
+    const { price, mrp } = priceOf(product)
     const rating = Number(product?.rating || 0)
-    const features: string[] = Array.isArray(product?.features) ? product.features.filter(Boolean) : []
-    const checks =
-      features.length >= 4
-        ? features.slice(0, 5)
-        : ['Genuine sealed unit', 'Official warranty', 'Free express delivery', 'Free 7-day returns']
+    const features: string[] = Array.isArray(product?.features)
+      ? product.features.map((f: any) => (typeof f === 'string' ? f : f?.feature ?? f?.name ?? '')).filter(Boolean)
+      : []
+
+    const specs: ProductSpec[] = []
+    if (variant?.processor) specs.push({ icon: 'cpu', label: String(variant.processor) })
+    if (Number(variant?.battery) > 0) specs.push({ icon: 'battery', label: `${variant.battery} mAh` })
+    if (variant?.camera) specs.push({ icon: 'camera', label: String(variant.camera) })
+    if (variant?.display) specs.push({ icon: 'display', label: String(variant.display) })
+    if (variant?.storage)
+      specs.push({ icon: 'storage', label: [variant.ram, variant.storage].filter(Boolean).join(' / ') })
+    for (const f of features) {
+      if (specs.length >= 3) break
+      specs.push({ icon: 'spark', label: f.length > 28 ? `${f.slice(0, 26)}…` : f })
+    }
+
     return {
       id: Number(product.id),
       name: String(product.name ?? ''),
+      brand: String(product.brand ?? ''),
       image: getProductImage(product),
       price,
       mrp,
-      save: Math.max(0, mrp - price),
       rating,
-      meta: [variant?.storage, variant?.color].filter(Boolean).join(' · '),
-      badge: kind === 'trending' ? 'Trending' : 'New',
-      badgeIcon: 'spark',
-      overlayTitle: kind === 'trending' ? "Why it's trending" : "What's inside",
-      checks,
-      certTitle: 'Customer rating',
-      certText: kind === 'trending' ? 'Free express delivery' : '1-year warranty',
-      warranty: '1 yr',
-      returns: '7 days',
+      sold: Number(product?.sold || 0) || undefined,
+      tag: variant?.storage ? String(variant.storage) : undefined,
+      swatches: swatchesFor(variants.map((v) => String(v?.color ?? '')).filter(Boolean)),
+      specs: specs.slice(0, 3),
+      badge: product?.bestSelling ? 'bestseller' : kind === 'trending' ? 'trending' : 'new',
+      cart: {
+        variationId: Number(variant?.dbId ?? variant?.id) || 0,
+        storage: variant?.storage ?? '',
+        ram: variant?.ram ?? '',
+        color: variant?.color ?? '',
+      },
     }
   }
 
@@ -777,11 +845,11 @@ export default function LandingPage() {
   const arrivalCards: ProductCardData[] = arrivals.slice(0, 4).map((p) => toCardData(p, 'new'))
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-pf-red/30 selection:text-pf-red-dark">
+    <div className="home-theme min-h-screen bg-surface text-on-surface font-body-md">
       <SiteTopNav transparent />
       {/* ─── HERO CAROUSEL (Video Background) ─── */}
       <section
-        className="hero-section hero-section--full relative overflow-hidden bg-black"
+        className="hero-section hero-section--full home-hero relative overflow-hidden bg-black"
       >
         {heroSlides.map((slide, i) => {
           const copy = slide.copies[heroCopyIndex] ?? slide.copies[0]
@@ -802,6 +870,7 @@ export default function LandingPage() {
                   className="absolute inset-0 w-full h-full object-cover object-center"
                   autoPlay
                   muted
+                  loop={heroSlides.length === 1}
                   playsInline
                   poster={slide.poster}
                   preload={i === 0 ? 'auto' : 'metadata'}
@@ -816,47 +885,43 @@ export default function LandingPage() {
                   <source src={slide.video} type="video/mp4" />
                 </video>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-              <div className="absolute inset-0 bg-gradient-to-r from-pf-red/5 via-transparent to-transparent" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
-              {/* Top scrim — a light wash so the transparent navigation layers
-                  stay legible on bright slides, while the hero footage still
-                  shows clearly through the glass. Kept gentle on purpose. */}
-              <div className="absolute inset-x-0 top-0 h-[220px] bg-gradient-to-b from-black/55 via-black/18 to-transparent" />
-              <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex flex-col justify-center items-start pt-[116px]">
+              {/* Neutral (not purple) shade on the left only, so the copy stays readable. */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent" />
+              {/* Top scrim so the see-through nav stays readable over the video. */}
+              <div className="home-hero__scrim absolute inset-x-0 top-0" aria-hidden="true" />
+              <div className="home-hero__content relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex flex-col justify-center items-start pb-20">
                 {/* Keyed on slide + variant so the CSS animation replays each swap. */}
                 <div
                   key={`${currentSlide}-${heroCopyIndex}`}
-                  className="w-full max-w-[620px] hero-copy-swap"
+                  className="w-full max-w-[540px] hero-copy-swap"
                 >
                   <div
-                    className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-pf-red/20 border border-pf-red/30 text-pf-red text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                    className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-[8px] bg-[#FFD014]/15 border border-[#FFD014]/40 text-[#FFD014] text-xs font-bold tracking-[0.15em] uppercase mb-5 backdrop-blur-md transition-all duration-700 delay-200 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                     }`}
                   >
                     <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-[8px] bg-pf-red animate-ping" />
-                      <span className="absolute inset-0 rounded-[8px] bg-pf-red" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#F0E100] animate-ping" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#F0E100]" />
                     </span>
                     {copy.tag}
                   </div>
                   <SlideHeading
                     isActive={i === currentSlide}
-                    className={`text-[clamp(34px,5vw,60px)] font-extrabold leading-[1.06] text-white mb-5 transition-all duration-700 delay-300 ${
+                    className={`text-[clamp(28px,3.3vw,48px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-white mb-4 transition-all duration-700 delay-300 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                     }`}
                   >
                     {copy.title[0]}
                     <br />
-                    <span className="relative inline-block bg-gradient-to-r from-pf-red via-pf-red to-pf-red bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(217,30,54,0.4)]">
+                    <span className="relative inline-block bg-gradient-to-r from-[#FFD014] via-[#F0E100] to-[#FFD014] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(255,208,20,0.35)]">
                       {copy.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-pf-red to-transparent rounded-[8px] opacity-60 animate-pulse" />
+                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D0ADFF] to-transparent rounded-[8px] opacity-80 animate-pulse" />
                     </span>{' '}
-                    <span className="text-white/80">{copy.title[2]}</span>
+                    <span className="text-[#FFF7F3]/85">{copy.title[2]}</span>
                   </SlideHeading>
                   <p
-                    className={`text-lg md:text-2xl text-white/80 leading-relaxed max-w-2xl mb-10 transition-all duration-700 delay-400 ${
+                    className={`text-[15px] md:text-lg text-[#FFF7F3]/80 leading-relaxed max-w-[500px] mb-7 transition-all duration-700 delay-400 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                     }`}
                   >
@@ -869,7 +934,7 @@ export default function LandingPage() {
                   >
                     <Link
                       to="/phones"
-                      className="btn btn-primary btn-md group animate-float hover:scale-105 active:scale-95"
+                      className="btn btn-primary btn-md home-hero__cta group animate-float hover:scale-105 active:scale-95"
                     >
                       <span>Shop Now</span>
                       <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">
@@ -887,7 +952,9 @@ export default function LandingPage() {
           )
         })}
         {/* Slide indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+        {heroSlides.length > 1 && (
+        <>
+        <div className="absolute bottom-7 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
           {heroSlides.map((slide, i) => (
             <button
               key={i}
@@ -901,7 +968,7 @@ export default function LandingPage() {
               {i === currentSlide && (
                 /* Real playback progress, so the dash fills as the clip plays out. */
                 <span
-                  className="absolute inset-y-0 left-0 rounded-[8px] bg-pf-red"
+                  className="absolute inset-y-0 left-0 rounded-[8px] bg-[#FFD014]"
                   style={{ width: `${Math.min(100, Math.max(0, slideProgress * 100))}%` }}
                 />
               )}
@@ -909,16 +976,20 @@ export default function LandingPage() {
           ))}
         </div>
         {/* Slide counter */}
-        <div className="absolute bottom-10 right-6 md:right-12 z-20 text-white/90 text-sm font-mono tracking-wider bg-black/70 px-3 py-1.5 rounded-[8px]">
+        <div className="absolute bottom-6 right-6 md:right-12 z-20 text-[#FFF7F3]/90 text-sm font-mono tracking-wider bg-[#210D35]/80 border border-[#D0ADFF]/30 px-3 py-1.5 rounded-[8px]">
           {String(currentSlide + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
         </div>
+        </>
+        )}
       </section>
 
+      {/* ═══ Editorial sections (reference-site structure, PhoneFix palette) ═══ */}
+      <div className="home-ed">
       {/* ─── CATEGORIES ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface">
-        <div className="max-w-[1440px] mx-auto scroll-reveal">
+      <section className="ed-section ed-cats py-20 px-6 md:px-12">
+        <div className="relative max-w-[1440px] mx-auto scroll-reveal">
           <SectionHeading
-            className="mb-14"
+            className="sec-head--classic mb-14"
             align="center"
             eyebrow="Categories"
             icon="category"
@@ -982,35 +1053,21 @@ export default function LandingPage() {
                             data-cat-card
                             key={`${copy}-${cat.id}`}
                             to={`/collection/${encodeURIComponent(cat.name)}`}
-                            className="relative flex-shrink-0 w-[200px] h-[230px] p-7 rounded-2xl flex flex-col items-center justify-center gap-4 group transition-all duration-400 hover:-translate-y-1.5 stagger-item overflow-hidden snap-start hover:shadow-[0_20px_50px_rgba(217,30,54,0.18)] hover:border-pf-red/40 border border-transparent"
-                            style={{
-                              background: `linear-gradient(145deg, #ffffff, #FBF8F6)`,
-                              boxShadow: '0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)',
-                            }}
+                            className="cat-card group"
                           >
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-pf-red/5 rounded-bl-[100%] transition-all duration-500 group-hover:bg-pf-red/15 group-hover:w-28 group-hover:h-28" />
-                            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pf-red/20 to-pf-red/5 flex items-center justify-center group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(217,30,54,0.15)] transition-all duration-300 overflow-hidden relative z-10">
+                            <span className="cat-card__blob" aria-hidden="true" />
+                            <div className="cat-card__media">
                               {getCategoryImage(cat) ? (
-                                <img
-                                  src={getCategoryImage(cat)}
-                                  alt={cat.name}
-                                  className="w-full h-full object-cover rounded-2xl"
-                                />
+                                <img src={getCategoryImage(cat)} alt={cat.name} />
                               ) : (
-                                <span className="material-symbols-outlined text-3xl text-pf-red-dark">
-                                  {getCategoryIcon(cat.name)}
-                                </span>
+                                <span className="material-symbols-outlined">{getCategoryIcon(cat.name)}</span>
                               )}
                             </div>
-                            <div className="relative z-10 text-center bg-white/90 rounded-xl p-2">
-                              <h3 className="font-bold text-base text-on-surface group-hover:text-pf-red-dark transition-colors">
-                                {cat.name}
-                              </h3>
-                              <p className="text-xs text-on-surface-variant font-medium mt-1">
-                                {cat.products} items
-                              </p>
+                            <div className="cat-card__label">
+                              <h3>{cat.name}</h3>
+                              <p>{cat.products} items</p>
                             </div>
-                            <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-pf-red/0 rounded-[8px] transition-all duration-400 group-hover:bg-pf-red/30" />
+                            <span className="cat-card__line" aria-hidden="true" />
                           </Link>
                         ))}
                       </div>
@@ -1061,10 +1118,10 @@ export default function LandingPage() {
                   <span className="material-symbols-outlined text-base">local_fire_department</span>
                   Flash Sale
                 </div>
-                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-on-surface leading-tight">
+                <h2 className="ed-serif text-[clamp(30px,4vw,48px)] text-on-surface leading-[1.1]">
                   Tech Essentials
                   <br />
-                  <span className="text-pf-red">Up to 25% Off</span>
+                  <em className="ed-italic">Up to 25% Off</em>
                 </h2>
                 <p className="text-base md:text-lg text-on-surface-variant leading-relaxed">
                   Grab the latest flagships and premium accessories at unbeatable prices. Certified
@@ -1109,7 +1166,7 @@ export default function LandingPage() {
                     <Link
                       key={`${dealTab}-${product.id}`}
                       to={`/product/${product.id}`}
-                      className="group bg-white/90 rounded-2xl border border-pf-red/10 p-2.5 hover:border-pf-red/40 hover:shadow-[0_14px_34px_rgba(217,30,54,0.14)] transition-all duration-300"
+                      className="group bg-white/90 rounded-2xl border border-pf-red/10 p-2.5 hover:border-pf-red/40 hover:shadow-[0_14px_34px_rgba(33,13,53,0.14)] transition-all duration-300"
                     >
                       <div className="h-20 md:h-24 rounded-lg bg-white flex items-center justify-center overflow-hidden mb-2">
                         {getProductImage(product) ? (
@@ -1152,118 +1209,138 @@ export default function LandingPage() {
       />
 
       {/* ─── TRENDING DEVICES ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface">
+      <section className="ed-section ed-section--deep py-20 md:py-28 px-6 md:px-12">
+        <span className="ed-glow ed-glow--b" aria-hidden="true" />
         <Tilt3D amount={0.6}>
           <div className="max-w-[1440px] mx-auto scroll-reveal">
             <SectionHeading
-              className="mb-12"
-              eyebrow="Trending"
-              icon="trending_up"
-              title={<>Trending <Accent>Devices</Accent></>}
-              subtitle="The most sought-after tech in our collection."
+              className="mb-12 md:mb-16"
+              eyebrow="Trending Now"
+              title={<>The most wanted <Accent>devices</Accent></>}
+              subtitle="Flagships and accessories our customers are buying this week — genuine, sealed and ready to ship."
             >
-              <Link to="/collection/all?tab=trending" className="btn btn-quiet btn-sm shrink-0">
-                Explore All <span className="material-symbols-outlined text-lg">arrow_forward</span>
-              </Link>
+              <div className="flex flex-col items-start sm:items-end gap-4">
+                <div className="ed-meta">
+                  <b>{String(trendingCards.length).padStart(2, '0')}</b>
+                  <span>/</span>
+                  <em>Free express delivery</em>
+                </div>
+                <Link to="/collection/all?tab=trending" className="ed-link">
+                  Explore all <span className="material-symbols-outlined">arrow_forward</span>
+                </Link>
+              </div>
             </SectionHeading>
             {trendingLoading ? (
               <SectionLoader type="products" count={8} />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="pc-bento">
                 {trendingCards.map((card, i) => (
-                  <ProductCard key={card.id} {...card} order={i} />
+                  <ProductCard
+                    key={card.id}
+                    {...card}
+                    variant="standard"
+                    span={cardSpan(trendingCards.length)}
+                    order={i}
+                    wishlisted={wishlist.has(card.id)}
+                    onToggleWishlist={toggleWishlist}
+                  />
                 ))}
               </div>
             )}
+            <div className="ed-promises">
+              {STORE_PROMISES.map((p) => (
+                <div key={p.title}>
+                  <span className="material-symbols-outlined" aria-hidden="true">{p.icon}</span>
+                  <div>
+                    <h3>{p.title}</h3>
+                    <p>{p.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Tilt3D>
       </section>
 
-      {/* ─── REPAIR SERVICES ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
-        <div className="max-w-[1440px] mx-auto">
+      {/* ─── REPAIR SERVICES (story layout) ─── */}
+      <section className="ed-section py-20 md:py-28 px-6 md:px-12">
+        <div className="max-w-[1440px] mx-auto scroll-reveal">
           <SectionHeading
-            className="mb-14"
-            align="center"
-            eyebrow="Services"
-            icon="handyman"
-            title={<>Precision <Accent>Repair</Accent> Services</>}
-            subtitle="From micro-soldering to full device restoration — we handle it all with clinical precision."
+            className="mb-12 md:mb-20 max-w-3xl"
+            eyebrow="The PhoneFix Repair Story"
+            title={<>Precision repairs, <Accent>done right.</Accent></>}
+            subtitle="From micro-soldering to full device restoration, every job runs through the same bench process: diagnose, repair with genuine parts, verify, and hand it back with a warranty."
           />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: 'bolt',
-                title: 'Express Repair',
-                desc: 'Wait in our comfortable lounge while we fix your screen or battery in under 60 minutes.',
-                gradient: 'from-pf-red/10 to-transparent',
-              },
-              {
-                icon: 'local_shipping',
-                title: 'Mail-In Service',
-                desc: 'Send your device from anywhere with our secure, prepaid shipping kits and track online.',
-                gradient: 'from-gold/10 to-transparent',
-              },
-              {
-                icon: 'home_repair_service',
-                title: 'On-Site Tech',
-                desc: "We'll come to your home or office for specific repairs, ensuring zero downtime for you.",
-                gradient: 'from-pf-red/10 to-transparent',
-              },
-            ].map((service) => (
-              <div
-                key={service.title}
-                className={`glass-card p-8 md:p-10 rounded-4xl flex flex-col gap-5 group transition-all duration-500 hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:-translate-y-1 stagger-item bg-gradient-to-b ${service.gradient}`}
-              >
-                <div className="w-16 h-16 rounded-2xl bg-pf-red/20 text-pf-red-dark flex items-center justify-center group-hover:scale-110 group-hover:bg-pf-red/30 transition-all duration-300">
-                  <span className="material-symbols-outlined text-3xl">{service.icon}</span>
-                </div>
-                <h3 className="text-xl font-bold text-on-surface">{service.title}</h3>
-                <p className="text-base text-on-surface-variant leading-relaxed">{service.desc}</p>
-                <Link to="/repairs" className="btn btn-quiet btn-sm group-hover:gap-3 mt-auto">
-                  Learn More{' '}
-                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <figure className="lg:col-span-7 group m-0">
+              <div className="ed-frame aspect-[4/3] md:aspect-[16/11]">
+                <img src={repairStoryImage} alt="Exploded view of a smartphone and its internal parts" loading="lazy" />
+              </div>
+              <figcaption className="ed-caption">
+                <span>Board-level repair</span>
+                <span>21-point diagnostics</span>
+              </figcaption>
+            </figure>
+            <div className="lg:col-span-5 flex flex-col gap-10">
+              <ol className="ed-steps">
+                {REPAIR_STEPS.map((step, i) => (
+                  <li key={step.title}>
+                    <div>
+                      <span className="ed-num">{String(i + 1).padStart(2, '0')}</span>
+                      <h3>{step.title}</h3>
+                    </div>
+                    <p>{step.desc}</p>
+                  </li>
+                ))}
+              </ol>
+              <div className="flex flex-wrap gap-3">
+                <Link to="/book-repair" className="ed-btn">
+                  Book a Repair
+                  <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </Link>
+                <Link to="/repairs" className="ed-btn ed-btn--ghost">
+                  All Services
                 </Link>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── NEW ARRIVALS ─── */}
       {newArrivalsLoading ? (
-        <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
+        <section className="ed-section ed-section--deep py-20 md:py-28 px-6 md:px-12 scroll-reveal">
           <div className="max-w-[1440px] mx-auto">
             <SectionHeading
-              className="mb-12"
-              eyebrow="New"
-              icon="new_releases"
-              title={<>New <Accent>Arrivals</Accent></>}
-              subtitle="Discover the latest cutting-edge technology."
+              className="mb-12 md:mb-16"
+              eyebrow="Just Landed"
+              title={<>New <Accent>arrivals</Accent></>}
+              subtitle="The latest launches, in stock now with official warranty."
             />
             <SectionLoader type="products" count={4} />
           </div>
         </section>
       ) : (
         arrivals.length > 0 && (
-          <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
+          <section className="ed-section ed-section--deep py-20 md:py-28 px-6 md:px-12 scroll-reveal">
             <div className="max-w-[1440px] mx-auto">
               <SectionHeading
-                className="mb-12"
-                eyebrow="New"
-                icon="new_releases"
-                title={<>New <Accent>Arrivals</Accent></>}
-                subtitle="Discover the latest cutting-edge technology."
+                className="mb-12 md:mb-16"
+                eyebrow="Just Landed"
+                title={<>New <Accent>arrivals</Accent></>}
+                subtitle="The latest launches, in stock now with official warranty."
               >
-                <Link to="/collection/all?tab=new" className="btn btn-quiet btn-sm shrink-0">
-                  View All <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <Link to="/collection/all?tab=new" className="ed-link">
+                  View all <span className="material-symbols-outlined">arrow_forward</span>
                 </Link>
               </SectionHeading>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="pc-bento">
                 {arrivalCards.map((card, i) => (
                   <ProductCard
                     key={card.id}
                     {...card}
+                    variant="standard"
+                    span={cardSpan(arrivalCards.length)}
                     order={i}
                     wishlisted={wishlist.has(card.id)}
                     onToggleWishlist={toggleWishlist}
@@ -1278,39 +1355,48 @@ export default function LandingPage() {
       {/* ─── CERTIFIED REFURBISHED ─── */}
       <RefurbishedShowcase devices={refurbishedDevices} loading={refurbishedLoading} />
 
-      {/* ─── VIDEO SHOWCASE ─── */}
-      <section className="py-20 px-6 md:px-12 bg-surface scroll-reveal">
+      {/* ─── VIDEO SHOWCASE + HIGHLIGHTS (reference: guide section) ─── */}
+      <section className="ed-section ed-section--deep py-20 md:py-28 px-6 md:px-12 scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
           <SectionHeading
-            className="mb-14"
-            align="center"
-            eyebrow="In Action"
-            icon="play_circle"
-            title={<>See the <Accent>Precision</Accent> in Action</>}
-            subtitle="Watch how we bring your devices back to life with clinical-grade repair techniques."
+            className="mb-12 md:mb-16"
+            eyebrow="Inside the Workshop"
+            title={<>See the precision <Accent>in action</Accent></>}
+            subtitle="Watch how we bring devices back to life with clinical-grade repair techniques."
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {VIDEO_FEATURES.map((feature) => (
-              <YouTubeLite
-                key={feature.videoId}
-                videoId={feature.videoId}
-                title={feature.title}
-                subtitle={feature.subtitle}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {VIDEO_FEATURES.map((feature, i) => (
+              <div key={feature.videoId} className="ed-video">
+                <span className="ed-mono ed-video__label">
+                  {String(i + 1).padStart(2, '0')} / {feature.title}
+                </span>
+                <YouTubeLite videoId={feature.videoId} title={feature.title} subtitle={feature.subtitle} />
+              </div>
+            ))}
+          </div>
+          <div className="ed-stats">
+            {HIGHLIGHTS.map((h) => (
+              <div key={h.label}>
+                <span className="ed-mono">{h.label}</span>
+                <p>
+                  <b>{h.value}</b> <small>{h.unit}</small>
+                </p>
+                <em>{h.note}</em>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ─── PARTNERS MARQUEE ─── */}
-      <section className="py-16 overflow-hidden bg-surface-container-highest">
+      <section className="ed-section ed-marquee py-12 md:py-14 overflow-hidden">
         <div className="flex animate-marquee whitespace-nowrap items-center">
           {[0, 1].map((dup) => (
             <div key={dup} className="flex items-center gap-20 mx-12">
               {partners.map((p) => (
                 <span
                   key={p + dup}
-                  className="text-5xl md:text-6xl font-extrabold text-on-surface/60 tracking-tighter select-none"
+                  className="ed-serif italic text-4xl md:text-5xl select-none"
                 >
                   {p}
                 </span>
@@ -1320,67 +1406,51 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <section className="py-20 px-6 md:px-12 overflow-hidden bg-surface">
-        <Tilt3D amount={0.75}>
-          <div className="max-w-[1440px] mx-auto scroll-reveal">
-            <SectionHeading
-              className="mb-14"
-              align="center"
-              eyebrow="Testimonials"
-              icon="format_quote"
-              title={<>Trusted by <Accent>Thousands</Accent></>}
-              subtitle="Real experiences from our community of tech enthusiasts."
-            />
-            <div className="flex gap-6 overflow-x-auto pb-6 no-scrollbar snap-x" tabIndex={0} role="region" aria-label="Testimonials">
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className="min-w-[320px] md:min-w-[400px] snap-center glass-card p-8 md:p-10 rounded-4xl flex flex-col gap-5 shrink-0 hover:shadow-[0_20px_60px_rgba(217,30,54,0.08)] transition-shadow duration-500"
-                  style={{
-                    animation: `float-slow 8s ease-in-out infinite`,
-                    animationDelay: `${i * 1.2}s`,
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-[8px] bg-pf-red/10 shrink-0 ring-2 ring-pf-red/20 flex items-center justify-center">
-                      <span className="text-pf-red-dark font-bold text-lg">
-                        {t.name
-                          .split(' ')
-                          .map((w) => w[0])
-                          .join('')
-                          .slice(0, 2)
-                          .toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-base text-on-surface">{t.name}</h3>
-                      <div className="flex text-gold mt-0.5">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <span key={s} className="material-symbols-outlined text-sm">
-                            star
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-base text-on-surface-variant italic leading-relaxed">
-                    {t.quote}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs font-bold text-pf-red-dark uppercase tracking-wide mt-auto pt-2 border-t border-pf-red/10">
-                    <span className="material-symbols-outlined text-sm text-pf-red">verified</span>
-                    {t.badge}
-                  </div>
+      {/* ─── TESTIMONIALS (reference: flavour-note cards) ─── */}
+      <section className="ed-section py-20 md:py-28 px-6 md:px-12">
+        <span className="ed-glow ed-glow--a" aria-hidden="true" />
+        <div className="relative max-w-[1440px] mx-auto scroll-reveal">
+          <SectionHeading
+            className="mb-12 md:mb-16"
+            eyebrow="Customer Stories"
+            title={<>Trusted by <Accent>thousands</Accent></>}
+            subtitle="Real experiences from our community of phone owners and tech enthusiasts."
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8">
+            {testimonials.map((t, i) => (
+              <article key={t.name} className="ed-quote">
+                <span className="ed-mono ed-quote__label">
+                  {String(i + 1).padStart(2, '0')} / {t.badge}
+                </span>
+                <div className="ed-quote__stars" aria-label="5 out of 5 stars">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <span key={n} className="material-symbols-outlined" aria-hidden="true">
+                      star
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
+                <p>{t.quote}</p>
+                <footer>
+                  <span className="ed-quote__avatar">
+                    {t.name
+                      .split(' ')
+                      .map((w) => w[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
+                  {t.name}
+                </footer>
+              </article>
+            ))}
           </div>
-        </Tilt3D>
+        </div>
       </section>
 
       <StoreLocation />
 
       <EcommerceFooter />
+      </div>
     </div>
   )
 }

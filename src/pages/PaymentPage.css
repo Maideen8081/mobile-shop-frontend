@@ -1,104 +1,267 @@
-/* Desktop checkout — payment step. Builds on CartPage.css / CheckoutAddress.css. */
+/* Desktop checkout — payment step. Builds on CartPage.css + CheckoutAddress.css (.ca-*).
+   Brand palette only: #210d35 purple · #fff7f3 cream · #d0adff lavender · #ffd014 sunshine. */
 
-.pp-skel { height: 110px; }
-
-.pp-address {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: start;
-  padding: 20px 24px;
-}
-.pp-address p { margin: 0; font-size: var(--text-body-sm); line-height: 1.55; color: var(--cx-ink-2); }
-.pp-address .ca-addr-top { padding-right: 0; }
-.pp-address-icon {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--cx-red-tint);
-  color: var(--cx-red);
-}
-.pp-eta {
+/* Heading with secure pill on the right */
+.pp-head > div { flex: 1; min-width: 0; }
+.pp-secure-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 8px;
+  padding: 10px 18px;
   border-radius: 999px;
-  background: var(--cx-green-tint);
-  color: var(--cx-green);
-  font-size: var(--text-caption);
+  background: var(--ca-lav-20);
+  color: var(--ca-purple);
+  font-size: 15px;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.pp-secure { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: 600; color: var(--cx-green); }
-
-.pp-methods { display: flex; flex-direction: column; gap: 10px; padding: 20px 24px 8px; }
-.pp-method {
+/* Two-pane card: method list | method details */
+.pp-card {
   display: grid;
-  grid-template-columns: 22px 44px minmax(0, 1fr) auto;
-  gap: 14px;
+  grid-template-columns: 320px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.pp-tabs {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-right: 1px solid var(--ca-line);
+}
+.pp-tab {
+  position: relative;
+  display: flex;
   align-items: center;
+  gap: 16px;
   width: 100%;
-  padding: 14px 18px;
-  border: 1.5px solid var(--cx-line);
-  border-radius: var(--radius-lg, 12px);
-  background: #fff;
+  padding: 16px 18px;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  background: none;
   text-align: left;
   font: inherit;
-  transition: border-color 0.2s, background 0.2s;
+  color: var(--ca-purple);
+  transition: background 0.2s, border-color 0.2s;
 }
-.pp-method:hover:not(:disabled) { border-color: #dcd3ce; }
-.pp-method:focus-visible { outline: none; border-color: var(--cx-red); box-shadow: 0 0 0 3px var(--cx-red-tint); }
-.pp-method.is-selected { border-color: var(--cx-red); background: #fffafa; }
-.pp-method.is-selected .ca-radio { border-color: var(--cx-red); }
-.pp-method.is-selected .ca-radio::after { transform: scale(1); }
-.pp-method:disabled { background: #fcfbfa; }
-.pp-method:disabled .pp-method-icon,
-.pp-method:disabled .pp-method-text { opacity: 0.5; }
+.pp-tab + .pp-tab::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: var(--ca-line);
+}
+.pp-tab:hover:not(.is-selected) { background: var(--ca-lav-10); }
+.pp-tab:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ca-lav-35); }
+.pp-tab.is-selected {
+  border: 2px solid var(--ca-purple);
+  background: linear-gradient(90deg, var(--ca-lav-20), var(--ca-lav-10));
+}
+.pp-tab.is-selected::before,
+.pp-tab.is-selected + .pp-tab::before { display: none; }
 
-.pp-method-icon {
-  display: grid;
-  place-items: center;
+.pp-tab-icon {
   width: 44px;
   height: 44px;
-  border-radius: var(--radius-md, 8px);
-  background: var(--cx-bg);
-  color: var(--cx-ink-2);
+  flex-shrink: 0;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--ca-lav-20);
+  color: var(--ca-purple);
 }
-.pp-method.is-selected .pp-method-icon { background: var(--cx-red-tint); color: var(--cx-red); }
-.pp-method-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.pp-method-text strong { font-size: var(--text-body); font-weight: 600; color: var(--cx-ink); }
-.pp-method-text span { font-size: var(--text-label); color: var(--cx-muted); }
+.pp-tab.is-selected .pp-tab-icon { background: var(--ca-purple); color: var(--ca-sun); }
+.pp-tab-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pp-tab-text strong { font-family: var(--font-display); font-size: 17px; font-weight: 700; line-height: 1.25; }
+.pp-tab:has(.pp-soon) .pp-tab-text { padding-right: 40px; }
+.pp-tab-text span { font-size: 14px; color: var(--ca-muted); }
 .pp-soon {
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--cx-bg);
-  color: var(--cx-muted);
-  font-size: var(--text-caption);
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--ca-lav-20);
+  color: var(--ca-muted);
+  font-size: 11px;
   font-weight: 700;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.pp-note {
-  margin: 8px 24px 22px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md, 8px);
-  background: var(--cx-bg);
-  font-size: var(--text-label);
-  color: var(--cx-ink-2);
+/* Details panel */
+.pp-panel { padding: 28px 30px 30px; min-width: 0; }
+.pp-panel h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ca-purple);
+}
+.pp-panel-sub { margin: 6px 0 20px; font-size: 16px; color: var(--ca-ink-2); }
+
+.pp-soon-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-left: 4px solid var(--ca-sun);
+  border-radius: 10px;
+  background: rgba(255, 208, 20, 0.16);
+  color: var(--ca-purple);
+  font-size: 14px;
+}
+.pp-soon-note svg { flex-shrink: 0; }
+
+/* App / bank / wallet tiles */
+.pp-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 12px; }
+.pp-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 92px;
+  padding: 12px 8px;
+  border: 1.5px solid var(--ca-line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ca-purple);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+.pp-option:disabled { cursor: not-allowed; }
+.pp-option-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ca-lav-35);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
 }
 
+.pp-or { position: relative; margin: 22px 0; text-align: center; }
+.pp-or::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ca-line);
+}
+.pp-or span {
+  position: relative;
+  padding: 4px 14px;
+  border: 1px solid var(--ca-line);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ca-muted);
+}
+
+.pp-label { display: block; margin-bottom: 10px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ca-purple); }
+.pp-input-row { height: 54px; padding-right: 6px; }
+.pp-input-row input { padding-right: 10px; }
+.pp-verify {
+  height: 42px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--ca-purple);
+  color: var(--ca-cream);
+  font-weight: 700;
+}
+.pp-verify:disabled,
+.pp-panel input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.pp-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
+
+.pp-perks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 22px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: var(--ca-lav-20);
+  color: var(--ca-purple);
+  font-size: 15px;
+  font-weight: 500;
+}
+.pp-perks i { margin-right: 14px; font-style: normal; }
+
+/* Cash on delivery */
+.pp-cod {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  border: 1.5px solid var(--ca-lavender);
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--ca-lav-10), #fff);
+}
+.pp-cod-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--ca-purple);
+  color: var(--ca-sun);
+}
+.pp-cod div { display: flex; flex-direction: column; gap: 2px; }
+.pp-cod div span { font-size: 15px; color: var(--ca-muted); }
+.pp-cod strong { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--ca-purple); }
+.pp-cod-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.pp-cod-list li { display: flex; align-items: center; gap: 12px; font-size: 16px; color: var(--ca-ink-2); }
+.pp-cod-list svg {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ca-sun);
+  color: var(--ca-purple);
+}
+
+/* Summary extras */
+.pp-change { margin-left: 4px; font-weight: 700; color: var(--ca-purple); }
+.pp-pay { gap: 12px; }
 .pp-error {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   padding: 10px 12px;
-  border-radius: var(--radius-md, 8px);
-  background: var(--cx-red-tint);
-  color: var(--cx-red-dark);
-  font-size: var(--text-label);
+  border-left: 4px solid var(--ca-sun);
+  border-radius: 10px;
+  background: rgba(255, 208, 20, 0.16);
+  color: var(--ca-purple);
+  font-size: 14px;
   font-weight: 600;
 }
-.pp-terms { margin: 12px 0 0; text-align: center; font-size: var(--text-caption); color: var(--cx-muted); }
-.pp-terms a { color: var(--cx-ink-2); }
+.pp-terms { margin: 12px 0 0; text-align: center; font-size: 13px; color: var(--ca-muted); }
+.pp-terms a { color: var(--ca-purple); }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .pp-card { grid-template-columns: 1fr; }
+  .pp-tabs { flex-direction: row; flex-wrap: wrap; gap: 8px; border-right: 0; border-bottom: 1px solid var(--ca-line); }
+  .pp-tab { flex: 1 1 200px; border-color: var(--ca-line); }
+  .pp-tab + .pp-tab::before { display: none; }
+}
+@media (max-width: 900px) {
+  .pp-head { flex-wrap: wrap; }
+  .pp-panel { padding: 22px 18px; }
+  .pp-form { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,132 @@
+- generic [active] [ref=f16e1]:
+  - generic [ref=f16e3]:
+    - generic [ref=f16e5]:
+      - generic [ref=f16e7]:
+        - generic [ref=f16e8]:
+          - generic [ref=f16e14]: Free Delivery
+          - generic [ref=f16e15]: on Orders Over ₹500
+        - generic [ref=f16e16]: 100% Genuine Products
+        - generic [ref=f16e21]: Easy 7-Day Returns
+        - generic [ref=f16e26]: 1-Year Service Support
+        - link "Deals of the Day" [ref=f16e31] [cursor=pointer]:
+          - /url: /collection/all?tab=deals
+      - generic [ref=f16e35]:
+        - link "PhoneFix home" [ref=f16e36] [cursor=pointer]:
+          - /url: /home
+          - generic [ref=f16e40]:
+            - generic [ref=f16e41]: PhoneFix.
+            - generic [ref=f16e42]: Premium Mobile Store
+        - search [ref=f16e43]:
+          - textbox "Search products" [ref=f16e47]:
+            - /placeholder: Search for smartphones, accessories, repairs...
+          - button "Search" [ref=f16e48] [cursor=pointer]
+        - generic [ref=f16e49]:
+          - link "+91 98765 43210" [ref=f16e50] [cursor=pointer]:
+            - /url: tel:+919876543210
+          - generic [ref=f16e53]: Mon – Sat, 10 AM – 8 PM
+        - generic [ref=f16e57]:
+          - button "My account" [ref=f16e59] [cursor=pointer]:
+            - generic [ref=f16e64]: My Account
+          - link "Wishlist" [ref=f16e67] [cursor=pointer]:
+            - /url: /wishlist
+          - link "Cart" [ref=f16e70] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f16e76]:
+        - generic [ref=f16e77]:
+          - button "All Categories" [ref=f16e79] [cursor=pointer]
+          - navigation "Product categories" [ref=f16e85]:
+            - link "Smartphones" [ref=f16e86] [cursor=pointer]:
+              - /url: /collection/Smartphones
+            - link "Tablets" [ref=f16e90] [cursor=pointer]:
+              - /url: /collection/Tablets
+            - link "Smart Watches" [ref=f16e94] [cursor=pointer]:
+              - /url: /collection/Smart%20Watches
+            - link "Earbuds" [ref=f16e101] [cursor=pointer]:
+              - /url: /collection/Earbuds
+            - link "Headphones" [ref=f16e105] [cursor=pointer]:
+              - /url: /collection/Headphones
+            - link "Power Banks" [ref=f16e109] [cursor=pointer]:
+              - /url: /collection/Power%20Banks
+        - generic [ref=f16e115]:
+          - link "Book Repair" [ref=f16e117] [cursor=pointer]:
+            - /url: /book-repair
+          - link "Trade-In" [ref=f16e121] [cursor=pointer]:
+            - /url: /trade-in
+    - main [ref=f16e127]:
+      - generic [ref=f16e128]:
+        - generic [ref=f16e129]:
+          - generic [ref=f16e130]: Smartphones Collection
+          - heading "Latest Smartphones for Every Need" [level=1] [ref=f16e131]:
+            - text: Latest Smartphones
+            - generic [ref=f16e132]: for Every Need
+          - paragraph [ref=f16e133]: Top brands, new launches and the best deals — only at PhoneFix.
+          - generic [ref=f16e134]:
+            - button "Shop Now" [ref=f16e135] [cursor=pointer]
+            - link "Exchange Offer" [ref=f16e138] [cursor=pointer]:
+              - /url: /trade-in
+        - list [ref=f16e144]:
+          - listitem [ref=f16e145]:
+            - generic [ref=f16e146]: Latest Models
+          - listitem [ref=f16e149]:
+            - generic [ref=f16e150]: Best Prices
+          - listitem [ref=f16e154]:
+            - generic [ref=f16e155]: No Cost EMI
+          - listitem [ref=f16e158]:
+            - link "Exchange Offer" [ref=f16e159] [cursor=pointer]:
+              - /url: /trade-in
+      - navigation "Breadcrumb" [ref=f16e163]:
+        - link "Home" [ref=f16e164] [cursor=pointer]:
+          - /url: /home
+        - generic [ref=f16e167]: Smartphones
+      - generic [ref=f16e168]:
+        - heading "Smartphones" [level=2] [ref=f16e169]
+        - generic [ref=f16e170]:
+          - 'button "Sort by: Popular" [ref=f16e172] [cursor=pointer]'
+          - group "Layout" [ref=f16e176]:
+            - button "Grid view" [pressed] [ref=f16e177] [cursor=pointer]
+            - button "List view" [ref=f16e183] [cursor=pointer]
+      - generic [ref=f16e185]:
+        - complementary "Filters" [ref=f16e186]:
+          - generic [ref=f16e187]:
+            - heading "Filters" [level=3] [ref=f16e188]
+            - button "Clear All" [ref=f16e191] [cursor=pointer]
+          - generic [ref=f16e192]:
+            - button "Price Range" [expanded] [ref=f16e193] [cursor=pointer]
+            - generic [ref=f16e196]:
+              - generic [ref=f16e197]:
+                - slider "Minimum price": "0"
+                - slider "Maximum price": "150000"
+              - generic [ref=f16e199]:
+                - generic [ref=f16e200]:
+                  - generic [ref=f16e201]: ₹
+                  - spinbutton "Minimum price in rupees" [ref=f16e202]: "0"
+                - generic [ref=f16e203]: –
+                - generic [ref=f16e204]:
+                  - generic [ref=f16e205]: ₹
+                  - spinbutton "Maximum price in rupees" [ref=f16e206]: "150000"
+          - generic [ref=f16e207]:
+            - button "Collection" [expanded] [ref=f16e208] [cursor=pointer]
+            - generic [ref=f16e211]:
+              - generic [ref=f16e212] [cursor=pointer]:
+                - radio "All Products" [checked]
+                - generic [ref=f16e214]: All Products
+              - generic [ref=f16e215] [cursor=pointer]:
+                - radio "New Arrivals"
+                - generic [ref=f16e217]: New Arrivals
+              - generic [ref=f16e218] [cursor=pointer]:
+                - radio "Trending"
+                - generic [ref=f16e220]: Trending
+              - generic [ref=f16e221] [cursor=pointer]:
+                - radio "Featured"
+                - generic [ref=f16e223]: Featured
+          - button "Category" [ref=f16e225] [cursor=pointer]
+        - region "Smartphones products" [ref=f16e228]
+  - generic [ref=f16e262]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f16e263]

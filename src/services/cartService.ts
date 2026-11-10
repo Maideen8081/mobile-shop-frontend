@@ -70,13 +70,16 @@ function dispatchCartUpdated() {
 }
 
 function mapApiItem(item: any): CartItem {
+  // Same rule as the server: a discount price only counts when it is above zero.
+  const discount = Number(item.discount_price)
+  const hasDiscount = item.discount_price != null && discount > 0
   return {
     productId: item.product_id,
     variantId: item.variation_id,
     name: item.product_name,
     brand: item.brand,
-    price: Number(item.discount_price ?? item.price),
-    discountPrice: item.discount_price != null ? Number(item.discount_price) : null,
+    price: hasDiscount ? discount : Number(item.price),
+    discountPrice: hasDiscount ? discount : null,
     image: item.image || '',
     quantity: item.quantity,
     storage: item.selected_storage || '',

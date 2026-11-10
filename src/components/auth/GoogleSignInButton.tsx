@@ -16,6 +16,8 @@ interface Props {
   /** Called with the sign-in error message instead of the default toast, e.g. for pages with their own toast. */
   onError?: (message: string) => void
   className?: string
+  /** Corner style of Google's button. */
+  shape?: 'rectangular' | 'pill'
 }
 
 function errorMessage(err: unknown): string {
@@ -28,7 +30,7 @@ function errorMessage(err: unknown): string {
  * the API verifies it and starts the normal session, then we redirect like a
  * password login would.
  */
-export default function GoogleSignInButton({ mode = 'signin', onError, className = '' }: Props) {
+export default function GoogleSignInButton({ mode = 'signin', onError, className = '', shape = 'rectangular' }: Props) {
   const navigate = useNavigate()
   const toast = useToast()
   const { googleLogin } = useAuth()
@@ -89,7 +91,7 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
             type: 'standard',
             theme: 'outline',
             size: 'large',
-            shape: 'rectangular',
+            shape,
             logo_alignment: 'center',
             text: mode === 'signup' ? 'signup_with' : 'continue_with',
             width,
@@ -107,7 +109,7 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
       observer?.disconnect()
       releaseGoogleHandler(dispatch)
     }
-  }, [dispatch, mode])
+  }, [dispatch, mode, shape])
 
   if (!GOOGLE_CLIENT_ID) return null
 
@@ -123,14 +125,14 @@ export default function GoogleSignInButton({ mode = 'signin', onError, className
       />
 
       {status === 'loading' && (
-        <div className="absolute inset-0 rounded-xl animate-pulse" style={{ background: '#F3EDE9' }} aria-hidden="true" />
+        <div className={`absolute inset-0 animate-pulse ${shape === 'pill' ? 'rounded-full' : 'rounded-xl'}`} style={{ background: '#F3EDE9' }} aria-hidden="true" />
       )}
       {status === 'unavailable' && (
         <p className="text-center text-xs py-3" style={{ color: '#857d79' }} role="status">
           Google sign-in couldn't load. Check your connection or any content blockers, then refresh.
         </p>
       )}
-      {busy && <SigningInState width={buttonWidth} elapsed={elapsed} />}
+      {busy && <SigningInState width={buttonWidth} elapsed={elapsed} shape={shape} />}
     </div>
   )
 }
@@ -155,7 +157,7 @@ function useElapsedSeconds(active: boolean) {
  * The API host sleeps when idle, so the first sign-in can take a while; the
  * copy changes as time passes so a slow wake-up doesn't look like a hang.
  */
-function SigningInState({ width, elapsed }: { width: number; elapsed: number }) {
+function SigningInState({ width, elapsed, shape }: { width: number; elapsed: number; shape: 'rectangular' | 'pill' }) {
   const [title, hint] =
     elapsed < 4 ? ['Signing you in…', 'Verifying your Google account']
     : elapsed < 12 ? ['Still working…', 'Setting up your session']
@@ -165,11 +167,11 @@ function SigningInState({ width, elapsed }: { width: number; elapsed: number }) 
     <div className="absolute inset-0 flex justify-center" role="status" aria-live="polite">
       <div
         className="relative h-11 overflow-hidden flex items-center justify-center gap-3 px-4 bg-white"
-        style={{ width: width || '100%', border: '1px solid #dadce0', borderRadius: 4 }}
+        style={{ width: width || '100%', border: '1px solid #dadce0', borderRadius: shape === 'pill' ? 999 : 4 }}
       >
         <svg className="animate-spin shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="9" stroke="#e8eaed" strokeWidth="3" />
-          <path d="M21 12a9 9 0 0 0-9-9" stroke="#cb202d" strokeWidth="3" strokeLinecap="round" />
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="#210D35" strokeWidth="3" strokeLinecap="round" />
         </svg>
         <span className="min-w-0 text-left leading-tight">
           <span className="block text-sm font-semibold truncate" style={{ color: '#1b1210' }}>{title}</span>

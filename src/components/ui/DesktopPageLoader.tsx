@@ -16,7 +16,7 @@ export default function DesktopPageLoader({ text = 'Loading...', fullScreen = tr
           className="absolute inset-0 rounded-[8px]"
           style={{
             border: '3px solid transparent',
-            borderTopColor: '#D91E36',
+            borderTopColor: '#210D35',
             borderRightColor: '#D91E3640',
           }}
           animate={{ rotate: 360 }}
@@ -39,7 +39,7 @@ export default function DesktopPageLoader({ text = 'Loading...', fullScreen = tr
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="w-2.5 h-2.5 rounded-[8px]" style={{ background: '#D91E36' }} />
+          <div className="w-2.5 h-2.5 rounded-[8px]" style={{ background: '#210D35' }} />
         </motion.div>
       </div>
       {/* Text */}

@@ -87,12 +87,12 @@ export default function CustomerProfile() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Total Spent', value: `₹${customer.totalSpent.toLocaleString('en-IN')}`, icon: FiDollarSign, color: '#CB202D' },
-          { label: 'Repairs', value: customer.repairCount.toString(), icon: FiTool, color: '#A81D2A' },
-          { label: 'Loyalty Pts', value: customer.loyaltyPoints.toLocaleString(), icon: FiStar, color: '#CB202D' },
+          { label: 'Total Spent', value: `₹${customer.totalSpent.toLocaleString('en-IN')}`, icon: FiDollarSign, color: '#210D35' },
+          { label: 'Repairs', value: customer.repairCount.toString(), icon: FiTool, color: '#3A1E52' },
+          { label: 'Loyalty Pts', value: customer.loyaltyPoints.toLocaleString(), icon: FiStar, color: '#210D35' },
           { label: 'Pending Repairs', value: customer.pendingRepairs.toString(), icon: FiClock, color: '#ef4444' },
-          { label: 'Last Purchase', value: customer.lastPurchaseDate, icon: FiShoppingBag, color: '#A81D2A' },
-          { label: 'Sat. Score', value: `${customer.satisfactionScore}%`, icon: FiAward, color: '#CB202D' },
+          { label: 'Last Purchase', value: customer.lastPurchaseDate, icon: FiShoppingBag, color: '#3A1E52' },
+          { label: 'Sat. Score', value: `${customer.satisfactionScore}%`, icon: FiAward, color: '#210D35' },
         ].map((card, i) => (
           <motion.div key={card.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.04 }}
             className="rounded-xl bg-bg-card border border-border shadow-sm p-3 text-center"

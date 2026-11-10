@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { requireSignInForWishlist } from '../../utils/wishlist'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Minus, Plus, Trash2, Tag, ShieldCheck, ArrowLeft, ShoppingBag, Heart, Star, Check, Bike } from 'lucide-react'
+import { Minus, Plus, Trash2, Tag, ArrowLeft, ShoppingBag, Heart, Star, Check } from 'lucide-react'
 import { useMobileToast } from './useMobileToast'
 import MobileTopSection from './MobileTopSection'
 import {
@@ -11,19 +11,18 @@ import {
   VALID_COUPONS,
   FREE_SHIPPING_THRESHOLD,
   TAX_RATE,
-  DELIVERY_CHARGE,
 } from './cartLogic'
+import { computeTotals, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
 import { productService } from '../../services/productService'
 import { getImageUrl } from './helpers'
 import { cartService, type CartItem } from '../../services/cartService'
 import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
-const PURPLE = '#CB202D'
-const PURPLE2 = '#FF5A65'
+const PURPLE = '#210D35'
+const PURPLE2 = '#7B3FD0'
 const SUCCESS = '#22C55E'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_24px_rgba(0,0,0,0.08)]'
-const PLATFORM_FEE = 9
 
 async function addProductToCart(p: any) {
   const id = p.id || p.product_id
@@ -51,16 +50,14 @@ export default function MobileCart() {
   const stockMap = useStockInfo(items)
 
   const [couponCode, setCouponCode] = useState('')
-  const [couponApplied, setCouponApplied] = useState(false)
-  const [activeCoupon, setActiveCoupon] = useState<string | null>(null)
+  // Coupons are validated by the server, which is what applies them to the order.
+  const [coupon, setCoupon] = useState<CheckoutCoupon | null>(readCheckoutCoupon)
+  const [couponBusy, setCouponBusy] = useState(false)
 
   const [recommended, setRecommended] = useState<any[]>([])
   const [recLoading, setRecLoading] = useState(true)
   const [wishlisted, setWishlisted] = useState<Set<number>>(new Set())
 
-  const [tip, setTip] = useState<number | null>(null)
-  const [customTip, setCustomTip] = useState('')
-  const [instructions, setInstructions] = useState('')
 
   useEffect(() => {
     setCartLoading(true)
@@ -72,32 +69,42 @@ export default function MobileCart() {
     return () => window.removeEventListener('cart-updated', handler)
   }, [])
 
-  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const totalItems = items.reduce((s, i) => s + i.quantity, 0)
-
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
+  // Same pricing as the server: GST and delivery on the subtotal, coupon off the total.
+  const { subtotal, quantity: totalItems, shipping, tax, discount, total: grandTotal } =
+    computeTotals(items, coupon?.discount || 0)
   const shippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100)
-  const tax = Math.round(subtotal * TAX_RATE)
-  const discount = couponApplied && activeCoupon
-    ? (VALID_COUPONS[activeCoupon]?.fixed
-      ? VALID_COUPONS[activeCoupon].discount
-      : Math.round(subtotal * (VALID_COUPONS[activeCoupon]?.discount || 0)))
-    : 0
-  const deliveryTip = tip != null ? tip : (Number(customTip) || 0)
-  const platformFee = subtotal > 0 ? PLATFORM_FEE : 0
-  const grandTotal = subtotal + shipping + tax + platformFee + deliveryTip - discount
 
-  const handleApplyCoupon = () => {
+  const applyCoupon = (next: CheckoutCoupon | null) => {
+    setCoupon(next)
+    saveCheckoutCoupon(next)
+  }
+
+  const handleApplyCoupon = async () => {
     const code = couponCode.trim().toUpperCase()
-    if (!code) return
-    if (VALID_COUPONS[code]) {
-      setCouponApplied(true)
-      setActiveCoupon(code)
-      showToast(`Coupon "${code}" applied — ${VALID_COUPONS[code].label}`, 'success')
-    } else {
-      showToast(`Invalid coupon code "${code}"`, 'error')
+    if (!code || couponBusy) return
+    setCouponBusy(true)
+    try {
+      const result = await validateCoupon(code, subtotal)
+      applyCoupon(result)
+      showToast(`Coupon "${result.code}" applied — ₹${Math.round(result.discount).toLocaleString('en-IN')} off`, 'success')
+    } catch (err: any) {
+      showToast(err?.message || `Invalid coupon code "${code}"`, 'error')
+    } finally {
+      setCouponBusy(false)
     }
   }
+
+  // Percentage coupons depend on the subtotal, so re-check when the cart changes.
+  const appliedCode = coupon?.code
+  useEffect(() => {
+    if (!appliedCode || cartLoading) return
+    if (subtotal <= 0) { applyCoupon(null); return }
+    let cancelled = false
+    validateCoupon(appliedCode, subtotal)
+      .then((r) => { if (!cancelled) applyCoupon(r) })
+      .catch(() => { if (!cancelled) applyCoupon(null) })
+    return () => { cancelled = true }
+  }, [appliedCode, subtotal, cartLoading])
 
   const handleUpdateQty = async (item: CartItem, delta: number) => {
     const key = `${item.productId}-${item.variantId || 'default'}`
@@ -202,13 +209,13 @@ export default function MobileCart() {
       <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Review your items" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
-          <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(203,32,45,0.1)' }}>
+          <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
             <ShoppingBag size={44} style={{ color: PURPLE }} />
           </div>
           <h2 className="text-xl font-bold text-[#1F2937]">Your cart is empty</h2>
           <p className="text-label text-[#6B7280] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
           <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-body-sm font-bold active:scale-95 transition"
-            style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
+            style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}>
             Start Shopping
           </button>
         </div>
@@ -252,9 +259,9 @@ export default function MobileCart() {
                   <button onClick={() => navigate(`/product/${item.productId}`)} className="text-left min-w-0">
                     <h3 className="text-label font-semibold text-[#1F2937] leading-snug line-clamp-1">{item.name}</h3>
                     <div className="flex items-center gap-1 mt-1 flex-wrap">
-                      {item.brand && <span className="text-micro font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.brand}</span>}
+                      {item.brand && <span className="text-micro font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>{item.brand}</span>}
                       {item.storage && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.storage}</span>}
-                      {item.ram && <span className="text-micro px-1.5 py-0.5 rounded" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
+                      {item.ram && <span className="text-micro px-1.5 py-0.5 rounded" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
                       {item.color && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.color}</span>}
                     </div>
                   </button>
@@ -272,7 +279,7 @@ export default function MobileCart() {
                       <Minus size={14} />
                     </button>
                     <span className="font-bold w-6 text-center text-label">{item.quantity}</span>
-                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}>
+                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}>
                       <Plus size={14} />
                     </button>
                   </div>
@@ -318,7 +325,7 @@ export default function MobileCart() {
         {/* Coupon */}
         <div className={`${card} p-4`}>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
               <Tag size={16} style={{ color: PURPLE }} />
             </div>
             <div>
@@ -326,10 +333,10 @@ export default function MobileCart() {
               <p className="text-micro text-[#6B7280] mt-0.5">Save more on your order</p>
             </div>
           </div>
-          {couponApplied && activeCoupon ? (
+          {coupon ? (
             <div className="flex items-center justify-between pl-3 pr-2 py-2.5 rounded-2xl text-caption font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#16A34A' }}>
-              <span className="flex items-center gap-1.5"><Check size={14} /> {activeCoupon} applied — {VALID_COUPONS[activeCoupon]?.label}</span>
-              <button onClick={() => { setCouponApplied(false); setActiveCoupon(null); setCouponCode('') }} className="text-[#64748B] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
+              <span className="flex items-center gap-1.5"><Check size={14} /> {coupon.code} applied — ₹{Math.round(discount).toLocaleString('en-IN')} off</span>
+              <button onClick={() => { applyCoupon(null); setCouponCode('') }} className="text-[#64748B] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
             </div>
           ) : (
             <div className="space-y-2.5">
@@ -342,14 +349,14 @@ export default function MobileCart() {
                   className="flex-1 h-full bg-transparent outline-none text-body-sm font-semibold tracking-wide text-[#1F2937] placeholder:text-[#9CA3AF] placeholder:font-medium placeholder:tracking-normal"
                 />
               </div>
-              <button onClick={handleApplyCoupon} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)`, boxShadow: '0 8px 20px rgba(203,32,45,0.32)' }}>
-                <Tag size={16} /> Apply Coupon
+              <button onClick={handleApplyCoupon} disabled={couponBusy} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)`, boxShadow: '0 8px 20px rgba(123, 63, 208,0.32)' }}>
+                <Tag size={16} /> {couponBusy ? 'Checking…' : 'Apply Coupon'}
               </button>
             </div>
           )}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {Object.entries(VALID_COUPONS).slice(0, 3).map(([code, c]) => (
-              <button key={code} onClick={() => setCouponCode(code)} disabled={couponApplied} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
+              <button key={code} onClick={() => setCouponCode(code)} disabled={!!coupon} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
                 {code} · {c.label}
               </button>
             ))}
@@ -371,27 +378,16 @@ export default function MobileCart() {
         <div className={`${card} p-3.5 space-y-2`}>
           <SummaryRow label="Subtotal" value={`₹${subtotal.toLocaleString('en-IN')}`} />
           <SummaryRow label="Shipping" value={shipping === 0 ? 'FREE' : `₹${shipping}`} highlight={shipping === 0} />
-          <SummaryRow label={`Tax (GST ${(TAX_RATE * 100).toFixed(0)}%)`} value={`₹${tax.toLocaleString('en-IN')}`} />
-          <SummaryRow label="Platform Fee" value={`₹${platformFee}`} />
-          {deliveryTip > 0 && <SummaryRow label="Delivery Partner Tip" value={`₹${deliveryTip}`} highlight />}
-          {couponApplied && activeCoupon && (
-            <SummaryRow label={`Coupon (${activeCoupon})`} value={`-₹${discount.toLocaleString('en-IN')}`} highlight />
+          <SummaryRow label={`Tax (GST ${(TAX_RATE * 100).toFixed(0)}%)`} value={`₹${Math.round(tax).toLocaleString('en-IN')}`} />
+          {coupon && (
+            <SummaryRow label={`Coupon (${coupon.code})`} value={`-₹${Math.round(discount).toLocaleString('en-IN')}`} highlight />
           )}
           <div className="pt-2 border-t border-[#EEF1F4] flex items-center justify-between">
             <span className="text-label font-bold text-[#1F2937]">Grand Total</span>
-            <span className="text-title-sm font-bold" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</span>
+            <span className="text-title-sm font-bold" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        {/* Delivery Partner Tip (bottom of page) */}
-        <DeliveryTipCard
-          tip={tip}
-          setTip={setTip}
-          customTip={customTip}
-          setCustomTip={setCustomTip}
-          instructions={instructions}
-          setInstructions={setInstructions}
-        />
       </div>
 
       {/* Sticky checkout bar */}
@@ -399,20 +395,12 @@ export default function MobileCart() {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-micro text-[#64748B]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
-            <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>₹{grandTotal.toLocaleString('en-IN')}</p>
+            <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</p>
           </div>
           <button
-            onClick={() => {
-              if (couponApplied && activeCoupon) {
-                localStorage.setItem('checkout_coupon', JSON.stringify({ code: activeCoupon, discount }))
-              } else {
-                localStorage.removeItem('checkout_coupon')
-              }
-              localStorage.setItem('checkout_delivery_tip', String(deliveryTip))
-              navigate('/checkout/address')
-            }}
+            onClick={() => navigate('/checkout/address')}
             className="flex-shrink-0 h-11 px-6 rounded-xl text-white text-body-sm font-bold active:scale-95 transition flex items-center justify-center gap-2"
-            style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}
+            style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}
           >
             Checkout <ArrowLeft size={16} className="rotate-180" />
           </button>
@@ -507,7 +495,7 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
                   onClick={() => onAdd(p)}
                   aria-label="Add to cart"
                   className="w-8 h-8 rounded-[8px] text-white flex items-center justify-center flex-shrink-0 active:scale-90 transition"
-                  style={{ background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)` }}
+                  style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}
                 >
                   <Plus size={16} />
                 </button>
@@ -521,92 +509,6 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
 }
 
 /* ---------- Delivery Partner Tip ---------- */
-function DeliveryTipCard({ tip, setTip, customTip, setCustomTip, instructions, setInstructions }: {
-  tip: number | null; setTip: (v: number | null) => void; customTip: string; setCustomTip: (v: string) => void
-  instructions: string; setInstructions: (v: string) => void
-}) {
-  const tips = [10, 20, 30, 50, 100]
-  const activeTip = tip != null ? tip : (Number(customTip) || 0)
-  const selectTip = (v: number) => { setTip(v); setCustomTip('') }
-  return (
-    <div className="rounded-[20px] p-4" style={{ background: '#F5F3FF' }}>
-      <div className="flex items-start gap-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-body font-bold text-[#1F2937] flex items-center gap-1.5">
-            <span>Support Your Delivery Partner</span>
-            <span className="text-[#EC4899]">❤️</span>
-          </h3>
-          <p className="text-caption text-[#6B7280] mt-0.5">100% of your tip goes directly to the delivery partner.</p>
-        </div>
-        {/* Rider illustration */}
-        <motion.div
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0"
-          style={{ background: 'rgba(203,32,45,0.12)' }}
-        >
-          <Bike size={30} style={{ color: PURPLE }} />
-        </motion.div>
-      </div>
-
-      {/* Tip options */}
-      <div className="grid grid-cols-5 gap-2 mt-3">
-        {tips.map((t) => {
-          const active = activeTip === t && tip != null
-          return (
-            <motion.button
-              key={t}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => selectTip(t)}
-              className="h-11 rounded-2xl text-label font-bold border-2 transition"
-              style={active
-                ? { background: `linear-gradient(135deg, ${PURPLE}, #A81D2A)`, color: '#fff', borderColor: 'transparent' }
-                : { background: '#fff', color: PURPLE, borderColor: '#FDD' }}
-            >
-              ₹{t}
-            </motion.button>
-          )
-        })}
-      </div>
-
-      {/* Custom tip */}
-      <div className="mt-2">
-        <div className="flex items-center gap-1 px-3 h-11 w-full rounded-2xl bg-white border-2" style={{ borderColor: customTip || activeTip > 0 ? PURPLE : '#E5E7EB' }}>
-          <span className="text-label font-bold text-[#6B7280]">₹</span>
-          <input
-            value={customTip}
-            onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 4); setCustomTip(v); if (v) setTip(null) }}
-            inputMode="numeric"
-            placeholder="Enter custom tip amount"
-            className="flex-1 min-w-0 h-full bg-transparent outline-none text-label font-semibold text-[#1F2937] placeholder:text-[#9CA3AF]"
-          />
-        </div>
-        {activeTip > 0 && (
-          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-[8px] text-micro font-semibold text-white" style={{ background: SUCCESS }}>
-            <Check size={13} /> Thank you for supporting your delivery partner!
-          </motion.div>
-        )}
-      </div>
-
-      {/* Delivery instructions */}
-      <input
-        value={instructions}
-        onChange={(e) => setInstructions(e.target.value.slice(0, 200))}
-        placeholder="Add delivery instructions (e.g. Leave at the door)"
-        className="w-full h-11 px-3 mt-2 rounded-2xl bg-white border border-[#E5E7EB] outline-none text-caption text-[#1F2937]"
-      />
-      <p className="text-micro text-[#9CA3AF] mt-1 text-right">{instructions.length}/200</p>
-
-      {/* Safety message */}
-      <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-2xl bg-white/70">
-        <ShieldCheck size={16} style={{ color: SUCCESS }} />
-        <p className="text-micro text-[#4B5563]">Your tip is transferred entirely to the delivery partner.</p>
-      </div>
-    </div>
-  )
-}
-
-/* ---------- Header & rows ---------- */
 function SummaryRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between text-caption">

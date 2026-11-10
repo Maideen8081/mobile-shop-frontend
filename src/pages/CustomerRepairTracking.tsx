@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
+import AccountLayout, { AccountPhone } from '../components/account/AccountLayout'
 import '../components/ecommerce/SiteTopNav.css'
 import '../components/repair/repairTracking.css'
 import { repairService, type RepairTicket } from '../services/repairService'
@@ -35,6 +36,13 @@ const SORTS: { key: SortKey; label: string }[] = [
   { key: 'updated', label: 'Recently updated' },
   { key: 'newest', label: 'Newest first' },
   { key: 'oldest', label: 'Oldest first' },
+]
+
+const STAT_CARDS: { key: FilterKey; label: string; icon: string; tone: string }[] = [
+  { key: 'active', label: 'In Progress', icon: 'build', tone: 'is-violet' },
+  { key: 'action', label: 'Needs Action', icon: 'notifications_active', tone: 'is-amber' },
+  { key: 'completed', label: 'Completed', icon: 'task_alt', tone: 'is-green' },
+  { key: 'all', label: 'Total Repairs', icon: 'smartphone', tone: 'is-blue' },
 ]
 
 function isFilterKey(v: string | null): v is FilterKey {
@@ -149,6 +157,158 @@ export default function CustomerRepairTracking() {
   const activeCount = counts.active
   const hasFilters = filter !== 'all' || query.trim() !== ''
 
+  const showStats = (key: FilterKey) => setParam('status', filter === key ? 'all' : key, 'all')
+
+  const body = (
+    <>
+      {/* Banner (desktop) */}
+      <div className="hidden lg:block">
+        <section className="acc-hero rt-banner" aria-labelledby="rt-title">
+          <span className="rt-banner-icon"><Icon name="build_circle" /></span>
+          <div className="rt-banner-text">
+            <small>Repair center</small>
+            <h1 id="rt-title">My Repairs</h1>
+            <p>Follow each device from booking to delivery, approve estimates and chat with our technicians.</p>
+            <div className="rt-banner-meta">
+              <span><Icon name="schedule" /> {syncedAt ? `Updated ${timeAgo(new Date(syncedAt).toISOString(), now)}` : 'Syncing…'}</span>
+              <button type="button" onClick={refresh} disabled={refreshing} aria-label="Refresh repairs">
+                <Icon name="refresh" className={refreshing ? 'animate-spin' : ''} /> Refresh
+              </button>
+            </div>
+          </div>
+          <Link to="/repairs" className="rt-banner-cta"><Icon name="add_circle" /> Book a Repair</Link>
+          <AccountPhone className="acc-phone-lg rt-banner-phone" />
+        </section>
+      </div>
+
+      {/* Summary */}
+      <section className="rt-stats" aria-label="Repair summary">
+        {STAT_CARDS.map(s => (
+          <button
+            key={s.key}
+            type="button"
+            className={`rt-stat ${s.tone}${filter === s.key && s.key !== 'all' ? ' is-selected' : ''}`}
+            onClick={() => showStats(s.key)}
+            aria-pressed={filter === s.key}
+          >
+            <span className="rt-stat-icon"><Icon name={s.icon} /></span>
+            <span className="rt-stat-text">
+              <strong>{loading ? '–' : counts[s.key]}</strong>
+              <span>{s.label}</span>
+            </span>
+            <Icon name="chevron_right" className="rt-stat-go" />
+          </button>
+        ))}
+      </section>
+
+      {/* Search / sort / tabs */}
+      <section className="rt-panel" aria-label="Find a repair">
+        <div className="rt-toolbar">
+          <label className="rt-search">
+            <Icon name="search" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setParam('q', e.target.value, '')}
+              placeholder="Search by ticket ID, device or IMEI"
+              aria-label="Search repairs"
+            />
+            {query && (
+              <button type="button" className="rt-search-clear" onClick={() => setParam('q', '', '')} aria-label="Clear search">
+                <Icon name="close" />
+              </button>
+            )}
+          </label>
+          <select className="rt-select" value={sort} onChange={(e) => setParam('sort', e.target.value, 'updated')} aria-label="Sort repairs">
+            {SORTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+          </select>
+        </div>
+
+        <div className="rt-tabs" role="tablist" aria-label="Filter by status">
+          {FILTERS.map(f => (
+            <button
+              key={f.key}
+              type="button"
+              role="tab"
+              aria-selected={filter === f.key}
+              className={`rt-tab${filter === f.key ? ' is-active' : ''}${f.key === 'action' && counts.action ? ' is-alert' : ''}`}
+              onClick={() => setParam('status', f.key, 'all')}
+            >
+              {f.label}
+              <span className="rt-tab-count">{loading ? '·' : counts[f.key]}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Nudge toward pending customer actions */}
+      {!loading && counts.action > 0 && filter !== 'action' && (
+        <div className="rt-callout" role="status">
+          <div className="rt-callout-icon"><Icon name="notifications_active" /></div>
+          <div className="rt-callout-text">
+            <strong>{counts.action === 1 ? '1 repair needs' : `${counts.action} repairs need`} your attention.</strong>{' '}
+            Approve an estimate or share shipping details to keep things moving.
+          </div>
+          <button type="button" className="rt-btn rt-btn-primary rt-btn-sm" onClick={() => setParam('status', 'action', 'all')}>Review now</button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="rt-list" aria-busy="true">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="rt-tcard" style={{ padding: 22, display: 'flex', gap: 18 }}>
+              <div className="rt-skel" style={{ width: 84, height: 84, borderRadius: 18, flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div className="rt-skel" style={{ height: 18, width: '40%', marginBottom: 10 }} />
+                <div className="rt-skel" style={{ height: 12, width: '60%', marginBottom: 18 }} />
+                <div className="rt-skel" style={{ height: 10, width: '100%' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error && tickets.length === 0 ? (
+        <div className="rt-empty" role="alert">
+          <div className="rt-empty-icon"><Icon name="wifi_off" /></div>
+          <h3>We couldn't load your repairs</h3>
+          <p>Check your connection and try again. Your repair requests are safe.</p>
+          <button type="button" className="rt-btn rt-btn-primary" onClick={() => { setLoading(true); load('manual') }}>
+            <Icon name="refresh" /> Try again
+          </button>
+        </div>
+      ) : visible.length === 0 ? (
+        <div className="rt-empty">
+          <div className="rt-empty-icon"><Icon name={hasFilters ? 'search_off' : 'build'} /></div>
+          {tickets.length === 0 ? (
+            <>
+              <h3>No repairs yet</h3>
+              <p>Cracked screen, weak battery or something else? Book a repair and track it here from pickup to delivery.</p>
+              <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add" /> Book your first repair</Link>
+            </>
+          ) : (
+            <>
+              <h3>No matching repairs</h3>
+              <p>{query ? `Nothing matches "${query}"` : 'There are no repairs in this view'}. Try another filter or search term.</p>
+              <button type="button" className="rt-btn" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Clear filters</button>
+            </>
+          )}
+        </div>
+      ) : (
+        <section className="rt-list" aria-label={`${visible.length} repair${visible.length === 1 ? '' : 's'}`}>
+          {visible.map(t => <RepairCard key={t.id} ticket={t} actions={actions} now={now} />)}
+        </section>
+      )}
+
+      <aside className="rt-help">
+        <span className="rt-help-icon"><Icon name="support_agent" /></span>
+        <div className="rt-help-text">
+          <strong>Questions about a repair?</strong>
+          Open any repair to message the technician working on it, or chat with our support team.
+        </div>
+        <Link to="/support" className="rt-btn rt-btn-primary"><Icon name="chat" /> Contact support</Link>
+      </aside>
+    </>
+  )
+
   return (
     <div className="rt">
       {/* Desktop nav */}
@@ -170,148 +330,11 @@ export default function CustomerRepairTracking() {
         </div>
       </header>
 
-      {/* Desktop hero */}
-      <section className="rt-hero hidden lg:block">
-        <div className="rt-shell rt-hero-inner">
-          <div>
-            <div className="rt-eyebrow"><Icon name="build_circle" /> Repair center</div>
-            <h1 className="rt-title">My Repairs</h1>
-            <p className="rt-sub">Follow each device from booking to delivery, approve estimates, and message our technicians — all in one place.</p>
-          </div>
-          <div className="rt-hero-side">
-            <div className="rt-kpis" aria-label="Repair summary">
-              <div className="rt-kpi">
-                <div className="rt-kpi-num">{loading ? '–' : activeCount}</div>
-                <div className="rt-kpi-label">In progress</div>
-              </div>
-              <div className={`rt-kpi${counts.action ? ' is-action' : ''}`}>
-                <div className="rt-kpi-num">{loading ? '–' : counts.action}</div>
-                <div className="rt-kpi-label">Needs your action</div>
-              </div>
-              <div className="rt-kpi is-done">
-                <div className="rt-kpi-num">{loading ? '–' : counts.completed}</div>
-                <div className="rt-kpi-label">Completed</div>
-              </div>
-            </div>
-            <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add" /> Book a repair</Link>
-          </div>
-        </div>
-      </section>
-
-      <main className="rt-shell" aria-label="My repairs">
-        {/* Search / sort / refresh */}
-        <div className="rt-toolbar">
-          <label className="rt-search">
-            <Icon name="search" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setParam('q', e.target.value, '')}
-              placeholder="Search by ticket ID, device or IMEI"
-              aria-label="Search repairs"
-            />
-            {query && (
-              <button type="button" className="rt-btn rt-btn-ghost rt-btn-sm rt-icon-btn" onClick={() => setParam('q', '', '')} aria-label="Clear search">
-                <Icon name="close" />
-              </button>
-            )}
-          </label>
-          <select className="rt-select" value={sort} onChange={(e) => setParam('sort', e.target.value, 'updated')} aria-label="Sort repairs">
-            {SORTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-          </select>
-          <div className="hidden lg:flex" style={{ alignItems: 'center', gap: 10 }}>
-            {syncedAt && <span className="rt-refresh-meta" aria-live="polite">Updated {timeAgo(new Date(syncedAt).toISOString(), now)}</span>}
-            <button type="button" className="rt-btn rt-icon-btn" onClick={refresh} disabled={refreshing} aria-label="Refresh repairs" title="Refresh">
-              <Icon name="refresh" className={refreshing ? 'animate-spin' : ''} />
-            </button>
-          </div>
-        </div>
-
-        {/* Status tabs */}
-        <div className="rt-tabs" role="tablist" aria-label="Filter by status">
-          {FILTERS.map(f => (
-            <button
-              key={f.key}
-              type="button"
-              role="tab"
-              aria-selected={filter === f.key}
-              className={`rt-tab${filter === f.key ? ' is-active' : ''}${f.key === 'action' && counts.action ? ' is-alert' : ''}`}
-              onClick={() => setParam('status', f.key, 'all')}
-            >
-              {f.label}
-              <span className="rt-tab-count">{loading ? '·' : counts[f.key]}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Nudge toward pending customer actions */}
-        {!loading && counts.action > 0 && filter !== 'action' && (
-          <div className="rt-callout" role="status">
-            <div className="rt-callout-icon"><Icon name="notifications_active" /></div>
-            <div className="rt-callout-text">
-              <strong>{counts.action === 1 ? '1 repair needs' : `${counts.action} repairs need`} your attention.</strong>{' '}
-              Approve an estimate or share shipping details to keep things moving.
-            </div>
-            <button type="button" className="rt-btn rt-btn-sm" onClick={() => setParam('status', 'action', 'all')}>Review</button>
-          </div>
-        )}
-
-        {loading ? (
-          <div className="rt-list" aria-busy="true">
-            {[0, 1, 2].map(i => (
-              <div key={i} className="rt-card" style={{ padding: 20, display: 'flex', gap: 18 }}>
-                <div className="rt-skel" style={{ width: 76, height: 76, borderRadius: 14, flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div className="rt-skel" style={{ height: 18, width: '40%', marginBottom: 10 }} />
-                  <div className="rt-skel" style={{ height: 12, width: '60%', marginBottom: 18 }} />
-                  <div className="rt-skel" style={{ height: 10, width: '100%' }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : error && tickets.length === 0 ? (
-          <div className="rt-empty" role="alert">
-            <div className="rt-empty-icon"><Icon name="wifi_off" /></div>
-            <h3>We couldn't load your repairs</h3>
-            <p>Check your connection and try again. Your repair requests are safe.</p>
-            <button type="button" className="rt-btn rt-btn-primary" onClick={() => { setLoading(true); load('manual') }}>
-              <Icon name="refresh" /> Try again
-            </button>
-          </div>
-        ) : visible.length === 0 ? (
-          <div className="rt-empty">
-            <div className="rt-empty-icon"><Icon name={hasFilters ? 'search_off' : 'build'} /></div>
-            {tickets.length === 0 ? (
-              <>
-                <h3>No repairs yet</h3>
-                <p>Cracked screen, weak battery or something else? Book a repair and track it here from pickup to delivery.</p>
-                <Link to="/repairs" className="rt-btn rt-btn-primary"><Icon name="add" /> Book your first repair</Link>
-              </>
-            ) : (
-              <>
-                <h3>No matching repairs</h3>
-                <p>{query ? `Nothing matches "${query}"` : 'There are no repairs in this view'}. Try another filter or search term.</p>
-                <button type="button" className="rt-btn" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Clear filters</button>
-              </>
-            )}
-          </div>
-        ) : (
-          <section className="rt-list" aria-label={`${visible.length} repair${visible.length === 1 ? '' : 's'}`}>
-            {visible.map(t => <RepairCard key={t.id} ticket={t} actions={actions} now={now} />)}
-          </section>
-        )}
-
-        <aside className="rt-help">
-          <div className="rt-help-text">
-            <strong>Questions about a repair?</strong>
-            Open any repair to message the technician working on it, or chat with our support team.
-          </div>
-          <Link to="/support" className="rt-btn"><Icon name="support_agent" /> Contact support</Link>
-        </aside>
-      </main>
+      <AccountLayout active="repairs" crumb="My Repairs" compact>
+        <main className="rt-page" aria-label="My repairs">{body}</main>
+      </AccountLayout>
 
       {actions.dialog}
-
 
       {/* Mobile CTA */}
       <div className="rt-mbar lg:hidden">
@@ -341,18 +364,18 @@ function RepairCard({ ticket, actions, now }: {
     : `Booked on ${formatDate(ticket.createdAt)}`
 
   return (
-    <article className={`rt-card${needsAction(ticket) ? ' is-action' : ''}`}>
+    <article className={`rt-tcard tone-${meta.tone}${needsAction(ticket) ? ' is-action' : ''}`}>
       <button type="button" className="rt-card-main" onClick={open} aria-label={`Open repair ${ticket.repairId}, ${ticket.deviceBrand} ${ticket.deviceModel}, ${meta.label}`}>
         <DeviceThumb ticket={ticket} />
         <div className="rt-card-body">
           <h3 className="rt-card-title">{ticket.deviceBrand} {ticket.deviceModel}</h3>
-          <div className="rt-meta">
-            <span className="rt-ticket-id">{ticket.repairId}</span>
-            {ticket.issueCategory && <><span className="rt-meta-dot" />{ticket.issueCategory}</>}
-            <span className="rt-meta-dot" />Booked {formatDate(ticket.createdAt)}
+          <div className="rt-chips">
+            <span className="rt-chip is-id"><Icon name="confirmation_number" /> {ticket.repairId}</span>
+            {ticket.issueCategory && <span className="rt-chip"><Icon name="build" /> {ticket.issueCategory}</span>}
+            <span className="rt-chip"><Icon name="calendar_month" /> Booked {formatDate(ticket.createdAt)}</span>
           </div>
           <StageTracker status={ticket.status} />
-          {meta.hint && <p className="rt-hint">{meta.hint}</p>}
+          {meta.hint && <p className="rt-hint"><Icon name="info" /> {meta.hint}</p>}
         </div>
         <div className="rt-card-side">
           <StatusPill status={ticket.status} />

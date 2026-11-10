@@ -1,16 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiUser, FiSmartphone, FiAlertCircle, FiCheckCircle, FiArrowRight, FiArrowLeft, FiSend, FiX, FiImage } from 'react-icons/fi'
-import BackBar from '../components/ecommerce/BackBar'
+import {
+  ArrowLeft, ArrowRight, BatteryCharging, Calendar, Camera, Check, CheckCircle2, Cpu, Droplets,
+  Headphones, ImagePlus, Loader2, Lock, MapPin, Mic, Pencil, Plug, ShieldCheck, Smartphone, Tablet,
+  User, Watch, Wrench, X, Zap,
+} from 'lucide-react'
 import { deviceBrands } from '../data/repairData'
-import { repairService, type RepairService } from '../services/repairService'
+import { repairService, appendIfFilled, formatRepairError, type RepairService } from '../services/repairService'
 import { authService } from '../services/authService'
 import { addressService, type AddressData } from '../services/addressService'
 import MobileBookRepair from '../components/mobile/MobileBookRepair'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
+import './BookRepair.css'
 
 const issueQuestions: Record<string, string[]> = {
   'Screen Repair': ['Is the glass only cracked or is the display also affected?', 'Is the touch functionality working?', 'Do you have a screen protector installed?', 'Any dead pixels or discoloration?'],
@@ -22,28 +25,46 @@ const issueQuestions: Record<string, string[]> = {
   'Software Unlocking': ['What type of lock? (iCloud / FRP / PIN)', 'Do you have proof of purchase?', 'Is the device signed into any account?', 'Can you access the settings menu?'],
   'Motherboard Repair': ['Does the phone turn on at all?', 'Any signs of water damage?', 'Has it been repaired before?', 'Does it show any signs of life (vibration, LED)?'],
 }
+const defaultQuestions = ['How long has this issue been present?', 'Is the device currently usable?', 'Any previous repairs done?']
 
-const defaultQuestions = ['Please describe the issue you are facing', 'How long has this issue been present?', 'Is the device currently usable?', 'Any previous repairs done?']
+const DEVICE_TYPES = [
+  { id: 'Phone', title: 'Phone Repair', desc: 'Screen, battery, charging & more', icon: Smartphone },
+  { id: 'Tablet', title: 'Tablet Repair', desc: 'Display, battery, port & more', icon: Tablet },
+  { id: 'Smartwatch', title: 'Smartwatch Repair', desc: 'Screen, battery & more', icon: Watch },
+  { id: 'Audio Device', title: 'Audio Device Repair', desc: 'Earbuds, headphones & more', icon: Headphones },
+]
 
-/* Fixed step labels — questions + 3 extra steps (details, device, photos) */
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 'var(--text-caption)', fontWeight: 600,
-  color: '#4A403D', marginBottom: 6, letterSpacing: '0.01em',
-}
+const ISSUE_ICONS: [RegExp, typeof Wrench][] = [
+  [/screen|display/i, Smartphone], [/battery/i, BatteryCharging], [/water/i, Droplets], [/camera/i, Camera],
+  [/charg|port/i, Plug], [/speaker|mic|audio/i, Mic], [/unlock|software/i, Lock], [/board/i, Cpu],
+]
+const issueIcon = (name: string) => ISSUE_ICONS.find(([re]) => re.test(name))?.[1] || Wrench
 
-// Defined at module level: a component declared inside the page would be a new
-// type on every render, remounting its input and dropping focus after each keystroke.
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+const STEPS = [
+  { title: 'Repair Details', desc: 'Tell us the issue' },
+  { title: 'Device Information', desc: 'Add your device details' },
+  { title: 'Your Details', desc: 'Contact & pickup info' },
+  { title: 'Review & Confirm', desc: 'Check and book your repair' },
+]
+
+const WARRANTY_OPTIONS = [
+  { value: 'in_warranty', label: 'In Warranty' },
+  { value: 'out_of_warranty', label: 'Out of Warranty' },
+  { value: 'expired', label: 'Expired' },
+]
+
+const MAX_ISSUE = 500
+
+// Module-level so inputs keep focus between keystrokes.
+function Field({ label, error, optional, wide, children }: { label: string; error?: string; optional?: boolean; wide?: boolean; children: React.ReactNode }) {
   return (
-    <div>
-      <label style={labelStyle}>{label}</label>
+    <div className={`br-field${wide ? ' is-wide' : ''}${error ? ' has-error' : ''}`}>
+      <label>{label}{optional ? <span> (optional)</span> : <em> *</em>}</label>
       {children}
-      {error && <p style={{ fontSize: 'var(--text-caption)', color: '#ef4444', marginTop: 5 }}>{error}</p>}
+      {error && <p className="br-err">{error}</p>}
     </div>
   )
 }
-
-const EXTRA_STEPS = ['Your Details', 'Device Info', 'Photos']
 
 export default function BookRepair() {
   const isMobile = useIsMobile()
@@ -55,43 +76,43 @@ function DesktopBookRepair() {
   const decodedIssue = issue ? decodeURIComponent(issue) : ''
 
   const [step, setStep] = useState(1)
+  const [deviceType, setDeviceType] = useState('Phone')
+  const [selectedIssue, setSelectedIssue] = useState(decodedIssue)
+  const [routeIssue, setRouteIssue] = useState(decodedIssue)
+  const [issueText, setIssueText] = useState('')
+  const [answers, setAnswers] = useState<Record<string, string>>({})
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
   const [brand, setBrand] = useState('')
   const [model, setModel] = useState('')
   const [imei, setImei] = useState('')
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
-  const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState('')
-  const [result, setResult] = useState<{ repairId: string; ticketId: number } | null>(null)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [touched, setTouched] = useState<Record<string, boolean>>({})
-  const [services, setServices] = useState<RepairService[]>([])
-  const [selectedIssue, setSelectedIssue] = useState(decodedIssue)
-  const [showServicePicker, setShowServicePicker] = useState(!decodedIssue)
-  const [address, setAddress] = useState('')
   const [serialNumber, setSerialNumber] = useState('')
   const [deviceColor, setDeviceColor] = useState('')
   const [warranty, setWarranty] = useState('unknown')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [result, setResult] = useState<{ repairId: string; ticketId: number } | null>(null)
+  const [services, setServices] = useState<RepairService[]>([])
+  const [savedAddresses, setSavedAddresses] = useState<AddressData[]>([])
+  const fileRef = useRef<HTMLInputElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
 
-  const questions = issueQuestions[selectedIssue] || defaultQuestions
-  const [answers, setAnswers] = useState<string[]>(questions.map(() => ''))
-
-  const totalSteps = questions.length + EXTRA_STEPS.length
-  const stepLabels = [
-    ...questions.map((_, i) => `Q${i + 1}`),
-    ...EXTRA_STEPS,
-  ]
+  // Follow /book-repair/:issue when the link changes.
+  if (decodedIssue !== routeIssue) {
+    setRouteIssue(decodedIssue)
+    setSelectedIssue(decodedIssue)
+  }
 
   useEffect(() => {
     repairService.getServices().then(setServices).catch(() => {})
   }, [])
 
   // Signed-in customers shouldn't retype what we already know.
-  const [savedAddresses, setSavedAddresses] = useState<AddressData[]>([])
   useEffect(() => {
     if (!authService.isAuthenticated()) return
     let alive = true
@@ -105,91 +126,74 @@ function DesktopBookRepair() {
     return () => { alive = false }
   }, [])
 
-  const applySavedAddress = (a: AddressData) => {
-    setName(a.fullName)
-    setMobile(a.mobile.replace(/\D/g, '').slice(-10))
-    setAddress([a.addressLine1, a.addressLine2, a.landmark && `Near ${a.landmark}`, `${a.city}, ${a.state} - ${a.zipCode}`]
-      .filter(Boolean).join(', '))
-    setErrors((p) => ({ ...p, name: '', mobile: '', address: '' }))
-  }
-
-  useEffect(() => {
-    setSelectedIssue(decodedIssue)
-    setShowServicePicker(!decodedIssue)
-  }, [decodedIssue])
-
-  useEffect(() => {
-    setAnswers(questions.map(() => ''))
-    setStep(1)
-    setErrors({})
-    setTouched({})
-  }, [selectedIssue])
-
   useEffect(() => {
     const urls = imageFiles.map((f) => URL.createObjectURL(f))
     setPreviews(urls)
     return () => urls.forEach((u) => URL.revokeObjectURL(u))
   }, [imageFiles])
 
-  const matchedService = services.find(s =>
-    s.slug.toLowerCase() === selectedIssue.toLowerCase() ||
-    s.name.toLowerCase() === selectedIssue.toLowerCase()
-  )
+  const activeServices = services.filter((s) => s.is_active)
+  const issueOptions = activeServices.length ? activeServices.map((s) => s.name) : Object.keys(issueQuestions)
+  const matchedService = services.find((s) =>
+    s.slug.toLowerCase() === selectedIssue.toLowerCase() || s.name.toLowerCase() === selectedIssue.toLowerCase())
+  const questions = issueQuestions[selectedIssue] || defaultQuestions
 
-  const validateName = (v: string) => v.trim().length < 2 ? 'Name must be at least 2 characters' : ''
-  const validateMobile = (v: string) => !/^\d{10}$/.test(v.replace(/\D/g, '')) ? 'Enter a valid 10-digit number' : ''
-  const validateEmail = (v: string) => !v.trim() ? 'Email is required' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email' : ''
-  const validateBrand = (v: string) => !v ? 'Please select a brand' : ''
-  const validateModel = (v: string) => !v.trim() ? 'Model is required' : ''
-  const validateImei = (v: string) => v.trim() && !/^\d{15}$/.test(v.trim()) ? 'IMEI must be exactly 15 digits' : ''
+  const clearError = (key: string) => setErrors((p) => (p[key] ? { ...p, [key]: '' } : p))
 
-  const validateDetails = () => {
+  const validateStep = (s: number): boolean => {
     const e: Record<string, string> = {}
-    const ne = validateName(name); if (ne) e.name = ne
-    const me = validateMobile(mobile); if (me) e.mobile = me
-    const ee = validateEmail(email); if (ee) e.email = ee
-    if (!address.trim()) e.address = 'Address is required'
-    setErrors(e); setTouched({ name: true, mobile: true, email: true, address: true })
+    if (s === 1) {
+      if (!selectedIssue) e.issue = 'Please choose the problem'
+      if (issueText.trim().length < 10) e.issueText = 'Please describe the problem (at least 10 characters)'
+    }
+    if (s === 2) {
+      if (!brand) e.brand = 'Please select a brand'
+      if (!model.trim()) e.model = 'Model is required'
+      if (imei.trim() && !/^\d{15}$/.test(imei.trim())) e.imei = 'IMEI must be exactly 15 digits'
+      if (!serialNumber.trim()) e.serialNumber = 'Serial number is required'
+      if (!deviceColor.trim()) e.deviceColor = 'Color is required'
+      if (warranty === 'unknown') e.warranty = 'Please select warranty status'
+    }
+    if (s === 3) {
+      if (name.trim().length < 2) e.name = 'Name must be at least 2 characters'
+      if (!/^\d{10}$/.test(mobile.replace(/\D/g, ''))) e.mobile = 'Enter a valid 10-digit number'
+      if (!email.trim()) e.email = 'Email is required'
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Enter a valid email'
+      if (!address.trim()) e.address = 'Address is required'
+    }
+    setErrors(e)
     return Object.keys(e).length === 0
   }
 
-  const validateDevice = () => {
-    const e: Record<string, string> = {}
-    const be = validateBrand(brand); if (be) e.brand = be
-    const me = validateModel(model); if (me) e.model = me
-    const ie = validateImei(imei); if (ie) e.imei = ie
-    if (!serialNumber.trim()) e.serialNumber = 'Serial number is required'
-    if (!deviceColor.trim()) e.deviceColor = 'Color is required'
-    if (warranty === 'unknown') e.warranty = 'Please select warranty status'
-    setErrors(e); setTouched({ brand: true, model: true, imei: true, serialNumber: true, deviceColor: true, warranty: true })
-    return Object.keys(e).length === 0
+  const scrollTop = () => topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const goTo = (s: number) => { setErrors({}); setStep(s); scrollTop() }
+  const goNext = () => { if (validateStep(step)) goTo(step + 1) }
+  // Steps already passed can be revisited from the sidebar.
+  const jumpTo = (s: number) => { if (s < step) goTo(s) }
+
+  const applySavedAddress = (a: AddressData) => {
+    setName(a.fullName)
+    setMobile(a.mobile.replace(/\D/g, '').slice(-10))
+    setAddress([a.addressLine1, a.addressLine2, a.landmark && `Near ${a.landmark}`, `${a.city}, ${a.state} - ${a.zipCode}`].filter(Boolean).join(', '))
+    setErrors((p) => ({ ...p, name: '', mobile: '', address: '' }))
   }
 
-  const updateAnswer = (idx: number, val: string) => {
-    const a = [...answers]; a[idx] = val; setAnswers(a)
+  const chooseIssue = (value: string) => {
+    if (value !== selectedIssue) setAnswers({})
+    setSelectedIssue(value)
+    clearError('issue')
   }
 
   const buildDescription = () => {
-    let desc = ''
-    answers.forEach((a, i) => { if (a.trim()) desc += `Q: ${questions[i]}\nA: ${a.trim()}\n` })
-    return desc.trim()
+    const lines = [`Device type: ${deviceType}`, issueText.trim()]
+    questions.forEach((q) => { const a = answers[q]?.trim(); if (a) lines.push(`Q: ${q}\nA: ${a}`) })
+    return lines.join('\n')
   }
-
-  const [qErrors, setQErrors] = useState<Record<number, string>>({})
-
-  const goNext = () => {
-    if (step <= questions.length) {
-      if (!answers[step - 1]?.trim()) { setQErrors({ [step - 1]: 'Please answer this question to continue' }); return }
-    }
-    if (step === questions.length + 1) { if (!validateDetails()) return }
-    if (step === questions.length + 2) { if (!validateDevice()) return }
-    setQErrors({})
-    setStep(s => s + 1)
-  }
-  const goPrev = () => { setErrors({}); setTouched({}); setStep(s => Math.max(1, s - 1)) }
 
   const handleSubmit = async () => {
-    if (!validateDetails() || !validateDevice()) return
+    for (const s of [1, 2, 3]) {
+      if (!validateStep(s)) { goTo(s); validateStep(s); return }
+    }
     setSubmitting(true); setSubmitError('')
     try {
       const fd = new FormData()
@@ -201,7 +205,7 @@ function DesktopBookRepair() {
       fd.append('device_category', selectedIssue || 'Other')
       fd.append('device_brand', brand)
       fd.append('device_model', model.trim())
-      fd.append('imei_number', imei.trim())
+      appendIfFilled(fd, 'imei_number', imei.trim())
       fd.append('serial_number', serialNumber.trim())
       fd.append('device_color', deviceColor.trim())
       fd.append('warranty_status', warranty)
@@ -212,443 +216,331 @@ function DesktopBookRepair() {
       imageFiles.forEach((file) => fd.append('photos', file))
       const created = await repairService.create(fd)
       setResult({ repairId: created.repairId, ticketId: created.id })
+      scrollTop()
     } catch (err: any) {
-      const resp = err?.response?.data
-      if (resp && typeof resp === 'object' && !resp.message) {
-        const msgs = Object.entries(resp).map(([, v]) => Array.isArray(v) ? v[0] : v).filter(Boolean)
-        setSubmitError(msgs.join('. ') || 'Validation failed. Please check your input.')
-      } else {
-        setSubmitError(resp?.message || err?.message || 'Failed to submit. Please try again.')
-      }
+      setSubmitError(formatRepairError(err))
     } finally {
       setSubmitting(false)
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', height: 44, padding: '0 15px', borderRadius: 11,
-    border: '1.5px solid #ECE4E0', fontSize: 'var(--text-body-sm)', color: '#1B1210',
-    background: '#FBF8F6', outline: 'none',
-    transition: 'border-color .16s ease, background .16s ease',
-    fontFamily: 'var(--font-ui)',
-  }
-
-  const btnPrimary: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 7,
-    padding: '11px 22px', borderRadius: 12, fontSize: 'var(--text-label)', fontWeight: 700,
-    color: '#fff', background: 'linear-gradient(135deg, #D91E36, #A3122A)',
-    border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px rgba(217,30,54,0.28)',
-    transition: 'transform .16s ease, box-shadow .16s ease',
-  }
-
-  const btnGhost: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 7,
-    padding: '11px 20px', borderRadius: 12, fontSize: 'var(--text-label)', fontWeight: 600,
-    color: '#4A403D', background: '#F5F0EC', border: '1.5px solid #ECE4E0',
-    cursor: 'pointer', transition: 'all .16s ease',
-  }
-
-  const cardStyle: React.CSSProperties = {
-    background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20,
-    padding: '28px 32px', boxShadow: '0 8px 32px -12px rgba(27,18,16,0.12)',
-  }
+  const header = (
+    <>
+      <section className="br-hero">
+        <div className="br-hero-text">
+          <h1>Book a Repair</h1>
+          <p>Get your device fixed by certified experts. Quick, reliable and hassle-free.</p>
+          <ul>
+            <li><ShieldCheck aria-hidden="true" /> Certified Technicians</li>
+            <li><Zap aria-hidden="true" /> Genuine Parts</li>
+            <li><Calendar aria-hidden="true" /> Quick Turnaround</li>
+          </ul>
+        </div>
+        <div className="br-hero-art" aria-hidden="true">
+          <span className="br-hero-wave" />
+          <span className="br-hero-phone"><span /><span /><span /></span>
+          <span className="br-hero-tool"><Wrench /></span>
+        </div>
+      </section>
+    </>
+  )
 
   if (result) {
     return (
-      <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+      <div className="br-page">
         <SiteTopNav />
-        <BackBar label="Back to Repair Services" to="/repairs" />
-        <main className="max-w-lg mx-auto px-4 py-12">
-          <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-            <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(5,150,105,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: '1px solid rgba(5,150,105,0.15)' }}>
-              <FiCheckCircle size={40} style={{ color: '#059669' }} />
+        <main className="br-wrap" ref={topRef}>
+          {header}
+          <section className="br-card br-success">
+            <span className="br-success-icon"><CheckCircle2 aria-hidden="true" /></span>
+            <h2>Booking Confirmed!</h2>
+            <p>Your repair request has been submitted. Our team will call you shortly to confirm the pickup.</p>
+            <div className="br-success-id">
+              <span>Your Tracking ID</span>
+              <strong>{result.repairId}</strong>
+              <small>Save this ID to track your repair status.</small>
             </div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#1B1210', marginBottom: 8 }}>Booking Confirmed!</h1>
-            <p style={{ fontSize: 'var(--text-body-sm)', color: '#4A403D', marginBottom: 32 }}>Your repair has been submitted successfully. We'll contact you shortly.</p>
-            <div style={{ background: '#fff', border: '1px solid #ECE4E0', borderRadius: 20, padding: 28, marginBottom: 28, boxShadow: '0 8px 24px -12px rgba(27,18,16,0.12)' }}>
-              <p style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#857D79', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 10 }}>Your Tracking ID</p>
-              <p style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#D91E36', letterSpacing: '0.08em' }}>{result.repairId}</p>
-              <p style={{ fontSize: 'var(--text-caption)', color: '#857D79', marginTop: 10 }}>Save this ID to track your repair status.</p>
+            <div className="br-success-actions">
+              <Link to={`/my-repairs/${result.ticketId}`} className="br-btn br-btn--primary">Track My Repair <ArrowRight aria-hidden="true" /></Link>
+              <Link to="/repairs" className="br-btn br-btn--ghost">Book Another</Link>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link to="/my-repairs" style={{ ...btnPrimary, textDecoration: 'none', justifyContent: 'center' }}>
-                Track My Repair <FiArrowRight size={15} />
-              </Link>
-              <Link to="/repairs" style={{ ...btnGhost, textDecoration: 'none', justifyContent: 'center' }}>
-                Book Another
-              </Link>
-            </div>
-          </motion.div>
+          </section>
         </main>
       </div>
     )
   }
 
+  const warrantyLabel = WARRANTY_OPTIONS.find((w) => w.value === warranty)?.label || '—'
+  const StepIcon = [Wrench, Smartphone, User, CheckCircle2][step - 1]
+
   return (
-    <div style={{ fontFamily: 'var(--font-ui)', background: '#FBF8F6', color: '#1B1210', minHeight: '100vh', WebkitFontSmoothing: 'antialiased' }}>
+    <div className="br-page">
       <SiteTopNav />
-      <BackBar label="Back to Repair Services" to="/repairs" />
+      <main className="br-wrap" ref={topRef}>
+        {header}
 
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-16">
-
-        {/* ── Page header ── */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.06)', border: '1px solid rgba(217,30,54,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 'var(--text-title)', color: '#D91E36' }}>build</span>
-            </div>
-            <div>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-heading)', fontWeight: 700, color: '#1B1210', lineHeight: 1.1 }}>Book a Repair</h1>
-              <p style={{ fontSize: 'var(--text-label)', color: '#857D79', marginTop: 2 }}>Complete the steps below to book your repair.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Service selector ── */}
-        <div style={{ background: '#fff', border: showServicePicker ? '1.5px solid #D91E36' : '1px solid #ECE4E0', borderRadius: 16, padding: '14px 18px', marginBottom: 24, boxShadow: '0 4px 16px -8px rgba(27,18,16,0.08)', cursor: 'pointer' }}
-          onClick={() => setShowServicePicker(v => !v)}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 'var(--text-title-sm)', color: '#D91E36' }}>medical_services</span>
-              <div>
-                <p style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#857D79', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 1 }}>Service Type</p>
-                <p style={{ fontSize: 'var(--text-body-sm)', fontWeight: 600, color: selectedIssue ? '#1B1210' : '#857D79' }}>
-                  {selectedIssue || 'Select a repair service…'}
-                </p>
-              </div>
-            </div>
-            <svg className={`transition-transform duration-200 ${showServicePicker ? 'rotate-180' : ''}`} width="16" height="16" fill="none" stroke="#857D79" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </div>
-
-          <AnimatePresence>
-            {showServicePicker && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ overflow: 'hidden' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-                  {services.filter(s => s.is_active).map(s => (
-                    <button key={s.id} type="button"
-                      onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
-                      style={{
-                        textAlign: 'left', padding: '10px 14px', fontSize: 'var(--text-label)', fontWeight: 500,
-                        borderRadius: 10, border: selectedIssue === s.name ? '1.5px solid #D91E36' : '1px solid #ECE4E0',
-                        cursor: 'pointer', transition: 'all .15s ease',
-                        background: selectedIssue === s.name ? 'rgba(217,30,54,0.06)' : '#FBF8F6',
-                        color: selectedIssue === s.name ? '#D91E36' : '#1B1210',
-                        fontFamily: 'var(--font-ui)',
-                      }}
-                      onMouseEnter={(e) => { if (selectedIssue !== s.name) { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.3)'; e.currentTarget.style.background = 'rgba(217,30,54,0.03)' } }}
-                      onMouseLeave={(e) => { if (selectedIssue !== s.name) { e.currentTarget.style.borderColor = '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' } }}
-                    >
-                      {selectedIssue === s.name && <span style={{ color: '#D91E36', marginRight: 4 }}>✓</span>}
-                      {s.name}
+        <div className="br-grid">
+          {/* ── Sidebar ── */}
+          <aside className="br-side">
+            <ol className="br-steps">
+              {STEPS.map((s, i) => {
+                const n = i + 1
+                const state = n < step ? 'done' : n === step ? 'current' : 'todo'
+                return (
+                  <li key={s.title} className={`is-${state}`}>
+                    <button type="button" onClick={() => jumpTo(n)} disabled={n >= step} aria-current={state === 'current' ? 'step' : undefined}>
+                      <span className="br-step-num">{state === 'done' ? <Check aria-hidden="true" /> : n}</span>
+                      <span className="br-step-text"><b>{s.title}</b><small>{s.desc}</small></span>
                     </button>
-                  ))}
-                  {services.filter(s => s.is_active).length === 0 && (
-                    <p style={{ gridColumn: '1/-1', fontSize: 'var(--text-label)', color: '#857D79', padding: '4px 0' }}>Loading services…</p>
+                  </li>
+                )
+              })}
+            </ol>
+
+            <div className="br-why">
+              <div className="br-why-head">
+                <span className="br-why-art" aria-hidden="true"><Smartphone /><Wrench /></span>
+                <h3>Why repair with PhoneFix?</h3>
+              </div>
+              <ul>
+                <li><Check aria-hidden="true" /> Expert &amp; certified technicians</li>
+                <li><Check aria-hidden="true" /> Original &amp; high-quality parts</li>
+                <li><Check aria-hidden="true" /> Transparent pricing</li>
+                <li><Check aria-hidden="true" /> Warranty on repairs</li>
+              </ul>
+            </div>
+          </aside>
+
+          {/* ── Form ── */}
+          <section className="br-card br-form">
+            <header className="br-form-head">
+              <span className="br-form-icon"><StepIcon aria-hidden="true" /></span>
+              <div>
+                <h2>{STEPS[step - 1].title}</h2>
+                <p>{['Let’s get started with your repair request.', 'Tell us about the device that needs fixing.', 'Where should we pick up and return your device?', 'Check everything before you book.'][step - 1]}</p>
+              </div>
+              <span className="br-form-count">Step {step} of {STEPS.length}</span>
+            </header>
+
+            <div className="br-form-body" key={step}>
+              {step === 1 && (
+                <>
+                  <h3 className="br-label">Select a repair service</h3>
+                  <div className="br-types" role="radiogroup" aria-label="Device type">
+                    {DEVICE_TYPES.map(({ id, title, desc, icon: Icon }) => (
+                      <button key={id} type="button" role="radio" aria-checked={deviceType === id} className={`br-type${deviceType === id ? ' is-active' : ''}`} onClick={() => setDeviceType(id)}>
+                        <span className="br-type-icon"><Icon aria-hidden="true" /></span>
+                        <b>{title}</b>
+                        <small>{desc}</small>
+                        {deviceType === id && <span className="br-type-check"><Check aria-hidden="true" /></span>}
+                      </button>
+                    ))}
+                  </div>
+
+                  <h3 className="br-label">What’s the problem? <em>*</em></h3>
+                  <div className={`br-issues${errors.issue ? ' has-error' : ''}`} role="radiogroup" aria-label="Problem">
+                    {issueOptions.map((opt) => {
+                      const Icon = issueIcon(opt)
+                      const svc = activeServices.find((s) => s.name === opt)
+                      return (
+                        <button key={opt} type="button" role="radio" aria-checked={selectedIssue === opt} className={selectedIssue === opt ? 'is-active' : ''} onClick={() => chooseIssue(opt)}>
+                          <Icon aria-hidden="true" />
+                          <span>{opt}</span>
+                          {svc && svc.estimated_price > 0 && <small>from ₹{Number(svc.estimated_price).toLocaleString('en-IN')}</small>}
+                        </button>
+                      )
+                    })}
+                    {!issueOptions.includes('Other') && (
+                      <button type="button" role="radio" aria-checked={selectedIssue === 'Other'} className={selectedIssue === 'Other' ? 'is-active' : ''} onClick={() => chooseIssue('Other')}>
+                        <Wrench aria-hidden="true" /><span>Something else</span>
+                      </button>
+                    )}
+                  </div>
+                  {errors.issue && <p className="br-err">{errors.issue}</p>}
+
+                  <h3 className="br-label">What issue are you facing? <em>*</em></h3>
+                  <div className={`br-textarea${errors.issueText ? ' has-error' : ''}`}>
+                    <textarea
+                      value={issueText}
+                      maxLength={MAX_ISSUE}
+                      rows={4}
+                      placeholder="Describe the problem in detail (e.g., screen cracked, battery not charging, etc.)"
+                      onChange={(e) => { setIssueText(e.target.value); if (e.target.value.trim().length >= 10) clearError('issueText') }}
+                    />
+                    <span>{issueText.length} / {MAX_ISSUE}</span>
+                  </div>
+                  {errors.issueText && <p className="br-err">{errors.issueText}</p>}
+
+                  {selectedIssue && (
+                    <details className="br-questions">
+                      <summary>Help our technician with a few quick answers <span>(optional)</span></summary>
+                      <div>
+                        {questions.map((q) => (
+                          <label key={q}>
+                            <span>{q}</span>
+                            <input value={answers[q] || ''} onChange={(e) => setAnswers((p) => ({ ...p, [q]: e.target.value }))} placeholder="Your answer" />
+                          </label>
+                        ))}
+                      </div>
+                    </details>
                   )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* ── Step indicator ── */}
-        <div style={{ marginBottom: 28 }}>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 10 }}>
-            {stepLabels.map((label, i) => {
-              const idx = i + 1
-              const done = idx < step
-              const active = idx === step
-              return (
-                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                  <div style={{
-                    height: 4, width: '100%', borderRadius: 10,
-                    background: done ? '#22c55e' : active ? '#D91E36' : '#ECE4E0',
-                    transition: 'background .3s ease',
-                  }} />
-                  <span style={{
-                    fontSize: 'var(--text-micro)', fontWeight: 700, letterSpacing: '0.04em',
-                    color: done ? '#16a34a' : active ? '#D91E36' : '#C4BBB8',
-                    textTransform: 'uppercase',
-                    transition: 'color .3s ease',
-                  }}>{label}</span>
-                </div>
-              )
-            })}
-          </div>
-          <p style={{ fontSize: 'var(--text-caption)', color: '#857D79', fontWeight: 500 }}>
-            Step {step} of {totalSteps} —{' '}
-            <span style={{ color: '#1B1210', fontWeight: 600 }}>{stepLabels[step - 1]}</span>
-          </p>
-        </div>
-
-        {/* ── Form steps ── */}
-        <AnimatePresence mode="wait">
-          {/* Question steps */}
-          {step <= questions.length ? (
-            <motion.div key={`q-${step}`} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(217,30,54,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 'var(--text-caption)', fontWeight: 800, color: '#D91E36' }}>{step}</span>
-                </div>
-                <span style={{ fontSize: 'var(--text-micro)', fontWeight: 700, color: '#D91E36', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                  Question {step} of {questions.length}
-                </span>
-              </div>
-              <p style={{ fontSize: 'var(--text-body)', fontWeight: 600, color: '#1B1210', margin: '14px 0 16px', lineHeight: 1.4 }}>{questions[step - 1]}</p>
-              <textarea
-                value={answers[step - 1]}
-                onChange={(e) => { updateAnswer(step - 1, e.target.value); if (qErrors[step - 1] && e.target.value.trim()) setQErrors(p => { const n = { ...p }; delete n[step - 1]; return n }) }}
-                rows={4}
-                style={{ ...inputStyle, height: 'auto', padding: '13px 16px', resize: 'none', borderColor: qErrors[step - 1] ? '#ef4444' : '#ECE4E0' }}
-                placeholder="Type your answer here…"
-                autoFocus
-                onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = qErrors[step - 1] ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-              />
-              {qErrors[step - 1] && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, fontSize: 'var(--text-caption)', color: '#ef4444' }}>
-                  <FiAlertCircle size={13} /> {qErrors[step - 1]}
-                </div>
+                </>
               )}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
-                <button onClick={goPrev} disabled={step === 1}
-                  style={{ ...btnGhost, opacity: step === 1 ? 0.4 : 1, cursor: step === 1 ? 'not-allowed' : 'pointer' }}>
-                  <FiArrowLeft size={14} /> Back
-                </button>
-                <button onClick={goNext} style={btnPrimary}>
-                  {step < questions.length ? 'Next' : 'Continue'} <FiArrowRight size={14} />
-                </button>
-              </div>
-            </motion.div>
 
-          ) : step === questions.length + 1 ? (
-            /* Your Details */
-            <motion.div key="details" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <FiUser size={16} style={{ color: '#D91E36' }} />
-                </div>
-                <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Your Details</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <Field label="Full Name *" error={touched.name ? errors.name : undefined}>
-                  <input value={name} autoFocus autoComplete="name"
-                    onChange={(e) => { setName(e.target.value); if (touched.name) setErrors(p => ({ ...p, name: validateName(e.target.value) })) }}
-                    onBlur={() => { setTouched(p => ({ ...p, name: true })); setErrors(p => ({ ...p, name: validateName(name) })) }}
-                    style={{ ...inputStyle, borderColor: touched.name && errors.name ? '#ef4444' : '#ECE4E0' }}
-                    placeholder="Your full name"
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.name && errors.name ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
+              {step === 2 && (
+                <>
+                  <h3 className="br-label">Brand <em>*</em></h3>
+                  <div className={`br-brands${errors.brand ? ' has-error' : ''}`} role="radiogroup" aria-label="Brand">
+                    {[...deviceBrands, 'Other'].map((b) => (
+                      <button key={b} type="button" role="radio" aria-checked={brand === b} className={brand === b ? 'is-active' : ''} onClick={() => { setBrand(b); clearError('brand') }}>{b}</button>
+                    ))}
+                  </div>
+                  {errors.brand && <p className="br-err">{errors.brand}</p>}
+
+                  <div className="br-fields">
+                    <Field label="Model" error={errors.model}>
+                      <input value={model} placeholder="e.g. iPhone 15 Pro" onChange={(e) => { setModel(e.target.value); clearError('model') }} />
+                    </Field>
+                    <Field label="Device Color" error={errors.deviceColor}>
+                      <input value={deviceColor} placeholder="e.g. Space Black" onChange={(e) => { setDeviceColor(e.target.value); clearError('deviceColor') }} />
+                    </Field>
+                    <Field label="IMEI Number" optional error={errors.imei}>
+                      <input value={imei} inputMode="numeric" placeholder="15-digit IMEI (dial *#06#)" onChange={(e) => { setImei(e.target.value.replace(/\D/g, '').slice(0, 15)); clearError('imei') }} />
+                    </Field>
+                    <Field label="Serial Number" error={errors.serialNumber}>
+                      <input value={serialNumber} placeholder="Settings › About phone" onChange={(e) => { setSerialNumber(e.target.value); clearError('serialNumber') }} />
+                    </Field>
+                    <Field label="Warranty Status" wide error={errors.warranty}>
+                      <div className="br-segment" role="radiogroup" aria-label="Warranty status">
+                        {WARRANTY_OPTIONS.map((w) => (
+                          <button key={w.value} type="button" role="radio" aria-checked={warranty === w.value} className={warranty === w.value ? 'is-active' : ''} onClick={() => { setWarranty(w.value); clearError('warranty') }}>{w.label}</button>
+                        ))}
+                      </div>
+                    </Field>
+                  </div>
+
+                  <h3 className="br-label">Device Photos <span className="br-opt">(optional)</span></h3>
+                  <button type="button" className="br-upload" onClick={() => fileRef.current?.click()}>
+                    <ImagePlus aria-hidden="true" />
+                    <b>Click to upload photos</b>
+                    <small>Show the damaged area for a faster diagnosis. PNG, JPG, HEIC supported.</small>
+                  </button>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    hidden
+                    onChange={(e) => { if (e.target.files) setImageFiles((prev) => [...prev, ...Array.from(e.target.files!)]); e.target.value = '' }}
                   />
-                </Field>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <Field label="Mobile Number *" error={touched.mobile ? errors.mobile : undefined}>
-                    <input value={mobile} placeholder="10-digit number" inputMode="tel" autoComplete="tel-national"
-                      onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setMobile(v); if (touched.mobile) setErrors(p => ({ ...p, mobile: validateMobile(v) })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, mobile: true })); setErrors(p => ({ ...p, mobile: validateMobile(mobile) })) }}
-                      style={{ ...inputStyle, borderColor: touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.mobile && errors.mobile ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                  <Field label="Email Address *" error={touched.email ? errors.email : undefined}>
-                    <input value={email} type="email" placeholder="email@example.com" autoComplete="email"
-                      onChange={(e) => { setEmail(e.target.value); if (touched.email) setErrors(p => ({ ...p, email: validateEmail(e.target.value) })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, email: true })); setErrors(p => ({ ...p, email: validateEmail(email) })) }}
-                      style={{ ...inputStyle, borderColor: touched.email && errors.email ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.email && errors.email ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                </div>
-                <Field label="Pickup / Delivery Address *" error={touched.address ? errors.address : undefined}>
+                  {previews.length > 0 && (
+                    <div className="br-previews">
+                      {previews.map((url, i) => (
+                        <div key={url}>
+                          <img src={url} alt={`Photo ${i + 1}`} />
+                          <button type="button" onClick={() => setImageFiles((f) => f.filter((_, j) => j !== i))} aria-label={`Remove photo ${i + 1}`}><X /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {step === 3 && (
+                <>
                   {savedAddresses.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: 'var(--text-caption)', color: '#857D79' }}>Use a saved address:</span>
+                    <div className="br-saved">
+                      <span>Use a saved address:</span>
                       {savedAddresses.slice(0, 3).map((a) => (
-                        <button
-                          key={a.id}
-                          type="button"
-                          onClick={() => applySavedAddress(a)}
-                          style={{ fontSize: 'var(--text-caption)', fontWeight: 600, padding: '5px 11px', borderRadius: 999, border: '1.5px solid #ECE4E0', background: '#fff', color: '#4A403D', cursor: 'pointer' }}
-                        >
-                          {a.addressType} · {a.city}{a.isDefault ? ' (default)' : ''}
+                        <button key={a.id} type="button" onClick={() => applySavedAddress(a)}>
+                          <MapPin aria-hidden="true" /> {a.addressType} · {a.city}{a.isDefault ? ' (default)' : ''}
                         </button>
                       ))}
                     </div>
                   )}
-                  <textarea value={address} rows={3} autoComplete="street-address" placeholder="House no., street, area, city and pincode"
-                    onChange={(e) => { setAddress(e.target.value); if (touched.address) setErrors(p => ({ ...p, address: !e.target.value.trim() ? 'Address is required' : '' })) }}
-                    onBlur={() => { setTouched(p => ({ ...p, address: true })); if (!address.trim()) setErrors(p => ({ ...p, address: 'Address is required' })) }}
-                    style={{ ...inputStyle, height: 'auto', padding: '11px 15px', resize: 'none', borderColor: touched.address && errors.address ? '#ef4444' : '#ECE4E0' }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                    onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.address && errors.address ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                  />
-                </Field>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
-                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={14} /></button>
-              </div>
-            </motion.div>
+                  <div className="br-fields">
+                    <Field label="Full Name" wide error={errors.name}>
+                      <input value={name} autoComplete="name" placeholder="Your full name" onChange={(e) => { setName(e.target.value); clearError('name') }} />
+                    </Field>
+                    <Field label="Mobile Number" error={errors.mobile}>
+                      <div className="br-prefix"><span>+91</span><input value={mobile} inputMode="tel" autoComplete="tel-national" placeholder="10-digit number" onChange={(e) => { setMobile(e.target.value.replace(/\D/g, '').slice(0, 10)); clearError('mobile') }} /></div>
+                    </Field>
+                    <Field label="Email Address" error={errors.email}>
+                      <input value={email} type="email" autoComplete="email" placeholder="email@example.com" onChange={(e) => { setEmail(e.target.value); clearError('email') }} />
+                    </Field>
+                    <Field label="Pickup / Delivery Address" wide error={errors.address}>
+                      <textarea value={address} rows={3} autoComplete="street-address" placeholder="House no., street, area, city and pincode" onChange={(e) => { setAddress(e.target.value); clearError('address') }} />
+                    </Field>
+                  </div>
+                </>
+              )}
 
-          ) : step === questions.length + 2 ? (
-            /* Device Info */
-            <motion.div key="device" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <FiSmartphone size={16} style={{ color: '#D91E36' }} />
-                </div>
-                <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Device Information</span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <Field label="Brand *" error={touched.brand ? errors.brand : undefined}>
-                    <select value={brand} autoFocus
-                      onChange={(e) => { setBrand(e.target.value); if (touched.brand) setErrors(p => ({ ...p, brand: validateBrand(e.target.value) })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, brand: true })); setErrors(p => ({ ...p, brand: validateBrand(brand) })) }}
-                      style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.brand && errors.brand ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.brand && errors.brand ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    >
-                      <option value="">Select brand</option>
-                      {deviceBrands.map((b) => <option key={b} value={b}>{b}</option>)}
-                    </select>
-                  </Field>
-                  <Field label="Model *" error={touched.model ? errors.model : undefined}>
-                    <input value={model} placeholder="e.g. iPhone 15 Pro"
-                      onChange={(e) => { setModel(e.target.value); if (touched.model) setErrors(p => ({ ...p, model: validateModel(e.target.value) })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, model: true })); setErrors(p => ({ ...p, model: validateModel(model) })) }}
-                      style={{ ...inputStyle, borderColor: touched.model && errors.model ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.model && errors.model ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <Field label="IMEI Number *" error={touched.imei ? errors.imei : undefined}>
-                    <input value={imei} placeholder="15-digit IMEI"
-                      onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 15); setImei(v); if (touched.imei) setErrors(p => ({ ...p, imei: validateImei(v) })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, imei: true })); setErrors(p => ({ ...p, imei: validateImei(imei) })) }}
-                      style={{ ...inputStyle, borderColor: touched.imei && errors.imei ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.imei && errors.imei ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                  <Field label="Serial No. *" error={touched.serialNumber ? errors.serialNumber : undefined}>
-                    <input value={serialNumber} placeholder="Device serial number"
-                      onChange={(e) => { setSerialNumber(e.target.value); if (touched.serialNumber) setErrors(p => ({ ...p, serialNumber: !e.target.value.trim() ? 'Serial number is required' : '' })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, serialNumber: true })); if (!serialNumber.trim()) setErrors(p => ({ ...p, serialNumber: 'Serial number is required' })) }}
-                      style={{ ...inputStyle, borderColor: touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.serialNumber && errors.serialNumber ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <Field label="Device Color *" error={touched.deviceColor ? errors.deviceColor : undefined}>
-                    <input value={deviceColor} placeholder="e.g. Space Black"
-                      onChange={(e) => { setDeviceColor(e.target.value); if (touched.deviceColor) setErrors(p => ({ ...p, deviceColor: !e.target.value.trim() ? 'Color is required' : '' })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, deviceColor: true })); if (!deviceColor.trim()) setErrors(p => ({ ...p, deviceColor: 'Color is required' })) }}
-                      style={{ ...inputStyle, borderColor: touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.deviceColor && errors.deviceColor ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    />
-                  </Field>
-                  <Field label="Warranty Status *" error={touched.warranty ? errors.warranty : undefined}>
-                    <select value={warranty}
-                      onChange={(e) => { setWarranty(e.target.value); if (touched.warranty) setErrors(p => ({ ...p, warranty: e.target.value === 'unknown' ? 'Please select warranty status' : '' })) }}
-                      onBlur={() => { setTouched(p => ({ ...p, warranty: true })); if (warranty === 'unknown') setErrors(p => ({ ...p, warranty: 'Please select warranty status' })) }}
-                      style={{ ...inputStyle, appearance: 'none' as const, cursor: 'pointer', borderColor: touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0', color: warranty === 'unknown' ? '#857D79' : '#1B1210' }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#D91E36'; e.currentTarget.style.background = '#fff' }}
-                      onBlurCapture={(e) => { e.currentTarget.style.borderColor = touched.warranty && errors.warranty ? '#ef4444' : '#ECE4E0'; e.currentTarget.style.background = '#FBF8F6' }}
-                    >
-                      <option value="unknown" disabled>Select status</option>
-                      <option value="in_warranty">In Warranty</option>
-                      <option value="out_of_warranty">Out of Warranty</option>
-                      <option value="expired">Expired</option>
-                    </select>
-                  </Field>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
-                <button onClick={goNext} style={btnPrimary}>Next <FiArrowRight size={14} /></button>
-              </div>
-            </motion.div>
-
-          ) : (
-            /* Photos */
-            <motion.div key="photos" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.2 }} style={cardStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <FiImage size={16} style={{ color: '#D91E36' }} />
-                </div>
-                <div>
-                  <span style={{ fontSize: 'var(--text-body)', fontWeight: 700, color: '#1B1210' }}>Device Photos</span>
-                  <span style={{ fontSize: 'var(--text-caption)', color: '#857D79', marginLeft: 8, fontWeight: 400 }}>(optional)</span>
-                </div>
-              </div>
-
-              <div
-                onClick={() => inputRef.current?.click()}
-                style={{ borderRadius: 14, border: '1.5px dashed rgba(217,30,54,0.22)', padding: '28px 20px', textAlign: 'center', cursor: 'pointer', background: '#FBF8F6', transition: 'all .18s ease' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.45)'; e.currentTarget.style.background = 'rgba(217,30,54,0.02)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(217,30,54,0.22)'; e.currentTarget.style.background = '#FBF8F6' }}
-              >
-                <input ref={inputRef} type="file" accept="image/*" multiple className="hidden"
-                  onChange={(e) => { if (e.target.files) setImageFiles(prev => [...prev, ...Array.from(e.target.files!)]) }} />
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(217,30,54,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
-                  <FiImage size={20} style={{ color: '#D91E36' }} />
-                </div>
-                <p style={{ fontSize: 'var(--text-label)', fontWeight: 600, color: '#1B1210', marginBottom: 4 }}>Click to upload photos</p>
-                <p style={{ fontSize: 'var(--text-caption)', color: '#857D79' }}>Show the damage area for faster diagnosis. PNG, JPG, HEIC supported.</p>
-              </div>
-
-              {previews.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginTop: 14 }}>
-                  {previews.map((url, i) => (
-                    <div key={i} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: 10, overflow: 'hidden', border: '1px solid #ECE4E0' }}>
-                      <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      <button onClick={() => { URL.revokeObjectURL(url); setImageFiles(f => f.filter((_, j) => j !== i)) }}
-                        style={{ position: 'absolute', top: 5, right: 5, width: 22, height: 22, borderRadius: 6, background: 'rgba(239,68,68,0.85)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}>
-                        <FiX size={11} />
-                      </button>
+              {step === 4 && (
+                <div className="br-review">
+                  <div className="br-review-card">
+                    <header><b>Repair Details</b><button type="button" onClick={() => goTo(1)}><Pencil aria-hidden="true" /> Edit</button></header>
+                    <dl>
+                      <div><dt>Device type</dt><dd>{deviceType}</dd></div>
+                      <div><dt>Problem</dt><dd>{selectedIssue === 'Other' ? 'Something else' : selectedIssue}</dd></div>
+                      <div className="is-wide"><dt>Description</dt><dd>{issueText}</dd></div>
+                    </dl>
+                  </div>
+                  <div className="br-review-card">
+                    <header><b>Device Information</b><button type="button" onClick={() => goTo(2)}><Pencil aria-hidden="true" /> Edit</button></header>
+                    <dl>
+                      <div><dt>Device</dt><dd>{brand} {model}</dd></div>
+                      <div><dt>Color</dt><dd>{deviceColor}</dd></div>
+                      <div><dt>IMEI</dt><dd>{imei || '—'}</dd></div>
+                      <div><dt>Serial No.</dt><dd>{serialNumber}</dd></div>
+                      <div><dt>Warranty</dt><dd>{warrantyLabel}</dd></div>
+                      <div><dt>Photos</dt><dd>{imageFiles.length ? `${imageFiles.length} attached` : 'None'}</dd></div>
+                    </dl>
+                  </div>
+                  <div className="br-review-card">
+                    <header><b>Your Details</b><button type="button" onClick={() => goTo(3)}><Pencil aria-hidden="true" /> Edit</button></header>
+                    <dl>
+                      <div><dt>Name</dt><dd>{name}</dd></div>
+                      <div><dt>Mobile</dt><dd>+91 {mobile}</dd></div>
+                      <div><dt>Email</dt><dd>{email}</dd></div>
+                      <div className="is-wide"><dt>Pickup address</dt><dd>{address}</dd></div>
+                    </dl>
+                  </div>
+                  {matchedService && (matchedService.estimated_price > 0 || matchedService.estimated_days > 0) && (
+                    <div className="br-estimate">
+                      <Wrench aria-hidden="true" />
+                      <div>
+                        <b>{matchedService.name}</b>
+                        <span>
+                          {matchedService.estimated_price > 0 && <>Estimated from <strong>₹{Number(matchedService.estimated_price).toLocaleString('en-IN')}</strong></>}
+                          {matchedService.estimated_price > 0 && matchedService.estimated_days > 0 && ' · '}
+                          {matchedService.estimated_days > 0 && <>ready in about {matchedService.estimated_days} day{matchedService.estimated_days > 1 ? 's' : ''}</>}
+                        </span>
+                        <small>Final price is confirmed after the technician inspects your device.</small>
+                      </div>
                     </div>
-                  ))}
+                  )}
+                  {submitError && <p className="br-submit-err" role="alert">{submitError}</p>}
                 </div>
               )}
+            </div>
 
-              {submitError && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 14px', borderRadius: 11, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)', fontSize: 'var(--text-label)', color: '#ef4444', marginTop: 14 }}>
-                  <FiAlertCircle size={14} /> {submitError}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
-                <button onClick={goPrev} style={btnGhost}><FiArrowLeft size={14} /> Back</button>
-                <button onClick={handleSubmit} disabled={submitting}
-                  style={{ ...btnPrimary, opacity: submitting ? 0.6 : 1, cursor: submitting ? 'not-allowed' : 'pointer', background: submitting ? 'linear-gradient(135deg,#9CA3AF,#6B7280)' : 'linear-gradient(135deg,#D91E36,#A3122A)' }}>
-                  {submitting
-                    ? <><span className="material-symbols-outlined" style={{ fontSize: 'var(--text-body)', animation: 'spin 1s linear infinite' }}>progress_activity</span> Booking…</>
-                    : <><FiSend size={14} /> Book Now</>
-                  }
+            <footer className="br-actions">
+              <button type="button" className="br-btn br-btn--ghost" onClick={() => goTo(step - 1)} disabled={step === 1 || submitting}>
+                <ArrowLeft aria-hidden="true" /> Back
+              </button>
+              {step < STEPS.length ? (
+                <button type="button" className="br-btn br-btn--primary" onClick={goNext}>
+                  Next: {STEPS[step].title} <ArrowRight aria-hidden="true" />
                 </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+              ) : (
+                <button type="button" className="br-btn br-btn--primary" onClick={handleSubmit} disabled={submitting}>
+                  {submitting ? <><Loader2 aria-hidden="true" className="br-spin" /> Booking…</> : <>Confirm &amp; Book Repair <Check aria-hidden="true" /></>}
+                </button>
+              )}
+            </footer>
+          </section>
+        </div>
       </main>
-
     </div>
   )
 }

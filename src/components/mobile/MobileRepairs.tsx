@@ -47,21 +47,21 @@ function ServiceCard({ service, index, onBook }: { service: typeof services[0]; 
       className="w-full text-left active:scale-[0.98] transition-transform"
     >
       <div
-        className={`rounded-2xl p-4 flex items-center gap-3.5 ${pressed ? 'border-[#CB202D] ring-2 ring-[#CB202D]/15' : ''}`}
+        className={`rounded-2xl p-4 flex items-center gap-3.5 ${pressed ? 'border-[#210D35] ring-2 ring-[#210D35]/15' : ''}`}
         style={{
           background: '#ffffff',
           border: `1px solid ${BRAND.line}`,
           boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
         }}
       >
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)', color: BRAND.primary }}>
+        <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)', color: BRAND.primary }}>
           <Icon size={22} />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-body-sm font-bold leading-tight" style={{ color: BRAND.ink }}>{service.title}</h3>
           <p className="text-caption mt-0.5 leading-snug line-clamp-2" style={{ color: BRAND.muted }}>{service.desc}</p>
         </div>
-        <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)' }}>
+        <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
           <ArrowRight size={14} style={{ color: BRAND.primary }} />
         </div>
       </div>
@@ -75,14 +75,14 @@ function StepCard({ item, idx, active }: { item: typeof steps[0]; idx: number; a
       animate={{ scale: active ? 1.01 : 1 }}
       className={`rounded-2xl p-4 flex gap-3.5 transition-all duration-300`}
       style={{
-        background: active ? 'rgba(203,32,45,0.06)' : '#ffffff',
-        border: `1px solid ${active ? 'rgba(203,32,45,0.3)' : BRAND.line}`,
-        boxShadow: active ? '0 4px 20px rgba(203,32,45,0.1)' : '0 2px 12px rgba(0,0,0,0.04)',
+        background: active ? 'rgba(123, 63, 208,0.06)' : '#ffffff',
+        border: `1px solid ${active ? 'rgba(123, 63, 208,0.3)' : BRAND.line}`,
+        boxShadow: active ? '0 4px 20px rgba(123, 63, 208,0.1)' : '0 2px 12px rgba(0,0,0,0.04)',
       }}
     >
       <div className="relative flex-shrink-0">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-lg ${active ? 'text-white' : ''}`}
-          style={{ background: active ? 'linear-gradient(135deg,#CB202D,#A81D2A)' : 'rgba(203,32,45,0.08)', color: active ? '#fff' : BRAND.muted }}>
+          style={{ background: active ? 'linear-gradient(135deg,#210D35,#3A1E52)' : 'rgba(123, 63, 208,0.08)', color: active ? '#fff' : BRAND.muted }}>
           {active ? <Check size={18} /> : item.step}
         </div>
         {idx < steps.length - 1 && (
@@ -120,7 +120,7 @@ export default function MobileRepairs() {
         <header
           className="relative w-full px-4 pt-3 pb-8 text-white overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)',
+            background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)',
             borderBottomLeftRadius: 28,
             borderBottomRightRadius: 28,
           }}
@@ -200,7 +200,7 @@ export default function MobileRepairs() {
       {/* ─── HOW IT WORKS ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }} />
           <div>
             <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>How It Works</h2>
             <p className="text-micro" style={{ color: BRAND.muted }}>Four simple steps to get your device fixed</p>
@@ -218,7 +218,7 @@ export default function MobileRepairs() {
       {/* ─── BRANDS ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }} />
           <div>
             <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Brands We Service</h2>
             <p className="text-micro" style={{ color: BRAND.muted }}>All major brands supported</p>
@@ -248,7 +248,7 @@ export default function MobileRepairs() {
       {/* ─── FAQ ─── */}
       <div className="px-4 mt-6">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }} />
+          <div className="w-1 h-5 rounded-[8px]" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }} />
           <div>
             <h2 className="text-title-sm font-extrabold tracking-tight" style={{ color: BRAND.ink }}>Quick FAQs</h2>
             <p className="text-micro" style={{ color: BRAND.muted }}>Common questions answered</p>
@@ -310,8 +310,8 @@ export default function MobileRepairs() {
           onClick={() => handleBook()}
           className="w-full flex items-center justify-center gap-2 rounded-2xl text-white text-body font-bold shadow-lg"
           style={{
-            background: 'linear-gradient(135deg,#CB202D,#A81D2A)',
-            boxShadow: '0 8px 28px rgba(203,32,45,0.3)',
+            background: 'linear-gradient(135deg,#210D35,#3A1E52)',
+            boxShadow: '0 8px 28px rgba(123, 63, 208,0.3)',
             height: '50px',
           }}
         >

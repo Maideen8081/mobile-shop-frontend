@@ -86,6 +86,7 @@ export interface ProductListParams {
   price_max?: number
   rating_min?: number
   ordering?: string
+  include?: 'variants'
 }
 
 // Products already viewed this session, so going back to a product page
@@ -253,6 +254,17 @@ export const productService = {
       productByIdCache.delete(id)
       return r.data
     }),
+
+  /** Every product matching a search (each word must match), with variants inline. */
+  searchAll: async (query: string) => {
+    const all: any[] = []
+    for (let page = 1; page <= 5; page++) {
+      const r = await api.get(`${PRODUCTS_URL}/`, { params: { search: query, include: 'variants', page_size: 100, page } })
+      all.push(...toArray(unwrapData<any>(r as any)).map(normalizeProduct))
+      if (!(r as any).data?.next) break
+    }
+    return all
+  },
 
   search: (query: string) =>
     api.get(`${PRODUCTS_URL}/search/`, { params: { query } }).then((r) =>

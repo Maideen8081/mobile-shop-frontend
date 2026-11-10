@@ -1,70 +1,136 @@
-/* Order summary card for the checkout steps. Builds on CartPage.css (.cx-*). */
+/* Order summary card for the checkout steps. Builds on CartPage.css (.cx-*).
+   Four brand colours only: #210d35 purple · #fff7f3 cream · #d0adff lavender · #ffd014 sunshine. */
 
-.osum-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
-.osum-head h2 { margin: 0 !important; }
-.osum-head span { font-size: var(--text-label); font-weight: 600; color: var(--cx-muted); }
+.cx-summary.osum-card {
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(33, 13, 53, 0.1);
+  border-radius: 22px;
+  box-shadow: 0 16px 40px rgba(33, 13, 53, 0.1);
+}
 
-.osum-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.osum-items li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.osum-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 26px;
+  background: #210d35;
+  color: #ffd014;
+}
+.osum-head h2 {
+  flex: 1;
+  margin: 0 !important;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff7f3;
+}
+.osum-head span { font-size: 16px; font-weight: 500; color: rgba(255, 247, 243, 0.85); }
+
+.osum-body { padding: 18px 22px 22px; }
+
+.osum-items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.osum-items li {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(33, 13, 53, 0.08);
+}
 .osum-img {
-  width: 52px;
-  height: 52px;
-  padding: 5px;
-  border: 1px solid var(--cx-line);
-  border-radius: var(--radius-md, 8px);
+  width: 68px;
+  height: 64px;
+  padding: 6px;
+  border: 1px solid rgba(33, 13, 53, 0.1);
+  border-radius: 10px;
   background: #fff;
 }
 .osum-img img { width: 100%; height: 100%; object-fit: contain; }
-.osum-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.osum-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .osum-name {
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--cx-ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #210d35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.osum-meta { font-size: var(--text-caption); color: var(--cx-muted); }
-.osum-price { font-size: var(--text-body-sm); font-weight: 700; white-space: nowrap; }
+.osum-meta { display: flex; flex-wrap: wrap; font-size: 14px; color: rgba(33, 13, 53, 0.58); }
+.osum-meta i { margin: 0 6px; font-style: normal; }
+.osum-price { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: #210d35; white-space: nowrap; }
 
 .osum-toggle {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 12px;
+  margin-top: 10px;
   padding: 0;
   border: 0;
   background: none;
-  font-size: var(--text-label);
+  font-size: 14px;
   font-weight: 600;
-  color: var(--cx-red);
+  color: #210d35;
 }
 .osum-toggle svg { transition: transform 0.2s; }
 .osum-toggle svg.is-open { transform: rotate(180deg); }
 
-.osum-card dl { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--cx-line); }
+/* Price breakdown */
+.cx-summary.osum-card dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 10px 4px;
+}
+.cx-summary.osum-card dl > div { display: flex; justify-content: space-between; gap: 12px; font-size: 17px; }
+.cx-summary.osum-card dt { color: rgba(33, 13, 53, 0.82); }
+.cx-summary.osum-card dd { margin: 0; font-weight: 600; color: #210d35; }
+.cx-summary.osum-card .is-save dt,
+.cx-summary.osum-card .is-save dd { color: #210d35; font-weight: 700; }
+.cx-summary.osum-card .is-save dd {
+  padding: 1px 10px;
+  border-radius: 6px;
+  background: #ffd014;
+}
+.cx-summary.osum-card dd.is-free { color: #210d35; font-weight: 700; }
+
+/* Total */
+.cx-summary.osum-card .osum-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 16px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(208, 173, 255, 0.3);
+}
+.cx-summary.osum-card .osum-total span { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #210d35; }
+.cx-summary.osum-card .osum-total strong { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: #210d35; letter-spacing: -0.01em; }
 
 .osum-skel { display: flex; flex-direction: column; gap: 12px; }
 .osum-skel span {
-  height: 52px;
-  border-radius: var(--radius-md, 8px);
-  background: linear-gradient(90deg, #f1ece9 25%, #f8f5f3 50%, #f1ece9 75%);
+  height: 64px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(208, 173, 255, 0.14) 25%, #fff7f3 50%, rgba(208, 173, 255, 0.14) 75%);
   background-size: 200% 100%;
   animation: cx-shimmer 1.2s infinite linear;
 }
 
-/* "Delivering to" box used under the totals */
+/* "Delivering to" box (payment step) */
 .osum-deliver {
   display: flex;
   gap: 10px;
   margin-top: 16px;
   padding: 12px 14px;
-  border-radius: var(--radius-md, 8px);
-  background: var(--cx-bg);
-  font-size: var(--text-label);
+  border-radius: 10px;
+  background: #fff7f3;
+  font-size: 14px;
 }
-.osum-deliver svg { color: var(--cx-red); flex-shrink: 0; margin-top: 1px; }
-.osum-deliver div { display: flex; flex-direction: column; gap: 2px; color: var(--cx-ink-2); }
-.osum-deliver div span + span { color: var(--cx-muted); }
+.osum-deliver svg { color: #210d35; flex-shrink: 0; margin-top: 1px; }
+.osum-deliver div { display: flex; flex-direction: column; gap: 2px; color: rgba(33, 13, 53, 0.82); }

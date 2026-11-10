@@ -34,7 +34,7 @@ const columns = [
 ]
 
 // Swap these for the shop's own social pages when they exist.
-const socials = [
+export const socials = [
   {
     label: 'WhatsApp',
     href: 'https://wa.me/919876543210',

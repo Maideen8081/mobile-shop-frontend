@@ -1,0 +1,55 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e2]:
+    - generic [ref=f6e4]:
+      - generic [ref=f6e6]:
+        - generic [ref=f6e7]:
+          - generic [ref=f6e13]: Free Delivery
+          - generic [ref=f6e14]: on Orders Over ₹500
+        - generic [ref=f6e15]: 100% Genuine Products
+        - link "Deals of the Day" [ref=f6e20] [cursor=pointer]:
+          - /url: /collection/all?tab=deals
+      - generic [ref=f6e24]:
+        - link "PhoneFix home" [ref=f6e25] [cursor=pointer]:
+          - /url: /home
+          - generic [ref=f6e29]: PhoneFix.
+        - search [ref=f6e31]:
+          - textbox "Search products" [ref=f6e35]:
+            - /placeholder: Search for smartphones, accessories, repairs...
+          - button "Search" [ref=f6e36] [cursor=pointer]
+        - generic [ref=f6e37]:
+          - button "My account" [ref=f6e39] [cursor=pointer]
+          - link "Wishlist" [ref=f6e44] [cursor=pointer]:
+            - /url: /wishlist
+          - link "Cart" [ref=f6e47] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f6e53]:
+        - generic [ref=f6e54]:
+          - button "All Categories" [ref=f6e56] [cursor=pointer]
+          - navigation "Product categories" [ref=f6e62]:
+            - link "Smartphones" [ref=f6e63] [cursor=pointer]:
+              - /url: /collection/Smartphones
+            - link "Tablets" [ref=f6e67] [cursor=pointer]:
+              - /url: /collection/Tablets
+            - link "Smart Watches" [ref=f6e71] [cursor=pointer]:
+              - /url: /collection/Smart%20Watches
+            - link "Earbuds" [ref=f6e78] [cursor=pointer]:
+              - /url: /collection/Earbuds
+            - link "Headphones" [ref=f6e82] [cursor=pointer]:
+              - /url: /collection/Headphones
+            - link "Power Banks" [ref=f6e86] [cursor=pointer]:
+              - /url: /collection/Power%20Banks
+        - generic [ref=f6e92]:
+          - link "Book Repair" [ref=f6e94] [cursor=pointer]:
+            - /url: /book-repair
+          - link "Trade-In" [ref=f6e98] [cursor=pointer]:
+            - /url: /trade-in
+    - paragraph [ref=f6e110]: Loading products...
+  - generic [ref=f6e111]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f6e112]

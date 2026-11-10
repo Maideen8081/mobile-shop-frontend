@@ -69,15 +69,15 @@ function botReply(raw: string): string {
   return 'Thanks for your message! I can help with repairs, order tracking, warranty, pricing, refurbished devices and returns. Could you tell me a little more about what you need?'
 }
 
+const greeting = (): ChatMessage => ({
+  id: 1,
+  from: 'bot',
+  text: "Hi, I'm the PhoneFix Assistant ✨. Ask me about repairs, orders, warranty or products — or pick a topic below.",
+  time: timeNow(),
+})
+
 export function useSupportChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 1,
-      from: 'bot',
-      text: "Hi, I'm the PhoneFix Assistant ✨. Ask me about repairs, orders, warranty or products — or pick a topic below.",
-      time: timeNow(),
-    },
-  ])
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [greeting()])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -114,5 +114,19 @@ export function useSupportChat() {
     setTyping(false)
   }
 
-  return { messages, input, setInput, typing, scrollRef, send }
+  /** Start over with just the greeting. */
+  const reset = () => {
+    if (typing) return
+    setMessages([greeting()])
+    setInput('')
+  }
+
+  /** Show a saved conversation again. */
+  const load = (saved: ChatMessage[]) => {
+    if (typing || saved.length === 0) return
+    setMessages(saved)
+    nextId.current = Math.max(...saved.map((m) => m.id)) + 1
+  }
+
+  return { messages, input, setInput, typing, scrollRef, send, reset, load }
 }

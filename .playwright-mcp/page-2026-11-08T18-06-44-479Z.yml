@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - link "mobileshop." [ref=e5] [cursor=pointer]:
+        - /url: /home
+      - link "Continue purchase →" [ref=e6] [cursor=pointer]:
+        - /url: /home
+    - generic [ref=e8]:
+      - paragraph [ref=e10]: In store now · scroll, swipe or use ← → to spin
+      - generic [ref=e11]:
+        - generic:
+          - img "Flagship 5G Phone" [ref=e14]
+          - generic [ref=e16]:
+            - img "Cloud ANC Headphones"
+          - generic [ref=e18]:
+            - img "Chrome ANC Earbuds"
+          - generic [ref=e20]:
+            - img "42,800mAh Power Bank"
+          - generic [ref=e22]:
+            - img "Studio Over-Ear"
+          - generic [ref=e24]:
+            - img "20W PD Charger + Cable"
+          - generic [ref=e26]:
+            - img "Punch Buds"
+          - generic [ref=e28]:
+            - img "USB-C to Lightning"
+          - generic [ref=e30]:
+            - img "Power-Case Buds"
+        - button "Previous product" [ref=e31]
+        - button "Next product" [ref=e34]
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - text: Phones
+          - heading "Flagship 5G Phone" [level=3] [ref=e39]
+          - paragraph [ref=e40]: AMOLED display, fast charging, 256GB.
+          - generic [ref=e41]: ₹42,999
+        - link "Continue purchase →" [ref=e42] [cursor=pointer]:
+          - /url: /home?product=phone-10t
+        - generic [ref=e43]:
+          - button "Show Flagship 5G Phone" [ref=e44]
+          - button "Show Cloud ANC Headphones" [ref=e46]
+          - button "Show Chrome ANC Earbuds" [ref=e48]
+          - button "Show 42,800mAh Power Bank" [ref=e50]
+          - button "Show Studio Over-Ear" [ref=e52]
+          - button "Show 20W PD Charger + Cable" [ref=e54]
+          - button "Show Punch Buds" [ref=e56]
+          - button "Show USB-C to Lightning" [ref=e58]
+          - button "Show Power-Case Buds" [ref=e60]
+    - generic [ref=e62]: Keep scrolling to enter the store ↓
+  - generic [ref=e63]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=e64]

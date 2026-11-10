@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ShoppingBag } from 'lucide-react'
 import type { CartItem } from '../../services/cartService'
 import { TAX_RATE } from '../mobile/cartLogic'
 import { computeTotals, formatINR, type CheckoutCoupon } from '../../utils/checkout'
@@ -29,55 +29,73 @@ export default function OrderSummary({ items, coupon, loading, children }: {
   const shown = expanded ? items : items.slice(0, VISIBLE_ITEMS)
   const hidden = items.length - VISIBLE_ITEMS
 
+  // Show the pre-discount price as the subtotal, and product savings + coupon as one discount line.
+  const mrpTotal = items.reduce((s, i) => s + Math.max(i.mrp || 0, i.price) * i.quantity, 0)
+  const discount = mrpTotal - t.subtotal + t.discount
+  const itemLabel = `${t.quantity} Item${t.quantity !== 1 ? 's' : ''}`
+
   return (
     <div className="cx-card cx-summary osum-card">
       <div className="osum-head">
-        <h2>Order summary</h2>
-        {!loading && <span>{t.quantity} item{t.quantity !== 1 ? 's' : ''}</span>}
+        <ShoppingBag size={30} strokeWidth={1.75} />
+        <h2>Order Summary</h2>
+        {!loading && <span>{itemLabel}</span>}
       </div>
 
-      {loading ? (
-        <div className="osum-skel"><span /><span /><span /></div>
-      ) : items.length > 0 && (
-        <>
-          <ul className="osum-items">
-            {shown.map((i) => {
-              const spec = [i.color, i.storage].filter(isRealSpec).join(' · ')
-              return (
-                <li key={i.cartItemId ?? `${i.productId}-${i.variantId}`}>
-                  <span className="osum-img">
-                    <img src={resolveImage(i.image)} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG }} />
-                  </span>
-                  <span className="osum-info">
-                    <span className="osum-name">{i.name}</span>
-                    <span className="osum-meta">Qty {i.quantity}{spec && ` · ${spec}`}</span>
-                  </span>
-                  <span className="osum-price">{formatINR(i.price * i.quantity)}</span>
-                </li>
-              )
-            })}
-          </ul>
-          {hidden > 0 && (
-            <button className="osum-toggle" onClick={() => setExpanded((e) => !e)} aria-expanded={expanded}>
-              {expanded ? 'Show less' : `Show ${hidden} more`}
-              <ChevronDown size={15} className={expanded ? 'is-open' : ''} />
-            </button>
+      <div className="osum-body">
+        {loading ? (
+          <div className="osum-skel"><span /><span /><span /></div>
+        ) : items.length > 0 && (
+          <>
+            <ul className="osum-items">
+              {shown.map((i) => {
+                const meta = [i.color, i.storage].filter(isRealSpec)
+                return (
+                  <li key={i.cartItemId ?? `${i.productId}-${i.variantId}`}>
+                    <span className="osum-img">
+                      <img src={resolveImage(i.image)} alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).src = FALLBACK_IMG }} />
+                    </span>
+                    <span className="osum-info">
+                      <span className="osum-name">{i.name}</span>
+                      <span className="osum-meta">
+                        {[...meta, `Qty: ${i.quantity}`].map((m, n) => (
+                          <span key={m}>{n > 0 && <i aria-hidden="true">•</i>}{m}</span>
+                        ))}
+                      </span>
+                    </span>
+                    <span className="osum-price">{formatINR(i.price * i.quantity)}</span>
+                  </li>
+                )
+              })}
+            </ul>
+            {hidden > 0 && (
+              <button className="osum-toggle" onClick={() => setExpanded((e) => !e)} aria-expanded={expanded}>
+                {expanded ? 'Show less' : `Show ${hidden} more`}
+                <ChevronDown size={15} className={expanded ? 'is-open' : ''} />
+              </button>
+            )}
+          </>
+        )}
+
+        <dl>
+          <div><dt>Subtotal ({itemLabel})</dt><dd>{formatINR(mrpTotal)}</dd></div>
+          {discount > 0 && (
+            <div className="is-save">
+              <dt>Discount{coupon?.code && t.discount > 0 ? ` (${coupon.code})` : ''}</dt>
+              <dd>– {formatINR(discount)}</dd>
+            </div>
           )}
-        </>
-      )}
+          <div><dt>Delivery</dt><dd className={t.shipping === 0 ? 'is-free' : ''}>{t.shipping === 0 ? 'Free' : formatINR(t.shipping)}</dd></div>
+          <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{formatINR(t.tax)}</dd></div>
+        </dl>
 
-      <dl>
-        <div><dt>Subtotal</dt><dd>{formatINR(t.subtotal)}</dd></div>
-        <div><dt>Delivery</dt><dd className={t.shipping === 0 ? 'is-free' : ''}>{t.shipping === 0 ? 'Free' : formatINR(t.shipping)}</dd></div>
-        <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{formatINR(t.tax)}</dd></div>
-        {t.discount > 0 && <div className="is-save"><dt>Coupon ({coupon?.code})</dt><dd>−{formatINR(t.discount)}</dd></div>}
-      </dl>
-      <div className="cx-total">
-        <span>Total amount</span>
-        <strong>{formatINR(t.total)}</strong>
+        <div className="cx-total osum-total">
+          <span>Total Amount</span>
+          <strong>{formatINR(t.total)}</strong>
+        </div>
+
+        {children}
       </div>
-
-      {children}
     </div>
   )
 }

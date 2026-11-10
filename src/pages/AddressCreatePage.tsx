@@ -28,7 +28,11 @@ const emptyForm: Omit<AddressData, 'id' | 'createdAt' | 'updatedAt'> = {
 
 export default function AddressCreatePage() {
   const isMobile = useIsMobile()
-  if (isMobile) return <MobileAddressManagement />
+  // Separate components keep hook order stable when the viewport crosses the breakpoint.
+  return isMobile ? <MobileAddressManagement /> : <DesktopAddressCreate />
+}
+
+function DesktopAddressCreate() {
   const navigate = useNavigate()
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
@@ -36,7 +40,7 @@ export default function AddressCreatePage() {
 
   useEffect(() => {
     if (!authService.isAuthenticated()) {
-      sessionStorage.setItem('redirect_after_login', '/addresses/new')
+      sessionStorage.setItem('redirect_after_login', '/address/create')
       navigate('/login', { replace: true })
     }
   }, [navigate])
@@ -107,7 +111,7 @@ export default function AddressCreatePage() {
     /^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FBF8F6' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FFF7F3' }}>
       <SiteTopNav />
 
       <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '40px 64px' }}>

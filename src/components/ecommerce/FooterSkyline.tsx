@@ -45,7 +45,7 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <rect x="118" y="168" width="120" height="72" fill="#C98B4F" />
       <rect x="118" y="162" width="120" height="8" fill="#8A4B2A" />
       <rect x="178" y="168" width="60" height="72" fill="#B5733C" />
-      <path d="M160,240 V202 A18,18 0 0 1 196,202 V240 Z" fill="#FDF4EF" />
+      <path d="M160,240 V202 A18,18 0 0 1 196,202 V240 Z" fill="#FFF7F3" />
       <path d="M128,214 V189 A7,7 0 0 1 142,189 V214 Z" fill="#8A4B2A" />
       <path d="M214,214 V189 A7,7 0 0 1 228,189 V214 Z" fill="#8A4B2A" />
       <path d="M132,162 C132,124.5 166.5,122 178,112 C189.5,122 224,124.5 224,162 Z" fill="#8A4B2A" />
@@ -104,7 +104,7 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <rect x="578" y="40" width="56" height="22" fill="#CF9E62" />
       <rect x="516" y="34" width="124" height="7" fill="#B5733C" />
       <path d="M560,34 Q578,10 596,34 Z" fill="#E2BC8A" />
-      <path d="M548,240 V142 A30,30 0 0 1 608,142 V240 Z" fill="#FDF4EF" />
+      <path d="M548,240 V142 A30,30 0 0 1 608,142 V240 Z" fill="#FFF7F3" />
       <rect x="520" y="96" width="116" height="2" fill="#C98B4F" />
       <rect x="520" y="104" width="116" height="2" fill="#C98B4F" />
       <rect x="650" y="214" width="186" height="26" fill="#E2DDDA" />
@@ -134,7 +134,7 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <rect x="915" y="136" width="59" height="104" fill="#E2894F" />
       <rect x="850" y="128" width="130" height="10" fill="#C8323F" />
       <path d="M888,240 V187 A27,27 0 0 1 942,187 V240 Z" fill="#B85A2A" />
-      <path d="M898,240 V193 A17,17 0 0 1 932,193 V240 Z" fill="#FDF4EF" />
+      <path d="M898,240 V193 A17,17 0 0 1 932,193 V240 Z" fill="#FFF7F3" />
       <path d="M862,172 V156 A8,8 0 0 1 878,156 V172 Z" fill="#B85A2A" />
       <path d="M952,172 V156 A8,8 0 0 1 968,156 V172 Z" fill="#B85A2A" />
       <path d="M862,128 V116 A4,4 0 0 1 870,116 V128 Z" fill="#E2894F" />
@@ -165,7 +165,7 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <path d="M876,108 C876,94.5 885,93.6 888,90 C891,93.6 900,94.5 900,108 Z" fill="#C8323F" />
       <path d="M930,108 C930,94.5 939,93.6 942,90 C945,93.6 954,94.5 954,108 Z" fill="#C8323F" />
       <rect x="1004" y="164" width="436" height="76" fill="#C8323F" />
-      <rect x="1004" y="160" width="436" height="6" fill="#A3122A" />
+      <rect x="1004" y="160" width="436" height="6" fill="#3A1E52" />
       <rect x="1006" y="152" width="7" height="9" fill="#C8323F" />
       <rect x="1018" y="152" width="7" height="9" fill="#C8323F" />
       <rect x="1030" y="152" width="7" height="9" fill="#C8323F" />
@@ -203,18 +203,18 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <rect x="1414" y="152" width="7" height="9" fill="#C8323F" />
       <rect x="1426" y="152" width="7" height="9" fill="#C8323F" />
       <rect x="1438" y="152" width="7" height="9" fill="#C8323F" />
-      <path d="M1016,214 V191 A5,5 0 0 1 1026,191 V214 Z" fill="#A3122A" />
-      <path d="M1042,214 V191 A5,5 0 0 1 1052,191 V214 Z" fill="#A3122A" />
-      <path d="M1068,214 V191 A5,5 0 0 1 1078,191 V214 Z" fill="#A3122A" />
-      <path d="M1094,214 V191 A5,5 0 0 1 1104,191 V214 Z" fill="#A3122A" />
-      <path d="M1120,214 V191 A5,5 0 0 1 1130,191 V214 Z" fill="#A3122A" />
-      <path d="M1146,214 V191 A5,5 0 0 1 1156,191 V214 Z" fill="#A3122A" />
-      <path d="M1276,214 V191 A5,5 0 0 1 1286,191 V214 Z" fill="#A3122A" />
-      <path d="M1302,214 V191 A5,5 0 0 1 1312,191 V214 Z" fill="#A3122A" />
-      <path d="M1328,214 V191 A5,5 0 0 1 1338,191 V214 Z" fill="#A3122A" />
-      <path d="M1354,214 V191 A5,5 0 0 1 1364,191 V214 Z" fill="#A3122A" />
-      <path d="M1380,214 V191 A5,5 0 0 1 1390,191 V214 Z" fill="#A3122A" />
-      <path d="M1406,214 V191 A5,5 0 0 1 1416,191 V214 Z" fill="#A3122A" />
+      <path d="M1016,214 V191 A5,5 0 0 1 1026,191 V214 Z" fill="#3A1E52" />
+      <path d="M1042,214 V191 A5,5 0 0 1 1052,191 V214 Z" fill="#3A1E52" />
+      <path d="M1068,214 V191 A5,5 0 0 1 1078,191 V214 Z" fill="#3A1E52" />
+      <path d="M1094,214 V191 A5,5 0 0 1 1104,191 V214 Z" fill="#3A1E52" />
+      <path d="M1120,214 V191 A5,5 0 0 1 1130,191 V214 Z" fill="#3A1E52" />
+      <path d="M1146,214 V191 A5,5 0 0 1 1156,191 V214 Z" fill="#3A1E52" />
+      <path d="M1276,214 V191 A5,5 0 0 1 1286,191 V214 Z" fill="#3A1E52" />
+      <path d="M1302,214 V191 A5,5 0 0 1 1312,191 V214 Z" fill="#3A1E52" />
+      <path d="M1328,214 V191 A5,5 0 0 1 1338,191 V214 Z" fill="#3A1E52" />
+      <path d="M1354,214 V191 A5,5 0 0 1 1364,191 V214 Z" fill="#3A1E52" />
+      <path d="M1380,214 V191 A5,5 0 0 1 1390,191 V214 Z" fill="#3A1E52" />
+      <path d="M1406,214 V191 A5,5 0 0 1 1416,191 V214 Z" fill="#3A1E52" />
       <rect x="1150" y="104" width="120" height="136" fill="#B3202F" />
       <rect x="1150" y="98" width="120" height="8" fill="#8E0F22" />
       <rect x="1152" y="90" width="7" height="9" fill="#B3202F" />
@@ -230,42 +230,42 @@ export default function FooterSkyline({ className = '' }: { className?: string }
       <path d="M1186,240 V184 A24,24 0 0 1 1234,184 V240 Z" fill="#7A0C1C" />
       <path d="M1160,152 V131 A7,7 0 0 1 1174,131 V152 Z" fill="#8E0F22" />
       <path d="M1244,152 V131 A7,7 0 0 1 1258,131 V152 Z" fill="#8E0F22" />
-      <rect x="1195" y="72" width="3" height="26" fill="#A3122A" />
-      <rect x="1222" y="72" width="3" height="26" fill="#A3122A" />
+      <rect x="1195" y="72" width="3" height="26" fill="#3A1E52" />
+      <rect x="1222" y="72" width="3" height="26" fill="#3A1E52" />
       <rect x="1192" y="68" width="36" height="5" fill="#8E0F22" />
       <path d="M1194,68 C1194,51.5 1206,50.4 1210,46 C1214,50.4 1226,51.5 1226,68 Z" fill="#C8323F" />
       <rect x="1209.25" y="40" width="1.5" height="7" fill="#8E0F22" />
-      <rect x="1151" y="82.4" width="1.8" height="15.6" fill="#A3122A" />
-      <rect x="1167.2" y="82.4" width="1.8" height="15.6" fill="#A3122A" />
+      <rect x="1151" y="82.4" width="1.8" height="15.6" fill="#3A1E52" />
+      <rect x="1167.2" y="82.4" width="1.8" height="15.6" fill="#3A1E52" />
       <rect x="1148" y="80" width="24" height="3" fill="#8E0F22" />
       <path d="M1150,80 C1150,70.1 1157.5,69.44 1160,66.8 C1162.5,69.44 1170,70.1 1170,80 Z" fill="#C8323F" />
       <rect x="1159.25" y="63.2" width="1.5" height="4.2" fill="#8E0F22" />
-      <rect x="1251" y="82.4" width="1.8" height="15.6" fill="#A3122A" />
-      <rect x="1267.2" y="82.4" width="1.8" height="15.6" fill="#A3122A" />
+      <rect x="1251" y="82.4" width="1.8" height="15.6" fill="#3A1E52" />
+      <rect x="1267.2" y="82.4" width="1.8" height="15.6" fill="#3A1E52" />
       <rect x="1248" y="80" width="24" height="3" fill="#8E0F22" />
       <path d="M1250,80 C1250,70.1 1257.5,69.44 1260,66.8 C1262.5,69.44 1270,70.1 1270,80 Z" fill="#C8323F" />
       <rect x="1259.25" y="63.2" width="1.5" height="4.2" fill="#8E0F22" />
       <rect x="1034" y="120" width="32" height="44" fill="#B3202F" />
-      <rect x="1038" y="99.2" width="2.4" height="20.8" fill="#A3122A" />
-      <rect x="1059.6" y="99.2" width="2.4" height="20.8" fill="#A3122A" />
+      <rect x="1038" y="99.2" width="2.4" height="20.8" fill="#3A1E52" />
+      <rect x="1059.6" y="99.2" width="2.4" height="20.8" fill="#3A1E52" />
       <rect x="1035" y="96" width="30" height="4" fill="#8E0F22" />
       <path d="M1037,96 C1037,82.8 1046.75,81.92 1050,78.4 C1053.25,81.92 1063,82.8 1063,96 Z" fill="#C8323F" />
       <rect x="1049.25" y="73.6" width="1.5" height="5.6" fill="#8E0F22" />
       <rect x="1344" y="120" width="32" height="44" fill="#B3202F" />
-      <rect x="1348" y="99.2" width="2.4" height="20.8" fill="#A3122A" />
-      <rect x="1369.6" y="99.2" width="2.4" height="20.8" fill="#A3122A" />
+      <rect x="1348" y="99.2" width="2.4" height="20.8" fill="#3A1E52" />
+      <rect x="1369.6" y="99.2" width="2.4" height="20.8" fill="#3A1E52" />
       <rect x="1345" y="96" width="30" height="4" fill="#8E0F22" />
       <path d="M1347,96 C1347,82.8 1356.75,81.92 1360,78.4 C1363.25,81.92 1373,82.8 1373,96 Z" fill="#C8323F" />
       <rect x="1359.25" y="73.6" width="1.5" height="5.6" fill="#8E0F22" />
       <rect x="1002" y="132" width="16" height="32" fill="#B3202F" />
-      <rect x="1002.5" y="119" width="1.5" height="13" fill="#A3122A" />
-      <rect x="1016" y="119" width="1.5" height="13" fill="#A3122A" />
+      <rect x="1002.5" y="119" width="1.5" height="13" fill="#3A1E52" />
+      <rect x="1016" y="119" width="1.5" height="13" fill="#3A1E52" />
       <rect x="999.5" y="117" width="21" height="2.5" fill="#8E0F22" />
       <path d="M1001.5,117 C1001.5,108.75 1007.88,108.2 1010,106 C1012.12,108.2 1018.5,108.75 1018.5,117 Z" fill="#C8323F" />
       <rect x="1009.25" y="103" width="1.5" height="3.5" fill="#8E0F22" />
       <rect x="1422" y="132" width="16" height="32" fill="#B3202F" />
-      <rect x="1422.5" y="119" width="1.5" height="13" fill="#A3122A" />
-      <rect x="1436" y="119" width="1.5" height="13" fill="#A3122A" />
+      <rect x="1422.5" y="119" width="1.5" height="13" fill="#3A1E52" />
+      <rect x="1436" y="119" width="1.5" height="13" fill="#3A1E52" />
       <rect x="1419.5" y="117" width="21" height="2.5" fill="#8E0F22" />
       <path d="M1421.5,117 C1421.5,108.75 1427.88,108.2 1430,106 C1432.12,108.2 1438.5,108.75 1438.5,117 Z" fill="#C8323F" />
       <rect x="1429.25" y="103" width="1.5" height="3.5" fill="#8E0F22" />

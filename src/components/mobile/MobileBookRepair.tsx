@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FiChevronLeft, FiUser, FiSmartphone, FiImage, FiX, FiAlertCircle, FiCheckCircle, FiSend, FiArrowRight } from 'react-icons/fi'
-import { repairService, type RepairService } from '../../services/repairService'
+import { repairService, appendIfFilled, formatRepairError, type RepairService } from '../../services/repairService'
 import { deviceBrands } from '../../data/repairData'
 import MobileTopSection from './MobileTopSection'
 
-const PURPLE = '#CB202D'
-const grad = 'linear-gradient(135deg,#CB202D 0%,#FF5A65 100%)'
+const PURPLE = '#210D35'
+const grad = 'linear-gradient(135deg,#210D35 0%,#7B3FD0 100%)'
 
 const issueQuestions: Record<string, string[]> = {
   'Screen Repair': ['Is the glass only cracked or is the display also affected?', 'Is the touch functionality working?', 'Do you have a screen protector installed?', 'Any dead pixels or discoloration?'],
@@ -142,7 +142,7 @@ export default function MobileBookRepair() {
       fd.append('device_category', selectedIssue || 'Other')
       fd.append('device_brand', brand)
       fd.append('device_model', model.trim())
-      fd.append('imei_number', imei.trim())
+      appendIfFilled(fd, 'imei_number', imei.trim())
       fd.append('serial_number', serialNumber.trim())
       fd.append('device_color', deviceColor.trim())
       fd.append('warranty_status', warranty)
@@ -167,13 +167,7 @@ export default function MobileBookRepair() {
       setResult({ repairId: created.repairId, ticketId: created.id })
     } catch (err: any) {
       console.error('[MobileBookRepair] Booking error:', err)
-      const resp = err?.response?.data
-      if (resp && typeof resp === 'object' && !resp.message) {
-        const msgs = Object.entries(resp).map(([, v]) => Array.isArray(v) ? v[0] : v).filter(Boolean)
-        setSubmitError(msgs.join('. ') || 'Validation failed. Please check your input.')
-      } else {
-        setSubmitError(resp?.message || err?.message || 'Failed to submit. Please try again.')
-      }
+      setSubmitError(formatRepairError(err))
     } finally {
       setSubmitting(false)
     }
@@ -189,12 +183,12 @@ export default function MobileBookRepair() {
   if (result) {
     return (
       <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
-        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(203,32,45,0.1)' }}>
+        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
           <FiCheckCircle size={40} style={{ color: PURPLE }} />
         </div>
         <h1 className="text-title font-extrabold text-[#1F2937] mb-1">Booking Confirmed!</h1>
         <p className="text-label text-[#6B7280] mb-6">Your repair has been submitted successfully.</p>
-        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(203,32,45,0.06)', border: '1.5px solid rgba(203,32,45,0.18)' }}>
+        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(123, 63, 208,0.06)', border: '1.5px solid rgba(123, 63, 208,0.18)' }}>
           <p className="text-micro text-[#6B7280] mb-1">Your Tracking ID</p>
           <p className="text-heading font-bold font-mono" style={{ color: PURPLE }}>{result.repairId}</p>
           <p className="text-micro text-[#6B7280] mt-2">Save this ID to track your repair.</p>
@@ -210,7 +204,7 @@ export default function MobileBookRepair() {
   }
 
   const cardCls = 'bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-4'
-  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm text-[#1F2937] focus:border-[#FF5A65] transition-all'
+  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm text-[#1F2937] focus:border-[#7B3FD0] transition-all'
   const nextBtn = 'flex items-center justify-center gap-1.5 h-11 rounded-[8px] text-label font-bold text-white active:scale-95 transition'
   const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-[8px] bg-white border border-[#E5E7EB] text-label font-semibold text-[#374151] active:scale-95 transition'
 
@@ -221,7 +215,7 @@ export default function MobileBookRepair() {
       <div className="px-4 pt-4">
         <div className="relative mb-3">
           <div onClick={() => setShowServicePicker(!showServicePicker)} className="flex items-center gap-2 cursor-pointer active:scale-[0.98] transition">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
               <FiSmartphone size={16} />
             </div>
             <div className="flex-1">
@@ -246,7 +240,7 @@ export default function MobileBookRepair() {
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-2">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-[8px] transition-all duration-300 ${i + 1 <= step ? 'bg-[#FF5A65]' : 'bg-[#E5E7EB]'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-[8px] transition-all duration-300 ${i + 1 <= step ? 'bg-[#7B3FD0]' : 'bg-[#E5E7EB]'}`} />
           ))}
         </div>
         <p className="text-micro font-semibold text-[#6B7280] mb-4">{progressLabel}</p>
@@ -261,7 +255,7 @@ export default function MobileBookRepair() {
                 value={answers[step - 1]}
                 onChange={(e) => { updateAnswer(step - 1, e.target.value); if (errors.q) setErrors({}) }}
                 rows={4}
-                className="w-full px-4 py-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] text-body-sm text-[#1F2937] outline-none focus:border-[#FF5A65] transition-all resize-none"
+                className="w-full px-4 py-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] text-body-sm text-[#1F2937] outline-none focus:border-[#7B3FD0] transition-all resize-none"
                 placeholder="Type your answer..."
               />
               {errors.q && <p className="text-micro text-[#EF4444] mt-1">{errors.q}</p>}
@@ -357,7 +351,7 @@ export default function MobileBookRepair() {
                 </div>
               )}
               {submitError && (
-                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#FEE2E2] border border-[#FCA5A5] text-micro text-[#B91C1C] mt-3">
+                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#F3E8FF] border border-[#FCA5A5] text-micro text-[#B91C1C] mt-3">
                   <FiAlertCircle size={12} /> {submitError}
                 </div>
               )}

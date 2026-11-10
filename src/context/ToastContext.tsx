@@ -1,55 +1,91 @@
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react'
+import { FiAlertCircle, FiCheckCircle, FiX } from 'react-icons/fi'
+import './Toast.css'
+
+type ToastType = 'success' | 'error'
 
 interface Toast {
   message: string
-  type: 'success' | 'error'
+  type: ToastType
   id: number
 }
 
 interface ToastContextType {
-  show: (message: string, type: 'success' | 'error') => void
+  show: (message: string, type: ToastType) => void
 }
 
 const ToastContext = createContext<ToastContextType>({ show: () => {} })
 
+// Errors stay up a little longer so there is time to read them.
+const DURATION: Record<ToastType, number> = { success: 3500, error: 5000 }
+const MAX_VISIBLE = 3
+
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toast, setToast] = useState<Toast | null>(null)
+  const [toasts, setToasts] = useState<Toast[]>([])
   const toastId = useRef(0)
 
-  const show = useCallback((message: string, type: 'success' | 'error') => {
+  const dismiss = useCallback((id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  const show = useCallback((message: string, type: ToastType) => {
     const id = ++toastId.current
-    setToast({ message, type, id })
-    setTimeout(() => setToast(prev => prev?.id === id ? null : prev), 3000)
+    setToasts((prev) => {
+      // Don't stack the same message twice (e.g. a double-clicked button).
+      const rest = prev.filter((t) => !(t.message === message && t.type === type))
+      return [...rest, { message, type, id }].slice(-MAX_VISIBLE)
+    })
   }, [])
 
   return (
     <ToastContext.Provider value={{ show }}>
       {children}
-      {toast && (
-        <div
-          key={toast.id}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-2xl"
-          style={{
-            background: toast.type === 'success'
-              ? 'linear-gradient(135deg, #4FE3C1, #006b58)'
-              : 'linear-gradient(135deg, #FF4D4D, #ba1a1a)',
-            color: 'white',
-            animation: 'toastIn 0.3s ease-out',
-          }}
-        >
-          <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            {toast.type === 'success' ? 'check_circle' : 'warning'}
-          </span>
-          <span className="text-sm font-semibold">{toast.message}</span>
-        </div>
-      )}
-      <style>{`
-        @keyframes toastIn {
-          from { opacity: 0; transform: translateY(20px) translateX(-50%); }
-          to { opacity: 1; transform: translateY(0) translateX(-50%); }
-        }
-      `}</style>
+      <div className="app-toasts" aria-live="polite" aria-relevant="additions">
+        {toasts.map((t) => (
+          <ToastItem key={t.id} toast={t} onDismiss={dismiss} />
+        ))}
+      </div>
     </ToastContext.Provider>
+  )
+}
+
+function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number) => void }) {
+  const [paused, setPaused] = useState(false)
+  const remaining = useRef(DURATION[toast.type])
+  const startedAt = useRef(0)
+
+  // Auto-close, pausing while the pointer is over the toast.
+  useEffect(() => {
+    if (paused) return
+    startedAt.current = Date.now()
+    const t = window.setTimeout(() => onDismiss(toast.id), remaining.current)
+    return () => {
+      window.clearTimeout(t)
+      remaining.current -= Date.now() - startedAt.current
+    }
+  }, [paused, toast.id, onDismiss])
+
+  const isSuccess = toast.type === 'success'
+  return (
+    <div
+      className={`app-toast app-toast--${toast.type}`}
+      role={isSuccess ? 'status' : 'alert'}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      style={{ ['--toast-duration' as string]: `${DURATION[toast.type]}ms` }}
+    >
+      <span className="app-toast__icon" aria-hidden="true">
+        {isSuccess ? <FiCheckCircle size={20} /> : <FiAlertCircle size={20} />}
+      </span>
+      <div className="app-toast__body">
+        <p className="app-toast__title">{isSuccess ? 'Success' : 'Error'}</p>
+        <p className="app-toast__message">{toast.message}</p>
+      </div>
+      <button type="button" className="app-toast__close" onClick={() => onDismiss(toast.id)} aria-label="Dismiss notification">
+        <FiX size={16} />
+      </button>
+      <span className={`app-toast__progress ${paused ? 'is-paused' : ''}`} aria-hidden="true" />
+    </div>
   )
 }
 

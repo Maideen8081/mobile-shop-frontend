@@ -18,8 +18,8 @@ import MobileTopSection from './MobileTopSection'
 import MobileBottomNav from './MobileBottomNav'
 import { useMobileToast } from './useMobileToast'
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 const gradient = `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})`
 
@@ -132,7 +132,7 @@ export default function MobileWishlist() {
           </div>
         ) : products.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
-            <div className="w-20 h-20 rounded-[8px] mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+            <div className="w-20 h-20 rounded-[8px] mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
               <Heart size={34} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-title-sm font-bold text-[#1F2937] mb-1">Your wishlist is empty</h2>
@@ -221,7 +221,7 @@ export default function MobileWishlist() {
             </div>
 
             <button onClick={() => navigate('/collection/all')} className={`${card} py-5 mt-3 w-full flex flex-col items-center justify-center text-center gap-0.5`}>
-              <div className="w-12 h-12 rounded-[8px] mb-2 flex items-center justify-center" style={{ background: 'rgba(203,32,45,0.1)' }}>
+              <div className="w-12 h-12 rounded-[8px] mb-2 flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
                 <Heart size={22} style={{ color: PURPLE }} />
               </div>
               <h3 className="text-body-sm font-bold text-[#1F2937] w-full text-center">Discover More</h3>

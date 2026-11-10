@@ -1,0 +1,194 @@
+.sf {
+  --sf-purple: #210d35;
+  --sf-cream: #fff7f3;
+  --sf-lavender: #d0adff;
+  --sf-sunshine: #ffd014;
+
+  margin-top: 56px;
+  background:
+    radial-gradient(700px 240px at 100% 0%, rgba(208, 173, 255, 0.14), transparent 70%),
+    linear-gradient(180deg, #2a1142, var(--sf-purple));
+  color: rgba(255, 247, 243, 0.78);
+  font-family: var(--font-ui);
+}
+.sf-inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 44px 28px 0;
+}
+.sf-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr 0.9fr 0.9fr 1.6fr;
+  gap: 40px;
+  padding-bottom: 36px;
+}
+.sf-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--sf-cream);
+  text-decoration: none;
+}
+.sf-logo-mark {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #7b3fd0, #4a2470);
+  color: var(--sf-cream);
+}
+.sf-logo-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+.sf-logo-tag {
+  font-size: 13px;
+  color: rgba(255, 247, 243, 0.7);
+}
+.sf-brand p {
+  margin: 18px 0 20px;
+  max-width: 320px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.sf-social {
+  display: flex;
+  gap: 12px;
+}
+.sf-social a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 247, 243, 0.1);
+  color: var(--sf-cream);
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+.sf-social a:hover {
+  background: var(--sf-sunshine);
+  color: var(--sf-purple);
+  transform: translateY(-2px);
+}
+.sf h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--sf-cream);
+}
+.sf-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sf-col a {
+  color: rgba(255, 247, 243, 0.75);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+.sf-col a:hover {
+  color: var(--sf-sunshine);
+}
+.sf-news p {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.sf-news-row {
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+  height: 50px;
+  padding: 0 5px 0 18px;
+  border-radius: 999px;
+  background: #fff;
+}
+.sf-news-row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--sf-purple);
+}
+.sf-news-row input::placeholder {
+  color: #8a7a96;
+}
+.sf-news-row button {
+  width: 44px;
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--sf-purple);
+  color: var(--sf-cream);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.sf-news-row button:hover {
+  background: var(--sf-sunshine);
+  color: var(--sf-purple);
+}
+.sf-news-row:focus-within {
+  box-shadow: 0 0 0 3px rgba(208, 173, 255, 0.45);
+}
+.sf-news .sf-ok { margin-top: 10px; color: #86efac; }
+.sf-news .sf-err { margin-top: 10px; color: #fca5a5; }
+.sf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.sf-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0 22px;
+  border-top: 1px solid rgba(255, 247, 243, 0.12);
+  font-size: 13px;
+}
+.sf-bottom p { margin: 0; }
+.sf-pay {
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+.sf-pay li {
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--sf-purple);
+  font-size: 12px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 1200px) {
+  .sf-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .sf-brand, .sf-news { grid-column: span 3; }
+}
+@media (max-width: 700px) {
+  .sf-inner { padding: 36px 16px 0; }
+  .sf-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .sf-brand, .sf-news { grid-column: span 2; }
+  .sf-bottom { flex-direction: column; align-items: flex-start; }
+}

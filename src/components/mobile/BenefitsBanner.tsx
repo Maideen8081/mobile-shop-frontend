@@ -10,17 +10,17 @@ type Benefit = {
 
 const BENEFITS: Benefit[] = [
   { title: 'Free Shipping', subtitle: 'On all orders, no minimum', Icon: Truck, iconBg: '#ECFDF5', iconColor: '#059669' },
-  { title: 'Secure Payment', subtitle: '100% safe & encrypted', Icon: ShieldCheck, iconBg: '#FEE2E6', iconColor: '#CB202D' },
-  { title: 'Easy Returns', subtitle: '7-day hassle-free', Icon: RotateCcw, iconBg: '#FEF3C7', iconColor: '#D97706' },
-  { title: 'Genuine Products', subtitle: '100% authentic guarantee', Icon: BadgeCheck, iconBg: '#FCE7F3', iconColor: '#DB2777' },
+  { title: 'Secure Payment', subtitle: '100% safe & encrypted', Icon: ShieldCheck, iconBg: '#F3E8FF', iconColor: '#210D35' },
+  { title: 'Easy Returns', subtitle: '7-day hassle-free', Icon: RotateCcw, iconBg: '#F3E8FF', iconColor: '#5B3A7E' },
+  { title: 'Genuine Products', subtitle: '100% authentic guarantee', Icon: BadgeCheck, iconBg: '#F3E8FF', iconColor: '#210D35' },
 ]
 
 export default function BenefitsBanner() {
   return (
     <section className="mt-6 px-3.5">
       <div className="flex items-center gap-1.5 mb-2.5 px-0.5">
-        <Sparkles size={14} className="text-[#CB202D]" />
-        <h2 className="text-label font-bold text-[#0F172A] tracking-tight">Why shop with us</h2>
+        <Sparkles size={14} className="text-[#210D35]" />
+        <h2 className="text-label font-bold text-[#210D35] tracking-tight">Why shop with us</h2>
       </div>
 
       {/* Static 2x2 grid — full text, no scroll, Zepto-style colorful chips */}
@@ -30,7 +30,7 @@ export default function BenefitsBanner() {
           return (
             <div
               key={b.title}
-              className="flex items-center gap-2.5 rounded-2xl bg-white border border-[#EEF1F6] shadow-[0_3px_12px_rgba(15,23,42,0.04)] px-3 py-3"
+              className="flex items-center gap-2.5 rounded-2xl bg-white border border-[#ECDFF6] shadow-[0_3px_12px_rgba(33,13,53,0.05)] px-3 py-3"
             >
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -39,8 +39,8 @@ export default function BenefitsBanner() {
                 <Icon size={20} style={{ color: b.iconColor }} strokeWidth={2.2} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-caption font-bold text-[#0F172A] leading-tight">{b.title}</h3>
-                <p className="text-micro text-[#64748B] leading-tight mt-0.5">{b.subtitle}</p>
+                <h3 className="text-caption font-bold text-[#210D35] leading-tight">{b.title}</h3>
+                <p className="text-micro text-[#7C668A] leading-tight mt-0.5">{b.subtitle}</p>
               </div>
             </div>
           )

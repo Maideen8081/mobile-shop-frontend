@@ -10,7 +10,7 @@ interface AuthContextValue {
   login: (data: { email: string; password: string }) => Promise<void>
   /** Resolves true when the Google sign-in created a new account. */
   googleLogin: (credential: string) => Promise<boolean>
-  register: (data: { fullName: string; email: string; password: string; confirmPassword: string }) => Promise<void>
+  register: (data: { fullName: string; email: string; password: string; confirmPassword: string; mobile?: string }) => Promise<void>
   adminLogin: (data: { email: string; password: string }) => Promise<void>
   logout: () => Promise<void>
   adminLogout: () => Promise<void>
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return Boolean(res?.data?.created)
   }, [refresh])
 
-  const register = useCallback(async (data: { fullName: string; email: string; password: string; confirmPassword: string }) => {
+  const register = useCallback(async (data: { fullName: string; email: string; password: string; confirmPassword: string; mobile?: string }) => {
     await authService.register(data)
     await refresh()
   }, [refresh])

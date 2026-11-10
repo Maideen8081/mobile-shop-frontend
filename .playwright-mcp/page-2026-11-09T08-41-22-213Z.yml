@@ -1,0 +1,58 @@
+- generic [active]:
+  - generic [ref=f5e2]:
+    - complementary "MobileShop highlights" [ref=f5e3]:
+      - link "MobileShop" [ref=f5e4] [cursor=pointer]:
+        - /url: /home
+      - generic [ref=f5e10]:
+        - generic [ref=f5e11]:
+          - paragraph [ref=f5e12]: Premium collection
+          - heading "TWS Earbuds" [level=2] [ref=f5e13]
+          - paragraph [ref=f5e14]: True wireless audio, redefined.
+        - img "Wireless earbuds in a charging case" [ref=f5e17]
+        - list [ref=f5e18]:
+          - listitem [ref=f5e19]: Immersive Sound
+          - listitem [ref=f5e23]: Long Battery Life
+          - listitem [ref=f5e27]: Light & Comfortable
+      - generic [ref=f5e32]:
+        - button "Show slide 1" [ref=f5e33] [cursor=pointer]
+        - button "Show slide 2" [ref=f5e34] [cursor=pointer]
+        - button "Show slide 3" [ref=f5e35] [cursor=pointer]
+    - main [ref=f5e36]:
+      - generic [ref=f5e37]:
+        - heading "Welcome back" [level=1] [ref=f5e38]
+        - paragraph [ref=f5e41]: Sign in to your account to continue shopping.
+      - generic [ref=f5e42]:
+        - generic [ref=f5e43]:
+          - generic [ref=f5e44]: Email address
+          - textbox "Email address" [ref=f5e47]:
+            - /placeholder: Enter your email
+        - generic [ref=f5e48]:
+          - generic [ref=f5e49]:
+            - generic [ref=f5e50]: Password
+            - button "Forgot password?" [ref=f5e51] [cursor=pointer]
+          - generic [ref=f5e52]:
+            - textbox "Password" [ref=f5e53]:
+              - /placeholder: Enter your password
+            - button "Show password" [ref=f5e55] [cursor=pointer]
+        - generic [ref=f5e59] [cursor=pointer]:
+          - checkbox "Remember me" [ref=f5e60]
+          - text: Remember me
+        - button "Sign In" [ref=f5e61] [cursor=pointer]
+      - generic [ref=f5e64]: or continue with
+      - generic [ref=f5e68]:
+        - button "Continue with Google. Opens in new tab" [ref=f5e70] [cursor=pointer]:
+          - generic [ref=f5e72]: Continue with Google
+        - iframe
+      - paragraph [ref=f5e83]:
+        - text: Don't have an account?
+        - link "Create account" [ref=f5e84] [cursor=pointer]:
+          - /url: /signup
+  - generic [ref=f5e85]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f5e86]

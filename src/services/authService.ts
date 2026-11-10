@@ -15,6 +15,7 @@ export interface RegisterData {
   email: string
   password: string
   confirmPassword: string
+  mobile?: string
 }
 
 export interface UserProfile {
@@ -139,6 +140,7 @@ export const authService = {
       email: data.email,
       password: data.password,
       confirm_password: data.confirmPassword,
+      ...(data.mobile ? { mobile: data.mobile } : {}),
     }
     const r = await api.post(`${BASE}/register/`, payload)
     saveUserProfile(r.data, data.email)

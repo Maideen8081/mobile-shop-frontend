@@ -24,7 +24,7 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 const HERO_COPY: { title: string; subtitle: string; bg: string } = {
   title: 'Premium Smartphones',
   subtitle: 'iPhone, Galaxy, Pixel & more — best prices, full warranty',
-  bg: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)',
+  bg: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)',
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
@@ -177,7 +177,7 @@ export default function MobilePhones() {
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
-            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(203,32,45,0.22)]" style={{ background: hero.bg }}>
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(123, 63, 208,0.22)]" style={{ background: hero.bg }}>
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-[8px] bg-white/20 blur-2xl" />
               <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-[8px] bg-white/15 blur-2xl" />
               <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -230,7 +230,7 @@ export default function MobilePhones() {
           </div>
 
           <div className="px-3.5 mt-5">
-            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(203,32,45,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#A81D2A,#CB202D)' }}>
+            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(123, 63, 208,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#3A1E52,#210D35)' }}>
               <div className="min-w-0">
                 <p className="text-label font-bold text-white leading-tight">Upgrade & Save Up To ₹30,000</p>
                 <p className="text-micro text-white/80 mt-0.5">Trade in your old device for instant credit.</p>

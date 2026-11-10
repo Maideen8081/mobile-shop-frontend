@@ -21,6 +21,7 @@ import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
 import { productsData } from '../../data/productData'
+import '../../pages/HomeTheme.css'
 
 type Slide = { id?: number; title?: string; subtitle?: string; image?: string; link?: string }
 
@@ -128,7 +129,7 @@ export default function MobileHome() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="home-theme min-h-screen bg-[#FFFBFB] font-sans text-[#1F2937] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
       {showLoader && <LoadingScreen isLoaded={!loading} onExitComplete={() => setShowLoader(false)} />}
 
       {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
@@ -161,7 +162,7 @@ export default function MobileHome() {
         <CouponsOffers />
         <ProductSection title="Featured" viewAllTo="/collection/all?tab=featured" products={featured} />
         <AdCarousel />
-        <RefurbishedSection products={refurbished} />
+        <RefurbishedSection products={refurbished} loading={loading && refurbished.length === 0} />
         <RepairServices />
         <VideoShowcase />
         <Partners />

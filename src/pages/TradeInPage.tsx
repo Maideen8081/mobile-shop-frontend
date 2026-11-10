@@ -1,103 +1,101 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  ArrowRight, Calculator, Check, CheckCircle2, ChevronLeft, ChevronRight, Info, Leaf,
+  Loader2, PlayCircle, ReceiptIndianRupee, RefreshCw, Smartphone, Sparkles, Truck, Wallet, Zap,
+} from 'lucide-react'
 import { useIsMobile } from '../components/mobile/helpers'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import MobileTradeIn from '../components/mobile/MobileTradeIn'
 import { tradeInService, type TradeInSubmission } from '../services/tradeInService'
-import SectionHeading, { Accent } from '../components/ui/SectionHeading'
+import { apiErrorMessage } from '../utils/checkout'
+import './TradeInPage.css'
 
 const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
 
-const steps = [
-  { icon: 'devices', title: 'Select Your Device', desc: 'Tell us what you\'re trading in — brand, model, and condition.' },
-  { icon: 'request_quote', title: 'Get Instant Quote', desc: 'Receive a fair market price for your device instantly.' },
-  { icon: 'local_shipping', title: 'Ship or Drop Off', desc: 'Send your device free with our prepaid label or visit a local shop.' },
-  { icon: 'payments', title: 'Get Paid', desc: 'Receive payment or store credit as soon as your device is inspected.' },
+const features = [
+  { icon: Zap, title: 'Instant Quote', desc: 'Get a fair value in seconds' },
+  { icon: Truck, title: 'Free Pickup', desc: 'From your doorstep' },
+  { icon: ReceiptIndianRupee, title: 'Quick Payment', desc: 'After device inspection' },
+  { icon: Leaf, title: 'Eco-Friendly', desc: 'Responsible device recycling' },
 ]
 
-const deviceConditions = ['Mint - Like New', 'Good - Minor Scratches', 'Fair - Visible Wear', 'Broken - Damaged Screen/Body']
+const steps = [
+  { icon: Smartphone, title: 'Select Device', desc: 'Choose your device brand and model', tone: 'lav' },
+  { icon: Calculator, title: 'Get a Quote', desc: 'See the best exchange value instantly', tone: 'lav' },
+  { icon: Truck, title: 'Free Pickup', desc: 'We collect your device from your location', tone: 'peach' },
+  { icon: Wallet, title: 'Get Paid', desc: 'Receive payment or store credit quickly', tone: 'lav' },
+]
+
+const deviceConditions = [
+  { value: 'Mint - Like New', title: 'Like New', desc: 'No scratches, works perfectly' },
+  { value: 'Good - Minor Scratches', title: 'Good', desc: 'Light scratches, fully working' },
+  { value: 'Fair - Visible Wear', title: 'Fair', desc: 'Visible dents or wear' },
+  { value: 'Broken - Damaged Screen/Body', title: 'Broken', desc: 'Cracked screen or body' },
+]
 const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB']
 
-const heroSlides = [
-  {
-    tag: 'Trade-In Program',
-    title: ['Turn Your Old', 'Device', 'Into Cash'],
-    desc: 'Get top dollar for your used smartphone, tablet, or wearable — instant quote, zero hassle.',
-    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&q=80',
-  },
-  {
-    tag: 'Instant Cash',
-    title: ['Sell Your Phone,', 'Get Paid', 'Instantly'],
-    desc: 'Up to ₹45,000 for your device. Same-day payment after inspection — no waiting.',
-    img: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1920&q=80',
-  },
-  {
-    tag: 'Upgrade Today',
-    title: ['Trade Up to', 'Something', 'Better'],
-    desc: 'Use your old device as credit toward the latest iPhone, Galaxy, or Pixel.',
-    img: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1920&q=80',
-  },
-  {
-    tag: 'Eco-Friendly',
-    title: ['Recycle,', 'Reuse,', 'Earn Rewards'],
-    desc: 'Keep e-waste out of landfills while putting money back in your pocket.',
-    img: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1920&q=80',
-  },
-  {
-    tag: 'Trusted by Thousands',
-    title: ['Your Device,', 'Fair Price,', 'No Games'],
-    desc: 'Transparent pricing, free shipping, and the best trade-in value guaranteed.',
-    img: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80',
-  },
+type PhoneLook = { body: string; screen: string; cams: 'tri' | 'column' | 'bar' | 'round' }
+
+const popularValues: { device: string; brand: string; value: string; look: PhoneLook }[] = [
+  { device: 'iPhone 16 Pro Max', brand: 'Apple', value: '₹35,000 – ₹45,000', look: { body: '#3b3b40', screen: 'linear-gradient(160deg,#1c1c22,#c2642f 55%,#2a1a14)', cams: 'tri' } },
+  { device: 'iPhone 15 Pro Max', brand: 'Apple', value: '₹30,000 – ₹38,000', look: { body: '#d9cdb8', screen: 'linear-gradient(160deg,#20201f,#5b4a36 60%,#141414)', cams: 'tri' } },
+  { device: 'iPhone 14 Pro Max', brand: 'Apple', value: '₹20,000 – ₹30,000', look: { body: '#4a4553', screen: 'linear-gradient(160deg,#160c2c,#a32bd6 50%,#ff3c8a 70%,#120a20)', cams: 'tri' } },
+  { device: 'Samsung Galaxy S25 Ultra', brand: 'Samsung', value: '₹30,000 – ₹42,000', look: { body: '#7c8088', screen: 'linear-gradient(160deg,#9fb4d8,#5d79b8 55%,#e7ecf5)', cams: 'column' } },
+  { device: 'Samsung Galaxy S24 Ultra', brand: 'Samsung', value: '₹24,000 – ₹33,000', look: { body: '#5b5e66', screen: 'linear-gradient(160deg,#2b2140,#7e5bd1 55%,#c9b3ff)', cams: 'column' } },
+  { device: 'Google Pixel 10 Pro', brand: 'Google', value: '₹22,000 – ₹30,000', look: { body: '#e7e2d8', screen: 'linear-gradient(160deg,#21362f,#5fae8c 55%,#e9f3ec)', cams: 'bar' } },
+  { device: 'OnePlus 13', brand: 'OnePlus', value: '₹18,000 – ₹26,000', look: { body: '#1f2a3a', screen: 'linear-gradient(160deg,#0f1b2b,#e2463b 55%,#2a0d0d)', cams: 'round' } },
+  { device: 'Xiaomi 15 Ultra', brand: 'Xiaomi', value: '₹16,000 – ₹24,000', look: { body: '#2b2b2b', screen: 'linear-gradient(160deg,#ff7a1a,#ffb347 50%,#3a1a05)', cams: 'round' } },
+  { device: 'Oppo Find X8 Pro', brand: 'Oppo', value: '₹14,000 – ₹22,000', look: { body: '#d8d4e6', screen: 'linear-gradient(160deg,#4b2c86,#c08cff 55%,#f2e9ff)', cams: 'round' } },
 ]
 
-const basePrices: Record<string, number> = {
-  'Apple': 30000, 'Samsung': 25000, 'Google': 22000, 'OnePlus': 18000, 'Xiaomi': 12000, 'Oppo': 10000,
-}
-
+const basePrices: Record<string, number> = { Apple: 30000, Samsung: 25000, Google: 22000, OnePlus: 18000, Xiaomi: 12000, Oppo: 10000 }
 const conditionMultiplier: Record<string, number> = {
-  'Mint - Like New': 1.0, 'Good - Minor Scratches': 0.75, 'Fair - Visible Wear': 0.50, 'Broken - Damaged Screen/Body': 0.25,
+  'Mint - Like New': 1.0, 'Good - Minor Scratches': 0.75, 'Fair - Visible Wear': 0.5, 'Broken - Damaged Screen/Body': 0.25,
 }
+const storageBonus: Record<string, number> = { '64GB': 0, '128GB': 2000, '256GB': 4000, '512GB': 7000, '1TB': 10000 }
 
-const storageBonus: Record<string, number> = {
-  '64GB': 0, '128GB': 2000, '256GB': 4000, '512GB': 7000, '1TB': 10000,
-}
-
-type AnalysisResult = {
-  baseValue: number
-  conditionAdjustment: number
-  storageBonusValue: number
-  finalValue: number
-  breakdown: { label: string; amount: number }[]
-}
+type AnalysisResult = { finalValue: number; breakdown: { label: string; amount: number }[] }
 
 function calculateAnalysis(brand: string, condition: string, storage: string): AnalysisResult | null {
   if (!brand || !condition) return null
   const base = basePrices[brand] || 15000
-  const condMult = conditionMultiplier[condition] || 0.5
-  const condAdj = Math.round(base * condMult)
-  const storBonus = storage ? (storageBonus[storage] || 0) : 0
-  const finalValue = condAdj + storBonus
+  const condAdj = Math.round(base * (conditionMultiplier[condition] || 0.5))
+  const storBonus = storage ? storageBonus[storage] || 0 : 0
+  const condTitle = deviceConditions.find((c) => c.value === condition)?.title || condition
   return {
-    baseValue: base,
-    conditionAdjustment: condAdj,
-    storageBonusValue: storBonus,
-    finalValue,
+    finalValue: condAdj + storBonus,
     breakdown: [
       { label: `Base value (${brand})`, amount: base },
-      { label: `Condition adjustment (${condition})`, amount: condAdj - base },
+      { label: `Condition (${condTitle})`, amount: condAdj - base },
       { label: `Storage bonus${storage ? ` (${storage})` : ''}`, amount: storBonus },
     ],
   }
 }
 
+const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
+
+/** Drawn product shot: phone back with cameras, front screen peeking beside it. */
+function PhoneThumb({ look }: { look: PhoneLook }) {
+  return (
+    <span className="ti-thumb" aria-hidden="true">
+      <span className="ti-thumb-back" style={{ background: look.body }}>
+        <span className={`ti-cams ti-cams--${look.cams}`}><i /><i /><i /></span>
+      </span>
+      <span className="ti-thumb-front" style={{ background: look.screen }} />
+    </span>
+  )
+}
+
 export default function TradeInPage() {
   const isMobile = useIsMobile()
+  return isMobile ? <MobileTradeIn /> : <DesktopTradeIn />
+}
+
+function DesktopTradeIn() {
   const navigate = useNavigate()
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [selectedBrand, setSelectedBrand] = useState('')
-  const [showForm, setShowForm] = useState(false)
+  const [filterBrand, setFilterBrand] = useState('')
   const [formBrand, setFormBrand] = useState('')
   const [formModel, setFormModel] = useState('')
   const [formCondition, setFormCondition] = useState('')
@@ -106,38 +104,46 @@ export default function TradeInPage() {
   const [formMobile, setFormMobile] = useState('')
   const [formEmail, setFormEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [submittedTrade, setSubmittedTrade] = useState<TradeInSubmission | null>(null)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
-  const revealRefs = useRef<Set<HTMLElement>>(new Set())
-  const formRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLElement>(null)
+  const trackRef = useRef<HTMLUListElement>(null)
+  const [page, setPage] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
-  if (isMobile) return <MobileTradeIn />
+  const analysis = calculateAnalysis(formBrand, formCondition, formStorage)
+  const shownValues = popularValues.filter((v) => !filterBrand || v.brand === filterBrand)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
-    }, 5000)
-    return () => clearInterval(interval)
+  const clearError = (key: string) => setFormErrors((p) => (p[key] ? { ...p, [key]: '' } : p))
+  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // Carousel paging follows the track's scroll position.
+  const syncPages = useCallback(() => {
+    const el = trackRef.current
+    if (!el) return
+    const pages = Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth - 0.05))
+    setPageCount(pages)
+    setPage(Math.min(pages - 1, Math.round(el.scrollLeft / el.clientWidth)))
   }, [])
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => { entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('active') }) },
-      { threshold: 0.1 }
-    )
-    revealRefs.current.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
+    const el = trackRef.current
+    if (!el) return
+    el.scrollLeft = 0
+    syncPages()
+    const ro = new ResizeObserver(syncPages)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [filterBrand, syncPages])
 
-  useEffect(() => {
-    if (formBrand && formCondition)
-      setAnalysis(calculateAnalysis(formBrand, formCondition, formStorage))
-    else setAnalysis(null)
-  }, [formBrand, formCondition, formStorage])
-
-  const setRevealRef = (el: HTMLElement | null) => { if (el) revealRefs.current.add(el) }
+  const scrollPage = (dir: number) => {
+    const el = trackRef.current
+    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' })
+  }
+  const goToPage = (i: number) => {
+    const el = trackRef.current
+    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' })
+  }
 
   const validateForm = () => {
     const e: Record<string, string> = {}
@@ -145,17 +151,11 @@ export default function TradeInPage() {
     if (!formModel.trim()) e.formModel = 'Model is required'
     if (!formCondition) e.formCondition = 'Select device condition'
     if (!formName.trim()) e.formName = 'Name is required'
+    else if (!/^[A-Za-z][A-Za-z .'-]*$/.test(formName.trim().replace(/\s+/g, ' '))) e.formName = 'Use letters only (spaces, dots, apostrophes and hyphens are fine)'
     if (!/^\d{10}$/.test(formMobile.replace(/\D/g, ''))) e.formMobile = 'Enter a valid 10-digit number'
     if (formEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail)) e.formEmail = 'Invalid email'
     setFormErrors(e)
     return Object.keys(e).length === 0
-  }
-
-  const handleStartTradeIn = () => {
-    setShowForm(true)
-    setSubmitted(false)
-    setFormErrors({})
-    setTimeout(() => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
   }
 
   const handleFormSubmit = async () => {
@@ -173,372 +173,256 @@ export default function TradeInPage() {
         estimated_value: analysis?.finalValue || 0,
       })
       setSubmittedTrade(trade)
-      setSubmitted(true)
-      setShowForm(false)
-    } catch (err: any) {
-      setFormErrors({ submit: err?.response?.data?.message || 'Failed to submit. Please try again.' })
+      setTimeout(scrollToForm, 50)
+    } catch (err) {
+      // Show the backend's reason (e.g. a field validation error) instead of a generic message.
+      setFormErrors({ submit: apiErrorMessage(err, 'Failed to submit. Please try again.') })
     }
     setSubmitting(false)
   }
 
-  const inputClass = (field: string) =>
-    `w-full h-11 px-4 rounded-xl bg-white border text-sm text-[#181c1e] outline-none focus:border-[#D91E36]/50 transition-all ${formErrors[field] ? 'border-red-400' : 'border-glass-border'}`
+  const resetForm = () => {
+    setSubmittedTrade(null)
+    setFormBrand(''); setFormModel(''); setFormCondition(''); setFormStorage('')
+    setFormErrors({})
+  }
+
+  const startFromPopular = (brand: string, device: string) => {
+    setFormBrand(brand)
+    setFormModel(device)
+    clearError('formBrand'); clearError('formModel')
+    scrollToForm()
+  }
 
   return (
-    <div className="min-h-screen bg-[#FBF8F6] text-[#181c1e] font-sans selection:bg-[#D91E36]/30 selection:text-[#A3122A]">
+    <div className="ti-page">
       <SiteTopNav />
+      <main className="ti-wrap">
+        {/* Hero */}
+        <section className="ti-hero">
+          <div className="ti-hero-main">
+            <div className="ti-hero-text">
+              <span className="ti-tag"><RefreshCw aria-hidden="true" /> Trade-In Program</span>
+              <h1>Upgrade Easily with <span>PhoneFix <em>Trade-In</em></span></h1>
+              <p>Exchange your old device for instant value and save more on your next purchase.</p>
+              <div className="ti-hero-actions">
+                <button type="button" className="ti-btn ti-btn--sun" onClick={scrollToForm}>Get Instant Quote <ArrowRight aria-hidden="true" /></button>
+                <a href="#ti-how" className="ti-btn ti-btn--outline"><PlayCircle aria-hidden="true" /> How It Works</a>
+              </div>
+            </div>
 
-      <main>
-        {/* ─── HERO CAROUSEL ─── */}
-        <section className="hero-section relative h-screen overflow-hidden bg-black">
-          {heroSlides.map((slide, i) => (
-            <div
-              key={i}
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                i === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-              }`}
-            >
-              <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(217,30,54,0.06)_0%,transparent_60%)]" />
-              <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
-                <div className="max-w-3xl">
-                  <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#D91E36]/10 border border-[#D91E36]/25 text-[#D91E36] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
-                    i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                  }`}>
-                    <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-[8px] bg-[#D91E36] animate-ping" />
-                      <span className="absolute inset-0 rounded-[8px] bg-[#D91E36]" />
-                    </span>
-                    {slide.tag}
-                  </div>
-                  <h1 className={`text-[clamp(42px,6vw,80px)] font-extrabold leading-[1.05] text-white mb-6 transition-all duration-700 delay-300 ${
-                    i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                  }`}>
-                    {slide.title[0]}<br />
-                    <span className="relative inline-block bg-gradient-to-r from-[#D91E36] via-[#E53E4E] to-[#D91E36] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(217,30,54,0.4)]">
-                      {slide.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D91E36] to-transparent rounded-[8px] opacity-60 animate-pulse" />
-                    </span>{' '}
-                    <span className="text-white/90">{slide.title[2]}</span>
-                  </h1>
-                  <p className={`text-lg md:text-2xl text-white/70 leading-relaxed max-w-2xl mb-10 transition-all duration-700 delay-400 ${
-                    i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                  }`}>
-                    {slide.desc}
-                  </p>
-                  <div className={`flex flex-wrap gap-4 transition-all duration-700 delay-500 ${
-                    i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                  }`}>
-                    <button onClick={handleStartTradeIn} className="group inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(217,30,54,0.3)] hover:shadow-[0_0_60px_rgba(217,30,54,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float">
-                      Get Your Quote <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <div className="ti-hero-art" aria-hidden="true">
+              <span className="ti-art-swoosh" />
+              <span className="ti-art-phone ti-art-phone--new"><i /><i /><i /></span>
+              <span className="ti-art-phone ti-art-phone--old"><span className="ti-crack" /></span>
+              <span className="ti-art-swap"><RefreshCw /></span>
+              <span className="ti-art-card">
+                Upgrade<br /><Sparkles /> &amp; Save
+                <b>₹45,000</b>
+              </span>
+            </div>
+          </div>
+
+          <ul className="ti-features">
+            {features.map(({ icon: Icon, title, desc }) => (
+              <li key={title}>
+                <span><Icon aria-hidden="true" /></span>
+                <div><b>{title}</b><small>{desc}</small></div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* How it works */}
+        <section className="ti-how" id="ti-how">
+          <div className="ti-how-head">
+            <h2>How Trade-In Works</h2>
+            <p>Just 4 simple steps to exchange your old device.</p>
+          </div>
+          <ol className="ti-steps">
+            {steps.map(({ icon: Icon, title, desc, tone }, i) => (
+              <li key={title}>
+                <span className={`ti-step-icon is-${tone}`}><Icon aria-hidden="true" /></span>
+                <div>
+                  <h3>{i + 1}. {title}</h3>
+                  <p>{desc}</p>
+                </div>
+                {i < steps.length - 1 && <ChevronRight className="ti-step-arrow" aria-hidden="true" />}
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Popular values + CTA */}
+        <section className="ti-values">
+          <div className="ti-card ti-popular">
+            <h2>Popular Trade-In Values</h2>
+            <div className="ti-filter" role="tablist" aria-label="Filter by brand">
+              <button type="button" role="tab" aria-selected={!filterBrand} className={!filterBrand ? 'is-active' : ''} onClick={() => setFilterBrand('')}>All</button>
+              {brands.map((b) => (
+                <button key={b} type="button" role="tab" aria-selected={filterBrand === b} className={filterBrand === b ? 'is-active' : ''} onClick={() => setFilterBrand(b)}>{b}</button>
+              ))}
+            </div>
+
+            <div className="ti-carousel">
+              <button type="button" className="ti-nav" aria-label="Previous devices" onClick={() => scrollPage(-1)} disabled={page === 0}><ChevronLeft aria-hidden="true" /></button>
+              <ul className="ti-track" ref={trackRef} onScroll={syncPages}>
+                {shownValues.map((v) => (
+                  <li key={v.device}>
+                    <button type="button" className="ti-device" onClick={() => startFromPopular(v.brand, v.device)} aria-label={`Get a quote for ${v.device}, ${v.value}`}>
+                      <PhoneThumb look={v.look} />
+                      <b>{v.device}</b>
+                      <span>{v.value}</span>
+                      <small>Get quote <ArrowRight aria-hidden="true" /></small>
                     </button>
-                    <a href="#how-it-works" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white border border-white/20 font-semibold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] hover:bg-white/20 hover:border-white/40 transition-all duration-300">
-                      How It Works
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-6 mt-8 text-white/60 text-sm">
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Instant Quote</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Free Shipping</span>
-                    <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-body text-[#D91E36]">check_circle</span> Best Price Guarantee</span>
-                  </div>
-                </div>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" className="ti-nav" aria-label="Next devices" onClick={() => scrollPage(1)} disabled={page >= pageCount - 1}><ChevronRight aria-hidden="true" /></button>
+            </div>
+
+            {pageCount > 1 && (
+              <div className="ti-dots">
+                {Array.from({ length: pageCount }, (_, i) => (
+                  <button key={i} type="button" className={i === page ? 'is-active' : ''} aria-label={`Show page ${i + 1}`} aria-current={i === page} onClick={() => goToPage(i)} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="ti-cta">
+            <div>
+              <h2>Ready to Trade-In?</h2>
+              <p>Check your device value and upgrade to a new one today.</p>
+              <button type="button" className="ti-btn ti-btn--sun" onClick={scrollToForm}>Start Trade-In <ArrowRight aria-hidden="true" /></button>
+            </div>
+            <span className="ti-cta-art" aria-hidden="true">
+              <span className="ti-cta-phone"><RefreshCw /></span>
+              <span className="ti-cta-base" />
+            </span>
+          </div>
+        </section>
+
+        {/* Quote form + value */}
+        <section className="ti-quote" ref={formRef} id="ti-quote">
+          {submittedTrade ? (
+            <div className="ti-card ti-success">
+              <span className="ti-success-icon"><CheckCircle2 aria-hidden="true" /></span>
+              <h2>Trade-In Submitted!</h2>
+              <p>We’ll review your device details and call you within 24 hours with a final quote.</p>
+              <dl>
+                <div><dt>Trade ID</dt><dd className="is-accent">{submittedTrade.tradeId}</dd></div>
+                <div><dt>Device</dt><dd>{submittedTrade.deviceBrand} {submittedTrade.deviceModel}</dd></div>
+                <div><dt>Estimated Value</dt><dd className="is-accent">{inr(submittedTrade.estimatedValue)}</dd></div>
+                <div><dt>Status</dt><dd><span className="ti-pending">Pending Review</span></dd></div>
+              </dl>
+              <div className="ti-success-actions">
+                <button type="button" className="ti-btn ti-btn--primary" onClick={() => navigate('/phones')}>Shop a New Phone <ArrowRight aria-hidden="true" /></button>
+                <button type="button" className="ti-btn ti-btn--ghost" onClick={resetForm}>Submit Another</button>
               </div>
             </div>
-          ))}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
-            {heroSlides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
-                  i === currentSlide ? 'w-16 bg-[#D91E36]' : 'w-6 bg-white/30 hover:bg-white/50'
-                }`}
-              >
-                {i === currentSlide && (
-                  <span className="absolute inset-0 bg-white/40 rounded-[8px] animate-pulse" />
+          ) : (
+            <div className="ti-quote-grid">
+              <div className="ti-card ti-form">
+                <header className="ti-form-head">
+                  <span><Calculator aria-hidden="true" /></span>
+                  <div>
+                    <h2>Get Your Instant Quote</h2>
+                    <p>Tell us about your device — the value updates as you go.</p>
+                  </div>
+                </header>
+
+                <h3 className="ti-label">1. Brand <em>*</em></h3>
+                <div className={`ti-chips${formErrors.formBrand ? ' has-error' : ''}`} role="radiogroup" aria-label="Brand">
+                  {brands.map((b) => (
+                    <button key={b} type="button" role="radio" aria-checked={formBrand === b} className={formBrand === b ? 'is-active' : ''} onClick={() => { setFormBrand(b); clearError('formBrand') }}>{b}</button>
+                  ))}
+                </div>
+                {formErrors.formBrand && <p className="ti-err">{formErrors.formBrand}</p>}
+
+                <div className="ti-fields">
+                  <div className={`ti-field${formErrors.formModel ? ' has-error' : ''}`}>
+                    <label htmlFor="ti-model">2. Model <em>*</em></label>
+                    <input id="ti-model" value={formModel} placeholder="e.g. iPhone 15 Pro Max" onChange={(e) => { setFormModel(e.target.value); clearError('formModel') }} />
+                    {formErrors.formModel && <p className="ti-err">{formErrors.formModel}</p>}
+                  </div>
+                  <div className="ti-field">
+                    <span className="ti-field-label">3. Storage</span>
+                    <div className="ti-chips ti-chips--sm" role="radiogroup" aria-label="Storage">
+                      {storageOptions.map((s) => (
+                        <button key={s} type="button" role="radio" aria-checked={formStorage === s} className={formStorage === s ? 'is-active' : ''} onClick={() => setFormStorage(formStorage === s ? '' : s)}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <h3 className="ti-label">4. Condition <em>*</em></h3>
+                <div className={`ti-conditions${formErrors.formCondition ? ' has-error' : ''}`} role="radiogroup" aria-label="Condition">
+                  {deviceConditions.map((c) => (
+                    <button key={c.value} type="button" role="radio" aria-checked={formCondition === c.value} className={formCondition === c.value ? 'is-active' : ''} onClick={() => { setFormCondition(c.value); clearError('formCondition') }}>
+                      <b>{c.title}</b>
+                      <small>{c.desc}</small>
+                      {formCondition === c.value && <span className="ti-check"><Check aria-hidden="true" /></span>}
+                    </button>
+                  ))}
+                </div>
+                {formErrors.formCondition && <p className="ti-err">{formErrors.formCondition}</p>}
+
+                <h3 className="ti-label">5. Your Contact Info</h3>
+                <div className="ti-fields ti-fields--3">
+                  <div className={`ti-field${formErrors.formName ? ' has-error' : ''}`}>
+                    <label htmlFor="ti-name">Full Name <em>*</em></label>
+                    <input id="ti-name" value={formName} autoComplete="name" placeholder="Your name" onChange={(e) => { setFormName(e.target.value); clearError('formName') }} />
+                    {formErrors.formName && <p className="ti-err">{formErrors.formName}</p>}
+                  </div>
+                  <div className={`ti-field${formErrors.formMobile ? ' has-error' : ''}`}>
+                    <label htmlFor="ti-mobile">Mobile <em>*</em></label>
+                    <input id="ti-mobile" value={formMobile} inputMode="tel" autoComplete="tel-national" placeholder="98765 43210" onChange={(e) => { setFormMobile(e.target.value.replace(/\D/g, '').slice(0, 10)); clearError('formMobile') }} />
+                    {formErrors.formMobile && <p className="ti-err">{formErrors.formMobile}</p>}
+                  </div>
+                  <div className={`ti-field${formErrors.formEmail ? ' has-error' : ''}`}>
+                    <label htmlFor="ti-email">Email <span>(optional)</span></label>
+                    <input id="ti-email" type="email" value={formEmail} autoComplete="email" placeholder="email@example.com" onChange={(e) => { setFormEmail(e.target.value); clearError('formEmail') }} />
+                    {formErrors.formEmail && <p className="ti-err">{formErrors.formEmail}</p>}
+                  </div>
+                </div>
+                {formErrors.submit && <p className="ti-submit-err" role="alert">{formErrors.submit}</p>}
+              </div>
+
+              <aside className="ti-card ti-value">
+                <h3><Sparkles aria-hidden="true" /> Value Analysis</h3>
+                {analysis ? (
+                  <>
+                    <div className="ti-value-big">
+                      <span>Estimated Trade-In Value</span>
+                      <strong key={analysis.finalValue}>{inr(analysis.finalValue)}</strong>
+                    </div>
+                    <ul className="ti-breakdown">
+                      {analysis.breakdown.map((b) => (
+                        <li key={b.label}><span>{b.label}</span><b className={b.amount < 0 ? 'is-neg' : ''}>{b.amount >= 0 ? '+' : '–'}{inr(Math.abs(b.amount))}</b></li>
+                      ))}
+                    </ul>
+                    <p className="ti-note"><Info aria-hidden="true" /> This is an estimate. The final value is confirmed after a physical inspection.</p>
+                  </>
+                ) : (
+                  <div className="ti-value-empty">
+                    <Smartphone aria-hidden="true" />
+                    <p>Pick a brand and condition to see your estimated value.</p>
+                  </div>
                 )}
-              </button>
-            ))}
-          </div>
-          <div className="absolute bottom-10 right-6 md:right-12 z-20 text-white/40 text-sm font-mono tracking-wider">
-            {String(currentSlide + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section id="how-it-works" className="py-24 px-4 md:px-8 max-w-[1400px] mx-auto" ref={setRevealRef}>
-          <SectionHeading
-            className="mb-16"
-            align="center"
-            eyebrow="Process"
-            icon="swap_horiz"
-            title={<>How <Accent>Trade-In</Accent> Works</>}
-            subtitle="Four simple steps to turn your old device into savings."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, idx) => (
-              <div key={step.title} className="glass-card p-8 rounded-[1.75rem] text-center group hover:shadow-[0_20px_60px_rgba(217,30,54,0.10)] hover:border-[#D91E36]/25 hover:-translate-y-1 transition-all duration-500" style={{ transitionDelay: `${idx * 100}ms` }}>
-                <div className="w-16 h-16 rounded-[8px] bg-[#D91E36]/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#D91E36]/20 transition-colors">
-                  <span className="material-symbols-outlined text-3xl text-[#D91E36]">{step.icon}</span>
-                </div>
-                <span className="text-[#D91E36] font-bold text-sm">Step {idx + 1}</span>
-                <h3 className="text-lg font-bold text-[#181c1e] mt-2 mb-2">{step.title}</h3>
-                <p className="text-[#434748] text-sm">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Estimate Section */}
-        <section className="py-24 px-4 md:px-8 bg-[#f0f3f5]" ref={setRevealRef}>
-          <div className="max-w-[1200px] mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              <div>
-                <SectionHeading
-                  className="mb-8"
-                  eyebrow="Estimate"
-                  icon="calculate"
-                  title={<>Estimate Your <Accent>Value</Accent></>}
-                  subtitle="Select your device brand to see estimated trade-in values for popular models."
-                />
-                <div className="flex flex-wrap gap-3 mb-8">
-                  {brands.map((brand) => (
-                    <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                      className={`px-5 py-2.5 rounded-[8px] text-sm font-semibold border transition-all cursor-pointer ${selectedBrand === brand ? 'bg-[#D91E36] text-white border-[#D91E36] shadow-lg shadow-[#D91E36]/20' : 'bg-white border-glass-border text-[#434748] hover:border-[#D91E36]/50'}`}
-                    >{brand}</button>
-                  ))}
-                </div>
-                <div className="space-y-3">
-                  {[
-                    { device: 'iPhone 16 Pro Max', value: '₹35,000 - ₹45,000' },
-                    { device: 'iPhone 15 Pro Max', value: '₹30,000 - ₹38,000' },
-                    { device: 'iPhone 14 Pro Max', value: '₹20,000 - ₹30,000' },
-                    { device: 'Samsung Galaxy S25 Ultra', value: '₹30,000 - ₹42,000' },
-                    { device: 'Samsung Galaxy S24 Ultra', value: '₹24,000 - ₹33,000' },
-                    { device: 'Google Pixel 10 Pro', value: '₹22,000 - ₹30,000' },
-                  ].filter(e => !selectedBrand || e.device.toLowerCase().includes(selectedBrand.toLowerCase())).map((item) => (
-                    <div key={item.device} className="glass-card p-4 rounded-xl flex items-center justify-between hover:border-[#D91E36]/20 transition-all">
-                      <span className="font-bold text-[#181c1e]">{item.device}</span>
-                      <span className="font-bold text-[#D91E36]">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="glass-card p-8 rounded-[1.75rem]">
-                <h3 className="text-xl font-extrabold text-[#181c1e] mb-6">Why Trade With Us?</h3>
-                <ul className="space-y-4">
-                  {[
-                    { icon: 'monetization_on', text: 'Competitive market-based pricing' },
-                    { icon: 'local_shipping', text: 'Free shipping with prepaid label' },
-                    { icon: 'verified', text: 'Fast inspection & same-day payment' },
-                    { icon: 'recycling', text: 'Environmentally responsible recycling' },
-                    { icon: 'card_giftcard', text: 'Bonus credit when used toward a new device' },
-                  ].map((item) => (
-                    <li key={item.text} className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#D91E36]">{item.icon}</span>
-                      <span className="text-[#434748]">{item.text}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button onClick={handleStartTradeIn} className="mt-8 w-full bg-[#D91E36] text-white font-bold py-3.5 rounded-[8px] hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-[#D91E36]/20 cursor-pointer flex items-center justify-center gap-2">
-                  Start Trade-In <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <button type="button" className="ti-btn ti-btn--primary ti-btn--block" onClick={handleFormSubmit} disabled={submitting || !analysis}>
+                  {submitting ? <><Loader2 aria-hidden="true" className="ti-spin" /> Submitting…</> : <>Submit Trade-In <ArrowRight aria-hidden="true" /></>}
                 </button>
-              </div>
+                <ul className="ti-perks">
+                  <li><Check aria-hidden="true" /> Instant payment after inspection</li>
+                  <li><Check aria-hidden="true" /> Free doorstep pickup</li>
+                  <li><Check aria-hidden="true" /> No hidden fees or deductions</li>
+                </ul>
+              </aside>
             </div>
-          </div>
+          )}
         </section>
-
-        {/* ─── TRADE-IN DETAILS & VALUE ANALYSIS ─── */}
-        {showForm && (
-          <section id="trade-in-form" ref={formRef} className="py-24 px-4 md:px-8 bg-white scroll-mt-24">
-            <div className="max-w-[1200px] mx-auto">
-              <SectionHeading
-                className="mb-14"
-                align="center"
-                eyebrow="Trade-In"
-                icon="sell"
-                title={<>Sell Your <Accent>Phone</Accent></>}
-                subtitle="Fill in your device details and contact info. We'll analyze the value instantly."
-              />
-              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                {/* Form */}
-                <div className="lg:col-span-3 glass-card p-8 md:p-10 rounded-[2rem]">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-[#434748] mb-1">Brand <span className="text-red-500">*</span></label>
-                      <select value={formBrand} onChange={(e) => { setFormBrand(e.target.value); if (formErrors.formBrand) setFormErrors(p => ({ ...p, formBrand: '' })) }}
-                        className={inputClass('formBrand')}>
-                        <option value="">Select brand</option>
-                        {brands.map(b => <option key={b} value={b}>{b}</option>)}
-                      </select>
-                      {formErrors.formBrand && <p className="text-xs text-red-500 mt-1">{formErrors.formBrand}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-[#434748] mb-1">Model <span className="text-red-500">*</span></label>
-                      <input value={formModel} onChange={(e) => { setFormModel(e.target.value); if (formErrors.formModel) setFormErrors(p => ({ ...p, formModel: '' })) }}
-                        className={inputClass('formModel')} placeholder="e.g. iPhone 15 Pro Max" />
-                      {formErrors.formModel && <p className="text-xs text-red-500 mt-1">{formErrors.formModel}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-[#434748] mb-1">Storage</label>
-                      <select value={formStorage} onChange={(e) => setFormStorage(e.target.value)}
-                        className="w-full h-11 px-4 rounded-xl bg-white border border-glass-border text-sm text-[#181c1e] outline-none appearance-none cursor-pointer focus:border-[#D91E36]/50 transition-all">
-                        <option value="">Select storage</option>
-                        {storageOptions.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-[#434748] mb-1">Condition <span className="text-red-500">*</span></label>
-                      <select value={formCondition} onChange={(e) => { setFormCondition(e.target.value); if (formErrors.formCondition) setFormErrors(p => ({ ...p, formCondition: '' })) }}
-                        className={inputClass('formCondition')}>
-                        <option value="">Select condition</option>
-                        {deviceConditions.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                      {formErrors.formCondition && <p className="text-xs text-red-500 mt-1">{formErrors.formCondition}</p>}
-                    </div>
-                  </div>
-                  <div className="border-t border-glass-border pt-6 mt-6">
-                    <p className="text-sm font-bold text-[#434748] mb-4">Your Contact Info</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-[#434748] mb-1">Full Name <span className="text-red-500">*</span></label>
-                        <input value={formName} onChange={(e) => { setFormName(e.target.value); if (formErrors.formName) setFormErrors(p => ({ ...p, formName: '' })) }}
-                          className={inputClass('formName')} placeholder="Your name" />
-                        {formErrors.formName && <p className="text-xs text-red-500 mt-1">{formErrors.formName}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#434748] mb-1">Mobile <span className="text-red-500">*</span></label>
-                        <input value={formMobile} onChange={(e) => { const v = e.target.value.replace(/\D/g, '').slice(0, 10); setFormMobile(v); if (formErrors.formMobile) setFormErrors(p => ({ ...p, formMobile: '' })) }}
-                          className={inputClass('formMobile')} placeholder="98765 43210" />
-                        {formErrors.formMobile && <p className="text-xs text-red-500 mt-1">{formErrors.formMobile}</p>}
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#434748] mb-1">Email</label>
-                        <input value={formEmail} onChange={(e) => { setFormEmail(e.target.value); if (formErrors.formEmail) setFormErrors(p => ({ ...p, formEmail: '' })) }}
-                          className={inputClass('formEmail')} placeholder="email@example.com" type="email" />
-                        {formErrors.formEmail && <p className="text-xs text-red-500 mt-1">{formErrors.formEmail}</p>}
-                      </div>
-                    </div>
-                  </div>
-                  {formErrors.submit && (
-                    <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-200">
-                      <p className="text-xs text-red-600">{formErrors.submit}</p>
-                    </div>
-                  )}
-                  <button onClick={handleFormSubmit} disabled={submitting || !analysis}
-                    className="mt-8 w-full py-3.5 rounded-[8px] text-sm font-bold shadow-lg shadow-[#D91E36]/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 transition-all cursor-pointer flex items-center justify-center gap-2 text-white"
-                    style={{ background: submitting ? '#9CA3AF' : 'linear-gradient(135deg, #D91E36, #A3122A)' }}
-                  >
-                    {submitting ? <span className="material-symbols-outlined animate-spin text-lg">refresh</span> : null}
-                    {submitting ? 'Submitting...' : 'Submit Trade-In'}
-                  </button>
-                </div>
-
-                {/* Value Analysis Panel */}
-                <div className="lg:col-span-2">
-                  <div className="glass-card p-8 rounded-[2rem] sticky top-28">
-                    <h3 className="text-lg font-extrabold text-[#181c1e] mb-5 flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[#D91E36]">analytics</span>
-                      Value Analysis
-                    </h3>
-                    {analysis ? (
-                      <div>
-                        <div className="text-center mb-6">
-                          <p className="text-sm text-[#434748] mb-1">Estimated Trade-In Value</p>
-                          <p className="text-[clamp(32px,4vw,48px)] font-extrabold text-[#D91E36]">₹{analysis.finalValue.toLocaleString('en-IN')}</p>
-                          <p className="text-xs text-[#434748] mt-1">Final amount after adjustments</p>
-                        </div>
-                        <div className="space-y-2.5">
-                          {analysis.breakdown.map((item) => (
-                            <div key={item.label} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[#f0f3f5]">
-                              <span className="text-xs text-[#434748]">{item.label}</span>
-                              <span className={`text-sm font-bold ${item.amount >= 0 ? 'text-[#181c1e]' : 'text-red-500'}`}>
-                                {item.amount >= 0 ? '+' : ''}₹{item.amount.toLocaleString('en-IN')}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="mt-4 p-3 rounded-lg bg-[#D91E36]/5 border border-[#D91E36]/15">
-                          <p className="text-xs text-[#434748] flex items-center gap-1.5">
-                            <span className="material-symbols-outlined text-body text-[#D91E36]">info</span>
-                            This is an estimate. Final value determined after physical inspection.
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-10">
-                        <span className="material-symbols-outlined text-4xl text-[#434748]/40 mb-3">devices</span>
-                        <p className="text-sm text-[#434748]">Select a brand and condition to see your estimated trade-in value.</p>
-                      </div>
-                    )}
-                    <div className="border-t border-glass-border pt-4 mt-6">
-                      <h4 className="text-xs font-bold text-[#434748] mb-3">Why sell to us?</h4>
-                      <ul className="space-y-2">
-                        {[
-                          'Instant payment after inspection',
-                          'Free doorstep pickup',
-                          'No hidden fees or deductions',
-                        ].map((tip) => (
-                          <li key={tip} className="flex items-center gap-2 text-xs text-[#434748]">
-                            <span className="material-symbols-outlined text-body-sm text-[#D91E36]">check</span>
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Success Section */}
-        {submitted && submittedTrade && (
-          <section className="py-24 px-4 md:px-8 bg-[#f0f3f5]">
-            <div className="max-w-lg mx-auto text-center glass-card p-12 rounded-[2rem]">
-              <div className="w-20 h-20 rounded-3xl bg-[#D91E36]/10 flex items-center justify-center mx-auto mb-6">
-                <span className="material-symbols-outlined text-4xl text-[#D91E36]">check_circle</span>
-              </div>
-              <h2 className="text-2xl font-extrabold text-[#181c1e] mb-2">Trade-In Submitted!</h2>
-              <p className="text-[#434748] mb-4">Your submission has been recorded successfully.</p>
-              <div className="bg-[#FBF8F6] rounded-xl p-4 mb-6 text-left space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#434748]">Trade ID</span>
-                  <span className="font-bold text-[#D91E36]">{submittedTrade.tradeId}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#434748]">Device</span>
-                  <span className="font-semibold text-[#181c1e]">{submittedTrade.deviceBrand} {submittedTrade.deviceModel}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#434748]">Estimated Value</span>
-                  <span className="font-bold text-[#D91E36]">₹{submittedTrade.estimatedValue.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[#434748]">Status</span>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-[8px] text-xs font-semibold bg-yellow-100 text-yellow-700">
-                    <span className="w-1.5 h-1.5 rounded-[8px] bg-yellow-500" />
-                    Pending Review
-                  </span>
-                </div>
-              </div>
-              <p className="text-xs text-[#434748] mb-6">We'll review your device details and get back to you within 24 hours with a final quote.</p>
-              <div className="flex gap-3 justify-center">
-                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null); navigate('/home') }}
-                  className="inline-flex items-center gap-2 bg-[#D91E36] text-white font-bold px-8 py-3.5 rounded-[8px] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                >Back to Home <span className="material-symbols-outlined text-lg">arrow_forward</span></button>
-                <button onClick={() => { setSubmitted(false); setSubmittedTrade(null) }}
-                  className="inline-flex items-center gap-2 bg-white border border-[#D91E36]/20 text-[#D91E36] font-bold px-8 py-3.5 rounded-[8px] hover:bg-[#D91E36]/5 transition-all cursor-pointer"
-                >Submit Another</button>
-              </div>
-            </div>
-          </section>
-        )}
       </main>
-
     </div>
   )
 }

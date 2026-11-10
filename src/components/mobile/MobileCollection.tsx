@@ -23,8 +23,8 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 ]
 
 const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }> = {
-  '': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#CB202D 0%,#CB202D 100%)' },
-  'all': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#CB202D 0%,#CB202D 100%)' },
+  '': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#210D35 0%,#210D35 100%)' },
+  'all': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#210D35 0%,#210D35 100%)' },
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
@@ -164,7 +164,7 @@ export default function MobileCollection() {
 
   useEffect(() => { load(1, true) }, [categoryName, tab, sortBy])
 
-  const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#CB202D 100%)' }
+  const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#210D35 100%)' }
 
   const handleFilterApply = (filters: any) => {
     setActiveFilters(filters)
@@ -211,7 +211,7 @@ export default function MobileCollection() {
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
-            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(203,32,45,0.22)]" style={{ background: hero.bg }}>
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(123, 63, 208,0.22)]" style={{ background: hero.bg }}>
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-[8px] bg-white/20 blur-2xl" />
               <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-[8px] bg-white/15 blur-2xl" />
               <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -264,7 +264,7 @@ export default function MobileCollection() {
 
             {hasMore && !productsLoading && (
               <button onClick={() => load(page + 1, false)} disabled={loadingMore}
-                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#EEF1F4] text-label font-bold text-[#CB202D] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
+                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#EEF1F4] text-label font-bold text-[#210D35] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
                 {loadingMore ? 'Loading…' : 'Load More'}
               </button>
             )}

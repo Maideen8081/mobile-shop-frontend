@@ -10,7 +10,7 @@ const messages = [
 
 const badges = [
   { Icon: Zap, label: 'Fast Delivery', color: '#059669' },
-  { Icon: ShieldCheck, label: 'Genuine', color: '#CB202D' },
+  { Icon: ShieldCheck, label: 'Genuine', color: '#210D35' },
   { Icon: Truck, label: 'Free Ship', color: '#0EA5E9' },
   { Icon: Star, label: 'Top Rated', color: '#F59E0B' },
 ]
@@ -43,11 +43,11 @@ export default function MobilePhonesLoader() {
     <div className="flex flex-col items-center py-10 px-5">
       {/* Icon */}
       <div className="relative mb-5">
-        <div className="absolute inset-[-16px] rounded-[8px] bg-[#CB202D]/10 blur-xl" />
-        <div className="absolute inset-[-10px] rounded-[8px] border border-[#CB202D]/10 ploader-pulse-1" />
-        <div className="absolute inset-[-10px] rounded-[8px] border border-[#CB202D]/5 ploader-pulse-2" />
+        <div className="absolute inset-[-16px] rounded-[8px] bg-[#210D35]/10 blur-xl" />
+        <div className="absolute inset-[-10px] rounded-[8px] border border-[#210D35]/10 ploader-pulse-1" />
+        <div className="absolute inset-[-10px] rounded-[8px] border border-[#210D35]/5 ploader-pulse-2" />
 
-        <div className="relative w-[72px] h-[72px] rounded-[8px] bg-gradient-to-br from-[#CB202D] to-[#A81D2A] flex items-center justify-center shadow-[0_12px_32px_rgba(203,32,45,0.25)]">
+        <div className="relative w-[72px] h-[72px] rounded-[8px] bg-gradient-to-br from-[#210D35] to-[#3A1E52] flex items-center justify-center shadow-[0_12px_32px_rgba(123, 63, 208,0.25)]">
           <div className="absolute inset-[3px] rounded-[8px] border border-white/15" />
           <Smartphone size={30} className="text-white" strokeWidth={1.8} />
         </div>
@@ -73,7 +73,7 @@ export default function MobilePhonesLoader() {
       <div className="w-[180px] mt-4">
         <div className="h-[2px] rounded-[8px] bg-[#F1F5F9] overflow-hidden">
           <motion.div
-            className="h-full rounded-[8px] bg-gradient-to-r from-[#CB202D] to-[#E53E4E]"
+            className="h-full rounded-[8px] bg-gradient-to-r from-[#210D35] to-[#2E1544]"
             style={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
           />
@@ -90,8 +90,8 @@ export default function MobilePhonesLoader() {
               <div className="h-2.5 bg-[#F1F5F9] rounded-[8px] w-3/4 ploader-shimmer" style={{ animationDelay: `${i * 150 + 100}ms` }} />
               <div className="h-2 bg-[#F8F9FB] rounded-[8px] w-1/2 mt-1.5 ploader-shimmer" style={{ animationDelay: `${i * 150 + 200}ms` }} />
               <div className="flex items-center justify-between mt-2">
-                <div className="h-3 bg-[#FEE2E6] rounded-[8px] w-16 ploader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
-                <div className="h-5 bg-[#CB202D]/10 rounded-[8px] w-10 ploader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
+                <div className="h-3 bg-[#F3E8FF] rounded-[8px] w-16 ploader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
+                <div className="h-5 bg-[#210D35]/10 rounded-[8px] w-10 ploader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
               </div>
             </div>
           </div>

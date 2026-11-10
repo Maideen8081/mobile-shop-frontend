@@ -1,46 +1,31 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  AlertTriangle, CalendarDays, ChevronRight, Heart, KeyRound, LayoutDashboard, Loader2, LogOut, Mail, MapPin,
-  MessageCircle, Package, Pencil, Phone, ShoppingBag, Trash2, Truck, Wallet, Wrench, X,
+  AlertTriangle, Bell, CalendarDays, Camera, ChevronRight, Crown, Heart, Home, KeyRound,
+  Loader2, Lock, Mail, MapPin, Pencil, Phone, ShieldCheck, ShoppingBag, SlidersHorizontal,
+  Trash2, User, Wallet, Wrench, X,
 } from 'lucide-react'
 import { authService, type UserProfile } from '../services/authService'
 import { orderService, type OrderResponse } from '../services/orderService'
 import { addressService, type AddressData } from '../services/addressService'
+import { repairService, type RepairTicket } from '../services/repairService'
+import { isClosed, isCompleted } from '../components/repair/repairStatus'
 import { useToast } from '../context/ToastContext'
 import { readWishlistIds } from '../utils/wishlist'
 import MobileProfile from '../components/mobile/MobileProfile'
 import { useIsMobile } from '../components/mobile/helpers'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import AccountLayout, { AccountPhone } from '../components/account/AccountLayout'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import './ProfilePage.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
-
-const STATUS: Record<string, { label: string; tone: string }> = {
-  order_placed: { label: 'Placed', tone: 'tone-blue' },
-  accepted: { label: 'Accepted', tone: 'tone-blue' },
-  processing: { label: 'Processing', tone: 'tone-amber' },
-  shipped: { label: 'Shipped', tone: 'tone-amber' },
-  out_for_delivery: { label: 'Out for delivery', tone: 'tone-amber' },
-  delivered: { label: 'Delivered', tone: 'tone-green' },
-  cancelled: { label: 'Cancelled', tone: 'tone-red' },
-}
-
-const imageUrl = (raw?: string) => {
-  if (!raw) return ''
-  if (raw.startsWith('http') || raw.startsWith('data:')) return raw
-  return `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
-}
 const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
 const formatDate = (d?: string, opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }) => {
   if (!d) return ''
   const date = new Date(d)
   return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-IN', opts)
 }
-const initialsOf = (name: string) =>
-  name.trim().split(/\s+/).map((w) => w[0]).join('').toUpperCase().slice(0, 2) || 'U'
 const errorMessage = (err: unknown, fallback: string) => {
   const data = (err as { response?: { data?: Record<string, unknown> } })?.response?.data
   if (data) {
@@ -57,6 +42,27 @@ export default function ProfilePage() {
   return isMobile ? <MobileProfile /> : <DesktopProfile />
 }
 
+const PREFS_KEY = 'profile_prefs'
+type Prefs = { orderUpdates: boolean; promotions: boolean }
+const readPrefs = (): Prefs => {
+  try {
+    return { orderUpdates: true, promotions: true, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') }
+  } catch {
+    return { orderUpdates: true, promotions: true }
+  }
+}
+
+function Toggle({ on, onChange, label, disabled }: { on: boolean; onChange?: (v: boolean) => void; label: string; disabled?: boolean }) {
+  return (
+    <button
+      type="button" role="switch" aria-checked={on} aria-label={label} disabled={disabled}
+      className={`pf-toggle${on ? ' is-on' : ''}`} onClick={() => onChange?.(!on)}
+    >
+      <span />
+    </button>
+  )
+}
+
 function DesktopProfile() {
   const navigate = useNavigate()
   const showToast = useToast().show
@@ -64,8 +70,10 @@ function DesktopProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [orders, setOrders] = useState<OrderResponse[]>([])
+  const [repairs, setRepairs] = useState<RepairTicket[]>([])
   const [addresses, setAddresses] = useState<AddressData[]>([])
   const [wishlistCount] = useState(() => readWishlistIds().length)
+  const [prefs, setPrefs] = useState<Prefs>(readPrefs)
 
   const [modal, setModal] = useState<'edit' | 'password' | 'delete' | null>(null)
 
@@ -82,6 +90,7 @@ function DesktopProfile() {
       })
       .finally(() => { if (alive) setLoading(false) })
     orderService.listMine().then((o) => { if (alive) setOrders(o) }).catch(() => {})
+    repairService.myTickets().then((r) => { if (alive) setRepairs(r) }).catch(() => {})
     addressService.list().then((a) => { if (alive) setAddresses(a) }).catch(() => {})
     return () => { alive = false }
   }, [])
@@ -97,21 +106,18 @@ function DesktopProfile() {
     const live = orders.filter((o) => o.delivery_status !== 'cancelled')
     return {
       total: orders.length,
-      active: live.filter((o) => o.delivery_status !== 'delivered').length,
       spend: live.reduce((s, o) => s + Number(o.grand_total || 0), 0),
+      activeRepairs: repairs.filter((t) => !isClosed(t) && !isCompleted(t)).length,
     }
-  }, [orders])
+  }, [orders, repairs])
 
-  const recentOrders = useMemo(
-    () => [...orders].sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at)).slice(0, 4),
-    [orders],
-  )
   const defaultAddress = addresses.find((a) => a.isDefault) || addresses[0]
 
-  const signOut = async () => {
-    await authService.logout()
-    showToast('Signed out', 'success')
-    navigate('/home')
+  const updatePref = (key: keyof Prefs, value: boolean) => {
+    const next = { ...prefs, [key]: value }
+    setPrefs(next)
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(next)) } catch { /* storage unavailable */ }
+    showToast('Preferences saved', 'success')
   }
 
   if (loading) {
@@ -125,170 +131,145 @@ function DesktopProfile() {
 
   const user = profile || { id: 0, email: '', fullName: 'User' }
   const joined = formatDate(user.dateJoined, { month: 'long', year: 'numeric' })
+  const joinedShort = formatDate(user.dateJoined, { month: 'short', year: 'numeric' })
+  const initial = (user.fullName.trim()[0] || 'U').toUpperCase()
 
   return (
     <div className="pf">
       <SiteTopNav />
 
-      <div className="pf-shell">
-        {/* ── Sidebar ── */}
-        <aside className="pf-side">
-          <div className="pf-side-user">
-            <span className="pf-avatar">{initialsOf(user.fullName)}</span>
-            <div style={{ minWidth: 0 }}>
-              <strong>{user.fullName}</strong>
-              <span>{user.email}</span>
-            </div>
-          </div>
-          <nav className="pf-nav" aria-label="Account">
-            <div className="pf-nav-label">Account</div>
-            <Link to="/profile" className="is-active" aria-current="page"><LayoutDashboard size={17} /> Overview</Link>
-            <Link to="/orders"><ShoppingBag size={17} /> My orders <span className="pf-nav-count">{stats.total}</span></Link>
-            <Link to="/my-repairs"><Wrench size={17} /> My repairs</Link>
-            <Link to="/wishlist"><Heart size={17} /> Wishlist <span className="pf-nav-count">{wishlistCount}</span></Link>
-            <Link to="/profile/addresses"><MapPin size={17} /> Addresses <span className="pf-nav-count">{addresses.length}</span></Link>
-            <div className="pf-nav-label">Help</div>
-            <Link to="/support"><MessageCircle size={17} /> Support chat</Link>
-            <div className="pf-nav-sep" />
-            <button type="button" className="pf-signout" onClick={signOut}><LogOut size={17} /> Sign out</button>
-          </nav>
-        </aside>
-
-        {/* ── Main ── */}
-        <main className="pf-main">
-          <section className="pf-hero" aria-labelledby="pf-name">
-            <span className="pf-avatar lg">{initialsOf(user.fullName)}</span>
-            <div className="pf-hero-text">
-              <small>Welcome back</small>
-              <h1 id="pf-name">{user.fullName}</h1>
-              <div className="pf-hero-meta">
-                {user.email && <span><Mail size={13} /> {user.email}</span>}
-                {user.mobile
-                  ? <span><Phone size={13} /> {user.mobile}</span>
-                  : <span className="is-missing"><Phone size={13} /> No mobile added</span>}
-                {joined && <span><CalendarDays size={13} /> Member since {joined}</span>}
+      <AccountLayout active="profile" crumb="My Account" counts={{ orders: stats.total, addresses: addresses.length }}>
+          <main className="pf-main">
+            <section className="acc-hero pf-hero" aria-labelledby="pf-name">
+              <div className="pf-hero-avatar">
+                <span>{initial}</span>
+                <button type="button" className="pf-hero-cam" onClick={() => setModal('edit')} aria-label="Edit profile">
+                  <Camera size={16} />
+                </button>
               </div>
-            </div>
-            <button className="pf-btn pf-btn-light" onClick={() => setModal('edit')}><Pencil size={15} /> Edit profile</button>
-          </section>
-
-          <section className="pf-stats" aria-label="Account summary">
-            <Link to="/orders" className="pf-stat">
-              <span className="pf-stat-icon tone-red"><ShoppingBag size={18} /></span>
-              <strong>{stats.total}</strong><span>Total orders</span>
-            </Link>
-            <Link to="/orders" className="pf-stat">
-              <span className="pf-stat-icon tone-amber"><Truck size={18} /></span>
-              <strong>{stats.active}</strong><span>In progress</span>
-            </Link>
-            <Link to="/wishlist" className="pf-stat">
-              <span className="pf-stat-icon tone-blue"><Heart size={18} /></span>
-              <strong>{wishlistCount}</strong><span>Wishlist items</span>
-            </Link>
-            <div className="pf-stat">
-              <span className="pf-stat-icon tone-green"><Wallet size={18} /></span>
-              <strong>{inr(stats.spend)}</strong><span>Total spent</span>
-            </div>
-          </section>
-
-          <section className="pf-actions" aria-label="Quick actions">
-            <Link to="/orders" className="pf-action"><span className="pf-stat-icon tone-amber"><Truck size={18} /></span><div><strong>Track orders</strong><span>See delivery status</span></div></Link>
-            <Link to="/book-repair" className="pf-action"><span className="pf-stat-icon tone-red"><Wrench size={18} /></span><div><strong>Book a repair</strong><span>Same-day fixes</span></div></Link>
-            <Link to="/trade-in" className="pf-action"><span className="pf-stat-icon tone-green"><Package size={18} /></span><div><strong>Trade in</strong><span>Get value for old phones</span></div></Link>
-            <Link to="/support" className="pf-action"><span className="pf-stat-icon tone-blue"><MessageCircle size={18} /></span><div><strong>Get help</strong><span>Chat with support</span></div></Link>
-          </section>
-
-          <section className="pf-card" aria-labelledby="pf-orders">
-            <div className="pf-card-head">
-              <div><h2 id="pf-orders">Recent orders</h2><p>Your latest purchases</p></div>
-              {orders.length > 0 && <Link to="/orders" className="pf-link">View all <ChevronRight size={15} /></Link>}
-            </div>
-            {recentOrders.length === 0 ? (
-              <div className="pf-empty">
-                You haven’t placed any orders yet.
-                <div><Link to="/collection/all" className="pf-btn pf-btn-primary"><ShoppingBag size={16} /> Start shopping</Link></div>
+              <div className="pf-hero-text">
+                <small>Welcome back,</small>
+                <div className="pf-hero-title">
+                  <h1 id="pf-name">{user.fullName}</h1>
+                  <span className="pf-badge"><Crown size={14} /> Member</span>
+                </div>
+                <div className="pf-hero-meta">
+                  {user.email && <span><Mail size={15} /> {user.email}</span>}
+                  {user.mobile
+                    ? <span><Phone size={15} /> {user.mobile}</span>
+                    : <span className="is-missing"><Phone size={15} /> No mobile added</span>}
+                  {joinedShort && <span><CalendarDays size={15} /> Member since {joinedShort}</span>}
+                </div>
               </div>
-            ) : (
-              <ul className="pf-orders">
-                {recentOrders.map((o) => {
-                  const first = o.items[0]
-                  const more = o.items.length - 1
-                  const status = STATUS[o.delivery_status] || { label: o.delivery_status.replace(/_/g, ' '), tone: 'tone-blue' }
-                  const img = imageUrl(first?.image)
-                  return (
-                    <li key={o.id} className="pf-order">
-                      <span className="pf-order-thumb">{img ? <img src={img} alt="" /> : <Package size={20} />}</span>
-                      <div className="pf-order-info">
-                        <strong>{first?.product_name || 'Order'}{more > 0 ? ` + ${more} more` : ''}</strong>
-                        <span>#{o.order_number || o.order_id} · {formatDate(o.created_at)}</span>
-                      </div>
-                      <span className={`pf-pill ${status.tone}`}>{status.label}</span>
-                      <span className="pf-order-total">{inr(Number(o.grand_total))}</span>
-                      <Link to={`/orders?order_id=${o.id}`} className="pf-order-link" aria-label={`View order ${o.order_number || o.order_id}`}>
-                        <ChevronRight size={18} />
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            )}
-          </section>
-
-          <div className="pf-two">
-            <section className="pf-card" aria-labelledby="pf-details">
-              <div className="pf-card-head">
-                <h2 id="pf-details">Personal details</h2>
-                <button className="pf-link" onClick={() => setModal('edit')}><Pencil size={14} /> Edit</button>
-              </div>
-              <dl className="pf-details">
-                <div><dt>Full name</dt><dd>{user.fullName}</dd></div>
-                <div><dt>Mobile</dt><dd className={user.mobile ? '' : 'is-missing'}>{user.mobile || 'Not added'}</dd></div>
-                <div><dt>Email</dt><dd>{user.email || '—'}</dd></div>
-                <div><dt>Member since</dt><dd className={joined ? '' : 'is-missing'}>{joined || 'Not available'}</dd></div>
-              </dl>
+              <AccountPhone className="acc-phone-lg" />
             </section>
 
-            <section className="pf-card" aria-labelledby="pf-address">
-              <div className="pf-card-head">
-                <h2 id="pf-address">Default address</h2>
-                <Link to="/profile/addresses" className="pf-link">{addresses.length ? 'Manage' : 'Add'} <ChevronRight size={15} /></Link>
-              </div>
-              <div className="pf-card-body">
+            <section className="pf-stats" aria-label="Account summary">
+              <Link to="/orders" className="pf-stat is-violet">
+                <span className="pf-stat-icon"><ShoppingBag size={24} /></span>
+                <div><strong>{stats.total}</strong><span>Total Orders</span></div>
+                <ChevronRight size={20} className="pf-stat-go" />
+              </Link>
+              <Link to="/my-repairs" className="pf-stat is-amber">
+                <span className="pf-stat-icon"><Wrench size={24} /></span>
+                <div><strong>{stats.activeRepairs}</strong><span>Active Repairs</span></div>
+                <ChevronRight size={20} className="pf-stat-go" />
+              </Link>
+              <Link to="/wishlist" className="pf-stat is-blue">
+                <span className="pf-stat-icon"><Heart size={24} /></span>
+                <div><strong>{wishlistCount}</strong><span>Wishlist Items</span></div>
+                <ChevronRight size={20} className="pf-stat-go" />
+              </Link>
+              <Link to="/orders" className="pf-stat is-green">
+                <span className="pf-stat-icon"><Wallet size={24} /></span>
+                <div><strong>{inr(stats.spend)}</strong><span>Total Spent</span></div>
+                <ChevronRight size={20} className="pf-stat-go" />
+              </Link>
+            </section>
+
+            <div className="pf-two">
+              <section className="pf-card" aria-labelledby="pf-details">
+                <div className="pf-card-head">
+                  <h2 id="pf-details"><User size={22} /> Personal Information</h2>
+                  <button className="pf-chip-btn" onClick={() => setModal('edit')}><Pencil size={14} /> Edit</button>
+                </div>
+                <dl className="pf-details">
+                  <div><dt><User size={16} /> Full Name</dt><dd>{user.fullName}</dd></div>
+                  <div><dt><Mail size={16} /> Email</dt><dd>{user.email || '—'}</dd></div>
+                  <div><dt><Phone size={16} /> Mobile</dt><dd className={user.mobile ? '' : 'is-missing'}>{user.mobile || 'Not added'}</dd></div>
+                  <div><dt><CalendarDays size={16} /> Member Since</dt><dd className={joined ? '' : 'is-missing'}>{joined || 'Not available'}</dd></div>
+                </dl>
+              </section>
+
+              <section className="pf-card" aria-labelledby="pf-address">
+                <div className="pf-card-head">
+                  <h2 id="pf-address"><MapPin size={22} /> Default Address</h2>
+                  <Link to="/profile/addresses" className="pf-chip-btn">{addresses.length ? 'Manage' : 'Add'} <ChevronRight size={14} /></Link>
+                </div>
                 {defaultAddress ? (
-                  <div className="pf-address">
-                    <span className="pf-stat-icon tone-red"><MapPin size={18} /></span>
-                    <p>
-                      <strong>{defaultAddress.fullName} · {defaultAddress.addressType}</strong>
-                      {defaultAddress.addressLine1}{defaultAddress.addressLine2 ? `, ${defaultAddress.addressLine2}` : ''}<br />
-                      {defaultAddress.city}, {defaultAddress.state} – {defaultAddress.zipCode}<br />
-                      {defaultAddress.mobile}
-                    </p>
-                  </div>
+                  <Link to="/profile/addresses" className="pf-address">
+                    <span className="pf-address-icon"><Home size={20} /></span>
+                    <div className="pf-address-text">
+                      <div className="pf-address-tags">
+                        <span className="pf-tag">{defaultAddress.addressType || 'Home'}</span>
+                        {defaultAddress.isDefault && <span className="pf-tag is-accent">Default</span>}
+                      </div>
+                      <p>
+                        {defaultAddress.addressLine1}{defaultAddress.addressLine2 ? `, ${defaultAddress.addressLine2}` : ''}<br />
+                        {defaultAddress.city}, {defaultAddress.state} – {defaultAddress.zipCode}<br />
+                        {defaultAddress.mobile}
+                      </p>
+                    </div>
+                    <span className="pf-address-pin" aria-hidden="true"><MapPin size={30} /></span>
+                    <ChevronRight size={20} className="pf-address-go" />
+                  </Link>
                 ) : (
-                  <p className="pf-empty" style={{ padding: 0 }}>No saved address yet — add one to check out faster.</p>
+                  <div className="pf-address is-empty">
+                    <span className="pf-address-icon"><Home size={20} /></span>
+                    <p>No saved address yet — add one to check out faster.</p>
+                  </div>
                 )}
-              </div>
-            </section>
-          </div>
+              </section>
 
-          <section className="pf-card" aria-labelledby="pf-security">
-            <div className="pf-card-head"><h2 id="pf-security">Security & account</h2></div>
-            <div className="pf-row">
-              <div><strong>Password</strong><span>Change the password you use to sign in</span></div>
-              <button className="pf-btn pf-btn-ghost" onClick={() => setModal('password')}><KeyRound size={15} /> Change password</button>
-            </div>
-            <div className="pf-row">
-              <div><strong>Sign out</strong><span>Sign out of this device</span></div>
-              <button className="pf-btn pf-btn-ghost" onClick={signOut}><LogOut size={15} /> Sign out</button>
-            </div>
-            <div className="pf-row">
-              <div><strong>Delete account</strong><span>Permanently remove your account and data</span></div>
-              <button className="pf-btn pf-btn-danger-outline" onClick={() => setModal('delete')}><Trash2 size={15} /> Delete account</button>
-            </div>
-          </section>
-        </main>
-      </div>
+              <section className="pf-card" aria-labelledby="pf-security">
+                <div className="pf-card-head">
+                  <h2 id="pf-security"><ShieldCheck size={22} /> Security &amp; Account</h2>
+                </div>
+                <button type="button" className="pf-row is-click" onClick={() => setModal('password')}>
+                  <span className="pf-row-icon"><KeyRound size={20} /></span>
+                  <div><strong>Change Password</strong><span>Update your password to keep your account secure</span></div>
+                  <ChevronRight size={20} className="pf-row-go" />
+                </button>
+                <div className="pf-row">
+                  <span className="pf-row-icon"><Lock size={20} /></span>
+                  <div><strong>Two-Factor Authentication</strong><span>Add an extra layer of security to your account</span></div>
+                  <Toggle on={false} disabled label="Two-factor authentication (coming soon)" />
+                </div>
+                <button type="button" className="pf-row is-click is-danger" onClick={() => setModal('delete')}>
+                  <span className="pf-row-icon"><Trash2 size={20} /></span>
+                  <div><strong>Delete Account</strong><span>Permanently remove your account and data</span></div>
+                  <ChevronRight size={20} className="pf-row-go" />
+                </button>
+              </section>
 
+              <section className="pf-card" aria-labelledby="pf-prefs">
+                <div className="pf-card-head">
+                  <h2 id="pf-prefs"><SlidersHorizontal size={22} /> Preferences</h2>
+                </div>
+                <div className="pf-row">
+                  <span className="pf-row-icon"><Bell size={20} /></span>
+                  <div><strong>Order Notifications</strong><span>Get updates on your orders, repairs and more</span></div>
+                  <Toggle on={prefs.orderUpdates} label="Order notifications" onChange={(v) => updatePref('orderUpdates', v)} />
+                </div>
+                <div className="pf-row">
+                  <span className="pf-row-icon"><Mail size={20} /></span>
+                  <div><strong>Offers &amp; Promotions</strong><span>Receive deals, discounts and special offers</span></div>
+                  <Toggle on={prefs.promotions} label="Offers and promotions" onChange={(v) => updatePref('promotions', v)} />
+                </div>
+              </section>
+            </div>
+          </main>
+      </AccountLayout>
 
       {modal === 'edit' && (
         <EditProfileModal

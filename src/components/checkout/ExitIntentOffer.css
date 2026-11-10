@@ -1,3 +1,6 @@
+/* Exit-intent offer — wide promo banner in the brand palette:
+   #210d35 purple · #fff7f3 cream · #d0adff lavender · #ffd014 sunshine. */
+
 .eo-overlay {
   position: fixed;
   inset: 0;
@@ -6,301 +9,614 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: rgba(27, 18, 16, 0.55);
-  backdrop-filter: blur(4px);
+  background: rgba(33, 13, 53, 0.6);
+  backdrop-filter: blur(6px);
   animation: eo-fade 0.2s ease-out;
   font-family: var(--font-ui);
 }
 
-.eo-card {
+.eo-banner {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 1120px;
   max-height: calc(100vh - 32px);
   overflow-y: auto;
-  border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-  animation: eo-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 28px;
+  color: #fff7f3;
+  background:
+    radial-gradient(circle at 52% 40%, rgba(208, 173, 255, 0.45), transparent 32%),
+    radial-gradient(ellipse at 0% 100%, rgba(208, 173, 255, 0.28), transparent 45%),
+    radial-gradient(ellipse at 100% 0%, rgba(208, 173, 255, 0.22), transparent 40%),
+    linear-gradient(135deg, #2c1147 0%, #210d35 55%, #2a0f45 100%);
+  border: 1px solid rgba(208, 173, 255, 0.3);
+  box-shadow: 0 40px 100px rgba(33, 13, 53, 0.55);
+  animation: eo-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .eo-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 1;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 247, 243, 0.25);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: rgba(255, 247, 243, 0.1);
+  color: #fff7f3;
   cursor: pointer;
+  transition: background 0.2s;
 }
-.eo-close:hover { background: rgba(255, 255, 255, 0.32); }
+.eo-close:hover { background: rgba(255, 247, 243, 0.22); }
 
-.eo-hero {
-  padding: 28px 28px 22px;
-  text-align: center;
-  color: #fff;
-  background: linear-gradient(135deg, #d91e36 0%, #a3122a 100%);
-}
-.eo-hero-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  margin-bottom: 12px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-}
-.eo-hero h2 {
-  margin: 0 0 6px;
-  font-family: var(--font-display);
-  font-size: var(--text-title);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-.eo-hero p { margin: 0; font-size: var(--text-body-sm); opacity: 0.85; }
-
-.eo-body { padding: 22px 24px 4px; display: flex; flex-direction: column; gap: 16px; }
-
-.eo-coupon {
-  display: flex;
-  align-items: stretch;
-  border: 2px dashed #d91e36;
-  border-radius: 16px;
-  background: #fff5f6;
-  overflow: hidden;
-}
-.eo-coupon-amount {
-  flex: 1;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-}
-.eo-coupon-amount span { font-size: var(--text-caption); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a3122a; }
-.eo-coupon-amount strong { font-family: var(--font-display); font-size: var(--text-heading); font-weight: 800; color: #d91e36; line-height: 1.15; }
-.eo-coupon-amount small { font-size: var(--text-caption); color: #857d79; }
-.eo-coupon-code {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.eo-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.9fr) minmax(0, 0.95fr);
   align-items: center;
-  gap: 4px;
-  padding: 0 18px;
-  border-left: 2px dashed #f3c2c9;
+  gap: 28px;
+  padding: 40px 44px 36px;
 }
-.eo-coupon-code span { font-size: var(--text-micro); color: #857d79; }
-.eo-coupon-code code,
-.eo-unlock code {
-  font-family: var(--font-mono);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: #1b1210;
-}
-.eo-coupon-code code { font-size: var(--text-body); padding: 4px 10px; border-radius: 8px; background: #fff; }
 
-.eo-unlock {
-  display: flex;
+/* ── Left: copy ── */
+.eo-pill {
+  display: inline-flex;
+  align-items: center;
   gap: 10px;
-  align-items: flex-start;
-  padding: 14px 16px;
-  border-radius: 14px;
-  background: #fff8eb;
-  color: #92400e;
+  padding: 9px 18px;
+  border: 1px solid rgba(208, 173, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(208, 173, 255, 0.18);
+  color: #d0adff;
+  font-size: 15px;
+  font-weight: 700;
 }
-.eo-unlock svg { flex-shrink: 0; margin-top: 2px; }
-.eo-unlock p { margin: 0; font-size: var(--text-body-sm); line-height: 1.5; color: #4a403d; }
+.eo-copy h2 {
+  margin: 18px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.eo-copy h2 span { display: block; color: #fff7f3; }
+.eo-copy h2 em {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+  font-style: italic;
+  color: #ffd014;
+}
+.eo-copy h2 em::after {
+  content: '';
+  position: absolute;
+  left: 30%;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, transparent, #fff7f3);
+}
+.eo-sub { margin: 14px 0 0; font-size: 17px; line-height: 1.5; color: rgba(255, 247, 243, 0.88); }
 
-.eo-cart {
+.eo-features {
+  list-style: none;
+  display: flex;
+  margin: 22px 0 0;
+  padding: 12px 6px;
+  border: 1px solid rgba(208, 173, 255, 0.28);
+  border-radius: 18px;
+  background: rgba(208, 173, 255, 0.12);
+}
+.eo-features li {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border: 1.5px solid #ece4e0;
-  border-radius: 14px;
-  background: #fbf8f6;
+  gap: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: 1.25;
 }
-.eo-cart-thumbs { display: flex; flex-shrink: 0; }
-.eo-cart-thumb {
+.eo-features li + li { border-left: 1px solid rgba(208, 173, 255, 0.3); }
+.eo-features svg { flex-shrink: 0; color: #d0adff; }
+.eo-features span { display: flex; flex-direction: column; }
+.eo-features strong { font-weight: 700; }
+
+/* ── Middle: podium ── */
+.eo-stage {
+  position: relative;
+  height: 320px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.eo-arc {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 260px;
+  height: 260px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  border-top: 3px solid rgba(255, 247, 243, 0.75);
+  box-shadow: 0 -10px 40px rgba(208, 173, 255, 0.45);
+  opacity: 0.8;
+}
+.eo-phones {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1;
+}
+.eo-phone {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-left: -10px;
-  border: 2px solid #fff;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  font-size: var(--text-title);
-  overflow: hidden;
+  width: 108px;
+  height: 180px;
+  padding: 10px;
+  border: 1px solid rgba(255, 247, 243, 0.35);
+  border-radius: 20px;
+  background: linear-gradient(160deg, #fff7f3, #f1e6ff);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
 }
-.eo-cart-thumb:first-child { margin-left: 0; }
-.eo-cart-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-.eo-cart-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.eo-cart-text strong {
-  font-size: var(--text-body-sm);
-  color: #1b1210;
-  white-space: nowrap;
+.eo-phone img { width: 100%; height: 100%; object-fit: contain; }
+.eo-phone--empty { color: #210d35; }
+.eo-phones--3 .eo-phone:nth-child(1),
+.eo-phones--3 .eo-phone:nth-child(3),
+.eo-phones--2 .eo-phone { width: 92px; height: 150px; }
+.eo-phones--3 .eo-phone:nth-child(1) { margin-right: -18px; transform: rotate(-6deg); }
+.eo-phones--3 .eo-phone:nth-child(3) { margin-left: -18px; transform: rotate(6deg); }
+.eo-phones--3 .eo-phone:nth-child(2) { position: relative; z-index: 1; height: 200px; width: 116px; }
+.eo-phones--2 .eo-phone:nth-child(1) { margin-right: -12px; transform: rotate(-5deg); }
+.eo-phones--2 .eo-phone:nth-child(2) { transform: rotate(5deg); }
+
+.eo-podium {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, #4a2470 0%, #210d35 70%);
+  border: 2px solid rgba(208, 173, 255, 0.55);
+  box-shadow: 0 0 0 6px rgba(208, 173, 255, 0.12), 0 0 40px rgba(208, 173, 255, 0.6), inset 0 6px 14px rgba(255, 247, 243, 0.2);
+}
+.eo-seal {
+  position: absolute;
+  left: 0;
+  bottom: 70px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: #ffd014;
+  color: #210d35;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 5px rgba(255, 208, 20, 0.35), 0 14px 26px rgba(0, 0, 0, 0.35);
+  transform: rotate(-10deg);
+}
+
+/* ── Right: offer ── */
+.eo-offer { display: flex; flex-direction: column; gap: 16px; }
+.eo-offer-card {
+  padding: 22px 20px 24px;
+  border: 1.5px solid rgba(208, 173, 255, 0.45);
+  border-radius: 22px;
+  background: rgba(208, 173, 255, 0.14);
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+.eo-offer-card h3 {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff7f3;
+}
+.eo-sticker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 12px 16px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #ffe066, #ffd014);
+  color: #210d35;
+  box-shadow: 0 14px 30px rgba(255, 208, 20, 0.3);
+  transform: rotate(-2deg);
+}
+.eo-sticker small { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+.eo-sticker strong {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 3.6vw, 48px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.eo-sticker strong b { font-size: 0.6em; }
+.eo-sticker code {
+  margin-top: 6px;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.eo-cart-text span { font-size: var(--text-caption); color: #857d79; }
-
-.eo-saving {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin: 0;
-  font-size: var(--text-label);
-  line-height: 1.5;
-  color: #4a403d;
-}
-.eo-saving svg { flex-shrink: 0; margin-top: 3px; color: #059669; }
-.eo-saving strong { color: #059669; }
-
-/* Second ad: darker hero so it reads as a different message. */
-.eo-card--second .eo-hero { background: linear-gradient(135deg, #1b1210 0%, #4a1520 100%); }
-
-.eo-perks {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.eo-perks li {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 12px;
-  border: 1px solid #f1e6e3;
-  border-radius: 14px;
-  background: #fffaf9;
-}
-.eo-perks svg { flex-shrink: 0; margin-top: 2px; color: #d91e36; }
-.eo-perks span { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-caption); color: #857d79; }
-.eo-perks strong { font-size: var(--text-label); color: #1b1210; }
-
-.eo-deals h3 {
-  margin: 0 0 10px;
-  font-size: var(--text-caption);
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #857d79;
 }
-.eo-deal-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 10px;
-}
-.eo-deal {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px;
-  border: 1.5px solid #ece4e0;
-  border-radius: 14px;
-  background: #fff;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-}
-.eo-deal:hover { border-color: #d91e36; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(217, 30, 54, 0.12); }
-.eo-deal-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: #d91e36;
-  color: #fff;
-  font-size: var(--text-micro);
-  font-weight: 800;
-}
-.eo-deal-img {
-  display: grid;
-  place-items: center;
-  height: 76px;
-  font-size: var(--text-heading);
-}
-.eo-deal-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
-.eo-deal-name {
-  font-size: var(--text-caption);
-  font-weight: 600;
-  line-height: 1.3;
-  color: #1b1210;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.eo-deal-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
-.eo-deal-price strong { font-size: var(--text-label); color: #d91e36; }
-.eo-deal-price s { font-size: var(--text-micro); color: #a8a09c; }
 
-.eo-error { margin: 0; font-size: var(--text-label); color: #d91e36; }
-
-.eo-actions { display: flex; flex-direction: column; gap: 8px; padding: 20px 24px 24px; }
 .eo-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  height: 50px;
+  gap: 12px;
+  width: 100%;
+  height: 58px;
   border: 0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #d91e36 0%, #a3122a 100%);
-  color: #fff;
-  font-size: var(--text-body);
-  font-weight: 700;
-  box-shadow: 0 6px 20px rgba(217, 30, 54, 0.3);
+  border-radius: 999px;
+  background: #ffd014;
+  color: #210d35;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
   cursor: pointer;
-  transition: box-shadow 0.15s, transform 0.1s;
+  box-shadow: 0 14px 30px rgba(255, 208, 20, 0.35);
+  transition: transform 0.15s, box-shadow 0.2s;
 }
-.eo-primary:hover { box-shadow: 0 8px 26px rgba(217, 30, 54, 0.45); }
-.eo-primary:active { transform: scale(0.98); }
-.eo-primary:disabled { opacity: 0.7; cursor: wait; }
+.eo-primary svg:last-child { margin-left: auto; }
+.eo-primary svg:first-child { margin-left: 0; }
+.eo-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 18px 34px rgba(255, 208, 20, 0.45); }
+.eo-primary:disabled { opacity: 0.75; cursor: wait; }
+.eo-primary:focus-visible,
+.eo-secondary:focus-visible,
+.eo-close:focus-visible { outline: 3px solid #d0adff; outline-offset: 2px; }
 .eo-secondary {
-  height: 40px;
+  align-self: center;
   border: 0;
   background: none;
-  color: #857d79;
-  font-size: var(--text-label);
+  color: rgba(255, 247, 243, 0.75);
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
-.eo-secondary:hover { color: #1b1210; text-decoration: underline; }
-
-.eo-spin { animation: eo-spin 0.8s linear infinite; }
-
-@media (max-width: 560px) {
-  .eo-overlay { align-items: flex-end; padding: 0; }
-  .eo-card {
-    max-width: none;
-    max-height: 92vh;
-    border-radius: 22px 22px 0 0;
-    animation: eo-sheet 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .eo-hero { padding: 24px 20px 18px; }
-  .eo-hero h2 { font-size: var(--text-title); }
-  .eo-body { padding: 18px 16px 4px; }
-  .eo-actions { padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); }
-  .eo-coupon-amount strong { font-size: var(--text-heading); }
-  .eo-deal-row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 128px; overflow-x: auto; padding-bottom: 4px; }
+.eo-secondary:hover { color: #fff7f3; text-decoration: underline; }
+.eo-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 208, 20, 0.18);
+  color: #ffd014;
+  font-size: 14px;
+  font-weight: 600;
 }
 
+/* ── Deals strip ── */
+.eo-deals {
+  padding: 18px 44px 26px;
+  border-top: 1px solid rgba(208, 173, 255, 0.22);
+  background: rgba(0, 0, 0, 0.12);
+}
+.eo-deals h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #d0adff;
+}
+.eo-deal-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.eo-deal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(208, 173, 255, 0.28);
+  border-radius: 14px;
+  background: rgba(255, 247, 243, 0.06);
+  color: #fff7f3;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.eo-deal:hover { background: rgba(255, 247, 243, 0.12); border-color: #d0adff; }
+.eo-deal-img {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border-radius: 10px;
+  background: #fff7f3;
+}
+.eo-deal-img img { width: 100%; height: 100%; object-fit: contain; }
+.eo-deal-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.eo-deal-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 600; }
+.eo-deal-price { display: flex; align-items: baseline; gap: 8px; }
+.eo-deal-price strong { font-family: var(--font-display); font-size: 15px; color: #ffd014; }
+.eo-deal-price s { font-size: 12px; color: rgba(255, 247, 243, 0.55); }
+.eo-deal-badge {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ffd014;
+  color: #210d35;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.eo-spin { animation: eo-spin 0.9s linear infinite; }
+
 @keyframes eo-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes eo-pop { from { opacity: 0; transform: translateY(16px) scale(0.96); } to { opacity: 1; transform: none; } }
-@keyframes eo-sheet { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes eo-pop { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
 @keyframes eo-spin { to { transform: rotate(360deg); } }
 
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .eo-main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 36px 28px 28px; }
+  .eo-copy { grid-column: 1 / -1; }
+  .eo-deals { padding: 16px 28px 22px; }
+}
+@media (max-width: 1024px) {
+  /* Stacked layout can be taller than the screen: allow vertical scroll only */
+  .eo-banner { overflow-x: hidden; overflow-y: auto; }
+}
+@media (max-width: 640px) {
+  .eo-banner { border-radius: 22px; }
+  .eo-main { grid-template-columns: 1fr; gap: 20px; padding: 28px 18px 22px; }
+  .eo-stage { height: 230px; }
+  .eo-arc { width: 200px; height: 200px; }
+  .eo-phones { bottom: 36px; }
+  .eo-phone { width: 80px; height: 130px; }
+  .eo-phones--3 .eo-phone:nth-child(2) { width: 88px; height: 150px; }
+  .eo-phones--3 .eo-phone:nth-child(1),
+  .eo-phones--3 .eo-phone:nth-child(3),
+  .eo-phones--2 .eo-phone { width: 70px; height: 116px; }
+  .eo-podium { height: 44px; max-width: 240px; }
+  .eo-seal { width: 82px; height: 82px; bottom: 50px; font-size: 10.5px; }
+  .eo-features { flex-wrap: wrap; row-gap: 10px; }
+  .eo-features li { padding: 0 8px; font-size: 13px; }
+  .eo-deals { padding: 14px 18px 20px; }
+}
+/* ───────────── Motion ───────────── */
+.eo-main, .eo-deals { position: relative; z-index: 1; }
+
+/* Banner entrance */
+.eo-overlay { animation: eo-fade 0.3s ease-out; }
+.eo-banner {
+  isolation: isolate;
+  animation: eo-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes eo-enter {
+  0% { opacity: 0; transform: translateY(40px) scale(0.92); filter: blur(6px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Drifting background glows */
+.eo-blob {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+}
+.eo-blob--a { width: 340px; height: 340px; left: -80px; top: -100px; background: rgba(208, 173, 255, 0.35); animation: eo-drift 9s ease-in-out infinite alternate; }
+.eo-blob--b { width: 300px; height: 300px; right: -60px; bottom: -120px; background: rgba(255, 208, 20, 0.18); animation: eo-drift 11s ease-in-out infinite alternate-reverse; }
+@keyframes eo-drift { to { transform: translate(60px, 40px) scale(1.15); } }
+
+/* Floating sparkles */
+.eo-sparks { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.eo-sparks i {
+  position: absolute;
+  bottom: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff7f3;
+  box-shadow: 0 0 10px 2px rgba(208, 173, 255, 0.9);
+  opacity: 0;
+  animation: eo-rise 7s linear infinite;
+}
+.eo-sparks i:nth-child(1) { left: 6%; animation-delay: 0s; }
+.eo-sparks i:nth-child(2) { left: 16%; animation-delay: 2.4s; width: 4px; height: 4px; }
+.eo-sparks i:nth-child(3) { left: 28%; animation-delay: 4.1s; }
+.eo-sparks i:nth-child(4) { left: 39%; animation-delay: 1.2s; width: 3px; height: 3px; }
+.eo-sparks i:nth-child(5) { left: 50%; animation-delay: 3.3s; background: #ffd014; box-shadow: 0 0 10px 2px rgba(255, 208, 20, 0.8); }
+.eo-sparks i:nth-child(6) { left: 61%; animation-delay: 5.2s; width: 4px; height: 4px; }
+.eo-sparks i:nth-child(7) { left: 70%; animation-delay: 0.7s; }
+.eo-sparks i:nth-child(8) { left: 79%; animation-delay: 2.9s; background: #ffd014; box-shadow: 0 0 10px 2px rgba(255, 208, 20, 0.8); }
+.eo-sparks i:nth-child(9) { left: 88%; animation-delay: 4.6s; width: 3px; height: 3px; }
+.eo-sparks i:nth-child(10) { left: 95%; animation-delay: 1.8s; }
+@keyframes eo-rise {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 0.8; }
+  100% { transform: translateY(-520px) scale(1.1); opacity: 0; }
+}
+
+/* Staggered content reveal */
+.eo-pill, .eo-copy h2 span, .eo-copy h2 em, .eo-sub, .eo-features,
+.eo-stage, .eo-offer-card, .eo-primary, .eo-secondary, .eo-deals {
+  animation: eo-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.eo-pill { animation-delay: 0.15s; }
+.eo-copy h2 span { animation-delay: 0.22s; }
+.eo-copy h2 em { animation-name: eo-pop-in; animation-delay: 0.32s; }
+.eo-sub { animation-delay: 0.42s; }
+.eo-features { animation-delay: 0.5s; }
+.eo-stage { animation-name: eo-zoom; animation-delay: 0.25s; animation-duration: 0.8s; }
+.eo-offer-card { animation-name: eo-left; animation-delay: 0.4s; }
+.eo-primary { animation-delay: 0.55s; }
+.eo-secondary { animation-delay: 0.65s; }
+.eo-deals { animation-delay: 0.7s; }
+.eo-deal { animation: eo-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.eo-deal:nth-child(1) { animation-delay: 0.8s; }
+.eo-deal:nth-child(2) { animation-delay: 0.9s; }
+.eo-deal:nth-child(3) { animation-delay: 1s; }
+.eo-deal:nth-child(4) { animation-delay: 1.1s; }
+@keyframes eo-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes eo-left { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
+@keyframes eo-zoom { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
+@keyframes eo-pop-in {
+  0% { opacity: 0; transform: scale(0.6) rotate(-4deg); }
+  70% { opacity: 1; transform: scale(1.06) rotate(1deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Headline underline draws in */
+.eo-copy h2 em::after { transform-origin: left; animation: eo-draw 0.7s 0.8s ease-out both; }
+@keyframes eo-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Gift icon wiggle */
+.eo-pill svg { animation: eo-wiggle 2.4s 1.2s ease-in-out infinite; }
+@keyframes eo-wiggle {
+  0%, 80%, 100% { transform: rotate(0); }
+  84% { transform: rotate(-14deg); }
+  88% { transform: rotate(12deg); }
+  92% { transform: rotate(-8deg); }
+  96% { transform: rotate(4deg); }
+}
+
+/* Podium: glowing arc, rotating light rays, floating phones */
+.eo-arc { animation: eo-glow 3s ease-in-out infinite; }
+@keyframes eo-glow {
+  0%, 100% { box-shadow: 0 -10px 40px rgba(208, 173, 255, 0.4); opacity: 0.75; }
+  50% { box-shadow: 0 -14px 60px rgba(208, 173, 255, 0.75); opacity: 1; }
+}
+.eo-rays {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  margin-left: -150px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgba(208, 173, 255, 0.14) 0deg 8deg, transparent 8deg 24deg);
+  -webkit-mask: radial-gradient(circle, #000 25%, transparent 70%);
+  mask: radial-gradient(circle, #000 25%, transparent 70%);
+  animation: eo-spin 24s linear infinite;
+  pointer-events: none;
+}
+.eo-phones { animation: eo-float 4s ease-in-out 1s infinite; }
+@keyframes eo-float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -10px); }
+}
+.eo-podium { animation: eo-podium 4s ease-in-out 1s infinite; }
+@keyframes eo-podium {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(208, 173, 255, 0.12), 0 0 40px rgba(208, 173, 255, 0.55), inset 0 6px 14px rgba(255, 247, 243, 0.2); }
+  50% { box-shadow: 0 0 0 10px rgba(208, 173, 255, 0.18), 0 0 70px rgba(208, 173, 255, 0.85), inset 0 6px 14px rgba(255, 247, 243, 0.3); }
+}
+
+/* Seal stamps in, then gently bobs */
+.eo-seal { animation: eo-stamp 0.7s 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both, eo-bob 3s 1.6s ease-in-out infinite; }
+@keyframes eo-stamp {
+  from { opacity: 0; transform: scale(2) rotate(-40deg); }
+  to { opacity: 1; transform: scale(1) rotate(-10deg); }
+}
+@keyframes eo-bob {
+  0%, 100% { transform: rotate(-10deg) scale(1); }
+  50% { transform: rotate(-4deg) scale(1.05); }
+}
+
+/* Sticker pops in with a shine sweep */
+.eo-sticker { position: relative; overflow: hidden; animation: eo-sticker 0.7s 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+@keyframes eo-sticker { from { opacity: 0; transform: rotate(-12deg) scale(0.7); } to { opacity: 1; transform: rotate(-2deg) scale(1); } }
+.eo-sticker::after,
+.eo-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  transform: skewX(-20deg);
+  animation: eo-shine 3.2s ease-in-out 1.4s infinite;
+  pointer-events: none;
+}
+@keyframes eo-shine { 0% { left: -60%; } 40%, 100% { left: 130%; } }
+
+/* CTA: keep icons off the edge, shine + pulse ring */
+.eo-primary { position: relative; overflow: visible; padding: 0 22px 0 26px; }
+.eo-primary::after { animation-delay: 2.2s; border-radius: inherit; }
+.eo-primary { clip-path: inset(-20px round 999px); }
+.eo-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: eo-ring 2.2s ease-out 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes eo-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 208, 20, 0.55); } 100% { box-shadow: 0 0 0 16px rgba(255, 208, 20, 0); } }
+.eo-primary svg:last-child { transition: transform 0.2s; }
+.eo-primary:hover svg:last-child { transform: translateX(4px); }
+
+/* No scrollbars: the banner is a fixed card; decorations are clipped to it. */
+.eo-banner { overflow: hidden; }
+
+/* Real phones on the podium — no card frame, like the home page product shots */
+.eo-phone,
+.eo-phones--3 .eo-phone:nth-child(2) {
+  width: 130px;
+  height: 210px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.eo-phones--3 .eo-phone:nth-child(1),
+.eo-phones--3 .eo-phone:nth-child(3),
+.eo-phones--2 .eo-phone { width: 104px; height: 168px; }
+.eo-phones--3 .eo-phone:nth-child(1) { margin-right: -26px; }
+.eo-phones--3 .eo-phone:nth-child(3) { margin-left: -26px; }
+.eo-phone img { filter: drop-shadow(0 22px 24px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 18px rgba(208, 173, 255, 0.35)); }
+/* Until the cut-out is ready, fade the photo's white backdrop with a soft vignette */
+.eo-phone:not(.is-cut) img {
+  -webkit-mask: radial-gradient(ellipse 60% 55% at center, #000 70%, transparent 100%);
+  mask: radial-gradient(ellipse 60% 55% at center, #000 70%, transparent 100%);
+  filter: none;
+}
+.eo-phone--empty { color: #ffd014; }
+
+/* Close button spins on hover */
+.eo-close { transition: background 0.2s, transform 0.3s; }
+.eo-close:hover { transform: rotate(90deg); }
+
+/* Deal cards lift */
+.eo-deal { transition: background 0.2s, border-color 0.2s, transform 0.2s; }
+.eo-deal:hover { transform: translateY(-3px); }
+
 @media (prefers-reduced-motion: reduce) {
-  .eo-overlay, .eo-card { animation: none; }
+  .eo-overlay, .eo-banner,
+  .eo-banner *, .eo-banner *::before, .eo-banner *::after { animation: none !important; }
+}
+
+/* Small screens (kept last so it wins over the rules above) */
+@media (max-width: 1024px) {
+  .eo-banner { overflow-x: hidden; overflow-y: auto; }
+}
+@media (max-width: 640px) {
+  .eo-phone, .eo-phones--3 .eo-phone:nth-child(2) { width: 96px; height: 156px; }
+  .eo-phones--3 .eo-phone:nth-child(1), .eo-phones--3 .eo-phone:nth-child(3), .eo-phones--2 .eo-phone { width: 76px; height: 124px; }
 }

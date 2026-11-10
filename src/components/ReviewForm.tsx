@@ -121,7 +121,7 @@ export default function ReviewForm({ productId, orderId, onSubmitted }: ReviewFo
           onChange={(e) => { setComment(e.target.value); setError('') }}
           placeholder="Tell others about your experience with this product..."
           rows={4}
-          className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#CB202D] focus:border-transparent resize-none transition"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#210D35] focus:border-transparent resize-none transition"
         />
       </div>
 
@@ -162,7 +162,7 @@ export default function ReviewForm({ productId, orderId, onSubmitted }: ReviewFo
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="flex items-center gap-2 text-sm font-medium text-[#CB202D] hover:text-[#A81D2A] transition"
+            className="flex items-center gap-2 text-sm font-medium text-[#210D35] hover:text-[#3A1E52] transition"
           >
             <FiImage size={16} />
             {previews.length > 0 ? 'Add more photos' : 'Add photos'}
@@ -183,7 +183,7 @@ export default function ReviewForm({ productId, orderId, onSubmitted }: ReviewFo
         onClick={handleSubmit}
         disabled={submitting}
         className="w-full py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{ background: 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+        style={{ background: 'linear-gradient(135deg, #210D35, #3A1E52)' }}
       >
         {submitting ? 'Submitting...' : 'Submit Review'}
       </button>

@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiCheck, FiArrowRight, FiLoader, FiSmartphone, FiTruck, FiStar, FiRefreshCw, FiShield, FiGift, FiCreditCard } from 'react-icons/fi'
 import MobileBottomNav from './MobileBottomNav'
 import { useMobileToast } from './useMobileToast'
+import { tradeInService } from '../../services/tradeInService'
+import { apiErrorMessage } from '../../utils/checkout'
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 const GREEN = '#00C46A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -112,6 +114,7 @@ export default function MobileTradeIn() {
     if (!formModel.trim()) e.formModel = 'Model is required'
     if (!formCondition) e.formCondition = 'Select device condition'
     if (!formName.trim()) e.formName = 'Name is required'
+    else if (!/^[A-Za-z][A-Za-z .'-]*$/.test(formName.trim().replace(/\s+/g, ' '))) e.formName = 'Use letters only (spaces, dots, apostrophes and hyphens are fine)'
     if (!/^\d{10}$/.test(formMobile.replace(/\D/g, ''))) e.formMobile = 'Enter a valid 10-digit number'
     if (formEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail)) e.formEmail = 'Invalid email'
     setFormErrors(e)
@@ -121,15 +124,29 @@ export default function MobileTradeIn() {
   const handleFormSubmit = async () => {
     if (!validateForm()) return
     setSubmitting(true)
-    await new Promise(r => setTimeout(r, 1200))
-    setSubmitting(false)
-    setShowForm(false)
-    setSubmitted(true)
-    showToast('Trade-In submitted!', 'success')
+    try {
+      const trade = await tradeInService.create({
+        customer_name: formName.trim(),
+        customer_mobile: formMobile.replace(/\D/g, ''),
+        customer_email: formEmail.trim() || undefined,
+        device_brand: formBrand,
+        device_model: formModel.trim(),
+        device_storage: formStorage || undefined,
+        device_condition: formCondition,
+        estimated_value: analysis?.finalValue || 0,
+      })
+      setShowForm(false)
+      setSubmitted(true)
+      showToast(`Trade-In submitted! ID ${trade.tradeId}`, 'success')
+    } catch (err) {
+      showToast(apiErrorMessage(err, 'Failed to submit. Please try again.'), 'error')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const inputClass = (field: string) =>
-    `w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FEE2E6] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
+    `w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#F3E8FF] border outline-none transition focus:bg-white ${formErrors[field] ? 'border-[#EF4444]' : 'border-[#E5E7EB]'}`
 
   const filteredRows = estimateRows.filter(r => !selectedBrand || r.device.toLowerCase().includes(selectedBrand.toLowerCase()))
 
@@ -177,7 +194,7 @@ export default function MobileTradeIn() {
             const Icon = step.icon
             return (
               <div key={step.title} className={`${card} p-4`}>
-                <div className="w-11 h-11 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
+                <div className="w-11 h-11 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center mb-2.5" style={{ color: PURPLE }}>
                   <Icon size={20} />
                 </div>
                 <span className="text-micro font-bold" style={{ color: PURPLE }}>STEP {idx + 1}</span>
@@ -197,7 +214,7 @@ export default function MobileTradeIn() {
           <div className="flex flex-wrap gap-2 mb-3">
             {brands.map((brand) => (
               <button key={brand} onClick={() => setSelectedBrand(brand === selectedBrand ? '' : brand)}
-                className={`px-3.5 h-9 rounded-[8px] text-caption font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#FEE2E6] border-[#E5E7EB] text-[#4B5563]'}`}
+                className={`px-3.5 h-9 rounded-[8px] text-caption font-semibold border transition ${selectedBrand === brand ? 'text-white border-transparent' : 'bg-[#F3E8FF] border-[#E5E7EB] text-[#4B5563]'}`}
                 style={selectedBrand === brand ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                 {brand}
               </button>
@@ -227,7 +244,7 @@ export default function MobileTradeIn() {
               const Icon = item.icon
               return (
                 <li key={i} className="flex items-center gap-2.5">
-                  <span className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
+                  <span className="w-7 h-7 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center flex-shrink-0" style={{ color: PURPLE }}><Icon size={14} /></span>
                   <span className="text-caption text-[#4B5563]">{item.text}</span>
                 </li>
               )
@@ -260,11 +277,11 @@ export default function MobileTradeIn() {
       {/* Form sheet */}
       {showForm && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowForm(false)} />
-          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
+          <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setShowForm(false)} />
+          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-[61] w-full max-w-[480px] bg-[#F7F8FC] rounded-t-[28px] flex flex-col max-h-[90vh]" style={{ boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}>
             <div className="px-4 pt-4 pb-2 flex-shrink-0">
               <div className="w-10 h-1 rounded-[8px] bg-[#D9D9E3] mx-auto mb-3" />
-              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
+              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center text-[#6B7280]"><FiChevronLeft size={18} className="rotate-90" /></button>
               <p className="text-body font-extrabold">Sell Your Phone</p>
               <p className="text-caption text-[#6B7280] mt-0.5">Fill details — we'll analyze the value instantly.</p>
             </div>

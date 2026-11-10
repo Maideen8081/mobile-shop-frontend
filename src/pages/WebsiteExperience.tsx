@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { suspendSmoothScroll } from "../utils/smoothScroll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { WEB_PRODUCTS, inr, shopUrl } from "../data/websiteCatalog";
 import "../styles/website-experience.css";
@@ -21,6 +22,8 @@ export default function WebsiteExperience() {
     if (!root.current) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    /* This page drives its own Lenis + GSAP; pause the site-wide one. */
+    const resumeSiteScroll = suspendSmoothScroll();
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: !reduce });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (t: number) => lenis.raf(t * 1000);
@@ -95,6 +98,7 @@ export default function WebsiteExperience() {
       ctx.revert();
       gsap.ticker.remove(tick);
       lenis.destroy();
+      resumeSiteScroll();
     };
   }, [attach, sync, snap]);
 

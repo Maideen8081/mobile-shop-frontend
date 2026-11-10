@@ -1,55 +1,79 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
+import { lazy as reactLazy, Suspense, type ComponentType, type ReactNode } from 'react'
+import DoubleRingLoader from '../components/ui/DoubleRingLoader'
+import { LEGACY_ADMIN_PATHS } from './adminPaths'
 import WebsiteGate from '../pages/WebsiteGate'
-import LandingGate from '../pages/LandingGate'
-import SearchPageGate from '../pages/SearchPageGate'
 import AuthGuard from '../components/AuthGuard'
 import AdminGuard from '../components/AdminGuard'
-import Dashboard from '../pages/Dashboard'
-import CategoryManagement from '../pages/CategoryManagement'
-import ProductManagement from '../pages/ProductManagement'
-import RepairDashboard from '../pages/RepairDashboard'
-import NewRepairTicket from '../pages/NewRepairTicket'
-import UserBookings from '../pages/UserBookings'
-import TechnicianPanel from '../pages/TechnicianPanel'
-import DeviceTracking from '../pages/DeviceTracking'
-import CustomerDashboard from '../pages/CustomerDashboard'
-import CustomerList from '../pages/CustomerList'
-import CustomerProfile from '../pages/CustomerProfile'
-import WarrantyDashboard from '../pages/WarrantyDashboard'
-import WarrantyTracking from '../pages/WarrantyTracking'
-import WarrantyClaims from '../pages/WarrantyClaims'
-import ExpiryAlerts from '../pages/ExpiryAlerts'
-import BrandWarrantyRecords from '../pages/BrandWarrantyRecords'
-import CollectionGate from '../pages/CollectionGate'
-import ProductDetailGate from '../pages/ProductDetailGate'
-import CartGate from '../pages/CartGate'
-import WishlistGate from '../pages/WishlistGate'
-import RepairsPage from '../pages/RepairsPage'
-import PhonesPage from '../pages/PhonesPage'
-import AccessoriesPage from '../pages/AccessoriesPage'
-import TradeInPage from '../pages/TradeInPage'
-import AboutPage from '../pages/AboutPage'
-import AddressManagement from '../pages/AddressManagement'
-import CheckoutAddress from '../pages/CheckoutAddress'
-import PaymentPage from '../pages/PaymentPage'
-import OrderSuccess from '../pages/OrderSuccess'
-import OrderTrackingGate from '../pages/OrderTrackingGate'
-import CustomerRepairTracking from '../pages/CustomerRepairTracking'
-import RepairDetailPage from '../pages/RepairDetailPage'
-import BookRepair from '../pages/BookRepair'
-import LoginPage from '../pages/LoginPage'
-import RegisterPage from '../pages/RegisterPage'
-import AddressCreatePage from '../pages/AddressCreatePage'
-import ProfilePage from '../pages/ProfilePage'
-import SupportChatGate from '../pages/SupportChatGate'
-import MobileNotifications from '../components/mobile/MobileNotifications'
-import AdminOrders from '../pages/AdminOrders'
-import AdminTradeInDashboard from '../pages/AdminTradeInDashboard'
-import AdminLoginPage from '../pages/AdminLoginPage'
-import ProductEditorPage from '../pages/ProductEditorPage'
-import CategoryEditorPage from '../pages/CategoryEditorPage'
-import { LEGACY_ADMIN_PATHS } from './adminPaths'
+
+// Only the home page ships in the main bundle; every other page downloads when first visited.
+// After a deploy, an open tab may ask for a page file that no longer exists:
+// reload once to pick up the new build instead of showing a blank screen.
+function lazy<T extends ComponentType<object>>(load: () => Promise<{ default: T }>) {
+  return reactLazy(() =>
+    load().then(
+      (mod) => {
+        sessionStorage.removeItem('chunk_reloaded')
+        return mod
+      },
+      (err) => {
+        if (!sessionStorage.getItem('chunk_reloaded')) {
+          sessionStorage.setItem('chunk_reloaded', '1')
+          window.location.reload()
+          return new Promise<never>(() => {})
+        }
+        throw err
+      },
+    ),
+  )
+}
+
+const LandingGate = lazy(() => import('../pages/LandingGate'))
+const SearchPageGate = lazy(() => import('../pages/SearchPageGate'))
+const Dashboard = lazy(() => import('../pages/Dashboard'))
+const CategoryManagement = lazy(() => import('../pages/CategoryManagement'))
+const ProductManagement = lazy(() => import('../pages/ProductManagement'))
+const RepairDashboard = lazy(() => import('../pages/RepairDashboard'))
+const NewRepairTicket = lazy(() => import('../pages/NewRepairTicket'))
+const UserBookings = lazy(() => import('../pages/UserBookings'))
+const TechnicianPanel = lazy(() => import('../pages/TechnicianPanel'))
+const DeviceTracking = lazy(() => import('../pages/DeviceTracking'))
+const CustomerDashboard = lazy(() => import('../pages/CustomerDashboard'))
+const CustomerList = lazy(() => import('../pages/CustomerList'))
+const CustomerProfile = lazy(() => import('../pages/CustomerProfile'))
+const WarrantyDashboard = lazy(() => import('../pages/WarrantyDashboard'))
+const WarrantyTracking = lazy(() => import('../pages/WarrantyTracking'))
+const WarrantyClaims = lazy(() => import('../pages/WarrantyClaims'))
+const ExpiryAlerts = lazy(() => import('../pages/ExpiryAlerts'))
+const BrandWarrantyRecords = lazy(() => import('../pages/BrandWarrantyRecords'))
+const CollectionGate = lazy(() => import('../pages/CollectionGate'))
+const ProductDetailGate = lazy(() => import('../pages/ProductDetailGate'))
+const CartGate = lazy(() => import('../pages/CartGate'))
+const WishlistGate = lazy(() => import('../pages/WishlistGate'))
+const RepairsPage = lazy(() => import('../pages/RepairsPage'))
+const PhonesPage = lazy(() => import('../pages/PhonesPage'))
+const AccessoriesPage = lazy(() => import('../pages/AccessoriesPage'))
+const TradeInPage = lazy(() => import('../pages/TradeInPage'))
+const AboutPage = lazy(() => import('../pages/AboutPage'))
+const AddressManagement = lazy(() => import('../pages/AddressManagement'))
+const CheckoutAddress = lazy(() => import('../pages/CheckoutAddress'))
+const PaymentPage = lazy(() => import('../pages/PaymentPage'))
+const OrderSuccess = lazy(() => import('../pages/OrderSuccess'))
+const OrderTrackingGate = lazy(() => import('../pages/OrderTrackingGate'))
+const CustomerRepairTracking = lazy(() => import('../pages/CustomerRepairTracking'))
+const RepairDetailPage = lazy(() => import('../pages/RepairDetailPage'))
+const BookRepair = lazy(() => import('../pages/BookRepair'))
+const LoginPage = lazy(() => import('../pages/LoginPage'))
+const RegisterPage = lazy(() => import('../pages/RegisterPage'))
+const AddressCreatePage = lazy(() => import('../pages/AddressCreatePage'))
+const ProfilePage = lazy(() => import('../pages/ProfilePage'))
+const SupportChatGate = lazy(() => import('../pages/SupportChatGate'))
+const MobileNotifications = lazy(() => import('../components/mobile/MobileNotifications'))
+const AdminOrders = lazy(() => import('../pages/AdminOrders'))
+const AdminTradeInDashboard = lazy(() => import('../pages/AdminTradeInDashboard'))
+const AdminLoginPage = lazy(() => import('../pages/AdminLoginPage'))
+const ProductEditorPage = lazy(() => import('../pages/ProductEditorPage'))
+const CategoryEditorPage = lazy(() => import('../pages/CategoryEditorPage'))
 
 // Admin-only pages. Routed under /admin/* and protected by AdminGuard, which
 // itself is enforced server-side by IsAdminUser on every API call.
@@ -84,8 +108,17 @@ const legacyAdminRedirects: { from: string; to: string }[] = LEGACY_ADMIN_PATHS.
   to: `/admin${from}`,
 }))
 
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <DoubleRingLoader size={48} label="Loading…" />
+    </div>
+  )
+}
+
 export default function AppRoutes() {
   return (
+    <Suspense fallback={<PageLoader />}>
     <Routes>
       {/* Admin area */}
       <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -132,5 +165,6 @@ export default function AppRoutes() {
 
       <Route path="*" element={<WebsiteGate />} />
     </Routes>
+    </Suspense>
   )
 }

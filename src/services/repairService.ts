@@ -206,6 +206,38 @@ function normalizeTicket(raw: any): RepairTicket {
   }
 }
 
+const FIELD_LABELS: Record<string, string> = {
+  customer_name: 'Name', mobile_number: 'Mobile', customer_mobile: 'Mobile', email: 'Email',
+  customer_email: 'Email', address: 'Address', customer_address: 'Address', device_brand: 'Brand',
+  device_model: 'Model', imei_number: 'IMEI', serial_number: 'Serial number', device_color: 'Color',
+  warranty_status: 'Warranty', issue_category: 'Issue', problem_description: 'Problem description',
+  service_id: 'Service', photos: 'Photos',
+}
+
+/** Turns a DRF error body into "Field: message" text the customer can act on. */
+export function formatRepairError(err: any): string {
+  const resp = err?.response?.data
+  const fieldErrors = resp?.errors && typeof resp.errors === 'object' ? resp.errors : resp
+  if (fieldErrors && typeof fieldErrors === 'object' && !Array.isArray(fieldErrors)) {
+    const msgs = Object.entries(fieldErrors)
+      .filter(([k]) => !['message', 'success', 'detail', 'status'].includes(k))
+      .map(([k, v]) => {
+        const text = Array.isArray(v) ? v[0] : v
+        if (!text || typeof text !== 'string') return ''
+        const label = FIELD_LABELS[k]
+        return label && k !== 'non_field_errors' ? `${label}: ${text}` : text
+      })
+      .filter(Boolean)
+    if (msgs.length) return msgs.join('. ')
+  }
+  return resp?.message || resp?.detail || err?.message || 'Failed to submit. Please try again.'
+}
+
+/** Adds a FormData value only when it is non-empty, so optional fields stay optional. */
+export function appendIfFilled(fd: FormData, key: string, value: string) {
+  if (value) fd.append(key, value)
+}
+
 function toArray(data: any): any[] {
   if (Array.isArray(data)) return data
   if (data?.results && Array.isArray(data.results)) return data.results

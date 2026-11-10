@@ -43,7 +43,7 @@ export default function MobileHeader() {
     <div className="relative z-50 w-full">
       <header
         className="relative w-full px-4 pt-3 pb-14 text-white overflow-hidden"
-        style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }}
+        style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }}
       >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -56,7 +56,7 @@ export default function MobileHeader() {
             <p className="text-micro text-white/75 leading-tight">Good morning 👋</p>
             <p className="text-body font-bold leading-tight truncate">{displayName}</p>
             <button className="flex items-center gap-0.5 min-w-0 active:opacity-70 mt-1" aria-label="Delivery location">
-              <MapPin size={12} className="text-[#4DA3FF] flex-shrink-0" />
+              <MapPin size={12} className="text-[#D0ADFF] flex-shrink-0" />
               <span className="text-micro text-white/80 font-medium truncate max-w-[130px]">Deliver to {location}</span>
             </button>
           </div>
@@ -65,7 +65,7 @@ export default function MobileHeader() {
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <button onClick={() => navigate('/notifications')} aria-label="Notifications" className={iconBtn}>
             <Bell size={18} />
-            <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#A81D2A]" />
+            <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#2E1544]" />
           </button>
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className={iconBtn}>
             <Heart size={18} />
@@ -78,7 +78,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/cart')} aria-label="Cart" className={iconBtn}>
             <ShoppingBag size={18} />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-[8px] bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
                 {badge(cartCount)}
               </span>
             )}
@@ -87,27 +87,27 @@ export default function MobileHeader() {
       </div>
 
       {/* Corner fills — cover the rounded-bottom gaps so scrolling content never shows through */}
-      <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)' }} />
-      <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)' }} />
+      <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)' }} />
+      <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)' }} />
       </header>
 
       {/* Floating glassmorphism search bar overlapping header bottom (outside header so it isn't clipped) */}
       <form
         onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
-        className="absolute left-4 right-4 -bottom-7 flex items-center gap-2 px-3 h-14 rounded-2xl bg-white/85 backdrop-blur-xl shadow-[0_12px_30px_rgba(203,32,45,0.20)] z-50"
+        className="absolute left-4 right-4 -bottom-7 flex items-center gap-2 px-3 h-14 rounded-2xl bg-white/85 backdrop-blur-xl shadow-[0_12px_30px_rgba(33,13,53,0.20)] z-50"
       >
-        <Search size={20} className="text-[#CB202D] shrink-0" />
+        <Search size={20} className="text-[#210D35] shrink-0" />
         <input
           readOnly
           onFocus={() => navigate('/search')}
           onClick={() => navigate('/search')}
           placeholder="Search mobiles, accessories..."
           aria-label="Search products"
-          className="flex-1 bg-transparent text-sm text-[#1F2937] placeholder:text-gray-400 outline-none min-w-0 cursor-pointer"
+          className="flex-1 bg-transparent text-sm text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
         />
-        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Mic size={17} /></button>
-        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><QrCode size={17} /></button>
-        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFFBFB] flex items-center justify-center text-[#CB202D] active:scale-90 transition"><Camera size={17} /></button>
+        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><Mic size={17} /></button>
+        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><QrCode size={17} /></button>
+        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><Camera size={17} /></button>
       </form>
     </div>
   )

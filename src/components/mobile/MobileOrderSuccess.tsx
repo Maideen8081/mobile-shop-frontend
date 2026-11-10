@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiChevronLeft, FiCheck, FiCopy, FiTruck, FiShoppingBag, FiStar } from 'react-icons/fi'
 import { orderService, type OrderResponse } from '../../services/orderService'
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -118,7 +118,7 @@ export default function MobileOrderSuccess() {
     setCopied(true)
   }
 
-  const confetti = ['#CB202D', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#FF5A65']
+  const confetti = ['#210D35', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#7B3FD0']
 
   return (
     <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
@@ -159,7 +159,7 @@ export default function MobileOrderSuccess() {
             <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
             <p className="text-body font-bold text-[#1F2937]">{displayOrderId}</p>
           </div>
-          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
             {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
           </button>
         </div>
@@ -260,9 +260,9 @@ export default function MobileOrderSuccess() {
             <div className="space-y-2.5">
               {items.map((item: any, idx: number) => (
                 <button key={item.productId ?? idx} onClick={() => navigate(`/product/${item.productId}`)}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-[14px] border border-[#FEE2E6] bg-[#FFFBFB] active:bg-[#FEE2E6] transition-colors">
-                  <div className="w-9 h-9 rounded-[10px] bg-[#FEE2E6] flex items-center justify-center flex-shrink-0">
-                    <FiStar size={16} className="text-[#CB202D]" />
+                  className="w-full flex items-center gap-3 p-2.5 rounded-[14px] border border-[#F3E8FF] bg-[#FFFBFB] active:bg-[#F3E8FF] transition-colors">
+                  <div className="w-9 h-9 rounded-[10px] bg-[#F3E8FF] flex items-center justify-center flex-shrink-0">
+                    <FiStar size={16} className="text-[#210D35]" />
                   </div>
                   <div className="flex-1 text-left min-w-0">
                     <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>

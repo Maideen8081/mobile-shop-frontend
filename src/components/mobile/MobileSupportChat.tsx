@@ -9,8 +9,8 @@ import {
   useSupportChat,
 } from '../ecommerce/useSupportChat'
 
-const PURPLE = '#CB202D'
-const gradient = 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)'
+const PURPLE = '#210D35'
+const gradient = 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)'
 
 export default function MobileSupportChat() {
   const navigate = useNavigate()
@@ -67,7 +67,7 @@ export default function MobileSupportChat() {
             </div>
           ) : (
             <div key={m.id} className="flex justify-end">
-              <div className="max-w-[80%] rounded-2xl rounded-br-[6px] px-3.5 py-2.5 text-white shadow-[0_4px_14px_rgba(203,32,45,0.25)]" style={{ background: gradient }}>
+              <div className="max-w-[80%] rounded-2xl rounded-br-[6px] px-3.5 py-2.5 text-white shadow-[0_4px_14px_rgba(123, 63, 208,0.25)]" style={{ background: gradient }}>
                 <p className="text-body-sm leading-snug whitespace-pre-wrap break-words">{m.text}</p>
                 <time className="block text-micro text-white/75 mt-1 text-right">{m.time}</time>
               </div>
@@ -96,7 +96,7 @@ export default function MobileSupportChat() {
                 const Icon = item.icon
                 return (
                   <Link key={item.to} to={item.to} className="flex items-center gap-3 px-4 py-3 active:bg-[#FFF5F5]">
-                    <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(203,32,45,0.1)', color: PURPLE }}>
+                    <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
                       <Icon size={17} />
                     </span>
                     <span className="flex-1 min-w-0">
@@ -121,7 +121,7 @@ export default function MobileSupportChat() {
               type="button"
               onClick={() => send(q)}
               className="flex-shrink-0 h-9 px-3.5 rounded-full bg-white border text-caption font-semibold whitespace-nowrap active:scale-95 transition"
-              style={{ borderColor: 'rgba(203,32,45,0.3)', color: PURPLE }}
+              style={{ borderColor: 'rgba(123, 63, 208,0.3)', color: PURPLE }}
             >
               {q}
             </button>
@@ -145,7 +145,7 @@ export default function MobileSupportChat() {
             aria-label="Type your message"
             autoComplete="off"
             enterKeyHint="send"
-            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#EEF0F6] text-body text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#CB202D]"
+            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#EEF0F6] text-body text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#210D35]"
           />
           <button
             type="submit"

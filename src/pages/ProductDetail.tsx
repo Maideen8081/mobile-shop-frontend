@@ -13,6 +13,14 @@ import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import '../pages/CollectionPage.css'
+import { useProductImage } from '../utils/productImage'
+import './ProductDetailPage.css'
+import {
+  ArrowLeftRight, Award, BadgeCheck, BatteryCharging, Bell, Cable, Camera, Check, ChevronDown, ChevronLeft,
+  ChevronRight, Cpu, CreditCard, HardDrive, Heart, Layers, MapPin, MemoryStick,
+  MessageCircleQuestion, Minus, Monitor, Percent, Plus, RotateCcw, Share2, ShieldCheck, ShoppingCart, Star,
+  Tag, Truck, Zap,
+} from 'lucide-react'
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {
@@ -26,9 +34,9 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
         <div className="axpd min-h-screen flex items-center justify-center p-6">
           <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
             <p className="text-4xl mb-4 block">⚠️</p>
-            <h2 className="text-xl font-bold text-[#1c1c1e] mb-2">Something went wrong</h2>
+            <h2 className="text-xl font-bold text-[#210D35] mb-2">Something went wrong</h2>
             <p className="text-sm text-[#6b6b70] mb-6">{this.state.error?.message || 'An unexpected error occurred'}</p>
-            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-[#1c1c1e] text-white rounded-[8px] text-sm font-semibold transition-all hover:opacity-80 cursor-pointer">
+            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-[#210D35] text-white rounded-[8px] text-sm font-semibold transition-all hover:opacity-80 cursor-pointer">
               Reload Page
             </button>
           </div>
@@ -39,7 +47,6 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
   }
 }
 
-const pad = (n: number) => String(n).padStart(2, '0')
 const fmt = (n: number) => '₹' + Math.round(n || 0).toLocaleString('en-IN')
 
 
@@ -116,6 +123,14 @@ const CART_OFFERS = [
 ]
 const FREE_DELIVERY_THRESHOLD = 500
 
+const QA = [
+  { q: 'Is this an original product?', a: 'Yes. Every product we sell is 100% genuine and sourced from the brand or its authorised distributors, with a GST invoice.' },
+  { q: 'Does it come with a warranty?', a: 'Yes — it carries the manufacturer warranty (1 year unless stated otherwise in Specifications). Our store also helps you with service claims.' },
+  { q: 'Can I return it if I don’t like it?', a: 'Unused products in original packaging can be returned within 7 days of delivery. Refunds reach your original payment method in 5–7 business days.' },
+  { q: 'How long does delivery take?', a: 'Most orders are delivered in 3–5 days. Delivery is free on orders over ₹500.' },
+  { q: 'Is Cash on Delivery available?', a: 'Yes, you can pay in cash or by UPI when the order arrives.' },
+]
+
 type ProductOffer = { title: string; code: string; desc: string; max: number; rate: number }
 const PRODUCT_OFFERS: ProductOffer[] = [
   { title: 'Extra 5% off on this product', code: 'LAUNCH5', desc: 'One-time use · maximum discount ₹500', max: 500, rate: 0.05 },
@@ -135,6 +150,20 @@ function getBankSaving(offer: BankOffer, subtotal: number): number {
 function getProductSaving(offer: ProductOffer, subtotal: number): number {
   if (offer.max <= 0 || offer.rate <= 0) return 0
   return Math.min(offer.max, Math.floor(subtotal * offer.rate))
+}
+
+/** Product photo with its background removed and margins trimmed, so it fills the frame. */
+function ProductPhoto({ src, alt }: { src: string; alt: string }) {
+  const photo = useProductImage(src)
+  return (
+    <img
+      src={photo.src}
+      alt={alt}
+      data-cut={photo.cut ? 'true' : undefined}
+      className={photo.ready ? 'is-ready' : ''}
+      onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
+    />
+  )
 }
 
 function Stars({ score, small }: { score: number; small?: boolean }) {
@@ -222,11 +251,9 @@ function ProductDetailContent() {
   const [hasReviewed, setHasReviewed] = useState(false)
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
 
-  const [dealLeft, setDealLeft] = useState({ h: 5, m: 59, s: 59 })
   const [displayPrice, setDisplayPrice] = useState(0)
   const [stickyVisible, setStickyVisible] = useState(false)
 
-  const [offerTab, setOfferTab] = useState<'product' | 'bank' | 'cart'>('product')
   const [appliedOffer, setAppliedOffer] = useState<string | null>(null)
   const [appliedProductOffer, setAppliedProductOffer] = useState(false)
   const [copiedCode, setCopiedCode] = useState('')
@@ -234,6 +261,16 @@ function ProductDetailContent() {
   const [lightboxIdx, setLightboxIdx] = useState(0)
   const [notifyOpen, setNotifyOpen] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState('')
+  const [tab, setTab] = useState<'desc' | 'specs' | 'reviews' | 'qa'>(() => (rateParam ? 'reviews' : 'desc'))
+  const [emiOpen, setEmiOpen] = useState(false)
+  const [bankOpen, setBankOpen] = useState(false)
+  const [fbtChecked, setFbtChecked] = useState<Set<number>>(() => new Set([-1]))
+  const [comboAdding, setComboAdding] = useState(false)
+  const [deliveryBy] = useState(() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 4)
+    return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
+  })
 
   const showToast = (msg: string) => {
     setToastMsg(msg)
@@ -321,6 +358,8 @@ function ProductDetailContent() {
   }, [resolvedId])
 
   useEffect(() => {
+    // Guests have no saved addresses; skip a request that can only fail.
+    if (!authService.isAuthenticated()) return
     addressService.list()
       .then((data: AddressData[]) => {
         setAddresses(data)
@@ -379,7 +418,10 @@ function ProductDetailContent() {
           }
         }
       }
-      if (!cancelled) setRelatedProducts(list.slice(0, 4))
+      if (!cancelled) {
+        setRelatedProducts(list.slice(0, 4))
+        setFbtChecked(new Set([-1, ...list.slice(0, 2).map((p: any) => Number(p.id))]))
+      }
     })()
     return () => { cancelled = true }
   }, [apiProduct])
@@ -464,9 +506,6 @@ function ProductDetailContent() {
   const inStock = activeVariant ? activeVariant.stock > 0 : (apiProduct?.inStock ?? true)
   const stockQty = activeVariant?.stock ?? apiProduct?.stock ?? 99
   const discountPct = oldPriceVal > currentPrice && oldPriceVal > 0 ? Math.round((1 - currentPrice / oldPriceVal) * 100) : 0
-  const TOTAL_DEAL_SEC = 21600
-  const dealElapsedSec = TOTAL_DEAL_SEC - (dealLeft.h * 3600 + dealLeft.m * 60 + dealLeft.s)
-  const dealProgress = Math.min(100, Math.max(2, Math.round((dealElapsedSec / TOTAL_DEAL_SEC) * 100)))
 
   const productName = apiProduct?.name || apiProduct?.product_name || 'Product'
   const productBrand = apiProduct?.brand || ''
@@ -502,21 +541,6 @@ function ProductDetailContent() {
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
   }, [currentPrice])
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setDealLeft((prev) => {
-        let s = prev.s - 1
-        let m = prev.m
-        let h = prev.h
-        if (s < 0) { s = 59; m-- }
-        if (m < 0) { m = 59; h-- }
-        if (h < 0) { h = 0; m = 0; s = 0 }
-        return { h, m, s }
-      })
-    }, 1000)
-    return () => clearInterval(id)
-  }, [])
 
   useEffect(() => {
     if (loading || !apiProduct) return
@@ -693,12 +717,6 @@ function ProductDetailContent() {
     }
   }
 
-  const goReviews = () => {
-    setTimeout(() => {
-      document.getElementById('ax-reviews-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 50)
-  }
-
   const goToAddresses = () => {
     navigate('/profile/addresses')
   }
@@ -735,13 +753,10 @@ function ProductDetailContent() {
   const dealSavings = Math.max(0, oldPriceVal - currentPrice) * qty
   const totalSavings = Math.round(dealSavings + cartOfferSavings + bankSavings + productOfferSavings)
   const freeDeliveryUnlocked = subtotal >= FREE_DELIVERY_THRESHOLD
-  const activeVariantImage = activeVariant?.images?.length
-    ? getImageUrl(typeof activeVariant.images[0] === 'string' ? activeVariant.images[0] : (activeVariant.images[0].image || activeVariant.images[0].url || ''))
-    : images[0]
 
   if (loading) {
     return (
-      <div className="axpd min-h-screen bg-[#FBF8F6]">
+      <div className="axpd min-h-screen bg-[#FFF7F3]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <DesktopPageLoader text="Loading product details..." />
@@ -751,19 +766,19 @@ function ProductDetailContent() {
 
   if (fetchError || !apiProduct) {
     return (
-      <div className="axpd min-h-screen bg-[#FBF8F6]">
+      <div className="axpd min-h-screen bg-[#FFF7F3]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <div className="min-h-[60vh] flex items-center justify-center p-6">
           <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
             <p className="text-4xl mb-4 block">🔍</p>
-            <h2 className="text-xl font-bold text-[#1c1c1e] mb-2">Product not found</h2>
+            <h2 className="text-xl font-bold text-[#210D35] mb-2">Product not found</h2>
             <p className="text-sm text-[#6b6b70] mb-6">{fetchError || 'This product is unavailable or has been removed.'}</p>
             <div className="flex gap-3 justify-center">
-              <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#e2231a,#a81510)' }}>
+              <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#210D35,#4A2470)' }}>
                 Go Back
               </button>
-              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] text-sm font-bold cursor-pointer" style={{ background: 'rgba(163,18,42,0.08)', color: '#A3122A', border: '1.5px solid rgba(163,18,42,0.2)' }}>
+              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] text-sm font-bold cursor-pointer" style={{ background: 'rgba(33, 13, 53,0.08)', color: '#3A1E52', border: '1.5px solid rgba(33, 13, 53,0.2)' }}>
                 Browse Products
               </Link>
             </div>
@@ -773,671 +788,378 @@ function ProductDetailContent() {
     )
   }
 
+  // Short pitch under the title: first sentence(s) of the description.
+  const tagline = (descParagraphs[0] || '').split(/(?<=[.!?])\s/).slice(0, 2).join(' ')
+
+  // Four highlight tiles: product features when present, else key specs.
+  const highlights: { icon: typeof Zap; title: string; sub: string }[] = (() => {
+    const icons = [Zap, Cable, ShieldCheck, Award]
+    const fromFeatures = (features as any[]).map((f) => String(f)).filter(Boolean).slice(0, 4)
+    if (fromFeatures.length >= 2) {
+      return fromFeatures.map((f, i) => {
+        const [first, ...rest] = f.split(' ')
+        return { icon: icons[i % icons.length], title: first, sub: rest.join(' ') || 'Feature' }
+      })
+    }
+    const specIcon: Record<string, typeof Zap> = { RAM: MemoryStick, Storage: HardDrive, Battery: BatteryCharging, Display: Monitor, Camera: Camera, Processor: Cpu }
+    const picked = specRows.filter(([k]) => specIcon[k]).slice(0, 3).map(([k, v]) => ({ icon: specIcon[k], title: v.length > 14 ? `${v.slice(0, 13)}…` : v, sub: k }))
+    return [...picked, { icon: Award, title: '1 Year', sub: 'Warranty' }].slice(0, 4)
+  })()
+
+  const fbtItems = relatedProducts.slice(0, 2)
+  const fbtSelf = { price: Number(currentPrice) || 0, old: oldPriceVal > currentPrice ? Number(oldPriceVal) : Number(currentPrice) || 0 }
+  const fbtTotal = (fbtChecked.has(-1) ? fbtSelf.price : 0) + fbtItems.reduce((s: number, rp: any) => s + (fbtChecked.has(Number(rp.id)) ? relatedPrice(rp).current : 0), 0)
+  const fbtMrp = (fbtChecked.has(-1) ? fbtSelf.old : 0) + fbtItems.reduce((s: number, rp: any) => {
+    if (!fbtChecked.has(Number(rp.id))) return s
+    const p = relatedPrice(rp)
+    return s + (p.old && p.old > p.current ? p.old : p.current)
+  }, 0)
+  const fbtCount = (fbtChecked.has(-1) ? 1 : 0) + fbtItems.filter((rp: any) => fbtChecked.has(Number(rp.id))).length
+
+  const toggleFbt = (key: number) => setFbtChecked((prev) => {
+    const next = new Set(prev)
+    if (next.has(key)) next.delete(key)
+    else next.add(key)
+    return next
+  })
+
+  const addCombo = async () => {
+    if (comboAdding || fbtCount === 0) return
+    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
+    setComboAdding(true)
+    let addedCount = 0
+    try {
+      if (fbtChecked.has(-1) && inStock && !isInCart) {
+        const error = validateStock(1)
+        if (!error) {
+          await cartService.addItem({
+            productId: apiProduct.id, variationId: activeVariant?.id || 0, quantity: 1, name: productName, brand: productBrand,
+            price: currentPrice, image: images[0] || '', storage: activeVariant?.storage || '', ram: activeVariant?.ram || '', color: activeVariant?.color || '',
+          })
+          setAdded(true)
+          addedCount++
+        }
+      }
+      for (const rp of fbtItems) {
+        if (!fbtChecked.has(Number(rp.id))) continue
+        await cartService.addItem({
+          productId: rp.id, variationId: 0, quantity: 1, name: relatedName(rp), brand: rp.brand || '',
+          price: relatedPrice(rp).current, image: getProductImage(rp), storage: '', ram: '', color: '',
+        })
+        addedCount++
+      }
+      showToast(addedCount ? `${addedCount} item${addedCount > 1 ? 's' : ''} added to cart` : 'Already in your cart')
+    } catch (err: any) {
+      showToast(err?.message || 'Failed to add to cart')
+    } finally {
+      setComboAdding(false)
+    }
+  }
+
+  const openTab = (t: typeof tab) => {
+    setTab(t)
+    setTimeout(() => document.getElementById('ax-reviews-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
+  }
+
+  const showVariantChips = variants.length > 1 && !colors.length && !storageOptions.length && !ramOptions.length
+
   return (
-    <div className="axpd min-h-screen" ref={rootRef}>
+    <div className="axpd pdx min-h-screen" ref={rootRef}>
       <style>{AXPD_CSS}</style>
+      <SiteTopNav />
 
-       <SiteTopNav />
-
-       {/* ===== BREADCRUMB ===== */}
-      <nav className="ax-breadcrumb">
-        <Link to="/home">Home</Link>
-        <span className="sep">/</span>
-        {categoryName && (
-          <>
-            <Link to={`/collection/${String(categoryName).toLowerCase()}`}>{categoryName}</Link>
-            <span className="sep">/</span>
-          </>
-        )}
-        {subCategoryName && String(subCategoryName).toLowerCase() !== 'null' && (
-          <>
-            <Link to={`/collection/${String(subCategoryName).toLowerCase()}`}>{subCategoryName}</Link>
-            <span className="sep">/</span>
-          </>
-        )}
-        <span className="current">{variantName || productName}</span>
-      </nav>
-
-      {/* ===== FLASH DEAL STRIP ===== */}
-      <div className="ax-deal-strip ax-reveal">
-        <div className="ax-deal-inner">
-          <div className="ax-deal-left">
-            <span className="ax-deal-bolt">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" /></svg>
-            </span>
-            <div className="ax-deal-copy">
-              <span className="ax-deal-badge">
-                <span className="ax-pulse" />
-                Flash Deal
-              </span>
-              <span className="ax-deal-msg">
-                {discountPct > 0
-                  ? <>Save <b>{discountPct}%</b> today — grab it before the timer runs out</>
-                  : <>Price drops when the timer hits zero</>}
-              </span>
-            </div>
-          </div>
-          <div className="ax-deal-right">
-            <div className="ax-deal-count-label">Ends in</div>
-            <div className="ax-countdown">
-              <div className="ax-cd-unit">
-                <span key={pad(dealLeft.h)} className="ax-cd-num ax-flip">{pad(dealLeft.h)}</span>
-                <span className="ax-cd-lbl">hrs</span>
+      <main className="pdx-wrap">
+        <div className="pdx-grid">
+          {/* ════════ LEFT: gallery + info + tabs ════════ */}
+          <div className="pdx-main">
+            <div className="pdx-top">
+              {/* Gallery */}
+              <div className="pdx-gallery">
+                <div className="pdx-thumbs">
+                  {images.map((img, i) => (
+                    <button key={img} className={`pdx-thumb ${i === selectedImage ? 'is-active' : ''}`} onClick={() => setSelectedImage(i)} aria-label={`Image ${i + 1}`}>
+                      <ProductPhoto src={img} alt="" />
+                    </button>
+                  ))}
+                </div>
+                <div className="pdx-stage-col">
+                  <div className="pdx-stage" onClick={() => openLightbox(selectedImage)}>
+                    {productBrand && <span className="pdx-brand-chip">{productBrand}</span>}
+                    {discountPct > 0 && <span className="pdx-off-chip">{discountPct}% OFF</span>}
+                    <div className="pdx-stage-actions">
+                      <button
+                        className={`pdx-round ${apiProduct?.id && wishlist.has(apiProduct.id) ? 'is-liked' : ''}`}
+                        onClick={(e) => { e.stopPropagation(); toggleWishlist(apiProduct?.id as number) }}
+                        aria-label="Add to wishlist"
+                      >
+                        <Heart aria-hidden="true" />
+                      </button>
+                      <button className="pdx-round" onClick={(e) => { e.stopPropagation(); handleShare() }} aria-label="Share product">
+                        <Share2 aria-hidden="true" />
+                      </button>
+                    </div>
+                    {images.length > 1 && (
+                      <>
+                        <button className="pdx-arrow pdx-arrow--prev" onClick={(e) => { e.stopPropagation(); stepImage(-1) }} aria-label="Previous image"><ChevronLeft /></button>
+                        <button className="pdx-arrow pdx-arrow--next" onClick={(e) => { e.stopPropagation(); stepImage(1) }} aria-label="Next image"><ChevronRight /></button>
+                      </>
+                    )}
+                    {images.map((img, i) => (
+                      <div key={img} className={`pdx-stage-img ${i === selectedImage ? 'is-active' : ''}`}>
+                        <ProductPhoto src={img} alt={productName} />
+                      </div>
+                    ))}
+                  </div>
+                  {images.length > 1 && (
+                    <div className="pdx-dots">
+                      {images.map((img, i) => (
+                        <button key={img} className={i === selectedImage ? 'is-active' : ''} onClick={() => setSelectedImage(i)} aria-label={`Show image ${i + 1}`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-              <span className="ax-cd-colon">:</span>
-              <div className="ax-cd-unit">
-                <span key={pad(dealLeft.m)} className="ax-cd-num ax-flip">{pad(dealLeft.m)}</span>
-                <span className="ax-cd-lbl">min</span>
-              </div>
-              <span className="ax-cd-colon">:</span>
-              <div className="ax-cd-unit">
-                <span key={pad(dealLeft.s)} className="ax-cd-num ax-flip">{pad(dealLeft.s)}</span>
-                <span className="ax-cd-lbl">sec</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="ax-deal-progress" role="progressbar" aria-valuenow={dealProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Flash deal progress">
-          <span style={{ width: `${dealProgress}%` }} />
-        </div>
-      </div>
 
-      {/* ===== MAIN ===== */}
-      <main className="ax-page-wrap">
-        <div className="ax-product-grid">
+              {/* Info */}
+              <div className="pdx-info">
+                <div className="pdx-tags">
+                  {productBrand && <span className="pdx-tag">{productBrand}</span>}
+                  <span className="pdx-tag pdx-tag--official"><ShieldCheck aria-hidden="true" /> Official Product</span>
+                  {newArrival && <span className="pdx-tag pdx-tag--new">New Launch</span>}
+                </div>
+                <h1 className="pdx-title">{variantName || productName}</h1>
+                {tagline && <p className="pdx-tagline">{tagline}</p>}
 
-          {/* ============ LEFT: STICKY GALLERY + OFFERS ============ */}
-          <aside className="ax-gallery-col">
-            <div className="ax-gallery">
-              <div className="ax-thumb-rail">
-                {images.map((img, i) => (
-                  <button key={i} className={`ax-thumb ${i === selectedImage ? 'active' : ''}`} data-idx={i} onClick={() => setSelectedImage(i)} aria-label={`Image ${i + 1}`}>
-                    <img src={img} alt="" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                <div className="pdx-rating">
+                  <button type="button" onClick={() => openTab('reviews')}>
+                    <Star aria-hidden="true" className="pdx-star" />
+                    <b>{rating > 0 ? rating.toFixed(1) : 'New'}</b>
+                    <span>({ratingCount ? `${Number(ratingCount).toLocaleString('en-IN')} reviews` : 'No reviews yet'})</span>
                   </button>
+                  {sold > 0 && <><i aria-hidden="true" /><span className="pdx-sold">{Number(sold).toLocaleString('en-IN')} sold</span></>}
+                  <i aria-hidden="true" />
+                  <span className={`pdx-stock ${inStock ? '' : 'is-out'}`}>{inStock ? (stockQty > 0 && stockQty <= 5 ? `Only ${stockQty} left` : 'In stock') : 'Out of stock'}</span>
+                </div>
+
+                <div className="pdx-price" ref={priceBlockRef}>
+                  <div className="pdx-price-row">
+                    <span className="pdx-price-now">{fmt(displayPrice)}</span>
+                    {oldPriceVal > currentPrice && <s className="pdx-price-mrp">{fmt(oldPriceVal)}</s>}
+                    {discountPct > 0 && <span className="pdx-price-off">{discountPct}% OFF</span>}
+                  </div>
+                  <p className="pdx-price-tax">Inclusive of all taxes</p>
+                  {totalSavings > 0 && (
+                    <p className="pdx-saving"><Check aria-hidden="true" /> You save <b>{fmt(totalSavings)}</b>{appliedProductOffer ? ' with the launch offer' : ''}{appliedOffer ? ' with bank offer' : ''}</p>
+                  )}
+                </div>
+
+                {currentPrice > 0 && (
+                  <div className={`pdx-emi ${emiOpen ? 'is-open' : ''}`} id="pdx-emi">
+                    <div className="pdx-emi-row">
+                      <CreditCard aria-hidden="true" />
+                      <span>From <b>{fmt(Math.ceil(currentPrice / 12))}/month</b> with no-cost EMI — 12 month plan</span>
+                    </div>
+                    <button type="button" className="pdx-emi-toggle" onClick={() => setEmiOpen((o) => !o)} aria-expanded={emiOpen}>
+                      {emiOpen ? 'Hide EMI options' : 'View EMI options'} <ChevronRight aria-hidden="true" />
+                    </button>
+                    {emiOpen && (
+                      <div className="pdx-emi-plans">
+                        {[3, 6, 9, 12].map((m) => (
+                          <div key={m}><b>{fmt(Math.ceil((currentPrice * displayQty) / m))}</b><span>× {m} months</span></div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Variant pickers (side by side) */}
+                <div className="pdx-picks">
+                {colors.length > 0 && (
+                  <div className="pdx-pick">
+                    <div className="pdx-pick-label">Colour: <b>{colors[selectedColorIdx] || 'Select'}</b></div>
+                    <div className="pdx-swatches">
+                      {colors.map((c, i) => {
+                        const v = variants.find((x: any) => x.color === c)
+                        const vImg = v?.images?.length ? getImageUrl(typeof v.images[0] === 'string' ? v.images[0] : (v.images[0].image || v.images[0].url || '')) : ''
+                        return (
+                          <button key={c} className={`pdx-swatch ${i === selectedColorIdx ? 'is-active' : ''}`} onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }} aria-label={c} title={c}>
+                            {vImg ? <img src={vImg} alt="" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} /> : <span style={{ background: getColorSwatch(c) }} />}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+                {storageOptions.length > 0 && (
+                  <div className="pdx-pick">
+                    <div className="pdx-pick-label">Storage: <b>{storageOptions[selectedStorageIdx]}</b></div>
+                    <div className="pdx-pills">
+                      {storageOptions.map((s, i) => (
+                        <button key={s} className={i === selectedStorageIdx ? 'is-active' : ''} onClick={() => { setSelectedStorageIdx(i); setSelectedVariantId(null) }}>{s}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {ramOptions.length > 0 && (
+                  <div className="pdx-pick">
+                    <div className="pdx-pick-label">RAM: <b>{ramOptions[selectedRamIdx]}</b></div>
+                    <div className="pdx-pills">
+                      {ramOptions.map((r, i) => (
+                        <button key={r} className={i === selectedRamIdx ? 'is-active' : ''} onClick={() => { setSelectedRamIdx(i); setSelectedVariantId(null) }}>{r}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {showVariantChips && (
+                  <div className="pdx-pick">
+                    <div className="pdx-pick-label">Variant</div>
+                    <div className="pdx-pills">
+                      {variants.map((v: any) => (
+                        <button key={v.id} className={String(activeVariant?.id) === String(v.id) ? 'is-active' : ''} onClick={() => setSelectedVariantId(String(v.id))}>
+                          {v.name || `Option ${v.id}`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                </div>
+
+                <ul className="pdx-highlights">
+                  {highlights.map(({ icon: Icon, title, sub }) => (
+                    <li key={`${title}-${sub}`}>
+                      <span><Icon aria-hidden="true" /></span>
+                      <b>{title}</b>
+                      <small>{sub}</small>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="pdx-buy">
+                  <div className="pdx-qty">
+                    <button onClick={() => changeQty(-1)} aria-label="Decrease quantity"><Minus /></button>
+                    <span aria-live="polite">{displayQty}</span>
+                    <button onClick={() => changeQty(1)} aria-label="Increase quantity"><Plus /></button>
+                  </div>
+                  {inStock ? (
+                    <>
+                      <button className="pdx-btn pdx-btn--cart" disabled={isAdding} onClick={handleAddToCart}>
+                        <ShoppingCart aria-hidden="true" /> {isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
+                      </button>
+                      <button className="pdx-btn pdx-btn--buy" disabled={isAdding} onClick={handleBuyNow}>
+                        <Zap aria-hidden="true" /> Buy Now
+                      </button>
+                    </>
+                  ) : (
+                    <button className="pdx-btn pdx-btn--buy pdx-btn--wide" onClick={() => setNotifyOpen(true)}>
+                      <Bell aria-hidden="true" /> Notify Me
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Delivery bar */}
+            <div className="pdx-deliver">
+              <MapPin aria-hidden="true" className="pdx-deliver-pin" />
+              <div className="pdx-deliver-text">
+                {selectedAddress ? (
+                  <>
+                    <b>Deliver to {selectedAddress.fullName}</b>
+                    <span>{selectedAddress.addressLine1}, {selectedAddress.city} – {selectedAddress.zipCode}</span>
+                  </>
+                ) : (
+                  <>
+                    <b>Add a delivery address</b>
+                    <span>See delivery dates for your location</span>
+                  </>
+                )}
+              </div>
+              <button type="button" className="pdx-deliver-chip" onClick={goToAddresses}>
+                <span>Delivery by {deliveryBy}</span>
+                <i aria-hidden="true" />
+                <span>{freeDeliveryUnlocked ? 'Free Delivery' : `Free above ${fmt(FREE_DELIVERY_THRESHOLD)}`}</span>
+                <ChevronDown aria-hidden="true" />
+              </button>
+            </div>
+
+            <ul className="pdx-trust">
+              <li><Truck aria-hidden="true" /><div><b>Free Delivery</b><span>on orders over {fmt(FREE_DELIVERY_THRESHOLD)}</span></div></li>
+              <li><RotateCcw aria-hidden="true" /><div><b>7-Day Returns</b><span>No questions asked</span></div></li>
+              <li><BadgeCheck aria-hidden="true" /><div><b>Authentic Product</b><span>100% genuine</span></div></li>
+              <li><ShieldCheck aria-hidden="true" /><div><b>1 Year Warranty</b><span>Manufacturer backed</span></div></li>
+            </ul>
+
+            {/* Tabs */}
+            <section className="pdx-tabs-wrap" id="ax-reviews-anchor">
+              <div className="pdx-tabs" role="tablist">
+                {([
+                  ['desc', 'Description'],
+                  ['specs', 'Specifications'],
+                  ['reviews', `Reviews (${Number(ratingCount || productReviews.length).toLocaleString('en-IN')})`],
+                  ['qa', `Q&A (${QA.length})`],
+                ] as const).map(([key, label]) => (
+                  <button key={key} role="tab" aria-selected={tab === key} className={tab === key ? 'is-active' : ''} onClick={() => setTab(key)}>{label}</button>
                 ))}
               </div>
 
-              <div>
-                <div className="ax-stage" onClick={() => openLightbox(selectedImage)}>
-                  <div className="ax-stage-badges">
-                    {newArrival && <span className="ax-pill ax-new">New Launch</span>}
-                    {discountPct > 0 && <span className="ax-pill ax-off">{discountPct}% off</span>}
-                  </div>
-
-                  <div className="ax-stage-actions">
-                    <button
-                      className={`ax-icon-btn ${apiProduct?.id && wishlist.has(apiProduct.id) ? 'liked' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); toggleWishlist(apiProduct?.id as number) }}
-                      aria-label="Add to wishlist"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-                      </svg>
-                    </button>
-                    <button className="ax-icon-btn" onClick={(e) => { e.stopPropagation(); handleShare() }} aria-label="Share product">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
-                        <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {images.length > 1 && (
-                    <>
-                      <button className="ax-arrow ax-arrow-prev" onClick={(e) => { e.stopPropagation(); stepImage(-1) }} aria-label="Previous image">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 18l-6-6 6-6" /></svg>
-                      </button>
-                      <button className="ax-arrow ax-arrow-next" onClick={(e) => { e.stopPropagation(); stepImage(1) }} aria-label="Next image">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M9 6l6 6-6 6" /></svg>
-                      </button>
-                    </>
-                  )}
-
-                  {images.map((img, i) => (
-                    <div key={i} className={`ax-stage-img ${i === selectedImage ? 'active' : ''}`} data-idx={i}>
-                      <img src={img} alt={productName} onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-                    </div>
-                  ))}
-
-                  <span className="ax-counter">{String(selectedImage + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}</span>
-                  <span className="ax-zoom-hint">Click to view full image</span>
-                </div>
-                {images.length > 1 && (
-                  <div className="ax-dots">
-                    {images.map((_, i) => (
-                      <span key={i} className={`ax-dot ${i === selectedImage ? 'active' : ''}`} onClick={() => setSelectedImage(i)} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ===== PREMIUM OFFERS CARD (under image) ===== */}
-            <div className="ax-offers-card ax-reveal">
-              <div className="ax-oc-head">
-                <div className="ax-oc-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>
-                  Offers &amp; Bank Deals
-                </div>
-                <div className="ax-oc-tabs">
-                  <button className={`ax-oc-tab ${offerTab === 'product' ? 'active' : ''}`} onClick={() => setOfferTab('product')}>Product</button>
-                  <button className={`ax-oc-tab ${offerTab === 'bank' ? 'active' : ''}`} onClick={() => setOfferTab('bank')}>Bank</button>
-                  <button className={`ax-oc-tab ${offerTab === 'cart' ? 'active' : ''}`} onClick={() => setOfferTab('cart')}>Cart</button>
-                </div>
-              </div>
-
-              {offerTab === 'product' && (
-                <div className="ax-offers-list">
-                  {PRODUCT_OFFERS.map((o) => {
-                    const applied = appliedProductOffer && o.code === PRODUCT_OFFERS[0].code
-                    const saving = getProductSaving(o, subtotal)
-                    return (
-                      <div className={`ax-bank-offer ${applied ? 'applied' : ''}`} key={o.code}>
-                        <div className="ax-bo-head">
-                          <div className="ax-bo-bank">{o.title}</div>
-                          <div className="ax-bo-code" onClick={() => copyCode(o.code)} title="Copy code">
-                            {copiedCode === o.code ? 'Copied ✓' : o.code}
-                          </div>
-                        </div>
-                        <div className="ax-bo-desc">{o.desc}</div>
-                        <div className="ax-bo-actions">
-                          {saving > 0 && <span className="ax-bo-save">You save {fmt(saving)}</span>}
-                          <button className={`ax-bo-apply ${applied ? 'applied' : ''}`} onClick={applyProductOffer}>
-                            {applied ? 'Applied ✓' : 'Apply'}
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  <div className="ax-co-note">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l3 3" /></svg>
-                    Launch offer is applied automatically when you checkout with this product.
-                  </div>
-                </div>
-              )}
-
-              {offerTab === 'bank' && (
-                <div className="ax-offers-list">
-                  {BANK_OFFERS.map((o) => {
-                    const applied = appliedOffer === o.code
-                    const saving = getBankSaving(o, subtotal)
-                    return (
-                      <div className={`ax-bank-offer ${applied ? 'applied' : ''}`} key={o.code}>
-                        <div className="ax-bo-head">
-                          <div className="ax-bo-bank">{o.bank}</div>
-                          <div className="ax-bo-code" onClick={() => copyCode(o.code)} title="Copy code">
-                            {copiedCode === o.code ? 'Copied ✓' : o.code}
-                          </div>
-                        </div>
-                        <div className="ax-bo-offer">{o.offer}<span> · {o.type}</span></div>
-                        <div className="ax-bo-desc">Min. {o.min} · {o.desc}</div>
-                        <div className="ax-bo-actions">
-                          {saving > 0 && <span className="ax-bo-save">You save {fmt(saving)}</span>}
-                          <button className={`ax-bo-apply ${applied ? 'applied' : ''}`} onClick={() => applyBankOffer(o.code)}>
-                            {applied ? 'Applied ✓' : 'Apply'}
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                  <div className="ax-co-note">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l3 3" /></svg>
-                    Select one bank offer at payment. Coupon codes are applied on the final amount.
-                  </div>
-                </div>
-              )}
-
-              {offerTab === 'cart' && (
-                <div className="ax-offers-list">
-                  <div className="ax-cart-offer">
-                    <div className="ax-co-row">
-                      <span>Free delivery</span>
-                      <b className={freeDeliveryUnlocked ? 'ok' : ''}>{freeDeliveryUnlocked ? 'Unlocked ✓' : `${fmt(Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal))} more`}</b>
-                    </div>
-                    <div className="ax-progress"><span style={{ width: `${Math.min(100, (subtotal / FREE_DELIVERY_THRESHOLD) * 100)}%` }} /></div>
-                  </div>
-                  {CART_OFFERS.map((o) => {
-                    const unlocked = subtotal >= o.threshold
-                    const progress = Math.min(100, (subtotal / o.threshold) * 100)
-                    return (
-                      <div className="ax-cart-offer" key={o.label}>
-                        <div className="ax-co-row">
-                          <span>{o.label} on cart value</span>
-                          <b className={unlocked ? 'ok' : ''}>{unlocked ? 'Unlocked ✓' : `${fmt(Math.max(0, o.threshold - subtotal))} more`}</b>
-                        </div>
-                        <div className="ax-progress"><span style={{ width: `${progress}%` }} /></div>
-                      </div>
-                    )
-                  })}
-                  <div className="ax-co-note">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l3 3" /></svg>
-                    Cart offers apply automatically at checkout on your final cart value. Bank offers need to be selected at payment.
-                  </div>
-                </div>
-              )}
-
-              <div className="ax-offers-foot">All offers auto-applicable at checkout · Terms &amp; conditions apply</div>
-            </div>
-
-            {/* ===== TRUST & BENEFITS ===== */}
-            <div className="ax-trust-card ax-reveal">
-              <div className="ax-trust-title">Why shop with us</div>
-              <div className="ax-trust-grid">
-                <div className="ax-trust-item">
-                  <span className="ax-trust-ic ax-ti-green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" /><circle cx="7" cy="17.5" r="1.8" /><circle cx="17.5" cy="17.5" r="1.8" /></svg>
-                  </span>
-                  <div className="ax-trust-txt">
-                    <b>Free Delivery</b>
-                    <span>On orders over {fmt(FREE_DELIVERY_THRESHOLD)}</span>
-                  </div>
-                </div>
-                <div className="ax-trust-item">
-                  <span className="ax-trust-ic ax-ti-blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 3.5-7.1L3 8" /><path d="M3 3v5h5" /></svg>
-                  </span>
-                  <div className="ax-trust-txt">
-                    <b>7-Day Returns</b>
-                    <span>Easy no-questions returns</span>
-                  </div>
-                </div>
-                <div className="ax-trust-item">
-                  <span className="ax-trust-ic ax-ti-purple">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                  </span>
-                  <div className="ax-trust-txt">
-                    <b>100% Secure</b>
-                    <span>UPI, cards &amp; COD</span>
-                  </div>
-                </div>
-                <div className="ax-trust-item">
-                  <span className="ax-trust-ic ax-ti-orange">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                  </span>
-                  <div className="ax-trust-txt">
-                    <b>Warranty</b>
-                    <span>Manufacturer backed</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ===== NEED HELP ===== */}
-            <div className="ax-help-card ax-reveal">
-              <div className="ax-help-head">
-                <span className="ax-help-ic">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.7 2z" /></svg>
-                </span>
-                <div className="ax-help-txt">
-                  <b>Need help with this product?</b>
-                  <span>Our experts are available 10am–8pm</span>
-                </div>
-              </div>
-              <div className="ax-help-actions">
-                <a href="tel:18001105000" className="ax-help-btn ax-help-call">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.7 2z" /></svg>
-                  Call Support
-                </a>
-                <a href="https://wa.me/919876543210?text=Hi%2C%20I%20need%20help%20with%20a%20product" target="_blank" rel="noreferrer" className="ax-help-btn ax-help-wa">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1.1.2-3.6-.8-3-1.2-4.9-4.3-5-4.5-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4-.1.7.5l1 2.3c0 .2.1.4 0 .6-.1.2-.1.4-.2.5l-.5.6c-.2.2-.3.4-.1.7.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.4 2.7 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.3 1.1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.2z" /></svg>
-                  WhatsApp
-                </a>
-              </div>
-            </div>
-          </aside>
-
-          {/* ============ RIGHT: CONTENT ============ */}
-          <div className="ax-content-right">
-
-              {/* Category chips */}
-              <div className="ax-reveal">
-                <div className="ax-cat-chips">
-                  {categoryName && (
-                    <Link to={`/collection/${String(categoryName).toLowerCase()}`} className="ax-cat-chip">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>
-                      {categoryName}
-                    </Link>
-                  )}
-                  {subCategoryName && String(subCategoryName).toLowerCase() !== 'null' && (
-                    <Link to={`/collection/${String(subCategoryName).toLowerCase()}`} className="ax-cat-chip">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
-                      {subCategoryName}
-                    </Link>
-                  )}
-                </div>
-              </div>
-
-              {/* Brand / Title / Rating */}
-              <div className="ax-reveal">
-                <div className="ax-brand-row">
-                  <div>
-                    {productBrand && <div className="ax-brand-tag">{productBrand}</div>}
-                    <h1 className="ax-title">{variantName || productName}</h1>
-                  </div>
-                </div>
-                <div className="ax-rating-row">
-                  {rating > 0 && (
-                    <>
-                      <div className="ax-rating-badge">
-                        {rating.toFixed(1)}
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                      </div>
-                      <Stars score={rating} />
-                      <div className="ax-rating-count">
-                        <a onClick={goReviews}>{ratingCount ? `${ratingCount} ratings` : 'No ratings'}</a>
-                        {productReviews.length > 0 && <> · {productReviews.length} review{productReviews.length !== 1 ? 's' : ''}</>}
-                        {sold > 0 && <> · {sold} sold</>}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Price block */}
-              <div className="ax-price-block ax-reveal" ref={priceBlockRef}>
-                <div className="ax-price-top">
-                  <span className="ax-deal-price ax-mono">{fmt(displayPrice)}</span>
-                  {oldPriceVal > currentPrice && <span className="ax-mrp ax-mono">{fmt(oldPriceVal)}</span>}
-                  {discountPct > 0 && <span className="ax-discount">{discountPct}% off</span>}
-                </div>
-                <p className="ax-tax-note">
-                  Inclusive of all taxes · Deal price active for the next <span id="dealMinutes">{Math.max(1, dealLeft.m)} min</span>
-                </p>
-                {currentPrice > 0 && (
-                  <p className="ax-emi-note">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
-                    </svg>
-                    From {fmt(Math.ceil(currentPrice / 12))}/month with no-cost EMI — 12 month plan
-                  </p>
-                )}
-                {totalSavings > 0 && (
-                  <p className="ax-savings-note">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
-                    You save <b>{fmt(totalSavings)}</b> on this order
-                    {appliedOffer ? ' with bank offer' : ''}{appliedProductOffer ? ' with launch offer' : ''}{cartOfferSavings > 0 ? ' · cart discount unlocked' : ''}
-                  </p>
-                )}
-              </div>
-
-              {/* Selected variation summary */}
-              {activeVariant && (
-                <div className="ax-variant-summary ax-reveal">
-                  <div className="ax-vs-img">
-                    <img src={activeVariantImage} alt={productName} onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-                  </div>
-                  <div>
-                    <div className="ax-vs-title">{variantName || productName}</div>
-                    <div className="ax-vs-specs">
-                      {[activeVariant.color, activeVariant.storage ? `${activeVariant.storage} storage` : '', activeVariant.ram ? `${activeVariant.ram} RAM` : ''].filter(Boolean).join(' · ') || 'Standard configuration'}
-                    </div>
-                    <div className="ax-vs-price">
-                      {fmt(currentPrice)} <span className="stock">{inStock ? 'In stock' : 'Out of stock'}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Variant list (mobile-style cards) */}
-              {variants.length > 0 && (
-                <div className="ax-variant-block ax-reveal">
-                  <div className="ax-variant-label">Select Variant</div>
-                  <div className="ax-variant-list">
-                    {variants.map((v: any) => {
-                      const selected = (selectedVariantId ? String(v.id) === selectedVariantId : activeVariant?.id === v.id)
-                      const vPrice = v.discountPrice || v.price || 0
-                      const vMrp = v.discountPrice ? v.price : 0
-                      const vOff = vMrp > vPrice ? Math.round((1 - vPrice / vMrp) * 100) : 0
-                      const vImg = v.images?.length
-                        ? getImageUrl(typeof v.images[0] === 'string' ? v.images[0] : (v.images[0].image || v.images[0].url || ''))
-                        : ''
-                      const vName = v.name || [v.color, v.storage, v.ram].filter(Boolean).join(' ')
-                      return (
-                        <button
-                          key={v.id}
-                          className={`ax-variant-card ${selected ? 'selected' : ''}`}
-                          onClick={() => setSelectedVariantId(String(v.id))}
-                        >
-                          <span className="ax-vc-img">
-                            {vImg
-                              ? <img src={vImg} alt={vName} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-                              : <span className="ax-vc-dot" style={{ background: getColorSwatch(v.color || '') }} />}
-                          </span>
-                          <span className="ax-vc-mid">
-                            <span className="ax-vc-name">{vName}</span>
-                            <span className="ax-vc-specs">
-                              {[v.color, v.storage, v.ram].filter(Boolean).join(' · ') || 'Standard configuration'}
-                            </span>
-                          </span>
-                          <span className="ax-vc-right">
-                            <span className="ax-vc-price">
-                              <b>{fmt(vPrice)}</b>
-                              {vMrp > vPrice && <s>{fmt(vMrp)}</s>}
-                            </span>
-                            {vOff > 0 && <span className="ax-vc-off">{vOff}% off</span>}
-                            <span className={`ax-vc-radio ${selected ? 'on' : ''}`}>
-                              {selected && (
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M20 6L9 17l-5-5" /></svg>
-                              )}
-                            </span>
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Colour swatches */}
-              {colors.length > 0 && (
-                <div className="ax-variant-block ax-reveal">
-                  <div className="ax-variant-label">Colour: <span>{colors[selectedColorIdx] || 'Select'}</span></div>
-                  <div className="ax-swatches">
-                    {colors.map((c, i) => {
-                      const v = variants.find((x: any) => x.color === c)
-                      const vImg = v?.images?.length
-                        ? getImageUrl(typeof v.images[0] === 'string' ? v.images[0] : (v.images[0].image || v.images[0].url || ''))
-                        : ''
-                      return (
-                        <button
-                          key={c}
-                          className={`ax-swatch ${i === selectedColorIdx ? 'active' : ''}`}
-                          onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
-                          aria-label={c}
-                          title={c}
-                        >
-                          {vImg
-                            ? <img className="ax-swatch-img" src={vImg} alt={c} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                            : <span className="ax-swatch-fill" style={{ background: getColorSwatch(c) }} />}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Storage pills */}
-              {storageOptions.length > 0 && (
-                <div className="ax-variant-block ax-reveal">
-                  <div className="ax-variant-label">Storage: <span>{storageOptions[selectedStorageIdx]}</span></div>
-                  <div className="ax-pills">
-                    {storageOptions.map((s, i) => (
-                      <button
-                        key={s}
-                        className={`ax-pill-opt ${i === selectedStorageIdx ? 'active' : ''}`}
-                        onClick={() => { setSelectedStorageIdx(i); setSelectedVariantId(null) }}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* RAM pills */}
-              {ramOptions.length > 0 && (
-                <div className="ax-variant-block ax-reveal">
-                  <div className="ax-variant-label">RAM: <span>{ramOptions[selectedRamIdx]}</span></div>
-                  <div className="ax-pills">
-                    {ramOptions.map((r, i) => (
-                      <button
-                        key={r}
-                        className={`ax-pill-opt ${i === selectedRamIdx ? 'active' : ''}`}
-                        onClick={() => { setSelectedRamIdx(i); setSelectedVariantId(null) }}
-                      >
-                        {r}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Deliver to */}
-              <div className="ax-delivery-block ax-reveal">
-                <div className="ax-field-label">Deliver to</div>
-                <button className="ax-address-btn" onClick={goToAddresses}>
-                  <span className="ax-address-ic">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-5.3-7-11a7 7 0 1 1 14 0c0 5.7-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-                  </span>
-                  <span className="ax-address-info">
-                    {selectedAddress ? (
-                      <>
-                        <b>{selectedAddress.fullName}</b>
-                        <span>{selectedAddress.addressLine1}, {selectedAddress.city} - {selectedAddress.zipCode}</span>
-                      </>
-                    ) : (
-                      <>
-                        <b>Add delivery address</b>
-                        <span>Choose where to deliver this product</span>
-                      </>
-                    )}
-                  </span>
-                  <svg className="ax-address-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
-                </button>
-                {selectedAddress && (
-                  <div className="ax-delivery-result show">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
-                    <span>Delivery available for this address · Free shipping</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Buy row */}
-              <div className="ax-buy-row ax-reveal">
-                <div className="ax-qty-selector">
-                  <button onClick={() => changeQty(-1)} aria-label="Decrease quantity by one">−</button>
-                  <span className="ax-qty-val">{displayQty}</span>
-                  <button onClick={() => changeQty(1)} aria-label="Increase quantity by one">+</button>
-                </div>
-                {inStock ? (
+              <div className="pdx-tab-body">
+                {tab === 'desc' && (
                   <>
-                    <button className="ax-btn-primary" disabled={isAdding} onClick={handleAddToCart}>
-                      {isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
-                    </button>
-                    <button className="ax-btn-secondary" disabled={isAdding} onClick={handleBuyNow}>
-                      Buy Now
-                    </button>
+                    <h2>Product Description</h2>
+                    {descParagraphs.length > 0
+                      ? descParagraphs.map((p: string, i: number) => <p key={i}>{p}</p>)
+                      : <p>This premium device is engineered for everyday performance — built to last, designed to impress.</p>}
+                    {features.length > 0 && (
+                      <ul className="pdx-feature-list">
+                        {features.map((f: any, i: number) => <li key={i}><Check aria-hidden="true" /> {String(f)}</li>)}
+                      </ul>
+                    )}
+                    {careInstructions.length > 0 && <p><b>Care instructions: </b>{careInstructions.join(', ')}</p>}
                   </>
-                ) : (
-                  <button className="ax-btn-primary ax-btn-notify" onClick={() => setNotifyOpen(true)}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                    </svg>
-                    Notify Me
-                  </button>
                 )}
-              </div>
 
-              {/* Highlights */}
-              <div className="ax-highlights ax-reveal">
-                <div className="ax-highlight">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                  <b>1 Year Warranty</b>
-                  Manufacturer backed
-                </div>
-                <div className="ax-highlight">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13" rx="2" /><path d="M16 8h4l3 3v5h-7z" /><circle cx="5.5" cy="18.5" r="2" /><circle cx="18.5" cy="18.5" r="2" /></svg>
-                  <b>Free Shipping</b>
-                  Delivered in 2–4 days
-                </div>
-                <div className="ax-highlight">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.7 2.7L3 8" /><path d="M3 3v5h5" /></svg>
-                  <b>10-Day Returns</b>
-                  No questions asked
-                </div>
-              </div>
+                {tab === 'specs' && (
+                  <>
+                    <h2>Specifications</h2>
+                    <table className="pdx-spec">
+                      <tbody>
+                        {specRows.map(([label, value]) => (
+                          <tr key={label}><th>{label}</th><td>{value}</td></tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </>
+                )}
 
-              {/* Sections */}
-              <div className="ax-reveal" id="ax-tabs-anchor">
-                <h2 className="ax-display ax-sec-title">Description</h2>
-                <div className="ax-sec-block">
-                  {descParagraphs.length > 0 ? (
-                    descParagraphs.map((p: string, i: number) => <p key={i} className="ax-desc-text">{p}</p>)
-                  ) : (
-                    <p className="ax-desc-text">This premium device is engineered for everyday performance — built to last, designed to impress.</p>
-                  )}
-                  {features.length > 0 && (
-                    <p className="ax-desc-text">
-                      {features.map((f: any, i: number) => <span key={i}>{i > 0 ? ' · ' : ''}{f}</span>)}
-                    </p>
-                  )}
-                  {careInstructions.length > 0 && (
-                    <p className="ax-desc-text">
-                      <b>Care instructions: </b>{careInstructions.join(', ')}
-                    </p>
-                  )}
-                </div>
-
-                <h2 className="ax-display ax-sec-title">Specifications</h2>
-                <div className="ax-sec-block">
-                  <table className="ax-spec-table">
-                    <tbody>
-                      {specRows.map(([label, value]) => (
-                        <tr key={label}>
-                          <td>{label}</td>
-                          <td>{value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <h2 className="ax-display ax-sec-title" id="ax-reviews-anchor">Reviews</h2>
-                <div className="ax-sec-block">
-                  {rating > 0 || ratingCount > 0 ? (
-                    <div className="ax-review-summary">
-                      <div className="ax-review-score">
-                        <div className="ax-big">{rating.toFixed(1)}</div>
-                        <Stars score={rating} />
-                        <div style={{ fontSize: 'var(--text-caption)', color: 'var(--slate)' }}>{ratingCount || 0} ratings</div>
+                {tab === 'reviews' && (
+                  <>
+                    <h2>Ratings &amp; Reviews</h2>
+                    {rating > 0 || ratingCount > 0 ? (
+                      <div className="ax-review-summary">
+                        <div className="ax-review-score">
+                          <div className="ax-big">{rating.toFixed(1)}</div>
+                          <Stars score={rating} />
+                          <div className="pdx-muted">{ratingCount || 0} ratings</div>
+                        </div>
+                        <RatingBars distribution={productRating.distribution} count={productRating.count} />
                       </div>
-                      <RatingBars distribution={productRating.distribution} count={productRating.count} />
-                    </div>
-                  ) : (
-                    <p className="ax-desc-text">No ratings yet — be the first to review this product!</p>
-                  )}
-
-                  {canReview && !hasReviewed && showReviewForm && (
-                    <div className="ax-review-form-wrap">
-                      <ReviewForm
-                        productId={Number(resolvedId)}
-                        orderId={orderIdParam}
-                        onSubmitted={async () => {
-                          setShowReviewForm(false)
-                          await refreshReviews()
-                        }}
-                      />
-                    </div>
-                  )}
-                  {canReview && !hasReviewed && !showReviewForm && (
-                    <div style={{ margin: '14px 0' }}>
-                      <button className="ax-btn-check" onClick={() => setShowReviewForm(true)}>Write a Review</button>
-                    </div>
-                  )}
-
-                  {productReviews.length > 0 ? (
-                    productReviews.map((review) => (
+                    ) : (
+                      <p>No ratings yet — be the first to review this product!</p>
+                    )}
+                    {canReview && !hasReviewed && showReviewForm && (
+                      <div className="ax-review-form-wrap">
+                        <ReviewForm
+                          productId={Number(resolvedId)}
+                          orderId={orderIdParam}
+                          onSubmitted={async () => { setShowReviewForm(false); await refreshReviews() }}
+                        />
+                      </div>
+                    )}
+                    {canReview && !hasReviewed && !showReviewForm && (
+                      <button className="pdx-outline-btn" onClick={() => setShowReviewForm(true)}>Write a Review</button>
+                    )}
+                    {productReviews.map((review) => (
                       <div key={review.id} className="ax-review-card">
                         <div className="ax-review-head">
                           <div className="ax-avatar">{(review.userName || 'U').charAt(0).toUpperCase()}</div>
@@ -1453,115 +1175,180 @@ function ProductDetailContent() {
                         {review.images.length > 0 && (
                           <div className="ax-review-imgs">
                             {review.images.map((url, j) => (
-                              <a key={j} href={url} target="_blank" rel="noopener noreferrer">
-                                <img src={url} alt="" loading="lazy" />
-                              </a>
+                              <a key={j} href={url} target="_blank" rel="noopener noreferrer"><img src={url} alt="" loading="lazy" /></a>
                             ))}
                           </div>
                         )}
                       </div>
-                    ))
-                  ) : (
-                    <p className="ax-desc-text" style={{ padding: '8px 0' }}>No reviews yet. Be the first to review this product!</p>
-                  )}
-                </div>
-              </div>
+                    ))}
+                  </>
+                )}
 
-            </div>
+                {tab === 'qa' && (
+                  <>
+                    <h2>Questions &amp; Answers</h2>
+                    <div className="pdx-qa">
+                      {QA.map(({ q, a }) => (
+                        <details key={q}>
+                          <summary><MessageCircleQuestion aria-hidden="true" /> {q}</summary>
+                          <p>{a}</p>
+                        </details>
+                      ))}
+                    </div>
+                    <Link to="/support" className="pdx-outline-btn">Ask a question</Link>
+                  </>
+                )}
+              </div>
+            </section>
           </div>
 
-          {/* ===== RELATED PRODUCTS (full width - 4 per row) ===== */}
-          {relatedProducts.length > 0 && (
-            <div className="ax-reveal ax-related-section">
-              <div className="ax-related-head">
-                <div>
-                  <div className="ax-related-subtitle">HANDPICKED RECOMMENDATIONS</div>
-                  <h3 className="ax-display ax-related-title">You may also like</h3>
+          {/* ════════ RIGHT: offers + bought together ════════ */}
+          <aside className="pdx-side">
+            <section className="pdx-card">
+              <h2 className="pdx-card-title"><span><Percent aria-hidden="true" /></span> Offers &amp; Deals</h2>
+              <ul className="pdx-offers">
+                <li>
+                  <Tag aria-hidden="true" />
+                  <div>
+                    <b>{PRODUCT_OFFERS[0].title}</b>
+                    <span>Use code: <button type="button" className="pdx-code" onClick={() => copyCode(PRODUCT_OFFERS[0].code)}>{copiedCode === PRODUCT_OFFERS[0].code ? 'Copied ✓' : PRODUCT_OFFERS[0].code}</button></span>
+                  </div>
+                  <button type="button" className={`pdx-offer-btn pdx-offer-btn--solid ${appliedProductOffer ? 'is-applied' : ''}`} onClick={applyProductOffer}>
+                    {appliedProductOffer ? 'Applied ✓' : 'Apply'}
+                  </button>
+                </li>
+                <li>
+                  <ArrowLeftRight aria-hidden="true" />
+                  <div>
+                    <b>{PRODUCT_OFFERS[1].title}</b>
+                    <span>Trade in any old phone</span>
+                  </div>
+                  <button type="button" className="pdx-offer-btn" onClick={() => navigate('/trade-in')}>Check Value</button>
+                </li>
+                <li>
+                  <CreditCard aria-hidden="true" />
+                  <div>
+                    <b>{PRODUCT_OFFERS[2].title}</b>
+                    <span>{PRODUCT_OFFERS[2].desc}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="pdx-offer-btn"
+                    onClick={() => { setEmiOpen(true); document.getElementById('pdx-emi')?.scrollIntoView({ behavior: 'smooth', block: 'center' }) }}
+                  >
+                    View Plans
+                  </button>
+                </li>
+              </ul>
+              <button type="button" className="pdx-bank-toggle" onClick={() => setBankOpen((o) => !o)} aria-expanded={bankOpen}>
+                {bankOpen ? 'Hide bank offers' : `+${BANK_OFFERS.length} bank offers`} <ChevronDown aria-hidden="true" className={bankOpen ? 'is-open' : ''} />
+              </button>
+              {bankOpen && (
+                <ul className="pdx-banks">
+                  {BANK_OFFERS.map((o) => {
+                    const applied = appliedOffer === o.code
+                    const saving = getBankSaving(o, subtotal)
+                    return (
+                      <li key={o.code}>
+                        <div>
+                          <b>{o.bank} · {o.offer}</b>
+                          <span>{o.desc}{saving > 0 ? ` · save ${fmt(saving)}` : ''}</span>
+                        </div>
+                        <button type="button" className={`pdx-offer-btn ${applied ? 'is-applied' : ''}`} onClick={() => applyBankOffer(o.code)}>
+                          {applied ? 'Applied ✓' : 'Apply'}
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </section>
+
+            {fbtItems.length > 0 && (
+              <section className="pdx-card">
+                <h2 className="pdx-card-title"><span><Layers aria-hidden="true" /></span> Frequently Bought Together</h2>
+                <div className="pdx-fbt">
+                  {[{ key: -1, img: images[0], name: productName }, ...fbtItems.map((rp: any) => ({ key: Number(rp.id), img: getProductImage(rp) || FALLBACK_IMG, name: relatedName(rp) }))].map((it, i) => (
+                    <div key={it.key} className="pdx-fbt-cell">
+                      {i > 0 && <Plus aria-hidden="true" className="pdx-fbt-plus" />}
+                      <label className={`pdx-fbt-item ${fbtChecked.has(it.key) ? 'is-on' : ''}`} title={it.name}>
+                        <input type="checkbox" checked={fbtChecked.has(it.key)} onChange={() => toggleFbt(it.key)} aria-label={`Include ${it.name}`} />
+                        <span className="pdx-fbt-check"><Check aria-hidden="true" /></span>
+                        <img src={it.img} alt="" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                      </label>
+                    </div>
+                  ))}
                 </div>
-                <Link to="/collection/all" className="ax-related-view-all">
-                  View Collection
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </Link>
+                <ul className="pdx-fbt-names">
+                  {[{ key: -1, name: productName, price: fbtSelf.price }, ...fbtItems.map((rp: any) => ({ key: Number(rp.id), name: relatedName(rp), price: relatedPrice(rp).current }))].map((it) => (
+                    <li key={it.key} className={fbtChecked.has(it.key) ? '' : 'is-off'}>
+                      <span>{it.key === -1 ? 'This item: ' : ''}{it.name}</span><b>{fmt(it.price)}</b>
+                    </li>
+                  ))}
+                </ul>
+                {fbtMrp > fbtTotal && <p className="pdx-fbt-save">Buy together &amp; save {fmt(fbtMrp - fbtTotal)}</p>}
+                <p className="pdx-fbt-total">
+                  Total: <b>{fmt(fbtTotal)}</b>
+                  {fbtMrp > fbtTotal && <s>{fmt(fbtMrp)}</s>}
+                </p>
+                <button type="button" className="pdx-combo-btn" onClick={addCombo} disabled={comboAdding || fbtCount === 0}>
+                  <ShoppingCart aria-hidden="true" /> {comboAdding ? 'Adding…' : fbtCount > 1 ? `Add ${fbtCount} Items to Cart` : 'Add Combo to Cart'}
+                </button>
+              </section>
+            )}
+          </aside>
+        </div>
+
+        {/* ===== RELATED PRODUCTS ===== */}
+        {relatedProducts.length > 0 && (
+          <div className="ax-reveal ax-related-section">
+            <div className="ax-related-head">
+              <div>
+                <div className="ax-related-subtitle">HANDPICKED RECOMMENDATIONS</div>
+                <h3 className="ax-display ax-related-title">You may also like</h3>
               </div>
-
-              <div className="ax-related-grid">
-                {relatedProducts.map((rp: any) => {
-                  const { current: rpPrice, old: rpOld } = relatedPrice(rp)
-                  const rpImg = getProductImage(rp) || FALLBACK_IMG
-                  const rpDisc = rpPrice > 0 && rpOld && rpOld > rpPrice ? Math.round(((rpOld - rpPrice) / rpOld) * 100) : 0
-                  const rpName = relatedName(rp) || 'Product'
-                  const rpBrand = rp.brand || 'PhoneFix'
-                  const rpRating = rp.rating || 4.8
-                  return (
-                    <div key={rp.id} className="ax-related-card">
-                      <div
-                        className="ax-related-media"
-                        onClick={() => navigate(`/product/${rp.id}`)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <img
-                          src={rpImg}
-                          alt={rpName}
-                          loading="lazy"
-                          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
-                        />
-                        {rpDisc > 0 && <span className="ax-related-disc-chip">{rpDisc}% OFF</span>}
-                        <div className="ax-related-hover-actions">
-                          <button
-                            className="ax-related-act-btn"
-                            aria-label="Add to wishlist"
-                            title="Add to wishlist"
-                            onClick={(e) => { e.stopPropagation(); toggleWishlist(rp.id) }}
-                          >
-                            <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
-                          </button>
-                          <button
-                            className="ax-related-act-btn"
-                            aria-label="Quick view"
-                            title="Quick view"
-                            onClick={(e) => { e.stopPropagation(); navigate(`/product/${rp.id}`) }}
-                          >
-                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /></svg>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="ax-related-info">
-                        <div className="ax-related-meta">
-                          <span className="ax-related-brand">{rpBrand}</span>
-                          <span className="ax-related-rating">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" /></svg>
-                            {Number(rpRating).toFixed(1)}
-                          </span>
-                        </div>
-                        <h4
-                          className="ax-related-name"
-                          onClick={() => navigate(`/product/${rp.id}`)}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          {rpName}
-                        </h4>
-                        <div className="ax-related-bottom">
-                          <button
-                            className="ax-related-add-btn"
-                            onClick={(e) => { e.stopPropagation(); handleRelatedAddToCart(e, rp) }}
-                            title="Add to Cart"
-                          >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
-                            <span>Add</span>
-                          </button>
-                        </div>
+              <Link to="/collection/all" className="ax-related-view-all">
+                View Collection
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </Link>
+            </div>
+            <div className="ax-related-grid">
+              {relatedProducts.map((rp: any) => {
+                const { current: rpPrice, old: rpOld } = relatedPrice(rp)
+                const rpImg = getProductImage(rp) || FALLBACK_IMG
+                const rpDisc = rpPrice > 0 && rpOld && rpOld > rpPrice ? Math.round(((rpOld - rpPrice) / rpOld) * 100) : 0
+                const rpName = relatedName(rp) || 'Product'
+                return (
+                  <div key={rp.id} className="ax-related-card">
+                    <div className="ax-related-media" onClick={() => navigate(`/product/${rp.id}`)} style={{ cursor: 'pointer' }}>
+                      <img src={rpImg} alt={rpName} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                      {rpDisc > 0 && <span className="ax-related-disc-chip">{rpDisc}% OFF</span>}
+                      <div className="ax-related-hover-actions">
+                        <button className="ax-related-act-btn" aria-label="Add to wishlist" title="Add to wishlist" onClick={(e) => { e.stopPropagation(); toggleWishlist(rp.id) }}>
+                          <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
+                        </button>
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                    <div className="ax-related-info">
+                      <div className="ax-related-meta">
+                        <span className="ax-related-brand">{rp.brand || 'PhoneFix'}</span>
+                        <span className="ax-related-price-inline">{fmt(rpPrice)}</span>
+                      </div>
+                      <h4 className="ax-related-name" onClick={() => navigate(`/product/${rp.id}`)} style={{ cursor: 'pointer' }}>{rpName}</h4>
+                      <div className="ax-related-bottom">
+                        <button className="ax-related-add-btn" onClick={(e) => { e.stopPropagation(); handleRelatedAddToCart(e, rp) }} title="Add to Cart">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
+                          <span>Add</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          )}
-
-        </main>
-
-      {/* ===== FOOTER ===== */}
+          </div>
+        )}
+      </main>
 
       {/* ===== STICKY BUY BAR ===== */}
       <div className={`ax-sticky-bar ${stickyVisible ? 'show' : ''}`}>
@@ -1569,8 +1356,8 @@ function ProductDetailContent() {
           {oldPriceVal > currentPrice && <span className="ax-sb-old ax-mono">{fmt(oldPriceVal)}</span>}
           <span className="ax-sb-price">{fmt(currentPrice)}</span>
         </div>
-        <button className="ax-btn-primary" onClick={handleAddToCart}>
-          {!inStock ? 'Out of Stock' : isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
+        <button className="ax-btn-primary" onClick={inStock ? handleAddToCart : () => setNotifyOpen(true)}>
+          {!inStock ? 'Notify Me' : isAdding ? 'Adding…' : isInCart ? 'Remove from Cart' : 'Add to Cart'}
         </button>
       </div>
 
@@ -1648,16 +1435,23 @@ export default function ProductDetail() {
 const AXPD_CSS = `
 .axpd{
   --white:#ffffff;
-  --off-white:#FBF8F6;
-  --ink:#1c1c1e;
-  --slate:#6b6b70;
-  --border:#ececea;
-  --red:#e2231a;
-  --red-deep:#a81510;
-  --red-tint:#fdeceb;
+  --off-white:#FFF7F3;
+  /* PhoneFix palette: Deep Purple · Warm Cream · Soft Lavender · Sunshine/Turbo Yellow.
+     (--red* names are kept so existing rules pick up the brand purple.) */
+  --purple:#210D35;
+  --purple-mid:#4A2470;
+  --lavender:#D0ADFF;
+  --sunshine:#FFD014;
+  --turbo:#F0E100;
+  --ink:#210D35;
+  --slate:#6e5d7e;
+  --border:#ece4ef;
+  --red:#210D35;
+  --red-deep:#4A2470;
+  --red-tint:rgba(208,173,255,.22);
   --green:#1e8a5f;
   --green-tint:#eaf7f1;
-  --gold:#f5a623;
+  --gold:#FFD014;
   --accent:var(--red);
   --black:#151515;
   --gray-900:#1C1C1E;
@@ -1665,9 +1459,9 @@ const AXPD_CSS = `
   --gray-400:#9A9AA0;
   --gray-200:#E7E7EA;
   --radius:14px;
-  --shadow-sm:0 1px 3px rgba(28,28,30,.06);
-  --shadow-md:0 10px 30px rgba(28,28,30,.08);
-  --shadow-lg:0 20px 50px rgba(28,28,30,.14);
+  --shadow-sm:0 1px 3px rgba(33,13,53,.06);
+  --shadow-md:0 10px 30px rgba(33,13,53,.08);
+  --shadow-lg:0 20px 50px rgba(33,13,53,.14);
   font-family:var(--font-ui);
   color:var(--ink);
   background:var(--off-white);
@@ -1676,7 +1470,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-mono{font-family:var(--font-display);}
 .axpd .ax-display{font-family:var(--font-display);}
-.axpd ::selection{background:var(--red); color:#fff;}
+.axpd ::selection{background:var(--lavender); color:var(--purple);}
 .axpd a{color:inherit; text-decoration:none;}
 .axpd img,.axpd svg{display:block; max-width:100%;}
 
@@ -1731,7 +1525,7 @@ const AXPD_CSS = `
 .axpd .ax-cat-chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
 .axpd .ax-cat-chip{
   display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
-  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(217,30,54,.18);
+  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(123, 63, 208,.18);
   padding:6px 12px; border-radius: 8px; text-transform:capitalize; transition:all .2s;
 }
 .axpd .ax-cat-chip svg{width:13px; height:13px;}
@@ -1740,38 +1534,38 @@ const AXPD_CSS = `
 /* deal strip */
 .axpd .ax-deal-strip{max-width:1500px; margin:16px auto 0; padding:0 20px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);}
 .axpd .ax-deal-inner{
-  background:linear-gradient(115deg, #17181c, #23242b 55%, #2b1a1d);
+  background:linear-gradient(115deg, #170826, var(--purple) 55%, var(--purple-mid));
   padding:16px 22px 14px;
   display:flex; align-items:center; justify-content:space-between;
   flex-wrap:wrap; gap:14px; color:#fff; position:relative; overflow:hidden;
 }
 .axpd .ax-deal-inner::before{
   content:''; position:absolute; top:-60px; right:-40px; width:240px; height:240px; border-radius: 8px;
-  background:radial-gradient(circle, rgba(217,30,54,.28), transparent 70%); pointer-events:none;
+  background:radial-gradient(circle, rgba(208,173,255,.28), transparent 70%); pointer-events:none;
 }
 .axpd .ax-deal-left{display:flex; align-items:center; gap:14px; position:relative;}
 .axpd .ax-deal-bolt{
   width:46px; height:46px; border-radius:12px; flex-shrink:0;
-  background:linear-gradient(135deg, #ff5b2e, var(--red));
-  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(217,30,54,.4);
+  background:linear-gradient(135deg, var(--turbo), var(--sunshine));
+  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(255,208,20,.4);
 }
-.axpd .ax-deal-bolt svg{width:24px; height:24px; color:#fff;}
+.axpd .ax-deal-bolt svg{width:24px; height:24px; color:var(--purple);}
 .axpd .ax-deal-copy{display:flex; flex-direction:column; gap:5px;}
 .axpd .ax-deal-badge{
   display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
-  font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#fff;
-  background-color: #e2231a; padding: 4px 10px; border-radius: 8px;
+  font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; 
+  background-color: var(--sunshine); color: var(--purple); padding: 4px 10px; border-radius: 8px;
 }
-.axpd .ax-pulse{width:8px; height:8px; border-radius: 8px; background:#ff5b2e; box-shadow:0 0 0 rgba(255,91,46,.6); animation:ax-pulse 1.8s infinite;}
+.axpd .ax-pulse{width:8px; height:8px; border-radius: 8px; background:var(--purple); box-shadow:0 0 0 rgba(255,208,20,.6); animation:ax-pulse 1.8s infinite;}
 @keyframes ax-pulse{
-  0%{box-shadow:0 0 0 0 rgba(255,91,46,.55);}
-  70%{box-shadow:0 0 0 9px rgba(255,91,46,0);}
-  100%{box-shadow:0 0 0 0 rgba(255,91,46,0);}
+  0%{box-shadow:0 0 0 0 rgba(255,208,20,.55);}
+  70%{box-shadow:0 0 0 9px rgba(255,208,20,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,208,20,0);}
 }
 .axpd .ax-deal-msg{font-size:15px; font-weight:600; letter-spacing:.01em; background-color: transparent;}
-.axpd .ax-deal-msg b{color:#ff5b4f; font-weight:800;}
+.axpd .ax-deal-msg b{color:var(--sunshine); font-weight:800;}
 .axpd .ax-deal-right{display:flex; align-items:center; gap:14px; position:relative;}
-.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#9b9da8; background-color: transparent;}
+.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--lavender); background-color: transparent;}
 .axpd .ax-countdown{display:flex; align-items:center; gap:6px;}
 .axpd .ax-cd-unit{
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:6px 9px;
@@ -1785,10 +1579,10 @@ const AXPD_CSS = `
   100%{transform:rotateX(0deg); opacity:1;}
 }
 .axpd .ax-cd-lbl{font-size:8.5px; letter-spacing:.1em; opacity:.7; text-transform:uppercase; margin-top:3px; display:block; background-color: transparent;}
-.axpd .ax-cd-colon{font-family:var(--font-display); font-size:18px; font-weight:700; color:#ff5b4f;}
+.axpd .ax-cd-colon{font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--sunshine);}
 .axpd .ax-deal-progress{height:4px; background:rgba(255,255,255,.08);}
 .axpd .ax-deal-progress span{
-  display:block; height:100%; background:linear-gradient(90deg, var(--red), #ff5b2e);
+  display:block; height:100%; background:linear-gradient(90deg, var(--sunshine), var(--turbo));
   transition:width .8s cubic-bezier(.4,0,.2,1); position:relative;
 }
 .axpd .ax-deal-progress span::after{
@@ -1816,7 +1610,7 @@ const AXPD_CSS = `
   transition:border-color .2s, transform .2s, box-shadow .2s;
 }
 .axpd .ax-thumb:hover{transform:translateY(-2px); border-color:var(--red);}
-.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(217,30,54,.12);}
+.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(123, 63, 208,.12);}
 .axpd .ax-thumb.active::before{
   content:''; position:absolute; left:-14px; top:8px; bottom:8px; width:3px;
   background:var(--red); border-radius:3px; animation:ax-rail-in .25s ease;
@@ -1825,7 +1619,7 @@ const AXPD_CSS = `
 .axpd .ax-thumb img{width:100%; height:100%; object-fit:contain;}
 
 .axpd .ax-stage{
-  background:linear-gradient(180deg,#fafafa,#fff 45%); border:1px solid var(--border); border-radius:var(--radius);
+  background:linear-gradient(180deg,#fbf7ff,#fff 45%); border:1px solid var(--border); border-radius:var(--radius);
   height:clamp(480px, 64vh, 680px); position:relative; overflow:hidden; box-shadow:var(--shadow-sm);
   cursor:zoom-in;
 }
@@ -1840,7 +1634,7 @@ const AXPD_CSS = `
   position:absolute; top:50%; transform:translateY(-50%);
   width:40px; height:40px; border-radius: 8px; border:1px solid var(--border);
   background:#fff; color:var(--ink); display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 14px rgba(28,28,30,.12); cursor:pointer; z-index:3;
+  box-shadow:0 4px 14px rgba(33,13,53,.12); cursor:pointer; z-index:3;
   transition:background .2s, color .2s, transform .2s;
 }
 .axpd .ax-arrow:hover{background:var(--red); border-color:var(--red); color:#fff; transform:translateY(-50%) scale(1.06);}
@@ -1856,7 +1650,7 @@ const AXPD_CSS = `
 .axpd .ax-stage-badges{position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:6px; z-index:2;}
 .axpd .ax-pill{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius: 8px; text-transform:uppercase; letter-spacing:.04em;}
 .axpd .ax-pill.ax-new{background:var(--ink); color:#fff;}
-.axpd .ax-pill.ax-off{background:var(--green-tint); color:#166534;}
+.axpd .ax-pill.ax-off{background:var(--sunshine); color:var(--purple);}
 .axpd .ax-stage-actions{position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:8px; z-index:2;}
 .axpd .ax-icon-btn{
   width:36px; height:36px; border-radius: 8px; background:#fff; border:1px solid var(--border);
@@ -1879,7 +1673,7 @@ const AXPD_CSS = `
 /* right content */
 .axpd .ax-content-right{display:flex; flex-direction:column; gap:26px;}
 .axpd .ax-brand-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-.axpd .ax-brand-tag{color:#a81510; font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
+.axpd .ax-brand-tag{color:var(--purple-mid); font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
 .axpd .ax-title{font-family:var(--font-display); font-weight:700; font-size:27px; line-height:1.3; margin-top:4px; letter-spacing:-.01em;}
 .axpd .ax-rating-row{display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap;}
 .axpd .ax-stars{display:flex; gap:2px;}
@@ -1894,7 +1688,7 @@ const AXPD_CSS = `
 .axpd .ax-price-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 .axpd .ax-deal-price{font-family:var(--font-display); font-weight:700; font-size:34px; color:var(--ink);}
 .axpd .ax-mrp{font-family:var(--font-display); font-size:16px; color:var(--slate); text-decoration:line-through;}
-.axpd .ax-discount{color:#166534; font-weight:700; font-size:15px;}
+.axpd .ax-discount{background:var(--sunshine); color:var(--purple); font-weight:800; font-size:13.5px; padding:3px 10px; border-radius:6px;}
 .axpd .ax-tax-note{font-size:12px; color:var(--slate); margin-top:6px;}
 .axpd .ax-emi-note{
   margin-top:14px; font-size:13px; display:inline-flex; align-items:center; gap:8px;
@@ -1933,7 +1727,7 @@ const AXPD_CSS = `
   padding:12px 14px; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
 }
 .axpd .ax-variant-card:hover{border-color:var(--red); transform:translateY(-1px); box-shadow:var(--shadow-sm);}
-.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(217,30,54,.08);}
+.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(123, 63, 208,.08);}
 .axpd .ax-vc-img{
   width:52px; height:52px; border-radius:10px; background:var(--white);
   border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;
@@ -1965,7 +1759,7 @@ const AXPD_CSS = `
   border:1px solid var(--border); border-radius:12px; background:var(--white); padding:12px 40px 12px 12px;
   cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
 }
-.axpd .ax-address-btn:hover{border-color:var(--red); box-shadow:0 6px 20px rgba(226,35,26,.08); transform:translateY(-1px);}
+.axpd .ax-address-btn:hover{border-color:var(--red); box-shadow:0 6px 20px rgba(74,36,112,.08); transform:translateY(-1px);}
 .axpd .ax-address-ic{
   width:40px; height:40px; border-radius:10px; background:var(--red-tint); color:var(--red);
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
@@ -2011,7 +1805,7 @@ const AXPD_CSS = `
 .axpd .ax-qty-selector button:hover{background:var(--off-white);}
 .axpd .ax-qty-val{width:40px; text-align:center; font-weight:700; font-family:var(--font-display);}
 .axpd .ax-btn-primary{
-  flex:1; min-width:180px; background:var(--red); color:#fff; font-weight:700; font-size:14.5px;
+  flex:1; min-width:180px; background:var(--purple); color:#FFF7F3; font-weight:700; font-size:14.5px;
   padding:14px 22px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px;
   transition:background .2s, transform .1s; position:relative; overflow:hidden; cursor:pointer;
 }
@@ -2019,10 +1813,11 @@ const AXPD_CSS = `
 .axpd .ax-btn-primary:active:not(:disabled){transform:scale(.98);}
 .axpd .ax-btn-primary:disabled{opacity:.5; cursor:not-allowed;}
 .axpd .ax-btn-secondary{
-  flex:1; min-width:180px; background:var(--ink); color:#fff; font-weight:700; font-size:14.5px;
+  flex:1; min-width:180px; background:var(--sunshine); color:var(--purple); font-weight:800; font-size:14.5px;
+  box-shadow:0 10px 22px -8px rgba(255,208,20,.7);
   padding:14px 22px; border-radius:10px; text-align:center; transition:background .2s, transform .1s; cursor:pointer;
 }
-.axpd .ax-btn-secondary:hover:not(:disabled){background:#000;}
+.axpd .ax-btn-secondary:hover:not(:disabled){background:var(--turbo);}
 .axpd .ax-btn-secondary:active:not(:disabled){transform:scale(.98);}
 .axpd .ax-btn-secondary:disabled{opacity:.5; cursor:not-allowed;}
 
@@ -2035,13 +1830,13 @@ const AXPD_CSS = `
 /* sections */
 .axpd .ax-sec-title{
   font-family:var(--font-display); font-size:19px; margin:36px 0 16px; padding:12px 18px;
-  background:linear-gradient(120deg, var(--red-tint), #fff 70%); border-left:4px solid var(--red);
+  background:linear-gradient(120deg, var(--red-tint), #fff 70%); border-left:4px solid var(--sunshine);
   border-radius:10px; color:var(--ink); display:flex; align-items:center; gap:10px;
   background-color: #fff; /* Explicit for contrast detection */
 }
 .axpd .ax-sec-title:first-child{margin-top:0;}
 .axpd .ax-sec-block{animation:ax-fade-in .35s ease;}
-.axpd .ax-desc-text{font-size:14px; line-height:1.8; color:#3a3a3d;}
+.axpd .ax-desc-text{font-size:14px; line-height:1.8; color:#4e3d5e;}
 .axpd .ax-desc-text + .ax-desc-text{margin-top:10px;}
 
 /* spec table */
@@ -2060,7 +1855,7 @@ const AXPD_CSS = `
 .axpd .ax-review-bars{flex:1; min-width:220px; display:flex; flex-direction:column; gap:7px;}
 .axpd .ax-review-bar-row{display:flex; align-items:center; gap:10px; font-size:12px; color:var(--slate);}
 .axpd .ax-bar-track{flex:1; height:7px; background:var(--border); border-radius: 8px; overflow:hidden;}
-.axpd .ax-bar-fill{height:100%; width:0%; background:var(--gold); border-radius: 8px;}
+.axpd .ax-bar-fill{height:100%; width:0%; background:#f5a623; border-radius: 8px;}
 .axpd .ax-review-card{border-top:1px solid var(--border); padding:18px 0; display:flex; flex-direction:column; gap:6px;}
 .axpd .ax-review-head{display:flex; align-items:center; gap:10px;}
 .axpd .ax-avatar{
@@ -2069,7 +1864,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-rev-name{font-weight:700; font-size:13.5px;}
 .axpd .ax-rev-date{font-size:11.5px; color:var(--slate);}
-.axpd .ax-review-text{font-size:13.5px; color:#3a3a3d; line-height:1.65;}
+.axpd .ax-review-text{font-size:13.5px; color:#4e3d5e; line-height:1.65;}
 .axpd .ax-review-imgs{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;}
 .axpd .ax-review-imgs img{width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid var(--border);}
 .axpd .ax-review-form-wrap{border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin:14px 0; background:var(--white);}
@@ -2090,8 +1885,8 @@ const AXPD_CSS = `
 .axpd .ax-rp-card:hover .ax-rp-media img{transform:scale(1.06);}
 .axpd .ax-rp-tag{
   position:absolute; top:12px; left:12px; z-index:2;
-  background:var(--red); color:#fff;
-  font-size:10px; font-weight:700; letter-spacing:.03em;
+  background:var(--sunshine); color:var(--purple);
+  font-size:10px; font-weight:800; letter-spacing:.03em;
   padding:5px 10px; border-radius: 8px; text-transform:uppercase;
 }
 .axpd .ax-rp-actions{
@@ -2112,7 +1907,7 @@ const AXPD_CSS = `
 .axpd .ax-rp-btn.liked svg{fill:currentColor;}
 .axpd .ax-rp-chip{
   position:absolute; left:12px; bottom:12px; z-index:2;
-  background:var(--ink); color:#fff;
+  background:var(--purple); color:#FFF7F3;
   font-size:12px; font-weight:700; padding:7px 14px; border-radius: 8px;
 }
 .axpd .ax-rp-info h4{
@@ -2143,7 +1938,7 @@ const AXPD_CSS = `
 .axpd .ax-bank-offer.applied{border-color:var(--green); background:var(--green-tint); box-shadow:0 0 0 1px var(--green) inset;}
 .axpd .ax-bo-head{display:flex; justify-content:space-between; align-items:center; gap:8px;}
 .axpd .ax-bo-bank{font-weight:800; font-size:12.5px; display:flex; align-items:center; gap:6px;}
-.axpd .ax-bo-bank::before{content:''; width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg, var(--red), #ff5b4f); flex-shrink:0;}
+.axpd .ax-bo-bank::before{content:''; width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg, var(--purple), var(--lavender)); flex-shrink:0;}
 .axpd .ax-bo-code{font-family:var(--font-display); font-size:10.5px; font-weight:700; color:var(--red); border:1px dashed var(--red); border-radius:6px; padding:2px 8px; cursor:pointer; letter-spacing:.04em; transition:all .2s; background:var(--white);}
 .axpd .ax-bo-code:hover{background:var(--red); color:#fff;}
 .axpd .ax-bo-offer{font-size:13px; font-weight:700; margin-top:7px;}
@@ -2152,14 +1947,14 @@ const AXPD_CSS = `
 .axpd .ax-bo-actions{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:9px;}
 .axpd .ax-bo-save{font-size:11px; font-weight:700; color:#166534; background:#e8f7ee; border-radius:6px; padding:3px 8px; white-space:nowrap;}
 .axpd .ax-bo-apply{border:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:700; border-radius:6px; padding:5px 14px; cursor:pointer; transition:all .2s; font-family:inherit;}
-.axpd .ax-bo-apply:hover{background:#000;}
+.axpd .ax-bo-apply:hover{background:var(--purple-mid);}
 .axpd .ax-bo-apply.applied{background:var(--green);}
 .axpd .ax-cart-offer{padding:9px 12px; border:1px solid var(--border); border-radius:10px;}
 .axpd .ax-co-row{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; font-weight:700; margin-bottom:8px;}
 .axpd .ax-co-row b{font-family:var(--font-display); font-size:11px; color:var(--slate);}
 .axpd .ax-co-row b.ok{color:var(--green);}
 .axpd .ax-progress{height:6px; background:var(--border); border-radius: 8px; overflow:hidden;}
-.axpd .ax-progress span{display:block; height:100%; background:linear-gradient(90deg, var(--red), #ff5b4f); border-radius: 8px; transition:width .5s ease;}
+.axpd .ax-progress span{display:block; height:100%; background:linear-gradient(90deg, var(--purple), var(--lavender)); border-radius: 8px; transition:width .5s ease;}
 .axpd .ax-co-note{font-size:11px; color:var(--slate); background:var(--off-white); border-radius:8px; padding:8px 10px; display:flex; gap:6px; align-items:flex-start; line-height:1.5;}
 .axpd .ax-co-note svg{width:13px; height:13px; color:var(--red); flex-shrink:0; margin-top:1px;}
 
@@ -2174,9 +1969,9 @@ const AXPD_CSS = `
 }
 .axpd .ax-trust-ic svg{width:17px; height:17px;}
 .axpd .ax-ti-green{background:#e8f7ee; color:#16a34a;}
-.axpd .ax-ti-blue{background:#e8f1fb; color:#2563eb;}
-.axpd .ax-ti-purple{background:#f3e8fb; color:#7c3aed;}
-.axpd .ax-ti-orange{background:#fdf0e6; color:#ea580c;}
+.axpd .ax-ti-blue{background:var(--red-tint); color:var(--purple);}
+.axpd .ax-ti-purple{background:var(--purple); color:var(--sunshine);}
+.axpd .ax-ti-orange{background:rgba(255,208,20,.22); color:var(--purple);}
 .axpd .ax-trust-txt{min-width:0;}
 .axpd .ax-trust-txt b{display:block; font-size:12px; font-weight:700; color:var(--ink); line-height:1.3;}
 .axpd .ax-trust-txt span{display:block; font-size:10.5px; color:var(--slate); line-height:1.35; margin-top:1px;}
@@ -2200,7 +1995,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-help-btn svg{width:15px; height:15px; flex-shrink:0;}
 .axpd .ax-help-call{background:var(--ink); color:#fff; border:1px solid var(--ink);}
-.axpd .ax-help-call:hover{background:#000;}
+.axpd .ax-help-call:hover{background:var(--purple-mid);}
 .axpd .ax-help-wa{background:#fff; color:#166534; border:1px solid #b9e6c8;}
 .axpd .ax-help-wa:hover{background:#e8f7ee;}
 
@@ -2335,14 +2130,14 @@ const AXPD_CSS = `
 }
 .axpd .ax-related-subtitle {
   font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-  color: #a81510; text-transform: uppercase; margin-bottom: 4px;
+  color: var(--purple-mid); text-transform: uppercase; margin-bottom: 4px;
 }
 .axpd .ax-related-title {
   font-family:var(--font-display); font-size: 26px; font-weight: 700; color: var(--ink);
 }
 .axpd .ax-related-view-all {
   display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700;
-  color: #a81510; transition: gap 0.2s ease; text-decoration: none;
+  color: var(--red-deep); transition: gap 0.2s ease; text-decoration: none;
 }
 .axpd .ax-related-view-all:hover { gap: 10px; }
 .axpd .ax-related-view-all svg { width: 15px; height: 15px; }
@@ -2363,7 +2158,7 @@ const AXPD_CSS = `
 .axpd .ax-related-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 16px 36px rgba(0,0,0,0.08);
-  border-color: rgba(226,35,26,0.3);
+  border-color: rgba(74,36,112,0.3);
 }
 
 /* Framed media with full auto-fit image without crop */
@@ -2393,7 +2188,7 @@ const AXPD_CSS = `
 
 .axpd .ax-related-disc-chip {
   position: absolute; top: 10px; left: 10px;
-  background: var(--red); color: #fff;
+  background: var(--sunshine); color: var(--purple);
   font-size: 10px; font-weight: 800; padding: 4px 8px;
   border-radius: 6px; letter-spacing: 0.04em; z-index: 2;
 }
@@ -2437,12 +2232,12 @@ const AXPD_CSS = `
 
 .axpd .ax-related-add-btn {
   display: inline-flex; align-items: center; gap: 5px;
-  background: var(--red-tint); color: var(--red-deep); border: 1px solid rgba(226,35,26,0.2);
+  background: var(--red-tint); color: var(--red-deep); border: 1px solid rgba(74,36,112,0.2);
   padding: 6px 14px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
   cursor: pointer; transition: all 0.2s ease;
 }
 .axpd .ax-related-add-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
-.axpd .ax-related-add-btn:hover { background: var(--red); color: #ffffff; border-color: var(--red); }
+.axpd .ax-related-add-btn:hover { background: var(--sunshine); color: var(--purple); border-color: var(--sunshine); }
 
 @media (max-width: 1024px) {
   .axpd .ax-related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }

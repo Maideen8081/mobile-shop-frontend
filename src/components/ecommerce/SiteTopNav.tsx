@@ -1,738 +1,623 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { categoryService } from '../../services/categoryService'
-import { authService } from '../../services/authService'
-import { getWishlistCount } from '../../utils/wishlist'
-import { cartService } from '../../services/cartService'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import {
+  X,
+  ArrowLeftRight,
+  BadgeCheck,
+  ChevronDown,
+  Clock,
+  Flame,
+  Heart,
+  LogIn,
+  LogOut,
+  Menu,
+  Phone,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+  ShoppingCart,
+  Truck,
+  User,
+  Wrench,
+} from 'lucide-react'
+import {
+  ACCOUNT_LINKS,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_TEL,
+  DEFAULT_HEADER_CATEGORIES,
+  GUEST_LINKS,
+  HELP_LINKS,
+  NAV_CATEGORIES,
+  SERVICE_LINKS,
+  SHOP_BY_CATEGORY_ICON,
+  SHOP_LINKS,
+  STORE_HOURS,
+  categoryHref,
+  collectionCategoryFromPath,
+  iconForCategory,
+  resolveCategoryName,
+  type HeaderCategory,
+} from './navConfig'
+import { useHeaderCategories, useNavState } from './useNavState'
+import NavDrawer from './NavDrawer'
 import './SiteTopNav.css'
 
-let cachedHeaderCategories: any[] | null = null
-
-const CATEGORY_ICONS: Record<string, React.ReactElement> = {
-  Smartphones: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="5" y="2" width="14" height="20" rx="2" />
-      <path d="M12 18h.01" />
-    </svg>
-  ),
-  Tablets: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="4" y="2" width="16" height="20" rx="2" />
-      <path d="M12 18h.01" />
-    </svg>
-  ),
-  'Smart Watches': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="6" y="6" width="12" height="12" rx="3" />
-      <path d="M9 2h6M9 22h6" />
-    </svg>
-  ),
-  'Earbuds (TWS)': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-      <path d="M3 18a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3zM21 18a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z" />
-    </svg>
-  ),
-  Headphones: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
-      <path d="M3 18a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3zM21 18a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z" />
-    </svg>
-  ),
-  'Power Banks': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="2" y="7" width="18" height="11" rx="2" />
-      <path d="M22 11v3M7 11v2M12 11v2" />
-    </svg>
-  ),
-  Chargers: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-  ),
-  'Charging Cables': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 5v14M5 12h14" />
-    </svg>
-  ),
-  'Mobile Cases & Covers': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="6" y="2" width="12" height="20" rx="3" />
-    </svg>
-  ),
-  'Screen Protectors': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-    </svg>
-  ),
-}
-
-const DefaultIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="7" rx="1.5" />
-    <rect x="14" y="3" width="7" height="7" rx="1.5" />
-    <rect x="3" y="14" width="7" height="7" rx="1.5" />
-    <rect x="14" y="14" width="7" height="7" rx="1.5" />
-  </svg>
-)
+type OpenMenu = 'shop' | 'account' | null
 
 export default function SiteTopNav({ transparent = false }: { transparent?: boolean }) {
   const navigate = useNavigate()
-  const [q, setQ] = useState('')
-  const [acctOpen, setAcctOpen] = useState(false)
-  const [megaOpen, setMegaOpen] = useState(false)
-  // Read the real scroll position on mount. Starting from `false` made a page
-  // opened while scrolled (e.g. Cart from the landing page) mount expanded and
-  // then collapse, which read as a flicker.
-  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 40)
-  const [wishlistCount, setWishlistCount] = useState(0)
-  const [cartCount, setCartCount] = useState(0)
-  const [user, setUser] = useState<{ name: string; email: string }>({ name: '', email: '' })
-  const [categories, setCategories] = useState<any[]>(() => cachedHeaderCategories || [])
+  const { pathname, search } = useLocation()
+  const categories = useHeaderCategories()
+  const { wishlistCount, cartCount, user, isAuth, displayName, initials, logout } = useNavState()
+
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  // On the search page the box shows the current search; elsewhere it starts empty.
+  const urlQuery = pathname === '/search' ? new URLSearchParams(search).get('q') || '' : ''
+  const [q, setQ] = useState(urlQuery)
+  const [syncedQuery, setSyncedQuery] = useState(urlQuery)
+  if (syncedQuery !== urlQuery) {
+    setSyncedQuery(urlQuery)
+    setQ(urlQuery)
+  }
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 8)
+  const [navH, setNavH] = useState(0)
 
   const rootRef = useRef<HTMLDivElement>(null)
-  const acctRef = useRef<HTMLDivElement>(null)
-  const megaRef = useRef<HTMLDivElement>(null)
-  const [navH, setNavH] = useState(0)
-  const utilBarH = useRef(0)
+  const stripRef = useRef<HTMLDivElement>(null)
 
-  /* ── auth ── */
+  /* ── Keep the fixed header visually separate once the page scrolls ── */
   useEffect(() => {
-    const load = () => {
-      try {
-        const stored = localStorage.getItem('user_profile')
-        if (stored) setUser(JSON.parse(stored))
-      } catch {
-        /* ignore */
-      }
-    }
-    load()
-    window.addEventListener('auth-changed', load)
-    return () => window.removeEventListener('auth-changed', load)
-  }, [])
-
-  /* ── wishlist ── */
-  useEffect(() => {
-    const update = () => setWishlistCount(getWishlistCount())
-    update()
-    window.addEventListener('wishlist-updated', update)
-    window.addEventListener('auth-changed', update)
-    return () => {
-      window.removeEventListener('wishlist-updated', update)
-      window.removeEventListener('auth-changed', update)
-    }
-  }, [])
-
-  /* ── cart ── */
-  useEffect(() => {
-    const update = () => setCartCount(cartService.getCachedCartCount())
-    update()
-    cartService
-      .getCartCount()
-      .then((count) => setCartCount(count))
-      .catch(() => {})
-    window.addEventListener('cart-updated', update)
-    return () => window.removeEventListener('cart-updated', update)
-  }, [])
-
-  /* ── categories ── */
-  useEffect(() => {
-    if (cachedHeaderCategories) {
-      setCategories(cachedHeaderCategories)
-      return
-    }
-    categoryService
-      .list()
-      .then((cats) => {
-        const mapped = cats
-          .filter((c: any) => c.status === 'active')
-          .map((c: any) => ({ id: c.id, name: c.name }))
-        cachedHeaderCategories = mapped
-        setCategories(mapped)
-      })
-      .catch(() => {})
-  }, [])
-
-  /* ── measure nav height for spacer ──
-     useLayoutEffect so the spacer is sized before the first paint, and a
-     ResizeObserver so it follows the utility bar appearing or collapsing. */
-  useLayoutEffect(() => {
-    const el = rootRef.current
-    if (!el) return
-    // The spacer keeps the *expanded* height even after the utility bar
-    // collapses on scroll. Shrinking it shortened the page by the bar's height,
-    // which on short pages (e.g. an empty wishlist) pulled scrollY back under
-    // the threshold, re-expanded the bar and made the header flicker.
-    const measure = () => {
-      const util = el.querySelector<HTMLElement>('.pfn-util-bar')
-      if (util) utilBarH.current = util.offsetHeight
-      setNavH(el.offsetHeight + (util ? 0 : utilBarH.current))
-    }
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
-    ro?.observe(el)
-    window.addEventListener('resize', measure)
-    return () => {
-      ro?.disconnect()
-      window.removeEventListener('resize', measure)
-    }
-  }, [])
-
-  /* ── scroll compact ── */
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  /* ── close dropdowns on outside click ── */
+  /* ── Measure the fixed header so page content sits below it ── */
+  useLayoutEffect(() => {
+    const el = rootRef.current
+    if (!el) return
+    /* Always measure the header as if the announcement strip were open, so
+       the spacer (and the Home hero) don't jump while it collapses on scroll. */
+    const measure = () => {
+      const strip = stripRef.current
+      const full = el.offsetHeight - (strip?.offsetHeight ?? 0) + (strip?.scrollHeight ?? 0)
+      setNavH(full)
+      /* Exposed so full-screen sections (the Home hero) can fill what's left. */
+      document.documentElement.style.setProperty('--pfn-h', `${full}px`)
+    }
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null
+    observer?.observe(el)
+    window.addEventListener('resize', measure)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [])
+
+  /* ── Close open menus on route change / outside click / Escape ── */
   useEffect(() => {
-    if (!acctOpen && !megaOpen) return
-    const close = (e: MouseEvent) => {
-      if (acctRef.current && !acctRef.current.contains(e.target as Node)) setAcctOpen(false)
-      if (megaRef.current && !megaRef.current.contains(e.target as Node)) setMegaOpen(false)
-    }
-    document.addEventListener('mousedown', close)
-    return () => document.removeEventListener('mousedown', close)
-  }, [acctOpen, megaOpen])
+    setOpenMenu(null)
+    setDrawerOpen(false)
+  }, [pathname])
 
-  const isAuth = authService.isAuthenticated()
-  const initials = user.name
-    ? user.name
-        .trim()
-        .split(/\s+/)
-        .map((p) => p[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
-    : '?'
-  /* Profile names are stored uppercase ("THUVAN MAIDEEN A"). Render them in
-     title case so the nav doesn't show a long all-caps run. */
-  const displayName = user.name
-    ? user.name.trim().toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
-    : ''
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (q.trim()) {
-      navigate(`/search?q=${encodeURIComponent(q.trim())}`)
-    } else {
-      navigate('/search')
+  useEffect(() => {
+    if (!openMenu) return
+    const onPointerDown = (event: MouseEvent) => {
+      const target = event.target as Element | null
+      if (!target?.closest('.pfn-drop-wrap')) setOpenMenu(null)
     }
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [openMenu])
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenMenu(null)
+        setDrawerOpen(false)
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  const allCategories: HeaderCategory[] = useMemo(
+    () => (categories.length > 0 ? categories : DEFAULT_HEADER_CATEGORIES),
+    [categories],
+  )
+
+  const primaryCategories = useMemo(
+    () =>
+      NAV_CATEGORIES.map((category) => ({
+        ...category,
+        to: categoryHref(resolveCategoryName(category.label, categories)),
+      })),
+    [categories],
+  )
+
+  const activeCollection = collectionCategoryFromPath(pathname)
+  const isCategoryActive = (to: string) =>
+    activeCollection !== '' &&
+    collectionCategoryFromPath(to).toLowerCase() === activeCollection.toLowerCase()
+
+  const shopActive =
+    pathname.startsWith('/collection') &&
+    !primaryCategories.some((category) => isCategoryActive(category.to))
+  const serviceActive = ['/book-repair', '/repairs', '/trade-in', '/my-repairs'].some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  )
+
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault()
+    const term = q.trim()
+    if (term) navigate(`/search?q=${encodeURIComponent(term)}`)
+    else navigate('/search')
+  }
+
+  const clearSearch = () => {
+    setQ('')
+    if (pathname === '/search') navigate('/search')
   }
 
   const handleLogout = async () => {
-    await authService.logout()
-    setAcctOpen(false)
+    setOpenMenu(null)
+    setDrawerOpen(false)
+    await logout()
     navigate('/home')
   }
 
-  const catChunks: any[][] = []
-  for (let i = 0; i < categories.length; i += 4) catChunks.push(categories.slice(i, i + 4))
+  const badgeText = (count: number) => (count > 99 ? '99+' : String(count))
+
+  const accountMenuItems = isAuth ? ACCOUNT_LINKS : GUEST_LINKS
+  const firstName = displayName.split(' ')[0]
 
   return (
     <>
       <div
-        className={`pfn-root${scrolled ? ' pfn-scrolled' : ''}${transparent ? ' pfn-transparent' : ''}`}
+        className={`pfn-root${scrolled ? ' pfn-scrolled' : ''}`}
         ref={rootRef}
+        data-transparent={transparent ? 'true' : undefined}
       >
-        {/* ══ ROW 1: UTILITY BAR ══ */}
-        {!scrolled && (
-          <div className="pfn-util-bar">
-            <div className="pfn-util-inner">
-              <div className="pfn-util-left">
-                <a href="tel:+919876543210">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.7 2z" />
-                  </svg>
-                  +91 98765 43210
-                </a>
-                <div className="pfn-util-sep" />
-                <a href="mailto:support@phonefixpro.com">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                  support@phonefixpro.com
-                </a>
-                <div className="pfn-util-sep" />
-                <span>Free delivery on orders over ₹500</span>
-              </div>
-              <div className="pfn-util-right">
-                <span className="pfn-util-badge sale">Sale</span>
-                <span className="pfn-util-badge new">New Arrivals</span>
-                <div className="pfn-util-sep" />
-                <Link to="/book-repair" className="btn btn-quiet btn-xs">Book Repair</Link>
-                <Link to="/track-repair" className="btn btn-quiet btn-xs">Track Device</Link>
-                {!isAuth && (
-                  <>
-                    <div className="pfn-util-sep" />
-                    <Link to="/login" className="btn btn-quiet btn-xs">Sign In</Link>
-                    <Link to="/register" className="btn btn-primary btn-xs">Register</Link>
-                  </>
-                )}
-              </div>
+        {/* ═══════════════ Desktop / tablet ═══════════════ */}
+        <div className="pfn-desktop">
+          {/* Announcement strip */}
+          <div className="pfn-strip" ref={stripRef} aria-hidden={scrolled || undefined}>
+            <div className="pfn-inner pfn-strip-inner">
+              <span className="pfn-strip-item">
+                <Truck size={17} aria-hidden="true" />
+                <b>Free Delivery</b>&nbsp;<span>on Orders Over ₹500</span>
+              </span>
+              <span className="pfn-strip-item">
+                <BadgeCheck size={17} aria-hidden="true" />
+                <b>100% Genuine Products</b>
+              </span>
+              <span className="pfn-strip-item">
+                <RotateCcw size={17} aria-hidden="true" />
+                <b>Easy 7-Day Returns</b>
+              </span>
+              <span className="pfn-strip-item">
+                <ShieldCheck size={17} aria-hidden="true" />
+                <b>1-Year Service Support</b>
+              </span>
+              <Link to="/collection/all?tab=deals" className="pfn-strip-deal">
+                <Flame size={15} aria-hidden="true" />
+                Deals of the Day
+              </Link>
             </div>
           </div>
-        )}
 
-        {/* ══ ROW 2: MAIN BAR (white) ══ */}
-        <div className="pfn-main-bar">
-          <div className="pfn-main-inner">
-            {/* Logo */}
-            <Link to="/home" className="pfn-logo">
-              <div className="pfn-logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z" />
-                </svg>
-              </div>
-              <div className="pfn-logo-text">
-                <span className="pfn-logo-name">
-                  PhoneFix<span>.</span>
+          <div className="pfn-inner">
+            <div className="pfn-main">
+              <Link to="/home" className="pfn-logo" aria-label="PhoneFix home">
+                <span className="pfn-logo-icon">
+                  <Wrench size={22} />
                 </span>
-                <span className="pfn-logo-sub">Premium Mobile Store</span>
-              </div>
-            </Link>
+                <span className="pfn-logo-text">
+                  <span className="pfn-logo-name">
+                    PhoneFix<span>.</span>
+                  </span>
+                  <span className="pfn-logo-sub">Premium Mobile Store</span>
+                </span>
+              </Link>
 
-            {/* Search */}
-            <div className="pfn-search-wrap">
-              <form className="pfn-search-form" onSubmit={handleSearch}>
-                <svg
-                  className="pfn-search-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.3-4.3" />
-                </svg>
+              <form className="pfn-search" onSubmit={handleSearch} role="search">
+                <Search className="pfn-search-icon" size={19} aria-hidden="true" />
                 <input
                   type="text"
                   value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  onFocus={() => {
-                    if (window.location.pathname !== '/search') navigate('/search')
-                  }}
-                  placeholder="Search phones, earbuds, accessories…"
+                  onChange={(event) => setQ(event.target.value)}
+                  placeholder="Search for smartphones, accessories, repairs..."
                   aria-label="Search products"
+                  autoComplete="off"
                 />
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-xs pfn-search-btn"
-                  onClick={() => navigate('/search')}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.3-4.3" />
-                  </svg>
-                  <span className="pfn-btn-label">Search</span>
+                {q && (
+                  <button type="button" className="pfn-search-clear" onClick={clearSearch} aria-label="Clear search">
+                    <X size={17} />
+                  </button>
+                )}
+                <button type="submit" className="pfn-search-btn">
+                  Search
                 </button>
               </form>
-            </div>
 
-            {/* Quick nav links near search */}
-            <div className="pfn-quick-nav">
-              <Link to="/home" className="btn btn-quiet btn-xs pfn-quick-link" title="Home">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2h-4.5v-6h-5v6H5a2 2 0 0 1-2-2V9.5z" />
-                </svg>
-                <span>Home</span>
-              </Link>
-              <Link
-                to="/collection/all"
-                className="btn btn-quiet btn-xs pfn-quick-link"
-                title="Products"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                </svg>
-                <span>Products</span>
-              </Link>
-              <Link to="/orders" className="btn btn-quiet btn-xs pfn-quick-link" title="My Orders">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <path d="M16 10a4 4 0 0 1-8 0" />
-                </svg>
-                <span>My Orders</span>
-              </Link>
-              <Link
-                to="/my-repairs"
-                className="btn btn-quiet btn-xs pfn-quick-link"
-                title="My Repairs"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z" />
-                </svg>
-                <span>My Repairs</span>
-              </Link>
-            </div>
+              <div className="pfn-contact">
+                <a href={`tel:${CONTACT_PHONE_TEL}`} className="pfn-contact-phone">
+                  <Phone size={14} aria-hidden="true" />
+                  {CONTACT_PHONE_DISPLAY}
+                </a>
+                <span className="pfn-contact-hours">
+                  <Clock size={14} aria-hidden="true" />
+                  {STORE_HOURS}
+                </span>
+              </div>
 
-            {/* Icon cluster */}
-            <div className="pfn-icon-cluster">
-              {/* Wishlist */}
-              <Link to="/wishlist" className="btn btn-icon pfn-icon-btn" aria-label="Wishlist">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-                </svg>
-                {wishlistCount > 0 && (
-                  <span className="pfn-badge">{wishlistCount > 99 ? '99+' : wishlistCount}</span>
-                )}
-              </Link>
-
-              {/* Cart */}
-              <Link to="/cart" className="btn btn-primary btn-xs pfn-cart-btn" aria-label="Cart">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="9" cy="21" r="1" />
-                  <circle cx="20" cy="21" r="1" />
-                  <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-                </svg>
-                <span className="pfn-cart-label">Cart</span>
-                {cartCount > 0 && (
-                  <span className="pfn-cart-count">{cartCount > 99 ? '99+' : cartCount}</span>
-                )}
-              </Link>
-
-              {/* Account */}
-              {isAuth ? (
-                <div className="pfn-acc-wrap" ref={acctRef}>
-                  <button
-                    className={`btn btn-quiet btn-xs pfn-acc-btn${acctOpen ? ' open' : ''}`}
-                    onClick={() => setAcctOpen((v) => !v)}
-                    aria-label="Account menu"
-                  >
-                    <div className="pfn-acc-avatar">{initials}</div>
-                    <div className="pfn-acc-info">
-                      <span className="pfn-acc-label">Account</span>
-                      <span className="pfn-acc-name" title={displayName || 'My Account'}>{displayName || 'My Account'}</span>
-                    </div>
-                    <svg
-                      className="pfn-acc-chevron"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
+              <div className="pfn-actions">
+                <div className="pfn-drop-wrap pfn-account-wrap">
+                  {isAuth ? (
+                    <button
+                      type="button"
+                      className={`pfn-account-btn${openMenu === 'account' ? ' is-open' : ''}`}
+                      onClick={() => setOpenMenu((current) => (current === 'account' ? null : 'account'))}
+                      aria-label={`Account menu for ${displayName || 'your account'}`}
+                      aria-haspopup="menu"
+                      aria-expanded={openMenu === 'account'}
+                      title={displayName || 'My Account'}
                     >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
+                      <span className="pfn-avatar">
+                        <User size={16} />
+                      </span>
+                      <span className="pfn-account-label">{firstName || 'My Account'}</span>
+                      <ChevronDown className="pfn-caret" size={14} aria-hidden="true" />
+                    </button>
+                  ) : (
+                    <Link to="/login" className="pfn-account-btn pfn-login-btn" onClick={() => setOpenMenu(null)}>
+                      <LogIn size={17} aria-hidden="true" />
+                      <span className="pfn-account-label">Login</span>
+                    </Link>
+                  )}
 
-                  {acctOpen && (
-                    <div className="pfn-acc-drop">
-                      <div className="pfn-drop-header">
-                        <div className="pfn-drop-avatar">{initials}</div>
-                        <div className="pfn-drop-id">
-                          <b>{displayName || 'User'}</b>
-                          <span>{user.email || ''}</span>
-                        </div>
+                  {isAuth && openMenu === 'account' && (
+                    <div className="pfn-drop pfn-account-drop" role="menu">
+                      <div className="pfn-drop-head">
+                        <span className="pfn-avatar pfn-avatar-lg">
+                          {isAuth ? initials || '?' : <User size={20} />}
+                        </span>
+                        <span className="pfn-drop-id">
+                          <b>{isAuth ? displayName || 'My Account' : 'Welcome to PhoneFix'}</b>
+                          <span>
+                            {isAuth
+                              ? user.email || 'Signed in'
+                              : 'Sign in for orders, repairs and saved devices.'}
+                          </span>
+                        </span>
                       </div>
-                      {[
-                        {
-                          to: '/profile',
-                          icon: (
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <circle cx="12" cy="8" r="4" />
-                              <path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" />
-                            </svg>
-                          ),
-                          label: 'My Profile',
-                        },
-                        {
-                          to: '/orders',
-                          icon: (
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M3 4h18l-2 13H5L3 4z" />
-                              <path d="M8 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM16 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-                            </svg>
-                          ),
-                          label: 'My Orders',
-                        },
-                        {
-                          to: '/my-repairs',
-                          icon: (
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z" />
-                            </svg>
-                          ),
-                          label: 'My Repairs',
-                        },
-                        {
-                          to: '/profile/addresses',
-                          icon: (
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M12 21s-7-5.3-7-11a7 7 0 1 1 14 0c0 5.7-7 11-7 11z" />
-                              <circle cx="12" cy="10" r="2.5" />
-                            </svg>
-                          ),
-                          label: 'My Addresses',
-                        },
-                        {
-                          to: '/wishlist',
-                          icon: (
-                            <svg
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-                            </svg>
-                          ),
-                          label: 'Wishlist',
-                        },
-                      ].map(({ to, icon, label }) => (
+
+                      {accountMenuItems.map(({ to, label, icon: Icon }) => (
                         <Link
                           key={to}
                           to={to}
-                          className="pfn-menu-row pfn-drop-item"
-                          onClick={() => setAcctOpen(false)}
+                          className="pfn-drop-row"
+                          role="menuitem"
+                          onClick={() => setOpenMenu(null)}
                         >
-                          {icon}
-                          {label}
+                          <Icon size={16} />
+                          <span>{label}</span>
                         </Link>
                       ))}
+
                       <div className="pfn-drop-sep" />
-                      <button
-                        className="pfn-menu-row pfn-drop-item pfn-drop-logout"
-                        onClick={handleLogout}
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                          <path d="M16 17l5-5-5-5" />
-                          <path d="M21 12H9" />
-                        </svg>
-                        Logout
-                      </button>
+                      {HELP_LINKS.map(({ to, label, icon: Icon }) => (
+                        <Link
+                          key={to}
+                          to={to}
+                          className="pfn-drop-row"
+                          role="menuitem"
+                          onClick={() => setOpenMenu(null)}
+                        >
+                          <Icon size={16} />
+                          <span>{label}</span>
+                        </Link>
+                      ))}
+
+                      {isAuth && (
+                        <>
+                          <div className="pfn-drop-sep" />
+                          <button
+                            type="button"
+                            className="pfn-drop-row pfn-logout"
+                            role="menuitem"
+                            onClick={handleLogout}
+                          >
+                            <LogOut size={16} />
+                            <span>Logout</span>
+                          </button>
+                        </>
+                      )}
+
+                      {!isAuth && (
+                        <>
+                          <div className="pfn-drop-sep" />
+                          <Link
+                            to="/login"
+                            className="pfn-drop-signin"
+                            onClick={() => setOpenMenu(null)}
+                          >
+                            <LogIn size={16} />
+                            Sign in to your account
+                          </Link>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
-              ) : (
-                <Link to="/login" className="btn btn-quiet btn-xs pfn-login-btn">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="8" r="4" />
-                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-                  </svg>
-                  Sign In
+
+                <Link
+                  to="/wishlist"
+                  className="pfn-icon-btn"
+                  aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : 'Wishlist'}
+                  title="Wishlist"
+                >
+                  <Heart size={19} />
+                  {wishlistCount > 0 && <span className="pfn-badge">{badgeText(wishlistCount)}</span>}
                 </Link>
-              )}
+
+                <Link
+                  to="/cart"
+                  className="pfn-icon-btn"
+                  aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
+                  title="Cart"
+                >
+                  <ShoppingCart size={19} />
+                  {cartCount > 0 && <span className="pfn-badge">{badgeText(cartCount)}</span>}
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="pfn-catbar">
+            <div className="pfn-inner pfn-catbar-inner">
+              <div className="pfn-cats-wrap">
+                <div className="pfn-drop-wrap pfn-shop-wrap">
+                  <button
+                    type="button"
+                    className={`pfn-cat pfn-shop-btn${openMenu === 'shop' ? ' is-open' : ''}${
+                      shopActive ? ' is-current' : ''
+                    }`}
+                    onClick={() => setOpenMenu((current) => (current === 'shop' ? null : 'shop'))}
+                    aria-haspopup="menu"
+                    aria-expanded={openMenu === 'shop'}
+                  >
+                    {(() => {
+                      const Icon = SHOP_BY_CATEGORY_ICON
+                      return <Icon size={16} />
+                    })()}
+                    <span>All Categories</span>
+                    <ChevronDown className="pfn-caret" size={14} aria-hidden="true" />
+                  </button>
+
+                  {openMenu === 'shop' && (
+                    <div className="pfn-drop pfn-shop-drop" role="menu">
+                      <div className="pfn-shop-cols">
+                        <div className="pfn-shop-col">
+                          <p className="pfn-drop-heading">Discover</p>
+                          {SHOP_LINKS.map(({ to, label, sub, icon: Icon }) => (
+                            <Link
+                              key={to}
+                              to={to}
+                              className="pfn-shop-link"
+                              role="menuitem"
+                              onClick={() => setOpenMenu(null)}
+                            >
+                              <span className="pfn-shop-link-icon">
+                                <Icon size={16} />
+                              </span>
+                              <span className="pfn-shop-link-text">
+                                <b>{label}</b>
+                                {sub && <small>{sub}</small>}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="pfn-shop-col">
+                          <p className="pfn-drop-heading">Categories</p>
+                          <div className="pfn-shop-cat-grid">
+                            {allCategories.map((category) => {
+                              const Icon = iconForCategory(category.name)
+                              return (
+                                <Link
+                                  key={category.id}
+                                  to={categoryHref(category.name)}
+                                  className="pfn-shop-cat"
+                                  role="menuitem"
+                                  onClick={() => setOpenMenu(null)}
+                                >
+                                  <Icon size={15} />
+                                  <span>{category.name}</span>
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="pfn-shop-col">
+                          <p className="pfn-drop-heading">Services</p>
+                          {SERVICE_LINKS.map(({ to, label, sub, icon: Icon }) => (
+                            <Link
+                              key={to}
+                              to={to}
+                              className="pfn-shop-link"
+                              role="menuitem"
+                              onClick={() => setOpenMenu(null)}
+                            >
+                              <span className="pfn-shop-link-icon">
+                                <Icon size={16} />
+                              </span>
+                              <span className="pfn-shop-link-text">
+                                <b>{label}</b>
+                                {sub && <small>{sub}</small>}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <nav className="pfn-cats-scroll" aria-label="Product categories">
+                  {primaryCategories.map(({ label, to, icon: Icon }) => (
+                    <Link
+                      key={label}
+                      to={to}
+                      className={`pfn-cat${isCategoryActive(to) ? ' is-current' : ''}`}
+                    >
+                      <Icon size={16} aria-hidden="true" />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+
+              <div className="pfn-services">
+                <span className="pfn-divider" aria-hidden="true" />
+                <Link
+                  to="/book-repair"
+                  className={`pfn-cta pfn-cta-repair${
+                    serviceActive && pathname.startsWith('/book-repair') ? ' is-current' : ''
+                  }`}
+                >
+                  <Wrench size={16} aria-hidden="true" />
+                  <span>Book Repair</span>
+                </Link>
+                <Link
+                  to="/trade-in"
+                  className={`pfn-cta pfn-cta-trade${
+                    pathname === '/trade-in' ? ' is-current' : ''
+                  }`}
+                >
+                  <ArrowLeftRight size={16} aria-hidden="true" />
+                  <span>Trade-In</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ══ ROW 3: MEGA NAV BAR (dark/red) ══ */}
-        <div className="pfn-mega-bar">
-          <div className="pfn-mega-inner">
-            {/* All Categories mega-menu */}
-            <div className="pfn-nav-item" ref={megaRef}>
+        {/* ═══════════════ Mobile ═══════════════ */}
+        <div className="pfn-mobile">
+          <div className="pfn-m-inner">
+            <div className="pfn-m-top">
               <button
-                className={`pfn-nav-link${megaOpen ? ' pfn-active' : ''}`}
-                onClick={() => setMegaOpen((v) => !v)}
-                aria-label="All categories"
+                type="button"
+                className="pfn-icon-btn pfn-menu-btn"
+                onClick={() => setDrawerOpen(true)}
+                aria-label="Open menu"
+                aria-expanded={drawerOpen}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  style={{ width: 14, height: 14 }}
-                >
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-                All Categories
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
+                <Menu size={20} />
               </button>
-              {megaOpen && (
-                <div className="pfn-mega-drop">
-                  <div className="pfn-mega-section">
-                    <div className="pfn-mega-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2h-4.5v-6h-5v6H5a2 2 0 0 1-2-2V9.5z" />
-                      </svg>
-                      Shop
-                    </div>
-                    {[
-                      { to: '/collection/all', label: 'All Products', sub: 'Browse everything' },
-                      {
-                        to: '/collection/all?tab=new',
-                        label: 'New Arrivals',
-                        sub: 'Fresh this week',
-                      },
-                      { to: '/collection/all?tab=popular', label: 'Popular', sub: 'Top sellers' },
-                      {
-                        to: '/collection/all?tab=deals',
-                        label: 'Deals & Offers',
-                        sub: 'Best prices',
-                      },
-                    ].map(({ to, label, sub }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        className="pfn-menu-row pfn-mega-link"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        <div className="pfn-mega-link-icon">
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                        <div className="pfn-mega-link-text">
-                          <b>{label}</b>
-                          <span>{sub}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="pfn-mega-section">
-                    <div className="pfn-mega-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                        <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                      </svg>
-                      Devices
-                    </div>
-                    {categories.slice(0, 4).map((c) => (
-                      <Link
-                        key={c.id}
-                        to={`/collection/${encodeURIComponent(c.name)}`}
-                        className="pfn-menu-row pfn-mega-link"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        <div className="pfn-mega-link-icon">
-                          {CATEGORY_ICONS[c.name] || <DefaultIcon />}
-                        </div>
-                        <div className="pfn-mega-link-text">
-                          <b>{c.name}</b>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <div className="pfn-mega-section">
-                    <div className="pfn-mega-head">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z" />
-                      </svg>
-                      Services
-                    </div>
-                    {[
-                      { to: '/book-repair', label: 'Book a Repair', sub: 'Fast & reliable' },
-                      { to: '/track-repair', label: 'Track Repair', sub: 'Live updates' },
-                      { to: '/trade-in', label: 'Trade-In', sub: 'Exchange & save' },
-                    ].map(({ to, label, sub }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        className="pfn-menu-row pfn-mega-link"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        <div className="pfn-mega-link-icon">
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18v3h3l5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3 3.7-3.7z" />
-                          </svg>
-                        </div>
-                        <div className="pfn-mega-link-text">
-                          <b>{label}</b>
-                          <span>{sub}</span>
-                        </div>
-                      </Link>
-                    ))}
-                    {categories.slice(4, 7).map((c) => (
-                      <Link
-                        key={c.id}
-                        to={`/collection/${encodeURIComponent(c.name)}`}
-                        className="pfn-menu-row pfn-mega-link"
-                        onClick={() => setMegaOpen(false)}
-                      >
-                        <div className="pfn-mega-link-icon">
-                          {CATEGORY_ICONS[c.name] || <DefaultIcon />}
-                        </div>
-                        <div className="pfn-mega-link-text">
-                          <b>{c.name}</b>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+
+              <Link to="/home" className="pfn-logo pfn-logo-mobile" aria-label="PhoneFix home">
+                <span className="pfn-logo-icon">
+                  <Wrench size={19} />
+                </span>
+                <span className="pfn-logo-text">
+                  <span className="pfn-logo-name">
+                    PhoneFix<span>.</span>
+                  </span>
+                  <span className="pfn-logo-sub">Premium Mobile Store</span>
+                </span>
+              </Link>
+
+              <div className="pfn-m-actions">
+                <Link
+                  to="/wishlist"
+                  className="pfn-icon-btn"
+                  aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : 'Wishlist'}
+                >
+                  <Heart size={18} />
+                  {wishlistCount > 0 && <span className="pfn-badge">{badgeText(wishlistCount)}</span>}
+                </Link>
+                <Link
+                  to="/cart"
+                  className="pfn-icon-btn"
+                  aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}
+                >
+                  <ShoppingCart size={18} />
+                  {cartCount > 0 && <span className="pfn-badge">{badgeText(cartCount)}</span>}
+                </Link>
+              </div>
             </div>
 
-            <div className="pfn-nav-divider" />
+            <form className="pfn-search pfn-search-mobile" onSubmit={handleSearch} role="search">
+              <Search className="pfn-search-icon" size={18} aria-hidden="true" />
+              <input
+                type="text"
+                value={q}
+                onChange={(event) => setQ(event.target.value)}
+                placeholder="Search smartphones, accessories and more..."
+                aria-label="Search products"
+                autoComplete="off"
+              />
+              {q && (
+                <button type="button" className="pfn-search-clear" onClick={clearSearch} aria-label="Clear search">
+                  <X size={17} />
+                </button>
+              )}
+              <button type="submit" className="pfn-search-btn">
+                Search
+              </button>
+            </form>
 
-            {/* Primary nav links */}
-            <Link to="/collection/all?tab=new" className="pfn-nav-link">
-              New Arrivals
-            </Link>
-            <Link to="/collection/all?tab=popular" className="pfn-nav-link">
-              Popular
-            </Link>
-
-            <div className="pfn-nav-divider" />
-
-            {/* Category pills from API */}
-            {categories.slice(0, 6).map((c) => (
+            <nav className="pfn-m-cats" aria-label="Product categories">
+              {primaryCategories.map(({ label, to, icon: Icon }) => (
+                <Link
+                  key={label}
+                  to={to}
+                  className={`pfn-m-cat${isCategoryActive(to) ? ' is-current' : ''}`}
+                >
+                  <Icon size={14} aria-hidden="true" />
+                  <span>{label}</span>
+                </Link>
+              ))}
               <Link
-                key={c.id}
-                to={`/collection/${encodeURIComponent(c.name)}`}
-                className="pfn-nav-link"
+                to="/book-repair"
+                className={`pfn-m-cat pfn-m-cat-service${
+                  pathname.startsWith('/book-repair') ? ' is-current' : ''
+                }`}
               >
-                {c.name}
+                <Wrench size={14} aria-hidden="true" />
+                <span>Book Repair</span>
               </Link>
-            ))}
-
-            <div className="pfn-nav-divider" />
-
-            {/* Services */}
-            <Link to="/book-repair" className="pfn-nav-link pfn-accent">
-              Book Repair
-            </Link>
-            <Link to="/trade-in" className="pfn-nav-link pfn-accent">
-              Trade-In
-            </Link>
+              <Link
+                to="/trade-in"
+                className={`pfn-m-cat pfn-m-cat-service${
+                  pathname === '/trade-in' ? ' is-current' : ''
+                }`}
+              >
+                <ArrowLeftRight size={14} aria-hidden="true" />
+                <span>Trade-In</span>
+              </Link>
+            </nav>
           </div>
         </div>
       </div>
 
-      {/* Spacer to push content below fixed nav. Skipped on the landing page so
-          the hero image can extend from the very top of the viewport. */}
-      {!transparent && <div className="pfn-spacer" style={{ height: navH || undefined }} />}
+      {!transparent && <div className="pfn-spacer" style={navH ? { height: navH } : undefined} />}
+
+      <NavDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        categories={categories}
+        isAuth={isAuth}
+        displayName={displayName}
+        initials={initials}
+        userEmail={user.email}
+        onLogout={handleLogout}
+      />
     </>
   )
 }

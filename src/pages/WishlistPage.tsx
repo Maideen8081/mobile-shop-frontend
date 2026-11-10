@@ -15,6 +15,7 @@ import {
   readWishlistIds,
   writeWishlistIds,
 } from '../utils/wishlist'
+import '../components/ecommerce/WishCard.css'
 import './WishlistPage.css'
 
 function getProductTags(product: any): string[] {
@@ -229,12 +230,6 @@ export default function WishlistPage() {
       <SiteTopNav />
       <main className="wishlist-main">
         <header className="wishlist-header">
-          <nav className="crumbs" aria-label="Breadcrumb">
-            <Link to="/home">Home</Link>
-            <span aria-hidden="true">/</span>
-            <strong>Wishlist</strong>
-          </nav>
-
           <div className="wishlist-head">
             <button className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

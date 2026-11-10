@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  ArrowLeft, Banknote, Building2, Check, CreditCard, Globe, Loader2, Lock, MapPin,
-  Phone, RotateCcw, ShieldCheck, Smartphone, Truck,
+  ArrowLeft, ArrowRight, AtSign, Banknote, Check, CreditCard, Headphones, Landmark, Loader2, Lock,
+  MapPin, RotateCcw, ShieldCheck, Smartphone, Truck, Wallet, Zap,
 } from 'lucide-react'
+import { FREE_SHIPPING_THRESHOLD } from '../components/mobile/cartLogic'
 import { useToast } from '../context/ToastContext'
 import MobilePayment from '../components/mobile/MobilePayment'
 import { useIsMobile } from '../components/mobile/helpers'
@@ -20,17 +21,143 @@ import './CartPage.css'
 import './CheckoutAddress.css'
 import './PaymentPage.css'
 
-type PaymentMethod = 'cod' | 'card' | 'upi' | 'netbanking' | 'paypal'
+type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'wallet' | 'cod'
 
 const STEPS = ['Cart', 'Address', 'Payment']
 
+// Only Cash on Delivery is live; the others show their UI but can't be paid with yet.
 const METHODS: { id: PaymentMethod; label: string; detail: string; icon: typeof Banknote; available: boolean }[] = [
-  { id: 'cod', label: 'Cash on Delivery', detail: 'Pay in cash or UPI when your order arrives', icon: Banknote, available: true },
-  { id: 'upi', label: 'UPI', detail: 'GPay, PhonePe, Paytm', icon: Smartphone, available: false },
-  { id: 'card', label: 'Credit / Debit card', detail: 'Visa, Mastercard, RuPay', icon: CreditCard, available: false },
-  { id: 'netbanking', label: 'Net banking', detail: 'All major Indian banks', icon: Building2, available: false },
-  { id: 'paypal', label: 'PayPal', detail: 'International payments', icon: Globe, available: false },
+  { id: 'upi', label: 'UPI', detail: 'Pay instantly via UPI', icon: Smartphone, available: false },
+  { id: 'card', label: 'Credit / Debit Card', detail: 'Visa, Mastercard, RuPay', icon: CreditCard, available: false },
+  { id: 'netbanking', label: 'Net Banking', detail: 'All major banks', icon: Landmark, available: false },
+  { id: 'wallet', label: 'Wallets', detail: 'Paytm, PhonePe & more', icon: Wallet, available: false },
+  { id: 'cod', label: 'Cash on Delivery', detail: 'Pay when you receive', icon: Banknote, available: true },
 ]
+
+const UPI_APPS = ['PhonePe', 'Google Pay', 'Paytm', 'BHIM UPI', 'Amazon Pay']
+const BANKS = ['SBI', 'HDFC Bank', 'ICICI Bank', 'Axis Bank', 'Kotak Bank', 'Other Banks']
+const WALLETS = ['Paytm', 'PhonePe', 'Amazon Pay', 'MobiKwik']
+
+const initials = (name: string) => name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+
+function SoonNote() {
+  return (
+    <p className="pp-soon-note">
+      <Zap size={16} /> Online payments are launching soon. For now, please use <strong>Cash on Delivery</strong>.
+    </p>
+  )
+}
+
+function OptionGrid({ options }: { options: string[] }) {
+  return (
+    <div className="pp-options">
+      {options.map((name) => (
+        <button key={name} type="button" className="pp-option" disabled>
+          <span className="pp-option-mark">{initials(name)}</span>
+          <span>{name}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function Perks({ items }: { items: string[] }) {
+  return (
+    <div className="pp-perks">
+      <Zap size={18} />
+      {items.map((p, i) => <span key={p}>{i > 0 && <i aria-hidden="true">•</i>}{p}</span>)}
+    </div>
+  )
+}
+
+function MethodPanel({ method, total }: { method: PaymentMethod; total: number }) {
+  switch (method) {
+    case 'upi':
+      return (
+        <>
+          <h2>Pay via UPI</h2>
+          <p className="pp-panel-sub">Complete your payment instantly using any UPI app.</p>
+          <SoonNote />
+          <OptionGrid options={UPI_APPS} />
+          <div className="pp-or"><span>OR</span></div>
+          <label className="pp-label" htmlFor="pp-upi">Enter UPI ID</label>
+          <div className="ca-input pp-input-row">
+            <AtSign size={18} className="ca-input-icon" />
+            <input id="pp-upi" placeholder="yourname@upi" disabled />
+            <button type="button" className="pp-verify" disabled>Verify</button>
+          </div>
+          <Perks items={['Instant Payment', 'No Extra Charges', '100% Secure']} />
+        </>
+      )
+    case 'card':
+      return (
+        <>
+          <h2>Pay with Card</h2>
+          <p className="pp-panel-sub">We accept Visa, Mastercard and RuPay cards.</p>
+          <SoonNote />
+          <div className="pp-form">
+            <div className="ca-field is-wide">
+              <label htmlFor="pp-card">Card number</label>
+              <div className="ca-input"><CreditCard size={18} className="ca-input-icon" /><input id="pp-card" placeholder="1234 5678 9012 3456" disabled /></div>
+            </div>
+            <div className="ca-field is-wide">
+              <label htmlFor="pp-name">Name on card</label>
+              <div className="ca-input"><input id="pp-name" placeholder="As printed on the card" disabled /></div>
+            </div>
+            <div className="ca-field">
+              <label htmlFor="pp-exp">Expiry</label>
+              <div className="ca-input"><input id="pp-exp" placeholder="MM / YY" disabled /></div>
+            </div>
+            <div className="ca-field">
+              <label htmlFor="pp-cvv">CVV</label>
+              <div className="ca-input"><Lock size={16} className="ca-input-icon" /><input id="pp-cvv" placeholder="•••" disabled /></div>
+            </div>
+          </div>
+          <Perks items={['No-cost EMI', 'Card details never stored', '100% Secure']} />
+        </>
+      )
+    case 'netbanking':
+      return (
+        <>
+          <h2>Net Banking</h2>
+          <p className="pp-panel-sub">Choose your bank and you’ll be taken to its secure login page.</p>
+          <SoonNote />
+          <OptionGrid options={BANKS} />
+          <Perks items={['All major banks', 'No Extra Charges', '100% Secure']} />
+        </>
+      )
+    case 'wallet':
+      return (
+        <>
+          <h2>Pay with Wallet</h2>
+          <p className="pp-panel-sub">Use your wallet balance for a one-tap checkout.</p>
+          <SoonNote />
+          <OptionGrid options={WALLETS} />
+          <Perks items={['One-tap Payment', 'No Extra Charges', '100% Secure']} />
+        </>
+      )
+    default:
+      return (
+        <>
+          <h2>Cash on Delivery</h2>
+          <p className="pp-panel-sub">Pay the delivery partner when your order arrives.</p>
+          <div className="pp-cod">
+            <span className="pp-cod-icon"><Banknote size={30} strokeWidth={1.75} /></span>
+            <div>
+              <span>Amount to pay at delivery</span>
+              <strong>{formatINR(total)}</strong>
+            </div>
+          </div>
+          <ul className="pp-cod-list">
+            <li><Check size={16} strokeWidth={3} /> Pay in cash or scan a UPI QR at your doorstep</li>
+            <li><Check size={16} strokeWidth={3} /> No extra charges for Cash on Delivery</li>
+            <li><Check size={16} strokeWidth={3} /> Keep the exact amount ready for a faster handover</li>
+          </ul>
+          <Perks items={['Pay on Delivery', 'No Extra Charges', '100% Secure']} />
+        </>
+      )
+  }
+}
 
 export default function PaymentPage() {
   const isMobile = useIsMobile()
@@ -80,7 +207,7 @@ function DesktopPayment() {
   const totals = computeTotals(items, coupon?.discount || 0)
 
   const handlePlaceOrder = async () => {
-    if (placing || !address || items.length === 0) return
+    if (placing || method !== 'cod' || !address || items.length === 0) return
     setPlacing(true)
     setError('')
     try {
@@ -150,62 +277,45 @@ function DesktopPayment() {
     }
   }
 
+  const isCod = method === 'cod'
+  const canPay = isCod && !loading && !placing && !!address && items.length > 0
+
   return (
-    <div className="cx-root">
+    <div className="cx-root ca-page pp-page">
       <SiteTopNav />
 
-      <main className="cx-wrap">
-        <header className="cx-head">
-          <div>
-            <nav className="cx-crumbs" aria-label="Breadcrumb">
-              <Link to="/home">Home</Link><span>/</span><Link to="/cart">Cart</Link><span>/</span>
-              <Link to="/checkout/address">Address</Link><span>/</span><span aria-current="page">Payment</span>
-            </nav>
-            <h1>Payment</h1>
-            <p className="cx-head-sub">Review your order and choose how you’d like to pay.</p>
-          </div>
-          <ol className="cx-steps" aria-label="Checkout progress">
-            {STEPS.map((label, i) => (
-              <li key={label} className={i === 2 ? 'is-active' : 'is-done'}>
-                <span className="cx-step-num">{i === 2 ? 3 : <Check size={13} />}</span>
-                {label}
-              </li>
-            ))}
-          </ol>
-        </header>
-
-        <div className="cx-grid">
-          <section className="cx-main">
-            <div className="cx-card">
-              <div className="cx-card-head">
-                <h2>Delivery address</h2>
-                <Link to="/checkout/address" className="cx-link-btn">Change</Link>
-              </div>
-              {loading || !address ? (
-                <div className="ca-list"><div className="ca-skel pp-skel" /></div>
+      <main className="cx-wrap ca-wrap">
+        <ol className="ca-steps" aria-label="Checkout progress">
+          {STEPS.map((label, i) => (
+            <li key={label} className={i === 2 ? 'is-active' : 'is-done'} aria-current={i === 2 ? 'step' : undefined}>
+              {i < 2 ? (
+                <Link to={i === 0 ? '/cart' : '/checkout/address'} className="ca-step">
+                  <span className="ca-step-num"><Check size={18} strokeWidth={3} /></span>
+                  <span className="ca-step-label">{label}</span>
+                </Link>
               ) : (
-                <div className="pp-address">
-                  <span className="pp-address-icon"><MapPin size={18} /></span>
-                  <div>
-                    <div className="ca-addr-top">
-                      <strong>{address.fullName}</strong>
-                      <span className="ca-chip">{address.addressType}</span>
-                    </div>
-                    <p>{[address.addressLine1, address.addressLine2].filter(Boolean).join(', ')}</p>
-                    <p>{address.city}, {address.state} – {address.zipCode}</p>
-                    <p className="ca-phone"><Phone size={13} /> {address.mobile}</p>
-                  </div>
-                  <span className="pp-eta"><Truck size={15} /> Delivery in 3–5 days</span>
-                </div>
+                <span className="ca-step">
+                  <span className="ca-step-num">3</span>
+                  <span className="ca-step-label">{label}</span>
+                </span>
               )}
-            </div>
+            </li>
+          ))}
+        </ol>
 
-            <div className="cx-card">
-              <div className="cx-card-head">
-                <h2>Payment method</h2>
-                <span className="pp-secure"><Lock size={13} /> Secure checkout</span>
+        <div className="cx-grid ca-grid">
+          <section className="ca-main">
+            <header className="ca-head pp-head">
+              <span className="ca-head-icon"><CreditCard size={26} /></span>
+              <div>
+                <h1>Complete Your Payment</h1>
+                <p>Choose your preferred payment method to place the order.</p>
               </div>
-              <div className="pp-methods" role="radiogroup" aria-label="Payment method">
+              <span className="pp-secure-pill"><ShieldCheck size={18} /> Secure &amp; Encrypted Payment</span>
+            </header>
+
+            <div className="ca-card pp-card">
+              <div className="pp-tabs" role="radiogroup" aria-label="Payment method">
                 {METHODS.map((m) => {
                   const Icon = m.icon
                   const selected = method === m.id
@@ -215,54 +325,62 @@ function DesktopPayment() {
                       type="button"
                       role="radio"
                       aria-checked={selected}
-                      disabled={!m.available}
-                      className={`pp-method${selected ? ' is-selected' : ''}`}
+                      className={`pp-tab${selected ? ' is-selected' : ''}`}
                       onClick={() => setMethod(m.id)}
                     >
-                      <span className="ca-radio" aria-hidden="true" />
-                      <span className="pp-method-icon"><Icon size={20} /></span>
-                      <span className="pp-method-text">
+                      <span className="pp-tab-icon"><Icon size={24} strokeWidth={1.75} /></span>
+                      <span className="pp-tab-text">
                         <strong>{m.label}</strong>
                         <span>{m.detail}</span>
                       </span>
-                      {!m.available && <span className="pp-soon">Coming soon</span>}
+                      {!m.available && <span className="pp-soon">Soon</span>}
                     </button>
                   )
                 })}
               </div>
-              {method === 'cod' && (
-                <p className="pp-note">
-                  Keep <strong>{formatINR(totals.total)}</strong> ready — you can pay the delivery partner in cash or by UPI.
-                </p>
-              )}
+
+              <div className="pp-panel">
+                <MethodPanel method={method} total={totals.total} />
+              </div>
             </div>
 
-            <Link to="/checkout/address" className="cx-back"><ArrowLeft size={16} /> Back to address</Link>
+            <div className="ca-actions">
+              <Link to="/checkout/address" className="ca-back"><ArrowLeft size={20} /> Back to Address</Link>
+            </div>
           </section>
 
           <aside className="cx-side">
             <OrderSummary items={items} coupon={coupon} loading={loading}>
+              {address && (
+                <p className="ca-deliver-note">
+                  <MapPin size={16} />
+                  <span>
+                    Delivering to <strong>{address.fullName}</strong> · {address.city} {address.zipCode} · 3–5 days{' '}
+                    <Link to="/checkout/address" className="pp-change">Change</Link>
+                  </span>
+                </p>
+              )}
               {error && <p className="pp-error" role="alert">{error}</p>}
-              <button
-                className="cx-btn cx-btn-primary cx-checkout"
-                data-place-order
-                disabled={loading || placing || !address || items.length === 0}
-                onClick={handlePlaceOrder}
-              >
+              <button className="ca-continue pp-pay" data-place-order disabled={!canPay} onClick={handlePlaceOrder}>
                 {placing
-                  ? <><Loader2 size={16} className="ca-spin" /> Placing order…</>
-                  : <><Lock size={16} /> Place order · {formatINR(totals.total)}</>}
+                  ? <><Loader2 size={20} className="ca-spin" /> Placing order…</>
+                  : <><Lock size={20} /> {isCod ? 'Place Order' : 'Pay'} {formatINR(totals.total)} <ArrowRight size={20} /></>}
               </button>
-              {!loading && items.length === 0 && <p className="cx-warn">Your cart is empty.</p>}
+              {!isCod && !loading && (
+                <p className="ca-warn">Online payments are coming soon. Choose Cash on Delivery to place your order.</p>
+              )}
+              {!loading && items.length === 0 && <p className="ca-warn">Your cart is empty.</p>}
               <p className="pp-terms">By placing this order you agree to our <Link to="/terms">terms</Link>.</p>
             </OrderSummary>
-
-            <ul className="cx-trust">
-              <li><ShieldCheck size={18} /><div><strong>Secure checkout</strong><span>Your details are encrypted</span></div></li>
-              <li><RotateCcw size={18} /><div><strong>7-day returns</strong><span>No-questions-asked</span></div></li>
-            </ul>
           </aside>
         </div>
+
+        <ul className="ca-benefits">
+          <li><span><ShieldCheck size={24} /></span><div><strong>Secure Checkout</strong><small>Your details are encrypted</small></div></li>
+          <li><span><Truck size={24} /></span><div><strong>Free Delivery</strong><small>On orders over {formatINR(FREE_SHIPPING_THRESHOLD)}</small></div></li>
+          <li><span><RotateCcw size={24} /></span><div><strong>Easy 7-Day Returns</strong><small>Hassle-free returns</small></div></li>
+          <li><span><Headphones size={24} /></span><div><strong>Need Help?</strong><small>Mon – Sat, 10 AM – 8 PM</small></div></li>
+        </ul>
       </main>
 
       <ExitIntentOffer

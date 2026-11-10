@@ -34,15 +34,15 @@ export default function CouponsOffers() {
         {coupons.map((c) => (
           <div
             key={c.code}
-            className="snap-start flex-shrink-0 w-[150px] h-[112px] rounded-2xl bg-white border border-[#EEF1F4] shadow-[0_4px_14px_rgba(15,23,42,0.06)] p-3 flex flex-col active:scale-[0.97] transition relative overflow-hidden"
+            className="snap-start flex-shrink-0 w-[150px] h-[112px] rounded-2xl bg-white border border-[#ECDFF6] shadow-[0_4px_14px_rgba(33,13,53,0.06)] p-3 flex flex-col active:scale-[0.97] transition relative overflow-hidden"
           >
             <div className="absolute -right-4 -top-4 w-16 h-16 rounded-[8px]" style={{ background: C.gradSoft }} />
-            <div className="relative w-7 h-7 rounded-[8px] bg-[#CB202D] flex items-center justify-center shrink-0">
+            <div className="relative w-7 h-7 rounded-[8px] bg-[#210D35] flex items-center justify-center shrink-0">
               <Tag size={14} className="text-white" />
             </div>
-            <p className="relative text-title font-extrabold text-[#0F172A] leading-tight mt-1.5">{c.label}</p>
+            <p className="relative text-title font-extrabold text-[#210D35] leading-tight mt-1.5">{c.label}</p>
             <div className="relative mt-auto">
-              <span className="text-micro font-bold text-[#CB202D] bg-[#FEE2E6] rounded px-1.5 py-0.5 inline-block">
+              <span className="text-micro font-bold text-[#210D35] bg-[#F3E8FF] rounded px-1.5 py-0.5 inline-block">
                 {c.code}
               </span>
             </div>

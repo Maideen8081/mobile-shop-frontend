@@ -25,7 +25,7 @@ export default function PremiumProductCard({
 
   const tags = []
   if (product.is_new_arrival || product.isNewArrival) tags.push({ label: 'New', color: 'bg-emerald-500' })
-  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'bg-[#CB202D]' })
+  if (product.is_best_selling || product.isBestSelling) tags.push({ label: 'Bestseller', color: 'bg-[#210D35]' })
   if (product.is_featured || product.isFeatured) tags.push({ label: 'Featured', color: 'bg-amber-500' })
   if (product.is_trending || product.isTrending) tags.push({ label: 'Trending', color: 'bg-[#0EA5E9]' })
   if (product.is_refurbished || product.isRefurbished) tags.push({ label: 'Refurbished', color: 'bg-violet-500' })
@@ -69,11 +69,11 @@ export default function PremiumProductCard({
         <div className="flex-1 min-w-0 flex flex-col justify-between">
           <div>
             {product.brand && (
-              <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
+              <span className="text-micro font-bold uppercase tracking-wider text-[#210D35] mb-1 block truncate">
                 {product.brand}
               </span>
             )}
-            <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#CB202D] transition-colors text-sm">
+            <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#210D35] transition-colors text-sm">
               {product.name}
             </h3>
           </div>
@@ -83,8 +83,8 @@ export default function PremiumProductCard({
               onClick={handleWishlist}
               className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
                 isInWishlist
-                  ? 'bg-[#CB202D] text-white shadow-[0_4px_12px_rgba(203,32,45,0.3)]'
-                  : 'bg-[#FEE2E6] text-[#CB202D] hover:bg-[#FDD] hover:text-[#A81D2A]'
+                  ? 'bg-[#210D35] text-white shadow-[0_4px_12px_rgba(123, 63, 208,0.3)]'
+                  : 'bg-[#F3E8FF] text-[#210D35] hover:bg-[#FDD] hover:text-[#3A1E52]'
               }`}
               aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
             >
@@ -122,7 +122,7 @@ export default function PremiumProductCard({
           <div className="absolute bottom-3 right-3">
             <button
               onClick={handleWishlist}
-              className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-10 h-10 rounded-[8px] flex items-center justify-center shadow-lg`}
+              className={`animate-slide-up ${isInWishlist ? 'bg-[#210D35] text-white' : 'bg-white/90 text-[#210D35] backdrop-blur-sm'} w-10 h-10 rounded-[8px] flex items-center justify-center shadow-lg`}
               aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
             >
               <Heart size={18} className={isInWishlist ? 'fill-current' : ''} />
@@ -132,11 +132,11 @@ export default function PremiumProductCard({
 
         <div className="p-4">
           {product.brand && (
-            <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1.5 block">
+            <span className="text-micro font-bold uppercase tracking-wider text-[#210D35] mb-1.5 block">
               {product.brand}
             </span>
           )}
-          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-[#CB202D] transition-colors text-base">
+          <h3 className="font-bold text-slate-900 line-clamp-2 group-hover:text-[#210D35] transition-colors text-base">
             {product.name}
           </h3>
         </div>
@@ -171,7 +171,7 @@ export default function PremiumProductCard({
         <div className="absolute bottom-2 right-2">
           <button
             onClick={handleWishlist}
-            className={`animate-slide-up ${isInWishlist ? 'bg-[#CB202D] text-white' : 'bg-white/90 text-[#CB202D] backdrop-blur-sm'} w-9 h-9 rounded-[8px] flex items-center justify-center shadow-lg`}
+            className={`animate-slide-up ${isInWishlist ? 'bg-[#210D35] text-white' : 'bg-white/90 text-[#210D35] backdrop-blur-sm'} w-9 h-9 rounded-[8px] flex items-center justify-center shadow-lg`}
             aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
             <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
@@ -181,11 +181,11 @@ export default function PremiumProductCard({
 
         <div className="p-3.5">
         {product.brand && (
-          <span className="text-micro font-bold uppercase tracking-wider text-[#CB202D] mb-1 block truncate">
+          <span className="text-micro font-bold uppercase tracking-wider text-[#210D35] mb-1 block truncate">
             {product.brand}
           </span>
         )}
-        <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#CB202D] transition-colors text-sm">
+        <h3 className="font-semibold text-slate-900 line-clamp-2 min-h-[2.86em] group-hover:text-[#210D35] transition-colors text-sm">
           {product.name}
         </h3>
       </div>

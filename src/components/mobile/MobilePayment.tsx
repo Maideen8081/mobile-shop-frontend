@@ -9,8 +9,8 @@ import { readCheckoutCoupon, saveCheckoutCoupon } from '../../utils/checkout'
 import ExitIntentOffer from '../checkout/ExitIntentOffer'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -92,7 +92,7 @@ export default function MobilePayment() {
     return (
       <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
@@ -183,7 +183,7 @@ export default function MobilePayment() {
     return (
       <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <h1 className="text-title-sm font-bold text-[#1F2937]">Payment</h1>
@@ -205,7 +205,7 @@ export default function MobilePayment() {
   return (
     <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(203,32,45,0.12)]">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="flex-1">
@@ -294,7 +294,7 @@ export default function MobilePayment() {
                   disabled={disabled && !active}
                   className={`w-full ${card} rounded-[18px] p-3.5 flex items-center gap-3 border-2 transition ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={{ borderColor: active ? PURPLE : 'transparent' }}>
-                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(203,32,45,0.1)' : '#FFFBFB' }}>{pm.icon}</div>
+                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(123, 63, 208,0.1)' : '#FFFBFB' }}>{pm.icon}</div>
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-label font-semibold text-[#1F2937]">{pm.label}</p>

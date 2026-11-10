@@ -1,473 +1,370 @@
-/* ═══════════════════════════════════════════════════════════
-   PHONEFIX PRO — PREMIUM SITE TOP NAV  v2
-   Colors: Red #D91E36 · White #ffffff · Black #111
-   Icons: black only.  Accents: red.  Backgrounds: white / red.
-   Desktop only — mobile handled separately.
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   PHONEFIX — SITE TOP NAV
+   Palette: Deep Purple #210D35 · Warm Cream #FFF7F3 ·
+   Soft Lavender #D0ADFF · Turbo Yellow #F0E100 · Sunshine Yellow #FFD014
 
-:root {
-  --pf-red: #d91e36;
-  --pf-red-dark: #a3122a;
-  --pf-red-deep: #5c0a1c;
-  --pf-red-glow: rgba(217, 30, 54, 0.18);
-  --pf-red-tint: rgba(217, 30, 54, 0.06);
-  --pf-ink: var(--color-on-surface);
-  --pf-muted: var(--color-on-surface-variant);
-  --pf-border: #ece4e0;
-  --pf-soft: #f5f0ec;
-  --pf-white: #ffffff;
-  --pf-gold: #b08d57;
-  --pf-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
-  --pf-shadow-lg: 0 16px 48px rgba(15, 23, 42, 0.13);
-  --pf-drop-bg: #1b1210;
-  --pf-drop-border: rgba(255, 255, 255, 0.1);
-  --pf-drop-text: #ffffff;
-  --pf-drop-muted: rgba(255, 255, 255, 0.6);
-  --pf-drop-hover: rgba(217, 30, 54, 0.18);
-  --pf-drop-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-}
+   Three rows on desktop/tablet:
+     row 0 — dark announcement strip with "Deals of the Day"
+     row 1 — light brand · search · contact · account / wishlist / cart
+     row 2 — floating dark category bar · Book Repair & Trade-In
+   Below 900px the compact mobile rows take over, with the shared
+   NavDrawer for categories, services and account links.
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── OUTER WRAPPER ─── */
 .pfn-root {
+  --pfn-cream: #fff7f3;
+  --pfn-white: #ffffff;
+  --pfn-purple: #210d35;
+  --pfn-purple-soft: #2e1544;
+  --pfn-purple-mid: #4a2470;
+  --pfn-purple-deep: #170826;
+  --pfn-lavender: #d0adff;
+  --pfn-lavender-bright: #e9dbff;
+  --pfn-lavender-soft: rgba(208, 173, 255, 0.18);
+  --pfn-lavender-line: rgba(208, 173, 255, 0.26);
+  --pfn-ink-line: rgba(33, 13, 53, 0.1);
+  --pfn-ink-muted: #6b5a7a;
+  --pfn-yellow: #f0e100;
+  --pfn-sunshine: #ffd014;
+  --pfn-cream-line: rgba(255, 247, 243, 0.16);
+  --pfn-muted: rgba(255, 247, 243, 0.64);
+  --pfn-drop-bg: #1a0a2b;
+  --pfn-drop-line: rgba(208, 173, 255, 0.2);
+
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 9999;
-  font-family:var(--font-ui);
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
+  color: var(--pfn-purple);
+  background:
+    radial-gradient(520px 160px at 0% 30%, rgba(208, 173, 255, 0.35), transparent 70%),
+    radial-gradient(620px 200px at 100% 70%, rgba(208, 173, 255, 0.4), transparent 70%),
+    var(--pfn-cream);
+  transition: box-shadow 0.3s ease;
+  isolation: isolate;
 }
-
-/* ─── SPACER ─── */
+.pfn-root.pfn-scrolled {
+  background:
+    radial-gradient(520px 160px at 0% 30%, rgba(208, 173, 255, 0.3), transparent 70%),
+    radial-gradient(620px 200px at 100% 70%, rgba(208, 173, 255, 0.34), transparent 70%),
+    rgba(255, 247, 243, 0.86);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 14px 40px rgba(33, 13, 53, 0.16);
+}
 .pfn-spacer {
-  height: 164px;
+  height: 210px;
 }
 
-/* ══════════════════════════════════════════
-   ROW 1 — UTILITY BAR
-   Black bg · white text · red badges
-   ══════════════════════════════════════════ */
-.pfn-util-bar {
-  background: var(--pf-ink);
-  height: 40px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  z-index: 40;
-}
-.pfn-util-inner {
-  max-width: 1440px;
+.pfn-inner {
   width: 100%;
+  max-width: 1480px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 28px;
+}
+
+/* ─────────────────────── Row 0 — announcement strip ─────────────────────── */
+.pfn-strip {
+  max-height: 42px;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--pfn-purple-deep), var(--pfn-purple) 50%, var(--pfn-purple-deep));
+  color: var(--pfn-cream);
+  transition: max-height 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+}
+/* Scrolling down tucks the strip away; search + categories stay. */
+.pfn-scrolled .pfn-strip {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.pfn-strip-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
+  height: 42px;
 }
-.pfn-util-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  font-size: var(--text-caption);
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.015em;
-}
-.pfn-util-left a {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: color 0.18s;
-}
-.pfn-util-left a:hover {
-  color: #fff;
-}
-.pfn-util-left svg {
-  width: 11px;
-  height: 11px;
-  stroke: currentColor;
-}
-.pfn-util-sep {
-  width: 1px;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.15);
-  flex-shrink: 0;
-}
-
-.pfn-util-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.pfn-util-right a,
-.pfn-util-right button {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--text-caption);
-  font-family:var(--font-ui);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: color 0.18s;
-  padding: 0;
-  letter-spacing: 0.01em;
-}
-.pfn-util-right a:hover,
-.pfn-util-right button:hover {
-  color: #fff;
-}
-
-.pfn-util-badge {
+.pfn-strip-item {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-caption);
+  gap: 9px;
+  font-size: 13px;
+  white-space: nowrap;
+  min-width: 0;
+}
+.pfn-strip-item b {
+  font-weight: 700;
+}
+.pfn-strip-item > span {
+  color: rgba(255, 247, 243, 0.66);
+  font-weight: 500;
+}
+.pfn-strip-item svg {
+  color: var(--pfn-lavender);
+  flex-shrink: 0;
+}
+.pfn-strip-item + .pfn-strip-item {
+  padding-left: 18px;
+  border-left: 1px solid rgba(208, 173, 255, 0.18);
+}
+.pfn-strip-deal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--pfn-yellow), var(--pfn-sunshine));
+  color: var(--pfn-purple);
+  font-size: 12.5px;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1.6;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 6px 18px rgba(255, 208, 20, 0.35);
+  transition: transform 0.15s, box-shadow 0.2s;
 }
-.pfn-util-badge.sale {
-  background: var(--pf-red);
-  color: #fff;
-}
-.pfn-util-badge.new {
-  background: #8b5a0a;
-  color: #fff;
+.pfn-strip-deal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(255, 208, 20, 0.5);
 }
 
-/* Utility bar buttons (Book Repair, Track Device) - ensure contrast on dark background */
-.pfn-util-right .btn-quiet {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-.pfn-util-right .btn-quiet:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-}
-.pfn-util-right .btn-primary {
-  background: var(--pf-red) !important;
-  color: #fff !important;
-}
-.pfn-util-right .btn-primary:hover {
-  background: var(--pf-red-dark) !important;
-}
-
-/* Utility bar buttons (Book Repair, Track Device) in transparent mode */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary {
-  background: var(--pf-red) !important;
-  color: #fff !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary:hover {
-  background: var(--pf-red-dark) !important;
-}
-
-/* Utility bar buttons - scrolled mode (dark background) */
-.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-quiet {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
-}
-.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-quiet:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-primary {
-  background: var(--pf-red);
-  color: #fff;
-}
-.pfn-root.pfn-scrolled .pfn-util-bar .pfn-util-right .btn-primary:hover {
-  background: var(--pf-red-dark);
-}
-
-/* Utility bar buttons (Book Repair, Track Device) in transparent mode */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet {
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-quiet:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary {
-  background: var(--pf-red) !important;
-  color: #fff !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right .btn-primary:hover {
-  background: var(--pf-red-dark) !important;
-}
-
-/* ══════════════════════════════════════════
-   ROW 2 — MAIN BAR
-   Pure white · black icons · red CTA
-   ══════════════════════════════════════════ */
-.pfn-main-bar {
-  background: var(--pf-white);
-  height: 72px;
-  border-bottom: 1.5px solid var(--pf-border);
+/* ─────────────────────────── Row 1 ─────────────────────────── */
+.pfn-main {
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: relative;
-  z-index: 30;
+  gap: 22px;
+  padding: 14px 0;
+  min-width: 0;
 }
-.pfn-main-inner {
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
+.pfn-catbar-inner {
+  transition: box-shadow 0.3s ease;
+}
+.pfn-scrolled .pfn-catbar-inner {
+  box-shadow:
+    0 12px 26px -12px rgba(123, 63, 208, 0.6),
+    0 4px 12px rgba(33, 13, 53, 0.22);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pfn-strip {
+    transition: none;
+  }
 }
 
-/* ── Logo ── */
+/* Brand lockup */
 .pfn-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-decoration: none;
+  gap: 12px;
+  min-width: 0;
   flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
 }
 .pfn-logo-icon {
-  width: 40px;
-  height: 40px;
-  background: var(--pf-red);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px var(--pf-red-glow);
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #7b3fd0, var(--pfn-purple-mid) 55%, var(--pfn-purple));
+  color: var(--pfn-cream);
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-}
-.pfn-logo-icon svg {
-  width: 22px;
-  height: 22px;
-  color: #fff;
-  stroke: #fff;
-  fill: none;
+  box-shadow: 0 10px 24px rgba(74, 36, 112, 0.35);
 }
 .pfn-logo-text {
   display: flex;
   flex-direction: column;
-  line-height: 1;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
 }
 .pfn-logo-name {
   font-family: var(--font-display);
+  font-size: 1.6rem;
   font-weight: 800;
-  font-size: var(--text-title);
-  color: var(--pf-ink);
+  line-height: 1;
   letter-spacing: -0.025em;
+  color: var(--pfn-purple);
 }
 .pfn-logo-name span {
-  color: var(--pf-red);
+  color: #7b3fd0;
 }
 .pfn-logo-sub {
-  font-size: var(--text-caption);
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pfn-ink-muted);
   white-space: nowrap;
-  color: var(--pf-muted);
 }
 
-/* ── Search ── */
-.pfn-search-wrap {
-  flex: 1;
-  max-width: 600px;
-}
-.pfn-search-form {
+/* Search */
+.pfn-search {
   display: flex;
   align-items: center;
-  background: var(--pf-soft);
-  border: 1.5px solid var(--pf-border);
-  border-radius: var(--radius-md);
-  padding: 0 5px 0 16px;
-  gap: 8px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s,
-    background 0.2s;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 170px;
+  max-width: 720px;
+  height: 52px;
+  padding: 0 5px 0 18px;
+  border-radius: var(--radius-full);
+  background: var(--pfn-white);
+  border: 1.5px solid rgba(74, 36, 112, 0.55);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.pfn-search-form:focus-within {
-  border-color: var(--pf-red);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(217, 30, 54, 0.09);
+.pfn-search:focus-within {
+  border-color: var(--pfn-purple);
+  box-shadow: 0 0 0 4px rgba(208, 173, 255, 0.35);
 }
 .pfn-search-icon {
-  width: 16px;
-  height: 16px;
-  color: var(--pf-ink); /* BLACK icon */
   flex-shrink: 0;
-  stroke: var(--pf-ink);
-  fill: none;
+  color: var(--pfn-purple-mid);
 }
-.pfn-search-form input {
+.pfn-search input {
   flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
   border: none;
-  background: none;
   outline: none;
-  font-size: var(--text-body-sm);
-  font-family:var(--font-ui);
-  color: var(--pf-ink);
-  height: 46px;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--pfn-purple);
 }
-.pfn-search-form input::placeholder {
-  color: var(--pf-muted);
+.pfn-search input::placeholder {
+  color: #8a7599;
 }
 .pfn-search-btn {
   flex-shrink: 0;
+  height: 40px;
+  padding: 0 24px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--pfn-purple-mid), var(--pfn-purple));
+  color: var(--pfn-cream);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  padding: 9px 22px;
-  font-size: var(--text-body-sm);
-  font-weight: 700;
-  font-family:var(--font-ui);
-  letter-spacing: 0.01em;
-  transition:
-    background 0.2s,
-    transform 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: var(--radius-md);
+  transition: transform 0.15s, box-shadow 0.2s;
 }
 .pfn-search-btn:hover {
-  transform: scale(1.02);
+  box-shadow: 0 8px 18px rgba(33, 13, 53, 0.3);
 }
-.pfn-search-btn svg {
-  width: 13px;
-  height: 13px;
-  stroke: #fff;
-  fill: none;
+.pfn-search-btn:active {
+  transform: scale(0.96);
 }
 
-/* ── Icon cluster (right side) ── */
-.pfn-icon-cluster {
+.pfn-search-clear {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #6b5a7a;
+  cursor: pointer;
+}
+.pfn-search-clear:hover {
+  background: rgba(74, 36, 112, 0.08);
+  color: var(--pfn-purple);
+}
+
+/* Contact */
+.pfn-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding-left: 20px;
+  border-left: 1px solid var(--pfn-ink-line);
+  flex-shrink: 0;
+}
+.pfn-contact-phone,
+.pfn-contact-hours {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-/* ── Quick nav links near search ── */
-.pfn-quick-nav {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 12px;
-  flex-shrink: 0;
-}
-.pfn-quick-link {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 7px 12px;
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-family:var(--font-ui);
-  text-decoration: none;
   white-space: nowrap;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    box-shadow 0.15s;
-  border-radius: var(--radius-md);
+  text-decoration: none;
 }
-.pfn-quick-link svg {
-  width: 15px;
-  height: 15px;
-  stroke: var(--pf-ink);
-  fill: none;
-  stroke-width: 2;
+.pfn-contact-phone {
+  color: var(--pfn-purple);
+  font-size: 14px;
+  font-weight: 800;
+  transition: color 0.2s;
+}
+.pfn-contact-phone:hover {
+  color: var(--pfn-purple-mid);
+}
+.pfn-contact-phone svg,
+.pfn-contact-hours svg {
+  color: var(--pfn-purple-mid);
   flex-shrink: 0;
-  transition: stroke 0.15s;
 }
-.pfn-quick-link:hover {
-  color: var(--pf-red);
-}
-.pfn-quick-link:hover svg {
-  stroke: var(--pf-red);
+.pfn-contact-hours {
+  color: var(--pfn-ink-muted);
+  font-weight: 500;
+  font-size: 12px;
 }
 
-/* Circular icon button — BLACK icon, white bg */
+/* Right-side actions */
+.pfn-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-left: 18px;
+  border-left: 1px solid var(--pfn-ink-line);
+}
 .pfn-icon-btn {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--pfn-ink-line);
+  background: var(--pfn-white);
+  color: var(--pfn-purple);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
   text-decoration: none;
   cursor: pointer;
-  border: 1px solid var(--pf-line);
-  border-radius: var(--radius-md);
-  background: #fff;
-  color: var(--pf-ink);
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    transform 0.15s,
-    box-shadow 0.2s;
-}
-.pfn-icon-btn svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--pf-ink); /* BLACK */
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  box-shadow: 0 4px 14px rgba(33, 13, 53, 0.06);
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 .pfn-icon-btn:hover {
-  background: var(--pf-red);
-  border-color: var(--pf-red);
-  color: #fff;
+  background: var(--pfn-lavender-bright);
+  border-color: var(--pfn-lavender);
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.3);
 }
-.pfn-icon-btn:hover svg {
-  stroke: #fff;
+.pfn-icon-btn:active {
+  transform: scale(0.94);
 }
-
 .pfn-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  background: var(--pf-red);
-  color: #fff;
-  font-size: var(--text-caption);
+  top: -5px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--pfn-cream);
+  background: var(--pfn-sunshine);
+  color: var(--pfn-purple);
+  font-size: 10px;
   font-weight: 800;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--pf-white);
-  padding: 0 2px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
   animation: pfn-pop 0.25s cubic-bezier(0.4, 1.8, 0.6, 1);
 }
 @keyframes pfn-pop {
@@ -479,817 +376,753 @@
   }
 }
 
-/* Cart button — red pill with white text */
-.pfn-cart-btn {
+/* Account button */
+.pfn-account-wrap {
+  position: relative;
+}
+.pfn-account-btn {
   display: flex;
   align-items: center;
   gap: 9px;
-  cursor: pointer;
-  padding: 11px 22px;
-  font-size: var(--text-body-sm);
-  font-weight: 700;
-  font-family:var(--font-ui);
-  text-decoration: none;
-  transition:
-    background 0.2s,
-    transform 0.15s,
-    box-shadow 0.2s;
-  position: relative;
-  flex-shrink: 0;
+  height: 46px;
+  padding: 0 14px 0 8px;
   border-radius: var(--radius-full);
-}
-.pfn-cart-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px var(--pf-red-glow);
-}
-.pfn-cart-btn svg {
-  width: 17px;
-  height: 17px;
-  stroke: #fff;
-  fill: none;
-  stroke-width: 2;
-}
-.pfn-cart-label {
-  white-space: nowrap;
-  color: #fff;
-}
-.pfn-cart-count {
-  background: #fff;
-  color: var(--pf-red);
-  font-size: var(--text-caption);
+  border: 1px solid var(--pfn-ink-line);
+  background: var(--pfn-white);
+  color: var(--pfn-purple);
+  font-family: var(--font-ui);
+  font-size: 14px;
   font-weight: 800;
-  min-width: 20px;
-  height: 20px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 2px;
-}
-
-/* Account button */
-.pfn-acc-wrap {
-  position: relative;
-}
-.pfn-acc-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px 7px 7px;
+  white-space: nowrap;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    box-shadow 0.2s;
-  font-family:var(--font-ui);
+  box-shadow: 0 4px 14px rgba(33, 13, 53, 0.06);
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
-.pfn-acc-btn:hover {
-  border-color: var(--pf-red);
-  box-shadow: 0 4px 12px var(--pf-red-glow);
+.pfn-account-btn:hover,
+.pfn-account-btn.is-open {
+  background: var(--pfn-lavender-bright);
+  border-color: var(--pfn-lavender);
 }
-.pfn-acc-avatar {
+.pfn-account-btn:active {
+  transform: scale(0.97);
+}
+.pfn-avatar {
   width: 30px;
   height: 30px;
-  border-radius: var(--radius-md);
-  background: var(--pf-red);
-  color: #fff;
-  font-size: var(--text-caption);
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--pfn-purple-mid), var(--pfn-purple));
+  color: var(--pfn-cream);
+  font-size: 11px;
   font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
 }
-.pfn-acc-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  min-width: 0;
+.pfn-avatar-guest {
+  background: transparent;
+  color: var(--pfn-purple);
 }
-.pfn-acc-label {
-  font-size: var(--text-caption);
-  color: var(--pf-muted);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.pfn-acc-name {
-  font-size: var(--text-body-sm);
-  font-weight: 700;
-  color: var(--pf-ink);
-  /* Names arrive uppercase from the profile; render them in title case so a
-     long run of caps isn't shown (audit: 16-char all-caps). */
-  text-transform: capitalize;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
-}
-.pfn-acc-chevron {
-  width: 14px;
-  height: 14px;
-  stroke: var(--pf-muted);
-  fill: none;
+.pfn-account-btn .pfn-caret {
+  color: var(--pfn-ink-muted);
   transition: transform 0.2s;
 }
-.pfn-acc-btn.open .pfn-acc-chevron {
+.pfn-account-btn.is-open .pfn-caret {
   transform: rotate(180deg);
 }
 
-/* Login button */
-.pfn-login-btn {
+/* ─────────────────────────── Row 2 ─────────────────────────── */
+.pfn-catbar {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 28px 14px;
+}
+.pfn-catbar-inner {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 18px;
-  font-size: var(--text-body-sm);
-  font-weight: 700;
-  font-family:var(--font-ui);
-  text-decoration: none;
-  transition:
-    border-color 0.2s,
-    background 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
-}
-.pfn-login-btn svg {
-  width: 15px;
-  height: 15px;
-  stroke: var(--pf-ink);
-  fill: none;
-  stroke-width: 2;
-  transition: stroke 0.2s;
-}
-.pfn-login-btn:hover {
-  border-color: var(--pf-red);
-  box-shadow: 0 4px 14px var(--pf-red-glow);
-}
-.pfn-login-btn:hover svg {
-  stroke: #fff;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: none;
+  padding: 10px 14px 10px 12px;
+  min-width: 0;
+  border-radius: 22px;
+  color: var(--pfn-cream);
+  background:
+    radial-gradient(600px 120px at 100% 0%, rgba(208, 173, 255, 0.16), transparent 70%),
+    linear-gradient(100deg, var(--pfn-purple-deep), var(--pfn-purple) 45%, var(--pfn-purple-soft));
+  box-shadow:
+    0 18px 36px -14px rgba(123, 63, 208, 0.55),
+    0 6px 16px rgba(33, 13, 53, 0.2);
 }
 
-/* Account dropdown */
-.pfn-acc-drop {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 280px;
-  background: var(--pf-drop-bg);
-  border: 1px solid var(--pf-drop-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--pf-drop-shadow);
-  padding: 8px;
-  z-index: 9999;
-  animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+.pfn-cats-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.pfn-shop-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.pfn-cats-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.pfn-cats-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.pfn-cat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--pfn-cream);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.pfn-cat svg {
+  color: var(--pfn-lavender);
+  flex-shrink: 0;
+  transition: color 0.18s;
+}
+.pfn-cat:hover,
+.pfn-cat.is-open {
+  background: var(--pfn-lavender-soft);
+}
+.pfn-cat.is-current {
+  background: var(--pfn-sunshine);
+  color: var(--pfn-purple);
+  box-shadow: 0 4px 14px rgba(255, 208, 20, 0.3);
+}
+.pfn-cat.is-current svg {
+  color: var(--pfn-purple);
+}
+.pfn-cat .pfn-caret {
+  color: currentColor;
+  opacity: 0.7;
+  transition: transform 0.2s;
+}
+.pfn-cat.is-open .pfn-caret {
+  transform: rotate(180deg);
+}
+/* "All Categories" — the light lavender pill on the left of the bar */
+.pfn-shop-btn,
+.pfn-shop-btn:hover,
+.pfn-shop-btn.is-open {
+  padding: 0 18px 0 16px;
+  margin-right: 10px;
+  background: var(--pfn-lavender-bright);
+  color: var(--pfn-purple);
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(208, 173, 255, 0.3);
+}
+.pfn-shop-btn svg {
+  color: var(--pfn-purple);
+}
+.pfn-shop-btn:hover,
+.pfn-shop-btn.is-open {
+  background: var(--pfn-lavender);
+}
+
+/* Service actions */
+.pfn-services {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.pfn-divider {
+  width: 1px;
+  height: 30px;
+  margin-right: 8px;
+  background: var(--pfn-lavender-line);
+}
+.pfn-cta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 42px;
+  padding: 0 20px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+/* `.pfn-root` prefix: some pages set `a { color: inherit }`, which would
+   otherwise turn this label cream on the yellow button. */
+.pfn-root .pfn-cta-repair,
+.pfn-root .pfn-cta-repair:hover {
+  color: var(--pfn-purple);
+}
+.pfn-cta-repair {
+  background: var(--pfn-sunshine);
+  color: var(--pfn-purple);
+  box-shadow: 0 6px 18px rgba(255, 208, 20, 0.3);
+}
+.pfn-cta-repair svg {
+  color: var(--pfn-purple);
+}
+.pfn-cta-repair:hover,
+.pfn-cta-repair.is-current {
+  background: var(--pfn-yellow);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(240, 225, 0, 0.45);
+}
+.pfn-cta-trade {
+  border: 1.5px solid rgba(255, 247, 243, 0.75);
+  background: transparent;
+  color: var(--pfn-cream);
+}
+.pfn-cta-trade:hover,
+.pfn-cta-trade.is-current {
+  border-color: var(--pfn-sunshine);
+  color: var(--pfn-sunshine);
+}
+.pfn-cta:active {
+  transform: scale(0.97);
+}
+
+/* ─────────────────────── Dropdown panels ─────────────────────── */
+.pfn-drop-wrap {
+  position: relative;
 }
 @keyframes pfn-drop-in {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.97);
+    transform: translateY(-7px) scale(0.98);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
-.pfn-drop-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px 14px;
-  border-bottom: 1px solid var(--pf-drop-border);
-  margin-bottom: 6px;
+.pfn-drop {
+  position: absolute;
+  top: calc(100% + 12px);
+  z-index: 10000;
+  background:
+    radial-gradient(500px 140px at 100% 0%, rgba(208, 173, 255, 0.12), transparent 70%),
+    var(--pfn-drop-bg);
+  border: 1px solid var(--pfn-drop-line);
+  border-radius: 18px;
+  box-shadow: 0 28px 70px rgba(10, 2, 18, 0.45);
+  animation: pfn-drop-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--pfn-cream);
 }
-.pfn-drop-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  background: var(--pf-red);
-  color: #fff;
-  font-size: var(--text-body);
-  font-weight: 800;
+.pfn-account-drop {
+  right: 0;
+  width: 300px;
+  padding: 9px;
+}
+.pfn-drop-head {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 11px;
+  padding: 10px 11px 13px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid var(--pfn-drop-line);
+}
+.pfn-drop .pfn-avatar {
+  background: linear-gradient(145deg, var(--pfn-lavender-bright), var(--pfn-lavender));
+  color: var(--pfn-purple);
+}
+.pfn-avatar-lg {
+  width: 42px;
+  height: 42px;
+  font-size: 13px;
 }
 .pfn-drop-id {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-width: 0;
 }
 .pfn-drop-id b {
-  display: block;
-  font-size: var(--text-body-sm);
-  color: var(--pf-drop-text);
-  font-weight: 700;
-  text-transform: capitalize;
-}
-.pfn-drop-id span {
-  display: block;
-  font-size: var(--text-caption);
-  color: var(--pf-drop-muted);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--pfn-cream);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.pfn-drop-item svg {
-  width: 15px;
-  height: 15px;
-  stroke: var(--pf-drop-text);
-  fill: none;
-  stroke-width: 2;
-  flex-shrink: 0;
-  transition: stroke 0.15s;
+.pfn-drop-id span {
+  font-size: 11px;
+  line-height: 1.35;
+  color: rgba(255, 247, 243, 0.56);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-/* Shared menu-row treatment — dropdown items, mega links and simple
-   dropdown links were three copies of the same row. */
-.pfn-menu-row {
+.pfn-drop-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: var(--text-body-sm);
-  font-weight: 600;
-  color: var(--pf-drop-text);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.pfn-menu-row:hover {
-  background: var(--pf-drop-hover);
-  color: #fff;
-}
-.pfn-menu-row:hover svg {
-  stroke: #fff;
-}
-
-.pfn-drop-item {
-  gap: 11px;
   width: 100%;
-  padding: 10px 14px;
+  padding: 9px 11px;
   border: none;
+  border-radius: 10px;
   background: transparent;
-  font-family:var(--font-ui);
+  color: rgba(255, 247, 243, 0.86);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
   text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s;
 }
-.pfn-mega-link {
-  padding: 9px 10px;
+.pfn-drop-row svg {
+  color: var(--pfn-lavender);
+  flex-shrink: 0;
 }
-
+.pfn-drop-row:hover {
+  background: rgba(208, 173, 255, 0.16);
+  color: var(--pfn-cream);
+}
 .pfn-drop-sep {
   height: 1px;
-  background: var(--pf-drop-border);
-  margin: 6px 0;
+  margin: 6px 4px;
+  background: var(--pfn-drop-line);
 }
-.pfn-drop-logout {
-  color: var(--pf-red);
+.pfn-drop-row.pfn-logout {
+  color: var(--pfn-sunshine);
 }
-.pfn-drop-logout svg {
-  stroke: var(--pf-red);
+.pfn-drop-row.pfn-logout svg {
+  color: var(--pfn-sunshine);
 }
-.pfn-drop-logout:hover {
-  background: var(--pf-drop-hover);
-  color: #fff;
-}
-.pfn-drop-logout:hover svg {
-  stroke: #fff;
-}
-
-/* ══════════════════════════════════════════
-   ROW 3 — MEGA NAV BAR
-   Solid RED · white text · white underline hover
-   ══════════════════════════════════════════ */
-.pfn-mega-bar {
-  background: var(--pf-red);
-  height: 52px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  z-index: 20;
-  box-shadow: 0 4px 16px rgba(217, 30, 54, 0.35);
-}
-.pfn-mega-inner {
-  max-width: 1440px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-
-/* Nav link items */
-.pfn-nav-item {
-  position: relative;
-}
-.pfn-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 15px;
-  height: 52px;
-  font-size: var(--text-body-sm);
-  font-weight: 600;
-  font-family:var(--font-ui);
-  color: #fff;
-  text-decoration: none;
-  white-space: nowrap;
-  letter-spacing: 0.01em;
-  transition:
-    color 0.18s,
-    background 0.18s;
-  border: none;
-  background: none;
-  cursor: pointer;
-  position: relative;
-}
-.pfn-nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 15px;
-  right: 15px;
-  height: 3px;
-  background: #fff;
-  border-radius: 8px;
-  transform: scaleX(0);
-  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.pfn-nav-link:hover,
-.pfn-nav-link.pfn-active {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.12);
-}
-.pfn-nav-link:hover::after,
-.pfn-nav-link.pfn-active::after {
-  transform: scaleX(1);
-}
-.pfn-nav-link svg {
-  width: 14px;
-  height: 14px;
-  stroke: #fff;
-  fill: none;
-  transition:
-    transform 0.2s,
-    stroke 0.18s;
-  stroke-width: 2.5;
-  flex-shrink: 0;
-}
-.pfn-nav-link:hover svg {
-  transform: rotate(180deg);
-  stroke: #fff;
-}
-
-.pfn-nav-divider {
-  width: 1px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.22);
-  margin: 0 4px;
-  flex-shrink: 0;
-}
-
-/* "Book Repair / Trade-In" accent links — solid dark red bg, white text */
-.pfn-nav-link.pfn-accent {
-  color: #fff;
-  font-weight: 700;
-  background: var(--pf-red-dark);
-  border-radius: 8px;
-  margin: 0 3px;
-}
-.pfn-nav-link.pfn-accent:hover {
-  background: var(--pf-red-deep);
-  color: #fff;
-}
-.pfn-nav-link.pfn-accent::after {
-  display: none;
-}
-
-/* ── Mega dropdown (All Categories) ── */
-.pfn-mega-drop {
-  position: absolute;
-  top: calc(100% + 0px);
-  left: 0;
-  width: 700px;
-  background: var(--pf-drop-bg);
-  border: 1px solid var(--pf-drop-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--pf-drop-shadow);
-  padding: 20px;
-  z-index: 9999;
-  animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 4px;
-}
-.pfn-mega-section {
-  padding: 4px 0;
-}
-.pfn-mega-head {
-  font-size: var(--text-caption);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--pf-drop-muted);
-  padding: 6px 10px 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border-bottom: 1px solid var(--pf-drop-border);
-  margin-bottom: 4px;
-}
-.pfn-mega-head svg {
-  width: 11px;
-  height: 11px;
-  stroke: var(--pf-red);
-  fill: none;
-}
-
-.pfn-mega-link-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.07);
+.pfn-drop-signin {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.15s;
+  gap: 8px;
+  margin-top: 6px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--pfn-sunshine);
+  color: var(--pfn-purple);
+  font-size: 12.5px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.15s, background 0.2s;
 }
-.pfn-mega-link:hover .pfn-mega-link-icon {
-  background: var(--pf-drop-hover);
-}
-.pfn-mega-link-icon svg {
-  width: 15px;
-  height: 15px;
-  stroke: var(--pf-drop-text);
-  fill: none;
-  stroke-width: 2;
-  transition: stroke 0.15s;
-}
-.pfn-mega-link:hover .pfn-mega-link-icon svg {
-  stroke: #fff;
-}
-.pfn-mega-link-text b {
-  display: block;
-  font-size: var(--text-body-sm);
-  font-weight: 700;
-  color: var(--pf-drop-text);
-}
-.pfn-mega-link-text span {
-  display: block;
-  font-size: var(--text-caption);
-  color: var(--pf-drop-muted);
-  font-weight: 500;
+.pfn-drop-signin:hover {
+  background: var(--pfn-yellow);
+  box-shadow: 0 8px 20px rgba(255, 208, 20, 0.3);
+  transform: translateY(-1px);
 }
 
-/* Simple dropdown */
-.pfn-nav-drop {
-  position: absolute;
-  top: calc(100% + 0px);
+/* Mega dropdown */
+.pfn-shop-drop {
   left: 0;
-  min-width: 220px;
-  background: var(--pf-drop-bg);
-  border: 1px solid var(--pf-drop-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--pf-drop-shadow);
-  padding: 8px;
-  z-index: 9999;
-  animation: pfn-drop-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  width: min(820px, calc(100vw - 56px));
+  padding: 14px;
+}
+.pfn-shop-cols {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 10px;
+}
+.pfn-shop-col {
+  min-width: 0;
+}
+.pfn-drop-heading {
+  margin: 0 0 6px;
+  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--pfn-sunshine);
+}
+.pfn-shop-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  color: rgba(255, 247, 243, 0.86);
+  text-decoration: none;
+  transition: background 0.16s, color 0.16s;
+}
+.pfn-shop-link:hover {
+  background: rgba(208, 173, 255, 0.16);
+  color: var(--pfn-cream);
+}
+.pfn-shop-link-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: rgba(208, 173, 255, 0.12);
+  color: var(--pfn-lavender);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.pfn-shop-link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.pfn-shop-link-text b {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: inherit;
+}
+.pfn-shop-link-text small {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: rgba(255, 247, 243, 0.48);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pfn-shop-cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.pfn-shop-cat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 9px;
+  border-radius: 9px;
+  color: rgba(255, 247, 243, 0.82);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.16s, color 0.16s;
+}
+.pfn-shop-cat svg {
+  color: var(--pfn-lavender);
+  flex-shrink: 0;
+}
+.pfn-shop-cat span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pfn-shop-cat:hover {
+  background: rgba(208, 173, 255, 0.16);
+  color: var(--pfn-cream);
 }
 
-.pfn-nav-drop-link svg {
-  width: 15px;
-  height: 15px;
-  stroke: var(--pf-drop-text);
-  fill: none;
+/* ─────────────── See-through mode (Home hero, before scrolling) ───────────────
+   `transparent` pages (Home) start with no cream background so the hero video
+   shows through; text switches to cream and buttons turn to glass. Once the
+   page scrolls, `.pfn-scrolled` drops these rules and the normal nav returns. */
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) {
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-logo-name,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-phone,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-icon-btn {
+  color: var(--pfn-cream);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-logo-name span {
+  color: var(--pfn-sunshine);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-logo-sub,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-hours,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn .pfn-caret {
+  color: rgba(255, 247, 243, 0.72);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-phone svg,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-hours svg {
+  color: var(--pfn-lavender);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-actions {
+  border-left-color: rgba(255, 247, 243, 0.18);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-icon-btn {
+  background: rgba(255, 247, 243, 0.1);
+  border-color: rgba(255, 247, 243, 0.24);
+  box-shadow: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn:hover,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn.is-open,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-icon-btn:hover {
+  background: rgba(255, 247, 243, 0.2);
+  border-color: rgba(255, 247, 243, 0.4);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-avatar-guest {
+  color: var(--pfn-cream);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-badge {
+  border-color: var(--pfn-purple);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-search {
+  border-color: rgba(255, 247, 243, 0.5);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-catbar-inner {
+  background: rgba(23, 8, 38, 0.55);
+  border: 1px solid rgba(208, 173, 255, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: none;
 }
 
-/* ══════════════════════════════════════════
-   SCROLL COMPACT
-   ══════════════════════════════════════════ */
-/* The spacer deliberately keeps its expanded height here (see the measure
-   effect in SiteTopNav.tsx): shrinking it made short pages flicker. */
-.pfn-root.pfn-scrolled .pfn-util-bar {
+/* ─────────────────────── Responsive ─────────────────────── */
+.pfn-mobile {
   display: none;
 }
 
-/* ══════════════════════════════════════════
-   TRANSPARENT OVERLAY — LANDING PAGE ONLY
-   Opt-in via the `transparent` prop. The three layers turn into
-   dark / white / crimson glass so the hero carousel shows through.
-   Once scrolled, the rules stop matching and each bar snaps back to
-   its solid, readable treatment above.
-   ══════════════════════════════════════════ */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-bar {
-  background: rgba(8, 9, 12, 0.85);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left a,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left span {
-  color: rgba(255, 255, 255, 0.9);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left a:hover {
-  color: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-left svg {
-  stroke: currentColor;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-sep {
-  background: rgba(255, 255, 255, 0.2);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right a,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right button {
-  color: rgba(255, 255, 255, 0.9);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right a:hover,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-util-right button:hover {
-  color: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-main-bar {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.1);
-  transition:
-    background 0.3s,
-    border-color 0.3s,
-    box-shadow 0.3s;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-mega-bar {
-  background: rgba(140, 14, 34, 0.95);
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: background 0.3s;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link {
-  color: #fff;
-}
-
-/* Account dropdown in transparent mode */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop {
-  background: var(--pf-drop-bg);
-  border-color: var(--pf-drop-border);
-  box-shadow: var(--pf-drop-shadow);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout {
-  color: var(--pf-drop-text);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item:hover,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout:hover {
-  background: var(--pf-drop-hover);
-  color: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item svg,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout svg {
-  stroke: var(--pf-drop-text);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-item:hover svg,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-drop .pfn-drop-logout:hover svg {
-  stroke: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-drop-sep {
-  background: var(--pf-drop-border);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link:hover,
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-active {
-  color: #fff;
-  background: rgba(0, 0, 0, 0.15);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link svg {
-  stroke: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link:hover svg {
-  transform: rotate(180deg);
-  stroke: #fff;
-}
-
-/* Ensure solid white text on mega bar for all states (fixes contrast issues 2-10) */
-.pfn-mega-bar .pfn-nav-link {
-  color: #fff !important;
-}
-.pfn-mega-bar .pfn-nav-link:hover,
-.pfn-mega-bar .pfn-nav-link.pfn-active {
-  color: #fff !important;
-}
-.pfn-mega-bar .pfn-nav-link svg {
-  stroke: #fff !important;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-divider {
-  background: rgba(255, 255, 255, 0.3);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-accent {
-  color: #fff;
-  background: var(--pf-red-dark);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-nav-link.pfn-accent:hover {
-  background: var(--pf-red-deep);
-  color: #fff;
-}
-
-/* Logo — white lockup over the hero; the red mark keeps the brand anchor. */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-name {
-  color: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-logo-sub {
-  color: var(--pf-muted);
-}
-
-/* Search — frosted field with dark text/icons. */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.15);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form:focus-within {
-  background: #fff;
-  border-color: var(--pf-red);
-  box-shadow: 0 0 0 3px rgba(217, 30, 54, 0.15);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-icon {
-  color: var(--pf-ink);
-  stroke: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input {
-  color: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-form input::placeholder {
-  color: var(--pf-muted);
-}
-
-/* Search button — ensure solid red background in transparent mode */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-btn {
-  background: var(--pf-red);
-  color: #fff;
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-search-btn:hover {
-  background: var(--pf-red-dark);
-}
-
-/* Quick nav links — dark text on light glass. */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link {
-  color: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link svg {
-  stroke: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover {
-  color: var(--pf-red);
-  background: var(--pf-red-tint);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-quick-link:hover svg {
-  stroke: var(--pf-red);
-}
-
-/* Circular icon buttons — glass pills with dark icons. */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn svg {
-  stroke: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover {
-  background: var(--pf-red);
-  border-color: var(--pf-red);
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(217, 30, 54, 0.3);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-icon-btn:hover svg {
-  stroke: #fff;
-}
-
-/* Sign-in / account controls — glass with dark text. */
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn {
-  color: var(--pf-ink);
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-login-btn svg {
-  stroke: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-name {
-  color: var(--pf-ink);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-label {
-  color: var(--pf-muted);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-chevron {
-  stroke: var(--pf-muted);
-}
-.pfn-root.pfn-transparent:not(.pfn-scrolled) .pfn-acc-btn:hover {
-  border-color: var(--pf-red);
-}
-
-/* ══════════════════════════════════════════
-   RESPONSIVE — only affects ≤768px
-   ══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .pfn-main-inner {
-    padding: 0 18px;
-    gap: 12px;
-  }
-  .pfn-mega-inner {
-    padding: 0 18px;
-  }
-  .pfn-search-btn .pfn-btn-label {
+@media (max-width: 1320px) {
+  .pfn-strip-item:nth-child(4) {
     display: none;
   }
-  .pfn-quick-link span {
-    display: none;
+  .pfn-cat {
+    padding: 0 11px;
+    font-size: 13px;
   }
-  .pfn-quick-link {
-    padding: 7px 8px;
+  .pfn-cta {
+    padding: 0 16px;
+    font-size: 13px;
   }
 }
-@media (max-width: 768px) {
-  .pfn-util-bar {
+
+@media (max-width: 1240px) {
+  .pfn-main {
+    gap: 16px;
+  }
+  .pfn-contact {
     display: none;
   }
-  .pfn-mega-bar {
+  .pfn-search {
+    max-width: none;
+  }
+  .pfn-shop-drop {
+    width: min(760px, calc(100vw - 48px));
+  }
+}
+
+@media (max-width: 1080px) {
+  .pfn-inner:not(.pfn-catbar-inner),
+  .pfn-catbar {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .pfn-strip-item:nth-child(3) {
     display: none;
   }
-  .pfn-main-bar {
-    height: 60px;
+  .pfn-account-label,
+  .pfn-account-btn .pfn-caret {
+    display: none;
+  }
+  .pfn-account-btn {
+    width: 46px;
+    padding: 0;
+    justify-content: center;
+  }
+  .pfn-cat {
+    padding: 0 10px;
+    font-size: 12.5px;
+  }
+  .pfn-cta {
+    padding: 0 12px;
+  }
+  .pfn-logo-sub {
+    display: none;
+  }
+  .pfn-shop-cols {
+    grid-template-columns: 1fr 1.1fr;
+  }
+  .pfn-shop-cols .pfn-shop-col:last-child {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .pfn-desktop {
+    display: none;
+  }
+  .pfn-mobile {
+    display: block;
   }
   .pfn-spacer {
-    height: 60px !important;
+    height: 166px;
   }
-  .pfn-cart-label {
+  .pfn-m-inner {
+    padding: 10px 14px 0;
+  }
+  .pfn-m-top {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+  .pfn-menu-btn {
+    width: 42px;
+    height: 42px;
+  }
+  .pfn-logo-mobile {
+    flex: 1;
+    gap: 9px;
+  }
+  .pfn-logo-mobile .pfn-logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .pfn-logo-mobile .pfn-logo-name {
+    font-size: 1.22rem;
+  }
+  .pfn-logo-mobile .pfn-logo-sub {
     display: none;
   }
-  .pfn-acc-info {
-    display: none;
+  .pfn-m-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
   }
-  .pfn-acc-btn {
-    padding: 6px;
-    border-radius: 8px;
-  }
-  .pfn-acc-chevron {
-    display: none;
-  }
-  .pfn-main-inner {
-    padding: 0 10px;
-    gap: 6px;
-  }
-  .pfn-logo-text {
-    display: none;
-  }
-  .pfn-icon-cluster {
-    gap: 4px;
-  }
-  .pfn-icon-btn {
+  .pfn-m-actions .pfn-icon-btn {
     width: 40px;
     height: 40px;
   }
-  .pfn-quick-nav {
+  .pfn-search-mobile {
+    width: 100%;
+    max-width: none;
+    height: 46px;
+    margin: 10px 0 10px;
+    padding: 0 5px 0 15px;
+  }
+  .pfn-search-mobile input {
+    font-size: 13px;
+  }
+  .pfn-search-mobile .pfn-search-btn {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 12.5px;
+  }
+  .pfn-m-cats {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: calc(100% + 28px);
+    margin: 0 -14px;
+    padding: 9px 14px;
+    background: linear-gradient(100deg, var(--pfn-purple-deep), var(--pfn-purple) 50%, var(--pfn-purple-soft));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pfn-m-cats::-webkit-scrollbar {
     display: none;
+  }
+  .pfn-m-cat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 33px;
+    padding: 0 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--pfn-cream-line);
+    background: rgba(255, 247, 243, 0.06);
+    color: var(--pfn-cream);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+  }
+  .pfn-m-cat svg {
+    color: var(--pfn-lavender);
+  }
+  .pfn-m-cat.is-current {
+    background: var(--pfn-sunshine);
+    border-color: transparent;
+    color: var(--pfn-purple);
+  }
+  .pfn-m-cat.is-current svg {
+    color: var(--pfn-purple);
+  }
+  .pfn-m-cat-service {
+    border-color: transparent;
+    background: var(--pfn-lavender-bright);
+    color: var(--pfn-purple);
+  }
+  .pfn-m-cat-service svg {
+    color: var(--pfn-purple);
   }
 }
 
-/* Suppress old header so it doesn't interfere */
+@media (max-width: 380px) {
+  .pfn-m-inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .pfn-search-mobile .pfn-search-btn {
+    padding: 0 11px;
+    font-size: 11.5px;
+  }
+  .pfn-logo-mobile .pfn-logo-name {
+    font-size: 1.06rem;
+  }
+}
+
+/* Suppress the old website header so it cannot interfere. */
 .wx-header {
   display: none !important;
 }
 
-/* Phone widths only: keep the search bar inside the viewport (320px+). */
-@media (max-width: 480px) {
-  .pfn-search-wrap {
-    min-width: 0;
-    width: 100%;
-  }
-  .pfn-search-form {
-    min-width: 0;
-  }
-  .pfn-search-form input {
-    min-width: 0;
-    width: 100%;
-  }
-  .pfn-search-btn {
-    padding: 9px 14px;
-  }
-  .pfn-icon-cluster {
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .pfn-acc-btn {
-    min-width: 0;
-  }
+
+/* Account: "Login" button for guests, profile icon + first name when signed in */
+.pfn-account-btn .pfn-account-label {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.pfn-login-btn {
+  padding: 0 20px;
+  background: var(--pfn-purple);
+  border-color: var(--pfn-purple);
+  color: var(--pfn-cream);
+  text-decoration: none;
+}
+.pfn-login-btn svg { color: var(--pfn-sunshine); }
+.pfn-login-btn:hover {
+  background: var(--pfn-purple-mid);
+  border-color: var(--pfn-purple-mid);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn,
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn:hover {
+  background: var(--pfn-sunshine);
+  border-color: var(--pfn-sunshine);
+  color: var(--pfn-purple);
+}
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn svg { color: var(--pfn-purple); }

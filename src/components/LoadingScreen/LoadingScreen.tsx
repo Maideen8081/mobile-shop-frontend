@@ -114,7 +114,7 @@ export default function LoadingScreen({ isLoaded, onExitComplete, minDuration = 
                       <path d={WAVE} fill="#FF8A95" />
                     </svg>
                     <svg className="pf-wave pf-wave--front" viewBox="0 0 400 16" preserveAspectRatio="none" aria-hidden="true">
-                      <path d={WAVE} fill="#E5243B" />
+                      <path d={WAVE} fill="#210D35" />
                     </svg>
                   </div>
                   <div className="pf-smile" />

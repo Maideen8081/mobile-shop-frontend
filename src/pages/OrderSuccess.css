@@ -1,13 +1,13 @@
 /* Desktop order confirmation. Scoped under .osx so nothing leaks into the app. */
 .osx {
-  --osx-paper: #fbf8f6;
+  --osx-paper: #FFF7F3;
   --osx-card: #ffffff;
   --osx-ink: #1b1210;
   --osx-ink-2: #4a403d;
   --osx-muted: #857d79;
   --osx-line: #ece4e0;
-  --osx-red: #d91e36;
-  --osx-red-dark: #a3122a;
+  --osx-red: #210D35;
+  --osx-red-dark: #3A1E52;
   --osx-red-tint: #fdecee;
   --osx-green: #059669;
   --osx-green-tint: #e7f6f0;
@@ -120,9 +120,9 @@
 .osx-btn-primary {
   background: linear-gradient(135deg, var(--osx-red), var(--osx-red-dark));
   color: #fff;
-  box-shadow: 0 6px 18px rgba(217, 30, 54, 0.28);
+  box-shadow: 0 6px 18px rgba(123, 63, 208, 0.28);
 }
-.osx-btn-primary:hover { box-shadow: 0 10px 24px rgba(217, 30, 54, 0.38); }
+.osx-btn-primary:hover { box-shadow: 0 10px 24px rgba(123, 63, 208, 0.38); }
 .osx-btn-ghost { background: #fff; color: var(--osx-ink); border-color: var(--osx-line); }
 .osx-btn-ghost:hover { border-color: var(--osx-ink-2); }
 

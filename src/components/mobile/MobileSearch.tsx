@@ -52,11 +52,11 @@ export default function MobileSearch() {
     <div className="min-h-screen bg-[#F8F9FB] text-[#0F172A] max-w-[480px] mx-auto flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-[#E5E7EB] px-3 py-2.5 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition flex-shrink-0">
           <ArrowLeft size={19} className="text-[#0F172A]" />
         </button>
-        <div className="flex-1 flex items-center gap-2 h-11 bg-[#FEE2E6] rounded-2xl px-3.5">
-          <Search size={19} className="text-[#CB202D] flex-shrink-0" />
+        <div className="flex-1 flex items-center gap-2 h-11 bg-[#F3E8FF] rounded-2xl px-3.5">
+          <Search size={19} className="text-[#210D35] flex-shrink-0" />
           <input
             ref={inputRef}
             value={query}
@@ -94,7 +94,7 @@ export default function MobileSearch() {
             {/* Top products */}
             <div className="mt-7">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-8 h-8 rounded-xl bg-[#FEE2E6] text-[#CB202D] flex items-center justify-center">
+                <span className="w-8 h-8 rounded-xl bg-[#F3E8FF] text-[#210D35] flex items-center justify-center">
                   <Flame size={17} />
                 </span>
                 <h2 className="text-title-sm font-extrabold text-[#0F172A] tracking-tight">Top Products</h2>
@@ -127,8 +127,8 @@ export default function MobileSearch() {
             </p>
             {results.length === 0 && !loading ? (
               <div className="flex flex-col items-center justify-center text-center py-20">
-                <div className="w-20 h-20 rounded-3xl bg-[#FEE2E6] flex items-center justify-center mb-4">
-                  <Search size={32} className="text-[#CB202D]" />
+                <div className="w-20 h-20 rounded-3xl bg-[#F3E8FF] flex items-center justify-center mb-4">
+                  <Search size={32} className="text-[#210D35]" />
                 </div>
                 <h3 className="text-body font-bold text-[#0F172A]">No products found</h3>
                 <p className="text-label text-[#64748B] mt-1.5 max-w-[240px]">Try a different keyword or browse popular searches.</p>

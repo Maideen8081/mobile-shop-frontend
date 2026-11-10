@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BadgeCheck, Clock, Gift, Loader2, RotateCcw, ShieldCheck, Sparkles, Tag, Truck, Wallet, X } from 'lucide-react'
+import { BadgeCheck, ChevronRight, Clock, Gift, Loader2, RotateCcw, ShieldCheck, ShoppingCart, Sparkles, Tag, Truck, Wallet, X } from 'lucide-react'
 import { offerService, type ExitOffer } from '../../services/offerService'
 import { formatINR, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
+import { useCutout } from '../../utils/removeBackground'
 import './ExitIntentOffer.css'
 
 // Shown when the shopper does anything on the payment page other than placing
@@ -23,6 +24,22 @@ export interface ExitOfferCartItem {
   mrp?: number
   image?: string
   quantity: number
+}
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const resolveImage = (raw: string) =>
+  raw.startsWith('http') || raw.startsWith('data:') || raw.startsWith('blob:')
+    ? raw
+    : `${API_BASE_URL.replace(/\/+$/, '')}/${raw.replace(/^\/+/, '')}`
+
+/** Cart phone on the podium, with its white photo background cut out like the home page cards. */
+function PodiumPhone({ image }: { image: string }) {
+  const cutout = useCutout(resolveImage(image))
+  return (
+    <span className={`eo-phone${cutout.cut ? ' is-cut' : ''}`}>
+      <img src={cutout.src} alt="" />
+    </span>
+  )
 }
 
 const EMPTY_OFFER: ExitOffer = { coupon: null, unlock_coupon: null, cart_savings: [], deals: [] }
@@ -51,10 +68,10 @@ function hasContent(offer: ExitOffer | null, applied: CheckoutCoupon | null, car
 }
 
 const PERKS = [
-  { icon: Truck, title: 'Free delivery', text: 'Arrives in 3–5 days' },
-  { icon: Wallet, title: 'Cash on Delivery', text: 'Pay when it arrives' },
-  { icon: RotateCcw, title: '7-day returns', text: 'No questions asked' },
-  { icon: ShieldCheck, title: 'Secure checkout', text: 'Details encrypted' },
+  { icon: ShieldCheck, title: 'Secure', text: 'Checkout' },
+  { icon: Truck, title: 'Free', text: 'Delivery' },
+  { icon: RotateCcw, title: '7-Day', text: 'Returns' },
+  { icon: Wallet, title: 'Cash on', text: 'Delivery' },
 ]
 
 export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabled, appliedCoupon, onApplyCoupon }: Props) {
@@ -198,6 +215,22 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
     return () => document.removeEventListener('keydown', onKey)
   }, [open, stay])
 
+  // Freeze the page behind the popup; pad for the hidden scrollbar so the layout doesn't jump.
+  useEffect(() => {
+    if (!open) return
+    const { body, documentElement: html } = document
+    const scrollbar = window.innerWidth - html.clientWidth
+    const prev = { bodyOverflow: body.style.overflow, htmlOverflow: html.style.overflow, padding: body.style.paddingRight }
+    body.style.overflow = 'hidden'
+    html.style.overflow = 'hidden'
+    if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`
+    return () => {
+      body.style.overflow = prev.bodyOverflow
+      html.style.overflow = prev.htmlOverflow
+      body.style.paddingRight = prev.padding
+    }
+  }, [open])
+
   const coupon = usableCoupon(offer, appliedCoupon)
 
   const applyCoupon = async () => {
@@ -230,143 +263,148 @@ export default function ExitIntentOffer({ productIds, subtotal, cartItems, enabl
     .map((i) => ({ name: i.name, percent_off: Math.round(((i.mrp! - i.price) / i.mrp!) * 100) }))
     .sort((a, b) => b.percent_off - a.percent_off)[0]
   const saving = offer.cart_savings[0] ?? localSaving
-  const hasOffers = Boolean(coupon || offer.unlock_coupon || offer.deals.length)
-  const unlock = offer.unlock_coupon
+    const unlock = offer.unlock_coupon
   const second = variant === 2
   // The follow-up ad leads with the biggest discounts so it doesn't repeat the first one.
   const deals = second
     ? [...offer.deals].sort((a, b) => b.percent_off - a.percent_off).slice(0, 4)
     : offer.deals
   const HeroIcon = second ? Clock : Gift
+  const thumbs = cartItems.filter((i) => i.image).slice(0, 3)
+  // Order the phones so the first item sits in the middle, like a podium line-up.
+  const podium = thumbs.length === 3 ? [thumbs[1], thumbs[0], thumbs[2]] : thumbs
 
   return (
     <div className="eo-overlay" data-exit-offer onClick={stay}>
-      <div className={`eo-card${second ? ' eo-card--second' : ''}`} role="dialog" aria-modal="true" aria-labelledby="eo-title" onClick={(e) => e.stopPropagation()}>
+      <div className={`eo-banner${second ? ' eo-banner--second' : ''}`} role="dialog" aria-modal="true" aria-labelledby="eo-title" onClick={(e) => e.stopPropagation()}>
         <button type="button" className="eo-close" onClick={stay} aria-label="Close offer"><X size={18} /></button>
 
-        <div className="eo-hero">
-          <span className="eo-hero-icon"><HeroIcon size={26} /></span>
-          {second ? (
-            <>
-              <h2 id="eo-title">Still thinking it over?</h2>
-              <p>Your cart is saved and ready — here’s why shoppers order today.</p>
-            </>
-          ) : (
-            <>
-              <h2 id="eo-title">Wait — your order is almost done!</h2>
-              <p>{coupon ? 'Here’s an extra discount to finish checking out.' : hasOffers ? 'Before you go, have a look at these offers.' : 'Your cart is saved — finish your order in one tap.'}</p>
-            </>
-          )}
-        </div>
+        {/* Decorative glow blobs and floating sparkles */}
+        <span className="eo-blob eo-blob--a" aria-hidden="true" />
+        <span className="eo-blob eo-blob--b" aria-hidden="true" />
+        <span className="eo-sparks" aria-hidden="true">
+          {Array.from({ length: 10 }, (_, i) => <i key={i} />)}
+        </span>
 
-        <div className="eo-body">
-          {coupon && (
-            <div className="eo-coupon">
-              <div className="eo-coupon-amount">
-                <span>Extra</span>
-                <strong>{formatINR(Number(coupon.discount_amount))} OFF</strong>
-                <small>
-                  {coupon.discount_type === 'percentage' ? `${Number(coupon.discount_value)}% off your order` : 'Flat discount'}
-                </small>
-              </div>
-              <div className="eo-coupon-code">
-                <span>Use code</span>
-                <code>{coupon.code}</code>
-              </div>
-            </div>
-          )}
-
-          {!coupon && unlock && (
-            <div className="eo-unlock">
-              <Tag size={18} />
-              <p>
-                Add <strong>{formatINR(Number(unlock.amount_needed))}</strong> more to unlock{' '}
-                <strong>
-                  {unlock.discount_type === 'percentage' ? `${Number(unlock.discount_value)}% off` : `${formatINR(Number(unlock.discount_value))} off`}
-                </strong>{' '}
-                with code <code>{unlock.code}</code>
-              </p>
-            </div>
-          )}
-
-          {cartItems.length > 0 && (
-            <div className="eo-cart">
-              <div className="eo-cart-thumbs">
-                {cartItems.slice(0, 3).map((it) => (
-                  <span key={it.productId} className="eo-cart-thumb">
-                    {it.image ? <img src={it.image} alt="" loading="lazy" /> : <span aria-hidden="true">📦</span>}
-                  </span>
-                ))}
-              </div>
-              <div className="eo-cart-text">
-                <strong>
-                  {cartItems.length === 1 ? cartItems[0].name : `${cartItems.length} items are waiting in your cart`}
-                </strong>
-                <span>
-                  {formatINR(subtotal)} · free delivery and 7-day returns
-                </span>
-              </div>
-            </div>
-          )}
-
-          {saving && !second && (
-            <p className="eo-saving">
-              <Sparkles size={15} />
-              <span>You’re already saving <strong>{saving.percent_off}%</strong> on {saving.name} — prices like this don’t last.</span>
+        <div className="eo-main">
+          {/* Left: message */}
+          <div className="eo-copy">
+            <span className="eo-pill"><HeroIcon size={18} /> {second ? 'Your cart is saved' : 'Exclusive Checkout Offer'}</span>
+            <h2 id="eo-title">
+              {second ? (
+                <><span>Still thinking</span><em>it over?</em></>
+              ) : (
+                <><span>Wait! Your order</span><em>is almost done</em></>
+              )}
+            </h2>
+            <p className="eo-sub">
+              {second
+                ? 'Your cart is saved and ready. Here’s why shoppers order today.'
+                : coupon
+                  ? 'Here’s an extra discount to finish checking out — smart, safe and quick!'
+                  : 'Your cart is saved — finish your order in one tap before these prices change.'}
             </p>
-          )}
-
-          {second && (
-            <ul className="eo-perks">
-              {PERKS.map(({ icon: Icon, title, text }) => (
+            <ul className="eo-features">
+              {PERKS.slice(0, 3).map(({ icon: Icon, title, text }) => (
                 <li key={title}>
-                  <Icon size={18} />
+                  <Icon size={22} />
                   <span><strong>{title}</strong>{text}</span>
                 </li>
               ))}
             </ul>
-          )}
+          </div>
 
-          {deals.length > 0 && (
-            <div className="eo-deals">
-              <h3>{second ? 'Biggest discounts right now' : 'Deals you might like'}</h3>
-              <div className="eo-deal-row">
-                {deals.map((d) => (
-                  <button key={d.variant_id} type="button" className="eo-deal" onClick={() => openDeal(d.product_id, d.variant_id)}>
-                    <span className="eo-deal-badge">-{d.percent_off}%</span>
-                    <span className="eo-deal-img">
-                      {d.image ? <img src={d.image} alt="" loading="lazy" /> : <span aria-hidden="true">📦</span>}
-                    </span>
+          {/* Middle: cart items on a podium */}
+          <div className="eo-stage" aria-hidden="true">
+            <span className="eo-arc" />
+            <span className="eo-rays" />
+            <div className={`eo-phones eo-phones--${podium.length || 0}`}>
+              {podium.length > 0
+                ? podium.map((it) => <PodiumPhone key={it.productId} image={it.image!} />)
+                : <span className="eo-phone eo-phone--empty"><Gift size={48} /></span>}
+            </div>
+            <span className="eo-podium" />
+            <span className="eo-seal">
+              <BadgeCheck size={22} />
+              {cartItems.length > 0 ? <>{cartItems.length} in<br />your cart</> : <>Ready to<br />ship</>}
+            </span>
+          </div>
+
+          {/* Right: offer + action */}
+          <div className="eo-offer">
+            <div className="eo-offer-card">
+              <h3>{coupon ? 'Save more on this order' : saving ? 'You’re already saving' : unlock ? 'Unlock a bigger discount' : 'Complete your order'}</h3>
+              <div className="eo-sticker">
+                {coupon ? (
+                  <>
+                    <small>Extra</small>
+                    <strong>{formatINR(Number(coupon.discount_amount))} <b>OFF</b></strong>
+                    <code>Code: {coupon.code}</code>
+                  </>
+                ) : saving ? (
+                  <>
+                    <small>Up to</small>
+                    <strong>{saving.percent_off}% <b>OFF</b></strong>
+                    <code>on {saving.name}</code>
+                  </>
+                ) : unlock ? (
+                  <>
+                    <small>Add {formatINR(Number(unlock.amount_needed))} more for</small>
+                    <strong>
+                      {unlock.discount_type === 'percentage' ? `${Number(unlock.discount_value)}%` : formatINR(Number(unlock.discount_value))} <b>OFF</b>
+                    </strong>
+                    <code>Code: {unlock.code}</code>
+                  </>
+                ) : (
+                  <>
+                    <small>Cart total</small>
+                    <strong>{formatINR(subtotal)}</strong>
+                    <code>Free delivery · 7-day returns</code>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {coupon ? (
+              <button type="button" className="eo-primary" onClick={applyCoupon} disabled={applying} autoFocus>
+                {applying ? <><Loader2 size={18} className="eo-spin" /> Applying…</> : <><Tag size={18} /> Apply &amp; complete order <ChevronRight size={18} /></>}
+              </button>
+            ) : (
+              <button type="button" className="eo-primary" onClick={stay} autoFocus>
+                <ShoppingCart size={18} /> {second ? 'Yes, place my order' : 'Complete my order'} <ChevronRight size={18} />
+              </button>
+            )}
+            {canLeave ? (
+              <button type="button" className="eo-secondary" onClick={leave}>No thanks, leave checkout</button>
+            ) : (
+              <button type="button" className="eo-secondary" onClick={stay}>Maybe later</button>
+            )}
+            {applyError && <p className="eo-error" role="alert">{applyError}</p>}
+          </div>
+        </div>
+
+        {deals.length > 0 && (
+          <div className="eo-deals">
+            <h3><Sparkles size={15} /> {second ? 'Biggest discounts right now' : 'Deals you might like'}</h3>
+            <div className="eo-deal-row">
+              {deals.map((d) => (
+                <button key={d.variant_id} type="button" className="eo-deal" onClick={() => openDeal(d.product_id, d.variant_id)}>
+                  <span className="eo-deal-img">
+                    {d.image ? <img src={d.image} alt="" loading="lazy" /> : <span aria-hidden="true">📦</span>}
+                  </span>
+                  <span className="eo-deal-info">
                     <span className="eo-deal-name">{d.name}</span>
                     <span className="eo-deal-price">
                       <strong>{formatINR(Number(d.discount_price))}</strong>
                       <s>{formatINR(Number(d.price))}</s>
                     </span>
-                  </button>
-                ))}
-              </div>
+                  </span>
+                  <span className="eo-deal-badge">-{d.percent_off}%</span>
+                </button>
+              ))}
             </div>
-          )}
-
-          {applyError && <p className="eo-error" role="alert">{applyError}</p>}
-        </div>
-
-        <div className="eo-actions">
-          {coupon ? (
-            <button type="button" className="eo-primary" onClick={applyCoupon} disabled={applying} autoFocus>
-              {applying ? <><Loader2 size={16} className="eo-spin" /> Applying…</> : `Apply ${coupon.code} & complete order`}
-            </button>
-          ) : (
-            <button type="button" className="eo-primary" onClick={stay} autoFocus>
-              {second ? <><BadgeCheck size={16} /> Yes, place my order</> : 'Complete my order'}
-            </button>
-          )}
-          {canLeave ? (
-            <button type="button" className="eo-secondary" onClick={leave}>No thanks, leave checkout</button>
-          ) : (
-            <button type="button" className="eo-secondary" onClick={stay}>Maybe later</button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -8,8 +8,8 @@ import DoubleRingLoader from '../ui/DoubleRingLoader'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
-const RED = '#CB202D'
-const RED_DEEP = '#A81D2A'
+const RED = '#210D35'
+const RED_DEEP = '#3A1E52'
 const SUCCESS = '#16A34A'
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -190,8 +190,8 @@ export default function MobileCheckoutAddress() {
           <div className="flex justify-center py-16"><DoubleRingLoader size={36} label="Loading addresses..." /></div>
         ) : addresses.length === 0 && !showForm ? (
           <div className="rounded-2xl p-8 text-center border border-gray-100" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-            <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#FEE2E2]">
-              <FiMapPin size={28} className="text-[#CB202D]" />
+            <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#F3E8FF]">
+              <FiMapPin size={28} className="text-[#210D35]" />
             </div>
             <h2 className="text-body font-bold text-gray-900 mb-1">No saved addresses</h2>
             <p className="text-caption text-gray-400 mb-5">Add your delivery address to continue checkout</p>
@@ -211,11 +211,11 @@ export default function MobileCheckoutAddress() {
                   style={{
                     background: isSel ? '#FFF5F5' : '#fff',
                     borderColor: isSel ? RED : '#F3F4F6',
-                    boxShadow: isSel ? '0 0 0 3px rgba(203,32,45,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
+                    boxShadow: isSel ? '0 0 0 3px rgba(123, 63, 208,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
                   }}>
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#FEE2E2] flex items-center justify-center shrink-0">
-                      {typeIcons[addr.addressType] || <FiMapPin size={16} className="text-[#CB202D]" />}
+                    <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] flex items-center justify-center shrink-0">
+                      {typeIcons[addr.addressType] || <FiMapPin size={16} className="text-[#210D35]" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -250,7 +250,7 @@ export default function MobileCheckoutAddress() {
 
             {!showForm && (
               <button onClick={() => openForm()} className="w-full h-12 rounded-xl text-label font-bold text-white inline-flex items-center justify-center gap-2 active:scale-[0.98] transition"
-                style={{ background: `linear-gradient(135deg,${RED},${RED_DEEP})`, boxShadow: '0 4px 16px rgba(203,32,45,0.25)' }}>
+                style={{ background: `linear-gradient(135deg,${RED},${RED_DEEP})`, boxShadow: '0 4px 16px rgba(123, 63, 208,0.25)' }}>
                 <FiPlus size={16} /> Add New Address
               </button>
             )}

@@ -2,16 +2,14 @@
 
 @theme {
   /* ── Typography tokens: one display + one UI family ──
-     Display (Sora) → logo, headings, prices, totals, big numbers.
-     UI (Plus Jakarta Sans) → everything else.                     */
-  --font-display: 'Sora Variable', 'Plus Jakarta Sans Variable', system-ui, sans-serif;
-  --font-ui: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto,
-    sans-serif;
+     Display (Poppins) → logo, headings, product titles, prices, banners.
+     UI (Inter) → body text, descriptions, buttons, labels.          */
+  --font-display: 'Poppins', 'Inter Variable', system-ui, sans-serif;
+  --font-ui: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   /* Tailwind base stacks: sans = UI, mono = display (numbers / IDs). */
-  --font-sans: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto,
-    sans-serif;
-  --font-mono: 'Sora Variable', 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Poppins', 'Inter Variable', system-ui, sans-serif;
 
   --font-primary: var(--font-ui);
 
@@ -26,29 +24,29 @@
   --color-dark-card: #111111;
   --color-dark-card2: #1a1a1a;
   --color-dark-border: #1e1e1e;
-  --color-gold: #e8c27a;
-  --color-gold-light: rgba(232, 194, 122, 0.12);
-  --color-gold-lighter: rgba(232, 194, 122, 0.06);
-  --color-gold-hover: #d4a85c;
+  --color-gold: #ffd014;
+  --color-gold-light: rgba(255, 208, 20, 0.14);
+  --color-gold-lighter: rgba(255, 208, 20, 0.07);
+  --color-gold-hover: #f0e100;
   --color-text: #f5f0eb;
   --color-text-muted: #8a8580;
   --color-text-dim: #5a5550;
-  --color-accent-green: #cb202d; /* legacy alias kept as brand red (see --color-accent-red) */
+  --color-accent-green: #210D35; /* legacy alias kept as brand red (see --color-accent-red) */
   --color-accent-purple: #a855f7;
 
   --font-heading: var(--font-display);
   --font-body: var(--font-ui);
 
   /* Profile-inspired unified palette */
-  --color-paper: #fbf8f6;
-  --color-ink: #1b1210;
-  --color-ink-soft: #4a403d;
-  --color-gray: #857d79;
-  --color-gray-light: #c9c0bc;
-  --color-line: #ece4e0;
-  --color-red: #d91e36;
-  --color-red-dark: #a3122a;
-  --color-maroon: #5c0a1c;
+  --color-paper: #FFF7F3;
+  --color-ink: #210d35;
+  --color-ink-soft: #4a3a5c;
+  --color-gray: #7c668a;
+  --color-gray-light: #cdbfdc;
+  --color-line: #ecdff3;
+  --color-red: #210D35;
+  --color-red-dark: #3A1E52;
+  --color-maroon: #170826;
   --color-gold-brand: #b08d57;
 
   /* PhoneFix Pro theme */
@@ -59,33 +57,33 @@
   --font-body-lg: var(--font-ui);
   --font-body-md: var(--font-ui);
 
-  --color-background: #fbf8f6;
-  --color-surface: #fbf8f6;
-  --color-surface-dim: #ece4e0;
+  --color-background: #fff7f3;
+  --color-surface: #fff7f3;
+  --color-surface-dim: #f6e4da;
   --color-surface-bright: #ffffff;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #fbf8f6;
-  --color-surface-container: #f5f0ec;
-  --color-surface-container-high: #ece4e0;
-  --color-surface-container-highest: #e0d8d4;
-  --color-surface-variant: #ece4e0;
-  --color-surface-tint: #5d5c74;
-  --color-primary: #00000b;
+  --color-surface-container-low: #f7efff;
+  --color-surface-container: #f3e8ff;
+  --color-surface-container-high: #ecdcff;
+  --color-surface-container-highest: #e4d2fb;
+  --color-surface-variant: #f3e8ff;
+  --color-surface-tint: #210d35;
+  --color-primary: #210d35;
   --color-on-primary: #ffffff;
-  --color-primary-container: #1a1a2e;
-  --color-on-primary-container: #83829b;
+  --color-primary-container: #2e1544;
+  --color-on-primary-container: #d0adff;
   --color-primary-fixed: #e2e0fc;
   --color-primary-fixed-dim: #c6c4df;
   --color-on-primary-fixed: #1a1a2e;
   --color-on-primary-fixed-variant: #45455b;
-  --color-secondary: #a3122a;
+  --color-secondary: #3A1E52;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: rgba(217, 30, 54, 0.08);
-  --color-on-secondary-container: #a3122a;
-  --color-secondary-fixed: rgba(217, 30, 54, 0.08);
-  --color-secondary-fixed-dim: rgba(163, 18, 42, 0.3);
-  --color-on-secondary-fixed: #a3122a;
-  --color-on-secondary-fixed-variant: #8a0f24;
+  --color-secondary-container: rgba(123, 63, 208, 0.08);
+  --color-on-secondary-container: #3A1E52;
+  --color-secondary-fixed: rgba(123, 63, 208, 0.08);
+  --color-secondary-fixed-dim: rgba(33, 13, 53, 0.3);
+  --color-on-secondary-fixed: #3A1E52;
+  --color-on-secondary-fixed-variant: #3A1E52;
   --color-tertiary: #000106;
   --color-on-tertiary: #ffffff;
   --color-tertiary-container: #001a45;
@@ -98,16 +96,16 @@
   --color-on-error: #ffffff;
   --color-error-container: #ffdad6;
   --color-on-error-container: #93000a;
-  --color-on-surface: #1a1c1c;
-  --color-on-surface-variant: #47464c;
-  --color-on-background: #1a1c1c;
-  --color-outline: #78767d;
-  --color-outline-variant: #c8c5cd;
+  --color-on-surface: #210d35;
+  --color-on-surface-variant: #5f4a70;
+  --color-on-background: #210d35;
+  --color-outline: #7c668a;
+  --color-outline-variant: #ddcdee;
   --color-inverse-surface: #2f3131;
   --color-inverse-on-surface: #f1f1f1;
   --color-inverse-primary: #c6c4df;
-  --color-mint: #d91e36; /* legacy alias for brand red; kept for ProfilePage var() refs */
-  --color-glass-border: rgba(236, 228, 224, 0.5);
+  --color-mint: #210D35; /* legacy alias for brand red; kept for ProfilePage var() refs */
+  --color-glass-border: rgba(208, 173, 255, 0.35);
 
   --spacing-container-max: 1280px;
   --spacing-gutter: 24px;
@@ -178,6 +176,14 @@
   --text-display--letter-spacing: -0.03em;
 }
 
+/* Cart-bar elevation tints. Red by default; the Home theme remaps these to
+   deep purple in HomeTheme.css so the floating bar matches the rest of Home. */
+:root {
+  --mcb-shadow-12: rgba(123, 63, 208, 0.12);
+  --mcb-shadow-18: rgba(123, 63, 208, 0.18);
+  --mcb-shadow-38: rgba(123, 63, 208, 0.38);
+}
+
 @layer base {
   *,
   *::before,
@@ -192,11 +198,26 @@
     overscroll-behavior-y: none;
   }
 
+  /* Site-wide Lenis smooth scrolling (src/utils/smoothScroll.ts). */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
   body {
     margin: 0;
     font: 400 16px / 1.55 var(--font-ui);
-    background: #fbf8f6;
-    color: #1b1210;
+    background: #fff7f3;
+    color: #210d35;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overscroll-behavior-y: none;
@@ -204,14 +225,15 @@
   }
 
   #root {
-    overflow-x: hidden;
+    /* clip (not hidden) so #root doesn't become a scroll box — that would break position: sticky */
+    overflow-x: clip;
   }
 
   * {
     font-family: inherit;
   }
 
-  /* Display family (Sora) for short, high-impact text only. */
+  /* Display family (Poppins) for short, high-impact text only. */
   h1,
   h2,
   h3,
@@ -232,8 +254,8 @@
   }
 
   ::selection {
-    background-color: rgba(217, 30, 54, 0.12);
-    color: #a3122a;
+    background-color: rgba(123, 63, 208, 0.12);
+    color: #3A1E52;
   }
 
   input,
@@ -329,7 +351,7 @@
 
 /* ─── Global accessibility ─── */
 :focus-visible {
-  outline: 2px solid var(--color-pf-red, #cb202d);
+  outline: 2px solid var(--color-pf-red, #210D35);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -414,7 +436,7 @@
 .interactive-card:hover {
   transform: scale(1.02);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border-color: rgba(203, 32, 45, 0.3);
+  border-color: rgba(123, 63, 208, 0.3);
 }
 
 .slide-up-item {
@@ -664,7 +686,7 @@
   width: 100%;
   max-width: 1440px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(203, 32, 45, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(123, 63, 208, 0.1), transparent);
 }
 
 @keyframes fadeInUp {
@@ -728,17 +750,17 @@
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(203, 32, 45, 0.06);
+  border: 1px solid rgba(123, 63, 208, 0.06);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
 
 .glass-card:hover {
-  box-shadow: 0 12px 40px rgba(203, 32, 45, 0.08);
-  border-color: rgba(203, 32, 45, 0.15);
+  box-shadow: 0 12px 40px rgba(123, 63, 208, 0.08);
+  border-color: rgba(123, 63, 208, 0.15);
 }
 
 .text-gradient-red {
-  background: linear-gradient(135deg, #cb202d, #e53e4e, #cb202d);
+  background: linear-gradient(135deg, #210D35, #2E1544, #210D35);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -747,31 +769,31 @@
 }
 
 .bg-gradient-subtle {
-  background: linear-gradient(135deg, rgba(203, 32, 45, 0.03) 0%, rgba(203, 32, 45, 0.06) 100%);
+  background: linear-gradient(135deg, rgba(123, 63, 208, 0.03) 0%, rgba(123, 63, 208, 0.06) 100%);
 }
 
 .border-gradient-subtle {
-  border-color: rgba(203, 32, 45, 0.1);
+  border-color: rgba(123, 63, 208, 0.1);
 }
 
 .shadow-red-subtle {
-  box-shadow: 0 4px 24px rgba(203, 32, 45, 0.06);
+  box-shadow: 0 4px 24px rgba(123, 63, 208, 0.06);
 }
 
 .shadow-red-medium {
-  box-shadow: 0 8px 40px rgba(203, 32, 45, 0.1);
+  box-shadow: 0 8px 40px rgba(123, 63, 208, 0.1);
 }
 
 .shadow-red-strong {
-  box-shadow: 0 12px 60px rgba(203, 32, 45, 0.15);
+  box-shadow: 0 12px 60px rgba(123, 63, 208, 0.15);
 }
 
 .hover\:shadow-red-hover:hover {
-  box-shadow: 0 20px 60px rgba(203, 32, 45, 0.12);
+  box-shadow: 0 20px 60px rgba(123, 63, 208, 0.12);
 }
 
 .hover\:border-red-hover:hover {
-  border-color: rgba(203, 32, 45, 0.3);
+  border-color: rgba(123, 63, 208, 0.3);
 }
 
 .hover\:scale-red-hover:hover {
@@ -783,39 +805,39 @@
 }
 
 .text-red-accent {
-  color: #cb202d;
+  color: #210D35;
 }
 
 .text-red-dark {
-  color: #a81d2a;
+  color: #3A1E52;
 }
 
 .bg-red-accent {
-  background-color: #cb202d;
+  background-color: #210D35;
 }
 
 .bg-red-dark {
-  background-color: #a81d2a;
+  background-color: #3A1E52;
 }
 
 .border-red-accent {
-  border-color: #cb202d;
+  border-color: #210D35;
 }
 
 .border-red-dark {
-  border-color: #a81d2a;
+  border-color: #3A1E52;
 }
 
 .hover\:bg-red-accent:hover {
-  background-color: #cb202d;
+  background-color: #210D35;
 }
 
 .hover\:text-red-accent:hover {
-  color: #cb202d;
+  color: #210D35;
 }
 
 .hover\:text-red-dark:hover {
-  color: #a81d2a;
+  color: #3A1E52;
 }
 
 .diagnostic-beam {
@@ -824,7 +846,7 @@
   left: 0;
   width: 100%;
   height: 20%;
-  background: linear-gradient(to bottom, transparent, rgba(203, 32, 45, 0.3), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(123, 63, 208, 0.3), transparent);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
@@ -850,7 +872,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: linear-gradient(to bottom, transparent, #cb202d, transparent);
+  background: linear-gradient(to bottom, transparent, #210D35, transparent);
   animation: scan 4s linear infinite;
   z-index: 10;
   pointer-events: none;
@@ -1191,8 +1213,8 @@
    Wraps only ProductDetail.tsx so other pages are untouched.
    ============================================================ */
 .product-light {
-  --color-surface: #ffffff;
-  --color-background: #ffffff;
+  --color-surface: #fff7f3;
+  --color-background: #fff7f3;
   --color-surface-dim: #f1f5f4;
   --color-surface-bright: #ffffff;
   --color-surface-container-lowest: #ffffff;
@@ -1380,17 +1402,17 @@
 
 /* ══════════════════════════════════════════════════════════════════════
    Brand tokens — one source for the red/ink palette.
-   Replaces hard-coded #D91E36 / #A3122A / #1B1210 / #857D79 in markup
+   Replaces hard-coded #210D35 / #3A1E52 / #1B1210 / #857D79 in markup
    (consistency audit #2: 21 distinct text colours -> 8).
    ══════════════════════════════════════════════════════════════════ */
 @theme {
-  --color-pf-red: #d91e36;
-  --color-pf-red-dark: #a3122a;
-  --color-pf-red-deep: #5c0a1c;
-  --color-pf-ink: #1b1210;
-  --color-pf-muted: #857d79;
-  --color-pf-line: #ece4e0;
-  --color-pf-soft: #f5f0ec;
+  --color-pf-red: #210D35;
+  --color-pf-red-dark: #3A1E52;
+  --color-pf-red-deep: #170826;
+  --color-pf-ink: #210d35;
+  --color-pf-muted: #6b5a7a;
+  --color-pf-line: #ecdff3;
+  --color-pf-soft: #f7efff;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -1438,11 +1460,11 @@
 .btn-primary {
   background: var(--color-pf-red);
   color: #fff;
-  box-shadow: 0 0 25px rgba(217, 30, 54, 0.2);
+  box-shadow: 0 0 25px rgba(123, 63, 208, 0.2);
 }
 .btn-primary:hover {
   background: var(--color-pf-red-dark);
-  box-shadow: 0 0 40px rgba(217, 30, 54, 0.35);
+  box-shadow: 0 0 40px rgba(123, 63, 208, 0.35);
 }
 
 .btn-secondary {
@@ -1467,11 +1489,11 @@
 .btn-quiet {
   background: transparent;
   color: var(--color-pf-red-dark);
-  border: 1px solid rgba(217, 30, 54, 0.2);
+  border: 1px solid rgba(123, 63, 208, 0.2);
 }
 .btn-quiet:hover {
-  background: rgba(217, 30, 54, 0.1);
-  border-color: rgba(217, 30, 54, 0.4);
+  background: rgba(123, 63, 208, 0.1);
+  border-color: rgba(123, 63, 208, 0.4);
 }
 
 /* Selected state for segmented controls (deal tabs) — a state, not a style. */
@@ -1488,7 +1510,7 @@
   border-radius: 8px;
   background: #fff;
   color: var(--color-pf-red-dark);
-  border: 1px solid rgba(217, 30, 54, 0.2);
+  border: 1px solid rgba(123, 63, 208, 0.2);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 .btn-icon:hover {
@@ -1503,7 +1525,7 @@
 }
 .google-signin-progress {
   width: 40%;
-  background: linear-gradient(90deg, transparent, #cb202d, transparent);
+  background: linear-gradient(90deg, transparent, #210D35, transparent);
   animation: google-signin-progress 1.2s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {

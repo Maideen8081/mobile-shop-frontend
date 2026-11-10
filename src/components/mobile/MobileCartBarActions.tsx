@@ -39,9 +39,9 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
     <div className="fixed bottom-[84px] left-1/2 -translate-x-1/2 z-40 w-full max-w-[480px] px-3 pointer-events-none">
       <div className="pointer-events-auto flex flex-col gap-2">
         {open && (
-          <div className="bg-white rounded-2xl shadow-[0_14px_34px_rgba(203,32,45,0.18)] border border-[#FEE2E2] p-2 max-h-[40vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-[0_14px_34px_var(--mcb-shadow-18)] border border-[#F3E8FF] p-2 max-h-[40vh] overflow-y-auto">
             {items.map((it) => (
-              <div key={`${it.productId}-${it.variantId ?? 'd'}`} className="flex items-center gap-2.5 py-2 border-b border-[#FEE2E6] last:border-0">
+              <div key={`${it.productId}-${it.variantId ?? 'd'}`} className="flex items-center gap-2.5 py-2 border-b border-[#F3E8FF] last:border-0">
                 <div className="w-11 h-11 rounded-xl bg-[#FFFBFB] overflow-hidden flex-shrink-0">
                   <img src={it.image || ''} alt={it.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '' }} />
                 </div>
@@ -50,11 +50,11 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
                   <p className="text-micro text-[#6B7280]">₹{Number(it.price).toLocaleString('en-IN')}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, -1).then(load)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
+                  <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, -1).then(load)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition">
                     <Minus size={14} className="text-[#1F2937]" />
                   </button>
                   <span className="text-label font-bold w-5 text-center">{it.quantity}</span>
-                  <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, 1).then(load)} aria-label="Increase" className="w-7 h-7 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
+                  <button onClick={() => cartService.updateQuantity(it.productId, it.variantId, 1).then(load)} aria-label="Increase" className="w-7 h-7 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition">
                     <Plus size={14} className="text-[#1F2937]" />
                   </button>
                 </div>
@@ -68,13 +68,13 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
 
         <button
           onClick={() => navigate('/cart')}
-          className={`w-full flex items-center justify-between gap-3 rounded-[8px] pl-4 pr-2 py-2.5 shadow-[0_12px_30px_rgba(203,32,45,0.38)] bg-[#CB202D] text-white active:scale-[0.99] transition ${bounce ? 'animate-bounce' : ''}`}
-          style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }}
+          className={`w-full flex items-center justify-between gap-3 rounded-[8px] pl-4 pr-2 py-2.5 shadow-[0_12px_30px_var(--mcb-shadow-38)] bg-[#210D35] text-white active:scale-[0.99] transition ${bounce ? 'animate-bounce' : ''}`}
+          style={{ background: 'linear-gradient(135deg,var(--pf-red, #210D35),var(--pf-red-dark, #3A1E52))' }}
         >
           <span className="flex items-center gap-2.5 min-w-0">
             <span className="relative w-9 h-9 rounded-[8px] bg-white/20 flex items-center justify-center flex-shrink-0">
               <ShoppingBag size={18} />
-              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-[8px] bg-white text-[#CB202D] text-micro font-bold flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-[8px] bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
                 {totalItems > 99 ? '99+' : totalItems}
               </span>
             </span>
@@ -83,14 +83,14 @@ export default function MobileCartBarActions({ hidden = false }: { hidden?: bool
               <span className="block text-micro text-white/80 leading-none mt-1">Tap to {open ? 'hide' : 'view & edit'}</span>
             </span>
           </span>
-          <span className="flex items-center gap-1.5 bg-white text-[#CB202D] text-label font-bold px-4 py-2 rounded-[8px] flex-shrink-0">
+          <span className="flex items-center gap-1.5 bg-white text-[#210D35] text-label font-bold px-4 py-2 rounded-[8px] flex-shrink-0">
             ₹{subtotal.toLocaleString('en-IN')} <ChevronRight size={15} />
           </span>
         </button>
 
         <button
           onClick={() => setOpen((v) => !v)}
-          className="self-center pointer-events-auto px-4 py-1.5 rounded-[8px] bg-white shadow-[0_6px_18px_rgba(203,32,45,0.12)] border border-[#FEE2E2] text-caption font-bold text-[#CB202D] active:scale-95 transition"
+          className="self-center pointer-events-auto px-4 py-1.5 rounded-[8px] bg-white shadow-[0_6px_18px_var(--mcb-shadow-12)] border border-[#F3E8FF] text-caption font-bold text-[#210D35] active:scale-95 transition"
         >
           {open ? 'Hide cart' : 'View cart items'}
         </button>

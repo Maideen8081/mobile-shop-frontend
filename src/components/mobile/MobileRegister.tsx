@@ -22,8 +22,8 @@ const LEVELS = [
   { label: 'Strong', color: '#059669' },
 ]
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 
 interface RegisterFormData { fullName: string; email: string; password: string; confirmPassword: string; agreeTerms: boolean }
 
@@ -99,7 +99,7 @@ export default function MobileRegister() {
   return (
     <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#FEE2E6] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
@@ -112,7 +112,7 @@ export default function MobileRegister() {
             <img src={s.src} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(203,32,45,0.85), transparent)' }}>
+        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(123, 63, 208,0.85), transparent)' }}>
           <p className="text-white text-title font-bold leading-tight">{slides[activeSlide].label}</p>
           <p className="text-white/80 text-caption">Join the premium club</p>
         </div>

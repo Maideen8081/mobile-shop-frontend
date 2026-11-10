@@ -1,0 +1,48 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e439]:
+    - generic [ref=f3e440]:
+      - button "Back" [ref=f3e441]
+      - generic [ref=f3e444]: M
+      - generic [ref=f3e445]: MobileShop
+    - generic [ref=f3e446]:
+      - img "Smartphones" [ref=f3e448]
+      - img "TWS Earbuds" [ref=f3e450]
+      - img "Headphones" [ref=f3e452]
+      - generic [ref=f3e453]:
+        - paragraph [ref=f3e454]: Smartphones
+        - paragraph [ref=f3e455]: Premium mobile engineering
+    - generic [ref=f3e460]:
+      - generic [ref=f3e461]:
+        - heading "Welcome back" [level=1] [ref=f3e462]
+        - paragraph [ref=f3e463]: Log in to your premium account
+        - generic [ref=f3e464]:
+          - generic [ref=f3e465]:
+            - generic [ref=f3e466]: Email Address
+            - textbox "name@example.com" [ref=f3e471]
+          - generic [ref=f3e472]:
+            - generic [ref=f3e473]:
+              - generic [ref=f3e474]: Password
+              - link "Forgot Password?" [ref=f3e475] [cursor=pointer]:
+                - /url: /login
+            - generic [ref=f3e476]:
+              - textbox "••••••••" [ref=f3e480]
+              - button "Show password" [ref=f3e481]
+          - button "Sign In" [ref=f3e485]
+        - generic [ref=f3e486]: or
+        - generic [ref=f3e492]:
+          - button "Continue with Google. Opens in new tab" [ref=f3e494] [cursor=pointer]:
+            - generic [ref=f3e496]: Continue with Google
+          - iframe
+      - paragraph [ref=f3e506]:
+        - text: Don't have an account?
+        - link "Register" [ref=f3e507] [cursor=pointer]:
+          - /url: /signup
+  - generic [ref=f3e11]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f3e12]

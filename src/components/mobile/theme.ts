@@ -1,25 +1,25 @@
 // Cohesive design tokens for the mobile shop experience.
-// Palette: Zomato-style bold red & white brand.
+// Home palette: warm cream canvas, deep purple ink, soft lavender accents.
 
 export const BRAND = {
-  primary: '#CB202D', // zomato red
-  primaryDark: '#A81D2A', // deeper red
-  primaryLight: '#E53E4E', // lighter red
-  primarySoft: '#FEE2E6', // soft red surface
+  primary: '#210D35', // zomato red
+  primaryDark: '#3A1E52', // deeper red
+  primaryLight: '#2E1544', // lighter red
+  primarySoft: '#F3E8FF', // soft red surface
   primarySoftBorder: '#FDD',
-  accent: '#FF5A65', // coral accent
-  accentDark: '#CB202D',
+  accent: '#7B3FD0', // coral accent
+  accentDark: '#210D35',
   success: '#059669', // emerald-600
   danger: '#EF4444', // red
   star: '#F59E0B', // amber
   info: '#0EA5E9', // sky
   colorful: {
-    red: '#CB202D',
+    red: '#210D35',
     sky: '#0EA5E9',
     emerald: '#059669',
     amber: '#F59E0B',
     rose: '#E11D48',
-    coral: '#FF5A65',
+    coral: '#7B3FD0',
   },
   ink: '#0F172A',
   muted: '#64748B',
@@ -30,18 +30,18 @@ export const BRAND = {
 }
 
 export const C = {
-  pageBg: 'bg-[#FFFBFB]',
-  card: 'bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_4px_16px_rgba(15,23,42,0.05)]',
+  pageBg: 'bg-[#FFF7F3]',
+  card: 'bg-white rounded-2xl border border-[#ECDFF6] shadow-[0_4px_16px_rgba(33,13,53,0.06)]',
   cardPress: 'active:scale-[0.98] transition',
-  sectionTitle: 'text-[17px] font-extrabold text-[#0F172A] tracking-tight',
-  viewAll: 'text-[12px] font-bold text-[#CB202D] flex items-center gap-0.5 active:opacity-70',
+  sectionTitle: 'text-[17px] font-extrabold text-[#210D35] tracking-tight',
+  viewAll: 'text-[12px] font-bold text-[#210D35] flex items-center gap-0.5 active:opacity-70',
   chip: 'text-[10px] font-bold px-2 py-0.5 rounded-[8px]',
   primaryBtn:
-    'bg-[#CB202D] text-white font-bold active:scale-95 transition shadow-[0_6px_16px_rgba(203,32,45,0.28)]',
-  iconWrap: 'rounded-xl bg-[#FEE2E6] text-[#CB202D] flex items-center justify-center',
+    'bg-[#210D35] text-white font-bold active:scale-95 transition shadow-[0_6px_16px_rgba(33,13,53,0.28)]',
+  iconWrap: 'rounded-xl bg-[#F3E8FF] text-[#210D35] flex items-center justify-center',
   pill: 'rounded-[8px]',
-  grad: 'linear-gradient(135deg,#A81D2A 0%,#CB202D 55%,#FF5A65 100%)',
-  gradSoft: 'linear-gradient(135deg,#FEE2E6 0%,#FDD 100%)',
+  grad: 'linear-gradient(135deg,#210D35 0%,#2E1544 55%,#5B3A7E 100%)',
+  gradSoft: 'linear-gradient(135deg,#F3E8FF 0%,#EADFF5 100%)',
 }
 
 export const scrollHide = 'scrollbar-hide'

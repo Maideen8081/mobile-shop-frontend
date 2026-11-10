@@ -13,7 +13,7 @@ export default function RepairServices() {
     <section className="mt-7">
       <div className="px-3.5 mb-3">
         <h2 className={C.sectionTitle}>Precision Repair Services</h2>
-        <p className="text-caption text-[#64748B] mt-0.5 font-medium">From micro-soldering to full restoration.</p>
+        <p className="text-caption text-[#7C668A] mt-0.5 font-medium">From micro-soldering to full restoration.</p>
       </div>
       <div className="grid grid-cols-1 gap-3 px-3.5">
         {services.map((s) => {
@@ -22,14 +22,14 @@ export default function RepairServices() {
             <Link
               key={s.title}
               to="/repairs"
-              className="flex items-center gap-3 rounded-2xl bg-white border border-[#EEF1F4] shadow-[0_2px_10px_rgba(15,23,42,0.05)] p-3.5 active:scale-[0.99] transition"
+              className="flex items-center gap-3 rounded-2xl bg-white border border-[#ECDFF6] shadow-[0_2px_10px_rgba(33,13,53,0.05)] p-3.5 active:scale-[0.99] transition"
             >
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${C.iconWrap}`}>
-                <Icon size={24} className="text-[#CB202D]" />
+                <Icon size={24} className="text-[#210D35]" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-body-sm font-bold text-[#0F172A]">{s.title}</h3>
-                <p className="text-caption text-[#64748B] leading-snug mt-0.5">{s.desc}</p>
+                <h3 className="text-body-sm font-bold text-[#210D35]">{s.title}</h3>
+                <p className="text-caption text-[#7C668A] leading-snug mt-0.5">{s.desc}</p>
               </div>
             </Link>
           )

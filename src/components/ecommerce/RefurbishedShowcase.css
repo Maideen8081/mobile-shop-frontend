@@ -55,7 +55,7 @@
   place-items: center;
   border-radius: var(--radius-md);
   background: #ffffff;
-  border: 1px solid rgba(217, 30, 54, 0.2);
+  border: 1px solid rgba(123, 63, 208, 0.2);
   color: var(--color-pf-red-dark);
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s;
@@ -94,7 +94,7 @@
 }
 .rfc-vc:hover {
   background: var(--color-pf-red-dark);
-  box-shadow: 0 10px 22px rgba(217, 30, 54, 0.28);
+  box-shadow: 0 10px 22px rgba(123, 63, 208, 0.28);
 }
 .rfc-vc:active {
   transform: translateY(1px);

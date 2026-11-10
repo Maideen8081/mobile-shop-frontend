@@ -19,10 +19,10 @@ function TopProduct({ product, index = 0 }: { product: any; index?: number }) {
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.45, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
       whileTap={{ scale: 0.96 }}
-      className="group relative flex flex-col h-full cursor-pointer overflow-hidden rounded-2xl bg-white shadow-[0_6px_18px_rgba(203,32,45,0.10)]"
+      className="group relative flex flex-col h-full cursor-pointer overflow-hidden rounded-2xl bg-white shadow-[0_6px_18px_rgba(33,13,53,0.10)]"
     >
       {discountPct > 0 && (
-        <span className="absolute top-1.5 left-1.5 z-10 text-micro font-bold text-white px-1.5 py-0.5 rounded-[8px] bg-[#EF4444] shadow-sm">
+        <span className="absolute top-1.5 left-1.5 z-10 text-micro font-bold text-white px-1.5 py-0.5 rounded-[8px] bg-[#210D35] shadow-sm">
           −{discountPct}%
         </span>
       )}
@@ -54,8 +54,8 @@ function Banner({ slide }: { slide: Slide | undefined }) {
       viewport={{ once: true }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       whileTap={{ scale: 0.985 }}
-      className="relative h-[132px] rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(203,32,45,0.28)]"
-      style={{ background: 'linear-gradient(120deg,#A81D2A 0%,#CB202D 45%,#CB202D 100%)' }}
+      className="relative h-[132px] rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(33,13,53,0.28)]"
+      style={{ background: 'linear-gradient(120deg,#210D35 0%,#2E1544 45%,#210D35 100%)' }}
     >
       {img ? (
         <img src={img} alt={slide.title || ''} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} className="absolute inset-0 w-full h-full object-cover opacity-90" />
@@ -82,7 +82,7 @@ function Banner({ slide }: { slide: Slide | undefined }) {
       />
       <motion.div
         aria-hidden
-        className="absolute -bottom-8 -left-4 w-24 h-24 rounded-[8px] bg-[#00FF88]/25 blur-2xl"
+        className="absolute -bottom-8 -left-4 w-24 h-24 rounded-[8px] bg-[#D0ADFF]/25 blur-2xl"
         animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
       />
@@ -106,8 +106,8 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
   const viewAll = '/collection/all?tab=best'
 
   return (
-    <section className="mt-7 mx-3.5 rounded-3xl p-3.5 overflow-hidden shadow-[0_12px_32px_rgba(203,32,45,0.16)] relative"
-      style={{ background: 'linear-gradient(160deg,#FEE2E6 0%,#F5F3FF 100%)' }}
+    <section className="mt-7 mx-3.5 rounded-3xl p-3.5 overflow-hidden shadow-[0_12px_32px_rgba(33,13,53,0.16)] relative"
+      style={{ background: 'linear-gradient(160deg,#F3E8FF 0%,#FFF7F3 100%)' }}
     >
       {/* Soft animated background blobs */}
       <motion.div
@@ -127,16 +127,16 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <motion.span
-              className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#CB202D] to-[#CB202D] text-white flex items-center justify-center shadow-md"
+              className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#210D35] to-[#2E1544] text-white flex items-center justify-center shadow-md"
               animate={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
               <Flame size={18} fill="currentColor" />
             </motion.span>
-            <h2 className="text-title-sm font-extrabold text-[#A81D2A] tracking-tight">Top Sales</h2>
+            <h2 className="text-title-sm font-extrabold text-[#210D35] tracking-tight">Top Sales</h2>
             <motion.span
               className="text-micro font-bold text-white px-2 py-0.5 rounded-[8px] flex items-center gap-1 shadow-sm"
-              style={{ background: 'linear-gradient(135deg,#EF4444,#F59E0B)' }}
+              style={{ background: 'linear-gradient(135deg,#5B3A7E,#210D35)' }}
               animate={{ scale: [1, 1.06, 1] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -157,9 +157,9 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         </div>
 
         {/* Animated deal marquee */}
-        <div className="relative mb-3 overflow-hidden rounded-[8px] bg-white/70 border border-[#E0E7FF] py-1.5 px-3">
+        <div className="relative mb-3 overflow-hidden rounded-[8px] bg-white/70 border border-[#EADFF5] py-1.5 px-3">
           <motion.div
-            className="flex items-center gap-4 whitespace-nowrap text-micro font-bold text-[#A81D2A]"
+            className="flex items-center gap-4 whitespace-nowrap text-micro font-bold text-[#210D35]"
             animate={{ x: ['0%', '-50%'] }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
           >
@@ -168,7 +168,7 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
               '🚚 Free Express Delivery', '💎 Premium Selection', '⏰ Ends Soon',
             ].map((t, i) => (
               <span key={`${dup}-${i}`} className="flex items-center gap-4">
-                {t}<span className="text-[#C7D2FE]">•</span>
+                {t}<span className="text-[#D0ADFF]">•</span>
               </span>
             )))}
           </motion.div>
@@ -191,8 +191,8 @@ export default function TopSales({ banner, products }: { banner?: Slide; product
         <motion.button
           onClick={() => navigate(viewAll)}
           whileTap={{ scale: 0.97 }}
-          className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-label font-bold text-white shadow-[0_8px_20px_rgba(203,32,45,0.30)]"
-          style={{ background: 'linear-gradient(135deg,#CB202D,#CB202D)' }}
+          className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-2xl text-label font-bold text-white shadow-[0_8px_20px_rgba(33,13,53,0.30)]"
+          style={{ background: 'linear-gradient(135deg,#210D35,#2E1544)' }}
         >
           Explore All Top Deals <ArrowRight size={15} />
         </motion.button>

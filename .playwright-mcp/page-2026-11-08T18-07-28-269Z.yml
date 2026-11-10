@@ -1,0 +1,11 @@
+- generic [active] [ref=f1e1]:
+  - paragraph [ref=f1e10]: Loading…
+  - generic [ref=f1e11]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: 💬 Chat Now
+    - button "Open the PhoneFix AI assistant" [ref=f1e12]

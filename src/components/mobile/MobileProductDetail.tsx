@@ -23,8 +23,8 @@ const COLOR_PALETTE: Record<string, string> = {
   graphite: '#4b5563', red: '#ef4444', blue: '#3b82f6', purple: '#7c3aed',
 }
 
-const PURPLE = '#CB202D'
-const PURPLE_DEEP = '#A81D2A'
+const PURPLE = '#210D35'
+const PURPLE_DEEP = '#3A1E52'
 const SUCCESS = '#16A34A'
 
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
@@ -39,15 +39,6 @@ export default function MobileProductDetail() {
   const rateParam = searchParams.get('rate') === 'true'
   const orderIdParam = searchParams.get('order_id') || ''
   const variantIdParam = searchParams.get('variant_id') || ''
-
-  useEffect(() => {
-    addressService.list()
-      .then((data: AddressData[]) => {
-        const def = data.find(a => a.isDefault) || data[0]
-        if (def?.zipCode) setDeliveryPincode(def.zipCode)
-      })
-      .catch(() => {})
-  }, [])
 
   const [product, setProduct] = useState<any>(() => (resolvedId ? productService.peekById(Number(resolvedId)) : null) ?? null)
   const [loading, setLoading] = useState(() => !(resolvedId && productService.peekById(Number(resolvedId))))
@@ -68,6 +59,17 @@ export default function MobileProductDetail() {
   const [relatedLoading, setRelatedLoading] = useState<Record<number, boolean>>({})
   const [cartCount, setCartCount] = useState(0)
   const [deliveryPincode, setDeliveryPincode] = useState('600001')
+  useEffect(() => {
+    // Guests have no saved addresses; skip a request that can only fail.
+    if (!authService.isAuthenticated()) return
+    addressService.list()
+      .then((data: AddressData[]) => {
+        const def = data.find(a => a.isDefault) || data[0]
+        if (def?.zipCode) setDeliveryPincode(def.zipCode)
+      })
+      .catch(() => {})
+  }, [])
+
   const [specsOpen, setSpecsOpen] = useState(false)
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const [descOpen, setDescOpen] = useState(false)
@@ -526,7 +528,7 @@ export default function MobileProductDetail() {
         }
         @keyframes pulseBrand {
           0%, 100% { opacity: 1; background-color: #F3EFFE; }
-          50% { opacity: 0.5; background-color: #FEE2E6; }
+          50% { opacity: 0.5; background-color: #F3E8FF; }
         }
         .skel-brand { animation: pulseBrand 1.8s ease-in-out infinite; }
         .skel-stagger-1 { animation: pulseBrand 1.8s ease-in-out 0s infinite; }
@@ -566,7 +568,7 @@ export default function MobileProductDetail() {
 
       {/* Deal of the day — flash sale banner with countdown */}
       <div className="px-3 mt-3">
-        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#CB202D 0%,#A81D2A 100%)', boxShadow: '0 10px 30px rgba(203,32,45,0.30)' }}>
+        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)', boxShadow: '0 10px 30px rgba(123, 63, 208,0.30)' }}>
           <div className="absolute -right-6 -top-6 w-24 h-24 rounded-[8px] bg-white/10" />
           <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-[8px] bg-white/10" />
           <div className="relative flex items-center justify-between">
@@ -593,11 +595,11 @@ export default function MobileProductDetail() {
           {coupons.map((c) => (
             <button key={c.code}
               onClick={() => { navigator.clipboard?.writeText(c.code).catch(() => {}); showToast(`Coupon ${c.code} copied!`, 'success') }}
-              className="snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(203,32,45,0.08)] active:scale-[0.97] transition relative overflow-hidden">
-              <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#CB202D,#A81D2A)' }}><Tag size={15} className="text-white" /></span>
+              className="snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(123, 63, 208,0.08)] active:scale-[0.97] transition relative overflow-hidden">
+              <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }}><Tag size={15} className="text-white" /></span>
               <div className="text-left">
                 <p className="text-body-sm font-extrabold leading-tight text-[#1F2937]">{c.label}</p>
-                <p className="text-micro font-bold px-1.5 py-0.5 rounded inline-block mt-0.5" style={{ color: PURPLE, background: '#FEE2E6' }}>{c.code}</p>
+                <p className="text-micro font-bold px-1.5 py-0.5 rounded inline-block mt-0.5" style={{ color: PURPLE, background: '#F3E8FF' }}>{c.code}</p>
               </div>
             </button>
           ))}
@@ -637,10 +639,10 @@ export default function MobileProductDetail() {
                   {!imgLoaded[i] && (
                     <div className="absolute inset-0 bg-gradient-to-br from-[#F1F2F6] via-[#F3EFFE] to-[#F1F2F6] shimmer-overlay flex flex-col items-center justify-center gap-3">
                         <div className="w-16 h-16 rounded-2xl bg-white/50 flex items-center justify-center shadow-sm" style={{ animation: 'pulseBrand 2s ease-in-out infinite' }}>
-                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CB202D" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#210D35" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="3" ry="3" opacity="0.35"/>
                             <line x1="12" y1="18" x2="12" y2="18.01" strokeWidth="2" opacity="0.35"/>
-                            <circle cx="12" cy="18" r="0.5" fill="#CB202D" opacity="0.35"/>
+                            <circle cx="12" cy="18" r="0.5" fill="#210D35" opacity="0.35"/>
                           </svg>
                         </div>
                       <p className="text-micro font-semibold text-[#6B7280]">Loading image...</p>
@@ -691,11 +693,11 @@ export default function MobileProductDetail() {
           <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
             <button onClick={toggleWishlist} aria-label="Wishlist" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition" style={wished ? { background: '#FEE2F2' } : undefined}>
               <motion.span animate={wished ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
-                <Heart size={21} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#CB202D]'} />
+                <Heart size={21} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#210D35]'} />
               </motion.span>
             </button>
             <button onClick={handleShare} aria-label="Share" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition">
-              <Share2 size={20} className="text-[#CB202D]" />
+              <Share2 size={20} className="text-[#210D35]" />
             </button>
           </div>
 
@@ -724,7 +726,7 @@ export default function MobileProductDetail() {
         {images.length > 1 && (
           <div className="flex gap-2.5 px-2 py-2 overflow-x-auto scrollbar-hide">
             {images.map((img, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#CB202D] scale-105 shadow-[0_4px_12px_rgba(203,32,45,0.3)]' : 'border-transparent'}`} style={{ background: '#F1F2F6' }}>
+              <button key={i} onClick={() => goTo(i)} className={`w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#210D35] scale-105 shadow-[0_4px_12px_rgba(123, 63, 208,0.3)]' : 'border-transparent'}`} style={{ background: '#F1F2F6' }}>
                 <img src={img || FALLBACK_IMG} alt="" loading="lazy" className="w-full h-full object-cover" />
               </button>
             ))}
@@ -857,7 +859,7 @@ export default function MobileProductDetail() {
             <div className="grid grid-cols-2 gap-2 mt-3.5">
               {activeVariant?.processor && (
                 <div className="bg-[#FFFBFB] rounded-xl px-3 py-2.5 flex items-start gap-2">
-                  <Zap size={15} className="text-[#CB202D] mt-0.5 flex-shrink-0" />
+                  <Zap size={15} className="text-[#210D35] mt-0.5 flex-shrink-0" />
                   <div className="min-w-0"><p className="text-micro text-[#9CA3AF] uppercase tracking-wide">Processor</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.processor}</p></div>
                 </div>
               )}
@@ -895,7 +897,7 @@ export default function MobileProductDetail() {
                   return (
                     <button key={v.id} onClick={() => setSelectedVariantId(String(v.id))}
                       className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 text-left transition active:scale-[0.99] ${selected ? 'border-transparent' : 'bg-white border-[#E5E7EB]'}`}
-                      style={selected ? { background: '#FEE2E6', borderColor: PURPLE } : undefined}>
+                      style={selected ? { background: '#F3E8FF', borderColor: PURPLE } : undefined}>
                       <div className="min-w-0">
                         <p className="text-label font-bold truncate">{v.name || `${v.color || ''} ${v.storage || ''} ${v.ram || ''}`.trim()}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
@@ -910,7 +912,7 @@ export default function MobileProductDetail() {
                           {vMrp > vPrice && <p className="text-micro text-[#9CA3AF] line-through">₹{Number(vMrp).toLocaleString('en-IN')}</p>}
                         </div>
                         {vOff > 0 && <span className="text-micro font-bold rounded-[8px] px-1.5 py-0.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{vOff}%</span>}
-                        <span className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#CB202D] bg-[#CB202D]' : 'border-[#D1D5DB]'}`}>
+                        <span className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#210D35] bg-[#210D35]' : 'border-[#D1D5DB]'}`}>
                           {selected && <Check size={12} className="text-white" />}
                         </span>
                       </div>
@@ -928,7 +930,7 @@ export default function MobileProductDetail() {
               <div className="flex gap-3">
                 {colors.map((c: string, i: number) => (
                   <button key={c} onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
-                    className={`w-11 h-11 rounded-[8px] border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#CB202D] scale-110 shadow-[0_4px_12px_rgba(203,32,45,0.35)]' : 'border-[#E5E7EB]'}`}
+                    className={`w-11 h-11 rounded-[8px] border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#210D35] scale-110 shadow-[0_4px_12px_rgba(123, 63, 208,0.35)]' : 'border-[#E5E7EB]'}`}
                     style={{ backgroundColor: COLOR_PALETTE[c.toLowerCase().trim()] || '#ccc' }} title={c} />
                 ))}
               </div>
@@ -983,7 +985,7 @@ export default function MobileProductDetail() {
           {/* Quantity */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-label font-bold">Quantity</p>
-            <div className="flex items-center rounded-[8px] p-1" style={{ background: '#FEE2E6' }}>
+            <div className="flex items-center rounded-[8px] p-1" style={{ background: '#F3E8FF' }}>
               <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 rounded-[8px] flex items-center justify-center active:scale-90 transition" aria-label="Decrease" style={{ color: PURPLE }}>
                 <Minus size={16} />
               </button>
@@ -1051,7 +1053,7 @@ export default function MobileProductDetail() {
               const Icon = d.icon
               return (
                 <div key={i} className="flex flex-col items-center gap-1.5 text-center bg-[#FFFBFB] rounded-xl px-2 py-3">
-                  <span className="w-9 h-9 rounded-[8px] flex items-center justify-center" style={{ background: '#FEE2E6', color: PURPLE }}><Icon size={16} /></span>
+                  <span className="w-9 h-9 rounded-[8px] flex items-center justify-center" style={{ background: '#F3E8FF', color: PURPLE }}><Icon size={16} /></span>
                   <span className="text-micro font-medium leading-tight text-[#4B5563]">{d.label}</span>
                 </div>
               )
@@ -1079,7 +1081,7 @@ export default function MobileProductDetail() {
             <div className="space-y-2">
               {careInstructions.map((c: string, i: number) => (
                 <div key={i} className="flex items-start gap-2.5 bg-[#FFFBFB] rounded-xl px-3 py-2.5">
-                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEE2E6', color: PURPLE }}>
+                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#F3E8FF', color: PURPLE }}>
                     <span className="text-micro font-bold">{i + 1}</span>
                   </span>
                   <span className="text-caption text-[#4B5563] leading-tight">{c}</span>
@@ -1108,7 +1110,7 @@ export default function MobileProductDetail() {
           <AnimatePresence initial={false}>
             {specsOpen && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                <div className="mt-3 divide-y divide-[#FEE2E6]">
+                <div className="mt-3 divide-y divide-[#F3E8FF]">
                   {specGroups.map(([k, v], i) => (
                     <div key={i} className="flex items-center justify-between py-2.5">
                       <span className="text-caption text-[#6B7280]">{k}</span>
@@ -1179,7 +1181,7 @@ export default function MobileProductDetail() {
                       <div className="flex items-center gap-2.5">
                         <span className="w-9 h-9 rounded-[8px] flex items-center justify-center text-white font-bold text-label" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{(r.userName || r.name || 'U').charAt(0).toUpperCase()}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-label font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#CB202D]" /></p>
+                          <p className="text-label font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#210D35]" /></p>
                           <p className="text-micro text-[#9CA3AF]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.date}</p>
                         </div>
                         <div className="flex items-center gap-0.5">
@@ -1196,7 +1198,7 @@ export default function MobileProductDetail() {
                           ))}
                         </div>
                       )}
-                      <span className="inline-flex items-center gap-1 text-micro font-bold text-[#CB202D] mt-1.5">Verified Purchase</span>
+                      <span className="inline-flex items-center gap-1 text-micro font-bold text-[#210D35] mt-1.5">Verified Purchase</span>
                     </div>
                   )) : (
                     <div className="text-center py-6">
@@ -1222,7 +1224,7 @@ export default function MobileProductDetail() {
                 const pMrp = p.variants?.[0]?.price && p.variants?.[0]?.discountPrice ? p.variants?.[0].price : (p.oldPrice || 0)
                 const pOff = pMrp > pPrice ? Math.round((1 - pPrice / pMrp) * 100) : 0
                 return (
-                  <div key={p.id} className="snap-start flex-shrink-0 w-[140px] bg-white rounded-2xl shadow-[0_4px_14px_rgba(203,32,45,0.08)] overflow-hidden">
+                  <div key={p.id} className="snap-start flex-shrink-0 w-[140px] bg-white rounded-2xl shadow-[0_4px_14px_rgba(123, 63, 208,0.08)] overflow-hidden">
                     <div className="relative">
                       <button onClick={() => navigate(`/product/${p.id}`)} className="block w-full h-[130px] bg-[#FFFBFB] flex items-center justify-center">
                         <img src={getImageUrl(p.image) || getProductImage(p) || FALLBACK_IMG} alt={p.name} className="w-full h-full object-contain p-2" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
@@ -1231,7 +1233,7 @@ export default function MobileProductDetail() {
                         <span className="absolute top-2 left-2 text-micro font-bold text-white px-2 py-0.5 rounded-[8px] bg-gradient-to-r from-[#EF4444] to-[#F97316]">{pOff}% off</span>
                       )}
                       <button onClick={() => { if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname); navigate('/login'); return } const wl = new Set<number>((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).map((x: any) => typeof x === 'number' ? x : x.id)); if (wl.has(Number(p.id))) wl.delete(Number(p.id)); else wl.add(Number(p.id)); localStorage.setItem('wishlist', JSON.stringify(Array.from(wl))); window.dispatchEvent(new Event('wishlist-updated')); showToast('Wishlist updated', 'success') }} aria-label="Wishlist" className="absolute top-2 right-2 w-7 h-7 rounded-[8px] bg-white shadow flex items-center justify-center">
-                        <Heart size={13} className="text-[#CB202D]" />
+                        <Heart size={13} className="text-[#210D35]" />
                       </button>
                     </div>
                     <div className="p-2.5">
@@ -1264,8 +1266,8 @@ export default function MobileProductDetail() {
           className="w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-95 transition flex-shrink-0 border"
           style={wished ? { background: '#FEE2F2', borderColor: '#FBCFE8' } : { background: '#FFFBFB', borderColor: '#E5E7EB' }}
         >
-          <Heart size={20} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#CB202D]'} />
-          <span className="text-micro font-bold" style={{ color: wished ? '#EC4899' : '#CB202D' }}>Save</span>
+          <Heart size={20} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#210D35]'} />
+          <span className="text-micro font-bold" style={{ color: wished ? '#EC4899' : '#210D35' }}>Save</span>
         </button>
 
         <div className="flex-1 flex items-center gap-2.5">
@@ -1287,7 +1289,7 @@ export default function MobileProductDetail() {
           <button
             onClick={handleBuyNow}
             disabled={!inStock || isAdding || isBuying}
-            className="flex-1 h-14 rounded-2xl font-bold text-body-sm text-white shadow-[0_8px_20px_rgba(203,32,45,0.35)] active:scale-[0.98] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+            className="flex-1 h-14 rounded-2xl font-bold text-body-sm text-white shadow-[0_8px_20px_rgba(123, 63, 208,0.35)] active:scale-[0.98] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
             style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}
           >
             {isBuying ? <Loader2 size={17} className="animate-spin" /> : <Zap size={17} fill="white" />}
