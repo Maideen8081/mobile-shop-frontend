@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
+import { useEffect, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { FiAlertCircle, FiArrowRight, FiEye, FiEyeOff, FiShoppingBag } from 'react-icons/fi'
 import GoogleSignInButton from './GoogleSignInButton'
@@ -6,67 +6,132 @@ import './AuthLayout.css'
 
 type Mode = 'signin' | 'signup'
 
+export interface ShowcaseSlide {
+  eyebrow?: string
+  title: string
+  description: string
+  features?: { icon: ReactNode; label: string }[]
+  visual?: ReactNode
+}
+
 interface AuthLayoutProps {
-  mode: Mode
-  /** dark = purple header (sign in), light = lavender header (sign up) */
-  tone: 'dark' | 'light'
-  title: ReactNode
-  subtitle: string
-  perks?: { icon: ReactNode; label: string }[]
-  image: { src: string; alt: string }
+  variant: Mode
+  slides: ShowcaseSlide[]
   children: ReactNode
 }
 
-/** Full-screen auth page: product header across the top, form panel below. The page never scrolls. */
-export function AuthLayout({ mode, tone, title, subtitle, perks, image, children }: AuthLayoutProps) {
-  return (
-    <div className={`auth-page auth-page--${mode}`}>
-      <header className={`auth-hero auth-hero--${tone}`}>
-        <div className="auth-hero__glow" aria-hidden="true" />
-        <div className="auth-hero__inner">
-          <div className="auth-hero__copy">
-            <Link to="/home" className="auth-brand">
-              <span className="auth-brand__mark" aria-hidden="true"><FiShoppingBag size={22} /></span>
-              <span className="auth-brand__text">
-                <strong>MobileShop</strong>
-                <small>Premium Mobile Store</small>
-              </span>
-            </Link>
-            <h1 className="auth-hero__title">{title}</h1>
-            <p className="auth-hero__sub">{subtitle}</p>
-            {perks && (
-              <ul className="auth-hero__perks">
-                {perks.map((p) => <li key={p.label}>{p.icon}{p.label}</li>)}
-              </ul>
-            )}
-          </div>
-          <div className="auth-hero__art" aria-hidden="true">
-            <img src={image.src} alt="" />
-          </div>
-        </div>
-      </header>
+const SLIDE_MS = 6000
 
-      <main className="auth-panel">
-        <div className="auth-panel__inner">
-          <AuthTabs active={mode} />
-          {children}
-        </div>
-      </main>
+/** The MobileShop logo glyph. */
+export function BrandMark() {
+  return <span className="auth-brand__mark" aria-hidden="true"><FiShoppingBag size={22} /></span>
+}
+
+function Brand({ className = '' }: { className?: string }) {
+  return (
+    <Link to="/home" className={`auth-brand ${className}`}>
+      <BrandMark />
+      MobileShop
+    </Link>
+  )
+}
+
+/** Full-screen auth page: rotating product showcase on the left, form on the right. The page never scrolls. */
+export function AuthLayout({ variant, slides, children }: AuthLayoutProps) {
+  const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    if (paused || slides.length < 2) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const t = window.setTimeout(() => setActive((i) => (i + 1) % slides.length), SLIDE_MS)
+    return () => window.clearTimeout(t)
+  }, [active, paused, slides.length])
+
+  return (
+    <div className="auth-page">
+      <div className={`auth-card auth-card--${variant}`}>
+        <aside
+          className="auth-showcase"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className="auth-showcase__glow" aria-hidden="true" />
+          <Brand />
+          <div className="auth-showcase__slides" aria-live="polite">
+            {slides.map((slide, i) => (
+              <section
+                key={slide.title}
+                className={`auth-slide ${i === active ? 'is-active' : ''}`}
+                aria-hidden={i !== active}
+              >
+                {slide.eyebrow && <p className="auth-slide__eyebrow">{slide.eyebrow}</p>}
+                <h2 className="auth-slide__title">{slide.title}</h2>
+                <p className="auth-slide__desc">{slide.description}</p>
+                {slide.visual && <div className="auth-slide__visual">{slide.visual}</div>}
+                {slide.features && (
+                  <ul className="auth-slide__features">
+                    {slide.features.map((f) => (
+                      <li key={f.label}>
+                        <span className="auth-slide__feature-icon" aria-hidden="true">{f.icon}</span>
+                        {f.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            ))}
+          </div>
+          {slides.length > 1 && (
+            <div className="auth-dots" role="tablist" aria-label="Showcase slides">
+              {slides.map((slide, i) => (
+                <button
+                  key={slide.title}
+                  type="button"
+                  role="tab"
+                  className={i === active ? 'is-active' : ''}
+                  aria-selected={i === active}
+                  aria-label={`Show slide ${i + 1}: ${slide.title}`}
+                  onClick={() => setActive(i)}
+                />
+              ))}
+            </div>
+          )}
+        </aside>
+
+        <main className="auth-form-side">
+          <div>
+            <Brand className="auth-brand--dark auth-brand--compact" />
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
 
-function AuthTabs({ active }: { active: Mode }) {
+export function AuthHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <nav className="auth-tabs" aria-label="Account">
-      <span className={`auth-tabs__pill auth-tabs__pill--${active}`} aria-hidden="true" />
-      <Link to="/login" replace className={active === 'signin' ? 'is-active' : ''} aria-current={active === 'signin' ? 'page' : undefined}>
-        Sign In
-      </Link>
-      <Link to="/signup" replace className={active === 'signup' ? 'is-active' : ''} aria-current={active === 'signup' ? 'page' : undefined}>
-        Create Account
-      </Link>
-    </nav>
+    <div className="auth-heading">
+      <h1>
+        {title}
+        <span className="auth-heading__spark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z" />
+          </svg>
+        </span>
+      </h1>
+      <p>{subtitle}</p>
+    </div>
+  )
+}
+
+export function AuthSwitch({ text, linkText, to }: { text: string; linkText: string; to: string }) {
+  return (
+    <p className="auth-switch">
+      {text}
+      <Link to={to} replace>{linkText}</Link>
+    </p>
   )
 }
 
@@ -86,13 +151,11 @@ export function AuthField({ name, label, icon, error, hint, labelAside, trailing
   return (
     <div className={`auth-field ${error ? 'has-error' : ''} ${trailing ? 'has-trailing' : ''}`}>
       <div className="auth-field__label-row">
-        <label htmlFor={id}>
-          <span className="auth-field__icon" aria-hidden="true">{icon}</span>
-          {label}
-        </label>
+        <label htmlFor={id}>{label}</label>
         {labelAside}
       </div>
       <div className="auth-field__control">
+        <span className="auth-field__icon" aria-hidden="true">{icon}</span>
         <input id={id} name={name} aria-invalid={!!error} aria-describedby={error || hint ? msgId : undefined} {...input} />
         {trailing && <span className="auth-field__trailing">{trailing}</span>}
       </div>
