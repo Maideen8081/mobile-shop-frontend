@@ -51,13 +51,6 @@ function SoundWave() {
   )
 }
 
-const productPhoto = (src: string, alt: string) => (
-  <div className="auth-podium">
-    <img src={src} alt={alt} loading="lazy" />
-    <div className="auth-podium__tint" />
-  </div>
-)
-
 const slides: ShowcaseSlide[] = [
   {
     eyebrow: 'Premium collection',
@@ -68,7 +61,8 @@ const slides: ShowcaseSlide[] = [
       { icon: <FiBattery size={17} />, label: 'Long Battery Life' },
       { icon: <FiFeather size={17} />, label: 'Light & Comfortable' },
     ],
-    visual: productPhoto('https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=900&q=80&auto=format', 'Wireless earbuds in a charging case'),
+    image: '/auth/signin-1.jpg',
+    imageFallback: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1200&q=80&auto=format',
   },
   {
     eyebrow: 'Premium collection',
@@ -79,7 +73,8 @@ const slides: ShowcaseSlide[] = [
       { icon: <FiZap size={17} />, label: 'Fast Charging' },
       { icon: <FiSmartphone size={17} />, label: 'Stunning Displays' },
     ],
-    visual: productPhoto('https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=900&q=80&auto=format', 'Flagship smartphones'),
+    image: '/auth/signin-2.jpg',
+    imageFallback: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=1200&q=80&auto=format',
   },
   {
     eyebrow: 'Premium collection',
@@ -90,7 +85,8 @@ const slides: ShowcaseSlide[] = [
       { icon: <FiActivity size={17} />, label: 'Fitness Modes' },
       { icon: <FiWatch size={17} />, label: 'All-day Battery' },
     ],
-    visual: productPhoto('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80&auto=format', 'Smart watch'),
+    image: '/auth/signin-3.jpg',
+    imageFallback: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80&auto=format',
   },
 ]
 

@@ -38,10 +38,12 @@ import { productsData } from '../data/productData'
 import { addToCartWithAuth } from '../utils/cartAuth'
 import { requireSignInForWishlist } from '../utils/wishlist'
 import { useToast } from '../context/ToastContext'
+import { useCutout } from '../utils/removeBackground'
 import phonesVideo from '../assets/Orange_smartphone_exploding_view_1080p_20261002155324.mp4'
 import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_20261012230812.mp4'
 import internalsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
 import './HomeStorefront.css'
+import { useBootHold } from '../components/LoadingScreen/bootLoader'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = '/phones/ios-a.png'
@@ -234,6 +236,50 @@ function MiniProductCard({
   )
 }
 
+/* ─────────────────────────── Category tile ─────────────────────────── */
+
+/** Soft colour stages, cycled across the tiles. */
+const CAT_TONES = ['lavender', 'peach', 'mint', 'sky', 'butter', 'rose'] as const
+
+function CategoryTileCard({
+  tile,
+  href,
+  img,
+  tone,
+}: {
+  tile: CategoryTile
+  href: string
+  img: string
+  tone: number
+}) {
+  // Strip the plain studio background so the product floats on the stage.
+  const cutout = useCutout(img || undefined)
+  const Icon = tile.icon
+  return (
+    <Link to={href} className={`hs-cat hs-cat--${CAT_TONES[tone]}`}>
+      <span className="hs-cat-stage">
+        <span className="hs-cat-glow" aria-hidden="true" />
+        {img ? (
+          <img
+            src={cutout.src}
+            alt=""
+            loading="lazy"
+            className={`hs-cat-img${cutout.cut ? ' is-cut' : ''}${cutout.done ? ' is-ready' : ''}`}
+          />
+        ) : (
+          <span className="hs-cat-icon">
+            <Icon size={34} strokeWidth={1.7} aria-hidden="true" />
+          </span>
+        )}
+      </span>
+      <span className="hs-cat-name">{tile.label}</span>
+      <span className="hs-cat-go" aria-hidden="true">
+        <ArrowRight size={14} />
+      </span>
+    </Link>
+  )
+}
+
 function SectionHead({
   icon,
   title,
@@ -280,6 +326,7 @@ export default function HomeStorefront() {
   const [refurbished, setRefurbished] = useState<any[]>(cache?.refurbished ?? [])
   const [reviewStart, setReviewStart] = useState(0)
   const [loading, setLoading] = useState(() => !cache)
+  useBootHold(loading)
   const [wishlist, setWishlist] = useState<Set<number>>(() => {
     try {
       return new Set(JSON.parse(localStorage.getItem('wishlist') || '[]'))
@@ -505,22 +552,15 @@ export default function HomeStorefront() {
             linkLabel="View All Categories"
           />
           <div className="hs-cats">
-            {CATEGORY_TILES.map((tile) => {
-              const img = tileImage(tile)
-              const Icon = tile.icon
-              return (
-                <Link key={tile.label} to={tileHref(tile)} className="hs-cat">
-                  <span className="hs-cat-art">
-                    {img ? (
-                      <img src={img} alt="" loading="lazy" />
-                    ) : (
-                      <Icon size={40} strokeWidth={1.6} aria-hidden="true" />
-                    )}
-                  </span>
-                  <span className="hs-cat-name">{tile.label}</span>
-                </Link>
-              )
-            })}
+            {CATEGORY_TILES.map((tile, i) => (
+              <CategoryTileCard
+                key={tile.label}
+                tile={tile}
+                href={tileHref(tile)}
+                img={tileImage(tile)}
+                tone={i % CAT_TONES.length}
+              />
+            ))}
           </div>
         </section>
 

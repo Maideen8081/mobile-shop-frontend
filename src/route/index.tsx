@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { lazy as reactLazy, Suspense, type ComponentType, type ReactNode } from 'react'
-import DoubleRingLoader from '../components/ui/DoubleRingLoader'
+import { RouteLoader } from '../components/LoadingScreen/RouteLoader'
 import { LEGACY_ADMIN_PATHS } from './adminPaths'
 import WebsiteGate from '../pages/WebsiteGate'
 import AuthGuard from '../components/AuthGuard'
@@ -108,17 +108,9 @@ const legacyAdminRedirects: { from: string; to: string }[] = LEGACY_ADMIN_PATHS.
   to: `/admin${from}`,
 }))
 
-function PageLoader() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <DoubleRingLoader size={48} label="Loading…" />
-    </div>
-  )
-}
-
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<PageLoader />}>
+    <Suspense fallback={<RouteLoader />}>
     <Routes>
       {/* Admin area */}
       <Route path="/admin/login" element={<AdminLoginPage />} />

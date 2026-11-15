@@ -1,0 +1,29 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - generic [ref=f5e4]:
+      - banner [ref=f5e5]:
+        - generic [ref=f5e11]:
+          - generic [ref=f5e12]: PhoneFix Pro
+          - generic [ref=f5e13]: Your tech store
+        - generic [ref=f5e14]: Live
+      - main [ref=f5e16]:
+        - progressbar "Loading PhoneFix Pro" [ref=f5e19]
+        - generic [ref=f5e27]:
+          - generic [ref=f5e28]: 0%
+          - paragraph [ref=f5e30]: Warming up the store
+          - paragraph [ref=f5e31]: Filling your bag with the best deals
+      - contentinfo [aria-hidden] [ref=f5e32]
+    - status [ref=f5e36]:
+      - generic [ref=f5e42]:
+        - text: Loading
+        - generic [ref=f5e43]: ...
+  - generic [ref=f5e44]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm Fixie, your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: Chat with Fixie →
+    - button "Open the PhoneFix AI assistant" [ref=f5e45]:
+      - generic [aria-hidden]: AI

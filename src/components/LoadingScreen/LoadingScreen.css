@@ -2,18 +2,18 @@
 
 .pf-loader {
   --brand: #210D35;
-  --brand-2: #ff6b78;
-  --brand-light: #ff8a95;
-  --ink: #f6f6f8;
-  --muted: #a9a9b2;
-  --bg: #09090d;
+  --brand-2: #ffd014;
+  --brand-light: #d0adff;
+  --ink: #fff7f3;
+  --muted: #bfaed3;
+  --bg: #140720;
   --ease: cubic-bezier(.2, .8, .2, 1);
 
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 100001;
   overflow: hidden;
-  background: radial-gradient(90% 55% at 50% 42%, #3a0b14 0%, var(--bg) 70%);
+  background: radial-gradient(90% 55% at 50% 42%, #4a2470 0%, #210d35 45%, var(--bg) 80%);
   color: var(--ink);
   font-family: var(--font-ui);
   clip-path: circle(150% at 50% 42%);
@@ -39,7 +39,7 @@
 .pf-blob--b {
   bottom: -35vmax;
   right: -35vmax;
-  background: radial-gradient(closest-side, rgba(255, 107, 120, .18), transparent);
+  background: radial-gradient(closest-side, rgba(208, 173, 255, .16), transparent);
   animation: pf-drift-b 18s ease-in-out infinite alternate;
 }
 @keyframes pf-drift-a { to { transform: translate3d(18vmax, 22vmax, 0); } }
@@ -70,7 +70,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #210D35, #9f1239);
+  background: linear-gradient(135deg, #7b3fd0, #4a2470 55%, #210D35);
   box-shadow: 0 8px 24px -6px rgba(123, 63, 208, .6);
 }
 .pf-name { display: block; font-size: 17px; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
@@ -165,7 +165,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, #ff5a6a 0%, #210D35 45%, #8e0f25 100%);
+  background: linear-gradient(180deg, #ffd014 0%, #b48cf0 45%, #4a2470 100%);
   transition: height .3s ease-out;
 }
 .pf-wave {
@@ -240,7 +240,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--brand);
+  background: var(--brand-2);
   animation: pf-pulse 1.2s ease-in-out infinite;
 }
 .pf-dots i:nth-child(2) { animation-delay: .2s; }

@@ -1,10 +1,21 @@
+import { useId } from 'react'
+
 type ChatAssistantIconProps = {
   className?: string
   size?: number
+  /** Blink + sparkle twinkle. Off for tiny inline uses. */
+  animated?: boolean
 }
 
-export default function ChatAssistantIcon({ className, size = 52 }: ChatAssistantIconProps) {
-  const id = 'cai'
+/**
+ * "Fixie" — the PhoneFix AI assistant mascot.
+ * A speech-bubble shaped bot with a glowing visor face and a sparkle antenna,
+ * drawn in the store palette (deep purple · lavender · sunshine yellow).
+ */
+export default function ChatAssistantIcon({ className, size = 52, animated = size >= 28 }: ChatAssistantIconProps) {
+  const uid = useId().replace(/:/g, '')
+  const id = (name: string) => `fx-${uid}-${name}`
+
   return (
     <svg
       width={size}
@@ -16,156 +27,94 @@ export default function ChatAssistantIcon({ className, size = 52 }: ChatAssistan
       focusable="false"
     >
       <defs>
-        {/* Head gradient – warm white top, cool steel bottom */}
-        <linearGradient id={`${id}-head`} x1="20" y1="8" x2="60" y2="42" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#f0f9ff" />
-          <stop offset="55%" stopColor="#dbeafe" />
-          <stop offset="100%" stopColor="#bfdbfe" />
+        <linearGradient id={id('shell')} x1="14" y1="16" x2="66" y2="66" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#f3eaff" />
+          <stop offset="45%" stopColor="#d0adff" />
+          <stop offset="100%" stopColor="#8a4fe0" />
         </linearGradient>
-        {/* Head shadow underside */}
-        <linearGradient id={`${id}-headSh`} x1="20" y1="42" x2="60" y2="8" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#93c5fd" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="transparent" />
+        <linearGradient id={id('visor')} x1="22" y1="26" x2="58" y2="52" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#2e1250" />
+          <stop offset="100%" stopColor="#14061f" />
         </linearGradient>
-        {/* Visor dark */}
-        <linearGradient id={`${id}-visor`} x1="18" y1="18" x2="62" y2="32" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#0c1445" />
-          <stop offset="100%" stopColor="#060a28" />
-        </linearGradient>
-        {/* Eye glow */}
-        <radialGradient id={`${id}-eyeL`} cx="50%" cy="42%" r="50%">
-          <stop offset="0%" stopColor="#7df9ff" />
-          <stop offset="45%" stopColor="#38bdf8" />
-          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
+        <radialGradient id={id('eye')} cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#fff8c4" />
+          <stop offset="55%" stopColor="#ffd014" />
+          <stop offset="100%" stopColor="#ffb800" />
         </radialGradient>
-        <radialGradient id={`${id}-eyeR`} cx="50%" cy="42%" r="50%">
-          <stop offset="0%" stopColor="#7df9ff" />
-          <stop offset="45%" stopColor="#38bdf8" />
-          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
+        <radialGradient id={id('glow')} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffd014" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#ffd014" stopOpacity="0" />
         </radialGradient>
-        {/* Body gradient */}
-        <linearGradient id={`${id}-body`} x1="18" y1="50" x2="62" y2="72" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#eff6ff" />
-          <stop offset="100%" stopColor="#bfdbfe" />
+        <linearGradient id={id('gloss')} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
-        {/* Arm gradient */}
-        <linearGradient id={`${id}-arm`} x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="#dbeafe" />
-          <stop offset="100%" stopColor="#93c5fd" />
-        </linearGradient>
-        {/* Chest panel */}
-        <linearGradient id={`${id}-chest`} x1="25" y1="55" x2="55" y2="68" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#0f2044" />
-          <stop offset="100%" stopColor="#050e22" />
-        </linearGradient>
-        {/* Gloss highlight */}
-        <radialGradient id={`${id}-gloss`} cx="35%" cy="25%" r="55%">
-          <stop offset="0%" stopColor="white" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </radialGradient>
-        {/* Eye ambient bloom */}
-        <filter id={`${id}-glow`} x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        <filter id={`${id}-softglow`} x="-60%" y="-60%" width="220%" height="220%">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
       </defs>
 
-      {/* ── Antenna ── */}
-      <rect x="38.5" y="2" width="3" height="8" rx="1.5" fill="#93c5fd" />
-      {/* Antenna orb */}
-      <circle cx="40" cy="2" r="3.5" fill="#38bdf8" filter={`url(#${id}-softglow)`} />
-      <circle cx="40" cy="2" r="2" fill="#bae6fd" />
-      <circle cx="39.2" cy="1.3" r="0.7" fill="white" opacity="0.9" />
+      {/* Antenna + AI sparkle */}
+      <path d="M40 18.5V11" stroke="#8a4fe0" strokeWidth="2.6" strokeLinecap="round" />
+      <circle cx="40" cy="8" r="7" fill={`url(#${id('glow')})`} />
+      <path d="M40 2.5l1.6 4 4 1.5-4 1.5-1.6 4-1.6-4-4-1.5 4-1.5 1.6-4Z" fill="#ffd014">
+        {animated && (
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            values="0 40 8;90 40 8;90 40 8"
+            keyTimes="0;0.25;1"
+            dur="3.2s"
+            repeatCount="indefinite"
+          />
+        )}
+      </path>
 
-      {/* ── Head ── */}
-      <rect x="17" y="10" width="46" height="34" rx="10" fill={`url(#${id}-head)`} />
-      {/* Head underside shading */}
-      <rect x="17" y="10" width="46" height="34" rx="10" fill={`url(#${id}-headSh)`} />
-      {/* Head side bolts */}
-      <circle cx="17" cy="24" r="3" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
-      <circle cx="17" cy="24" r="1.2" fill="#60a5fa" />
-      <circle cx="63" cy="24" r="3" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
-      <circle cx="63" cy="24" r="1.2" fill="#60a5fa" />
+      {/* Speech-bubble head with tail */}
+      <path
+        d="M24 18h32c7.7 0 14 6.3 14 14v14c0 7.7-6.3 14-14 14H35l-11.5 9.2c-1.3 1-3.2.1-3.2-1.6V59.4C14.2 57.8 10 52.4 10 46V32c0-7.7 6.3-14 14-14Z"
+        fill={`url(#${id('shell')})`}
+      />
+      <path
+        d="M24 18h32c7.7 0 14 6.3 14 14v14c0 7.7-6.3 14-14 14H35l-11.5 9.2c-1.3 1-3.2.1-3.2-1.6V59.4C14.2 57.8 10 52.4 10 46V32c0-7.7 6.3-14 14-14Z"
+        stroke="#ffffff"
+        strokeOpacity="0.55"
+        strokeWidth="1.2"
+      />
+      {/* Top gloss */}
+      <path d="M22 21.5h36c4 0 7.4 2.4 8.8 5.8H13.2c1.4-3.4 4.8-5.8 8.8-5.8Z" fill={`url(#${id('gloss')})`} opacity="0.7" />
 
-      {/* ── Visor / face panel ── */}
-      <rect x="22" y="17" width="36" height="18" rx="6" fill={`url(#${id}-visor)`} />
-      {/* Visor inner bevel */}
-      <rect x="23" y="18" width="34" height="16" rx="5" fill="none" stroke="rgba(100,180,255,0.15)" strokeWidth="1" />
+      {/* Ear pods */}
+      <rect x="5" y="32" width="6" height="12" rx="3" fill="#ffd014" />
+      <rect x="69" y="32" width="6" height="12" rx="3" fill="#ffd014" />
 
-      {/* ── Left eye ── */}
-      <ellipse cx="31.5" cy="26" rx="6" ry="5" fill={`url(#${id}-eyeL)`} filter={`url(#${id}-glow)`} />
-      {/* Eye inner bright core */}
-      <ellipse cx="31.5" cy="26" rx="3.5" ry="2.8" fill="#7df9ff" opacity="0.9" />
-      <ellipse cx="30.4" cy="24.8" rx="1.4" ry="1" fill="white" opacity="0.85" />
-      {/* Eye scan line */}
-      <rect x="25.5" y="25.3" width="12" height="1.2" rx="0.6" fill="#bae6fd" opacity="0.35" />
+      {/* Visor face */}
+      <rect x="18" y="26" width="44" height="26" rx="12" fill={`url(#${id('visor')})`} />
+      <rect x="18.6" y="26.6" width="42.8" height="24.8" rx="11.4" stroke="#d0adff" strokeOpacity="0.35" strokeWidth="1.2" />
 
-      {/* ── Right eye ── */}
-      <ellipse cx="48.5" cy="26" rx="6" ry="5" fill={`url(#${id}-eyeR)`} filter={`url(#${id}-glow)`} />
-      <ellipse cx="48.5" cy="26" rx="3.5" ry="2.8" fill="#7df9ff" opacity="0.9" />
-      <ellipse cx="47.4" cy="24.8" rx="1.4" ry="1" fill="white" opacity="0.85" />
-      <rect x="42.5" y="25.3" width="12" height="1.2" rx="0.6" fill="#bae6fd" opacity="0.35" />
+      {/* Eyes (blink) */}
+      <g>
+        <ellipse cx="31" cy="37.5" rx="3.6" ry="4.4" fill={`url(#${id('eye')})`}>
+          {animated && (
+            <animate attributeName="ry" values="4.4;4.4;0.6;4.4;4.4" keyTimes="0;0.9;0.93;0.96;1" dur="4.5s" repeatCount="indefinite" />
+          )}
+        </ellipse>
+        <ellipse cx="49" cy="37.5" rx="3.6" ry="4.4" fill={`url(#${id('eye')})`}>
+          {animated && (
+            <animate attributeName="ry" values="4.4;4.4;0.6;4.4;4.4" keyTimes="0;0.9;0.93;0.96;1" dur="4.5s" repeatCount="indefinite" />
+          )}
+        </ellipse>
+        <circle cx="32.2" cy="36" r="1.1" fill="#fff" />
+        <circle cx="50.2" cy="36" r="1.1" fill="#fff" />
+      </g>
 
-      {/* ── Mouth ── */}
-      {/* Mouth tray */}
-      <rect x="27" y="37" width="26" height="5" rx="2.5" fill="#0c1445" opacity="0.7" />
-      {/* Smile pixels */}
-      <rect x="29" y="38.5" width="3.5" height="2" rx="1" fill="#38bdf8" opacity="0.9" />
-      <rect x="34" y="38.5" width="3.5" height="2" rx="1" fill="#34d399" opacity="0.9" />
-      <rect x="39" y="38.5" width="3.5" height="2" rx="1" fill="#34d399" opacity="0.9" />
-      <rect x="44" y="38.5" width="3.5" height="2" rx="1" fill="#38bdf8" opacity="0.9" />
+      {/* Smile */}
+      <path d="M35 45c2.8 2.4 7.2 2.4 10 0" stroke="#ffd014" strokeWidth="2.2" strokeLinecap="round" />
+      {/* Cheeks */}
+      <circle cx="24.5" cy="44.5" r="2.2" fill="#ff8ab3" opacity="0.55" />
+      <circle cx="55.5" cy="44.5" r="2.2" fill="#ff8ab3" opacity="0.55" />
 
-      {/* ── Neck ── */}
-      <rect x="34" y="44" width="12" height="6" rx="3" fill="#bfdbfe" />
-      <rect x="36" y="45.5" width="3" height="3" rx="1" fill="#93c5fd" opacity="0.6" />
-      <rect x="41" y="45.5" width="3" height="3" rx="1" fill="#93c5fd" opacity="0.6" />
-
-      {/* ── Left arm ── */}
-      <rect x="9" y="52" width="10" height="20" rx="5" fill="#dbeafe" />
-      <rect x="9" y="52" width="10" height="20" rx="5" fill="none" stroke="#93c5fd" strokeWidth="0.8" />
-      {/* Hand */}
-      <ellipse cx="14" cy="73.5" rx="5.5" ry="3.5" fill="#bfdbfe" />
-      <circle cx="11" cy="73" r="1.5" fill="#93c5fd" />
-      <circle cx="14" cy="74" r="1.5" fill="#93c5fd" />
-      <circle cx="17" cy="73" r="1.5" fill="#93c5fd" />
-
-      {/* ── Right arm ── */}
-      <rect x="61" y="52" width="10" height="20" rx="5" fill="#dbeafe" />
-      <rect x="61" y="52" width="10" height="20" rx="5" fill="none" stroke="#93c5fd" strokeWidth="0.8" />
-      <ellipse cx="66" cy="73.5" rx="5.5" ry="3.5" fill="#bfdbfe" />
-      <circle cx="63" cy="73" r="1.5" fill="#93c5fd" />
-      <circle cx="66" cy="74" r="1.5" fill="#93c5fd" />
-      <circle cx="69" cy="73" r="1.5" fill="#93c5fd" />
-
-      {/* ── Body ── */}
-      <rect x="19" y="50" width="42" height="26" rx="10" fill={`url(#${id}-body)`} />
-      <rect x="19" y="50" width="42" height="26" rx="10" fill="none" stroke="#93c5fd" strokeWidth="0.8" />
-
-      {/* ── Chest panel ── */}
-      <rect x="25" y="55" width="30" height="16" rx="5" fill={`url(#${id}-chest)`} />
-      <rect x="26" y="56" width="28" height="14" rx="4" fill="none" stroke="rgba(56,189,248,0.25)" strokeWidth="0.8" />
-
-      {/* Status LEDs */}
-      <circle cx="32" cy="60" r="2.8" fill="#38bdf8" filter={`url(#${id}-glow)`} />
-      <circle cx="32" cy="60" r="1.5" fill="#7df9ff" />
-      <circle cx="40" cy="60" r="2.8" fill="#34d399" filter={`url(#${id}-glow)`} />
-      <circle cx="40" cy="60" r="1.5" fill="#6ee7b7" />
-      <circle cx="48" cy="60" r="2.8" fill="#f87171" filter={`url(#${id}-glow)`} />
-      <circle cx="48" cy="60" r="1.5" fill="#fca5a5" />
-
-      {/* Mini screen / wave inside chest */}
-      <rect x="28" y="64" width="24" height="4" rx="2" fill="#0f2044" opacity="0.6" />
-      <polyline points="29,66 32,64.5 35,67 38,64.5 41,67 44,64.5 47,66 50,65" stroke="#38bdf8" strokeWidth="1" fill="none" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
-
-      {/* ── Body gloss highlight ── */}
-      <ellipse cx="32" cy="54" rx="10" ry="4" fill="white" opacity="0.18" />
-
-      {/* ── Head glass gloss ── */}
-      <rect x="17" y="10" width="46" height="34" rx="10" fill={`url(#${id}-gloss)`} />
+      {/* Side sparkle */}
+      <path d="M66 12l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1 1-2.6Z" fill="#ffffff">
+        {animated && <animate attributeName="opacity" values="0.2;1;0.2" dur="2.4s" repeatCount="indefinite" />}
+      </path>
     </svg>
   )
 }

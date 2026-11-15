@@ -13,24 +13,9 @@ function clamp(value: number, min: number, max: number) {
 }
 
 // Mobile gets a smaller button that sits above the bottom navigation bar.
-const DESKTOP_SIZE = 80
+const DESKTOP_SIZE = 72
 const MOBILE_SIZE = 52
 const MOBILE_NAV_CLEARANCE = 100
-
-/** Chat bubble with an AI sparkle, used for the compact mobile button. */
-function ChatSparkIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
-      <path
-        d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5Z"
-        stroke="#fff"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path d="M12 7.5l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1 1-2.5Z" fill="#fff" />
-    </svg>
-  )
-}
 
 function getSavedPos(btnSize: number, bottomGap = 28): { x: number; y: number } {
   try {
@@ -177,7 +162,7 @@ export default function SupportChatButton() {
           background: '#ffffff',
           borderRadius: 16,
           padding: '14px 16px 12px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10), 0 0 0 1px rgba(56,189,248,0.14)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10), 0 0 0 1px rgba(123,63,208,0.18)',
           opacity: showPopup ? 1 : 0,
           transform: showPopup ? 'translateY(0) scale(1)' : 'translateY(10px) scale(0.96)',
           transformOrigin: popupOnLeft ? 'bottom right' : 'bottom left',
@@ -196,8 +181,8 @@ export default function SupportChatButton() {
           width: 14,
           height: 14,
           background: '#ffffff',
-          borderRight: '1px solid rgba(56,189,248,0.18)',
-          borderBottom: '1px solid rgba(56,189,248,0.18)',
+          borderRight: '1px solid rgba(123,63,208,0.2)',
+          borderBottom: '1px solid rgba(123,63,208,0.2)',
           transform: 'rotate(45deg)',
           borderRadius: 2,
         }} />
@@ -206,7 +191,7 @@ export default function SupportChatButton() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
           <span style={{
             fontSize: 'var(--text-micro)', fontWeight: 700, letterSpacing: '0.08em',
-            color: '#0ea5e9', background: 'rgba(14,165,233,0.1)',
+            color: '#5b2ea6', background: 'rgba(208,173,255,0.3)',
             padding: '2px 7px', borderRadius: 20, textTransform: 'uppercase',
           }}>AI COMPANION</span>
           <span style={{
@@ -216,18 +201,18 @@ export default function SupportChatButton() {
           <span style={{ fontSize: 'var(--text-micro)', fontWeight: 500, color: '#22c55e' }}>Online</span>
         </div>
 
-        <p style={{ margin: '0 0 4px', fontSize: 'var(--text-body-sm)', fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>
+        <p style={{ margin: '0 0 4px', fontSize: 'var(--text-body-sm)', fontWeight: 700, color: '#210d35', lineHeight: 1.3 }}>
           Hey there! 👋
         </p>
-        <p style={{ margin: '0 0 12px', fontSize: 'var(--text-caption)', color: '#64748b', lineHeight: 1.5 }}>
-          I'm your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+        <p style={{ margin: '0 0 12px', fontSize: 'var(--text-caption)', color: '#6b5a7a', lineHeight: 1.5 }}>
+          I'm Fixie, your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
         </p>
         <button
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
             width: '100%', padding: '8px 14px',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-            color: '#ffffff', fontSize: 'var(--text-caption)', fontWeight: 600,
+            background: 'linear-gradient(135deg, #4a2470 0%, #210d35 100%)',
+            color: '#ffd014', fontSize: 'var(--text-caption)', fontWeight: 600,
             border: 'none', borderRadius: 10, cursor: 'pointer',
             fontFamily: 'inherit', letterSpacing: '0.02em',
             transition: 'opacity 0.15s ease',
@@ -237,7 +222,7 @@ export default function SupportChatButton() {
           onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
           onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
         >
-          💬 Chat Now
+          Chat with Fixie →
         </button>
       </div>
 
@@ -252,8 +237,9 @@ export default function SupportChatButton() {
       >
         <span className="support-chat-button-inner">
           <span className="support-chat-button-ring" aria-hidden="true" />
-          {isMobile ? <ChatSparkIcon /> : <ChatAssistantIcon size={54} />}
+          <ChatAssistantIcon size={isMobile ? 38 : 50} />
         </span>
+        <span className="support-chat-ai-chip" aria-hidden="true">AI</span>
       </button>
     </div>
   )

@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiGift, FiHeadphones, FiLock, FiMail, FiPhone, FiShield, FiSmartphone, FiTruck, FiUser, FiWatch, FiTag, FiTool, FiStar } from 'react-icons/fi'
+import { FiGift, FiLock, FiMail, FiPhone, FiShield, FiTruck, FiUser, FiTag, FiTool, FiStar } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import MobileRegister from '../components/mobile/MobileRegister'
 import { useIsMobile } from '../components/mobile/helpers'
 import {
-  AuthField, AuthHeading, AuthLayout, AuthSwitch, BrandMark, PasswordToggle, SocialSignIn, SubmitButton,
+  AuthField, AuthHeading, AuthLayout, AuthSwitch, PasswordToggle, SocialSignIn, SubmitButton,
   type ShowcaseSlide,
 } from '../components/auth/AuthLayout'
 import { parseApiError, useValidatedForm, type FieldRules } from '../components/auth/useValidatedForm'
@@ -69,27 +69,12 @@ function friendlyRegisterError(msg: string): string {
   return msg
 }
 
-function BagScene() {
-  return (
-    <div className="auth-bag-scene" aria-hidden="true">
-      <div className="auth-bag-scene__ring" />
-      <span className="auth-bubble auth-bubble--phone"><FiSmartphone size={24} /></span>
-      <span className="auth-bubble auth-bubble--audio"><FiHeadphones size={24} /></span>
-      <span className="auth-bubble auth-bubble--watch"><FiWatch size={24} /></span>
-      <div className="auth-bag">
-        <div className="auth-bag__handle" />
-        <div className="auth-bag__body" />
-        <div className="auth-bag__logo"><BrandMark /></div>
-      </div>
-    </div>
-  )
-}
-
 const slides: ShowcaseSlide[] = [
   {
     title: 'Create your account',
-    description: 'Join MobileShop and enjoy a seamless shopping experience.',
-    visual: <BagScene />,
+    description: 'Join PhoneFix and enjoy a seamless shopping experience.',
+    image: '/auth/signup-1.jpg',
+    imageFallback: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=1100&q=75&auto=format&fit=crop',
     features: [
       { icon: <FiGift size={17} />, label: 'Exclusive Deals' },
       { icon: <FiShield size={17} />, label: 'Secure Payments' },
@@ -99,7 +84,8 @@ const slides: ShowcaseSlide[] = [
   {
     title: 'Shop smarter',
     description: 'Save addresses, build a wishlist and check out in seconds.',
-    visual: <BagScene />,
+    image: '/auth/signup-2.jpg',
+    imageFallback: 'https://images.unsplash.com/photo-1556742111-a301076d9d18?w=1100&q=75&auto=format&fit=crop',
     features: [
       { icon: <FiTag size={17} />, label: 'Member-only Prices' },
       { icon: <FiStar size={17} />, label: 'Personal Wishlist' },
@@ -109,7 +95,8 @@ const slides: ShowcaseSlide[] = [
   {
     title: 'Repairs made easy',
     description: 'Book repairs and follow every step from one account.',
-    visual: <BagScene />,
+    image: '/auth/signup-3.jpg',
+    imageFallback: '/products/repair-internals.jpg',
     features: [
       { icon: <FiTool size={17} />, label: 'Doorstep Repair Booking' },
       { icon: <FiShield size={17} />, label: 'Genuine Parts' },
@@ -165,7 +152,7 @@ function DesktopRegister() {
 
   return (
     <AuthLayout slides={slides} variant="signup">
-      <AuthHeading title="Create an account" subtitle="Get started with your MobileShop account." />
+      <AuthHeading title="Create an account" subtitle="Get started with your PhoneFix account in under a minute." />
 
       <form className="auth-form" onSubmit={onSubmit} noValidate>
         <AuthField

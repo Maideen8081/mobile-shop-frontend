@@ -1,6 +1,9 @@
 import { useEffect, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { FiAlertCircle, FiArrowRight, FiEye, FiEyeOff, FiShoppingBag } from 'react-icons/fi'
+import {
+  FiAlertCircle, FiArrowLeft, FiArrowRight, FiEye, FiEyeOff, FiLock, FiRefreshCw, FiRepeat, FiShield,
+  FiShoppingBag, FiStar, FiTool, FiTruck,
+} from 'react-icons/fi'
 import GoogleSignInButton from './GoogleSignInButton'
 import './AuthLayout.css'
 
@@ -12,6 +15,33 @@ export interface ShowcaseSlide {
   description: string
   features?: { icon: ReactNode; label: string }[]
   visual?: ReactNode
+  /** Full-bleed background photo for the showcase tile. */
+  image?: string
+  /** Shown if `image` fails to load (e.g. the local file hasn't been added). */
+  imageFallback?: string
+}
+
+const unsplash = (id: string, w = 900) =>
+  `https://images.unsplash.com/photo-${id}?w=${w}&q=75&auto=format&fit=crop`
+
+/**
+ * Tile photos. Drop your own images into `public/auth/` with these names and
+ * they are used automatically; until then the fallback photo shows.
+ */
+const TILE_PHOTOS = {
+  rating: { src: '/auth/rating.jpg', fallback: unsplash('1592899677977-9c10ca588bbd', 700) },
+  repair: { src: '/auth/repair.jpg', fallback: '/products/repair-internals.jpg' },
+  trade: { src: '/auth/trade.jpg', fallback: unsplash('1556656793-08538906a9f8', 700) },
+}
+
+/** Swap to the fallback photo once if the preferred file is missing. */
+function fallbackTo(fallback: string) {
+  return (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget
+    if (img.dataset.fellBack) return
+    img.dataset.fellBack = '1'
+    img.src = fallback
+  }
 }
 
 interface AuthLayoutProps {
@@ -27,16 +57,25 @@ export function BrandMark() {
   return <span className="auth-brand__mark" aria-hidden="true"><FiShoppingBag size={22} /></span>
 }
 
-function Brand({ className = '' }: { className?: string }) {
+function Brand() {
   return (
-    <Link to="/home" className={`auth-brand ${className}`}>
-      <BrandMark />
-      MobileShop
+    <Link to="/home" className="auth-brand">
+      <span className="auth-brand__mark" aria-hidden="true"><FiTool size={20} /></span>
+      <span className="auth-brand__text">
+        <span>PhoneFix<i>.</i></span>
+        <small>Premium Mobile Store</small>
+      </span>
     </Link>
   )
 }
 
-/** Full-screen auth page: rotating product showcase on the left, form on the right. The page never scrolls. */
+const AVATARS = ['AS', 'PK', 'RM', 'AR']
+
+/**
+ * Full-screen auth page (never scrolls as a whole).
+ * Left: the form card with Sign in / Create account tabs.
+ * Right: a bento grid — rotating product showcase plus trust tiles.
+ */
 export function AuthLayout({ variant, slides, children }: AuthLayoutProps) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -50,61 +89,132 @@ export function AuthLayout({ variant, slides, children }: AuthLayoutProps) {
 
   return (
     <div className="auth-page">
-      <div className={`auth-card auth-card--${variant}`}>
-        <aside
-          className="auth-showcase"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <div className="auth-showcase__glow" aria-hidden="true" />
-          <Brand />
-          <div className="auth-showcase__slides" aria-live="polite">
-            {slides.map((slide, i) => (
-              <section
-                key={slide.title}
-                className={`auth-slide ${i === active ? 'is-active' : ''}`}
-                aria-hidden={i !== active}
-              >
-                {slide.eyebrow && <p className="auth-slide__eyebrow">{slide.eyebrow}</p>}
-                <h2 className="auth-slide__title">{slide.title}</h2>
-                <p className="auth-slide__desc">{slide.description}</p>
-                {slide.visual && <div className="auth-slide__visual">{slide.visual}</div>}
-                {slide.features && (
-                  <ul className="auth-slide__features">
-                    {slide.features.map((f) => (
-                      <li key={f.label}>
-                        <span className="auth-slide__feature-icon" aria-hidden="true">{f.icon}</span>
-                        {f.label}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            ))}
+      <div className={`auth-shell auth-shell--${variant}`}>
+        <main className="auth-panel">
+          <header className="auth-panel__top">
+            <Brand />
+            <Link to="/home" className="auth-back">
+              <FiArrowLeft size={15} aria-hidden="true" /> Back to store
+            </Link>
+          </header>
+
+          <div className="auth-panel__body">
+            <div className="auth-panel__inner">
+              <nav className={`auth-tabs auth-tabs--${variant}`} aria-label="Account">
+                <span className="auth-tabs__thumb" aria-hidden="true" />
+                <Link to="/login" replace aria-current={variant === 'signin' ? 'page' : undefined}>Sign in</Link>
+                <Link to="/signup" replace aria-current={variant === 'signup' ? 'page' : undefined}>Create account</Link>
+              </nav>
+              {children}
+            </div>
           </div>
-          {slides.length > 1 && (
-            <div className="auth-dots" role="tablist" aria-label="Showcase slides">
+
+          <footer className="auth-panel__foot">
+            <FiLock size={13} aria-hidden="true" />
+            <span>Secure, encrypted sign-in</span>
+            <span className="auth-panel__dot" aria-hidden="true" />
+            <Link to="/support">Need help?</Link>
+          </footer>
+        </main>
+
+        <aside className="auth-bento" aria-label="Why shop with PhoneFix">
+          <section
+            className="bento bento--hero"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            <span className="bento-hero__glow" aria-hidden="true" />
+            {slides.map((slide, i) => slide.image && (
+              <img
+                key={`bg-${slide.title}`}
+                src={slide.image}
+                onError={slide.imageFallback ? fallbackTo(slide.imageFallback) : undefined}
+                alt=""
+                aria-hidden="true"
+                className={`bento-hero__photo${i === active ? ' is-active' : ''}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            ))}
+            <div className="bento-hero__slides" aria-live="polite">
               {slides.map((slide, i) => (
-                <button
+                <div
                   key={slide.title}
-                  type="button"
-                  role="tab"
-                  className={i === active ? 'is-active' : ''}
-                  aria-selected={i === active}
-                  aria-label={`Show slide ${i + 1}: ${slide.title}`}
-                  onClick={() => setActive(i)}
-                />
+                  className={`auth-slide ${i === active ? 'is-active' : ''}`}
+                  aria-hidden={i !== active}
+                >
+                  <div className="auth-slide__copy">
+                    {slide.eyebrow && <p className="auth-slide__eyebrow">{slide.eyebrow}</p>}
+                    <h2 className="auth-slide__title">{slide.title}</h2>
+                    <p className="auth-slide__desc">{slide.description}</p>
+                    {slide.features && (
+                      <ul className="auth-slide__features">
+                        {slide.features.map((f) => (
+                          <li key={f.label}>
+                            <span className="auth-slide__feature-icon" aria-hidden="true">{f.icon}</span>
+                            {f.label}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  {slide.visual && <div className="auth-slide__visual">{slide.visual}</div>}
+                </div>
               ))}
             </div>
-          )}
-        </aside>
+            {slides.length > 1 && (
+              <div className="auth-dots" role="tablist" aria-label="Showcase slides">
+                {slides.map((slide, i) => (
+                  <button
+                    key={slide.title}
+                    type="button"
+                    role="tab"
+                    className={i === active ? 'is-active' : ''}
+                    aria-selected={i === active}
+                    aria-label={`Show slide ${i + 1}: ${slide.title}`}
+                    onClick={() => setActive(i)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
 
-        <main className="auth-form-side">
-          <div>
-            <Brand className="auth-brand--dark auth-brand--compact" />
-            {children}
+          <div className="bento bento--rating">
+            <img className="bento-rating__photo" src={TILE_PHOTOS.rating.src} onError={fallbackTo(TILE_PHOTOS.rating.fallback)} alt="" aria-hidden="true" loading="lazy" />
+            <div className="bento-rating__score">
+              <b>4.8</b>
+              <span className="bento-rating__stars" aria-label="4.8 out of 5 stars">
+                {[0, 1, 2, 3, 4].map((i) => <FiStar key={i} size={14} aria-hidden="true" />)}
+              </span>
+            </div>
+            <p>Loved by <b>12,000+</b> customers across Hyderabad</p>
+            <div className="bento-rating__faces" aria-hidden="true">
+              {AVATARS.map((a) => <span key={a}>{a}</span>)}
+              <span className="is-more">+12k</span>
+            </div>
           </div>
-        </main>
+
+          <div className="bento bento--repair">
+            <img className="bento-photo" src={TILE_PHOTOS.repair.src} onError={fallbackTo(TILE_PHOTOS.repair.fallback)} alt="" aria-hidden="true" loading="lazy" />
+            <span className="bento-icon"><FiTool size={20} /></span>
+            <span className="bento-big">45<small>min</small></span>
+            <span className="bento-label">Express screen &amp; battery repairs</span>
+          </div>
+
+          <div className="bento bento--trade">
+            <img className="bento-photo" src={TILE_PHOTOS.trade.src} onError={fallbackTo(TILE_PHOTOS.trade.fallback)} alt="" aria-hidden="true" loading="lazy" />
+            <span className="bento-icon"><FiRepeat size={20} /></span>
+            <span className="bento-kicker">Trade-in value up to</span>
+            <span className="bento-big">₹40,000</span>
+            <span className="bento-label">for your old phone</span>
+          </div>
+
+          <ul className="bento bento--perks">
+            <li><FiTruck size={18} aria-hidden="true" /><span><b>Free delivery</b> over ₹500</span></li>
+            <li><FiShield size={18} aria-hidden="true" /><span><b>100% genuine</b> products</span></li>
+            <li><FiRefreshCw size={18} aria-hidden="true" /><span><b>7-day</b> easy returns</span></li>
+            <li><FiShoppingBag size={18} aria-hidden="true" /><span><b>No-cost EMI</b> available</span></li>
+          </ul>
+        </aside>
       </div>
     </div>
   )

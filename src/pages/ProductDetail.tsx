@@ -21,6 +21,7 @@ import {
   MessageCircleQuestion, Minus, Monitor, Percent, Plus, RotateCcw, Share2, ShieldCheck, ShoppingCart, Star,
   Tag, Truck, Zap,
 } from 'lucide-react'
+import { useBootHold } from '../components/LoadingScreen/bootLoader'
 
 class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
   constructor(props: { children: React.ReactNode }) {
@@ -220,6 +221,7 @@ function ProductDetailContent() {
 
   const [apiProduct, setApiProduct] = useState<any>(() => (resolvedId ? productService.peekById(Number(resolvedId)) : null) ?? null)
   const [loading, setLoading] = useState(() => !(resolvedId && productService.peekById(Number(resolvedId))))
+  useBootHold(loading)
   const [fetchError, setFetchError] = useState('')
   const [selectedImage, setSelectedImage] = useState(0)
   const [qty, setQty] = useState(1)

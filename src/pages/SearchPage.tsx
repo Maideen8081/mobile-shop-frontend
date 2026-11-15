@@ -13,6 +13,7 @@ import { useToast } from '../context/ToastContext'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import './SearchPage.css'
+import { useBootHold } from '../components/LoadingScreen/bootLoader'
 
 const PAGE_SIZE = 12
 const POPULAR = ['iPhone', 'Samsung', 'Earbuds', 'Charger', 'Smart Watch', 'Power Bank', 'Headphones', 'Case']
@@ -179,6 +180,7 @@ function SearchResults({ query }: { query: string }) {
 
   const [items, setItems] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
+  useBootHold(loading)
   const [failed, setFailed] = useState(false)
 
   const [cats, setCats] = useState<Set<string>>(new Set())

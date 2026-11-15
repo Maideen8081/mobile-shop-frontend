@@ -26,6 +26,7 @@ import { addToCartWithAuth } from '../utils/cartAuth'
 import { isOutOfStock, requireSignInForWishlist } from '../utils/wishlist'
 import '../components/ecommerce/WishCard.css'
 import './CollectionView.css'
+import { useBootHold } from '../components/LoadingScreen/bootLoader'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = '/phones/ios-a.png'
@@ -219,6 +220,7 @@ export default function CollectionPage() {
   const [items, setItems] = useState<any[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  useBootHold(loading)
   const [page, setPage] = useState(1)
   const [sortBy, setSortBy] = useState('popular')
   const [brandFilter, setBrandFilter] = useState<string[]>([])
