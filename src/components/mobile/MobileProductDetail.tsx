@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { sendGuestToLogin } from '../../utils/cartAuth'
+import { usePageMeta } from '../../hooks/usePageMeta'
+import ProductSuggestions, { productErrorMessage } from '../ecommerce/ProductSuggestions'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { addressService, type AddressData } from '../../services/addressService'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -9,9 +12,10 @@ import { cartService } from '../../services/cartService'
 import { reviewService, type Review, type ProductRating } from '../../services/reviewService'
 import ReviewForm from '../ReviewForm'
 import { useMobileToast } from './useMobileToast'
-import { getImageUrl, getProductImage } from './helpers'
+import { collectProductImages, getImageUrl, getProductImage } from './helpers'
 import { FALLBACK_IMG } from './fallback'
-import { VALID_COUPONS } from './cartLogic'
+import { useStoreCoupons } from '../../hooks/useStoreCoupons'
+import { couponLabel } from '../../services/offerService'
 import MobileCartBarActions from './MobileCartBarActions'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
@@ -96,7 +100,7 @@ export default function MobileProductDetail() {
     setFetchError('')
     productService.getById(Number(resolvedId))
       .then((res) => { if (!cancelled) setProduct(res) })
-      .catch((err) => { if (!cancelled && !cached) setFetchError(err?.message || 'Failed to load product') })
+      .catch((err) => { if (!cancelled && !cached) setFetchError(productErrorMessage(err)) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])
@@ -229,12 +233,12 @@ export default function MobileProductDetail() {
       .catch(() => {})
   }, [product?.id, resolvedId])
 
-  const images = useMemo(() => {
-    if (activeVariant?.images?.length > 0) return (activeVariant.images as any[]).map((i) => getImageUrl(typeof i === 'string' ? i : i.image || i.url || '')).filter(Boolean)
-    if (product?.images?.length > 0) return (product.images as any[]).map((i) => getImageUrl(typeof i === 'string' ? i : i.image || i.url || '')).filter(Boolean)
-    const fb = getProductImage(product)
-    return fb ? [fb] : [FALLBACK_IMG]
-  }, [activeVariant, product])
+  const images = useMemo(() => collectProductImages(product, activeVariant), [activeVariant, product])
+  usePageMeta({
+    title: product?.name ? `${product.name}${product.brand ? ` by ${product.brand}` : ''}` : 'Product',
+    description: product?.description || (product?.name ? `Buy ${product.name} at PhoneFix with fast delivery and warranty.` : undefined),
+    image: images[0]?.startsWith('http') ? images[0] : undefined,
+  })
 
   const currentPrice = activeVariant?.discountPrice || activeVariant?.price || product?.price || 0
   const mrp = activeVariant?.price && activeVariant?.discountPrice ? activeVariant.price : (product?.oldPrice || product?.price || 0)
@@ -250,8 +254,9 @@ export default function MobileProductDetail() {
   const description = product?.description || ''
   const features = product?.features || []
   const careInstructions = product?.careInstructions || []
-  const rating = product?.rating || 4.0
-  const ratingCount = product?.ratingCount || product?.rating_count || 128
+  // Same source as desktop: real review stats only, never a made-up default.
+  const rating = productRating.count > 0 ? productRating.average : (Number(product?.rating) || 0)
+  const ratingCount = productRating.count || product?.ratingCount || product?.rating_count || 0
   const sold = product?.sold || 0
   const trending = product?.trending
   const newArrival = product?.newArrival
@@ -311,7 +316,15 @@ export default function MobileProductDetail() {
 
   const handleAddToCart = async () => {
     if (isAdding) return
-    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
+    if (!authService.isAuthenticated()) {
+      showToast('Sign in to add items to your cart', 'success')
+      sendGuestToLogin([{
+        productId: product.id, variationId: activeVariant?.id || 0, quantity: qty, name: productName,
+        brand: productBrand, price: currentPrice, image: images[0] || '', storage: activeVariant?.storage || '',
+        ram: activeVariant?.ram || '', color: activeVariant?.color || '',
+      }], navigate)
+      return
+    }
     setCartError('')
     
     if (isInCart) {
@@ -471,7 +484,8 @@ export default function MobileProductDetail() {
 
   const reviews = productReviews
 
-  const coupons = Object.entries(VALID_COUPONS).map(([code, c]) => ({ code, label: c.label, discount: c.discount, fixed: !!c.fixed }))
+  // Same live coupons as the desktop page; checkout accepts every one of them.
+  const coupons = useStoreCoupons().map((c) => ({ code: c.code, label: couponLabel(c) }))
 
   const [dealLeft, setDealLeft] = useState({ h: '05', m: '59', s: '59' })
   useEffect(() => {
@@ -498,9 +512,13 @@ export default function MobileProductDetail() {
   if (fetchError || !product) {
     return (
       <div className="min-h-screen bg-white max-w-[480px] mx-auto flex flex-col items-center justify-center p-8 text-center font-sans">
-        <p className="text-body font-bold text-[#1F2937] mb-2">Product not found</p>
-        <p className="text-label text-[#6B7280] mb-6">{fetchError || 'This product is unavailable.'}</p>
-        <button onClick={() => navigate(-1)} className="px-6 py-2.5 rounded-[8px] text-white text-label font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Go Back</button>
+        <h1 className="text-body font-bold text-[#1F2937] mb-2">Product unavailable</h1>
+        <p className="text-label text-[#6B7280] mb-6">{fetchError || 'This product is no longer available.'}</p>
+        <div className="flex gap-2">
+          <button onClick={() => navigate(-1)} className="h-11 px-6 rounded-[8px] text-white text-label font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Go Back</button>
+          <button onClick={() => navigate('/collection/all')} className="h-11 px-6 rounded-[8px] text-label font-bold border border-[#E5E7EB] text-[#1F2937]">Browse Products</button>
+        </div>
+        <ProductSuggestions title="Similar products" excludeId={Number(resolvedId)} />
       </div>
     )
   }
@@ -709,11 +727,13 @@ export default function MobileProductDetail() {
           )}
 
           {/* Rating badge bottom-left */}
-          <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-white/90 backdrop-blur shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
-            <span className="text-caption font-bold text-[#1F2937]">{rating.toFixed(1)}</span>
-            <Star size={12} fill="#F59E0B" className="text-[#F59E0B]" />
-            <span className="text-micro text-[#6B7280]">({ratingCount})</span>
-          </div>
+          {ratingCount > 0 && rating > 0 && (
+            <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-white/90 backdrop-blur shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
+              <span className="text-caption font-bold text-[#1F2937]">{rating.toFixed(1)}</span>
+              <Star size={12} fill="#F59E0B" className="text-[#F59E0B]" />
+              <span className="text-micro text-[#6B7280]">({ratingCount})</span>
+            </div>
+          )}
 
           {images.length > 1 && (
             <div className="absolute bottom-3 right-3 z-20 text-micro font-semibold text-[#1F2937] bg-white/90 backdrop-blur px-2.5 py-1 rounded-[8px] shadow">
@@ -832,11 +852,17 @@ export default function MobileProductDetail() {
           </div>
 
           <div className="flex items-center gap-3 mt-2.5">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-[#ECFDF5]">
-              <span className="text-caption font-bold" style={{ color: SUCCESS }}>{rating.toFixed(1)}</span>
-              <Star size={12} fill="#16A34A" className="text-[#16A34A]" />
-            </div>
-            <span className="text-caption text-[#6B7280]">{ratingCount} Ratings</span>
+            {ratingCount > 0 && rating > 0 ? (
+              <>
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-[#ECFDF5]">
+                  <span className="text-caption font-bold" style={{ color: SUCCESS }}>{rating.toFixed(1)}</span>
+                  <Star size={12} fill="#16A34A" className="text-[#16A34A]" />
+                </div>
+                <span className="text-caption text-[#6B7280]">{Number(ratingCount).toLocaleString('en-IN')} Ratings</span>
+              </>
+            ) : (
+              <span className="text-caption text-[#6B7280]">No reviews yet</span>
+            )}
             {sold > 0 && <span className="text-caption text-[#6B7280]">· {sold} Sold</span>}
           </div>
 

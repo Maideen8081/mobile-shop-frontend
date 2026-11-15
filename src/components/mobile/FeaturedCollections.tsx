@@ -15,7 +15,7 @@ export default function FeaturedCollections() {
       .list()
       .then((cats) => {
         if (cancelled) return
-        const active = (cats || []).filter((c) => c.status === 'active' && c.image)
+        const active = (cats || []).filter((c) => c.status === 'active' && c.image && (c.products ?? 0) > 0)
         setCategories(active.slice(0, 4))
       })
       .catch(() => !cancelled && setCategories([]))

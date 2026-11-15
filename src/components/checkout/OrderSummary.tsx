@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
+import { gstLabel } from '../../utils/checkout'
 import { ChevronDown, ShoppingBag } from 'lucide-react'
 import type { CartItem } from '../../services/cartService'
-import { TAX_RATE } from '../mobile/cartLogic'
 import { computeTotals, formatINR, type CheckoutCoupon } from '../../utils/checkout'
 import './OrderSummary.css'
 
@@ -86,7 +86,7 @@ export default function OrderSummary({ items, coupon, loading, children }: {
             </div>
           )}
           <div><dt>Delivery</dt><dd className={t.shipping === 0 ? 'is-free' : ''}>{t.shipping === 0 ? 'Free' : formatINR(t.shipping)}</dd></div>
-          <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{formatINR(t.tax)}</dd></div>
+          <div><dt>{gstLabel()}</dt><dd>{formatINR(t.tax)}</dd></div>
         </dl>
 
         <div className="cx-total osum-total">

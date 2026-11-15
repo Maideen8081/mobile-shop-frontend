@@ -1,4 +1,7 @@
 import { Component, useState, useMemo, useEffect, useRef } from 'react'
+import { sendGuestToLogin } from '../utils/cartAuth'
+import { usePageMeta } from '../hooks/usePageMeta'
+import ProductSuggestions, { productErrorMessage } from '../components/ecommerce/ProductSuggestions'
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { productService } from '../services/productService'
@@ -7,7 +10,9 @@ import { addressService, type AddressData } from '../services/addressService'
 import { reviewService, type Review, type ProductRating } from '../services/reviewService'
 import { cartService } from '../services/cartService'
 import ReviewForm from '../components/ReviewForm'
-import { getImageUrl, getProductImage } from '../components/mobile/helpers'
+import { useStoreCoupons } from '../hooks/useStoreCoupons'
+import { couponLabel } from '../services/offerService'
+import { collectProductImages, getImageUrl, getProductImage } from '../components/mobile/helpers'
 import { FALLBACK_IMG } from '../components/mobile/fallback'
 import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -118,10 +123,6 @@ const BANK_OFFERS: BankOffer[] = [
   { bank: 'PhoneFix Card', type: 'Cashback', offer: '5% cashback', min: '₹1,000', code: 'PF5X', desc: 'Up to ₹2,000 cashback on first 3 orders', maxAmount: 2000 },
   { bank: 'Axis Bank', type: 'EMI', offer: 'No-cost EMI', min: '₹10,000', code: 'AXISEMI', desc: '3 to 12 month plans at zero interest', maxAmount: 0 },
 ]
-const CART_OFFERS = [
-  { label: 'Extra 5% off', threshold: 500, rate: 0.05, max: 200 },
-  { label: 'Extra 10% off', threshold: 2000, rate: 0.1, max: 1000 },
-]
 const FREE_DELIVERY_THRESHOLD = 500
 
 const QA = [
@@ -134,7 +135,6 @@ const QA = [
 
 type ProductOffer = { title: string; code: string; desc: string; max: number; rate: number }
 const PRODUCT_OFFERS: ProductOffer[] = [
-  { title: 'Extra 5% off on this product', code: 'LAUNCH5', desc: 'One-time use · maximum discount ₹500', max: 500, rate: 0.05 },
   { title: 'Up to ₹8,000 exchange bonus', code: 'EXCHANGE', desc: 'Trade in any old phone — instant value on purchase', max: 0, rate: 0 },
   { title: 'No-cost EMI available', code: 'PFEMI', desc: '3 to 12 month plans at zero interest', max: 0, rate: 0 },
 ]
@@ -146,11 +146,6 @@ function getBankSaving(offer: BankOffer, subtotal: number): number {
   const pct = /(\d+)%\s*(?:off|cashback|discount)/i.exec(offer.offer)
   if (pct) return Math.min(offer.maxAmount, Math.floor((subtotal * parseInt(pct[1], 10)) / 100))
   return 0
-}
-
-function getProductSaving(offer: ProductOffer, subtotal: number): number {
-  if (offer.max <= 0 || offer.rate <= 0) return 0
-  return Math.min(offer.max, Math.floor(subtotal * offer.rate))
 }
 
 /** Product photo with its background removed and margins trimmed, so it fills the frame. */
@@ -257,7 +252,8 @@ function ProductDetailContent() {
   const [stickyVisible, setStickyVisible] = useState(false)
 
   const [appliedOffer, setAppliedOffer] = useState<string | null>(null)
-  const [appliedProductOffer, setAppliedProductOffer] = useState(false)
+  // Live coupons, the same list the mobile page shows and checkout accepts.
+  const storeCoupons = useStoreCoupons()
   const [copiedCode, setCopiedCode] = useState('')
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIdx, setLightboxIdx] = useState(0)
@@ -322,13 +318,6 @@ function ProductDetailContent() {
     showToast(`Bank offer applied — ${code}`)
   }
 
-  const applyProductOffer = () => {
-    setAppliedProductOffer((p) => {
-      showToast(p ? 'Product offer removed' : 'Launch offer applied — LAUNCH5')
-      return !p
-    })
-  }
-
   useEffect(() => {
     if (!resolvedId) { setLoading(false); return }
     let cancelled = false
@@ -339,7 +328,7 @@ function ProductDetailContent() {
     setFetchError('')
     productService.getById(Number(resolvedId))
       .then((res) => { if (!cancelled) setApiProduct(res) })
-      .catch((err) => { if (!cancelled && !cached) setFetchError(err?.message || 'Failed to load product') })
+      .catch((err) => { if (!cancelled && !cached) setFetchError(productErrorMessage(err)) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [resolvedId])
@@ -463,29 +452,12 @@ function ProductDetailContent() {
   useEffect(() => { setSelectedImage(0) }, [activeVariant?.id])
   useEffect(() => { setQty(1); setAdded(false) }, [activeVariant?.id])
 
-  const images = useMemo(() => {
-    const seen = new Set<string>()
-    const out: string[] = []
-    const push = (raw: any) => {
-      if (!raw) return
-      const url = getImageUrl(typeof raw === 'string' ? raw : (raw?.image || raw?.url || ''))
-      if (url && !seen.has(url)) { seen.add(url); out.push(url) }
-    }
-    if (Array.isArray(activeVariant?.images)) activeVariant.images.forEach(push)
-    else push(activeVariant?.images)
-    if (activeVariant?.image) push(activeVariant.image)
-    if (Array.isArray(apiProduct?.images)) apiProduct.images.forEach(push)
-    else push(apiProduct?.images)
-    if (apiProduct?.common_image) push(apiProduct.common_image)
-    if (apiProduct?.image) push(apiProduct.image)
-    if (apiProduct?.thumbnail) push(apiProduct.thumbnail)
-    if (apiProduct?.product_image) push(apiProduct.product_image)
-    if (!out.length) {
-      const fb = getProductImage(apiProduct)
-      out.push(fb ? fb : FALLBACK_IMG)
-    }
-    return out
-  }, [activeVariant, apiProduct])
+  const images = useMemo(() => collectProductImages(apiProduct, activeVariant), [activeVariant, apiProduct])
+  usePageMeta({
+    title: apiProduct?.name ? `${apiProduct.name}${apiProduct.brand ? ` by ${apiProduct.brand}` : ''}` : 'Product',
+    description: apiProduct?.description || (apiProduct?.name ? `Buy ${apiProduct.name} at PhoneFix with fast delivery and warranty.` : undefined),
+    image: images[0]?.startsWith('http') ? images[0] : undefined,
+  })
 
   const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true) }
   const closeLightbox = () => setLightboxOpen(false)
@@ -603,7 +575,15 @@ function ProductDetailContent() {
 
   const handleAddToCart = async () => {
     if (isAdding) return
-    if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search); navigate('/login'); return }
+    if (!authService.isAuthenticated()) {
+      showToast('Sign in to add items to your cart')
+      sendGuestToLogin([{
+        productId: apiProduct.id, variationId: activeVariant?.id || 0, quantity: qty, name: productName,
+        brand: productBrand, price: currentPrice, image: images[0] || '', storage: activeVariant?.storage || '',
+        ram: activeVariant?.ram || '', color: activeVariant?.color || '',
+      }], navigate)
+      return
+    }
 
     if (isInCart) {
       await cartService.removeItem(apiProduct.id, activeVariant?.id ?? null)
@@ -748,12 +728,12 @@ function ProductDetailContent() {
   const descParagraphs = useMemo(() => description.split(/\n+/).filter(Boolean), [description])
 
   const subtotal = qty * (Number(currentPrice) || 0)
-  const cartOfferSavings = CART_OFFERS.reduce((sum, o) => (subtotal >= o.threshold ? sum + Math.min(o.max, Math.floor(subtotal * o.rate)) : sum), 0)
   const activeBankOffer = appliedOffer ? BANK_OFFERS.find((o) => o.code === appliedOffer) : null
   const bankSavings = activeBankOffer ? getBankSaving(activeBankOffer, subtotal) : 0
-  const productOfferSavings = appliedProductOffer ? getProductSaving(PRODUCT_OFFERS[0], subtotal) : 0
   const dealSavings = Math.max(0, oldPriceVal - currentPrice) * qty
-  const totalSavings = Math.round(dealSavings + cartOfferSavings + bankSavings + productOfferSavings)
+  // "You save" = MRP − price, plus only the offers the shopper has applied.
+  // Cart offers are applied at checkout, so they are not counted here.
+  const totalSavings = Math.round(dealSavings + bankSavings)
   const freeDeliveryUnlocked = subtotal >= FREE_DELIVERY_THRESHOLD
 
   if (loading) {
@@ -774,8 +754,8 @@ function ProductDetailContent() {
         <div className="min-h-[60vh] flex items-center justify-center p-6">
           <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
             <p className="text-4xl mb-4 block">🔍</p>
-            <h2 className="text-xl font-bold text-[#210D35] mb-2">Product not found</h2>
-            <p className="text-sm text-[#6b6b70] mb-6">{fetchError || 'This product is unavailable or has been removed.'}</p>
+            <h1 className="text-xl font-bold text-[#210D35] mb-2">Product unavailable</h1>
+            <p className="text-sm text-[#6b6b70] mb-6">{fetchError || 'This product is no longer available.'}</p>
             <div className="flex gap-3 justify-center">
               <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#210D35,#4A2470)' }}>
                 Go Back
@@ -785,6 +765,9 @@ function ProductDetailContent() {
               </Link>
             </div>
           </div>
+        </div>
+        <div className="px-6 pb-16">
+          <ProductSuggestions title="Similar products you might like" excludeId={Number(resolvedId)} />
         </div>
       </div>
     )
@@ -951,7 +934,7 @@ function ProductDetailContent() {
                   </div>
                   <p className="pdx-price-tax">Inclusive of all taxes</p>
                   {totalSavings > 0 && (
-                    <p className="pdx-saving"><Check aria-hidden="true" /> You save <b>{fmt(totalSavings)}</b>{appliedProductOffer ? ' with the launch offer' : ''}{appliedOffer ? ' with bank offer' : ''}</p>
+                    <p className="pdx-saving"><Check aria-hidden="true" /> You save <b>{fmt(totalSavings)}</b>{appliedOffer ? ' with bank offer' : ''}</p>
                   )}
                 </div>
 
@@ -1209,20 +1192,19 @@ function ProductDetailContent() {
             <section className="pdx-card">
               <h2 className="pdx-card-title"><span><Percent aria-hidden="true" /></span> Offers &amp; Deals</h2>
               <ul className="pdx-offers">
-                <li>
-                  <Tag aria-hidden="true" />
-                  <div>
-                    <b>{PRODUCT_OFFERS[0].title}</b>
-                    <span>Use code: <button type="button" className="pdx-code" onClick={() => copyCode(PRODUCT_OFFERS[0].code)}>{copiedCode === PRODUCT_OFFERS[0].code ? 'Copied ✓' : PRODUCT_OFFERS[0].code}</button></span>
-                  </div>
-                  <button type="button" className={`pdx-offer-btn pdx-offer-btn--solid ${appliedProductOffer ? 'is-applied' : ''}`} onClick={applyProductOffer}>
-                    {appliedProductOffer ? 'Applied ✓' : 'Apply'}
-                  </button>
-                </li>
+                {storeCoupons.map((c) => (
+                  <li key={c.code}>
+                    <Tag aria-hidden="true" />
+                    <div>
+                      <b>{couponLabel(c)}</b>
+                      <span>Use code at checkout: <button type="button" className="pdx-code" onClick={() => copyCode(c.code)}>{copiedCode === c.code ? 'Copied ✓' : c.code}</button></span>
+                    </div>
+                  </li>
+                ))}
                 <li>
                   <ArrowLeftRight aria-hidden="true" />
                   <div>
-                    <b>{PRODUCT_OFFERS[1].title}</b>
+                    <b>{PRODUCT_OFFERS[0].title}</b>
                     <span>Trade in any old phone</span>
                   </div>
                   <button type="button" className="pdx-offer-btn" onClick={() => navigate('/trade-in')}>Check Value</button>
@@ -1230,8 +1212,8 @@ function ProductDetailContent() {
                 <li>
                   <CreditCard aria-hidden="true" />
                   <div>
-                    <b>{PRODUCT_OFFERS[2].title}</b>
-                    <span>{PRODUCT_OFFERS[2].desc}</span>
+                    <b>{PRODUCT_OFFERS[1].title}</b>
+                    <span>{PRODUCT_OFFERS[1].desc}</span>
                   </div>
                   <button
                     type="button"

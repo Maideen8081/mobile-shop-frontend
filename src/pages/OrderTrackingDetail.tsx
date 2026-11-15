@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { orderService } from '../services/orderService'
+import { apiErrorMessage } from '../utils/checkout'
+import { orderTaxLabel } from '../utils/checkout'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Box, CalendarDays, Check, ClipboardList, Copy, Download, Headphones, Home,
   MapPin, MessageSquareText, PackageCheck, PackageOpen, PartyPopper, Pencil, Share2, ShoppingBag, Store,
   Truck, X, XCircle,
 } from 'lucide-react'
-import { TAX_RATE } from '../components/mobile/cartLogic'
 import './OrderTrackingDetail.css'
 
 export interface TrackOrderItem {
@@ -34,6 +36,10 @@ export interface TrackOrder {
   orderDate: string
   status: string
   paymentMethod?: string
+  paymentStatus?: string
+  /** Server order number, used by the cancel endpoint. */
+  orderNumber?: string
+  tax_rate?: string | null
   deliveryPartner?: string
   trackingId?: string
   address?: string
@@ -97,16 +103,40 @@ ${order.address ? `<p><strong>Deliver to:</strong> ${order.address}</p>` : ''}<p
 <table class="tot"><tr><td>Subtotal</td><td align="right">${inr(order.subtotal)}</td></tr>
 ${order.discount ? `<tr><td>Discount${order.couponCode ? ` (${order.couponCode})` : ''}</td><td align="right">– ${inr(order.discount)}</td></tr>` : ''}
 <tr><td>Delivery</td><td align="right">${order.shipping ? inr(order.shipping) : 'Free'}</td></tr>
-<tr><td>GST (${Math.round(TAX_RATE * 100)}%)</td><td align="right">${inr(order.tax)}</td></tr>
+<tr><td>${orderTaxLabel(order)}</td><td align="right">${inr(order.tax)}</td></tr>
 <tr class="grand"><td>Total</td><td align="right">${inr(order.total)}</td></tr></table>
 <script>window.onload=()=>window.print()</script></body></html>`
 }
+
+const CANCEL_REASONS = [
+  'Ordered by mistake',
+  'Found a better price elsewhere',
+  'Delivery is taking too long',
+  'Want to change items or address',
+  'Other',
+]
 
 export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
   const navigate = useNavigate()
   const [copied, setCopied] = useState('')
   const [now] = useState(() => Date.now())
   const [showDetails, setShowDetails] = useState(false)
+  const [cancelOpen, setCancelOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState(CANCEL_REASONS[0])
+  const [cancelBusy, setCancelBusy] = useState(false)
+  const [cancelError, setCancelError] = useState('')
+  const confirmCancel = async () => {
+    if (!order.orderNumber || cancelBusy) return
+    setCancelBusy(true)
+    setCancelError('')
+    try {
+      await orderService.cancelMine(order.orderNumber, cancelReason)
+      window.location.reload()
+    } catch (err) {
+      setCancelError(apiErrorMessage(err, 'We couldn’t cancel this order. Please contact support.'))
+      setCancelBusy(false)
+    }
+  }
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
 
   const id = order.displayOrderId || order.orderId
@@ -116,6 +146,8 @@ export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
   const placedAt = parseDate(order.orderDate)
   const eta = parseDate(order.deliveredAt) || parseDate(order.deliveryDate)
   const daysLeft = eta && placedAt ? Math.max(0, Math.ceil((eta.getTime() - now) / 86_400_000)) : null
+  // The estimate has passed and the order still isn't delivered.
+  const delayed = !delivered && !!eta && eta.getTime() < now - 86_400_000
   const payment = PAYMENT_LABELS[(order.paymentMethod || '').toLowerCase()] || order.paymentMethod || 'Cash on Delivery'
   const itemCount = order.items.reduce((s, i) => s + i.quantity, 0)
   const msg = MESSAGES[step]
@@ -183,7 +215,7 @@ export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
             {!cancelled && (
               <span className="otd-chip">
                 <PackageCheck aria-hidden="true" />
-                {delivered ? 'Delivered' : daysLeft === null ? 'Arriving in 3–5 days' : daysLeft <= 1 ? 'Arriving soon' : `Arriving in ${daysLeft} days`}
+                {delivered ? 'Delivered' : delayed ? 'Delayed — we’re checking with the courier' : daysLeft === null ? 'Arriving in 3–5 days' : daysLeft <= 1 ? 'Arriving soon' : `Arriving in ${daysLeft} days`}
               </span>
             )}
             <div className="otd-box" aria-hidden="true">
@@ -306,7 +338,7 @@ export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
               <div><dt>Discount{order.couponCode ? ` (${order.couponCode})` : ''}</dt><dd className="is-save">– {inr(order.discount)}</dd></div>
             )}
             <div><dt>Delivery</dt><dd className={order.shipping ? '' : 'is-free'}>{order.shipping ? inr(order.shipping) : 'Free'}</dd></div>
-            <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{inr(order.tax)}</dd></div>
+            <div><dt>{orderTaxLabel(order)}</dt><dd>{inr(order.tax)}</dd></div>
           </dl>
           <div className="otd-total"><span>Total Amount</span><strong>{inr(order.total)}</strong></div>
         </section>
@@ -324,8 +356,10 @@ export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
           </Link>
           {canChange && (
             <>
-              <Link to="/support" className="otd-help-btn"><Pencil aria-hidden="true" /> Modify Order</Link>
-              <Link to="/support" className="otd-help-btn"><X aria-hidden="true" /> Cancel Order</Link>
+              <Link to="/support" className="otd-help-btn"><Pencil aria-hidden="true" /> Need a change? Ask support</Link>
+              {order.orderNumber && String(order.paymentStatus).toLowerCase() !== 'paid' && (
+                <button type="button" className="otd-help-btn" onClick={() => setCancelOpen(true)}><X aria-hidden="true" /> Cancel Order</button>
+              )}
             </>
           )}
           {delivered && (
@@ -342,6 +376,26 @@ export default function OrderTrackingDetail({ order }: { order: TrackOrder }) {
           )}
         </section>
       </div>
+
+      {cancelOpen && (
+        <div className="otd-cancel-backdrop" role="presentation" onClick={() => !cancelBusy && setCancelOpen(false)}>
+          <div className="otd-cancel" role="dialog" aria-modal="true" aria-labelledby="otd-cancel-title" onClick={(e) => e.stopPropagation()}>
+            <h2 id="otd-cancel-title">Cancel order {id}?</h2>
+            <p>Items go back to stock and you won’t be charged. This can’t be undone.</p>
+            <label htmlFor="otd-cancel-reason">Reason</label>
+            <select id="otd-cancel-reason" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)}>
+              {CANCEL_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
+            </select>
+            {cancelError && <p className="otd-cancel-err" role="alert">{cancelError}</p>}
+            <div className="otd-cancel-actions">
+              <button type="button" onClick={() => setCancelOpen(false)} disabled={cancelBusy}>Keep order</button>
+              <button type="button" className="is-danger" onClick={confirmCancel} disabled={cancelBusy}>
+                {cancelBusy ? 'Cancelling…' : 'Cancel order'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

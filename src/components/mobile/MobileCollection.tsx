@@ -120,7 +120,9 @@ export default function MobileCollection() {
   }, [])
 
   const load = (pageNum: number, replace: boolean) => {
-    const key = cacheKeyFor(categoryName, tab, sortBy)
+    const brandKey = activeFilters.brands.join(',')
+    const priceKey = activeFilters.priceRange ? `${activeFilters.priceRange.min}-${activeFilters.priceRange.max}` : ''
+    const key = `${cacheKeyFor(categoryName, tab, sortBy)}|${brandKey}|${priceKey}`
     const requestId = ++latestRequest.current
     const cached = cachedProducts[key]
     if (replace && cached) {
@@ -134,13 +136,18 @@ export default function MobileCollection() {
     const params: any = {
       page: pageNum,
       page_size: 12,
-      ordering: sortBy === 'price-asc' ? 'price' : sortBy === 'price-desc' ? '-price' : sortBy === 'popular' ? '-rating' : '-created',
+      ordering: sortBy === 'price-asc' ? 'min_price' : sortBy === 'price-desc' ? '-min_price' : sortBy === 'popular' ? '-review_count' : '-created_at',
     }
     if (categoryName && categoryName.toLowerCase() !== 'all') params.category = categoryName
     if (tab === 'new') params.is_new_arrival = true
     if (tab === 'trending') params.is_trending = true
     if (tab === 'best') params.is_best_selling = true
     if (tab === 'featured') params.is_featured = true
+    if (brandKey) params.brand = brandKey
+    if (activeFilters.priceRange) {
+      if (activeFilters.priceRange.min > 0) params.price_min = activeFilters.priceRange.min
+      if (activeFilters.priceRange.max > 0) params.price_max = activeFilters.priceRange.max
+    }
 
     setProductsLoading(true)
     setLoadingMore(pageNum > 1)
@@ -162,7 +169,7 @@ export default function MobileCollection() {
     })
   }
 
-  useEffect(() => { load(1, true) }, [categoryName, tab, sortBy])
+  useEffect(() => { load(1, true) }, [categoryName, tab, sortBy, activeFilters.brands, activeFilters.priceRange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#210D35 100%)' }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { loginIsForCart } from '../../utils/cartAuth'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock, FiChevronLeft } from 'react-icons/fi'
 import { useAuthForm } from '../../hooks/useAuthForm'
@@ -33,6 +34,7 @@ export default function MobileLogin() {
   const { login } = useAuth()
   const [activeSlide, setActiveSlide] = useState(0)
   const [showPassword, setShowPassword] = useState(false)
+  const [forCart] = useState(loginIsForCart)
 
   const { formData, errors, loading, handleChange, handleSubmit } = useAuthForm<LoginFormData>({
     initial: { email: '', password: '' },
@@ -104,6 +106,11 @@ export default function MobileLogin() {
           <h1 className="text-heading font-extrabold">Welcome back</h1>
           <p className="text-label text-[#6B7280] mt-1 mb-5">Log in to your premium account</p>
 
+          {forCart && (
+            <p role="status" className="mb-4 rounded-xl bg-[#F3E8FF] px-4 py-3 text-label font-semibold text-[#210D35]">
+              Sign in to add items to your cart. We’ll add the item you picked as soon as you’re in.
+            </p>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>

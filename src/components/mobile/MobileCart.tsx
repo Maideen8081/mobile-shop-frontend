@@ -8,13 +8,13 @@ import MobileTopSection from './MobileTopSection'
 import {
   useStockInfo,
   resolveImage,
-  VALID_COUPONS,
   FREE_SHIPPING_THRESHOLD,
-  TAX_RATE,
 } from './cartLogic'
-import { computeTotals, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
+import { useStoreCoupons } from '../../hooks/useStoreCoupons'
+import { couponLabel } from '../../services/offerService'
+import { computeTotals, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
 import { productService } from '../../services/productService'
-import { getImageUrl } from './helpers'
+import { getImageUrl, getProductPrice, isInStock } from './helpers'
 import { cartService, type CartItem } from '../../services/cartService'
 import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
@@ -50,6 +50,8 @@ export default function MobileCart() {
   const stockMap = useStockInfo(items)
 
   const [couponCode, setCouponCode] = useState('')
+  const qtyQueue = useRef<Promise<void>>(Promise.resolve())
+  const liveCoupons = useStoreCoupons()
   // Coupons are validated by the server, which is what applies them to the order.
   const [coupon, setCoupon] = useState<CheckoutCoupon | null>(readCheckoutCoupon)
   const [couponBusy, setCouponBusy] = useState(false)
@@ -69,7 +71,7 @@ export default function MobileCart() {
     return () => window.removeEventListener('cart-updated', handler)
   }, [])
 
-  // Same pricing as the server: GST and delivery on the subtotal, coupon off the total.
+  // Same pricing as the server: prices include GST; delivery on the subtotal; coupon off the price.
   const { subtotal, quantity: totalItems, shipping, tax, discount, total: grandTotal } =
     computeTotals(items, coupon?.discount || 0)
   const shippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100)
@@ -114,13 +116,27 @@ export default function MobileCart() {
       showToast(stockInfo.stock === 0 ? `${item.name} is out of stock` : `Only ${stockInfo.stock} available`, 'error')
       return
     }
-    await cartService.updateQuantity(item.productId, item.variantId ?? 0, delta)
-    window.dispatchEvent(new Event('cart-updated'))
+    // Serialise taps per item so quick +/− presses are all applied, in order.
+    // cartService updates its cache (and the screen) right away.
+    qtyQueue.current = qtyQueue.current
+      .then(() => cartService.updateQuantity(item.productId, item.variantId ?? 0, delta))
+      .catch(() => {})
+      .then(() => { window.dispatchEvent(new Event('cart-updated')) })
   }
 
   const handleRemoveItem = async (item: CartItem) => {
     await cartService.removeItem(item.productId, item.variantId ?? 0)
     window.dispatchEvent(new Event('cart-updated'))
+    showToast(`${item.name} removed`, 'success', {
+      label: 'Undo',
+      onClick: async () => {
+        await cartService.addItem({
+          productId: item.productId, variationId: item.variantId ?? 0, quantity: item.quantity,
+          name: item.name, brand: item.brand, price: item.price, image: item.image || '',
+        })
+        window.dispatchEvent(new Event('cart-updated'))
+      },
+    })
   }
 
   // Smart recommendations
@@ -135,12 +151,13 @@ export default function MobileCart() {
         if (!mounted) return
         const inCart = new Set(items.map((i) => i.productId))
         const scored = all
-          .filter((p) => p && (p.id || p.product_id) && !inCart.has(p.id || p.product_id))
+          // Only buyable products: skip out-of-stock and unpriced items.
+          .filter((p) => p && (p.id || p.product_id) && !inCart.has(p.id || p.product_id) && isInStock(p) && getProductPrice(p).price > 0)
           .map((p) => {
             let score = 0
             const b = p.brand || ''
             const c = p.category || ''
-            const price = Number(p.variants?.[0]?.discount_price || p.variants?.[0]?.price || p.min_price || p.price || 0)
+            const price = getProductPrice(p).price
             const cartAvg = items.reduce((s, i) => s + i.price, 0) / Math.max(items.length, 1)
             if (brands.includes(b)) score += 5
             if (cats.includes(c)) score += 4
@@ -355,9 +372,9 @@ export default function MobileCart() {
             </div>
           )}
           <div className="flex flex-wrap gap-1.5 mt-3">
-            {Object.entries(VALID_COUPONS).slice(0, 3).map(([code, c]) => (
-              <button key={code} onClick={() => setCouponCode(code)} disabled={!!coupon} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
-                {code} · {c.label}
+            {liveCoupons.slice(0, 3).map((c) => (
+              <button key={c.code} onClick={() => setCouponCode(c.code)} disabled={!!coupon} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
+                {c.code} · {couponLabel(c)}
               </button>
             ))}
           </div>
@@ -378,7 +395,7 @@ export default function MobileCart() {
         <div className={`${card} p-3.5 space-y-2`}>
           <SummaryRow label="Subtotal" value={`₹${subtotal.toLocaleString('en-IN')}`} />
           <SummaryRow label="Shipping" value={shipping === 0 ? 'FREE' : `₹${shipping}`} highlight={shipping === 0} />
-          <SummaryRow label={`Tax (GST ${(TAX_RATE * 100).toFixed(0)}%)`} value={`₹${Math.round(tax).toLocaleString('en-IN')}`} />
+          <SummaryRow label={gstLabel()} value={`₹${Math.round(tax).toLocaleString('en-IN')}`} />
           {coupon && (
             <SummaryRow label={`Coupon (${coupon.code})`} value={`-₹${Math.round(discount).toLocaleString('en-IN')}`} highlight />
           )}
@@ -445,8 +462,7 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
         const img = getImageUrl(p.common_image || p.image || p.images?.[0] || p.thumbnail || '')
         const name = p.product_name || p.name || ''
         const brand = p.brand || ''
-        const cur = Number(p.variants?.[0]?.discount_price || p.variants?.[0]?.price || p.min_price || p.price || 0)
-        const mrp = Number(p.variants?.[0]?.price || p.mrp || 0)
+        const { price: cur, discount: mrp } = getProductPrice(p)
         const off = mrp > cur ? Math.round(((mrp - cur) / mrp) * 100) : 0
         const rating = Number(p.rating) || 0
         const wished = wishlisted.has(id)

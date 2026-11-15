@@ -1,23 +1,79 @@
+import { useEffect, useState } from "react";
+import { productService } from "../services/productService";
+
 export type WebProduct = {
   slug: string;
   name: string;
   tag: string;
-  price: number;
+  /** Only real catalog products carry a price; showcase cards never invent one. */
+  price?: number;
   blurb: string;
   src: string;
+  /** Where the card's call to action goes. */
+  href: string;
 };
 
+/**
+ * Category showcase shown until (or if) the API returns featured products.
+ * These are illustrations of what we stock, so they link to the category,
+ * not to a product, and they carry no price.
+ */
 export const WEB_PRODUCTS: WebProduct[] = [
-  { slug: "phone-10t", name: "Flagship 5G Phone", tag: "Phones", price: 42999, blurb: "AMOLED display, fast charging, 256GB.", src: "/phones/ios-a.png" },
-  { slug: "headphones-anc", name: "Cloud ANC Headphones", tag: "Audio", price: 2999, blurb: "Active noise cancelling, soft ear cushions.", src: "/products/headphones-anc.png" },
-  { slug: "earbuds-chrome", name: "Chrome ANC Earbuds", tag: "Audio", price: 1999, blurb: "Quad mic, 40-hour playtime with the case.", src: "/products/earbuds-chrome.png" },
-  { slug: "powerbank", name: "42,800mAh Power Bank", tag: "Power", price: 2499, blurb: "Four built-in cables, 22.5W PD in and out.", src: "/products/powerbank.png" },
-  { slug: "headphones-red", name: "Studio Over-Ear", tag: "Audio", price: 3499, blurb: "Wireless over-ear with deep, balanced sound.", src: "/products/headphones-red.png" },
-  { slug: "charger-20w", name: "20W PD Charger + Cable", tag: "Power", price: 1299, blurb: "USB-C fast charge, Lightning cable included.", src: "/products/charger-20w.png" },
-  { slug: "earbuds-yellow", name: "Punch Buds", tag: "Audio", price: 1499, blurb: "Bass-forward buds in a pocket-size case.", src: "/products/earbuds-yellow.png" },
-  { slug: "cable-c-lightning", name: "USB-C to Lightning", tag: "Cables", price: 499, blurb: "MFi-grade, tangle-free, 1m.", src: "/products/cable-c-lightning.png" },
-  { slug: "earbuds-pro", name: "Power-Case Buds", tag: "Audio", price: 1799, blurb: "Charging case with a digital battery display.", src: "/products/earbuds-pro.png" },
+  { slug: "show-phones", name: "Smartphones", tag: "Phones", blurb: "The latest 5G phones from top brands.", src: "/phones/ios-a.png", href: "/phones" },
+  { slug: "show-headphones", name: "Headphones", tag: "Audio", blurb: "Noise-cancelling and studio over-ear headphones.", src: "/products/headphones-anc.png", href: "/accessories" },
+  { slug: "show-earbuds", name: "Wireless Earbuds", tag: "Audio", blurb: "True-wireless buds with long battery life.", src: "/products/earbuds-chrome.png", href: "/accessories" },
+  { slug: "show-powerbanks", name: "Power Banks", tag: "Power", blurb: "High-capacity packs with fast charging.", src: "/products/powerbank.png", href: "/accessories" },
+  { slug: "show-chargers", name: "Chargers", tag: "Power", blurb: "USB-C PD fast chargers and cables.", src: "/products/charger-20w.png", href: "/accessories" },
+  { slug: "show-cables", name: "Cables", tag: "Cables", blurb: "Durable, tangle-free charging cables.", src: "/products/cable-c-lightning.png", href: "/accessories" },
 ];
+
+function toWebProduct(p: any): WebProduct | null {
+  const src = p.coverImage || p.images?.[0] || p.variants?.[0]?.images?.[0];
+  if (!p?.id || !p.name || !src) return null;
+  const price = Number(p.minPrice) || 0;
+  return {
+    slug: `p-${p.id}`,
+    name: p.name,
+    tag: p.category || p.brand || "Featured",
+    price: price > 0 ? price : undefined,
+    blurb: [p.brand, p.category].filter(Boolean).join(" · ") || "In stock now",
+    src,
+    href: `/product/${p.id}`,
+  };
+}
+
+let landingCache: WebProduct[] | null = null;
+
+/** Real featured products for the landing carousel; falls back to the category showcase. */
+export function useLandingProducts(): WebProduct[] {
+  const [items, setItems] = useState<WebProduct[]>(() => landingCache ?? WEB_PRODUCTS);
+
+  useEffect(() => {
+    if (landingCache) return;
+    let alive = true;
+    (async () => {
+      try {
+        let list = await productService.list({ is_featured: true, page_size: 9 });
+        if (list.length < 4) list = [...list, ...(await productService.list({ page_size: 9 }))];
+        const seen = new Set<string>();
+        const real = list
+          .map(toWebProduct)
+          .filter((p): p is WebProduct => !!p && !seen.has(p.slug) && !!seen.add(p.slug))
+          .slice(0, 9);
+        // A ring of one or two products looks broken; keep the showcase instead.
+        if (real.length >= 4) {
+          landingCache = real;
+          if (alive) setItems(real);
+        }
+      } catch {
+        /* keep the category showcase */
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  return items;
+}
 
 export const WEB_REVIEWS = [
   { name: "Aarav S.", item: "Screen replacement", stars: 5, text: "Cracked screen in the morning, back in my hand before lunch. Looks and feels brand new." },
@@ -30,5 +86,3 @@ export const WEB_REVIEWS = [
 
 export const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
 
-export const shopUrl = (slug?: string) =>
-  slug ? `/home?product=${encodeURIComponent(slug)}` : "/home";

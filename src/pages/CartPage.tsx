@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, BadgePercent, Check, Headphones, Heart, Minus, Plus,
@@ -10,8 +10,8 @@ import DesktopPageLoader from '../components/ui/DesktopPageLoader'
 import './CartPage.css'
 import { productService } from '../services/productService'
 import { cartService, type CartItem } from '../services/cartService'
-import { FREE_SHIPPING_THRESHOLD, TAX_RATE } from '../components/mobile/cartLogic'
-import { computeTotals, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../utils/checkout'
+import { FREE_SHIPPING_THRESHOLD } from '../components/mobile/cartLogic'
+import { computeTotals, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../utils/checkout'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'https://picsum.photos/seed/product/300/300'
@@ -110,7 +110,10 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true)
   const [busyKeys, setBusyKeys] = useState<string[]>([])
   const [removingKeys, setRemovingKeys] = useState<string[]>([])
-  const [notice, setNotice] = useState<{ text: string; type: 'ok' | 'err' } | null>(null)
+  const [notice, setNotice] = useState<{ text: string; type: 'ok' | 'err'; undo?: () => void } | null>(null)
+  // Per-item queue so quick +/− taps all apply, in order, without blocking the buttons.
+  const qtyQueues = useRef<Record<string, Promise<void>>>({})
+  const pendingQty = useRef<Record<string, number>>({})
   const [confirmClear, setConfirmClear] = useState(false)
   // Rows the shopper unticked. Everything else (including new items) is selected.
   const [unselected, setUnselected] = useState<string[]>([])
@@ -171,7 +174,7 @@ export default function CartPage() {
 
   useEffect(() => {
     if (!notice) return
-    const t = setTimeout(() => setNotice(null), 2600)
+    const t = setTimeout(() => setNotice(null), notice.undo ? 6000 : 2600)
     return () => clearTimeout(t)
   }, [notice])
 
@@ -198,30 +201,49 @@ export default function CartPage() {
   }
 
   const handleQtyChange = (item: CartRow, delta: number) => {
-    if (item.qty + delta < 1) return
-    withBusy(item.key, async () => {
-      setCart((prev) => prev.map((i) => (i.key === item.key ? { ...i, qty: i.qty + delta } : i)))
+    // Use the latest number on screen (earlier taps may still be saving).
+    const shown = cart.find((i) => i.key === item.key)?.qty ?? item.qty
+    if (shown + delta < 1) return
+    setCart((prev) => prev.map((i) => (i.key === item.key ? { ...i, qty: i.qty + delta } : i)))
+    pendingQty.current[item.key] = (pendingQty.current[item.key] || 0) + 1
+    const run = async () => {
       await cartService.updateQuantity(item.id, item.variantId, delta)
       const err = cartService.getLastCartError()
       if (err && Date.now() - err.timestamp < 1500) setNotice({ text: err.message, type: 'err' })
-      await fetchCart()
-    })
+    }
+    qtyQueues.current[item.key] = (qtyQueues.current[item.key] || Promise.resolve())
+      .then(run, run)
+      .finally(async () => {
+        pendingQty.current[item.key] -= 1
+        // Re-sync with the server once this item's taps have all been saved.
+        if (pendingQty.current[item.key] === 0) await fetchCart()
+      })
   }
 
-  const removeRow = (item: CartRow, message: string) => {
+  const removeRow = (item: CartRow, message: string, undoable = true) => {
     withBusy(item.key, async () => {
       setRemovingKeys((r) => [...r, item.key])
       await cartService.removeItem(item.id, item.variantId)
       await new Promise((r) => setTimeout(r, 220))
       setRemovingKeys((r) => r.filter((k) => k !== item.key))
-      setNotice({ text: message, type: 'ok' })
+      const undo = undoable
+        ? async () => {
+            setNotice(null)
+            await cartService.addItem({
+              productId: item.id, variationId: item.variantId || 0, quantity: item.qty,
+              name: item.name, brand: item.brand, price: item.price, image: item.img,
+            })
+            await fetchCart()
+          }
+        : undefined
+      setNotice({ text: message, type: 'ok', undo })
       await fetchCart()
     })
   }
 
   const handleSaveForLater = (item: CartRow) => {
     addToWishlist(item.id)
-    removeRow(item, `${item.name} moved to your wishlist`)
+    removeRow(item, `${item.name} moved to your wishlist`, false)
   }
 
   const handleConfirmClear = async () => {
@@ -423,7 +445,7 @@ export default function CartPage() {
                       <dt>Delivery</dt>
                       <dd className={shipping === 0 ? 'is-free' : ''}>{shipping === 0 ? 'Free' : fmt(shipping)}</dd>
                     </div>
-                    <div><dt>GST ({Math.round(TAX_RATE * 100)}%)</dt><dd>{fmt(tax)}</dd></div>
+                    <div><dt>{gstLabel()}</dt><dd>{fmt(tax)}</dd></div>
                   </dl>
                   {shipping > 0 && toFreeShipping > 0 && (
                     <p className="cx-ship-hint"><Truck size={15} /> Add {fmt(toFreeShipping)} more for free delivery</p>
@@ -553,6 +575,9 @@ export default function CartPage() {
         <div className={`cx-toast is-${notice.type}`} role="status">
           {notice.type === 'ok' ? <Check size={16} /> : <X size={16} />}
           {notice.text}
+          {notice.undo && (
+            <button type="button" className="cx-toast-undo" onClick={notice.undo}>Undo</button>
+          )}
         </div>
       )}
     </div>

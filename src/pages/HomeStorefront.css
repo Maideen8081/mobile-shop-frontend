@@ -1139,3 +1139,7 @@
   .hs-hero-shade { background: rgba(33, 13, 53, 0.78); }
 }
 
+
+/* Out-of-stock cards: labelled, dimmed image, no cart button. */
+.hs-off.hs-out { background: #f1f1f4; color: #6b6b70; }
+.hs-card.is-out .hs-card-img img { opacity: 0.55; }

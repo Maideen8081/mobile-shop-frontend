@@ -114,7 +114,7 @@ const CATEGORY_TILES: CategoryTile[] = [
   { label: 'Power Banks', img: '/products/powerbank.png', icon: BatteryCharging },
   { label: 'Chargers & Cables', match: 'Chargers', img: '/products/charger-20w.png', icon: Zap },
   { label: 'Mobile Accessories', to: '/accessories', img: '/products/cable-c-lightning.png', icon: Smartphone },
-  { label: 'Phone Repair', to: '/book-repair', icon: Wrench },
+  { label: 'Phone Repair', to: '/book-repair', img: '/products/repair-internals.png', icon: Wrench },
 ]
 
 const REPAIR_SERVICES = [
@@ -195,9 +195,10 @@ function MiniProductCard({
   const rating = Number(product?.rating) || 0
   const name = String(product?.name ?? product?.product_name ?? '')
   const to = `/product/${product.id}`
+  const outOfStock = product?.inStock === false || product?.totalStock === 0
 
   return (
-    <article className="hs-card">
+    <article className={`hs-card${outOfStock ? ' is-out' : ''}`}>
       <Link to={to} className="hs-card-img" aria-label={`View ${name}`}>
         <img
           src={productImage(product)}
@@ -218,7 +219,7 @@ function MiniProductCard({
           <strong>{price > 0 ? inr(price) : 'View price'}</strong>
           {off > 0 && <s>{inr(mrp)}</s>}
         </div>
-        {off > 0 && <span className="hs-off">{off}% OFF</span>}
+        {outOfStock ? <span className="hs-off hs-out">Out of stock</span> : off > 0 && <span className="hs-off">{off}% OFF</span>}
       </div>
       <button
         type="button"
@@ -229,9 +230,11 @@ function MiniProductCard({
       >
         <Heart size={18} fill={liked ? 'currentColor' : 'none'} />
       </button>
-      <button type="button" className="hs-card-cart" onClick={onAdd} aria-label={`Add ${name} to cart`}>
-        <ShoppingCart size={18} />
-      </button>
+      {!outOfStock && (
+        <button type="button" className="hs-card-cart" onClick={onAdd} aria-label={`Add ${name} to cart`}>
+          <ShoppingCart size={18} />
+        </button>
+      )}
     </article>
   )
 }
@@ -398,6 +401,14 @@ export default function HomeStorefront() {
     return imageUrl(cat?.image) || tile.img || ''
   }
 
+  // Hide category tiles that would open an empty collection (service tiles always show).
+  const visibleTiles = CATEGORY_TILES.filter((tile) => {
+    if (tile.to || categories.length === 0) return true
+    const wanted = resolveCategoryName(tile.match ?? tile.label, headerCats).toLowerCase()
+    const cat = categories.find((c) => c.name.toLowerCase() === wanted)
+    return !!cat && (cat.products ?? 0) > 0
+  })
+
   const toggleWishlist = (id: number) => {
     if (!requireSignInForWishlist(navigate)) return
     setWishlist((prev) => {
@@ -552,7 +563,7 @@ export default function HomeStorefront() {
             linkLabel="View All Categories"
           />
           <div className="hs-cats">
-            {CATEGORY_TILES.map((tile, i) => (
+            {visibleTiles.map((tile, i) => (
               <CategoryTileCard
                 key={tile.label}
                 tile={tile}

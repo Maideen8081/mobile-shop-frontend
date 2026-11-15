@@ -1,16 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { Tag, ChevronRight } from 'lucide-react'
-import { VALID_COUPONS } from './cartLogic'
+import { useStoreCoupons } from '../../hooks/useStoreCoupons'
+import { couponLabel } from '../../services/offerService'
 import { C } from './theme'
 
 export default function CouponsOffers() {
   const navigate = useNavigate()
-  const coupons = Object.entries(VALID_COUPONS).map(([code, c]) => ({
-    code,
-    label: c.label,
-    discount: c.discount,
-    fixed: !!c.fixed,
-  }))
+  // Live coupons only; the section hides when none are running.
+  const coupons = useStoreCoupons().map((c) => ({ code: c.code, label: couponLabel(c) }))
 
   if (!coupons.length) return null
 
@@ -40,7 +37,7 @@ export default function CouponsOffers() {
             <div className="relative w-7 h-7 rounded-[8px] bg-[#210D35] flex items-center justify-center shrink-0">
               <Tag size={14} className="text-white" />
             </div>
-            <p className="relative text-title font-extrabold text-[#210D35] leading-tight mt-1.5">{c.label}</p>
+            <p className="relative text-body-sm font-extrabold text-[#210D35] leading-tight mt-1.5">{c.label}</p>
             <div className="relative mt-auto">
               <span className="text-micro font-bold text-[#210D35] bg-[#F3E8FF] rounded px-1.5 py-0.5 inline-block">
                 {c.code}

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { loginIsForCart } from '../utils/cartAuth'
 import { useNavigate } from 'react-router-dom'
 import { FiBattery, FiFeather, FiLock, FiMail, FiSmartphone, FiWatch, FiZap, FiCamera, FiHeart, FiActivity } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
@@ -103,6 +104,8 @@ function DesktopLogin() {
     rules,
   )
 
+  const [forCart] = useState(loginIsForCart)
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (loading || !validateAll()) return
@@ -126,7 +129,10 @@ function DesktopLogin() {
 
   return (
     <AuthLayout slides={slides} variant="signin">
-      <AuthHeading title="Welcome back" subtitle="Sign in to your account to continue shopping." />
+      <AuthHeading
+        title="Welcome back"
+        subtitle={forCart ? 'Sign in to add items to your cart — we’ll add the one you picked as soon as you’re in.' : 'Sign in to your account to continue shopping.'}
+      />
 
       <form className="auth-form" onSubmit={onSubmit} noValidate>
         <AuthField

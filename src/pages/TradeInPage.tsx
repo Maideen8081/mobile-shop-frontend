@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { tradeInUpTo } from '../config/business'
+import { CONDITIONS, OTHER_MODEL, STORAGE_OPTIONS, TRADE_IN_BRANDS, TRADE_IN_MODELS, modelsFor, quoteTradeIn, valueRange } from '../data/tradeInPrices'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowRight, Calculator, Check, CheckCircle2, ChevronLeft, ChevronRight, Info, Leaf,
@@ -12,7 +14,7 @@ import { tradeInService, type TradeInSubmission } from '../services/tradeInServi
 import { apiErrorMessage } from '../utils/checkout'
 import './TradeInPage.css'
 
-const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
+const brands = [...TRADE_IN_BRANDS]
 
 const features = [
   { icon: Zap, title: 'Instant Quote', desc: 'Get a fair value in seconds' },
@@ -28,51 +30,28 @@ const steps = [
   { icon: Wallet, title: 'Get Paid', desc: 'Receive payment or store credit quickly', tone: 'lav' },
 ]
 
-const deviceConditions = [
-  { value: 'Mint - Like New', title: 'Like New', desc: 'No scratches, works perfectly' },
-  { value: 'Good - Minor Scratches', title: 'Good', desc: 'Light scratches, fully working' },
-  { value: 'Fair - Visible Wear', title: 'Fair', desc: 'Visible dents or wear' },
-  { value: 'Broken - Damaged Screen/Body', title: 'Broken', desc: 'Cracked screen or body' },
-]
-const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB']
+const deviceConditions = CONDITIONS
+const storageOptions = STORAGE_OPTIONS
 
 type PhoneLook = { body: string; screen: string; cams: 'tri' | 'column' | 'bar' | 'round' }
 
-const popularValues: { device: string; brand: string; value: string; look: PhoneLook }[] = [
-  { device: 'iPhone 16 Pro Max', brand: 'Apple', value: '₹35,000 – ₹45,000', look: { body: '#3b3b40', screen: 'linear-gradient(160deg,#1c1c22,#c2642f 55%,#2a1a14)', cams: 'tri' } },
-  { device: 'iPhone 15 Pro Max', brand: 'Apple', value: '₹30,000 – ₹38,000', look: { body: '#d9cdb8', screen: 'linear-gradient(160deg,#20201f,#5b4a36 60%,#141414)', cams: 'tri' } },
-  { device: 'iPhone 14 Pro Max', brand: 'Apple', value: '₹20,000 – ₹30,000', look: { body: '#4a4553', screen: 'linear-gradient(160deg,#160c2c,#a32bd6 50%,#ff3c8a 70%,#120a20)', cams: 'tri' } },
-  { device: 'Samsung Galaxy S25 Ultra', brand: 'Samsung', value: '₹30,000 – ₹42,000', look: { body: '#7c8088', screen: 'linear-gradient(160deg,#9fb4d8,#5d79b8 55%,#e7ecf5)', cams: 'column' } },
-  { device: 'Samsung Galaxy S24 Ultra', brand: 'Samsung', value: '₹24,000 – ₹33,000', look: { body: '#5b5e66', screen: 'linear-gradient(160deg,#2b2140,#7e5bd1 55%,#c9b3ff)', cams: 'column' } },
-  { device: 'Google Pixel 10 Pro', brand: 'Google', value: '₹22,000 – ₹30,000', look: { body: '#e7e2d8', screen: 'linear-gradient(160deg,#21362f,#5fae8c 55%,#e9f3ec)', cams: 'bar' } },
-  { device: 'OnePlus 13', brand: 'OnePlus', value: '₹18,000 – ₹26,000', look: { body: '#1f2a3a', screen: 'linear-gradient(160deg,#0f1b2b,#e2463b 55%,#2a0d0d)', cams: 'round' } },
-  { device: 'Xiaomi 15 Ultra', brand: 'Xiaomi', value: '₹16,000 – ₹24,000', look: { body: '#2b2b2b', screen: 'linear-gradient(160deg,#ff7a1a,#ffb347 50%,#3a1a05)', cams: 'round' } },
-  { device: 'Oppo Find X8 Pro', brand: 'Oppo', value: '₹14,000 – ₹22,000', look: { body: '#d8d4e6', screen: 'linear-gradient(160deg,#4b2c86,#c08cff 55%,#f2e9ff)', cams: 'round' } },
+const POPULAR: { device: string; brand: string; look: PhoneLook }[] = [
+  { device: 'iPhone 16 Pro Max', brand: 'Apple', look: { body: '#3b3b40', screen: 'linear-gradient(160deg,#1c1c22,#c2642f 55%,#2a1a14)', cams: 'tri' } },
+  { device: 'iPhone 15 Pro Max', brand: 'Apple', look: { body: '#d9cdb8', screen: 'linear-gradient(160deg,#20201f,#5b4a36 60%,#141414)', cams: 'tri' } },
+  { device: 'iPhone 14 Pro Max', brand: 'Apple', look: { body: '#4a4553', screen: 'linear-gradient(160deg,#160c2c,#a32bd6 50%,#ff3c8a 70%,#120a20)', cams: 'tri' } },
+  { device: 'Galaxy S25 Ultra', brand: 'Samsung', look: { body: '#7c8088', screen: 'linear-gradient(160deg,#9fb4d8,#5d79b8 55%,#e7ecf5)', cams: 'column' } },
+  { device: 'Galaxy S24 Ultra', brand: 'Samsung', look: { body: '#5b5e66', screen: 'linear-gradient(160deg,#2b2140,#7e5bd1 55%,#c9b3ff)', cams: 'column' } },
+  { device: 'Pixel 10 Pro', brand: 'Google', look: { body: '#e7e2d8', screen: 'linear-gradient(160deg,#21362f,#5fae8c 55%,#e9f3ec)', cams: 'bar' } },
+  { device: 'OnePlus 13', brand: 'OnePlus', look: { body: '#1f2a3a', screen: 'linear-gradient(160deg,#0f1b2b,#e2463b 55%,#2a0d0d)', cams: 'round' } },
+  { device: 'Xiaomi 15 Ultra', brand: 'Xiaomi', look: { body: '#2b2b2b', screen: 'linear-gradient(160deg,#ff7a1a,#ffb347 50%,#3a1a05)', cams: 'round' } },
+  { device: 'Find X8 Pro', brand: 'Oppo', look: { body: '#d8d4e6', screen: 'linear-gradient(160deg,#4b2c86,#c08cff 55%,#f2e9ff)', cams: 'round' } },
 ]
 
-const basePrices: Record<string, number> = { Apple: 30000, Samsung: 25000, Google: 22000, OnePlus: 18000, Xiaomi: 12000, Oppo: 10000 }
-const conditionMultiplier: Record<string, number> = {
-  'Mint - Like New': 1.0, 'Good - Minor Scratches': 0.75, 'Fair - Visible Wear': 0.5, 'Broken - Damaged Screen/Body': 0.25,
-}
-const storageBonus: Record<string, number> = { '64GB': 0, '128GB': 2000, '256GB': 4000, '512GB': 7000, '1TB': 10000 }
-
-type AnalysisResult = { finalValue: number; breakdown: { label: string; amount: number }[] }
-
-function calculateAnalysis(brand: string, condition: string, storage: string): AnalysisResult | null {
-  if (!brand || !condition) return null
-  const base = basePrices[brand] || 15000
-  const condAdj = Math.round(base * (conditionMultiplier[condition] || 0.5))
-  const storBonus = storage ? storageBonus[storage] || 0 : 0
-  const condTitle = deviceConditions.find((c) => c.value === condition)?.title || condition
-  return {
-    finalValue: condAdj + storBonus,
-    breakdown: [
-      { label: `Base value (${brand})`, amount: base },
-      { label: `Condition (${condTitle})`, amount: condAdj - base },
-      { label: `Storage bonus${storage ? ` (${storage})` : ''}`, amount: storBonus },
-    ],
-  }
-}
+// Ranges come from the same price table the quote uses, so they always agree.
+const popularValues = POPULAR.map((p) => {
+  const model = TRADE_IN_MODELS.find((x) => x.brand === p.brand && x.model === p.device)
+  return { ...p, value: model ? valueRange(model) : '' }
+})
 
 const inr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
 
@@ -111,7 +90,7 @@ function DesktopTradeIn() {
   const [page, setPage] = useState(0)
   const [pageCount, setPageCount] = useState(1)
 
-  const analysis = calculateAnalysis(formBrand, formCondition, formStorage)
+  const analysis = quoteTradeIn(formBrand, formModel, formCondition, formStorage)
   const shownValues = popularValues.filter((v) => !filterBrand || v.brand === filterBrand)
 
   const clearError = (key: string) => setFormErrors((p) => (p[key] ? { ...p, [key]: '' } : p))
@@ -217,8 +196,8 @@ function DesktopTradeIn() {
               <span className="ti-art-phone ti-art-phone--old"><span className="ti-crack" /></span>
               <span className="ti-art-swap"><RefreshCw /></span>
               <span className="ti-art-card">
-                Upgrade<br /><Sparkles /> &amp; Save
-                <b>₹45,000</b>
+                <Sparkles aria-hidden="true" />Upgrade &amp; Save
+                <b>Up to {tradeInUpTo()}</b>
               </span>
             </div>
           </div>
@@ -335,7 +314,7 @@ function DesktopTradeIn() {
                 <h3 className="ti-label">1. Brand <em>*</em></h3>
                 <div className={`ti-chips${formErrors.formBrand ? ' has-error' : ''}`} role="radiogroup" aria-label="Brand">
                   {brands.map((b) => (
-                    <button key={b} type="button" role="radio" aria-checked={formBrand === b} className={formBrand === b ? 'is-active' : ''} onClick={() => { setFormBrand(b); clearError('formBrand') }}>{b}</button>
+                    <button key={b} type="button" role="radio" aria-checked={formBrand === b} className={formBrand === b ? 'is-active' : ''} onClick={() => { if (b !== formBrand) setFormModel(''); setFormBrand(b); clearError('formBrand') }}>{b}</button>
                   ))}
                 </div>
                 {formErrors.formBrand && <p className="ti-err">{formErrors.formBrand}</p>}
@@ -343,7 +322,11 @@ function DesktopTradeIn() {
                 <div className="ti-fields">
                   <div className={`ti-field${formErrors.formModel ? ' has-error' : ''}`}>
                     <label htmlFor="ti-model">2. Model <em>*</em></label>
-                    <input id="ti-model" value={formModel} placeholder="e.g. iPhone 15 Pro Max" onChange={(e) => { setFormModel(e.target.value); clearError('formModel') }} />
+                    <select id="ti-model" value={formModel} disabled={!formBrand} onChange={(e) => { setFormModel(e.target.value); clearError('formModel') }}>
+                      <option value="">{formBrand ? 'Choose your model' : 'Pick a brand first'}</option>
+                      {modelsFor(formBrand).map((x) => <option key={x.model} value={x.model}>{x.model}</option>)}
+                      {formBrand && <option value={OTHER_MODEL}>{OTHER_MODEL}</option>}
+                    </select>
                     {formErrors.formModel && <p className="ti-err">{formErrors.formModel}</p>}
                   </div>
                   <div className="ti-field">
@@ -359,7 +342,7 @@ function DesktopTradeIn() {
                 <h3 className="ti-label">4. Condition <em>*</em></h3>
                 <div className={`ti-conditions${formErrors.formCondition ? ' has-error' : ''}`} role="radiogroup" aria-label="Condition">
                   {deviceConditions.map((c) => (
-                    <button key={c.value} type="button" role="radio" aria-checked={formCondition === c.value} className={formCondition === c.value ? 'is-active' : ''} onClick={() => { setFormCondition(c.value); clearError('formCondition') }}>
+                    <button key={c.value} type="button" role="radio" aria-label={`${c.title}: ${c.desc}`} aria-checked={formCondition === c.value} className={formCondition === c.value ? 'is-active' : ''} onClick={() => { setFormCondition(c.value); clearError('formCondition') }}>
                       <b>{c.title}</b>
                       <small>{c.desc}</small>
                       {formCondition === c.value && <span className="ti-check"><Check aria-hidden="true" /></span>}
@@ -402,12 +385,12 @@ function DesktopTradeIn() {
                         <li key={b.label}><span>{b.label}</span><b className={b.amount < 0 ? 'is-neg' : ''}>{b.amount >= 0 ? '+' : '–'}{inr(Math.abs(b.amount))}</b></li>
                       ))}
                     </ul>
-                    <p className="ti-note"><Info aria-hidden="true" /> This is an estimate. The final value is confirmed after a physical inspection.</p>
+                    <p className="ti-note"><Info aria-hidden="true" /> {analysis.approximate ? 'Your model isn’t in our price list yet, so this is a minimum estimate. ' : ''}This is an estimate. The final value is confirmed after a physical inspection.</p>
                   </>
                 ) : (
                   <div className="ti-value-empty">
                     <Smartphone aria-hidden="true" />
-                    <p>Pick a brand and condition to see your estimated value.</p>
+                    <p>Pick a brand, model and condition to see your estimated value.</p>
                   </div>
                 )}
                 <button type="button" className="ti-btn ti-btn--primary ti-btn--block" onClick={handleFormSubmit} disabled={submitting || !analysis}>

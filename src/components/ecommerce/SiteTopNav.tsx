@@ -5,6 +5,8 @@ import {
   ArrowLeftRight,
   BadgeCheck,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Flame,
   Heart,
@@ -128,6 +130,24 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
     [categories],
   )
 
+  // Category rail: show scroll arrows only when items are hidden off either edge.
+  const catRail = useRef<HTMLElement>(null)
+  const [catEdges, setCatEdges] = useState({ left: false, right: false })
+  useEffect(() => {
+    const el = catRail.current
+    if (!el) return
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth
+      setCatEdges({ left: el.scrollLeft > 4, right: el.scrollLeft < max - 4 })
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => { el.removeEventListener('scroll', update); ro.disconnect() }
+  }, [])
+  const scrollCats = (dir: 1 | -1) => catRail.current?.scrollBy({ left: dir * 220, behavior: 'smooth' })
+
   const primaryCategories = useMemo(
     () =>
       NAV_CATEGORIES.map((category) => ({
@@ -243,10 +263,12 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
               </form>
 
               <div className="pfn-contact">
-                <a href={`tel:${CONTACT_PHONE_TEL}`} className="pfn-contact-phone">
-                  <Phone size={14} aria-hidden="true" />
-                  {CONTACT_PHONE_DISPLAY}
-                </a>
+                {CONTACT_PHONE_TEL && (
+                  <a href={`tel:${CONTACT_PHONE_TEL}`} className="pfn-contact-phone">
+                    <Phone size={14} aria-hidden="true" />
+                    {CONTACT_PHONE_DISPLAY}
+                  </a>
+                )}
                 <span className="pfn-contact-hours">
                   <Clock size={14} aria-hidden="true" />
                   {STORE_HOURS}
@@ -272,7 +294,7 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                       <ChevronDown className="pfn-caret" size={14} aria-hidden="true" />
                     </button>
                   ) : (
-                    <Link to="/login" className="pfn-account-btn pfn-login-btn" onClick={() => setOpenMenu(null)}>
+                    <Link to="/login" className="pfn-account-btn pfn-login-btn" aria-label="Log in" onClick={() => setOpenMenu(null)}>
                       <LogIn size={17} aria-hidden="true" />
                       <span className="pfn-account-label">Login</span>
                     </Link>
@@ -467,7 +489,16 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                   )}
                 </div>
 
-                <nav className="pfn-cats-scroll" aria-label="Product categories">
+                {catEdges.left && (
+                  <button type="button" className="pfn-cats-arrow" onClick={() => scrollCats(-1)} aria-label="Show previous categories">
+                    <ChevronLeft size={16} aria-hidden="true" />
+                  </button>
+                )}
+                <nav
+                  ref={catRail}
+                  className={`pfn-cats-scroll${catEdges.left ? ' fade-l' : ''}${catEdges.right ? ' fade-r' : ''}`}
+                  aria-label="Product categories"
+                >
                   {primaryCategories.map(({ label, to, icon: Icon }) => (
                     <Link
                       key={label}
@@ -479,6 +510,11 @@ export default function SiteTopNav({ transparent = false }: { transparent?: bool
                     </Link>
                   ))}
                 </nav>
+                {catEdges.right && (
+                  <button type="button" className="pfn-cats-arrow" onClick={() => scrollCats(1)} aria-label="Show more categories">
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </button>
+                )}
               </div>
 
               <div className="pfn-services">

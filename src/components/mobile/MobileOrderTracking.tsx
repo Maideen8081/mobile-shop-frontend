@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { apiErrorMessage } from '../../utils/checkout'
+import { orderTaxLabel } from '../../utils/checkout'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Copy, Check, Package, Truck, ShoppingBag, MapPin, Receipt, Star } from 'lucide-react'
@@ -36,7 +38,7 @@ function formatPrice(n: number): string {
 }
 
 const STEPS = [
-  { key: 'order_placed', label: 'Order Placed', desc: 'Order placed & payment verified', icon: Package },
+  { key: 'order_placed', label: 'Order Placed', desc: 'We’ve received your order', icon: Package },
   { key: 'accepted', label: 'Order Accepted', desc: 'Order accepted by seller', icon: Package },
   { key: 'processing', label: 'Processing', desc: 'Items being packed & prepared', icon: Package },
   { key: 'shipped', label: 'Shipped', desc: 'Package handed to courier partner', icon: Truck },
@@ -113,9 +115,11 @@ export default function MobileOrderTracking() {
             subtotal: Number(o.subtotal),
             shipping: Number(o.shipping_charge),
             tax: Number(o.tax),
+            tax_rate: o.tax_rate,
             discount: o.discount || 0,
             couponCode: o.coupon_code || '',
             paymentMethod: o.payment_method,
+            paymentStatus: o.payment_status,
             deliveryDate: o.est_delivery,
             orderDate: o.created_at,
             status: o.delivery_status,
@@ -149,9 +153,11 @@ export default function MobileOrderTracking() {
                 subtotal: Number(found.subtotal),
                 shipping: Number(found.shipping_charge),
                 tax: Number(found.tax),
+                tax_rate: found.tax_rate,
                 discount: found.discount || 0,
                 couponCode: found.coupon_code || '',
                 paymentMethod: found.payment_method,
+                paymentStatus: found.payment_status,
                 deliveryDate: found.est_delivery,
                 orderDate: found.created_at,
                 status: found.delivery_status,
@@ -247,6 +253,25 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
   const navigate = useNavigate()
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
   const [copied, setCopied] = useState(false)
+  const [cancelOpen, setCancelOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState('Ordered by mistake')
+  const [cancelBusy, setCancelBusy] = useState(false)
+  const [cancelError, setCancelError] = useState('')
+  const canCancel = !!order.orderNumber
+    && ['order_placed', 'accepted', 'processing'].includes(order.status)
+    && String(order.paymentStatus || '').toLowerCase() !== 'paid'
+  const confirmCancel = async () => {
+    if (cancelBusy) return
+    setCancelBusy(true)
+    setCancelError('')
+    try {
+      await orderService.cancelMine(order.orderNumber, cancelReason)
+      window.location.reload()
+    } catch (err) {
+      setCancelError(apiErrorMessage(err, 'We couldn’t cancel this order. Please contact support.'))
+      setCancelBusy(false)
+    }
+  }
 
   const currentStepIndex = STATUS_INDEX[order.status] ?? 0
   const isDelivered = order.status === 'delivered'
@@ -380,17 +405,41 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
           </div>
         </div>
 
+        {canCancel && (
+          <div className={`${card} p-4`}>
+            {!cancelOpen ? (
+              <button type="button" onClick={() => setCancelOpen(true)} className="w-full h-11 rounded-[8px] border border-[#E5E7EB] text-label font-bold text-[#B42318]">
+                Cancel order
+              </button>
+            ) : (
+              <div>
+                <p className="text-body-sm font-bold text-[#1F2937]">Cancel this order?</p>
+                <p className="text-caption text-[#6B7280] mt-0.5">Items go back to stock and you won’t be charged.</p>
+                <label htmlFor="mot-cancel-reason" className="block text-micro font-bold uppercase tracking-wide text-[#6B7280] mt-3 mb-1">Reason</label>
+                <select id="mot-cancel-reason" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className="w-full h-11 px-3 rounded-[8px] border border-[#E5E7EB] text-label">
+                  {['Ordered by mistake', 'Found a better price elsewhere', 'Delivery is taking too long', 'Want to change items or address', 'Other'].map((r) => <option key={r}>{r}</option>)}
+                </select>
+                {cancelError && <p role="alert" className="text-caption font-semibold text-[#B42318] mt-2">{cancelError}</p>}
+                <div className="flex gap-2 mt-3">
+                  <button type="button" onClick={() => setCancelOpen(false)} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] border border-[#E5E7EB] text-label font-bold">Keep order</button>
+                  <button type="button" onClick={confirmCancel} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] bg-[#B42318] text-white text-label font-bold disabled:opacity-60">{cancelBusy ? 'Cancelling…' : 'Cancel order'}</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Price summary */}
         <div className={`${card} p-4`}>
           <p className="text-body-sm font-bold text-[#1F2937] mb-3">Price Summary</p>
           <div className="space-y-2.5">
             <Row label="Subtotal" value={formatPrice(order.subtotal)} />
             <Row label="Shipping" value={Number(order.shipping) === 0 ? 'FREE' : formatPrice(order.shipping)} highlight={Number(order.shipping) === 0} />
-            <Row label="Tax" value={formatPrice(order.tax)} />
+            <Row label={orderTaxLabel(order)} value={formatPrice(order.tax)} />
             {order.discount ? <Row label={`Coupon (${order.couponCode})`} value={`-${formatPrice(order.discount)}`} highlight /> : null}
             <div className="h-px bg-[#EEF0F6] my-1" />
             <div className="flex justify-between items-center">
-              <span className="text-label font-bold text-[#1F2937]">Total Paid</span>
+              <span className="text-label font-bold text-[#1F2937]">{isPaid(order) ? 'Total Paid' : /cod|cash/i.test(order.paymentMethod || '') ? 'Pay on delivery' : 'Amount due'}</span>
               <span className="text-title-sm font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</span>
             </div>
           </div>
@@ -472,4 +521,9 @@ function MobileHeader({ title, onBack }: { title: string; onBack: () => void }) 
       </div>
     </div>
   )
+}
+
+/** Paid online, or COD that was collected on delivery. */
+function isPaid(order: { paymentStatus?: string; status?: string }): boolean {
+  return String(order.paymentStatus || '').toLowerCase() === 'paid' || order.status === 'delivered'
 }

@@ -50,9 +50,8 @@
   background:
     radial-gradient(520px 160px at 0% 30%, rgba(208, 173, 255, 0.3), transparent 70%),
     radial-gradient(620px 200px at 100% 70%, rgba(208, 173, 255, 0.34), transparent 70%),
-    rgba(255, 247, 243, 0.86);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    var(--pfn-cream);
+  /* Solid: page content must not show through the header while scrolling. */
   box-shadow: 0 14px 40px rgba(33, 13, 53, 0.16);
 }
 .pfn-spacer {
@@ -477,6 +476,34 @@
 }
 .pfn-cats-scroll::-webkit-scrollbar {
   display: none;
+}
+/* Fade the edge where more categories are hidden. */
+.pfn-cats-scroll.fade-r {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+}
+.pfn-cats-scroll.fade-l {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to left, #000 calc(100% - 40px), transparent);
+}
+.pfn-cats-scroll.fade-l.fade-r {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+.pfn-cats-arrow {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 247, 243, 0.24);
+  background: rgba(255, 247, 243, 0.1);
+  color: var(--pfn-cream);
+  cursor: pointer;
+}
+.pfn-cats-arrow:hover {
+  background: rgba(255, 247, 243, 0.2);
 }
 
 .pfn-cat {
@@ -1114,7 +1141,16 @@
   color: var(--pfn-cream);
   text-decoration: none;
 }
-.pfn-login-btn svg { color: var(--pfn-sunshine); }
+.pfn-login-btn svg { color: var(--pfn-sunshine); flex-shrink: 0; width: 17px; height: 17px; }
+.pfn-account-btn svg { flex-shrink: 0; }
+/* Icon-only below 1080px: the padding above would otherwise squash the icon to a few px. */
+@media (max-width: 1080px) {
+  .pfn-login-btn {
+    width: 46px;
+    padding: 0;
+    justify-content: center;
+  }
+}
 .pfn-login-btn:hover {
   background: var(--pfn-purple-mid);
   border-color: var(--pfn-purple-mid);

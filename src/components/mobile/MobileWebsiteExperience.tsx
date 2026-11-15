@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { BUSINESS } from "../../config/business";
 import ScrollEndRedirect from "../ScrollEndRedirect";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
@@ -6,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRingStepper } from "../../hooks/useRingStepper";
-import { WEB_PRODUCTS, WEB_REVIEWS, inr, shopUrl } from "../../data/websiteCatalog";
+import { WEB_REVIEWS, inr, useLandingProducts } from "../../data/websiteCatalog";
 import "../../styles/website-experience.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -29,7 +30,6 @@ const C = {
   card: "#1c0b2e",
 };
 
-const TAGS = ["All", ...Array.from(new Set(WEB_PRODUCTS.map((p) => p.tag)))];
 
 const STEPS: [string, string, string, string, string][] = [
   ["01", "Bring it in", "Walk in or book a slot. No appointment needed for quick fixes.", "/phones/ios-b.png", "linear-gradient(150deg, #2a0d4f, #1c0b2e 70%)"],
@@ -38,8 +38,8 @@ const STEPS: [string, string, string, string, string][] = [
 ];
 
 const STATS: [number, string, string, string][] = [
-  [30, "", "min", "Express swaps"],
-  [6, "", "mo", "Repair warranty"],
+  [BUSINESS.expressRepairMinutes, "", "min", "Express repairs"],
+  [BUSINESS.repairWarrantyMonths, "", "mo", "Repair warranty"],
   [0, "₹", "", "Diagnosis"],
 ];
 
@@ -206,11 +206,14 @@ export default function MobileWebsiteExperience() {
   const [tag, setTag] = useState("All");
   const [active, setActive] = useState(0);
   const lineupStage = useRef<HTMLDivElement>(null);
-  const { attach: attachRing, sync: syncRing, snap: snapRing, step: stepRing } = useRingStepper(WEB_PRODUCTS.length, lineupStage);
+  const lineup = useLandingProducts();
+  const introPlayed = useRef(false);
+  const TAGS = ["All", ...Array.from(new Set(lineup.map((p) => p.tag)))];
+  const { attach: attachRing, sync: syncRing, snap: snapRing, step: stepRing } = useRingStepper(lineup.length, lineupStage);
   const [showBar, setShowBar] = useState(false);
-  const products = tag === "All" ? WEB_PRODUCTS : WEB_PRODUCTS.filter((p) => p.tag === tag);
+  const products = tag === "All" ? lineup : lineup.filter((p) => p.tag === tag);
   const { ref: shelfRef, idx: shelfIdx, goTo: shelfGoTo } = useCoverflow(tag);
-  const lineupProduct = WEB_PRODUCTS[active];
+  const lineupProduct = lineup[active] ?? lineup[0];
 
   const enableMotion = async () => {
     try {
@@ -228,6 +231,12 @@ export default function MobileWebsiteExperience() {
     const ctx = gsap.context(() => {
       /* ── Loader iris → hero intro ── */
       const counter = { v: 0 };
+      // The effect re-runs when live products arrive; only play the intro once.
+      if (introPlayed.current) {
+        gsap.set(".wem-loader", { display: "none" });
+        ScrollTrigger.refresh();
+      } else {
+      introPlayed.current = true;
       gsap.timeline({ onComplete: () => ScrollTrigger.refresh() })
         .to(counter, { v: 100, duration: reduce ? 0.1 : 1.1, ease: "power2.inOut", onUpdate: () => setCount(Math.round(counter.v)) })
         .to(".wem-loader-inner", { scale: 0.85, opacity: 0, duration: reduce ? 0.1 : 0.4, ease: "power2.in" })
@@ -237,6 +246,7 @@ export default function MobileWebsiteExperience() {
         .from(".wem-hero-phone", { y: 120, rotateY: -70, scale: 0.7, opacity: 0, duration: 1.4, ease: "expo.out" }, "<0.1")
         .from(".wem-orbit-img", { scale: 0, opacity: 0, duration: 0.9, stagger: 0.12, ease: "back.out(2)" }, "-=1")
         .from(".wem-hero-fade", { y: 24, opacity: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" }, "-=0.8");
+      }
 
       if (reduce) return;
 
@@ -435,7 +445,8 @@ export default function MobileWebsiteExperience() {
     const bar = ScrollTrigger.create({ trigger: "#products", start: "top 70%", end: "max", onToggle: (s) => setShowBar(s.isActive) });
 
     return () => { bar.kill(); cleanups.forEach((fn) => fn()); ctx.revert(); };
-  }, [reduce, attachRing, syncRing, snapRing]);
+    // Rebuild the ring when real products replace the showcase.
+  }, [reduce, attachRing, syncRing, snapRing, lineup]);
 
   return (
     <div ref={root} className="we wem relative min-h-screen" style={{ background: C.bg, color: C.fg }}>
@@ -574,9 +585,9 @@ export default function MobileWebsiteExperience() {
 
           <div ref={lineupStage} className="relative flex flex-1 select-none items-center justify-center" style={{ perspective: 900, touchAction: "pan-y" }}>
             <div className="wem-ring p3d relative h-0 w-0">
-              {WEB_PRODUCTS.map((p) => (
+              {lineup.map((p) => (
                 <div key={p.slug} className="wem-ring-item p3d absolute" style={{ width: "44vw", maxWidth: 210, height: "min(58vw, 280px)", left: "calc(min(44vw, 210px) / -2)", top: "calc(min(58vw, 280px) / -2)" }}>
-                  <Link to={shopUrl(p.slug)} className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[26px] p-3" style={{ background: `linear-gradient(160deg, #2a1142, ${C.card} 65%)`, border: `1px solid ${C.border}`, backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
+                  <Link to={p.href} className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[26px] p-3" style={{ background: `linear-gradient(160deg, #2a1142, ${C.card} 65%)`, border: `1px solid ${C.border}`, backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
                     <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full" style={{ background: "radial-gradient(circle, rgba(123, 63, 208,0.45), transparent 70%)" }} />
                     <img src={p.src} alt={p.name} loading="lazy" draggable={false} className="max-h-[75%] max-w-[85%] object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]" />
                     <span className="absolute bottom-3 left-3 rounded-full px-2.5 py-0.5 text-micro font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
@@ -603,12 +614,12 @@ export default function MobileWebsiteExperience() {
           <div className="relative px-5" style={{ perspective: 600 }}>
             <motion.div key={active} initial={{ opacity: 0, y: 24, rotateX: -60 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="flex items-end justify-between gap-3" style={{ transformOrigin: "50% 100%" }}>
               <div className="min-w-0">
-                <p className="text-micro uppercase tracking-[0.25em]" style={{ color: C.muted }}>{String(active + 1).padStart(2, "0")} / {String(WEB_PRODUCTS.length).padStart(2, "0")} · {lineupProduct.tag}</p>
+                <p className="text-micro uppercase tracking-[0.25em]" style={{ color: C.muted }}>{String(active + 1).padStart(2, "0")} / {String(lineup.length).padStart(2, "0")} · {lineupProduct.tag}</p>
                 <h3 className="mt-1 truncate font-display text-2xl font-bold tracking-tight">{lineupProduct.name}</h3>
-                <p className="font-display text-xl font-bold" style={{ color: C.primary }}>{inr(lineupProduct.price)}</p>
+                {lineupProduct.price ? <p className="font-display text-xl font-bold" style={{ color: C.primary }}>{inr(lineupProduct.price)}</p> : null}
               </div>
-              <Link to={shopUrl(lineupProduct.slug)} className="wem-shine relative flex h-12 shrink-0 items-center overflow-hidden rounded-full px-5 text-body-sm font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
-                Buy →
+              <Link to={lineupProduct.href} className="wem-shine relative flex h-12 shrink-0 items-center overflow-hidden rounded-full px-5 text-body-sm font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
+                {lineupProduct.price ? "Buy →" : "Shop →"}
               </Link>
             </motion.div>
             <div className="mt-4 h-[2px] w-full overflow-hidden rounded-full" style={{ background: C.border }}>
@@ -657,8 +668,8 @@ export default function MobileWebsiteExperience() {
                   <h3 className="relative z-10 font-display text-xl font-bold leading-tight tracking-tight">{p.name}</h3>
                   <p className="relative z-10 mt-1 line-clamp-2 text-label" style={{ color: C.muted }}>{p.blurb}</p>
                   <div className="relative z-10 mt-4 flex items-center justify-between">
-                    <span className="font-display text-2xl font-bold" style={{ color: C.primary }}>{inr(p.price)}</span>
-                    <Link to={shopUrl(p.slug)} aria-label={`Buy ${p.name}`} className="flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold active:scale-90 transition" style={{ background: C.primary, color: C.bg }}>
+                    <span className="font-display text-2xl font-bold" style={{ color: C.primary }}>{p.price ? inr(p.price) : "Shop now"}</span>
+                    <Link to={p.href} aria-label={p.price ? `Buy ${p.name}` : `Shop ${p.name}`} className="flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold active:scale-90 transition" style={{ background: C.primary, color: C.bg }}>
                       →
                     </Link>
                   </div>

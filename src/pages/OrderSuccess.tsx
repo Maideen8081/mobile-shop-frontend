@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { gstLabel, orderTaxLabel } from '../utils/checkout'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Banknote, Calendar, Check, CircleCheck, Home, LifeBuoy, MessageCircle, Package, PackageCheck,
@@ -214,7 +215,7 @@ function DesktopOrderSuccess() {
                 <dl className="osx-rows">
                   <div className="osx-row"><dt>Subtotal ({itemCount} item{itemCount !== 1 ? 's' : ''})</dt><dd>{formatPrice(subtotal)}</dd></div>
                   <div className={`osx-row${shipping === 0 ? ' is-green' : ''}`}><dt>Delivery</dt><dd>{shipping === 0 ? 'Free' : formatPrice(shipping)}</dd></div>
-                  <div className="osx-row"><dt>GST (18%)</dt><dd>{formatPrice(tax)}</dd></div>
+                  <div className="osx-row"><dt>{order ? orderTaxLabel(order) : gstLabel()}</dt><dd>{formatPrice(tax)}</dd></div>
                   {discount > 0 && (
                     <div className="osx-row is-green">
                       <dt>Discount{order?.couponCode ? ` (${order.couponCode})` : ''}</dt>

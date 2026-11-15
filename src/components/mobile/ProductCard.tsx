@@ -1,18 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { FALLBACK_IMG } from './fallback'
-import { getProductImage } from './helpers'
+import { getProductImage, getProductPrice, isInStock } from './helpers'
 
 function buildTags(product: any): { label: string; cls: string }[] {
   const tags: { label: string; cls: string }[] = []
-  if (product.is_new_arrival || product.isNewArrival)
+  if (product.is_new_arrival || product.newArrival)
     tags.push({ label: 'New', cls: 'bg-[#059669] text-white' })
-  if (product.is_best_selling || product.isBestSelling)
+  if (product.is_best_selling || product.bestSelling)
     tags.push({ label: 'Bestseller', cls: 'bg-[#210D35] text-white' })
-  if (product.is_featured || product.isFeatured)
+  if (product.is_featured || product.featured)
     tags.push({ label: 'Featured', cls: 'bg-[#F59E0B] text-white' })
-  if (product.is_trending || product.isTrending)
+  if (product.is_trending || product.trending)
     tags.push({ label: 'Trending', cls: 'bg-[#0EA5E9] text-white' })
-  if (product.is_refurbished || product.isRefurbished)
+  if (product.is_refurbished || product.refurbished)
     tags.push({ label: 'Refurbished', cls: 'bg-[#210D35] text-white' })
   return tags
 }
@@ -21,10 +21,16 @@ export default function ProductCard({ product }: { product: any }) {
   const navigate = useNavigate()
   const img = getProductImage(product)
   const tags = buildTags(product)
+  const { price, discount: mrp, discountPct } = getProductPrice(product)
+  const inStock = isInStock(product)
 
   return (
     <div
       onClick={() => navigate(`/product/${product.id}`)}
+      onKeyDown={(e) => { if (e.key === 'Enter') navigate(`/product/${product.id}`) }}
+      role="link"
+      tabIndex={0}
+      aria-label={product.name}
       className="group flex flex-col items-stretch cursor-pointer select-none"
     >
       <div className="relative aspect-square w-full rounded-xl bg-white overflow-hidden p-[6%]">
@@ -32,7 +38,7 @@ export default function ProductCard({ product }: { product: any }) {
           src={img || FALLBACK_IMG}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-contain object-center mix-blend-multiply transition-transform duration-500 ease-out group-active:scale-[1.04]"
+          className={`w-full h-full object-contain object-center mix-blend-multiply ${inStock ? "" : "opacity-50"} transition-transform duration-500 ease-out group-active:scale-[1.04]`}
           onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
         />
 
@@ -59,6 +65,13 @@ export default function ProductCard({ product }: { product: any }) {
         <h3 className="text-caption font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#210D35] transition-colors">
           {product.name}
         </h3>
+        {price > 0 && (
+          <p className="mt-0.5 flex items-baseline gap-1.5">
+            <span className="text-caption font-bold text-[#210D35]">₹{price.toLocaleString('en-IN')}</span>
+            {discountPct > 0 && <s className="text-micro text-[#9CA3AF]">₹{mrp.toLocaleString('en-IN')}</s>}
+          </p>
+        )}
+        {!inStock && <span className="mt-0.5 block text-micro font-semibold text-[#6B7280]">Out of stock</span>}
       </div>
     </div>
   )

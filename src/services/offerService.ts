@@ -1,4 +1,5 @@
 import api from './api'
+import { cachedRequest } from '../utils/requestCache'
 
 export interface ExitOfferCoupon {
   code: string
@@ -37,7 +38,33 @@ export interface ExitOffer {
   deals: ExitOfferDeal[]
 }
 
+export interface StoreCoupon {
+  code: string
+  discount_type: 'percentage' | 'fixed'
+  discount_value: string
+  minimum_amount: string
+  expires_at: string
+}
+
+/** Short shopper-facing label, e.g. "10% off" or "₹500 off on ₹2,000+". */
+export function couponLabel(c: StoreCoupon): string {
+  const value = Number(c.discount_value) || 0
+  const min = Number(c.minimum_amount) || 0
+  const off = c.discount_type === 'percentage' ? `${value}% off` : `₹${value.toLocaleString('en-IN')} off`
+  return min > 0 ? `${off} on ₹${min.toLocaleString('en-IN')}+` : off
+}
+
 export const offerService = {
+  /** Coupons valid right now, the same ones checkout will accept. */
+  getActiveCoupons(): Promise<StoreCoupon[]> {
+    return cachedRequest('coupons:active', () =>
+      api
+        .get('/api/v1/coupon/active/', { skipAuthRedirect: true })
+        .then((r) => (Array.isArray(r.data?.data) ? r.data.data : [])),
+      5 * 60_000,
+    )
+  },
+
   async getCheckoutExitOffer(productIds: number[], subtotal: number): Promise<ExitOffer> {
     const r = await api.post('/api/v1/checkout/exit-offer/', {
       product_ids: productIds,

@@ -1,4 +1,5 @@
 import api from './api'
+import { cachedRequest, invalidateRequests } from '../utils/requestCache'
 
 const CATEGORIES_URL = '/api/v1/categories'
 const SUBCATEGORIES_URL = '/api/v1/sub-categories'
@@ -73,24 +74,26 @@ function toArray(data: any): any[] {
 
 export const categoryService = {
   list: () =>
-    api.get(`${CATEGORIES_URL}/`).then((r) =>
-      toArray(unwrapData<any>(r as any))
-        .map(normalizeCategory)
-        .sort((a, b) => a.id - b.id),
+    cachedRequest('categories:list', () =>
+      api.get(`${CATEGORIES_URL}/`).then((r) =>
+        toArray(unwrapData<any>(r as any))
+          .map(normalizeCategory)
+          .sort((a, b) => a.id - b.id),
+      ),
     ),
 
   create: (data: FormData) =>
-    api.post(`${CATEGORIES_URL}/create/`, data, {
+    (invalidateRequests('categories:'), api.post(`${CATEGORIES_URL}/create/`, data, {
       headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => normalizeCategory(unwrapData<any>(r as any))),
+    }).then((r) => normalizeCategory(unwrapData<any>(r as any)))),
 
   update: (id: number, data: FormData) =>
-    api.put(`${CATEGORIES_URL}/${id}/`, data, {
+    (invalidateRequests('categories:'), api.put(`${CATEGORIES_URL}/${id}/`, data, {
       headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => normalizeCategory(unwrapData<any>(r as any))),
+    }).then((r) => normalizeCategory(unwrapData<any>(r as any)))),
 
   delete: (id: number) =>
-    api.delete(`${CATEGORIES_URL}/${id}/`).then((r) => r.data),
+    (invalidateRequests('categories:'), api.delete(`${CATEGORIES_URL}/${id}/`).then((r) => r.data)),
 
   dashboardCounts: () =>
     api.get(`${CATEGORIES_URL}/dashboard-counts/`).then((r) => unwrapData<CategoryStats>(r as any)),

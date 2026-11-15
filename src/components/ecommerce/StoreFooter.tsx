@@ -2,20 +2,26 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Wrench } from 'lucide-react'
 import { socials } from './Footer'
+import { POLICY_LINKS } from '../../config/business'
+import { categoryHref, resolveCategoryName } from './navConfig'
+import { useHeaderCategories } from './useNavState'
 import './StoreFooter.css'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const COLUMNS = [
+type FooterLink = { label: string; to?: string; category?: boolean }
+
+const COLUMNS: { title: string; links: FooterLink[] }[] = [
   {
     title: 'Shop',
     links: [
-      { label: 'Smartphones', to: '/collection/Smartphones' },
-      { label: 'Tablets', to: '/collection/Tablets' },
-      { label: 'Smart Watches', to: '/collection/Smart%20Watches' },
-      { label: 'Earbuds', to: '/collection/Earbuds' },
-      { label: 'Headphones', to: '/collection/Headphones' },
-      { label: 'Power Banks', to: '/collection/Power%20Banks' },
+      // Category links resolve to the real category names from the API at render time.
+      { label: 'Smartphones', category: true },
+      { label: 'Tablets', category: true },
+      { label: 'Smart Watches', category: true },
+      { label: 'Earbuds', category: true },
+      { label: 'Headphones', category: true },
+      { label: 'Power Banks', category: true },
     ],
   },
   {
@@ -23,7 +29,7 @@ const COLUMNS = [
     links: [
       { label: 'Phone Repair', to: '/book-repair' },
       { label: 'Trade-In', to: '/trade-in' },
-      { label: 'Refurbished Phones', to: '/collection/Refurbished%20Devices' },
+      { label: 'Refurbished Phones', to: '/collection/all?tab=refurbished' },
       { label: 'Track My Repair', to: '/my-repairs' },
       { label: 'Track Your Order', to: '/orders' },
     ],
@@ -40,10 +46,14 @@ const COLUMNS = [
   },
 ]
 
-const PAYMENTS = ['VISA', 'Mastercard', 'UPI', 'RuPay']
+// Only what is live today; add card/UPI badges once online payments launch.
+const PAYMENTS = ['Cash on Delivery']
 
 /** Storefront footer (home page): dark purple band with link columns and newsletter. */
 export default function StoreFooter() {
+  const categories = useHeaderCategories()
+  const hrefFor = (l: FooterLink) =>
+    l.category ? categoryHref(resolveCategoryName(l.label, categories)) : (l.to as string)
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -87,7 +97,7 @@ export default function StoreFooter() {
               <h2>{col.title}</h2>
               <ul>
                 {col.links.map((l) => (
-                  <li key={l.label}><Link to={l.to}>{l.label}</Link></li>
+                  <li key={l.label}><Link to={hrefFor(l)}>{l.label}</Link></li>
                 ))}
               </ul>
             </nav>
@@ -117,6 +127,9 @@ export default function StoreFooter() {
 
         <div className="sf-bottom">
           <p>© {new Date().getFullYear()} PhoneFix. All rights reserved.</p>
+          <ul className="sf-legal" aria-label="Store policies">
+            {POLICY_LINKS.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}
+          </ul>
           <ul className="sf-pay" aria-label="Payment methods we accept">
             {PAYMENTS.map((p) => <li key={p}>{p}</li>)}
           </ul>

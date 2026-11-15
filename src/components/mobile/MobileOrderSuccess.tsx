@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { gstLabel, orderTaxLabel } from '../../utils/checkout'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiChevronLeft, FiCheck, FiCopy, FiTruck, FiShoppingBag, FiStar } from 'react-icons/fi'
 import { orderService, type OrderResponse } from '../../services/orderService'
@@ -237,12 +238,12 @@ export default function MobileOrderSuccess() {
           <div className="space-y-1.5 text-caption">
             <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
             <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>Tax (GST)</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
+            <div className="flex justify-between text-[#6B7280]"><span>{order ? orderTaxLabel(order) : gstLabel()}</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
             {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({couponCode})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
           </div>
           <div className="h-px bg-[#EEF0F6] my-3" />
           <div className="flex justify-between items-center">
-            <span className="text-caption text-[#6B7280] font-semibold uppercase tracking-wide">Total Paid</span>
+            <span className="text-caption text-[#6B7280] font-semibold uppercase tracking-wide">{/cod|cash/i.test(paymentMethod) ? 'To pay on delivery' : String(order?.payment_status || '').toLowerCase() === 'paid' ? 'Total Paid' : 'Amount due'}</span>
             <span className="text-title-sm font-bold text-[#1F2937]">{formatPrice(grandTotal)}</span>
           </div>
           {paymentMethod && (

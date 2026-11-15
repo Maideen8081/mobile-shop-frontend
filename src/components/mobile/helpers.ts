@@ -1,3 +1,4 @@
+import { FALLBACK_IMG } from './fallback'
 import { useEffect, useRef, useState } from 'react'
 
 const MOBILE_MAX = 480
@@ -44,8 +45,10 @@ export function getProductImage(product: any): string {
 
 export function getProductPrice(product: any): { price: number; discount: number; discountPct: number } {
   const variant = (product?.variants || [])[0]
-  const price = Number(variant?.price || product?.price || 0)
-  const discount = Number(variant?.discountPrice || product?.discountPrice || 0)
+  // List responses have no variants: their selling price is min_price (minPrice once normalised).
+  const listPrice = Number(product?.minPrice ?? product?.min_price ?? 0)
+  const price = Number(variant?.price || product?.price || listPrice || 0)
+  const discount = Number(variant?.discountPrice || variant?.discount_price || product?.discountPrice || 0)
   const finalPrice = discount > 0 ? discount : price
   const mrp = price > 0 ? price : finalPrice
   const discountPct = mrp > 0 && discount > 0 && discount < mrp
@@ -79,4 +82,38 @@ export function useHorizontalArrows() {
   }
 
   return { ref, canLeft, canRight, update, scroll }
+}
+
+
+/**
+ * Every image for a product page, variant images first, de-duplicated.
+ * Desktop and mobile product pages both use this so they show the same gallery.
+ */
+export function collectProductImages(product: any, variant: any): string[] {
+  const seen = new Set<string>()
+  const out: string[] = []
+  const push = (raw: any) => {
+    if (!raw) return
+    const url = getImageUrl(typeof raw === 'string' ? raw : (raw?.image || raw?.url || ''))
+    if (url && !seen.has(url)) { seen.add(url); out.push(url) }
+  }
+  if (Array.isArray(variant?.images)) variant.images.forEach(push)
+  else push(variant?.images)
+  if (variant?.image) push(variant.image)
+  if (Array.isArray(product?.images)) product.images.forEach(push)
+  else push(product?.images)
+  push(product?.coverImage)
+  push(product?.common_image)
+  push(product?.image)
+  push(product?.thumbnail)
+  push(product?.product_image)
+  if (!out.length) out.push(getProductImage(product) || FALLBACK_IMG)
+  return out
+}
+
+/** False only when we know the product has no stock. */
+export function isInStock(product: any): boolean {
+  if (product?.inStock === false) return false
+  if (typeof product?.totalStock === 'number') return product.totalStock > 0
+  return true
 }

@@ -1,4 +1,5 @@
 import api from './api'
+import { cachedRequest, invalidateRequests, stableKey } from '../utils/requestCache'
 
 const PRODUCTS_URL = '/api/v1/products'
 
@@ -149,6 +150,13 @@ function normalizeProduct(raw: any): any {
     careInstructions: Array.isArray(raw.care_instructions) ? raw.care_instructions.map((c: any) => c.instruction_text ?? c) : [],
     variants: Array.isArray(raw.variants) ? raw.variants.map(normalizeVariant) : [],
     minPrice: parseFloat(raw.min_price ?? raw.minPrice ?? raw.starting_price ?? raw.price ?? raw.discount_price) || 0,
+    // List responses carry total_stock; detail responses carry variants.
+    totalStock: raw.total_stock != null ? Number(raw.total_stock) || 0 : null,
+    inStock: raw.total_stock != null
+      ? Number(raw.total_stock) > 0
+      : Array.isArray(raw.variants) && raw.variants.length > 0
+        ? raw.variants.some((v: any) => v.is_active !== false && Number(v.stock_quantity ?? v.stock ?? 0) > 0)
+        : true,
     price: parseFloat(raw.price ?? raw.max_price ?? raw.mrp) || 0,
     rawMinPrice: raw.min_price,
     rawPrice: raw.price,
@@ -200,8 +208,10 @@ function toArray(data: any): any[] {
 
 export const productService = {
   list: (params?: ProductListParams) =>
-    api.get(`${PRODUCTS_URL}/`, { params }).then((r) =>
-      toArray(unwrapData<any>(r as any)).map(normalizeProduct),
+    cachedRequest(`products:list:${stableKey(params)}`, () =>
+      api.get(`${PRODUCTS_URL}/`, { params }).then((r) =>
+        toArray(unwrapData<any>(r as any)).map(normalizeProduct),
+      ),
     ),
 
   /** Every product with variants inline, for the admin catalog (100 per request). */
@@ -217,20 +227,22 @@ export const productService = {
   },
 
   listPaginated: (params?: ProductListParams) =>
-    api.get(`${PRODUCTS_URL}/`, { params }).then((r) => {
-      const data = unwrapData<any>(r as any)
-      return {
-        results: toArray(data).map(normalizeProduct),
-        count: data?.count ?? data?.total ?? data?.results?.length ?? 0,
-        next: data?.next ?? null,
-        previous: data?.previous ?? null,
-      }
-    }),
+    cachedRequest(`products:page:${stableKey(params)}`, () =>
+      api.get(`${PRODUCTS_URL}/`, { params }).then((r) => {
+        const data = unwrapData<any>(r as any)
+        return {
+          results: toArray(data).map(normalizeProduct),
+          count: data?.count ?? data?.total ?? data?.results?.length ?? 0,
+          next: data?.next ?? null,
+          previous: data?.previous ?? null,
+        }
+      }),
+    ),
 
   create: (formData: FormData) =>
-    api.post(`${PRODUCTS_URL}/create/`, formData, {
+    (invalidateRequests('products:'), api.post(`${PRODUCTS_URL}/create/`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => normalizeProduct(unwrapData<any>(r as any))),
+    }).then((r) => normalizeProduct(unwrapData<any>(r as any)))),
 
   getById: (id: number) =>
     api.get(`${PRODUCTS_URL}/${id}/`).then((r) => {
@@ -246,12 +258,14 @@ export const productService = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }).then((r) => {
       productByIdCache.delete(id)
+      invalidateRequests('products:')
       return normalizeProduct(unwrapData<any>(r as any))
     }),
 
   delete: (id: number) =>
     api.delete(`${PRODUCTS_URL}/${id}/delete/`).then((r) => {
       productByIdCache.delete(id)
+      invalidateRequests('products:')
       return r.data
     }),
 

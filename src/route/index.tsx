@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { lazy as reactLazy, Suspense, type ComponentType, type ReactNode } from 'react'
 import { RouteLoader } from '../components/LoadingScreen/RouteLoader'
 import { LEGACY_ADMIN_PATHS } from './adminPaths'
+import RouteMeta from './RouteMeta'
 import WebsiteGate from '../pages/WebsiteGate'
 import AuthGuard from '../components/AuthGuard'
 import AdminGuard from '../components/AdminGuard'
@@ -74,6 +75,8 @@ const AdminTradeInDashboard = lazy(() => import('../pages/AdminTradeInDashboard'
 const AdminLoginPage = lazy(() => import('../pages/AdminLoginPage'))
 const ProductEditorPage = lazy(() => import('../pages/ProductEditorPage'))
 const CategoryEditorPage = lazy(() => import('../pages/CategoryEditorPage'))
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'))
+const PolicyPage = lazy(() => import('../pages/PolicyPage'))
 
 // Admin-only pages. Routed under /admin/* and protected by AdminGuard, which
 // itself is enforced server-side by IsAdminUser on every API call.
@@ -111,6 +114,7 @@ const legacyAdminRedirects: { from: string; to: string }[] = LEGACY_ADMIN_PATHS.
 export default function AppRoutes() {
   return (
     <Suspense fallback={<RouteLoader />}>
+    <RouteMeta />
     <Routes>
       {/* Admin area */}
       <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -140,7 +144,10 @@ export default function AppRoutes() {
       <Route path="/book-repair/:issue" element={<BookRepair />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<RegisterPage />} />
-      <Route path="/notifications" element={<MobileNotifications />} />
+      <Route path="/notifications" element={<AuthGuard><MobileNotifications /></AuthGuard>} />
+      {['/privacy-policy', '/terms', '/refund-policy', '/shipping-policy'].map((path) => (
+        <Route key={path} path={path} element={<PolicyPage />} />
+      ))}
 
       {/* Customer-only (authenticated) */}
       <Route path="/cart" element={<AuthGuard><CartGate /></AuthGuard>} />
@@ -155,7 +162,7 @@ export default function AppRoutes() {
       <Route path="/my-repairs/:id" element={<AuthGuard><RepairDetailPage /></AuthGuard>} />
       <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
 
-      <Route path="*" element={<WebsiteGate />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
     </Suspense>
   )

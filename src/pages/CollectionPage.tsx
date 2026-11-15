@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   ArrowLeftRight,
@@ -34,10 +35,10 @@ const PAGE_SIZE = 12
 const BRANDS_SHOWN = 5
 
 const SORT_OPTIONS = [
-  { value: 'popular', label: 'Popular', ordering: '-rating' },
-  { value: 'newest', label: 'Newest', ordering: '-created' },
-  { value: 'price-asc', label: 'Price: Low to High', ordering: 'price' },
-  { value: 'price-desc', label: 'Price: High to Low', ordering: '-price' },
+  { value: 'popular', label: 'Popular', ordering: '-review_count' },
+  { value: 'newest', label: 'Newest', ordering: '-created_at' },
+  { value: 'price-asc', label: 'Price: Low to High', ordering: 'min_price' },
+  { value: 'price-desc', label: 'Price: High to Low', ordering: '-min_price' },
 ]
 
 const COLLECTION_TABS = [
@@ -45,6 +46,7 @@ const COLLECTION_TABS = [
   { value: 'new', label: 'New Arrivals' },
   { value: 'trending', label: 'Trending' },
   { value: 'popular', label: 'Featured' },
+  { value: 'refurbished', label: 'Refurbished' },
 ]
 
 const HERO_FEATURES = [
@@ -67,6 +69,7 @@ function getTabParams(tab: string): Record<string, boolean> {
   if (tab === 'new') return { is_new_arrival: true }
   if (tab === 'trending') return { is_trending: true }
   if (tab === 'popular') return { is_featured: true }
+  if (tab === 'refurbished') return { is_refurbished: true }
   return {}
 }
 
@@ -120,8 +123,9 @@ function CollectionCard({
   const off = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0
   const badge = badgeOf(product, off)
   const name = String(product.name ?? product.product_name ?? '')
-  const stockKnown = Array.isArray(product.variants) && product.variants.length > 0
-  const outOfStock = stockKnown && isOutOfStock(product)
+  const hasVariants = Array.isArray(product.variants) && product.variants.length > 0
+  const stockKnown = hasVariants || typeof product.totalStock === 'number'
+  const outOfStock = hasVariants ? isOutOfStock(product) : product.totalStock === 0
   const label = product.brand || badge?.label || ''
   const to = `/product/${product.id}`
 
@@ -242,6 +246,7 @@ export default function CollectionPage() {
 
   const isAll = categoryName === 'all' || !categoryName
   const title = isAll ? 'All Products' : categoryName
+  usePageMeta({ title, description: `Shop ${isAll ? 'phones and accessories' : categoryName} at PhoneFix — genuine products, fast delivery and easy returns.` })
 
   /* Reset filters when the category / collection / search changes */
   useEffect(() => {
@@ -288,7 +293,7 @@ export default function CollectionPage() {
   /* Products for the current page */
   useEffect(() => {
     let cancelled = false
-    const ordering = SORT_OPTIONS.find((o) => o.value === sortBy)?.ordering || '-created'
+    const ordering = SORT_OPTIONS.find((o) => o.value === sortBy)?.ordering || '-created_at'
     const key = `${scope}|${sortBy}|${brandFilter.join(',')}|${price ? `${price.min}-${price.max}` : 'any'}|${page}`
     const cached = pageCache[key]
     if (cached) {
@@ -419,11 +424,19 @@ export default function CollectionPage() {
         <section className="cv-hero">
           <div className="cv-hero-copy">
             <span className="cv-pill">{title} Collection</span>
-            <h1>
-              Latest {title}
-              <br />
-              <span>for Every Need</span>
-            </h1>
+            {isAll ? (
+              <h1>
+                Every Phone &amp; Accessory
+                <br />
+                <span>in One Place</span>
+              </h1>
+            ) : (
+              <h1>
+                Latest {title}
+                <br />
+                <span>for Every Need</span>
+              </h1>
+            )}
             <p>Top brands, new launches and the best deals — only at PhoneFix.</p>
             <div className="cv-hero-actions">
               <button type="button" className="cv-btn cv-btn-dark" onClick={scrollToGrid}>

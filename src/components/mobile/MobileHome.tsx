@@ -20,7 +20,6 @@ import MobileCartBarActions from './MobileCartBarActions'
 import { useBootHold } from '../LoadingScreen/bootLoader'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
-import { productsData } from '../../data/productData'
 import '../../pages/HomeTheme.css'
 
 type Slide = { id?: number; title?: string; subtitle?: string; image?: string; link?: string }
@@ -47,17 +46,9 @@ let sharedCachedData: {
   recommended: any[]
 } | null = null
 
-const fallbackCategories: Category[] = [
-  { id: 1, name: 'Smartphones', image: null, status: 'active', products: 20, sub_category_count: 0, created: '', subcategories: [] },
-  { id: 2, name: 'Accessories', image: null, status: 'active', products: 15, sub_category_count: 0, created: '', subcategories: [] },
-  { id: 3, name: 'Tablets', image: null, status: 'active', products: 8, sub_category_count: 0, created: '', subcategories: [] },
-  { id: 4, name: 'Audio', image: null, status: 'active', products: 12, sub_category_count: 0, created: '', subcategories: [] },
-  { id: 5, name: 'Wearables', image: null, status: 'active', products: 10, sub_category_count: 0, created: '', subcategories: [] },
-  { id: 6, name: 'Chargers', image: null, status: 'active', products: 7, sub_category_count: 0, created: '', subcategories: [] },
-]
 
 export default function MobileHome() {
-  const [categories, setCategories] = useState<Category[]>(() => sharedCachedData?.categories ?? fallbackCategories)
+  const [categories, setCategories] = useState<Category[]>(() => sharedCachedData?.categories ?? [])
   const [heroSlides] = useState<Slide[]>(HERO_SLIDES)
   const [flashSale, setFlashSale] = useState<any[]>(() => sharedCachedData?.flashSale ?? [])
   const [trending, setTrending] = useState<any[]>(() => sharedCachedData?.trending ?? [])
@@ -86,32 +77,22 @@ export default function MobileHome() {
 
       if (cancelled) return
 
-      const activeCats = cats.filter((c) => c.status === 'active')
+      // Only real catalog data: a section with nothing to show is hidden, never filled with mock items.
+      const activeCats = cats.filter((c) => c.status === 'active' && (c.products ?? 0) > 0)
       const deals = all.filter((p) => {
         const v = (p.variants || [])[0]
         return v && v.discountPrice > 0 && v.discountPrice < v.price
       })
 
-      const finalCategories = activeCats.length > 0 ? activeCats : fallbackCategories
-      const finalTrending = trend.length > 0 ? trend.slice(0, 10) : productsData.filter((p) => p.trending).slice(0, 10)
-      const finalBestSellers = best.length > 0 ? best.slice(0, 10) : productsData.filter((p) => p.bestSelling).slice(0, 10)
-      const finalNewArrivals = fresh.length > 0 ? fresh.slice(0, 10) : productsData.filter((p) => p.newArrival).slice(0, 10)
-      const finalFeatured = feat.length > 0 ? feat.slice(0, 10) : productsData.filter((p) => p.featured).slice(0, 10)
-      const finalRefurbished = refurb.length > 0 ? refurb.slice(0, 10) : productsData.filter((p) => p.refurbished).slice(0, 10)
-      const finalRecommended = all.length > 0 ? all.slice(0, 10) : productsData.slice(0, 10)
-
       sharedCachedData = {
-        categories: finalCategories,
-        flashSale: deals.length > 0 ? deals.slice(0, 10) : productsData.filter((p) => {
-          const v = (p.variants || [])[0]
-          return v && v.discountPrice > 0 && v.discountPrice < v.price
-        }).slice(0, 10),
-        trending: finalTrending,
-        bestSellers: finalBestSellers,
-        newArrivals: finalNewArrivals,
-        featured: finalFeatured,
-        refurbished: finalRefurbished,
-        recommended: finalRecommended,
+        categories: activeCats,
+        flashSale: deals.slice(0, 10),
+        trending: trend.slice(0, 10),
+        bestSellers: best.slice(0, 10),
+        newArrivals: fresh.slice(0, 10),
+        featured: feat.slice(0, 10),
+        refurbished: refurb.slice(0, 10),
+        recommended: all.slice(0, 10),
       }
 
       setCategories(sharedCachedData.categories)
@@ -140,9 +121,9 @@ export default function MobileHome() {
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-title-sm font-extrabold text-[#1F2937] leading-snug tracking-tight">
-          Welcome to Mobile Shop 👋
-        </p>
+        <h1 className="text-title-sm font-extrabold text-[#1F2937] leading-snug tracking-tight">
+          Welcome to PhoneFix 👋
+        </h1>
         <p className="text-label text-[#6B7280] mt-1 leading-snug font-medium">
           Find the best phones, accessories & deals — all in one place.
         </p>

@@ -9,17 +9,50 @@ export interface CheckoutCoupon {
 }
 
 /**
- * Checkout totals, mirroring the server's order pricing: tax and delivery are
- * charged on the item subtotal, and a coupon comes off the final amount.
+ * Checkout totals, mirroring the server's order_totals(): listed prices
+ * INCLUDE GST, so GST is shown as the included share and never added on top.
+ * Delivery is decided on the item subtotal; a coupon comes off the price.
  */
 export function computeTotals(items: { price: number; quantity: number }[], couponDiscount = 0) {
   const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
   const quantity = items.reduce((s, i) => s + i.quantity, 0)
   const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
-  const tax = Math.round(subtotal * TAX_RATE * 100) / 100
-  const discount = Math.min(couponDiscount, subtotal)
-  const total = Math.max(0, subtotal + shipping + tax - discount)
+  const discount = Math.min(Math.max(couponDiscount, 0), subtotal)
+  const payable = subtotal - discount
+  const tax = includedGst(payable)
+  const total = Math.max(0, payable + shipping)
   return { subtotal, quantity, shipping, tax, discount, total }
+}
+
+/** GST contained in a tax-inclusive amount. */
+export function includedGst(amount: number, rate = TAX_RATE): number {
+  if (!(amount > 0)) return 0
+  return Math.round(((amount * rate) / (1 + rate)) * 100) / 100
+}
+
+/** Label for the GST line, e.g. "Incl. GST (18%)". */
+export function gstLabel(ratePercent: number = Math.round(TAX_RATE * 100)): string {
+  return `Incl. GST (${Number(ratePercent.toFixed(2))}%)`
+}
+
+/**
+ * The GST % an order was actually charged. New orders store it; for older
+ * orders (tax added on top of the subtotal) it is derived from the amounts.
+ */
+export function orderTaxRate(order: { tax_rate?: unknown; taxRate?: unknown; tax?: unknown; subtotal?: unknown }): number {
+  const stored = Number(order.tax_rate ?? order.taxRate)
+  if (stored > 0) return stored
+  const tax = Number(order.tax) || 0
+  const subtotal = Number(order.subtotal) || 0
+  if (tax > 0 && subtotal > 0) return Math.round((tax / subtotal) * 100)
+  return Math.round(TAX_RATE * 100)
+}
+
+/** Old orders had GST added on top; new ones include it. */
+export function orderTaxLabel(order: Parameters<typeof orderTaxRate>[0]): string {
+  const rate = orderTaxRate(order)
+  const included = Number(order.tax_rate ?? order.taxRate) > 0
+  return included ? gstLabel(rate) : `GST (${rate}%)`
 }
 
 export function readCheckoutCoupon(): CheckoutCoupon | null {

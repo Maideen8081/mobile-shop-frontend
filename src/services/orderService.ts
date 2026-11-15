@@ -84,6 +84,7 @@ export interface OrderResponse {
   subtotal: string
   shipping_charge: string
   tax: string
+  tax_rate?: string | null
   delivery_status: string
   payment_status: string
   payment_status_display: string
@@ -132,6 +133,7 @@ function normalizeOrder(raw: Record<string, unknown>): OrderResponse {
     subtotal: String(raw.subtotal ?? '0'),
     shipping_charge: String(raw.shipping_charge ?? raw.shipping ?? '0'),
     tax: String(raw.tax ?? '0'),
+    tax_rate: raw.tax_rate == null ? null : String(raw.tax_rate),
     delivery_status: normalizeStatus(String(raw.delivery_status ?? raw.status ?? 'Order Placed')),
     payment_status: String(raw.payment_status ?? 'pending'),
     payment_status_display: String(raw.payment_status_display ?? raw.payment_status ?? 'Pending'),
@@ -214,6 +216,13 @@ export const orderService = {
   /** Admin status change: throws with the server's message on rejection. */
   adminUpdateStatus: async (orderNumber: string, orderStatus: string): Promise<OrderResponse> => {
     const r = await api.put(`${BASE}/update-status/${orderNumber}/`, { status: orderStatus })
+    const body = r.data
+    return normalizeOrder(body?.success === true && 'data' in body ? body.data : body)
+  },
+
+  /** Customer cancels their own unshipped, unpaid order. Throws with the server's message. */
+  cancelMine: async (orderNumber: string, reason: string): Promise<OrderResponse> => {
+    const r = await api.post(`${BASE}/${encodeURIComponent(orderNumber)}/cancel/`, { reason })
     const body = r.data
     return normalizeOrder(body?.success === true && 'data' in body ? body.data : body)
   },

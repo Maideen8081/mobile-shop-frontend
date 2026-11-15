@@ -25,7 +25,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (opts?: { boot?: boolean }) => {
+    // On page load, skip the profile calls for guests (they only produce 403s),
+    // and never call the admin endpoint from the storefront.
+    const onAdmin = window.location.pathname.startsWith('/admin')
+    if (opts?.boot && !authService.isAuthenticated() && !onAdmin) {
+      setUser(null)
+      setIsAuthenticated(false)
+      setIsAdmin(false)
+      return
+    }
     try {
       const profile = await authService.getProfile({ skipAuthRedirect: true })
       localStorage.setItem('is_authenticated', 'true')
@@ -34,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAdmin(Boolean(profile.isAdmin))
     } catch {
       try {
+        if (!onAdmin) throw new Error('admin profile is only checked inside /admin')
         const adminProfile = await authService.getAdminProfile({ skipAuthRedirect: true })
         localStorage.setItem('is_authenticated', 'true')
         setUser(adminProfile)
@@ -53,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false
     ;(async () => {
       await bootstrapCsrf()
-      if (!cancelled) await refresh()
+      if (!cancelled) await refresh({ boot: true })
       if (!cancelled) setInitialized(true)
     })()
     return () => { cancelled = true }

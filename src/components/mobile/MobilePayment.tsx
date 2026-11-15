@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
+import { computeTotals, gstLabel } from '../../utils/checkout'
+import { COD_MAX_ORDER } from './cartLogic'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
@@ -14,9 +16,6 @@ const PURPLE_DEEP = '#3A1E52'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
-const FREE_SHIPPING_THRESHOLD = 1200
-const TAX_RATE = 0.12
-const DELIVERY_CHARGE = 49
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
 const emojiToImage: Record<string, string> = {
@@ -82,11 +81,14 @@ export default function MobilePayment() {
 
   const [checkoutCoupon, setCheckoutCoupon] = useState(readCheckoutCoupon)
 
-  const subtotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items])
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
-  const tax = Math.round(subtotal * TAX_RATE)
-  const discount = checkoutCoupon?.discount || 0
-  const grandTotal = subtotal + shipping + tax - discount
+  // One shared pricing function (GST included in prices), same as the server.
+  // grandTotal is declared below; canPlace/codBlocked are derived after it.
+  const { subtotal, shipping, tax, discount, total: grandTotal } = useMemo(
+    () => computeTotals(items, checkoutCoupon?.discount || 0),
+    [items, checkoutCoupon],
+  )
+  const codBlocked = grandTotal > COD_MAX_ORDER
+  const canPlace = selectedMethod === 'cod' && !codBlocked && items.length > 0
 
   if (cartLoading) {
     return (
@@ -118,9 +120,10 @@ export default function MobilePayment() {
       navigate('/login')
       return
     }
+    // Only Cash on Delivery is live; never pretend an online payment happened.
+    if (!canPlace) return
     setProcessing(true)
     try {
-      if (selectedMethod !== 'cod') await new Promise((resolve) => setTimeout(resolve, 2000))
       const isCod = selectedMethod === 'cod'
 
       const apiOrder = await orderService.create({
@@ -269,7 +272,7 @@ export default function MobilePayment() {
           <div className="space-y-1.5 text-caption">
             <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
             <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>Tax (GST)</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
+            <div className="flex justify-between text-[#6B7280]"><span>{gstLabel()}</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
             {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({checkoutCoupon?.code})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
           </div>
           <div className="h-px bg-[#EEF0F6] my-3" />
@@ -311,58 +314,23 @@ export default function MobilePayment() {
             })}
           </div>
 
-          {/* Contextual method panel */}
-          {selectedMethod === 'razorpay' && (
-            <div className={`${card} rounded-[18px] p-4 mt-2`}>
-              <p className="text-caption font-semibold text-[#6B7280] mb-3">Pay using UPI apps</p>
-              <div className="grid grid-cols-4 gap-2.5">
-                {[{ n: 'GPay', e: '🟢' }, { n: 'PhonePe', e: '🟣' }, { n: 'Paytm', e: '🔵' }, { n: 'UPI', e: '🅰️' }].map(a => (
-                  <button key={a.n} data-place-order onClick={handlePayment} disabled={processing}
-                    className="h-16 rounded-[14px] bg-[#FFFBFB] flex flex-col items-center justify-center gap-1 active:scale-95 transition disabled:opacity-60">
-                    <span className="text-xl">{a.e}</span>
-                    <span className="text-micro font-semibold text-[#1F2937]">{a.n}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-2 mt-3">
-                <input placeholder="enter UPI ID (name@bank)" className="flex-1 h-11 px-3 rounded-2xl text-label bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
-                <button data-place-order onClick={handlePayment} disabled={processing} className="h-11 px-5 rounded-2xl text-label font-bold text-white disabled:opacity-60"
-                  style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Pay</button>
-              </div>
-            </div>
+          {codBlocked && (
+            <p role="alert" className="mt-2 rounded-[14px] bg-amber-50 px-3 py-2.5 text-caption font-semibold text-amber-800">
+              Cash on Delivery is available for orders up to ₹{COD_MAX_ORDER.toLocaleString('en-IN')}. Online payments are launching soon, so please reduce this order to place it now.
+            </p>
           )}
-          {selectedMethod === 'card' && (
-            <div className={`${card} rounded-[18px] p-4 mt-2 space-y-3`}>
-              <div>
-                <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Card Number</label>
-                <input inputMode="numeric" placeholder="1234 5678 9012 3456" className="w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Expiry</label>
-                  <input placeholder="MM/YY" className="w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
-                </div>
-                <div>
-                  <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">CVV</label>
-                  <input placeholder="•••" className="w-full h-12 px-3.5 rounded-2xl text-body-sm bg-[#FFFBFB] border border-[#E5E7EB] outline-none" style={{ color: '#1F2937' }} />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span style={{ color: SUCCESS }}>🔒</span>
-          <p className="text-micro text-[#6B7280]">256-bit encrypted · PCI DSS compliant</p>
+          <p className="mt-2 text-micro text-[#6B7280]">
+            By placing this order you agree to our <a href="/terms" className="underline">Terms</a> and <a href="/refund-policy" className="underline">Refund Policy</a>.
+          </p>
         </div>
       </div>
 
       {/* Fixed pay button */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3">
-        <button data-place-order onClick={handlePayment} disabled={processing}
+        <button data-place-order onClick={handlePayment} disabled={processing || !canPlace}
           className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
-          {processing ? <><FiLoader size={18} className="animate-spin" /> PAYING…</> : <>Pay {formatPrice(grandTotal)}</>}
+          {processing ? <><FiLoader size={18} className="animate-spin" /> Placing order…</> : <>Place order · Pay {formatPrice(grandTotal)} on delivery</>}
         </button>
       </div>
 
