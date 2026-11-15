@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import ChatAssistantIcon from "../ecommerce/ChatAssistantIcon";
 import { useRingStepper } from "../../hooks/useRingStepper";
 import { WEB_PRODUCTS, WEB_REVIEWS, inr, shopUrl } from "../../data/websiteCatalog";
 import "../../styles/website-experience.css";
@@ -20,22 +19,22 @@ ScrollTrigger.config({ ignoreMobileResize: true });
 // pinned product ring, a coverflow shelf, stacking step cards and a swipe deck.
 
 const C = {
-  bg: "#07040a",
-  fg: "#f6efe9",
-  muted: "#8f8590",
-  border: "rgba(246,239,233,0.12)",
-  primary: "#ff3b4e",
-  accent: "#ff8a3d",
-  magenta: "#c2185b",
-  card: "#140910",
+  bg: "#160823",
+  fg: "#fff7f3",
+  muted: "#b9a7cc",
+  border: "rgba(255, 247, 243,0.12)",
+  primary: "#ffd014",
+  accent: "#d0adff",
+  magenta: "#7b3fd0",
+  card: "#1c0b2e",
 };
 
 const TAGS = ["All", ...Array.from(new Set(WEB_PRODUCTS.map((p) => p.tag)))];
 
 const STEPS: [string, string, string, string, string][] = [
-  ["01", "Bring it in", "Walk in or book a slot. No appointment needed for quick fixes.", "/phones/ios-b.png", "linear-gradient(150deg, #2a0f1a, #140910 70%)"],
-  ["02", "Free diagnosis", "We find the fault, quote it upfront and only start once you say yes.", "/products/repair-internals.png", "linear-gradient(150deg, #3a0d1c, #1a0910 70%)"],
-  ["03", "Fixed & covered", "Collect your phone with a 6-month warranty on the repair.", "/phones/gold.png", "linear-gradient(150deg, #ff3b4e, #c2185b 80%)"],
+  ["01", "Bring it in", "Walk in or book a slot. No appointment needed for quick fixes.", "/phones/ios-b.png", "linear-gradient(150deg, #2a0d4f, #1c0b2e 70%)"],
+  ["02", "Free diagnosis", "We find the fault, quote it upfront and only start once you say yes.", "/products/repair-internals.png", "linear-gradient(150deg, #3b1466, #1a0910 70%)"],
+  ["03", "Fixed & covered", "Collect your phone with a 6-month warranty on the repair.", "/phones/gold.png", "linear-gradient(150deg, #ffd014, #7b3fd0 80%)"],
 ];
 
 const STATS: [number, string, string, string][] = [
@@ -134,7 +133,7 @@ function DeckCard({ r, depth, onSwipe }: { r: Review; depth: number; onSwipe: ()
       dragElastic={0.9}
       style={{
         x, rotateZ, rotateY, zIndex: 20 - depth, touchAction: "pan-y",
-        background: "linear-gradient(160deg, #24101a, #14070d 70%)",
+        background: "linear-gradient(160deg, #241038, #14070d 70%)",
         border: `1px solid ${C.border}`,
         boxShadow: "0 30px 60px rgba(0,0,0,0.55)",
       }}
@@ -444,7 +443,7 @@ export default function MobileWebsiteExperience() {
       <div className="wem-loader fixed inset-0 z-[100] flex flex-col items-center justify-center" style={{ background: C.primary, color: C.bg, clipPath: "circle(150% at 50% 50%)" }}>
         <div className="wem-loader-inner flex flex-col items-center">
           <div className="font-display text-[28vw] font-extrabold leading-none tabular-nums">{count}%</div>
-          <div className="mt-3 h-[3px] w-40 overflow-hidden rounded-full" style={{ background: "rgba(7,4,10,0.2)" }}>
+          <div className="mt-3 h-[3px] w-40 overflow-hidden rounded-full" style={{ background: "rgba(22, 8, 35,0.2)" }}>
             <div className="h-full rounded-full" style={{ width: `${count}%`, background: C.bg }} />
           </div>
           <p className="mt-3 text-micro uppercase tracking-[0.3em]">Powering up the store</p>
@@ -455,14 +454,11 @@ export default function MobileWebsiteExperience() {
       <div className="wem-progress fixed inset-x-0 top-0 z-[60] h-[2px] origin-left scale-x-0" style={{ background: `linear-gradient(90deg, ${C.accent}, ${C.primary}, ${C.magenta})` }} />
 
       {/* Top bar */}
-      <header className="wem-header fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 pb-3 pt-[calc(env(safe-area-inset-top)+12px)]" style={{ background: "linear-gradient(to bottom, rgba(7,4,10,0.92), rgba(7,4,10,0.6) 70%, transparent)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
+      <header className="wem-header fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 pb-3 pt-[calc(env(safe-area-inset-top)+12px)]" style={{ background: "linear-gradient(to bottom, rgba(22, 8, 35,0.92), rgba(22, 8, 35,0.6) 70%, transparent)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" }}>
         <a href="#top" className="font-display text-lg font-bold tracking-tight" style={{ color: C.fg }}>
-          mobileshop<span style={{ color: C.primary }}>.</span>
+          PhoneFix<span style={{ color: C.primary }}>.</span>
         </a>
         <div className="flex items-center gap-2">
-          <Link to="/support" aria-label="Chat with PhoneFix Assistant" className="flex h-9 w-9 items-center justify-center rounded-full active:scale-90 transition" style={{ background: "rgba(246,239,233,0.08)", border: `1px solid ${C.border}` }}>
-            <ChatAssistantIcon size={20} />
-          </Link>
           <Link to="/home" className="wem-shine relative overflow-hidden rounded-full px-4 py-2 text-label font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg }}>
             Shop now
           </Link>
@@ -491,7 +487,7 @@ export default function MobileWebsiteExperience() {
           <div className="wem-hero-3d p3d relative flex items-center justify-center">
             <div className="wem-stage p3d relative flex items-center justify-center">
               <div className="wem-hero-phone relative" style={{ transform: "translateZ(40px)" }}>
-                <img src="/phones/ios-a.png" alt="" draggable={false} className="block h-[38svh] w-auto max-w-[58vw] select-none object-contain drop-shadow-[0_30px_60px_rgba(255,59,78,0.45)]" />
+                <img src="/phones/ios-a.png" alt="" draggable={false} className="block h-[38svh] w-auto max-w-[58vw] select-none object-contain drop-shadow-[0_30px_60px_rgba(123, 63, 208,0.45)]" />
                 <div className="wem-glare absolute inset-0" style={{ WebkitMaskImage: "url(/phones/ios-a.png)", maskImage: "url(/phones/ios-a.png)" }}>
                   <div className="wem-glare-beam" />
                 </div>
@@ -501,7 +497,7 @@ export default function MobileWebsiteExperience() {
                   {ORBIT.map((o, i) => (
                     <div key={o.src} className="p3d absolute" style={{ transform: `rotateY(${i * 120}deg) translateZ(44vw) rotateY(${-i * 120}deg) translateY(${o.y})` }}>
                       <div className="wem-orbit-face">
-                        <img src={o.src} alt="" draggable={false} className="wem-orbit-img block max-w-none select-none" style={{ width: o.w, marginLeft: `calc(${o.w} / -2)`, marginTop: `calc(${o.w} / -2)`, filter: "drop-shadow(0 16px 26px rgba(255,90,70,0.35))" }} />
+                        <img src={o.src} alt="" draggable={false} className="wem-orbit-img block max-w-none select-none" style={{ width: o.w, marginLeft: `calc(${o.w} / -2)`, marginTop: `calc(${o.w} / -2)`, filter: "drop-shadow(0 16px 26px rgba(255, 208, 20,0.35))" }} />
                       </div>
                     </div>
                   ))}
@@ -515,16 +511,16 @@ export default function MobileWebsiteExperience() {
           Phones, accessories and same-day repairs, all under one roof.
         </p>
         <div className="wem-hero-fade relative z-10 mt-6 grid w-full max-w-sm grid-cols-2 gap-3">
-          <Link to="/home" className="wem-shine relative flex h-12 items-center justify-center overflow-hidden rounded-full text-body font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg, boxShadow: "0 12px 30px rgba(255,59,78,0.35)" }}>
+          <Link to="/home" className="wem-shine relative flex h-12 items-center justify-center overflow-hidden rounded-full text-body font-semibold active:scale-95 transition" style={{ background: C.primary, color: C.bg, boxShadow: "0 12px 30px rgba(123, 63, 208,0.35)" }}>
             Shop now →
           </Link>
-          <Link to="/book-repair" className="flex h-12 items-center justify-center rounded-full text-body font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, color: C.fg, background: "rgba(246,239,233,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
+          <Link to="/book-repair" className="flex h-12 items-center justify-center rounded-full text-body font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, color: C.fg, background: "rgba(255, 247, 243,0.04)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}>
             Book repair
           </Link>
         </div>
         <div className="wem-hero-fade relative z-10 mt-6 flex flex-col items-center gap-2">
           {needsMotionPermission && !reduce ? (
-            <button onClick={enableMotion} className="rounded-full px-4 py-2 text-caption font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, background: "rgba(246,239,233,0.06)" }}>
+            <button onClick={enableMotion} className="rounded-full px-4 py-2 text-caption font-semibold active:scale-95 transition" style={{ border: `1px solid ${C.border}`, background: "rgba(255, 247, 243,0.06)" }}>
               ✦ Enable 3D motion
             </button>
           ) : (
@@ -568,7 +564,7 @@ export default function MobileWebsiteExperience() {
       {/* ══ LINEUP: pinned 3D ring ══ */}
       {!reduce && (
         <section id="lineup" className="wem-lineup relative flex h-[100svh] flex-col overflow-hidden pt-[calc(env(safe-area-inset-top)+72px)] pb-[calc(env(safe-area-inset-bottom)+20px)]">
-          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 40% at 50% 55%, rgba(194,24,91,0.35), transparent 70%)" }} />
+          <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 40% at 50% 55%, rgba(74, 36, 112,0.35), transparent 70%)" }} />
           <div className="relative px-5">
             <div className="mb-2 flex items-center gap-3 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>
               <span className="h-px w-10" style={{ background: C.primary }} />Chapter 01
@@ -580,8 +576,8 @@ export default function MobileWebsiteExperience() {
             <div className="wem-ring p3d relative h-0 w-0">
               {WEB_PRODUCTS.map((p) => (
                 <div key={p.slug} className="wem-ring-item p3d absolute" style={{ width: "44vw", maxWidth: 210, height: "min(58vw, 280px)", left: "calc(min(44vw, 210px) / -2)", top: "calc(min(58vw, 280px) / -2)" }}>
-                  <Link to={shopUrl(p.slug)} className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[26px] p-3" style={{ background: `linear-gradient(160deg, #2a111d, ${C.card} 65%)`, border: `1px solid ${C.border}`, backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
-                    <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,59,78,0.45), transparent 70%)" }} />
+                  <Link to={shopUrl(p.slug)} className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[26px] p-3" style={{ background: `linear-gradient(160deg, #2a1142, ${C.card} 65%)`, border: `1px solid ${C.border}`, backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", boxShadow: "0 30px 60px rgba(0,0,0,0.6)" }}>
+                    <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full" style={{ background: "radial-gradient(circle, rgba(123, 63, 208,0.45), transparent 70%)" }} />
                     <img src={p.src} alt={p.name} loading="lazy" draggable={false} className="max-h-[75%] max-w-[85%] object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.6)]" />
                     <span className="absolute bottom-3 left-3 rounded-full px-2.5 py-0.5 text-micro font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
                   </Link>
@@ -595,13 +591,13 @@ export default function MobileWebsiteExperience() {
                 onClick={() => stepRing(dir)}
                 aria-label={label === "prev" ? "Previous product" : "Next product"}
                 className={`absolute top-1/2 z-20 -mt-[22px] flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-md transition active:scale-90 ${side}`}
-                style={{ background: "rgba(7,4,10,0.45)", border: `1px solid ${C.border}`, color: C.fg }}
+                style={{ background: "rgba(22, 8, 35,0.45)", border: `1px solid ${C.border}`, color: C.fg }}
               >
                 <Icon size={22} strokeWidth={2} />
               </button>
             ))}
             {/* reflective floor */}
-            <div className="pointer-events-none absolute bottom-[6%] left-1/2 h-10 w-[70vw] -translate-x-1/2 rounded-[50%] blur-xl" style={{ background: "rgba(255,59,78,0.35)" }} />
+            <div className="pointer-events-none absolute bottom-[6%] left-1/2 h-10 w-[70vw] -translate-x-1/2 rounded-[50%] blur-xl" style={{ background: "rgba(123, 63, 208,0.35)" }} />
           </div>
 
           <div className="relative px-5" style={{ perspective: 600 }}>
@@ -653,7 +649,7 @@ export default function MobileWebsiteExperience() {
             <div key={`${tag}-${p.slug}`} className="w-[68vw] max-w-[300px] shrink-0 snap-center" style={{ perspective: 900 }}>
               <div className="h-full will-change-transform" style={{ transformStyle: "preserve-3d" }}>
                 <article className="wem-card-in relative flex h-full flex-col overflow-hidden rounded-[26px] p-4" style={{ animationDelay: `${Math.min(i, 3) * 70}ms`, background: `linear-gradient(160deg, #22101a, ${C.card} 60%)`, border: `1px solid ${C.border}`, boxShadow: "0 24px 50px rgba(0,0,0,0.5)" }}>
-                  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,59,78,0.35), transparent 70%)" }} />
+                  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full" style={{ background: "radial-gradient(circle, rgba(123, 63, 208,0.35), transparent 70%)" }} />
                   <span className="relative z-10 self-start rounded-full px-3 py-1 text-micro font-medium" style={{ border: `1px solid ${C.border}` }}>{p.tag}</span>
                   <div className="relative z-10 flex h-[38vw] max-h-[180px] items-center justify-center py-3">
                     <img src={p.src} alt={p.name} loading="lazy" draggable={false} className={`max-h-full max-w-[80%] object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)] transition-transform duration-700 ${i === shelfIdx ? "scale-110 -rotate-3" : ""}`} />
@@ -722,7 +718,7 @@ export default function MobileWebsiteExperience() {
       </section>
 
       {/* ══ REVIEWS: swipe deck ══ */}
-      <section id="reviews" className="pb-16" style={{ background: "linear-gradient(to bottom, transparent, #14060c 18%, #14060c 82%, transparent)" }}>
+      <section id="reviews" className="pb-16" style={{ background: "linear-gradient(to bottom, transparent, #1a0a2b 18%, #1a0a2b 82%, transparent)" }}>
         <div className="px-5 pt-6">
           <p className="wem-reveal mb-2 text-micro uppercase tracking-[0.3em]" style={{ color: C.primary }}>Customer reviews</p>
           <Split text="Loved by the neighbourhood." className="wem-rv block font-display text-headline font-bold leading-[1.02] tracking-tight" />
@@ -743,7 +739,7 @@ export default function MobileWebsiteExperience() {
 
       {/* ══ OUTRO ══ */}
       <section id="contact" className="wem-outro relative flex min-h-[85svh] flex-col items-center justify-center overflow-hidden px-5 pb-32 pt-16 text-center">
-        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 40% at 50% 45%, rgba(255,59,78,0.3), transparent 70%)" }} />
+        <div className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 40% at 50% 45%, rgba(123, 63, 208,0.3), transparent 70%)" }} />
         {[
           { src: "/phones/gold.png", cls: "left-[-6%] top-[4%] w-[22vw] max-w-[110px] opacity-80", speed: 1.3, depth: 1.6 },
           { src: "/products/earbuds-chrome.png", cls: "right-[2%] top-[12%] w-[24vw] max-w-[120px]", speed: 0.7, depth: 1 },
@@ -772,7 +768,7 @@ export default function MobileWebsiteExperience() {
         </div>
 
         <footer className="absolute inset-x-0 bottom-0 z-10 flex justify-between px-5 pb-[calc(env(safe-area-inset-bottom)+88px)] text-micro" style={{ color: C.muted }}>
-          <span>© {new Date().getFullYear()} mobileshop</span>
+          <span>© {new Date().getFullYear()} PhoneFix</span>
           <span>Phones · Accessories</span>
         </footer>
       </section>
@@ -783,7 +779,7 @@ export default function MobileWebsiteExperience() {
         style={{ transform: showBar ? "translateY(0)" : "translateY(120%)", transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)" }}
         aria-hidden={!showBar}
       >
-        <div className="flex items-center gap-3 rounded-full p-1.5 pl-5 shadow-[0_16px_40px_rgba(0,0,0,0.6)]" style={{ background: "rgba(26,11,18,0.88)", border: `1px solid ${C.border}`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
+        <div className="flex items-center gap-3 rounded-full p-1.5 pl-5 shadow-[0_16px_40px_rgba(0,0,0,0.6)]" style={{ background: "rgba(28, 11, 46,0.88)", border: `1px solid ${C.border}`, backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" }}>
           <div className="min-w-0 flex-1">
             <p className="truncate text-label font-semibold">Phones, audio & repairs</p>
             <p className="text-micro" style={{ color: C.muted }}>Free diagnosis · 6-mo warranty</p>

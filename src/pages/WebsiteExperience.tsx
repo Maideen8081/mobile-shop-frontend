@@ -105,27 +105,27 @@ export default function WebsiteExperience() {
   const rp = WEB_PRODUCTS[ringIdx] ?? WEB_PRODUCTS[0];
 
   return (
-    <div ref={root} className="we relative" style={{ background: "#07040a", color: "#f6efe9", overflowX: "hidden" }}>
+    <div ref={root} className="we relative" style={{ background: "#160823", color: "#fff7f3", overflowX: "hidden" }}>
       {/* Nav */}
       <header className="we-nav fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-4 md:px-10">
-        <Link to="/home" className="font-display text-xl font-bold tracking-tight" style={{ color: "#f6efe9" }}>
-          mobileshop<span style={{ color: "#ff3b4e" }}>.</span>
+        <Link to="/home" className="font-display text-xl font-bold tracking-tight" style={{ color: "#fff7f3" }}>
+          PhoneFix<span style={{ color: "#ffd014" }}>.</span>
         </Link>
-        <Link to="/home" className="magnet rounded-full px-5 py-2 text-sm font-medium transition hover:opacity-90" style={{ background: "#ff3b4e", color: "#07040a" }}>
+        <Link to="/home" className="magnet rounded-full px-5 py-2 text-sm font-medium transition hover:opacity-90" style={{ background: "#ffd014", color: "#160823" }}>
           Continue purchase →
         </Link>
       </header>
 
       {/* Scroll progress bar */}
-      <div className="we-progress fixed inset-x-0 top-0 z-[90] h-[3px] origin-left scale-x-0" style={{ background: "linear-gradient(to right, #ff3b4e, #ff8a3d, #c2185b)" }} />
+      <div className="we-progress fixed inset-x-0 top-0 z-[90] h-[3px] origin-left scale-x-0" style={{ background: "linear-gradient(to right, #ffd014, #d0adff, #7b3fd0)" }} />
       {/* Custom cursor */}
-      <div className="we-cursor pointer-events-none fixed left-0 top-0 z-[95] -ml-3 -mt-3 hidden h-6 w-6 rounded-full opacity-0 mix-blend-difference md:block" style={{ border: "1px solid #f6efe9" }} />
+      <div className="we-cursor pointer-events-none fixed left-0 top-0 z-[95] -ml-3 -mt-3 hidden h-6 w-6 rounded-full opacity-0 mix-blend-difference md:block" style={{ border: "1px solid #fff7f3" }} />
 
       {/* ══ 3D PRODUCT RING ══ */}
-      <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-20" style={{ background: "#07040a" }}>
-        <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(255,59,78,0.35), transparent 65%)" }} />
+      <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-20" style={{ background: "#160823" }}>
+        <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(123, 63, 208,0.35), transparent 65%)" }} />
         <div className="relative z-10 w-full px-5 md:px-10">
-          <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "#ff3b4e" }}>In store now · scroll, swipe or use ← → to spin</p>
+          <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "#ffd014" }}>In store now · scroll, swipe or use ← → to spin</p>
         </div>
         <div ref={stage} className="relative z-10 min-h-0 w-full flex-1 select-none" style={{ perspective: 1900, touchAction: "pan-y" }}>
           <div className="we-ring preserve-3d absolute left-1/2 top-1/2 h-0 w-0">
@@ -147,8 +147,8 @@ export default function WebsiteExperience() {
               type="button"
               onClick={() => step(dir)}
               aria-label={label === "prev" ? "Previous product" : "Next product"}
-              className={`absolute top-1/2 z-20 -mt-7 flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition hover:scale-105 hover:border-[#ff3b4e] hover:text-[#ff3b4e] active:scale-95 ${side}`}
-              style={{ background: "rgba(246,239,233,0.06)", border: "1px solid rgba(246,239,233,0.16)", color: "#f6efe9" }}
+              className={`absolute top-1/2 z-20 -mt-7 flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition hover:scale-105 hover:border-[#ffd014] hover:text-[#ffd014] active:scale-95 ${side}`}
+              style={{ background: "rgba(255, 247, 243,0.06)", border: "1px solid rgba(255, 247, 243,0.16)", color: "#fff7f3" }}
             >
               <Icon size={26} strokeWidth={1.75} />
             </button>
@@ -156,18 +156,18 @@ export default function WebsiteExperience() {
         </div>
         <div className="relative z-10 w-full max-w-xl px-5 text-center">
           <div key={rp.slug}>
-            <span className="rounded-full px-3 py-1 text-xs" style={{ border: "1px solid rgba(246,239,233,0.12)", color: "#f6efe9" }}>{rp.tag}</span>
-            <h3 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl" style={{ color: "#f6efe9" }}>{rp.name}</h3>
-            <p className="mt-2" style={{ color: "#8f8590" }}>{rp.blurb}</p>
-            <div className="mt-2 font-display text-3xl" style={{ color: "#ff3b4e" }}>{inr(rp.price)}</div>
+            <span className="rounded-full px-3 py-1 text-xs" style={{ border: "1px solid rgba(255, 247, 243,0.12)", color: "#fff7f3" }}>{rp.tag}</span>
+            <h3 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl" style={{ color: "#fff7f3" }}>{rp.name}</h3>
+            <p className="mt-2" style={{ color: "#b9a7cc" }}>{rp.blurb}</p>
+            <div className="mt-2 font-display text-3xl" style={{ color: "#ffd014" }}>{inr(rp.price)}</div>
           </div>
-          <Link to={shopUrl(rp.slug)} className="magnet mt-4 inline-block rounded-full px-8 py-3 font-medium transition hover:opacity-80" style={{ background: "#ff3b4e", color: "#07040a" }}>
+          <Link to={shopUrl(rp.slug)} className="magnet mt-4 inline-block rounded-full px-8 py-3 font-medium transition hover:opacity-80" style={{ background: "#ffd014", color: "#160823" }}>
             Continue purchase →
           </Link>
           <div className="mt-2 flex justify-center">
             {WEB_PRODUCTS.map((p, i) => (
               <button key={p.slug} type="button" onClick={() => goTo(i)} aria-label={`Show ${p.name}`} aria-current={i === ringIdx} className="px-[3px] py-2">
-                <span className="block h-1.5 rounded-full transition-all" style={{ width: i === ringIdx ? 32 : 6, background: i === ringIdx ? "#ff3b4e" : "rgba(246,239,233,0.12)" }} />
+                <span className="block h-1.5 rounded-full transition-all" style={{ width: i === ringIdx ? 32 : 6, background: i === ringIdx ? "#ffd014" : "rgba(255, 247, 243,0.12)" }} />
               </button>
             ))}
           </div>
@@ -176,7 +176,7 @@ export default function WebsiteExperience() {
 
       {/* Run-out so the last product isn't the page end: landing on it (scroll, arrows, dots)
           shouldn't fire the redirect — scrolling on past it does. */}
-      <div className="flex h-[35vh] items-center justify-center text-xs uppercase tracking-[0.3em]" style={{ color: "#8f8590" }}>
+      <div className="flex h-[35vh] items-center justify-center text-xs uppercase tracking-[0.3em]" style={{ color: "#b9a7cc" }}>
         Keep scrolling to enter the store ↓
       </div>
 

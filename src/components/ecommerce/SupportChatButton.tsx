@@ -133,9 +133,9 @@ export default function SupportChatButton() {
   /* Decide popup position: left or right of button */
   const popupOnLeft = pos.x > window.innerWidth / 2
 
-  // The mobile website has its own chat link in the top bar.
-  // Shopper-facing assistant: hidden in the admin console, where it covers table actions.
-  if (pathname === '/support' || isAdminPath(pathname) || (isMobile && pathname === '/')) return null
+  // Hidden on the intro page (/), the support page itself, and the admin console
+  // (where it covers table actions).
+  if (pathname === '/' || pathname === '/support' || isAdminPath(pathname)) return null
 
   const showPopup = hovered && !dragging.current
 

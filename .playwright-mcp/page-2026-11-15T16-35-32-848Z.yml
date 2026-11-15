@@ -1,0 +1,65 @@
+- generic [active] [ref=f26e1]:
+  - generic [ref=f26e2]:
+    - generic [ref=f26e4]:
+      - banner [ref=f26e5]:
+        - generic [ref=f26e11]:
+          - generic [ref=f26e12]: PhoneFix Pro
+          - generic [ref=f26e13]: Your tech store
+        - generic [ref=f26e14]: Live
+      - main [ref=f26e16]:
+        - progressbar "Loading PhoneFix Pro" [ref=f26e19]
+        - generic [ref=f26e27]:
+          - generic [ref=f26e28]: 0%
+          - paragraph [ref=f26e30]: Warming up the store
+          - paragraph [ref=f26e31]: Filling your bag with the best deals
+      - contentinfo [aria-hidden] [ref=f26e32]
+    - generic [ref=f26e36]:
+      - banner [ref=f26e37]:
+        - link "PhoneFix." [ref=f26e38] [cursor=pointer]:
+          - /url: /home
+        - link "Continue purchase →" [ref=f26e39] [cursor=pointer]:
+          - /url: /home
+      - generic [ref=f26e41]:
+        - paragraph [ref=f26e43]: In store now · scroll, swipe or use ← → to spin
+        - generic [ref=f26e44]:
+          - generic:
+            - img "Flagship 5G Phone" [ref=f26e47]
+            - img "Cloud ANC Headphones" [ref=f26e50]
+            - img "Chrome ANC Earbuds" [ref=f26e53]
+            - img "42,800mAh Power Bank" [ref=f26e56]
+            - img "Studio Over-Ear" [ref=f26e59]
+            - img "20W PD Charger + Cable" [ref=f26e62]
+            - img "Punch Buds" [ref=f26e65]
+            - img "USB-C to Lightning" [ref=f26e68]
+            - img "Power-Case Buds" [ref=f26e71]
+          - button "Previous product" [ref=f26e72]
+          - button "Next product" [ref=f26e75]
+        - generic [ref=f26e78]:
+          - generic [ref=f26e79]:
+            - text: Phones
+            - heading "Flagship 5G Phone" [level=3] [ref=f26e80]
+            - paragraph [ref=f26e81]: AMOLED display, fast charging, 256GB.
+            - generic [ref=f26e82]: ₹42,999
+          - link "Continue purchase →" [ref=f26e83] [cursor=pointer]:
+            - /url: /home?product=phone-10t
+          - generic [ref=f26e84]:
+            - button "Show Flagship 5G Phone" [ref=f26e85]
+            - button "Show Cloud ANC Headphones" [ref=f26e87]
+            - button "Show Chrome ANC Earbuds" [ref=f26e89]
+            - button "Show 42,800mAh Power Bank" [ref=f26e91]
+            - button "Show Studio Over-Ear" [ref=f26e93]
+            - button "Show 20W PD Charger + Cable" [ref=f26e95]
+            - button "Show Punch Buds" [ref=f26e97]
+            - button "Show USB-C to Lightning" [ref=f26e99]
+            - button "Show Power-Case Buds" [ref=f26e101]
+      - generic [ref=f26e103]: Keep scrolling to enter the store ↓
+  - generic [ref=f26e104]:
+    - generic [aria-hidden]:
+      - generic:
+        - generic: AI COMPANION
+        - generic: Online
+      - paragraph: Hey there! 👋
+      - paragraph: I'm Fixie, your PhoneFix AI assistant. Ask me anything about repairs, orders, or devices.
+      - button: Chat with Fixie →
+    - button "Open the PhoneFix AI assistant" [ref=f26e105]:
+      - generic [aria-hidden]: AI
