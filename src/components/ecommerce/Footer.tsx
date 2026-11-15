@@ -1,3 +1,4 @@
+import { BUSINESS, POLICY_LINKS } from '../../config/business'
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone, Wrench } from 'lucide-react'
@@ -34,28 +35,31 @@ const columns = [
 ]
 
 // Swap these for the shop's own social pages when they exist.
-export const socials = [
+const ALL_SOCIALS = [
   {
     label: 'WhatsApp',
-    href: 'https://wa.me/919876543210',
+    href: BUSINESS.whatsappUrl,
     path: 'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z',
   },
   {
     label: 'Instagram',
-    href: 'https://www.instagram.com/',
+    href: BUSINESS.instagramUrl,
     path: 'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4ZM21.9 7.9a6 6 0 0 0-1.6-4.2A6 6 0 0 0 16 2.1C14.4 2 9.6 2 8 2.1a6 6 0 0 0-4.2 1.6A6 6 0 0 0 2.1 8C2 9.6 2 14.4 2.1 16a6 6 0 0 0 1.6 4.2A6 6 0 0 0 8 21.9c1.6.1 6.4.1 8 0a6 6 0 0 0 4.2-1.6 6 6 0 0 0 1.6-4.2c.1-1.6.1-6.4 0-8Zm-2.1 9.9a3.3 3.3 0 0 1-1.9 1.9c-1.3.5-4.4.4-5.9.4s-4.6.1-5.9-.4a3.3 3.3 0 0 1-1.9-1.9c-.5-1.3-.4-4.4-.4-5.8s-.1-4.6.4-5.9a3.3 3.3 0 0 1 1.9-1.9C7.4 3.7 10.5 3.8 12 3.8s4.6-.1 5.9.4a3.3 3.3 0 0 1 1.9 1.9c.5 1.3.4 4.4.4 5.9s.1 4.5-.4 5.8Z',
   },
   {
     label: 'Facebook',
-    href: 'https://www.facebook.com/',
+    href: BUSINESS.facebookUrl,
     path: 'M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z',
   },
   {
     label: 'YouTube',
-    href: 'https://www.youtube.com/',
+    href: BUSINESS.youtubeUrl,
     path: 'M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8ZM9.8 15V9l5.8 3-5.8 3Z',
   },
 ]
+
+/** Only accounts that are actually configured; never a generic platform home page. */
+export const socials = ALL_SOCIALS.filter((s) => s.href)
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -132,9 +136,9 @@ export default function EcommerceFooter() {
           <div className="pff-connect">
             <h2>Connect With Us</h2>
             <ul>
-              <li><a href="mailto:support@phonefixpro.com"><Mail size={15} /> support@phonefixpro.com</a></li>
-              <li><a href="tel:+919876543210"><Phone size={15} /> +91 98765 43210</a></li>
-              <li><span><MapPin size={15} /> Chennai, Tamil Nadu</span></li>
+              <li><a href={`mailto:${BUSINESS.email}`}><Mail size={15} /> {BUSINESS.email}</a></li>
+              {BUSINESS.phoneTel && <li><a href={`tel:${BUSINESS.phoneTel}`}><Phone size={15} /> {BUSINESS.phoneDisplay}</a></li>}
+              <li><span><MapPin size={15} /> {BUSINESS.city}</span></li>
             </ul>
             <div className="pff-social">
               {socials.map((s) => (
@@ -146,7 +150,10 @@ export default function EcommerceFooter() {
           </div>
         </div>
 
-        <p className="pff-copy">© {new Date().getFullYear()} PhoneFix Pro. All Rights Reserved.</p>
+        <p className="pff-copy">
+          © {new Date().getFullYear()} PhoneFix. All Rights Reserved.
+          {POLICY_LINKS.map((l) => <span key={l.to}> · <Link to={l.to}>{l.label}</Link></span>)}
+        </p>
       </div>
 
     </footer>

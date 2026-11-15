@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiChevronLeft, FiPackage, FiTruck, FiTag, FiHeart, FiBell } from 'react-icons/fi'
+import { FiChevronLeft, FiPackage, FiTruck, FiTool, FiBell } from 'react-icons/fi'
+import { authService } from '../../services/authService'
+import { orderService } from '../../services/orderService'
+import { repairService } from '../../services/repairService'
+import SiteTopNav from '../ecommerce/SiteTopNav'
+import { useIsMobile } from './helpers'
 
 const PURPLE = '#210D35'
 const PURPLE_DEEP = '#3A1E52'
@@ -18,27 +23,77 @@ type Notif = {
   action?: string
 }
 
-const SAMPLE: Notif[] = [
-  { id: 1, icon: <FiTruck size={18} />, title: 'Order Shipped', description: 'Your order ORD-48291003 is on the way and will arrive by Fri.', time: '2h ago', color: PURPLE, unread: true, action: '/orders' },
-  { id: 2, icon: <FiTag size={18} />, title: 'Flash Sale Live', description: 'Up to 40% off on premium smartphones for the next 6 hours.', time: '5h ago', color: '#F59E0B', unread: true, action: '/collection/all' },
-  { id: 3, icon: <FiHeart size={18} />, title: 'Back in Stock', description: 'iPhone 16 Pro (256GB, Desert) is back in stock. Grab it now!', time: '1d ago', color: SUCCESS, unread: true, action: '/wishlist' },
-  { id: 4, icon: <FiPackage size={18} />, title: 'Order Delivered', description: 'Your order ORD-48290551 has been delivered. Enjoy!', time: '2d ago', color: '#0EA5E9', unread: false },
-  { id: 5, icon: <FiBell size={18} />, title: 'New Repair Slot', description: 'Weekend repair appointments are now open for booking.', time: '3d ago', color: '#7B3FD0', unread: false, action: '/book-repair' },
-]
+function timeAgo(iso: string): string {
+  const t = Date.parse(iso)
+  if (!t) return ''
+  const mins = Math.max(0, Math.round((Date.now() - t) / 60000))
+  if (mins < 60) return mins <= 1 ? 'Just now' : `${mins}m ago`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.round(hrs / 24)
+  return days < 30 ? `${days}d ago` : new Date(t).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+}
+
+const RECENT_DAYS = 7
+
+/** Real updates only: one entry per order and repair, newest first. */
+async function loadNotifications(): Promise<Notif[]> {
+  if (!authService.isAuthenticated()) return []
+  const [orders, repairs] = await Promise.all([
+    orderService.listMine().catch(() => []),
+    repairService.myTickets().catch(() => [] as any[]),
+  ])
+  const recent = (iso: string) => Date.now() - (Date.parse(iso) || 0) < RECENT_DAYS * 86400000
+  const fromOrders: (Notif & { at: string })[] = orders.map((o, i) => {
+    const at = o.updated_at || o.created_at
+    const delivered = /deliver/i.test(o.delivery_status) && !/out for/i.test(o.delivery_status)
+    return {
+      id: 1_000_000 + (o.id || i),
+      icon: delivered ? <FiPackage size={18} /> : <FiTruck size={18} />,
+      title: `Order ${o.order_id}`,
+      description: `Status: ${o.delivery_status}.`,
+      time: timeAgo(at),
+      color: delivered ? '#0EA5E9' : PURPLE,
+      unread: recent(at),
+      action: '/orders',
+      at,
+    }
+  })
+  const fromRepairs: (Notif & { at: string })[] = (repairs as any[]).map((r, i) => {
+    const at = r.updatedAt || r.createdAt
+    return {
+      id: 2_000_000 + (r.id || i),
+      icon: <FiTool size={18} />,
+      title: `Repair ${r.repairId}`,
+      description: `${[r.deviceBrand, r.deviceModel].filter(Boolean).join(' ')} — ${String(r.status || '').replace(/_/g, ' ')}.`,
+      time: timeAgo(at),
+      color: SUCCESS,
+      unread: recent(at),
+      action: r.id ? `/my-repairs/${r.id}` : '/my-repairs',
+      at,
+    }
+  })
+  return [...fromOrders, ...fromRepairs]
+    .sort((x, y) => (Date.parse(y.at) || 0) - (Date.parse(x.at) || 0))
+    .map(({ at: _at, ...n }) => n)
+}
 
 export default function MobileNotifications() {
   const navigate = useNavigate()
-  const [items, setItems] = useState<Notif[]>(SAMPLE)
+  const isMobile = useIsMobile()
+  const [items, setItems] = useState<Notif[]>([])
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
 
   useEffect(() => {
-    const stored = localStorage.getItem('notif_read')
-    if (stored) {
-      try {
-        const readIds: number[] = JSON.parse(stored)
-        setItems((prev) => prev.map((n) => (readIds.includes(n.id) ? { ...n, unread: false } : n)))
-      } catch {}
-    }
+    let alive = true
+    loadNotifications().then((list) => {
+      if (!alive) return
+      let readIds: number[] = []
+      try { readIds = JSON.parse(localStorage.getItem('notif_read') || '[]') } catch { /* ignore */ }
+      setItems(list.map((n) => (readIds.includes(n.id) ? { ...n, unread: false } : n)))
+    }).finally(() => { if (alive) setLoading(false) })
+    return () => { alive = false }
   }, [])
 
   const markAllRead = () => {
@@ -59,8 +114,10 @@ export default function MobileNotifications() {
   const visible = filter === 'unread' ? items.filter((n) => n.unread) : items
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-10" style={{ fontFamily: 'var(--font-ui)' }}>
-      <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]">
+    <div className="min-h-screen bg-[#FFFBFB] pb-10" style={{ fontFamily: 'var(--font-ui)' }}>
+      {!isMobile && <SiteTopNav />}
+      <div className="max-w-[720px] mx-auto">
+      <div className={`${isMobile ? 'sticky top-0 z-30' : 'pt-6'} bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]`}>
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
@@ -85,13 +142,17 @@ export default function MobileNotifications() {
       </div>
 
       <div className="px-4 pt-4">
-        {visible.length === 0 ? (
+        {loading ? (
+          <p className="text-caption text-[#6B7280] text-center mt-10">Loading your updates…</p>
+        ) : visible.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-6`}>
             <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
               <FiBell size={32} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-body font-bold text-[#1F2937] mb-1">No notifications</h2>
-            <p className="text-caption text-[#6B7280]">You're all caught up.</p>
+            <p className="text-caption text-[#6B7280]">
+              {authService.isAuthenticated() ? 'Updates on your orders and repairs will appear here.' : 'Sign in to see updates on your orders and repairs.'}
+            </p>
           </div>
         ) : (
           <div className="space-y-2.5">
@@ -112,6 +173,7 @@ export default function MobileNotifications() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   )

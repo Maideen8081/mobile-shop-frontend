@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { BUSINESS } from '../config/business'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, BadgeCheck, BatteryCharging, Clock, Cpu, HandCoins, Headphones, Heart, MapPin, Phone,
@@ -12,7 +13,7 @@ import heroVideo from '../assets/Smartphone_internal_components_1080p_2026100215
 import './AboutPage.css'
 
 const stats = [
-  { icon: Wrench, value: '5,000+', label: 'Devices repaired' },
+  { icon: Wrench, value: BUSINESS.devicesRepaired, label: 'Devices repaired' },
   { icon: Star, value: '4.9', label: 'Customer rating' },
   { icon: Clock, value: '8+', label: 'Years of experience' },
   { icon: Store, value: '3', label: 'Local shops' },
@@ -214,7 +215,7 @@ export default function AboutPage() {
           </div>
           <div className="ab-cta-actions">
             <Link to="/book-repair" className="ab-btn ab-btn--sun"><Wrench aria-hidden="true" /> Book a Repair</Link>
-            <a href="tel:+919876543210" className="ab-btn ab-btn--glass"><Phone aria-hidden="true" /> +91 98765 43210</a>
+            {BUSINESS.phoneTel && <a href={`tel:${BUSINESS.phoneTel}`} className="ab-btn ab-btn--glass"><Phone aria-hidden="true" /> {BUSINESS.phoneDisplay}</a>}
           </div>
         </section>
       </div>

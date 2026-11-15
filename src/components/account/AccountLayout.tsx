@@ -72,7 +72,7 @@ export default function AccountLayout({ active, counts, compact = false, childre
             {item('repairs', '/my-repairs', <Wrench size={20} />, 'My Repairs')}
             {item('addresses', '/profile/addresses', <MapPin size={20} />, 'Addresses', count(addresses))}
             {item('wishlist', '/wishlist', <Heart size={20} />, 'Wishlist', count(wishlistCount))}
-            {item('notifications', '/notifications', <Bell size={20} />, 'Notifications', <span className="acc-nav-dot" />)}
+            {item('notifications', '/notifications', <Bell size={20} />, 'Notifications')}
             {item('support', '/support', <Headphones size={20} />, 'Help & Support')}
             <button type="button" className="acc-signout" onClick={signOut}><LogOut size={20} /> Sign Out</button>
           </nav>

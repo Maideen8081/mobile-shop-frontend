@@ -4,18 +4,19 @@ export interface MobileToastItem {
   id: number
   message: string
   type: 'success' | 'error' | 'info'
+  action?: { label: string; onClick: () => void }
 }
 
 export function useMobileToast() {
   const [toasts, setToasts] = useState<MobileToastItem[]>([])
   const idRef = useRef(0)
 
-  const show = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
+  const show = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success', action?: MobileToastItem['action']) => {
     const id = ++idRef.current
-    setToasts(prev => [...prev, { id, message, type }])
+    setToasts(prev => [...prev, { id, message, type, action }])
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id))
-    }, 3000)
+    }, action ? 6000 : 3000)
   }, [])
 
   const Toast = (
@@ -38,6 +39,15 @@ export function useMobileToast() {
               {theme.icon}
             </span>
             <span className="text-label font-semibold text-[#1F2937] leading-snug flex-1">{t.message}</span>
+            {t.action && (
+              <button
+                type="button"
+                onClick={() => { setToasts(prev => prev.filter(x => x.id !== t.id)); t.action?.onClick() }}
+                className="min-h-[44px] px-3 rounded-[8px] text-label font-bold text-[#210D35]"
+              >
+                {t.action.label}
+              </button>
+            )}
           </div>
         )
       })}

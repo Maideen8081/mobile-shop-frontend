@@ -192,10 +192,12 @@ export default function NavDrawer({
         </div>
 
         <div className="nd-foot">
-          <a href={`tel:${CONTACT_PHONE_TEL}`} className="nd-phone">
-            <Phone size={16} />
-            <span>{CONTACT_PHONE_DISPLAY}</span>
-          </a>
+          {CONTACT_PHONE_TEL && (
+            <a href={`tel:${CONTACT_PHONE_TEL}`} className="nd-phone">
+              <Phone size={16} />
+              <span>{CONTACT_PHONE_DISPLAY}</span>
+            </a>
+          )}
           <span className="nd-hours">{STORE_HOURS}</span>
           <div className="nd-foot-row">
             <Link to="/wishlist" className="nd-foot-link" onClick={onClose}>

@@ -46,9 +46,9 @@ const PREFS_KEY = 'profile_prefs'
 type Prefs = { orderUpdates: boolean; promotions: boolean }
 const readPrefs = (): Prefs => {
   try {
-    return { orderUpdates: true, promotions: true, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') }
+    return { orderUpdates: true, promotions: false, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') }
   } catch {
-    return { orderUpdates: true, promotions: true }
+    return { orderUpdates: true, promotions: false }
   }
 }
 
@@ -103,10 +103,15 @@ function DesktopProfile() {
   }, [modal])
 
   const stats = useMemo(() => {
-    const live = orders.filter((o) => o.delivery_status !== 'cancelled')
+    // Only money actually spent: paid orders, or COD orders that were delivered.
+    const spent = orders.filter((o) => {
+      if (/cancel/i.test(o.delivery_status)) return false
+      if (String(o.payment_status).toLowerCase() === 'paid') return true
+      return /^delivered$/i.test(String(o.delivery_status).trim())
+    })
     return {
       total: orders.length,
-      spend: live.reduce((s, o) => s + Number(o.grand_total || 0), 0),
+      spend: spent.reduce((s, o) => s + Number(o.grand_total || 0), 0),
       activeRepairs: repairs.filter((t) => !isClosed(t) && !isCompleted(t)).length,
     }
   }, [orders, repairs])

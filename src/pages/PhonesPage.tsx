@@ -35,7 +35,7 @@ const heroSlides = [
     tag: 'Android Power',
     title: ['Samsung &', 'Android', 'Flagships'],
     desc: 'Galaxy S24 Ultra, Z Fold 6, Pixel 9 Pro — the best of Android with cutting-edge innovation.',
-    img: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=1920&q=80',
+    img: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=1920&q=80&fit=crop&crop=right',
   },
   {
     tag: 'Budget Phones',
@@ -186,17 +186,17 @@ function PhonesDesktop() {
             }`}
           >
             <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(123, 63, 208,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#210D35]/10 border border-[#210D35]/25 text-[#210D35] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-black/45 border border-[#FFD014]/40 text-[#FFD014] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-[8px] bg-[#210D35] animate-ping" />
-                    <span className="absolute inset-0 rounded-[8px] bg-[#210D35]" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#FFD014] animate-ping" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#FFD014]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -204,9 +204,9 @@ function PhonesDesktop() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block bg-gradient-to-r from-[#210D35] via-[#2E1544] to-[#210D35] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(123, 63, 208,0.4)]">
+                  <span className="relative inline-block text-[#FFD014] italic">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#210D35] to-transparent rounded-[8px] opacity-60 animate-pulse" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#FFD014] to-transparent rounded-[8px] opacity-60" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>

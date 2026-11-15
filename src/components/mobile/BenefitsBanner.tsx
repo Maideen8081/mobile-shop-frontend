@@ -1,3 +1,4 @@
+import { BUSINESS } from '../../config/business'
 import { Truck, ShieldCheck, RotateCcw, BadgeCheck, Sparkles } from 'lucide-react'
 
 type Benefit = {
@@ -9,7 +10,7 @@ type Benefit = {
 }
 
 const BENEFITS: Benefit[] = [
-  { title: 'Free Shipping', subtitle: 'On all orders, no minimum', Icon: Truck, iconBg: '#ECFDF5', iconColor: '#059669' },
+  { title: 'Free Delivery', subtitle: `On orders over ₹${BUSINESS.freeDeliveryOver}`, Icon: Truck, iconBg: '#ECFDF5', iconColor: '#059669' },
   { title: 'Secure Payment', subtitle: '100% safe & encrypted', Icon: ShieldCheck, iconBg: '#F3E8FF', iconColor: '#210D35' },
   { title: 'Easy Returns', subtitle: '7-day hassle-free', Icon: RotateCcw, iconBg: '#F3E8FF', iconColor: '#5B3A7E' },
   { title: 'Genuine Products', subtitle: '100% authentic guarantee', Icon: BadgeCheck, iconBg: '#F3E8FF', iconColor: '#210D35' },

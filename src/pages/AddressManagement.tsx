@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  Bell, Briefcase, Check, ChevronDown, CreditCard, Heart, Home, Loader2, LogOut, MapPin,
-  MessageSquare, MoreVertical, Package, Pencil, Phone, Plus, Save, ShieldCheck, Star, Trash2, User,
+  Bell, Briefcase, Check, ChevronDown, Heart, Home, Loader2, LogOut, MapPin,
+  MessageSquare, MoreVertical, Package, Pencil, Phone, Plus, Save, Star, Trash2, User,
   UserRound, Wrench,
 } from 'lucide-react'
 import { addressService, type AddressData } from '../services/addressService'
@@ -116,15 +116,13 @@ function AccountSidebar() {
         {link('/my-repairs', <Wrench size={20} />, 'My Repairs')}
         {link('/profile/addresses', <MapPin size={20} />, 'Addresses', null, true)}
         {link('/wishlist', <Heart size={20} />, 'Wishlist', badge(wishlist))}
-        {link('/orders', <CreditCard size={20} />, 'Payments')}
-        {link('/notifications', <Bell size={20} />, 'Notifications', <span className="am-nav-dot" aria-label="New" />)}
-        {link('/profile', <ShieldCheck size={20} />, 'Security')}
+        {link('/notifications', <Bell size={20} />, 'Notifications')}
       </nav>
 
       <nav className="am-nav am-nav-help">
         <p className="am-nav-label">Help</p>
         {link('/support', <MessageSquare size={20} />, 'Support Chat')}
-        <button type="button" className="am-nav-item" onClick={signOut}><LogOut size={20} /><span>Log Out</span></button>
+        <button type="button" className="am-nav-item" onClick={signOut}><LogOut size={20} /><span>Sign Out</span></button>
       </nav>
     </aside>
   )

@@ -1,3 +1,4 @@
+import { BUSINESS } from '../../config/business'
 import { useEffect, useRef, useState } from 'react'
 import { ShieldCheck, Truck, Wrench } from 'lucide-react'
 import { sendChatMessage } from '../../services/chatService'
@@ -11,8 +12,9 @@ export type ChatMessage = {
   time: string
 }
 
-export const SUPPORT_PHONE = '+91 98765 43210'
-export const SUPPORT_PHONE_DIAL = '+919876543210'
+// Empty until VITE_CONTACT_PHONE is set; callers hide phone links then.
+export const SUPPORT_PHONE = BUSINESS.phoneDisplay
+export const SUPPORT_PHONE_DIAL = BUSINESS.phoneTel
 
 export const quickReplies = [
   'Book a repair',
@@ -53,7 +55,7 @@ function botReply(raw: string): string {
   if (/(book|repair|fix|broken|crack|screen|battery|water|charging|hang)/.test(t))
     return 'I can help you book a repair 🔧. Open the Book Repair page, choose your device, describe the issue and pick a slot. Most screen and battery repairs are done the same day. Want to start a booking?'
   if (/(track|order|delivery|ship|where is|status|dispatch|parcel)/.test(t))
-    return 'You can track any order from the Orders page — it shows live status, courier details and the expected delivery date 📦. Share your order ID if you want me to point you to it.'
+    return 'I can’t look up orders myself yet. Open My Orders (/orders) while signed in to see each order’s live status and delivery estimate 📦. Repairs are under My Repairs (/my-repairs).'
   if (/(warranty|guarantee|covered|coverage)/.test(t))
     return 'Every repair includes a 6-month service warranty, and refurbished devices carry a 12-month PhoneFix warranty 🛡️. Keep your invoice safe — that is your warranty proof.'
   if (/(price|cost|how much|charge|rate|quote|estimate)/.test(t))

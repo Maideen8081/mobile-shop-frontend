@@ -42,13 +42,15 @@ export default function MobileSupportChat() {
               Online · replies instantly
             </p>
           </div>
-          <a
-            href={`tel:${SUPPORT_PHONE_DIAL}`}
-            aria-label={`Call support ${SUPPORT_PHONE}`}
-            className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
-          >
-            <Phone size={17} />
-          </a>
+          {SUPPORT_PHONE_DIAL && (
+            <a
+              href={`tel:${SUPPORT_PHONE_DIAL}`}
+              aria-label={`Call support ${SUPPORT_PHONE}`}
+              className="w-11 h-11 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
+            >
+              <Phone size={17} />
+            </a>
+          )}
         </div>
       </header>
 
@@ -158,8 +160,10 @@ export default function MobileSupportChat() {
           </button>
         </form>
         <p className="text-micro text-[#9CA3AF] text-center mt-1.5">
-          Automated assistant · urgent help:{' '}
-          <a href={`tel:${SUPPORT_PHONE_DIAL}`} className="font-semibold" style={{ color: PURPLE }}>{SUPPORT_PHONE}</a>
+          Automated assistant · it can’t look up your orders or repairs — see{' '}
+          <a href="/orders" className="font-semibold" style={{ color: PURPLE }}>My Orders</a> and{' '}
+          <a href="/my-repairs" className="font-semibold" style={{ color: PURPLE }}>My Repairs</a>
+          {SUPPORT_PHONE_DIAL && <> · urgent help: <a href={`tel:${SUPPORT_PHONE_DIAL}`} className="font-semibold" style={{ color: PURPLE }}>{SUPPORT_PHONE}</a></>}
         </p>
       </div>
     </div>

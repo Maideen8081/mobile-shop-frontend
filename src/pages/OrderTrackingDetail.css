@@ -390,3 +390,16 @@
   .otd-status { padding-right: 22px; }
   .otd-status-art { display: none; }
 }
+
+/* Cancel-order confirmation */
+.otd-cancel-backdrop { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 16px; background: rgba(23, 8, 38, 0.55); }
+.otd-cancel { width: min(440px, 100%); background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); color: #210d35; }
+.otd-cancel h2 { font-size: 20px; font-weight: 800; margin: 0 0 6px; }
+.otd-cancel p { color: #6b6b70; font-size: 14px; margin: 0 0 16px; }
+.otd-cancel label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.otd-cancel select { width: 100%; height: 44px; border: 1.5px solid #e5e1ea; border-radius: 10px; padding: 0 12px; font: inherit; }
+.otd-cancel .otd-cancel-err { color: #b42318; margin: 10px 0 0; font-weight: 600; }
+.otd-cancel-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.otd-cancel-actions button { height: 44px; padding: 0 18px; border-radius: 10px; border: 1.5px solid #e5e1ea; background: #fff; font-weight: 700; cursor: pointer; }
+.otd-cancel-actions .is-danger { background: #b42318; border-color: #b42318; color: #fff; }
+.otd-cancel-actions button:disabled { opacity: 0.6; cursor: default; }

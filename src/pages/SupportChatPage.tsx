@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { BUSINESS } from '../config/business'
 import {
   ArrowRight, BookOpen, Box, ChevronRight, CircleCheck, CreditCard, History, MessageCircle,
   MessagesSquare, Mic, MoreVertical, Phone, Plus, Recycle, Send, ShieldCheck, Smartphone, Sparkles,
@@ -10,7 +11,7 @@ import ChatAssistantIcon from '../components/ecommerce/ChatAssistantIcon'
 import { SUPPORT_PHONE, SUPPORT_PHONE_DIAL, useSupportChat, type ChatMessage } from '../components/ecommerce/useSupportChat'
 import './SupportChatPage.css'
 
-const WHATSAPP_URL = 'https://wa.me/919876543210?text=Hi%20PhoneFix%2C%20I%20need%20some%20help'
+const WHATSAPP_URL = BUSINESS.whatsappUrl ? `${BUSINESS.whatsappUrl}?text=Hi%20PhoneFix%2C%20I%20need%20some%20help` : ''
 const HISTORY_KEY = 'support_chat_history'
 const MAX_HISTORY = 10
 
@@ -231,7 +232,7 @@ export default function SupportChatPage() {
                 {menuOpen && (
                   <div className="scp-pop scp-menu" role="menu">
                     <button type="button" role="menuitem" onClick={newChat}><Plus /> New chat</button>
-                    <a role="menuitem" href={`tel:${SUPPORT_PHONE_DIAL}`}><Phone /> Call support</a>
+                    {SUPPORT_PHONE_DIAL && <a role="menuitem" href={`tel:${SUPPORT_PHONE_DIAL}`}><Phone /> Call support</a>}
                     <button type="button" role="menuitem" onClick={clearHistory} disabled={history.length === 0}><X /> Clear history</button>
                   </div>
                 )}
@@ -349,14 +350,18 @@ export default function SupportChatPage() {
             <div className="scp-card">
               <h2 className="scp-card-title">More ways to get help</h2>
               <div className="scp-ways">
-                <a href={`tel:${SUPPORT_PHONE_DIAL}`} className="scp-way">
-                  <strong><Phone aria-hidden="true" /> Call Us</strong>
-                  <span>{SUPPORT_PHONE}</span>
-                </a>
-                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="scp-way scp-way--wa">
-                  <strong><MessageCircle aria-hidden="true" /> WhatsApp</strong>
-                  <span>Chat instantly</span>
-                </a>
+                {SUPPORT_PHONE_DIAL && (
+                  <a href={`tel:${SUPPORT_PHONE_DIAL}`} className="scp-way">
+                    <strong><Phone aria-hidden="true" /> Call Us</strong>
+                    <span>{SUPPORT_PHONE}</span>
+                  </a>
+                )}
+                {WHATSAPP_URL && (
+                  <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="scp-way scp-way--wa">
+                    <strong><MessageCircle aria-hidden="true" /> WhatsApp</strong>
+                    <span>Chat instantly</span>
+                  </a>
+                )}
                 <button type="button" className="scp-way" onClick={() => inputRef.current?.focus()}>
                   <strong><MessagesSquare aria-hidden="true" /> Live Chat</strong>
                   <span>Talk to an expert</span>

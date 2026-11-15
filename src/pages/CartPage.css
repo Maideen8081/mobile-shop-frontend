@@ -651,3 +651,5 @@
 
 /* Selected checkbox: deep purple with a yellow tick */
 .cx-check input:checked + span { background: var(--cx-purple); color: var(--cx-sunshine); }
+
+.cx-toast-undo { margin-left: 12px; padding: 4px 10px; min-height: 32px; border-radius: 8px; border: 1px solid currentColor; background: transparent; color: inherit; font-weight: 800; cursor: pointer; }

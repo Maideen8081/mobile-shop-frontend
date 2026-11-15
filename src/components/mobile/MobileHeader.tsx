@@ -1,15 +1,32 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Bell, ShoppingBag, Heart, Search, Mic, QrCode, Camera } from 'lucide-react'
+import { MapPin, Bell, ShoppingBag, Heart, Search, Mic, QrCode, Camera, UserRound } from 'lucide-react'
 import { authService } from '../../services/authService'
 import { getWishlistCount } from '../../utils/wishlist'
 import { cartService } from '../../services/cartService'
+
+function greeting(): string {
+  const h = new Date().getHours()
+  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
+}
+
+/** City from the shopper's saved default address, if any. */
+function savedCity(): string {
+  try {
+    const list = JSON.parse(localStorage.getItem('phonehub_addresses') || '[]')
+    if (!Array.isArray(list) || !list.length) return ''
+    const a = list.find((x: any) => x?.isDefault || x?.is_default) || list[0]
+    return [a?.city, a?.zipCode || a?.pincode].filter(Boolean).join(' ')
+  } catch {
+    return ''
+  }
+}
 
 export default function MobileHeader() {
   const navigate = useNavigate()
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
-  const [location] = useState('Chennai 600001')
+  const [location] = useState(savedCity)
   const [userName, setUserName] = useState('')
   const isLoggedIn = authService.isAuthenticated()
 
@@ -47,17 +64,19 @@ export default function MobileHeader() {
       >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <img
-            src={isLoggedIn ? 'https://i.pravatar.cc/80?img=12' : 'https://i.pravatar.cc/80?img=5'}
-            alt="User"
-            className="w-11 h-11 rounded-[8px] border-2 border-white/40 object-cover flex-shrink-0"
-          />
+          <span className="w-11 h-11 rounded-[8px] border-2 border-white/40 bg-white/10 flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <UserRound size={22} />
+          </span>
           <div className="min-w-0 flex-1">
-            <p className="text-micro text-white/75 leading-tight">Good morning 👋</p>
+            <p className="text-micro text-white/75 leading-tight">{greeting()} 👋</p>
             <p className="text-body font-bold leading-tight truncate">{displayName}</p>
-            <button className="flex items-center gap-0.5 min-w-0 active:opacity-70 mt-1" aria-label="Delivery location">
+            <button
+              onClick={() => navigate(isLoggedIn ? '/profile/addresses' : '/login')}
+              className="flex items-center gap-0.5 min-w-0 min-h-[24px] active:opacity-70 mt-1"
+              aria-label={location ? `Delivery location: ${location}. Change` : 'Set delivery location'}
+            >
               <MapPin size={12} className="text-[#D0ADFF] flex-shrink-0" />
-              <span className="text-micro text-white/80 font-medium truncate max-w-[130px]">Deliver to {location}</span>
+              <span className="text-micro text-white/80 font-medium truncate max-w-[130px]">{location ? `Deliver to ${location}` : 'Set location'}</span>
             </button>
           </div>
         </div>
@@ -65,7 +84,6 @@ export default function MobileHeader() {
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <button onClick={() => navigate('/notifications')} aria-label="Notifications" className={iconBtn}>
             <Bell size={18} />
-            <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#2E1544]" />
           </button>
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className={iconBtn}>
             <Heart size={18} />

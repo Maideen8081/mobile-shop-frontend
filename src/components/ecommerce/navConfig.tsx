@@ -1,3 +1,4 @@
+import { BUSINESS } from '../../config/business'
 import type { LucideIcon } from 'lucide-react'
 import {
   ArrowLeftRight,
@@ -40,9 +41,10 @@ export interface NavLink {
 }
 
 /* ── Storefront contact details ─────────────────────────────────────── */
-export const CONTACT_PHONE_DISPLAY = '+91 98765 43210'
-export const CONTACT_PHONE_TEL = '+919876543210'
-export const STORE_HOURS = 'Mon – Sat, 10 AM – 8 PM'
+// From src/config/business.ts; empty until VITE_CONTACT_PHONE is set.
+export const CONTACT_PHONE_DISPLAY = BUSINESS.phoneDisplay
+export const CONTACT_PHONE_TEL = BUSINESS.phoneTel
+export const STORE_HOURS = BUSINESS.hours
 
 /* ── The six categories surfaced in the main navigation ─────────────── */
 export const NAV_CATEGORIES: NavCategoryDef[] = [

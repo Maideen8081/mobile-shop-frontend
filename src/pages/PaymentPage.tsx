@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { COD_MAX_ORDER } from '../components/mobile/cartLogic'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, AtSign, Banknote, Check, CreditCard, Headphones, Landmark, Loader2, Lock,
@@ -207,7 +208,7 @@ function DesktopPayment() {
   const totals = computeTotals(items, coupon?.discount || 0)
 
   const handlePlaceOrder = async () => {
-    if (placing || method !== 'cod' || !address || items.length === 0) return
+    if (placing || method !== 'cod' || totals.total > COD_MAX_ORDER || !address || items.length === 0) return
     setPlacing(true)
     setError('')
     try {
@@ -278,7 +279,8 @@ function DesktopPayment() {
   }
 
   const isCod = method === 'cod'
-  const canPay = isCod && !loading && !placing && !!address && items.length > 0
+  const codBlocked = totals.total > COD_MAX_ORDER
+  const canPay = isCod && !codBlocked && !loading && !placing && !!address && items.length > 0
 
   return (
     <div className="cx-root ca-page pp-page">
@@ -364,13 +366,18 @@ function DesktopPayment() {
               <button className="ca-continue pp-pay" data-place-order disabled={!canPay} onClick={handlePlaceOrder}>
                 {placing
                   ? <><Loader2 size={20} className="ca-spin" /> Placing order…</>
-                  : <><Lock size={20} /> {isCod ? 'Place Order' : 'Pay'} {formatINR(totals.total)} <ArrowRight size={20} /></>}
+                  : <><Lock size={20} /> {isCod ? `Place Order · Pay ${formatINR(totals.total)} on delivery` : `Pay ${formatINR(totals.total)}`} <ArrowRight size={20} /></>}
               </button>
               {!isCod && !loading && (
                 <p className="ca-warn">Online payments are coming soon. Choose Cash on Delivery to place your order.</p>
               )}
+              {isCod && codBlocked && !loading && (
+                <p className="ca-warn" role="alert">
+                  Cash on Delivery is available for orders up to {formatINR(COD_MAX_ORDER)}. Online payments are launching soon, so please reduce this order to place it now.
+                </p>
+              )}
               {!loading && items.length === 0 && <p className="ca-warn">Your cart is empty.</p>}
-              <p className="pp-terms">By placing this order you agree to our <Link to="/terms">terms</Link>.</p>
+              <p className="pp-terms">By placing this order you agree to our <Link to="/terms">Terms</Link> and <Link to="/refund-policy">Refund Policy</Link>.</p>
             </OrderSummary>
           </aside>
         </div>

@@ -1,12 +1,13 @@
+import { BUSINESS } from '../../config/business'
 import SectionHeading, { Accent } from '../ui/SectionHeading'
 
 /** Store location shown on the home page, just above the footer. */
 const STORE = {
-  name: 'PhoneFix Pro',
-  address: 'Chennai, Tamil Nadu',
-  phone: '+91 98765 43210',
-  phoneHref: 'tel:+919876543210',
-  email: 'support@phonefixpro.com',
+  name: BUSINESS.name,
+  address: BUSINESS.city,
+  phone: BUSINESS.phoneDisplay,
+  phoneHref: BUSINESS.phoneTel ? `tel:${BUSINESS.phoneTel}` : '',
+  email: BUSINESS.email,
   // Map search text. Swap in the full street address once the shop has one.
   mapQuery: 'Chennai, Tamil Nadu',
 }
@@ -17,7 +18,7 @@ const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(STORE.mapQu
 
 const details = [
   { icon: 'location_on', label: 'Address', value: `${STORE.name}, ${STORE.address}` },
-  { icon: 'call', label: 'Phone', value: STORE.phone, href: STORE.phoneHref },
+  ...(STORE.phone ? [{ icon: 'call', label: 'Phone', value: STORE.phone, href: STORE.phoneHref }] : []),
   { icon: 'mail', label: 'Email', value: STORE.email, href: `mailto:${STORE.email}` },
 ]
 

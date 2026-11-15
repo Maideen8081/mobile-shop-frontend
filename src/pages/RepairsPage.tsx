@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { BUSINESS } from '../config/business'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight, BadgeCheck, BatteryCharging, Camera, Check, ClipboardCheck, Cpu, Droplets, Headphones,
@@ -233,7 +234,7 @@ function DesktopRepairs() {
           </div>
           <div className="rp-cta-actions">
             <Link to="/support" className="rp-btn rp-btn--sun"><Headphones aria-hidden="true" /> Chat with an Expert</Link>
-            <a href="tel:+919876543210" className="rp-btn rp-btn--glass"><Phone aria-hidden="true" /> +91 98765 43210</a>
+            {BUSINESS.phoneTel && <a href={`tel:${BUSINESS.phoneTel}`} className="rp-btn rp-btn--glass"><Phone aria-hidden="true" /> {BUSINESS.phoneDisplay}</a>}
           </div>
         </section>
       </main>

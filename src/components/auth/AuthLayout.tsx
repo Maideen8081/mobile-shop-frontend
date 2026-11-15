@@ -1,4 +1,5 @@
 import { useEffect, useState, type InputHTMLAttributes, type ReactNode } from 'react'
+import { BUSINESS, tradeInUpTo } from '../../config/business'
 import { Link } from 'react-router-dom'
 import {
   FiAlertCircle, FiArrowLeft, FiArrowRight, FiEye, FiEyeOff, FiLock, FiRefreshCw, FiRepeat, FiShield,
@@ -186,17 +187,16 @@ export function AuthLayout({ variant, slides, children }: AuthLayoutProps) {
                 {[0, 1, 2, 3, 4].map((i) => <FiStar key={i} size={14} aria-hidden="true" />)}
               </span>
             </div>
-            <p>Loved by <b>12,000+</b> customers across Hyderabad</p>
+            <p><b>{BUSINESS.devicesRepaired}</b> devices repaired at our {BUSINESS.city.split(',')[0]} store</p>
             <div className="bento-rating__faces" aria-hidden="true">
               {AVATARS.map((a) => <span key={a}>{a}</span>)}
-              <span className="is-more">+12k</span>
             </div>
           </div>
 
           <div className="bento bento--repair">
             <img className="bento-photo" src={TILE_PHOTOS.repair.src} onError={fallbackTo(TILE_PHOTOS.repair.fallback)} alt="" aria-hidden="true" loading="lazy" />
             <span className="bento-icon"><FiTool size={20} /></span>
-            <span className="bento-big">45<small>min</small></span>
+            <span className="bento-big">{BUSINESS.expressRepairMinutes}<small>min</small></span>
             <span className="bento-label">Express screen &amp; battery repairs</span>
           </div>
 
@@ -204,7 +204,7 @@ export function AuthLayout({ variant, slides, children }: AuthLayoutProps) {
             <img className="bento-photo" src={TILE_PHOTOS.trade.src} onError={fallbackTo(TILE_PHOTOS.trade.fallback)} alt="" aria-hidden="true" loading="lazy" />
             <span className="bento-icon"><FiRepeat size={20} /></span>
             <span className="bento-kicker">Trade-in value up to</span>
-            <span className="bento-big">₹40,000</span>
+            <span className="bento-big">{tradeInUpTo()}</span>
             <span className="bento-label">for your old phone</span>
           </div>
 

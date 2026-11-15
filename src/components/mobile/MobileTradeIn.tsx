@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CONDITIONS, MAX_TRADE_IN_VALUE, OTHER_MODEL, STORAGE_OPTIONS, TRADE_IN_BRANDS, TRADE_IN_MODELS, modelsFor, quoteTradeIn, valueRange, type TradeInQuote } from '../../data/tradeInPrices'
 import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiCheck, FiArrowRight, FiLoader, FiSmartphone, FiTruck, FiStar, FiRefreshCw, FiShield, FiGift, FiCreditCard } from 'react-icons/fi'
 import MobileBottomNav from './MobileBottomNav'
@@ -11,7 +12,7 @@ const PURPLE_DEEP = '#3A1E52'
 const GREEN = '#00C46A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
-const brands = ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Oppo']
+const brands = [...TRADE_IN_BRANDS]
 
 const steps = [
   { icon: FiSmartphone, title: 'Select Your Device', desc: 'Tell us what you\'re trading in — brand, model, and condition.' },
@@ -20,65 +21,24 @@ const steps = [
   { icon: FiCheck, title: 'Get Paid', desc: 'Receive payment or store credit after inspection.' },
 ]
 
-const deviceConditions = ['Mint - Like New', 'Good - Minor Scratches', 'Fair - Visible Wear', 'Broken - Damaged Screen/Body']
-const storageOptions = ['64GB', '128GB', '256GB', '512GB', '1TB']
+const deviceConditions = CONDITIONS.map((c) => c.value)
+const storageOptions = STORAGE_OPTIONS
 
 const heroSlides = [
   { tag: 'Trade-In Program', title: ['Turn Your Old', 'Device Into Cash'], desc: 'Get top value for your used phone, tablet, or wearable — instant quote, zero hassle.' },
-  { tag: 'Instant Cash', title: ['Sell Your Phone,', 'Get Paid Instantly'], desc: 'Up to ₹45,000 for your device. Same-day payment after inspection.' },
+  { tag: 'Instant Cash', title: ['Sell Your Phone,', 'Get Paid Instantly'], desc: `Up to ₹${MAX_TRADE_IN_VALUE.toLocaleString('en-IN')} for your device. Same-day payment after inspection.` },
   { tag: 'Upgrade Today', title: ['Trade Up to', 'Something Better'], desc: 'Use your old device as credit toward the latest iPhone, Galaxy, or Pixel.' },
   { tag: 'Eco-Friendly', title: ['Recycle, Reuse,', 'Earn Rewards'], desc: 'Keep e-waste out of landfills while putting money back in your pocket.' },
   { tag: 'Trusted by Thousands', title: ['Your Device,', 'Fair Price, No Games'], desc: 'Transparent pricing, free shipping, and the best trade-in value guaranteed.' },
 ]
 
-const basePrices: Record<string, number> = {
-  'Apple': 30000, 'Samsung': 25000, 'Google': 22000, 'OnePlus': 18000, 'Xiaomi': 12000, 'Oppo': 10000,
-}
+// Ranges and quotes come from the shared price table (same as desktop).
+const estimateRows = TRADE_IN_MODELS.filter((x) => x.topValue >= 20000).slice(0, 6).map((x) => ({
+  device: `${x.brand} ${x.model.startsWith(x.brand) ? x.model.slice(x.brand.length + 1) : x.model}`,
+  value: valueRange(x),
+}))
 
-const conditionMultiplier: Record<string, number> = {
-  'Mint - Like New': 1.0, 'Good - Minor Scratches': 0.75, 'Fair - Visible Wear': 0.50, 'Broken - Damaged Screen/Body': 0.25,
-}
-
-const storageBonus: Record<string, number> = {
-  '64GB': 0, '128GB': 2000, '256GB': 4000, '512GB': 7000, '1TB': 10000,
-}
-
-const estimateRows = [
-  { device: 'iPhone 16 Pro Max', value: '₹35,000 - ₹45,000' },
-  { device: 'iPhone 15 Pro Max', value: '₹30,000 - ₹38,000' },
-  { device: 'iPhone 14 Pro Max', value: '₹20,000 - ₹30,000' },
-  { device: 'Samsung Galaxy S25 Ultra', value: '₹30,000 - ₹42,000' },
-  { device: 'Samsung Galaxy S24 Ultra', value: '₹24,000 - ₹33,000' },
-  { device: 'Google Pixel 10 Pro', value: '₹22,000 - ₹30,000' },
-]
-
-type AnalysisResult = {
-  baseValue: number
-  conditionAdjustment: number
-  storageBonusValue: number
-  finalValue: number
-  breakdown: { label: string; amount: number }[]
-}
-
-function calculateAnalysis(brand: string, condition: string, storage: string): AnalysisResult | null {
-  if (!brand || !condition) return null
-  const base = basePrices[brand] || 15000
-  const condMult = conditionMultiplier[condition] || 0.5
-  const condAdj = Math.round(base * condMult)
-  const storBonus = storage ? (storageBonus[storage] || 0) : 0
-  const finalValue = condAdj + storBonus
-  return {
-    baseValue: base,
-    conditionAdjustment: condAdj,
-    storageBonusValue: storBonus,
-    finalValue,
-    breakdown: [
-      { label: `Base value (${brand})`, amount: base },
-      { label: `Condition adjustment (${condition})`, amount: condAdj - base },
-      { label: `Storage bonus${storage ? ` (${storage})` : ''}`, amount: storBonus },
-    ],
-  }
-}
+type AnalysisResult = TradeInQuote
 
 export default function MobileTradeIn() {
   const navigate = useNavigate()
@@ -104,9 +64,9 @@ export default function MobileTradeIn() {
   }, [])
 
   useEffect(() => {
-    if (formBrand && formCondition) setAnalysis(calculateAnalysis(formBrand, formCondition, formStorage))
+    if (formBrand && formModel && formCondition) setAnalysis(quoteTradeIn(formBrand, formModel, formCondition, formStorage))
     else setAnalysis(null)
-  }, [formBrand, formCondition, formStorage])
+  }, [formBrand, formModel, formCondition, formStorage])
 
   const validateForm = () => {
     const e: Record<string, string> = {}
@@ -288,7 +248,7 @@ export default function MobileTradeIn() {
             <div className="px-4 overflow-y-auto flex-1 space-y-3">
               <div>
                 <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Brand <span className="text-[#EF4444]">*</span></label>
-                <select value={formBrand} onChange={(e) => { setFormBrand(e.target.value); if (formErrors.formBrand) setFormErrors(p => ({ ...p, formBrand: '' })) }} className={inputClass('formBrand')}>
+                <select value={formBrand} onChange={(e) => { setFormBrand(e.target.value); setFormModel(''); if (formErrors.formBrand) setFormErrors(p => ({ ...p, formBrand: '' })) }} className={inputClass('formBrand')}>
                   <option value="">Select brand</option>
                   {brands.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
@@ -296,7 +256,11 @@ export default function MobileTradeIn() {
               </div>
               <div>
                 <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Model <span className="text-[#EF4444]">*</span></label>
-                <input value={formModel} onChange={(e) => { setFormModel(e.target.value); if (formErrors.formModel) setFormErrors(p => ({ ...p, formModel: '' })) }} className={inputClass('formModel')} placeholder="e.g. iPhone 15 Pro Max" />
+                <select value={formModel} disabled={!formBrand} onChange={(e) => { setFormModel(e.target.value); if (formErrors.formModel) setFormErrors(p => ({ ...p, formModel: '' })) }} className={inputClass('formModel')}>
+                  <option value="">{formBrand ? 'Select model' : 'Select a brand first'}</option>
+                  {modelsFor(formBrand).map((x) => <option key={x.model} value={x.model}>{x.model}</option>)}
+                  {formBrand && <option value={OTHER_MODEL}>{OTHER_MODEL}</option>}
+                </select>
                 {formErrors.formModel && <p className="text-micro text-[#EF4444] mt-1">{formErrors.formModel}</p>}
               </div>
               <div className="grid grid-cols-2 gap-3">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { BUSINESS } from '../config/business'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { addManyToCartWithAuth, addToCartWithAuth } from '../utils/cartAuth'
@@ -72,7 +73,9 @@ function WishCard({ product, adding, added, onRemove, onAddToCart }: WishCardPro
           </button>
         </div>
         <div className="wish-card-info">
-          <div className="wish-card-cat">{tag || 'Accessories'}</div>
+          {(product.category || product.category_name || product.brand) && (
+            <div className="wish-card-cat">{product.category || product.category_name || product.brand}</div>
+          )}
           <h3 className="wish-card-name"><Link to={`/product/${productId}`}>{name}</Link></h3>
           <div className="wish-card-row">
             <span className="wish-card-price">₹{price.toLocaleString('en-IN')}</span>
@@ -305,7 +308,7 @@ export default function WishlistPage() {
               </div>
               <ul className="summary-benefits">
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Genuine sealed units</li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free express delivery</li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>{`Free delivery over ₹${BUSINESS.freeDeliveryOver}`}</li>
                 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free 7-day returns</li>
               </ul>
               <button 
