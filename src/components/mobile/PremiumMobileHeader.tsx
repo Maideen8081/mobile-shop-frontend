@@ -242,13 +242,13 @@ export default function PremiumMobileHeader({
                   className="snap-start flex-shrink-0 w-[76px] flex flex-col items-center gap-1.5 active:scale-95 transition"
                 >
                   <div
-                    className={`w-[64px] h-[64px] rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'scale-105' : ''}`}
+                    className={`w-[64px] h-[64px] rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 ${active ? 'scale-105' : ''}`}
                     style={active
                       ? { background: 'linear-gradient(135deg,#210D35,#3A1E52)', boxShadow: '0 8px 20px rgba(123, 63, 208,0.35)' }
                       : { background: '#FFFFFF', boxShadow: '0 4px 14px rgba(31,41,55,0.07)' }}
                   >
                     {img ? (
-                      <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-[8px]" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                      <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-full" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                     ) : (
                       <span className="text-heading leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                     )}

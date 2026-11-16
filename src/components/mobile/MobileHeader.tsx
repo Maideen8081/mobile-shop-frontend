@@ -109,10 +109,10 @@ export default function MobileHeader() {
       <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)' }} />
       </header>
 
-      {/* Floating glassmorphism search bar overlapping header bottom (outside header so it isn't clipped) */}
+      {/* Floating search bar overlapping header bottom (outside header so it isn't clipped) */}
       <form
         onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
-        className="absolute left-4 right-4 -bottom-7 flex items-center gap-2 px-3 h-14 rounded-2xl bg-white/85 backdrop-blur-xl shadow-[0_12px_30px_rgba(33,13,53,0.20)] z-50"
+        className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full bg-white z-50"
       >
         <Search size={20} className="text-[#210D35] shrink-0" />
         <input
@@ -123,9 +123,9 @@ export default function MobileHeader() {
           aria-label="Search products"
           className="flex-1 bg-transparent text-sm text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
         />
-        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><Mic size={17} /></button>
-        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><QrCode size={17} /></button>
-        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 rounded-[8px] bg-[#FFF7F3] flex items-center justify-center text-[#210D35] active:scale-90 transition"><Camera size={17} /></button>
+        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><Mic size={17} /></button>
+        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><QrCode size={17} /></button>
+        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><Camera size={17} /></button>
       </form>
     </div>
   )

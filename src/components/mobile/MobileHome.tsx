@@ -10,7 +10,6 @@ import RepairServices from './RepairServices'
 import RefurbishedSection from './RefurbishedSection'
 import FeaturedCollections from './FeaturedCollections'
 import VideoShowcase from './VideoShowcase'
-import TopSales from './TopSales'
 import CouponsOffers from './CouponsOffers'
 import Partners from './Partners'
 import Testimonials from './Testimonials'
@@ -21,17 +20,6 @@ import { useBootHold } from '../LoadingScreen/bootLoader'
 import { categoryService, type Category } from '../../services/categoryService'
 import { productService } from '../../services/productService'
 import '../../pages/HomeTheme.css'
-
-type Slide = { id?: number; title?: string; subtitle?: string; image?: string; link?: string }
-
-// Reuse the exact same hero imagery/text as the web (desktop) LandingPage
-const HERO_SLIDES: Slide[] = [
-  { title: 'Premium TWS Earbuds — Crystal Clarity', subtitle: 'Noise-cancelling wireless earbuds with immersive sound.', image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1920&q=80', link: '/collection/all' },
-  { title: 'Premium Headphones & Audio Gear', subtitle: 'Wireless earbuds and high-fidelity audio for every budget.', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1920&q=80', link: '/collection/all' },
-  { title: 'Phone Accessories & Enhancements', subtitle: 'Fast chargers, premium cases, screen protectors, power banks.', image: 'https://images.unsplash.com/photo-1592890288564-76628a30a657?w=1920&q=80', link: '/collection/all' },
-  { title: 'Quality Spare Parts & Repairs', subtitle: 'Genuine screens, batteries, charging ports — certified service.', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=1920&q=80', link: '/repairs' },
-  { title: 'One Stop Tech Store — All You Need', subtitle: 'From phones to accessories to repairs under one roof.', image: 'https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1920&q=80', link: '/collection/all' },
-]
 
 // Module-level cache: persists across re-mounts (navigating back from product detail).
 // On first load → fetch from API and cache. On subsequent mounts → use cache instantly.
@@ -49,7 +37,6 @@ let sharedCachedData: {
 
 export default function MobileHome() {
   const [categories, setCategories] = useState<Category[]>(() => sharedCachedData?.categories ?? [])
-  const [heroSlides] = useState<Slide[]>(HERO_SLIDES)
   const [flashSale, setFlashSale] = useState<any[]>(() => sharedCachedData?.flashSale ?? [])
   const [trending, setTrending] = useState<any[]>(() => sharedCachedData?.trending ?? [])
   const [bestSellers, setBestSellers] = useState<any[]>(() => sharedCachedData?.bestSellers ?? [])
@@ -137,7 +124,6 @@ export default function MobileHome() {
         <ProductSection title="Trending Products" viewAllTo="/collection/all?tab=trending" products={trending} />
         <FeaturedCollections />
         <ProductSection title="Best Sellers" viewAllTo="/collection/all?tab=best" products={bestSellers} />
-        <TopSales banner={heroSlides[0]} products={[...bestSellers, ...trending, ...featured].slice(0, 5)} />
         <ProductSection title="New Arrivals" viewAllTo="/collection/all?tab=new" products={newArrivals} />
         <CouponsOffers />
         <ProductSection title="Featured" viewAllTo="/collection/all?tab=featured" products={featured} />

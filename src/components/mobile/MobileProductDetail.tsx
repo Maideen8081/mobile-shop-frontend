@@ -586,9 +586,7 @@ export default function MobileProductDetail() {
 
       {/* Deal of the day — flash sale banner with countdown */}
       <div className="px-3 mt-3">
-        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)', boxShadow: '0 10px 30px rgba(123, 63, 208,0.30)' }}>
-          <div className="absolute -right-6 -top-6 w-24 h-24 rounded-[8px] bg-white/10" />
-          <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-[8px] bg-white/10" />
+        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)' }}>
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame size={18} className="text-[#FFD54F]" fill="#FFD54F" />

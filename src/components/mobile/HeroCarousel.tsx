@@ -62,8 +62,6 @@ export default function HeroCarousel() {
               role="button"
             >
               <img src={b.image} alt={b.brand} loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#210D35]/80 via-[#2E1544]/45 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4">
                 <span className="self-start mb-2 px-3 py-1 rounded-[8px] bg-white/20 backdrop-blur text-micro font-semibold tracking-wide uppercase text-white">{b.tag}</span>
                 <p className="text-micro font-medium text-white/85">{b.brand}</p>
