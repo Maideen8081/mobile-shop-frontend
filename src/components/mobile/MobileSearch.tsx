@@ -51,21 +51,21 @@ export default function MobileSearch() {
   return (
     <div className="min-h-screen bg-[#F8F9FB] text-[#0F172A] max-w-[480px] mx-auto flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-[#E5E7EB] px-3 py-2.5 flex items-center gap-2">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-          <ArrowLeft size={19} className="text-[#0F172A]" />
+      <header className="sticky top-0 z-50 bg-[#FFFBFB] px-3 py-3 flex items-center gap-2">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+          <ArrowLeft size={19} className="text-[#210D35]" />
         </button>
-        <div className="flex-1 flex items-center gap-2 h-11 bg-[#F3E8FF] rounded-2xl px-3.5">
+        <div className="flex-1 flex items-center gap-2 h-11 bg-transparent px-1">
           <Search size={19} className="text-[#210D35] flex-shrink-0" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products, brands, categories..."
-            className="flex-1 bg-transparent outline-none text-body-sm text-[#0F172A] placeholder:text-[#94A3B8]"
+            className="flex-1 bg-transparent outline-none text-body-sm text-[#210D35] placeholder:text-[#7C668A]"
           />
           {query && (
-            <button onClick={() => setQuery('')} aria-label="Clear" className="text-[#64748B] active:scale-90 transition">
+            <button onClick={() => setQuery('')} aria-label="Clear" className="text-[#5F4A70] active:scale-90 transition">
               <X size={18} />
             </button>
           )}

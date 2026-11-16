@@ -75,9 +75,9 @@ export default function PremiumMobileHeader({
         .icon-btn {
           width: 40px;
           height: 40px;
-          border-radius: 14px;
-          background: rgba(254, 226, 230, 0.9);
-          border: 1px solid rgba(253, 221, 221, 0.8);
+          border-radius: 9999px;
+          background: #F3E8FF;
+          border: 1px solid #E9D5FF;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
           align-items: center;
@@ -86,19 +86,19 @@ export default function PremiumMobileHeader({
         }
         .icon-btn:active {
           transform: scale(0.92);
-          background: rgba(123, 63, 208, 0.12);
+          background: #E9D5FF;
         }
         .icon-btn-red {
           width: 40px;
           height: 40px;
-          border-radius: 14px;
+          border-radius: 9999px;
           background: #210D35;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(123, 63, 208, 0.3);
+          box-shadow: 0 4px 12px rgba(33, 13, 53, 0.25);
         }
         .icon-btn-red:active {
           transform: scale(0.92);
@@ -110,14 +110,14 @@ export default function PremiumMobileHeader({
           justify-content: center;
           height: 40px;
           padding: 0 12px;
-          border-radius: 14px;
+          border-radius: 9999px;
           background: #210D35;
           color: white;
           gap: 5px;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           position: relative;
           flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(123, 63, 208, 0.3);
+          box-shadow: 0 4px 12px rgba(33, 13, 53, 0.25);
         }
         .filter-pill:active {
           transform: scale(0.92);
@@ -130,22 +130,22 @@ export default function PremiumMobileHeader({
           min-width: 18px;
           height: 18px;
           padding: 0 5px;
-          border-radius: 9px;
-          background: linear-gradient(135deg, #210D35, #7B3FD0);
+          border-radius: 9999px;
+          background: #210D35;
           color: white;
           font-size: 10px;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 8px rgba(123, 63, 208, 0.4);
+          box-shadow: 0 2px 8px rgba(33, 13, 53, 0.3);
         }
         .search-bar {
           width: 100%;
           height: 44px;
-          border-radius: 14px;
-          background: rgba(254, 226, 230, 0.5);
-          border: 1px solid rgba(253, 221, 221, 0.8);
+          border-radius: 9999px;
+          background: #F3E8FF;
+          border: 1px solid #E9D5FF;
           display: flex;
           align-items: center;
           padding: 0 14px;
@@ -154,9 +154,9 @@ export default function PremiumMobileHeader({
           cursor: pointer;
         }
         .search-bar:focus-within {
-          background: white;
-          border-color: rgba(123, 63, 208, 0.3);
-          box-shadow: 0 0 0 3px rgba(123, 63, 208, 0.08);
+          background: #F3E8FF;
+          border-color: #D0ADFF;
+          box-shadow: 0 0 0 3px rgba(208, 173, 255, 0.2);
         }
         .badge {
           transform-origin: 100% 0%;
@@ -180,7 +180,7 @@ export default function PremiumMobileHeader({
           <div className="flex items-center gap-2 min-w-0">
             {showBack && (
               <button onClick={handleBack} aria-label="Back" className="icon-btn">
-                <ChevronLeft size={20} className="text-slate-600" />
+                <ChevronLeft size={20} className="text-[#210D35]" />
               </button>
             )}
             <h1 className="text-lg font-bold title-text tracking-tight truncate">
@@ -192,7 +192,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn-red relative">
               <Heart size={18} className="text-white" />
               {wishlistCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -201,7 +201,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn-red relative">
               <ShoppingBag size={18} className="text-white" />
               {cartCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-[8px] bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -220,9 +220,9 @@ export default function PremiumMobileHeader({
 
         {showSearch && (
           <div className="px-4 pb-3">
-            <div className="search-bar" onClick={() => { if (onSearchClick) onSearchClick(); }}>
-              <Search size={18} className="text-slate-400 flex-shrink-0" />
-              <span className="text-sm text-slate-400 font-medium select-none">Search phones, brands & more...</span>
+              <div className="search-bar" onClick={() => { if (onSearchClick) onSearchClick(); }}>
+              <Search size={18} className="text-[#210D35] flex-shrink-0" />
+              <span className="text-sm text-[#5F4A70] font-medium select-none">Search phones, brands & more...</span>
             </div>
           </div>
         )}

@@ -32,7 +32,7 @@ export default function MobileTopSection({
           <button
             onClick={handleBack}
             aria-label="Back"
-            className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
+            className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition flex-shrink-0"
           >
             <ArrowLeft size={18} />
           </button>
@@ -41,13 +41,13 @@ export default function MobileTopSection({
             {subtitle && <p className="text-micro text-white/80 mt-0.5 truncate">{subtitle}</p>}
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
+            <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
               <Bell size={17} />
-              <span className="absolute top-1.5 right-2 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-[#3A1E52]" />
+              <span className="absolute top-1.5 right-2 w-2 h-2 bg-white rounded-full ring-2 ring-[#3A1E52]" />
             </button>
-            <div className="w-9 h-9 rounded-[8px] bg-white/15 backdrop-blur flex items-center justify-center">
+            <button onClick={() => navigate(icon === 'wishlist' ? '/wishlist' : '/cart')} aria-label={icon === 'wishlist' ? 'Wishlist' : 'Cart'} className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
               <Icon size={17} fill="white" />
-            </div>
+            </button>
           </div>
         </div>
 
@@ -59,13 +59,16 @@ export default function MobileTopSection({
       {showSearch && (
         <form
           onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
-          className="absolute left-4 right-4 -bottom-7 flex items-center gap-2 px-3 h-14 rounded-2xl bg-white/85 backdrop-blur-xl shadow-[0_12px_30px_rgba(123, 63, 208,0.20)] z-50"
+          className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full bg-white z-50"
         >
           <Search size={20} className="text-[#210D35] shrink-0" />
           <input
+            readOnly
+            onFocus={() => navigate('/search')}
+            onClick={() => navigate('/search')}
             placeholder="Search mobiles, accessories..."
             aria-label="Search products"
-            className="flex-1 bg-transparent text-sm text-[#1F2937] placeholder:text-gray-400 outline-none min-w-0"
+            className="flex-1 bg-transparent text-sm text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
           />
         </form>
       )}

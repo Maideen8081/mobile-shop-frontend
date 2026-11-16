@@ -559,26 +559,26 @@ export default function MobileProductDetail() {
       {/* Sticky top bar — product page style (white/neutral, no purple gradient) */}
       <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-3 py-2.5 flex items-center gap-2.5">
-          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <ChevronLeft size={22} className="text-[#1F2937]" />
+          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <ChevronLeft size={22} className="text-[#210D35]" />
           </button>
-          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
-            <Search size={18} className="text-[#9CA3AF] flex-shrink-0" />
+          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
+            <Search size={18} className="text-[#7C668A] flex-shrink-0" />
             <input
               readOnly
               placeholder="Search for products"
               aria-label="Search products"
-              className="flex-1 bg-transparent text-label text-[#1F2937] placeholder:text-[#9CA3AF] outline-none min-w-0 cursor-pointer"
+              className="flex-1 bg-transparent text-label text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
             />
           </form>
-          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <Heart size={19} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#1F2937]'} />
-            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#22C55E] rounded-[8px] ring-2 ring-white" />}
+          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <Heart size={19} className={wished ? 'text-[#210D35] fill-[#210D35]' : 'text-[#210D35]'} />
+            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#210D35] rounded-full ring-2 ring-white" />}
           </button>
-          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <ShoppingBag size={19} className="text-[#1F2937]" />
+          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <ShoppingBag size={19} className="text-[#210D35]" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-[8px] bg-[#EF4444] text-white text-micro font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#210D35] text-white text-micro font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
             )}
           </button>
         </div>
