@@ -55,12 +55,12 @@ export default function AppBootLoader() {
     <div
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-[100001] grid place-items-center bg-[#140720] transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[100001] grid place-items-center bg-[#0b2e22] transition-opacity duration-300 ${
         ready ? 'opacity-0' : 'opacity-100'
       }`}
     >
       <div className="flex flex-col items-center gap-4 text-white">
-        <span className="h-10 w-10 animate-spin rounded-full border-[3px] border-white/20 border-t-[#ffd014]" />
+        <span className="h-10 w-10 animate-spin rounded-full border-[3px] border-white/20 border-t-[#dfe8b4]" />
         <span className="text-sm font-semibold tracking-wide text-white/70">Loading…</span>
       </div>
     </div>

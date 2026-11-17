@@ -135,16 +135,16 @@ function OrderDrawer({
               <section className="p-6 border-b border-border-light">
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-text-label mb-4">Fulfilment</h4>
                 {status === 'cancelled' ? (
-                  <div className="rounded-xl bg-[#fef3f2] text-[#b42318] px-4 py-3 text-sm flex items-center gap-2"><FiXCircle /> This order was cancelled.</div>
+                  <div className="rounded-xl bg-[#fbe1d8] text-[#a8261b] px-4 py-3 text-sm flex items-center gap-2"><FiXCircle /> This order was cancelled.</div>
                 ) : (
                   <ol className="relative">
                     {FLOW.map((s, i) => {
                       const done = i <= idx
                       return (
                         <li key={s} className="flex gap-3 pb-4 last:pb-0 relative">
-                          {i < FLOW.length - 1 && <span className={`absolute left-[11px] top-6 bottom-0 w-px ${i < idx ? 'bg-[#101828]' : 'bg-border'}`} />}
+                          {i < FLOW.length - 1 && <span className={`absolute left-[11px] top-6 bottom-0 w-px ${i < idx ? 'bg-[#1d2522]' : 'bg-border'}`} />}
                           <span className={`relative z-10 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${
-                            done ? 'bg-[#101828] text-white' : 'bg-white text-text-muted ring-1 ring-inset ring-border-dark'
+                            done ? 'bg-[#1d2522] text-white' : 'bg-white text-text-muted ring-1 ring-inset ring-border-dark'
                           }`}>{done ? <FiCheck size={12} /> : i + 1}</span>
                           <span className={`text-sm pt-0.5 ${i === idx ? 'font-semibold text-text-primary' : done ? 'text-text-secondary' : 'text-text-muted'}`}>
                             {STATUS_LABELS[s]}

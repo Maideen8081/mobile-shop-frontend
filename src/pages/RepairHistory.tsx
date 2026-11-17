@@ -38,7 +38,7 @@ export default function RepairHistory() {
         <div className="relative flex-1 w-full">
           <FiSearch size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
           <input type="text" placeholder="Search by ID, customer, IMEI, or mobile..." value={search} onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-10 pr-4 rounded-2xl bg-bg-card border border-border text-sm outline-none focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.08)]"
+            className="w-full h-11 pl-10 pr-4 rounded-2xl bg-bg-card border border-border text-sm outline-none focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(24,80,60,0.08)]"
           />
         </div>
         <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}

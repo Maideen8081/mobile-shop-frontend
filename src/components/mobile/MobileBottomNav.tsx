@@ -18,7 +18,7 @@ export default function MobileBottomNav() {
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2 pointer-events-none">
       <div
-        className="pointer-events-auto flex items-center justify-around rounded-[26px] px-1.5 py-1.5 shadow-[0_12px_34px_rgba(15,23,42,0.18)] border border-white/60"
+        className="pointer-events-auto flex items-center justify-around rounded-[26px] px-1.5 py-1.5 shadow-[0_12px_34px_rgba(29,37,34,0.18)] border border-white/60"
         style={{ background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(14px)' }}
       >
         {tabs.map((tab) => {
@@ -32,11 +32,11 @@ export default function MobileBottomNav() {
               className="flex flex-col items-center gap-0.5 py-1 px-1.5 min-w-[42px] active:scale-90 transition relative"
             >
               <span
-                className={`w-12 h-8 rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#210D35] text-white shadow-[0_6px_16px_rgba(33,13,53,0.45)]' : 'text-[#9CA3AF]'}`}
+                className={`w-12 h-8 rounded-[8px] flex items-center justify-center transition-all duration-300 ${active ? 'bg-[#0f3b2c] text-white shadow-[0_6px_16px_rgba(15,59,44,0.45)]' : 'text-[#9aa29e]'}`}
               >
                 <Icon size={19} />
               </span>
-              <span className={`text-micro font-semibold transition-colors ${active ? 'text-[#210D35]' : 'text-[#9CA3AF]'}`}>
+              <span className={`text-micro font-semibold transition-colors ${active ? 'text-[#0f3b2c]' : 'text-[#9aa29e]'}`}>
                 {tab.name}
               </span>
             </button>

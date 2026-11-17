@@ -1,27 +1,27 @@
 /* Desktop profile. Scoped under .pf so nothing leaks into the app.
-   Colours come from the app tokens in index.css (brand purple + paper). */
+   Colours come from the app tokens in index.css (brand green + paper). */
 .pf {
-  --pf-paper: var(--color-paper, #FFF7F3);
+  --pf-paper: var(--color-paper, #f7f6f2);
   --pf-card: #ffffff;
-  --pf-ink: var(--color-ink, #210d35);
-  --pf-ink-2: var(--color-ink-soft, #4a3a5c);
-  --pf-muted: var(--color-gray, #7c668a);
-  --pf-line: var(--color-line, #ecdff3);
-  --pf-red: var(--color-primary, #210D35);
-  --pf-red-dark: var(--color-secondary, #3A1E52);
-  --pf-red-tint: var(--color-surface-container, #f3e8ff);
-  --pf-violet: #7B3FD0;
+  --pf-ink: var(--color-ink, #0f3b2c);
+  --pf-ink-2: var(--color-ink-soft, #0f3b2c);
+  --pf-muted: var(--color-gray, #5d6762);
+  --pf-line: var(--color-line, #f7f6f2);
+  --pf-red: var(--color-primary, #0f3b2c);
+  --pf-red-dark: var(--color-secondary, #18503c);
+  --pf-red-tint: var(--color-surface-container, #dfe6cf);
+  --pf-lime: #0f3b2c;
   --pf-green: #059669;
   --pf-amber: #ea7a12;
   --pf-blue: #2563eb;
   --pf-danger: #b4232f;
-  --pf-shadow: 0 10px 30px -12px rgba(33, 13, 53, 0.14);
+  --pf-shadow: 0 10px 30px -12px rgba(15,59,44, 0.14);
 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(1200px 500px at 85% -10%, rgba(123, 63, 208, 0.08), transparent 60%),
+    radial-gradient(1200px 500px at 85% -10%, rgba(15,59,44, 0.08), transparent 60%),
     var(--pf-paper);
   color: var(--pf-ink);
   font-family: var(--font-ui);
@@ -33,7 +33,7 @@
 .pf-hero-avatar { position: relative; flex-shrink: 0; }
 .pf-hero-avatar > span {
   display: grid; place-items: center; width: 112px; height: 112px; border-radius: 50%;
-  background: linear-gradient(135deg, #a15cf0, #6a2fc0); border: 4px solid #fff;
+  background: linear-gradient(135deg, #18503c, #18503c); border: 4px solid #fff;
   font-family: var(--font-display); font-size: 42px; font-weight: 700; color: #fff;
 }
 .pf-hero-cam {
@@ -64,15 +64,15 @@
   display: flex; align-items: center; gap: 18px; padding: 20px; border-radius: 18px; border: 1px solid var(--pf-line);
   text-decoration: none; color: var(--pf-ink); box-shadow: var(--pf-shadow); transition: transform 0.15s, box-shadow 0.15s;
 }
-.pf-stat:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -14px rgba(33, 13, 53, 0.25); }
+.pf-stat:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -14px rgba(15,59,44, 0.25); }
 .pf-stat > div { flex: 1; min-width: 0; }
 .pf-stat strong { display: block; font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.15; }
 .pf-stat span { font-size: 15px; color: var(--pf-ink-2); }
 .pf-stat-icon { display: grid; place-items: center; flex-shrink: 0; width: 60px; height: 60px; border-radius: 14px; }
 .pf-stat-go { flex-shrink: 0; color: var(--pf-ink); }
-.pf-stat.is-violet { background: linear-gradient(135deg, #f7efff, #fff); }
-.pf-stat.is-violet .pf-stat-icon { background: #e9d9ff; color: var(--pf-violet); }
-.pf-stat.is-amber { background: linear-gradient(135deg, #fff4e8, #fff); }
+.pf-stat.is-violet { background: linear-gradient(135deg, #f7f6f2, #fff); }
+.pf-stat.is-violet .pf-stat-icon { background: #f7f6f2; color: var(--pf-lime); }
+.pf-stat.is-amber { background: linear-gradient(135deg, #f7f6f2, #fff); }
 .pf-stat.is-amber .pf-stat-icon { background: #ffe1c2; color: var(--pf-amber); }
 .pf-stat.is-blue { background: linear-gradient(135deg, #eef3ff, #fff); }
 .pf-stat.is-blue .pf-stat-icon { background: #dce7ff; color: var(--pf-blue); }
@@ -84,14 +84,14 @@
 .pf-card { background: var(--pf-card); border: 1px solid var(--pf-line); border-radius: 20px; padding: 0 16px 16px; box-shadow: var(--pf-shadow); }
 .pf-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 14px 14px; }
 .pf-card-head h2 { display: flex; align-items: center; gap: 14px; margin: 0; font-family: var(--font-display); font-size: 18px; font-weight: 700; }
-.pf-card-head h2 svg { color: var(--pf-violet); }
+.pf-card-head h2 svg { color: var(--pf-lime); }
 .pf-chip-btn {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--pf-line);
-  background: #f7efff; color: var(--pf-ink); font: 600 13px var(--font-ui); text-decoration: none; cursor: pointer;
+  background: #f7f6f2; color: var(--pf-ink); font: 600 13px var(--font-ui); text-decoration: none; cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
-.pf-chip-btn svg { color: var(--pf-violet); }
-.pf-chip-btn:hover { background: #ecdcff; border-color: #d9c2fb; }
+.pf-chip-btn svg { color: var(--pf-lime); }
+.pf-chip-btn:hover { background: #dfe6cf; border-color: #dfe8b4; }
 
 /* Details list */
 .pf-details { margin: 0; border-top: 1px solid var(--pf-line); }
@@ -105,21 +105,21 @@
 .pf-address {
   position: relative; overflow: hidden; display: flex; align-items: flex-start; gap: 18px; padding: 20px; border-radius: 16px;
   background:
-    repeating-linear-gradient(35deg, transparent 0 22px, rgba(123, 63, 208, 0.07) 22px 24px),
-    repeating-linear-gradient(-55deg, transparent 0 30px, rgba(123, 63, 208, 0.06) 30px 32px),
-    linear-gradient(90deg, #f7f3fd 55%, #efe5fd 100%);
+    repeating-linear-gradient(35deg, transparent 0 22px, rgba(15,59,44, 0.07) 22px 24px),
+    repeating-linear-gradient(-55deg, transparent 0 30px, rgba(15,59,44, 0.06) 30px 32px),
+    linear-gradient(90deg, #f7f3fd 55%, #f7f6f2 100%);
   text-decoration: none; color: var(--pf-ink);
 }
 .pf-address::before { content: ""; position: absolute; inset: 0 40% 0 0; background: linear-gradient(90deg, #f7f3fd 75%, transparent); }
 .pf-address > * { position: relative; }
-.pf-address-icon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: #fff; color: var(--pf-violet); box-shadow: 0 4px 10px rgba(33, 13, 53, 0.06); }
+.pf-address-icon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: #fff; color: var(--pf-lime); box-shadow: 0 4px 10px rgba(15,59,44, 0.06); }
 .pf-address-text { flex: 1; min-width: 0; }
 .pf-address-tags { display: flex; gap: 8px; margin-bottom: 10px; }
-.pf-tag { padding: 3px 10px; border-radius: 999px; background: #efe3ff; font-size: 13px; font-weight: 700; color: var(--pf-ink); text-transform: capitalize; }
-.pf-tag.is-accent { background: #d9c2fb; color: var(--pf-violet); }
+.pf-tag { padding: 3px 10px; border-radius: 999px; background: #f7f6f2; font-size: 13px; font-weight: 700; color: var(--pf-ink); text-transform: capitalize; }
+.pf-tag.is-accent { background: #dfe8b4; color: var(--pf-lime); }
 .pf-address p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--pf-ink); overflow-wrap: anywhere; }
-.pf-address-pin { align-self: center; color: #fff; filter: drop-shadow(0 6px 8px rgba(123, 63, 208, 0.35)); }
-.pf-address-pin svg { fill: #a15cf0; }
+.pf-address-pin { align-self: center; color: #fff; filter: drop-shadow(0 6px 8px rgba(15,59,44, 0.35)); }
+.pf-address-pin svg { fill: #18503c; }
 .pf-address-go { align-self: center; flex-shrink: 0; }
 .pf-address.is-empty { align-items: center; }
 .pf-address.is-empty p { color: var(--pf-muted); }
@@ -130,14 +130,14 @@
   background: none; text-align: left; font: inherit; color: inherit;
 }
 .pf-row.is-click { cursor: pointer; transition: background 0.15s; }
-.pf-row.is-click:hover { background: #faf6ff; }
+.pf-row.is-click:hover { background: #f7f6f2; }
 .pf-row > div { flex: 1; min-width: 0; }
 .pf-row strong { display: block; font-size: 15px; font-weight: 700; margin-bottom: 2px; }
 .pf-row span { font-size: 14px; color: var(--pf-ink-2); }
 .pf-row-icon { display: grid; place-items: center; flex-shrink: 0; width: 52px; height: 52px; border-radius: 14px; background: #f5effc; color: var(--pf-ink); }
 .pf-row-go { flex-shrink: 0; color: var(--pf-ink); }
 .pf-row.is-danger strong, .pf-row.is-danger .pf-row-icon { color: var(--pf-danger); }
-.pf-row.is-danger .pf-row-icon { background: #fdecee; }
+.pf-row.is-danger .pf-row-icon { background: #fbe1d8; }
 
 /* Toggle */
 .pf-toggle {
@@ -148,10 +148,10 @@
   position: absolute; top: 4px; left: 4px; width: 20px; height: 20px; border-radius: 50%; background: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: transform 0.2s;
 }
-.pf-toggle.is-on { background: linear-gradient(135deg, #8b4fe0, #5d2f8f); }
+.pf-toggle.is-on { background: linear-gradient(135deg, #18503c, #18503c); }
 .pf-row .pf-toggle.is-on span { transform: translateX(22px); }
 .pf-toggle:disabled { cursor: not-allowed; opacity: 0.7; }
-.pf-toggle:focus-visible { outline: 3px solid rgba(123, 63, 208, 0.35); outline-offset: 2px; }
+.pf-toggle:focus-visible { outline: 3px solid rgba(15,59,44, 0.35); outline-offset: 2px; }
 
 /* ── Buttons ── */
 .pf-btn {
@@ -162,8 +162,8 @@
 .pf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .pf-btn-light { background: #fff; color: var(--pf-ink); }
 .pf-btn-light:hover { box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
-.pf-btn-primary { background: linear-gradient(135deg, var(--pf-red), var(--pf-red-dark)); color: #fff; box-shadow: 0 6px 18px rgba(123, 63, 208, 0.26); }
-.pf-btn-primary:hover:not(:disabled) { box-shadow: 0 10px 24px rgba(123, 63, 208, 0.36); }
+.pf-btn-primary { background: linear-gradient(135deg, var(--pf-red), var(--pf-red-dark)); color: #fff; box-shadow: 0 6px 18px rgba(15,59,44, 0.26); }
+.pf-btn-primary:hover:not(:disabled) { box-shadow: 0 10px 24px rgba(15,59,44, 0.36); }
 .pf-btn-ghost { background: #fff; color: var(--pf-ink); border-color: var(--pf-line); }
 .pf-btn-ghost:hover:not(:disabled) { border-color: var(--pf-ink-2); }
 .pf-btn-danger { background: var(--pf-red); color: #fff; }
@@ -193,7 +193,7 @@
   height: 44px; padding: 0 14px; border-radius: 11px; border: 1.5px solid var(--pf-line); background: #fff;
   font: 14px var(--font-ui); color: var(--pf-ink); outline: none; transition: border-color 0.15s, box-shadow 0.15s;
 }
-.pf-field input:focus { border-color: var(--pf-red); box-shadow: 0 0 0 3px rgba(123, 63, 208, 0.1); }
+.pf-field input:focus { border-color: var(--pf-red); box-shadow: 0 0 0 3px rgba(15,59,44, 0.1); }
 .pf-field input:read-only { background: var(--pf-paper); color: var(--pf-muted); }
 .pf-field.has-error input { border-color: var(--pf-red); }
 .pf-field small { font-size: var(--text-caption); color: var(--pf-muted); }

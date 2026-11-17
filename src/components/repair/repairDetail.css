@@ -62,7 +62,7 @@
 .rt .rd-tl-item:last-child { padding-bottom: 0; }
 .rt .rd-tl-item:last-child::before { display: none; }
 .rt .rd-tl-dot { position: absolute; left: 0; top: 4px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--rt-surface); box-shadow: 0 0 0 1px var(--rt-line); background: #CFC5C0; }
-.rt .rd-tl-item.is-latest .rd-tl-dot { background: var(--rt-red); box-shadow: 0 0 0 3px rgba(123, 63, 208, .15); }
+.rt .rd-tl-item.is-latest .rd-tl-dot { background: var(--rt-red); box-shadow: 0 0 0 3px rgba(15,59,44, .15); }
 .rt .rd-tl-item.is-latest.tone-done .rd-tl-dot { background: var(--tone-done); box-shadow: 0 0 0 3px rgba(4, 120, 87, .15); }
 .rt .rd-tl-head { display: flex; justify-content: space-between; gap: 12px; font-size: var(--text-label); }
 .rt .rd-tl-head time { color: var(--rt-muted); font-size: var(--text-caption); white-space: nowrap; }

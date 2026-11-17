@@ -12,9 +12,9 @@ class GateErrorBoundary extends Component<{ children: ReactNode }> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-white max-w-[480px] mx-auto flex flex-col items-center justify-center p-8 text-center font-sans">
-          <p className="text-body font-bold text-[#1F2937] mb-2">Something went wrong</p>
-          <p className="text-label text-[#6B7280] mb-6">Please try refreshing the page.</p>
-          <button onClick={() => window.location.reload()} className="px-6 py-2.5 rounded-[8px] text-white text-label font-bold" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }}>Refresh</button>
+          <p className="text-body font-bold text-[#1d2522] mb-2">Something went wrong</p>
+          <p className="text-label text-[#5d6762] mb-6">Please try refreshing the page.</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 rounded-[8px] text-white text-label font-bold" style={{ background: 'linear-gradient(135deg,#0f3b2c,#18503c)' }}>Refresh</button>
         </div>
       )
     }

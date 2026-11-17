@@ -47,7 +47,7 @@ function SignInBadge({ method }: { method: SignInMethod }) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap ${
-        google ? 'bg-white text-text-primary ring-1 ring-inset ring-[#dadce0]' : 'bg-[#f2f4f7] text-[#475467]'
+        google ? 'bg-white text-text-primary ring-1 ring-inset ring-[#dadce0]' : 'bg-[#f7f6f2] text-[#5d6762]'
       }`}
       title={method === 'both' ? 'Signs in with Google or with email and password' : undefined}
     >
@@ -247,8 +247,8 @@ function CustomerDrawer({
                   onClick={() => setConfirming(true)}
                   className={`w-full h-10 rounded-[10px] text-sm font-semibold inline-flex items-center justify-center gap-2 transition ${
                     detail.isActive
-                      ? 'bg-white text-danger ring-1 ring-inset ring-[#fecdca] hover:bg-[#fef3f2]'
-                      : 'bg-[#101828] text-white hover:bg-[#1d2939]'
+                      ? 'bg-white text-danger ring-1 ring-inset ring-[#fecdca] hover:bg-[#fbe1d8]'
+                      : 'bg-[#1d2522] text-white hover:bg-[#1d2939]'
                   }`}
                 >
                   {detail.isActive ? <><FiUserX /> Deactivate account</> : <><FiUserCheck /> Re-activate account</>}

@@ -45,7 +45,7 @@ export default function HeroCarousel() {
   return (
     <section className="px-3.5 mt-4">
       <div
-        className="relative h-[200px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(33,13,53,0.22)]"
+        className="relative h-[200px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(15,59,44,0.22)]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -69,7 +69,7 @@ export default function HeroCarousel() {
                 <p className="text-white/90 text-caption mt-0.5 font-medium line-clamp-1">{b.desc}</p>
                 <button
                   onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#210D35] text-caption font-bold px-4 py-2 rounded-[8px] active:scale-95 transition"
+                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#0f3b2c] text-caption font-bold px-4 py-2 rounded-[8px] active:scale-95 transition"
                 >
                   Shop Now
                 </button>

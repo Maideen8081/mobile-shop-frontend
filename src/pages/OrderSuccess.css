@@ -1,14 +1,14 @@
 /* Desktop order confirmation. Scoped under .osx so nothing leaks into the app. */
 .osx {
-  --osx-paper: #FFF7F3;
+  --osx-paper: #f7f6f2;
   --osx-card: #ffffff;
   --osx-ink: #1b1210;
   --osx-ink-2: #4a403d;
   --osx-muted: #857d79;
   --osx-line: #ece4e0;
-  --osx-red: #210D35;
-  --osx-red-dark: #3A1E52;
-  --osx-red-tint: #fdecee;
+  --osx-red: #0f3b2c;
+  --osx-red-dark: #18503c;
+  --osx-red-tint: #fbe1d8;
   --osx-green: #059669;
   --osx-green-tint: #e7f6f0;
 
@@ -23,7 +23,7 @@
 .osx-main {
   flex: 1;
   width: 100%;
-  max-width: 1120px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 36px 24px 64px;
 }
@@ -120,9 +120,9 @@
 .osx-btn-primary {
   background: linear-gradient(135deg, var(--osx-red), var(--osx-red-dark));
   color: #fff;
-  box-shadow: 0 6px 18px rgba(123, 63, 208, 0.28);
+  box-shadow: 0 6px 18px rgba(15,59,44, 0.28);
 }
-.osx-btn-primary:hover { box-shadow: 0 10px 24px rgba(123, 63, 208, 0.38); }
+.osx-btn-primary:hover { box-shadow: 0 10px 24px rgba(15,59,44, 0.38); }
 .osx-btn-ghost { background: #fff; color: var(--osx-ink); border-color: var(--osx-line); }
 .osx-btn-ghost:hover { border-color: var(--osx-ink-2); }
 

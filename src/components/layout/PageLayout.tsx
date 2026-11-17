@@ -179,7 +179,7 @@ export default function PageLayout({ children, title }: PageLayoutProps) {
             <button
               type="button"
               onClick={() => setCommandOpen(true)}
-              className="flex-1 sm:flex-none flex items-center gap-3 h-11 sm:w-[min(470px,45vw)] px-5 rounded-full bg-white text-sm text-text-muted shadow-[0_1px_2px_rgba(16,24,40,0.04)] ring-1 ring-inset ring-[#eceef2] hover:ring-border-dark transition"
+              className="flex-1 sm:flex-none flex items-center gap-3 h-11 sm:w-[min(470px,45vw)] px-5 rounded-full bg-white text-sm text-text-muted shadow-[0_1px_2px_rgba(29,37,34,0.04)] ring-1 ring-inset ring-[#eceef2] hover:ring-border-dark transition"
             >
               <FiSearch size={16} className="text-text-label" />
               <span className="flex-1 text-left">Search</span>
@@ -259,7 +259,7 @@ export default function PageLayout({ children, title }: PageLayoutProps) {
                       <button
                         type="button"
                         onClick={async () => { await adminLogout(); navigate('/admin/login', { replace: true }) }}
-                        className="w-full flex items-center gap-2.5 px-2.5 h-9 rounded-lg text-sm text-danger hover:bg-[#fef3f2]"
+                        className="w-full flex items-center gap-2.5 px-2.5 h-9 rounded-lg text-sm text-danger hover:bg-[#fbe1d8]"
                       >
                         <FiLogOut size={15} /> Sign out
                       </button>

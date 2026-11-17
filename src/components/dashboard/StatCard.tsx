@@ -25,7 +25,7 @@ export default function StatCard({
   trend,
   subtitle,
   icon,
-  color = '#7c3aed',
+  color = '#18503c',
   delay = 0,
   className = '',
 }: StatCardProps) {

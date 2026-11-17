@@ -7,8 +7,8 @@ import { ChevronLeft, ChevronRight, Copy, Check, Package, Truck, ShoppingBag, Ma
 import { orderService } from '../../services/orderService'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -55,14 +55,14 @@ const STATUS_INDEX: Record<string, number> = {
   delivered: 5,
 }
 
-const FALLBACK_BADGE = { label: 'Confirmed', color: '#210D35' }
+const FALLBACK_BADGE = { label: 'Confirmed', color: '#0f3b2c' }
 
 const STATUS_BADGE: Record<string, { label: string; color: string }> = {
-  order_placed: { label: 'Order Placed', color: '#6B7280' },
+  order_placed: { label: 'Order Placed', color: '#5d6762' },
   accepted: { label: 'Accepted', color: '#0891B2' },
   processing: { label: 'Processing', color: '#F59E0B' },
   shipped: { label: 'Shipped', color: '#3B82F6' },
-  out_for_delivery: { label: 'Out for Delivery', color: '#7B3FD0' },
+  out_for_delivery: { label: 'Out for Delivery', color: '#0f3b2c' },
   delivered: { label: 'Delivered', color: '#16A34A' },
   cancelled: { label: 'Cancelled', color: '#EF4444' },
 }
@@ -182,7 +182,7 @@ export default function MobileOrderTracking() {
 function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: boolean; onSelect: (o: any) => void }) {
   const navigate = useNavigate()
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileHeader title="My Orders" onBack={() => navigate('/profile')} />
 
       <div className="px-4 mt-3">
@@ -192,11 +192,11 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
           </div>
         ) : orders.length === 0 ? (
           <div className={`${card} p-8 flex flex-col items-center text-center`}>
-            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(15,59,44,0.1)' }}>
               <Package size={36} style={{ color: PURPLE }} />
             </div>
-            <h2 className="text-title-sm font-bold text-[#1F2937]">No orders yet</h2>
-            <p className="text-caption text-[#6B7280] mt-1.5 max-w-[240px]">Complete your first purchase to see orders here.</p>
+            <h2 className="text-title-sm font-bold text-[#1d2522]">No orders yet</h2>
+            <p className="text-caption text-[#5d6762] mt-1.5 max-w-[240px]">Complete your first purchase to see orders here.</p>
             <button onClick={() => navigate('/collection/all')} className="mt-5 h-11 px-7 rounded-[8px] text-white text-label font-bold active:scale-95 transition"
               style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
               Browse Products
@@ -219,20 +219,20 @@ function OrderList({ orders, loading, onSelect }: { orders: any[]; loading: bool
                   onClick={() => onSelect(order)}
                   className={`${card} p-3.5 w-full text-left active:scale-[0.99] transition flex items-center gap-3`}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-[#FFFBFB] flex items-center justify-center overflow-hidden flex-shrink-0">
-                    {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = '' }} /> : <Package size={22} className="text-[#9CA3AF]" />}
+                  <div className="w-14 h-14 rounded-2xl bg-[#f7f6f2] flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-contain p-1.5" onError={(e) => { (e.target as HTMLImageElement).src = '' }} /> : <Package size={22} className="text-[#9aa29e]" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-label font-bold text-[#1F2937] truncate">{order.displayOrderId || order.orderId}</span>
+                      <span className="text-label font-bold text-[#1d2522] truncate">{order.displayOrderId || order.orderId}</span>
                       <span className="text-micro font-bold px-1.5 py-0.5 rounded-[8px] flex-shrink-0" style={{ background: `${badge.color}1A`, color: badge.color }}>{badge.label}</span>
                     </div>
-                    <p className="text-micro text-[#6B7280] truncate">{first?.name || 'Order'}</p>
+                    <p className="text-micro text-[#5d6762] truncate">{first?.name || 'Order'}</p>
                     <div className="flex items-center gap-1.5 mt-1.5">
-                      <div className="flex-1 h-1.5 rounded-[8px] bg-[#E5E7EB] overflow-hidden max-w-[140px]">
+                      <div className="flex-1 h-1.5 rounded-[8px] bg-[#ece9e2] overflow-hidden max-w-[140px]">
                         <div className="h-full rounded-[8px]" style={{ width: `${((currentStepIndex + 1) / STEPS.length) * 100}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
                       </div>
-                      <span className="text-micro font-semibold text-[#6B7280] flex-shrink-0">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
+                      <span className="text-micro font-semibold text-[#5d6762] flex-shrink-0">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
@@ -293,7 +293,7 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
   const progressPct = isDelivered ? 100 : Math.round(((currentStepIndex) / (STEPS.length - 1)) * 100)
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28 font-sans overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileHeader title="Track Order" onBack={onBack} />
 
       {/* Status banner */}
@@ -346,29 +346,29 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
         <div className={`${card} p-4`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
-              <p className="text-body font-bold text-[#1F2937]">{order.displayOrderId || order.orderId}</p>
+              <p className="text-micro text-[#5d6762] font-semibold uppercase tracking-wide">Order ID</p>
+              <p className="text-body font-bold text-[#1d2522]">{order.displayOrderId || order.orderId}</p>
             </div>
-            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
+            <button onClick={copyId} className="flex items-center gap-1 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>
               {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
-          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="h-px bg-[#ece9e2] my-3" />
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+            <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(15,59,44,0.1)' }}>
               <MapPin size={20} style={{ color: PURPLE }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Estimated Delivery</p>
-              <p className="text-label font-bold text-[#1F2937] truncate">{order.deliveryDate || '—'}</p>
+              <p className="text-micro text-[#5d6762] font-semibold uppercase tracking-wide">Estimated Delivery</p>
+              <p className="text-label font-bold text-[#1d2522] truncate">{order.deliveryDate || '—'}</p>
             </div>
           </div>
           <div className="mt-3">
             <div className="flex justify-between items-end mb-1">
-              <span className="text-micro font-semibold text-[#6B7280]">{isDelivered ? 'Completed' : 'Order Progress'}</span>
+              <span className="text-micro font-semibold text-[#5d6762]">{isDelivered ? 'Completed' : 'Order Progress'}</span>
               <span className="text-caption font-bold" style={{ color: PURPLE }}>{progressPct}%</span>
             </div>
-            <div className="h-2 w-full rounded-[8px] bg-[#E5E7EB] overflow-hidden">
+            <div className="h-2 w-full rounded-[8px] bg-[#ece9e2] overflow-hidden">
               <motion.div initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 1, ease: 'easeOut' }}
                 className="h-full rounded-[8px]" style={{ background: `linear-gradient(90deg, ${PURPLE}, ${PURPLE_DEEP})` }} />
             </div>
@@ -377,16 +377,16 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
         {/* Items */}
         <div className={`${card} p-4`}>
-          <p className="text-body-sm font-bold text-[#1F2937] mb-3">Items ({itemCount})</p>
+          <p className="text-body-sm font-bold text-[#1d2522] mb-3">Items ({itemCount})</p>
           <div className="space-y-1">
             {items.map((item, idx) => {
               const imgUrl = resolveImage(item)
               const hasImg = imgUrl && !imgErrors[item.productId]
               return (
                 <div key={item.productId}>
-                  {idx > 0 && <div className="h-px my-3 bg-[#EEF0F6]" />}
+                  {idx > 0 && <div className="h-px my-3 bg-[#ece9e2]" />}
                   <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-2xl bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    <div className="w-14 h-14 rounded-2xl bg-[#f7f6f2] flex-shrink-0 flex items-center justify-center overflow-hidden">
                       {hasImg ? (
                         <img src={imgUrl} alt={item.name} className="w-full h-full object-contain p-1.5" onError={() => setImgErrors(p => ({ ...p, [item.productId]: true }))} />
                       ) : (
@@ -394,10 +394,10 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>
-                      <p className="text-micro text-[#6B7280] mt-0.5">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.color ? ` · ${item.color}` : ''}</p>
+                      <p className="text-label font-semibold text-[#1d2522] truncate">{item.name}</p>
+                      <p className="text-micro text-[#5d6762] mt-0.5">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.color ? ` · ${item.color}` : ''}</p>
                     </div>
-                    <span className="text-label font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                    <span className="text-label font-bold text-[#1d2522]">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 </div>
               )
@@ -408,21 +408,21 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
         {canCancel && (
           <div className={`${card} p-4`}>
             {!cancelOpen ? (
-              <button type="button" onClick={() => setCancelOpen(true)} className="w-full h-11 rounded-[8px] border border-[#E5E7EB] text-label font-bold text-[#B42318]">
+              <button type="button" onClick={() => setCancelOpen(true)} className="w-full h-11 rounded-[8px] border border-[#ece9e2] text-label font-bold text-[#a8261b]">
                 Cancel order
               </button>
             ) : (
               <div>
-                <p className="text-body-sm font-bold text-[#1F2937]">Cancel this order?</p>
-                <p className="text-caption text-[#6B7280] mt-0.5">Items go back to stock and you won’t be charged.</p>
-                <label htmlFor="mot-cancel-reason" className="block text-micro font-bold uppercase tracking-wide text-[#6B7280] mt-3 mb-1">Reason</label>
-                <select id="mot-cancel-reason" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className="w-full h-11 px-3 rounded-[8px] border border-[#E5E7EB] text-label">
+                <p className="text-body-sm font-bold text-[#1d2522]">Cancel this order?</p>
+                <p className="text-caption text-[#5d6762] mt-0.5">Items go back to stock and you won’t be charged.</p>
+                <label htmlFor="mot-cancel-reason" className="block text-micro font-bold uppercase tracking-wide text-[#5d6762] mt-3 mb-1">Reason</label>
+                <select id="mot-cancel-reason" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} className="w-full h-11 px-3 rounded-[8px] border border-[#ece9e2] text-label">
                   {['Ordered by mistake', 'Found a better price elsewhere', 'Delivery is taking too long', 'Want to change items or address', 'Other'].map((r) => <option key={r}>{r}</option>)}
                 </select>
-                {cancelError && <p role="alert" className="text-caption font-semibold text-[#B42318] mt-2">{cancelError}</p>}
+                {cancelError && <p role="alert" className="text-caption font-semibold text-[#a8261b] mt-2">{cancelError}</p>}
                 <div className="flex gap-2 mt-3">
-                  <button type="button" onClick={() => setCancelOpen(false)} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] border border-[#E5E7EB] text-label font-bold">Keep order</button>
-                  <button type="button" onClick={confirmCancel} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] bg-[#B42318] text-white text-label font-bold disabled:opacity-60">{cancelBusy ? 'Cancelling…' : 'Cancel order'}</button>
+                  <button type="button" onClick={() => setCancelOpen(false)} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] border border-[#ece9e2] text-label font-bold">Keep order</button>
+                  <button type="button" onClick={confirmCancel} disabled={cancelBusy} className="flex-1 h-11 rounded-[8px] bg-[#a8261b] text-white text-label font-bold disabled:opacity-60">{cancelBusy ? 'Cancelling…' : 'Cancel order'}</button>
                 </div>
               </div>
             )}
@@ -431,15 +431,15 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 
         {/* Price summary */}
         <div className={`${card} p-4`}>
-          <p className="text-body-sm font-bold text-[#1F2937] mb-3">Price Summary</p>
+          <p className="text-body-sm font-bold text-[#1d2522] mb-3">Price Summary</p>
           <div className="space-y-2.5">
             <Row label="Subtotal" value={formatPrice(order.subtotal)} />
             <Row label="Shipping" value={Number(order.shipping) === 0 ? 'FREE' : formatPrice(order.shipping)} highlight={Number(order.shipping) === 0} />
             <Row label={orderTaxLabel(order)} value={formatPrice(order.tax)} />
             {order.discount ? <Row label={`Coupon (${order.couponCode})`} value={`-${formatPrice(order.discount)}`} highlight /> : null}
-            <div className="h-px bg-[#EEF0F6] my-1" />
+            <div className="h-px bg-[#ece9e2] my-1" />
             <div className="flex justify-between items-center">
-              <span className="text-label font-bold text-[#1F2937]">{isPaid(order) ? 'Total Paid' : /cod|cash/i.test(order.paymentMethod || '') ? 'Pay on delivery' : 'Amount due'}</span>
+              <span className="text-label font-bold text-[#1d2522]">{isPaid(order) ? 'Total Paid' : /cod|cash/i.test(order.paymentMethod || '') ? 'Pay on delivery' : 'Amount due'}</span>
               <span className="text-title-sm font-bold" style={{ color: PURPLE }}>{formatPrice(order.total)}</span>
             </div>
           </div>
@@ -457,8 +457,8 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
           }} className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}>
             <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B' }}><Star size={18} /></div>
             <div className="flex-1 text-left">
-              <p className="text-label font-semibold text-[#1F2937]">Rate your experience</p>
-              <p className="text-micro text-[#6B7280]">Help others by reviewing your purchase</p>
+              <p className="text-label font-semibold text-[#1d2522]">Rate your experience</p>
+              <p className="text-micro text-[#5d6762]">Help others by reviewing your purchase</p>
             </div>
             <ChevronRight size={16} className="text-[#C4C7D0]" />
           </button>
@@ -478,18 +478,18 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
           }}
           className={`${card} p-3.5 w-full flex items-center gap-3 active:scale-[0.99] transition`}
         >
-          <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}><Receipt size={18} /></div>
+          <div className="w-10 h-10 rounded-[8px] flex items-center justify-center" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}><Receipt size={18} /></div>
           <div className="flex-1 text-left">
-            <p className="text-label font-semibold text-[#1F2937]">Digital Receipt</p>
-            <p className="text-micro text-[#6B7280]">Download order summary</p>
+            <p className="text-label font-semibold text-[#1d2522]">Digital Receipt</p>
+            <p className="text-micro text-[#5d6762]">Download order summary</p>
           </div>
           <ChevronRight size={16} className="text-[#C4C7D0]" />
         </button>
       </div>
 
       {/* Sticky CTAs */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5 pb-[calc(env(safe-area-inset-bottom)+12px)]">
-        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2 active:scale-95 transition">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#ece9e2] px-4 py-3 flex gap-2.5 pb-[calc(env(safe-area-inset-bottom)+12px)]">
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold border border-[#ece9e2] text-[#1d2522] inline-flex items-center justify-center gap-2 active:scale-95 transition">
           <ShoppingBag size={15} /> Shop More
         </button>
         <button onClick={onShowAll} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold text-white inline-flex items-center justify-center gap-2 active:scale-95 transition"
@@ -504,20 +504,20 @@ function OrderDetailView({ order, onBack, onShowAll }: { order: any; onBack: () 
 function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex justify-between items-center text-caption">
-      <span className="text-[#6B7280]">{label}</span>
-      <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#1F2937]'}`}>{value}</span>
+      <span className="text-[#5d6762]">{label}</span>
+      <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#1d2522]'}`}>{value}</span>
     </div>
   )
 }
 
 function MobileHeader({ title, onBack }: { title: string; onBack: () => void }) {
   return (
-    <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="sticky top-0 z-40 w-full bg-[#f7f6f2]/95 backdrop-blur-xl border-b border-[#ece9e2]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <div className="px-3 py-2.5 flex items-center gap-2.5">
-        <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-          <ChevronLeft size={22} className="text-[#1F2937]" />
+        <button onClick={onBack} aria-label="Back" className="w-10 h-10 rounded-[8px] bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+          <ChevronLeft size={22} className="text-[#1d2522]" />
         </button>
-        <h1 className="text-body font-bold text-[#1F2937]">{title}</h1>
+        <h1 className="text-body font-bold text-[#1d2522]">{title}</h1>
       </div>
     </div>
   )

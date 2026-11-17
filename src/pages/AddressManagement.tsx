@@ -135,17 +135,17 @@ function MapArt() {
     <svg className="am-map-art" viewBox="0 0 180 110" aria-hidden="true">
       <defs>
         <linearGradient id="amMapA" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#efe7ff" />
-          <stop offset="1" stopColor="#d9c8fb" />
+          <stop offset="0" stopColor="#f7f6f2" />
+          <stop offset="1" stopColor="#dfe8b4" />
         </linearGradient>
         <linearGradient id="amPin" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#8b5cf6" />
-          <stop offset="1" stopColor="#5b21b6" />
+          <stop offset="0" stopColor="#18503c" />
+          <stop offset="1" stopColor="#18503c" />
         </linearGradient>
       </defs>
-      <ellipse cx="96" cy="98" rx="72" ry="8" fill="#5b21b6" opacity="0.08" />
-      <path d="M20 62 L62 44 L100 62 L142 44 L164 78 L122 96 L84 78 L42 96 Z" fill="url(#amMapA)" stroke="#c4b0f3" strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M62 44 L42 96 M100 62 L84 78 M142 44 L122 96" stroke="#c4b0f3" strokeWidth="1.5" />
+      <ellipse cx="96" cy="98" rx="72" ry="8" fill="#18503c" opacity="0.08" />
+      <path d="M20 62 L62 44 L100 62 L142 44 L164 78 L122 96 L84 78 L42 96 Z" fill="url(#amMapA)" stroke="#dfe8b4" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M62 44 L42 96 M100 62 L84 78 M142 44 L122 96" stroke="#dfe8b4" strokeWidth="1.5" />
       <path d="M38 74 Q70 66 92 76 T150 66" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity="0.9" />
       <path d="M86 6 C72 6 62 16 62 30 C62 46 86 70 86 70 C86 70 110 46 110 30 C110 16 100 6 86 6 Z" fill="url(#amPin)" />
       <circle cx="86" cy="29" r="9" fill="#fff" />

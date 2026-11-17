@@ -13,8 +13,8 @@ import {
 import { adminService, type DashboardData } from '../services/adminService'
 import { useAuth } from '../context/AuthContext'
 
-const BRAND = '#cb202d'
-const axisTick = { fontSize: 11, fill: '#98a2b3' }
+const BRAND = '#a8261b'
+const axisTick = { fontSize: 11, fill: '#9aa29e' }
 
 function greeting() {
   const h = new Date().getHours()
@@ -24,8 +24,8 @@ function greeting() {
 function ChartTooltip({ active, payload, label, money = true }: { active?: boolean; payload?: { value: number; name: string }[]; label?: string; money?: boolean }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-xl bg-[#101828] text-white px-3 py-2 shadow-lg text-xs">
-      <p className="text-[#98a2b3] mb-0.5">{label}</p>
+    <div className="rounded-xl bg-[#1d2522] text-white px-3 py-2 shadow-lg text-xs">
+      <p className="text-[#9aa29e] mb-0.5">{label}</p>
       {payload.map((p) => (
         <p key={p.name} className="font-semibold tabular">
           {p.name === 'orders' ? `${p.value} orders` : money ? formatINR(p.value) : p.value}
@@ -97,7 +97,7 @@ export default function Dashboard() {
       {alerts.length > 0 && (
         <div className="admin-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-text-primary shrink-0">
-            <span className="w-7 h-7 rounded-lg bg-[#fffaeb] text-[#dc6803] flex items-center justify-center"><FiAlertTriangle size={14} /></span>
+            <span className="w-7 h-7 rounded-lg bg-[#eef2d9] text-[#dc6803] flex items-center justify-center"><FiAlertTriangle size={14} /></span>
             Needs attention
           </div>
           <div className="flex flex-wrap gap-2">
@@ -186,7 +186,7 @@ export default function Dashboard() {
                       className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: `${(o.count / ordersTotalForBars) * 100}%`,
-                        background: { success: '#17b26a', danger: '#f04438', warning: '#f79009', info: '#2e90fa' }[toneForStatus(o.status) as string] ?? '#98a2b3',
+                        background: { success: '#17b26a', danger: '#f04438', warning: '#f79009', info: '#2e90fa' }[toneForStatus(o.status) as string] ?? '#9aa29e',
                       }}
                     />
                   </div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
                   <CartesianGrid vertical={false} stroke="#eef0f3" />
                   <XAxis dataKey="month" tick={axisTick} axisLine={false} tickLine={false} />
                   <YAxis tick={axisTick} axisLine={false} tickLine={false} width={56} tickFormatter={(v) => formatINR(v, true)} />
-                  <Tooltip content={<ChartTooltip />} cursor={{ fill: '#f2f4f7' }} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ fill: '#f7f6f2' }} />
                   <Bar dataKey="revenue" name="revenue" fill={BRAND} radius={[6, 6, 0, 0]} maxBarSize={36} />
                 </BarChart>
               </ResponsiveContainer>
@@ -225,7 +225,7 @@ export default function Dashboard() {
             <ol className="space-y-1">
               {data.topProducts.map((p, i) => (
                 <li key={p.name} className="flex items-center gap-3 py-2">
-                  <span className={`w-6 h-6 rounded-lg text-[11px] font-bold flex items-center justify-center ${i === 0 ? 'bg-[#fdecee] text-primary' : 'bg-surface-lighter text-text-label'}`}>{i + 1}</span>
+                  <span className={`w-6 h-6 rounded-lg text-[11px] font-bold flex items-center justify-center ${i === 0 ? 'bg-[#fbe1d8] text-primary' : 'bg-surface-lighter text-text-label'}`}>{i + 1}</span>
                   <span className="flex-1 min-w-0">
                     <span className="block text-sm font-medium text-text-primary truncate">{p.name}</span>
                     <span className="block text-xs text-text-label">{p.units} sold</span>

@@ -167,7 +167,7 @@ export default function AccessoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#210D35]/30 selection:text-[#3A1E52]">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#0f3b2c]/30 selection:text-[#18503c]">
       <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
@@ -182,15 +182,15 @@ export default function AccessoriesPage() {
             <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(123, 63, 208,0.06)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(15,59,44,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#210D35]/10 border border-[#210D35]/25 text-[#210D35] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-[#0f3b2c]/10 border border-[#0f3b2c]/25 text-[#0f3b2c] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-[8px] bg-[#210D35] animate-ping" />
-                    <span className="absolute inset-0 rounded-[8px] bg-[#210D35]" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#0f3b2c] animate-ping" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#0f3b2c]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -198,9 +198,9 @@ export default function AccessoriesPage() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block bg-gradient-to-r from-[#210D35] via-[#2E1544] to-[#210D35] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(123, 63, 208,0.4)]">
+                  <span className="relative inline-block bg-gradient-to-r from-[#0f3b2c] via-[#18503c] to-[#0f3b2c] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(15,59,44,0.4)]">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#210D35] to-transparent rounded-[8px] opacity-60 animate-pulse" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#0f3b2c] to-transparent rounded-[8px] opacity-60 animate-pulse" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>
@@ -214,7 +214,7 @@ export default function AccessoriesPage() {
                 }`}>
                   <Link
                     to="/accessories"
-                    className="group inline-flex items-center gap-2 bg-[#210D35] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(123, 63, 208,0.3)] hover:shadow-[0_0_60px_rgba(123, 63, 208,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
+                    className="group inline-flex items-center gap-2 bg-[#0f3b2c] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(15,59,44,0.3)] hover:shadow-[0_0_60px_rgba(15,59,44,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
                   >
                     <span>Shop Accessories</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -237,7 +237,7 @@ export default function AccessoriesPage() {
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
-                i === currentSlide ? 'w-16 bg-[#210D35]' : 'w-6 bg-white/30 hover:bg-white/50'
+                i === currentSlide ? 'w-16 bg-[#0f3b2c]' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
@@ -261,8 +261,8 @@ export default function AccessoriesPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-6 py-2.5 rounded-[8px] text-sm font-bold transition-all duration-300 ${
                   activeTab === tab.key
-                    ? 'bg-[#3A1E52] text-white shadow-lg shadow-black/10'
-                    : 'bg-white border border-[#210D35]/20 text-on-surface-variant hover:border-[#210D35]/40 hover:text-[#3A1E52]'
+                    ? 'bg-[#18503c] text-white shadow-lg shadow-black/10'
+                    : 'bg-white border border-[#0f3b2c]/20 text-on-surface-variant hover:border-[#0f3b2c]/40 hover:text-[#18503c]'
                 }`}
               >
                 {tab.label}
@@ -285,7 +285,7 @@ export default function AccessoriesPage() {
                   <div
                     key={product.id}
                     onClick={() => navigate(`/product/${product.id}`)}
-                    className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(123, 63, 208,0.10)] hover:border-[#210D35]/25 hover:-translate-y-1"
+                    className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(15,59,44,0.10)] hover:border-[#0f3b2c]/25 hover:-translate-y-1"
                   >
                     <div className="relative rounded-2xl overflow-hidden bg-white h-[240px] mb-4 flex items-center justify-center p-5">
                       {img && img !== FALLBACK_IMG ? (
@@ -301,13 +301,13 @@ export default function AccessoriesPage() {
                         </div>
                       )}
                       {tags.length > 0 && (
-                        <span className="absolute top-3 left-3 bg-[#210D35] text-white text-micro font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
+                        <span className="absolute top-3 left-3 bg-[#0f3b2c] text-white text-micro font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
                           {tags[0]}
                         </span>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`) }}
-                        className="absolute bottom-3 right-3 bg-[#210D35] text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(123, 63, 208,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
+                        className="absolute bottom-3 right-3 bg-[#0f3b2c] text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(15,59,44,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
                       >
                         <span className="material-symbols-outlined text-xl">arrow_forward</span>
                       </button>
@@ -317,13 +317,13 @@ export default function AccessoriesPage() {
                       <h3 className="font-bold text-base md:text-lg text-on-surface mb-1.5 leading-snug">{product.name}</h3>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-[#3A1E52] font-extrabold text-lg">₹{price.current.toLocaleString('en-IN')}</span>
+                          <span className="text-[#18503c] font-extrabold text-lg">₹{price.current.toLocaleString('en-IN')}</span>
                           {price.old && <span className="text-on-surface-variant text-xs line-through">₹{price.old.toLocaleString('en-IN')}</span>}
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((s) => (
-                              <span key={s} className={`material-symbols-outlined text-body-sm ${s <= 4 ? 'text-[#e5c364]' : 'text-[#e5c364]/40'}`}>star</span>
+                              <span key={s} className={`material-symbols-outlined text-body-sm ${s <= 4 ? 'text-[#f2b01e]' : 'text-[#f2b01e]/40'}`}>star</span>
                             ))}
                           </div>
                           <span className="text-xs font-bold text-on-surface-variant">{product.rating || '4.9'}</span>

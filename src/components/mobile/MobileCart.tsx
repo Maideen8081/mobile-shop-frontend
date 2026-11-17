@@ -19,8 +19,8 @@ import { cartService, type CartItem } from '../../services/cartService'
 import { addToCartWithAuth } from '../../utils/cartAuth'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
-const PURPLE = '#210D35'
-const PURPLE2 = '#7B3FD0'
+const PURPLE = '#0f3b2c'
+const PURPLE2 = '#0f3b2c'
 const SUCCESS = '#22C55E'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_24px_rgba(0,0,0,0.08)]'
 
@@ -211,7 +211,7 @@ export default function MobileCart() {
 
   if (cartLoading) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <DoubleRingLoader size={48} label="Loading your cart…" />
@@ -223,16 +223,16 @@ export default function MobileCart() {
 
   if (items.length === 0) {
     return (
-      <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Review your items" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
-          <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+          <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(15,59,44,0.1)' }}>
             <ShoppingBag size={44} style={{ color: PURPLE }} />
           </div>
-          <h2 className="text-xl font-bold text-[#1F2937]">Your cart is empty</h2>
-          <p className="text-label text-[#6B7280] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
+          <h2 className="text-xl font-bold text-[#1d2522]">Your cart is empty</h2>
+          <p className="text-label text-[#5d6762] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
           <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-body-sm font-bold active:scale-95 transition"
-            style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}>
+            style={{ background: `linear-gradient(135deg, ${PURPLE}, #18503c)` }}>
             Start Shopping
           </button>
         </div>
@@ -242,14 +242,14 @@ export default function MobileCart() {
   }
 
   return (
-    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileTopSection title="My Cart" subtitle={`${totalItems} ${totalItems === 1 ? 'item' : 'items'}`} icon="cart" />
 
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3.5 pt-3 pb-4 space-y-3">
         {/* Cart items */}
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-body font-bold text-[#1F2937]">Your Cart</h3>
-          <span className="text-micro text-[#6B7280] font-medium">{totalItems} {totalItems === 1 ? 'item' : 'items'}</span>
+          <h3 className="text-body font-bold text-[#1d2522]">Your Cart</h3>
+          <span className="text-micro text-[#5d6762] font-medium">{totalItems} {totalItems === 1 ? 'item' : 'items'}</span>
         </div>
         {items.map((item) => {
           const img = resolveImage(item)
@@ -267,19 +267,19 @@ export default function MobileCart() {
           const stockColor = noStock ? '#EF4444' : stock && stock.stock <= 5 ? '#0EA5E9' : SUCCESS
           return (
             <div key={key} className={`${card} p-2.5 flex gap-2.5`}>
-              <button onClick={() => navigate(`/product/${item.productId}`)} className="relative w-[76px] h-[76px] rounded-xl bg-[#FFFBFB] overflow-hidden flex-shrink-0 active:scale-95 transition self-center">
-                {img ? <img src={img} alt={item.name} className="w-full h-full object-contain p-1.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center text-[#64748B] text-2xl">📦</div>}
+              <button onClick={() => navigate(`/product/${item.productId}`)} className="relative w-[76px] h-[76px] rounded-xl bg-[#f7f6f2] overflow-hidden flex-shrink-0 active:scale-95 transition self-center">
+                {img ? <img src={img} alt={item.name} className="w-full h-full object-contain p-1.5" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center text-[#5d6762] text-2xl">📦</div>}
                 <span className="absolute top-1 left-1 text-micro font-bold px-1.5 py-0.5 rounded-[8px] text-white" style={{ background: PURPLE }}>×{item.quantity}</span>
               </button>
               <div className="flex-1 min-w-0 flex flex-col">
                 <div className="flex items-start justify-between gap-1.5">
                   <button onClick={() => navigate(`/product/${item.productId}`)} className="text-left min-w-0">
-                    <h3 className="text-label font-semibold text-[#1F2937] leading-snug line-clamp-1">{item.name}</h3>
+                    <h3 className="text-label font-semibold text-[#1d2522] leading-snug line-clamp-1">{item.name}</h3>
                     <div className="flex items-center gap-1 mt-1 flex-wrap">
-                      {item.brand && <span className="text-micro font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>{item.brand}</span>}
-                      {item.storage && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.storage}</span>}
-                      {item.ram && <span className="text-micro px-1.5 py-0.5 rounded" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
-                      {item.color && <span className="text-micro px-1.5 py-0.5 rounded bg-[#F1F5F9] text-[#64748B]">{item.color}</span>}
+                      {item.brand && <span className="text-micro font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>{item.brand}</span>}
+                      {item.storage && <span className="text-micro px-1.5 py-0.5 rounded bg-[#f7f6f2] text-[#5d6762]">{item.storage}</span>}
+                      {item.ram && <span className="text-micro px-1.5 py-0.5 rounded" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>{item.ram} RAM</span>}
+                      {item.color && <span className="text-micro px-1.5 py-0.5 rounded bg-[#f7f6f2] text-[#5d6762]">{item.color}</span>}
                     </div>
                   </button>
                   <button onClick={() => handleRemoveItem(item)} aria-label="Remove" className="text-[#94A3B8] hover:text-[#EF4444] active:scale-90 transition flex-shrink-0 -mr-1">
@@ -291,12 +291,12 @@ export default function MobileCart() {
                     <span className="text-body font-extrabold leading-none" style={{ color: PURPLE }}>₹{item.price.toLocaleString('en-IN')}</span>
                     <p className="text-micro font-semibold mt-0.5" style={{ color: stockColor }}>{stockLabel}</p>
                   </div>
-                  <div className="flex items-center gap-1 rounded-[8px] bg-[#FFFBFB] border border-[#E2E8F0] px-1 py-0.5">
-                    <button onClick={() => handleUpdateQty(item, -1)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[#0F172A] active:scale-90 transition">
+                  <div className="flex items-center gap-1 rounded-[8px] bg-[#f7f6f2] border border-[#ece9e2] px-1 py-0.5">
+                    <button onClick={() => handleUpdateQty(item, -1)} aria-label="Decrease" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[#1d2522] active:scale-90 transition">
                       <Minus size={14} />
                     </button>
                     <span className="font-bold w-6 text-center text-label">{item.quantity}</span>
-                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}>
+                    <button onClick={() => handleUpdateQty(item, 1)} disabled={!!atMax || !!noStock} aria-label="Increase" className="w-7 h-7 rounded-[8px] flex items-center justify-center text-white active:scale-90 transition disabled:opacity-30" style={{ background: `linear-gradient(135deg, ${PURPLE}, #18503c)` }}>
                       <Plus size={14} />
                     </button>
                   </div>
@@ -311,14 +311,14 @@ export default function MobileCart() {
           <div className="flex items-center gap-2 px-1 mb-3">
             <div className="w-1 h-4 rounded-[8px]" style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
             <div>
-              <h3 className="text-body font-bold text-[#1F2937] leading-none">Recommended for You</h3>
-              <p className="text-micro text-[#6B7280] mt-0.5">Frequently bought together</p>
+              <h3 className="text-body font-bold text-[#1d2522] leading-none">Recommended for You</h3>
+              <p className="text-micro text-[#5d6762] mt-0.5">Frequently bought together</p>
             </div>
           </div>
           {recLoading ? (
             <div className="flex gap-3 overflow-hidden px-1">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="w-[150px] h-[230px] rounded-[20px] bg-[#E9E3FA] animate-pulse flex-shrink-0" />
+                <div key={i} className="w-[150px] h-[230px] rounded-[20px] bg-[#f7f6f2] animate-pulse flex-shrink-0" />
               ))}
             </div>
           ) : recommended.length > 0 ? (
@@ -342,38 +342,38 @@ export default function MobileCart() {
         {/* Coupon */}
         <div className={`${card} p-4`}>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.1)' }}>
               <Tag size={16} style={{ color: PURPLE }} />
             </div>
             <div>
-              <p className="text-label font-bold text-[#1F2937] leading-none">Apply Coupon</p>
-              <p className="text-micro text-[#6B7280] mt-0.5">Save more on your order</p>
+              <p className="text-label font-bold text-[#1d2522] leading-none">Apply Coupon</p>
+              <p className="text-micro text-[#5d6762] mt-0.5">Save more on your order</p>
             </div>
           </div>
           {coupon ? (
             <div className="flex items-center justify-between pl-3 pr-2 py-2.5 rounded-2xl text-caption font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#16A34A' }}>
               <span className="flex items-center gap-1.5"><Check size={14} /> {coupon.code} applied — ₹{Math.round(discount).toLocaleString('en-IN')} off</span>
-              <button onClick={() => { applyCoupon(null); setCouponCode('') }} className="text-[#64748B] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
+              <button onClick={() => { applyCoupon(null); setCouponCode('') }} className="text-[#5d6762] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
             </div>
           ) : (
             <div className="space-y-2.5">
-              <div className="flex items-center h-12 px-4 rounded-2xl bg-[#FFFBFB] border border-[#E5E7EB] focus-within:border-[#FDD] transition">
-                <Tag size={15} className="text-[#9CA3AF] mr-2.5 flex-shrink-0" />
+              <div className="flex items-center h-12 px-4 rounded-2xl bg-[#f7f6f2] border border-[#ece9e2] focus-within:border-[#FDD] transition">
+                <Tag size={15} className="text-[#9aa29e] mr-2.5 flex-shrink-0" />
                 <input
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                   placeholder="Enter coupon code"
-                  className="flex-1 h-full bg-transparent outline-none text-body-sm font-semibold tracking-wide text-[#1F2937] placeholder:text-[#9CA3AF] placeholder:font-medium placeholder:tracking-normal"
+                  className="flex-1 h-full bg-transparent outline-none text-body-sm font-semibold tracking-wide text-[#1d2522] placeholder:text-[#9aa29e] placeholder:font-medium placeholder:tracking-normal"
                 />
               </div>
-              <button onClick={handleApplyCoupon} disabled={couponBusy} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)`, boxShadow: '0 8px 20px rgba(123, 63, 208,0.32)' }}>
+              <button onClick={handleApplyCoupon} disabled={couponBusy} className="w-full h-12 rounded-2xl text-body-sm font-bold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition" style={{ background: `linear-gradient(135deg, ${PURPLE}, #18503c)`, boxShadow: '0 8px 20px rgba(15,59,44,0.32)' }}>
                 <Tag size={16} /> {couponBusy ? 'Checking…' : 'Apply Coupon'}
               </button>
             </div>
           )}
           <div className="flex flex-wrap gap-1.5 mt-3">
             {liveCoupons.slice(0, 3).map((c) => (
-              <button key={c.code} onClick={() => setCouponCode(c.code)} disabled={!!coupon} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#E5E7EB', color: PURPLE }}>
+              <button key={c.code} onClick={() => setCouponCode(c.code)} disabled={!!coupon} className="text-micro font-semibold px-2.5 py-1 rounded-[8px] border transition disabled:opacity-40 active:scale-95" style={{ borderColor: '#ece9e2', color: PURPLE }}>
                 {c.code} · {couponLabel(c)}
               </button>
             ))}
@@ -386,7 +386,7 @@ export default function MobileCart() {
             <span>Free Shipping</span>
             <span>{shipping === 0 ? 'Unlocked' : `₹${(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString('en-IN')} left`}</span>
           </div>
-          <div className="h-1.5 w-full rounded-[8px] bg-[#E2E8F0] overflow-hidden">
+          <div className="h-1.5 w-full rounded-[8px] bg-[#ece9e2] overflow-hidden">
             <div className="h-full rounded-[8px]" style={{ width: `${shippingProgress}%`, background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE2})` }} />
           </div>
         </div>
@@ -399,8 +399,8 @@ export default function MobileCart() {
           {coupon && (
             <SummaryRow label={`Coupon (${coupon.code})`} value={`-₹${Math.round(discount).toLocaleString('en-IN')}`} highlight />
           )}
-          <div className="pt-2 border-t border-[#EEF1F4] flex items-center justify-between">
-            <span className="text-label font-bold text-[#1F2937]">Grand Total</span>
+          <div className="pt-2 border-t border-[#ece9e2] flex items-center justify-between">
+            <span className="text-label font-bold text-[#1d2522]">Grand Total</span>
             <span className="text-title-sm font-bold" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</span>
           </div>
         </div>
@@ -408,16 +408,16 @@ export default function MobileCart() {
       </div>
 
       {/* Sticky checkout bar */}
-      <div className="flex-shrink-0 z-50 w-full bg-white/95 backdrop-blur-xl border-t border-[#EEF1F4] px-3.5 py-2.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+      <div className="flex-shrink-0 z-50 w-full bg-white/95 backdrop-blur-xl border-t border-[#ece9e2] px-3.5 py-2.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-micro text-[#64748B]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
+            <p className="text-micro text-[#5d6762]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
             <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</p>
           </div>
           <button
             onClick={() => navigate('/checkout/address')}
             className="flex-shrink-0 h-11 px-6 rounded-xl text-white text-body-sm font-bold active:scale-95 transition flex items-center justify-center gap-2"
-            style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}
+            style={{ background: `linear-gradient(135deg, ${PURPLE}, #18503c)` }}
           >
             Checkout <ArrowLeft size={16} className="rotate-180" />
           </button>
@@ -483,35 +483,35 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
             <button
               onClick={() => onWish(p)}
               className="absolute top-2 right-2 z-10 w-7 h-7 rounded-[8px] bg-white flex items-center justify-center shadow"
-              style={{ color: wished ? '#EC4899' : '#9CA3AF' }}
+              style={{ color: wished ? '#f08a7b' : '#9aa29e' }}
             >
-              <Heart size={14} fill={wished ? '#EC4899' : 'none'} />
+              <Heart size={14} fill={wished ? '#f08a7b' : 'none'} />
             </button>
             <button
               onClick={() => { if (!drag.current.moved) onOpen(id) }}
-              className="h-[120px] bg-[#FFFBFB] flex items-center justify-center overflow-hidden"
+              className="h-[120px] bg-[#f7f6f2] flex items-center justify-center overflow-hidden"
             >
               {img ? <img src={img} alt={name} className="w-full h-full object-contain p-2" loading="lazy" draggable={false} /> : <span className="text-3xl">📦</span>}
             </button>
             <div className="flex-1 px-2.5 pt-2 flex flex-col min-h-0">
               {brand && <span className="text-micro font-bold uppercase truncate" style={{ color: PURPLE }}>{brand}</span>}
-              <p className="text-caption font-semibold text-[#1F2937] leading-tight line-clamp-2">{name}</p>
+              <p className="text-caption font-semibold text-[#1d2522] leading-tight line-clamp-2">{name}</p>
               {rating > 0 && (
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <Star size={10} style={{ color: '#F59E0B' }} fill="#F59E0B" />
-                  <span className="text-micro font-semibold text-[#1F2937]">{rating.toFixed(1)}</span>
+                  <span className="text-micro font-semibold text-[#1d2522]">{rating.toFixed(1)}</span>
                 </div>
               )}
               <div className="mt-auto flex items-center justify-between gap-1 pt-1">
                 <div className="min-w-0">
-                  <p className="text-label font-bold text-[#1F2937] leading-none">₹{cur.toLocaleString('en-IN')}</p>
-                  {mrp > cur && <p className="text-micro text-[#9CA3AF] line-through leading-none">₹{mrp.toLocaleString('en-IN')}</p>}
+                  <p className="text-label font-bold text-[#1d2522] leading-none">₹{cur.toLocaleString('en-IN')}</p>
+                  {mrp > cur && <p className="text-micro text-[#9aa29e] line-through leading-none">₹{mrp.toLocaleString('en-IN')}</p>}
                 </div>
                 <button
                   onClick={() => onAdd(p)}
                   aria-label="Add to cart"
                   className="w-8 h-8 rounded-[8px] text-white flex items-center justify-center flex-shrink-0 active:scale-90 transition"
-                  style={{ background: `linear-gradient(135deg, ${PURPLE}, #3A1E52)` }}
+                  style={{ background: `linear-gradient(135deg, ${PURPLE}, #18503c)` }}
                 >
                   <Plus size={16} />
                 </button>
@@ -528,8 +528,8 @@ function RecCarousel({ products, wishlisted, onAdd, onWish, onOpen }: {
 function SummaryRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between text-caption">
-      <span className="text-[#64748B]">{label}</span>
-      <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#111827]'}`}>{value}</span>
+      <span className="text-[#5d6762]">{label}</span>
+      <span className={`font-semibold ${highlight ? 'text-[#16A34A]' : 'text-[#1d2522]'}`}>{value}</span>
     </div>
   )
 }

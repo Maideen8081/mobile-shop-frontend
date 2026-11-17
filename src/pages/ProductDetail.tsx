@@ -40,9 +40,9 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
         <div className="axpd min-h-screen flex items-center justify-center p-6">
           <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
             <p className="text-4xl mb-4 block">⚠️</p>
-            <h2 className="text-xl font-bold text-[#210D35] mb-2">Something went wrong</h2>
+            <h2 className="text-xl font-bold text-[#0f3b2c] mb-2">Something went wrong</h2>
             <p className="text-sm text-[#6b6b70] mb-6">{this.state.error?.message || 'An unexpected error occurred'}</p>
-            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-[#210D35] text-white rounded-[8px] text-sm font-semibold transition-all hover:opacity-80 cursor-pointer">
+            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-[#0f3b2c] text-white rounded-[8px] text-sm font-semibold transition-all hover:opacity-80 cursor-pointer">
               Reload Page
             </button>
           </div>
@@ -101,14 +101,14 @@ const relatedName = (product: any): string => product.product_name ?? product.na
 
 const COLOR_PALETTE: Record<string, string> = {
   black: '#1a1a1a', white: '#f0f0f0', silver: '#c0c0c0',
-  gray: '#808080', 'titanium gray': '#6b7280', 'titanium black': '#374151',
-  'titanium violet': '#8b5cf6', 'natural titanium': '#d4c5a9',
-  'blue titanium': '#2563eb', 'white titanium': '#e5e7eb',
-  'flowy emerald': '#10b981', 'silky black': '#111827',
+  gray: '#808080', 'titanium gray': '#5d6762', 'titanium black': '#3d4641',
+  'titanium violet': '#18503c', 'natural titanium': '#d4c5a9',
+  'blue titanium': '#2563eb', 'white titanium': '#ece9e2',
+  'flowy emerald': '#10b981', 'silky black': '#1d2522',
   green: '#22c55e', midnight: '#1e293b', starlight: '#faf5eb',
-  rose: '#e11d48', gold: '#f59e0b', graphite: '#4b5563',
-  sierra: '#9ca3af', 'deep purple': '#7c3aed', red: '#ef4444',
-  blue: '#3b82f6', purple: '#7c3aed',
+  rose: '#0f3b2c', gold: '#f59e0b', graphite: '#5d6762',
+  sierra: '#9aa29e', 'deep purple': '#18503c', red: '#ef4444',
+  blue: '#3b82f6', purple: '#18503c',
 }
 
 function getColorSwatch(c: string): string {
@@ -166,7 +166,7 @@ function Stars({ score, small }: { score: number; small?: boolean }) {
   return (
     <div className={`ax-stars ${small ? 'ax-sm' : ''}`}>
       {[1, 2, 3, 4, 5].map((i) => (
-        <svg key={i} viewBox="0 0 24 24" fill={i <= Math.round(score) ? '#f5a623' : 'none'} stroke="#f5a623" strokeWidth="1.5">
+        <svg key={i} viewBox="0 0 24 24" fill={i <= Math.round(score) ? '#f2b01e' : 'none'} stroke="#f2b01e" strokeWidth="1.5">
           <path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" />
         </svg>
       ))}
@@ -738,7 +738,7 @@ function ProductDetailContent() {
 
   if (loading) {
     return (
-      <div className="axpd min-h-screen bg-[#FFF7F3]">
+      <div className="axpd min-h-screen bg-[#f7f6f2]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <DesktopPageLoader text="Loading product details..." />
@@ -748,19 +748,19 @@ function ProductDetailContent() {
 
   if (fetchError || !apiProduct) {
     return (
-      <div className="axpd min-h-screen bg-[#FFF7F3]">
+      <div className="axpd min-h-screen bg-[#f7f6f2]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
         <div className="min-h-[60vh] flex items-center justify-center p-6">
           <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
             <p className="text-4xl mb-4 block">🔍</p>
-            <h1 className="text-xl font-bold text-[#210D35] mb-2">Product unavailable</h1>
+            <h1 className="text-xl font-bold text-[#0f3b2c] mb-2">Product unavailable</h1>
             <p className="text-sm text-[#6b6b70] mb-6">{fetchError || 'This product is no longer available.'}</p>
             <div className="flex gap-3 justify-center">
-              <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#210D35,#4A2470)' }}>
+              <button onClick={() => navigate(-1)} className="px-6 py-3 rounded-[8px] text-white text-sm font-bold cursor-pointer" style={{ background: 'linear-gradient(100deg,#0f3b2c,#18503c)' }}>
                 Go Back
               </button>
-              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] text-sm font-bold cursor-pointer" style={{ background: 'rgba(33, 13, 53,0.08)', color: '#3A1E52', border: '1.5px solid rgba(33, 13, 53,0.2)' }}>
+              <Link to="/collection/all" className="px-6 py-3 rounded-[8px] text-sm font-bold cursor-pointer" style={{ background: 'rgba(15,59,44,0.08)', color: '#18503c', border: '1.5px solid rgba(15,59,44,0.2)' }}>
                 Browse Products
               </Link>
             </div>
@@ -1419,23 +1419,23 @@ export default function ProductDetail() {
 const AXPD_CSS = `
 .axpd{
   --white:#ffffff;
-  --off-white:#FFF7F3;
-  /* PhoneFix palette: Deep Purple · Warm Cream · Soft Lavender · Sunshine/Turbo Yellow.
-     (--red* names are kept so existing rules pick up the brand purple.) */
-  --purple:#210D35;
-  --purple-mid:#4A2470;
-  --lavender:#D0ADFF;
-  --sunshine:#FFD014;
-  --turbo:#F0E100;
-  --ink:#210D35;
-  --slate:#6e5d7e;
+  --off-white:#f7f6f2;
+  /* PhoneFix palette: Deep green · Warm Cream · Soft sage · Sunshine/Turbo Yellow.
+     (--red* names are kept so existing rules pick up the brand green.) */
+  --green:#0f3b2c;
+  --green-mid:#18503c;
+  --sage:#dfe8b4;
+  --sunshine:#dfe8b4;
+  --turbo:#dfe8b4;
+  --ink:#0f3b2c;
+  --slate:#5d6762;
   --border:#ece4ef;
-  --red:#210D35;
-  --red-deep:#4A2470;
-  --red-tint:rgba(208,173,255,.22);
+  --red:#0f3b2c;
+  --red-deep:#18503c;
+  --red-tint:rgba(223,232,180,.22);
   --green:#1e8a5f;
   --green-tint:#eaf7f1;
-  --gold:#FFD014;
+  --gold:#dfe8b4;
   --accent:var(--red);
   --black:#151515;
   --gray-900:#1C1C1E;
@@ -1443,9 +1443,9 @@ const AXPD_CSS = `
   --gray-400:#9A9AA0;
   --gray-200:#E7E7EA;
   --radius:14px;
-  --shadow-sm:0 1px 3px rgba(33,13,53,.06);
-  --shadow-md:0 10px 30px rgba(33,13,53,.08);
-  --shadow-lg:0 20px 50px rgba(33,13,53,.14);
+  --shadow-sm:0 1px 3px rgba(15,59,44,.06);
+  --shadow-md:0 10px 30px rgba(15,59,44,.08);
+  --shadow-lg:0 20px 50px rgba(15,59,44,.14);
   font-family:var(--font-ui);
   color:var(--ink);
   background:var(--off-white);
@@ -1454,7 +1454,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-mono{font-family:var(--font-display);}
 .axpd .ax-display{font-family:var(--font-display);}
-.axpd ::selection{background:var(--lavender); color:var(--purple);}
+.axpd ::selection{background:var(--sage); color:var(--green);}
 .axpd a{color:inherit; text-decoration:none;}
 .axpd img,.axpd svg{display:block; max-width:100%;}
 
@@ -1499,7 +1499,7 @@ const AXPD_CSS = `
 }
 
 /* breadcrumb */
-.axpd .ax-breadcrumb{max-width:1500px; margin:0 auto; padding:14px 20px 0; font-size:12.5px; color:var(--slate); display:flex; gap:6px; flex-wrap:wrap;}
+.axpd .ax-breadcrumb{max-width:1280px; margin:0 auto; padding:14px 32px 0; font-size:12.5px; color:var(--slate); display:flex; gap:6px; flex-wrap:wrap;}
 .axpd .ax-breadcrumb a{color:var(--slate); font-weight:600; transition:color .2s;}
 .axpd .ax-breadcrumb a:hover{color:var(--red);}
 .axpd .ax-breadcrumb .sep{color:#c9c9cc;}
@@ -1509,47 +1509,47 @@ const AXPD_CSS = `
 .axpd .ax-cat-chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
 .axpd .ax-cat-chip{
   display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
-  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(123, 63, 208,.18);
+  color:var(--red-deep); background:var(--red-tint); border:1px solid rgba(15,59,44,.18);
   padding:6px 12px; border-radius: 8px; text-transform:capitalize; transition:all .2s;
 }
 .axpd .ax-cat-chip svg{width:13px; height:13px;}
 .axpd .ax-cat-chip:hover{background:var(--red); color:#fff; border-color:var(--red);}
 
 /* deal strip */
-.axpd .ax-deal-strip{max-width:1500px; margin:16px auto 0; padding:0 20px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);}
+.axpd .ax-deal-strip{max-width:1280px; margin:16px auto 0; padding:0 32px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);}
 .axpd .ax-deal-inner{
-  background:linear-gradient(115deg, #170826, var(--purple) 55%, var(--purple-mid));
+  background:linear-gradient(115deg, #0b2e22, var(--green) 55%, var(--green-mid));
   padding:16px 22px 14px;
   display:flex; align-items:center; justify-content:space-between;
   flex-wrap:wrap; gap:14px; color:#fff; position:relative; overflow:hidden;
 }
 .axpd .ax-deal-inner::before{
   content:''; position:absolute; top:-60px; right:-40px; width:240px; height:240px; border-radius: 8px;
-  background:radial-gradient(circle, rgba(208,173,255,.28), transparent 70%); pointer-events:none;
+  background:radial-gradient(circle, rgba(223,232,180,.28), transparent 70%); pointer-events:none;
 }
 .axpd .ax-deal-left{display:flex; align-items:center; gap:14px; position:relative;}
 .axpd .ax-deal-bolt{
   width:46px; height:46px; border-radius:12px; flex-shrink:0;
   background:linear-gradient(135deg, var(--turbo), var(--sunshine));
-  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(255,208,20,.4);
+  display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(223,232,180,.4);
 }
-.axpd .ax-deal-bolt svg{width:24px; height:24px; color:var(--purple);}
+.axpd .ax-deal-bolt svg{width:24px; height:24px; color:var(--green);}
 .axpd .ax-deal-copy{display:flex; flex-direction:column; gap:5px;}
 .axpd .ax-deal-badge{
   display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
   font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; 
-  background-color: var(--sunshine); color: var(--purple); padding: 4px 10px; border-radius: 8px;
+  background-color: var(--sunshine); color: var(--green); padding: 4px 10px; border-radius: 8px;
 }
-.axpd .ax-pulse{width:8px; height:8px; border-radius: 8px; background:var(--purple); box-shadow:0 0 0 rgba(255,208,20,.6); animation:ax-pulse 1.8s infinite;}
+.axpd .ax-pulse{width:8px; height:8px; border-radius: 8px; background:var(--green); box-shadow:0 0 0 rgba(223,232,180,.6); animation:ax-pulse 1.8s infinite;}
 @keyframes ax-pulse{
-  0%{box-shadow:0 0 0 0 rgba(255,208,20,.55);}
-  70%{box-shadow:0 0 0 9px rgba(255,208,20,0);}
-  100%{box-shadow:0 0 0 0 rgba(255,208,20,0);}
+  0%{box-shadow:0 0 0 0 rgba(223,232,180,.55);}
+  70%{box-shadow:0 0 0 9px rgba(223,232,180,0);}
+  100%{box-shadow:0 0 0 0 rgba(223,232,180,0);}
 }
 .axpd .ax-deal-msg{font-size:15px; font-weight:600; letter-spacing:.01em; background-color: transparent;}
 .axpd .ax-deal-msg b{color:var(--sunshine); font-weight:800;}
 .axpd .ax-deal-right{display:flex; align-items:center; gap:14px; position:relative;}
-.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--lavender); background-color: transparent;}
+.axpd .ax-deal-count-label{font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--sage); background-color: transparent;}
 .axpd .ax-countdown{display:flex; align-items:center; gap:6px;}
 .axpd .ax-cd-unit{
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:6px 9px;
@@ -1579,7 +1579,7 @@ const AXPD_CSS = `
 }
 
 /* main layout */
-.axpd .ax-page-wrap{max-width:1500px; margin:0 auto; padding:20px;}
+.axpd .ax-page-wrap{max-width:1280px; margin:0 auto; padding:20px 32px;}
 .axpd .ax-product-grid{display:grid; grid-template-columns:minmax(420px, 640px) minmax(0, 1fr); gap:40px; align-items:start;}
 
 /* sticky gallery column (image + offers don't scroll) */
@@ -1594,7 +1594,7 @@ const AXPD_CSS = `
   transition:border-color .2s, transform .2s, box-shadow .2s;
 }
 .axpd .ax-thumb:hover{transform:translateY(-2px); border-color:var(--red);}
-.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(123, 63, 208,.12);}
+.axpd .ax-thumb.active{border-color:var(--red); box-shadow:0 4px 14px rgba(15,59,44,.12);}
 .axpd .ax-thumb.active::before{
   content:''; position:absolute; left:-14px; top:8px; bottom:8px; width:3px;
   background:var(--red); border-radius:3px; animation:ax-rail-in .25s ease;
@@ -1618,7 +1618,7 @@ const AXPD_CSS = `
   position:absolute; top:50%; transform:translateY(-50%);
   width:40px; height:40px; border-radius: 8px; border:1px solid var(--border);
   background:#fff; color:var(--ink); display:flex; align-items:center; justify-content:center;
-  box-shadow:0 4px 14px rgba(33,13,53,.12); cursor:pointer; z-index:3;
+  box-shadow:0 4px 14px rgba(15,59,44,.12); cursor:pointer; z-index:3;
   transition:background .2s, color .2s, transform .2s;
 }
 .axpd .ax-arrow:hover{background:var(--red); border-color:var(--red); color:#fff; transform:translateY(-50%) scale(1.06);}
@@ -1634,7 +1634,7 @@ const AXPD_CSS = `
 .axpd .ax-stage-badges{position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:6px; z-index:2;}
 .axpd .ax-pill{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius: 8px; text-transform:uppercase; letter-spacing:.04em;}
 .axpd .ax-pill.ax-new{background:var(--ink); color:#fff;}
-.axpd .ax-pill.ax-off{background:var(--sunshine); color:var(--purple);}
+.axpd .ax-pill.ax-off{background:var(--sunshine); color:var(--green);}
 .axpd .ax-stage-actions{position:absolute; top:14px; right:14px; display:flex; flex-direction:column; gap:8px; z-index:2;}
 .axpd .ax-icon-btn{
   width:36px; height:36px; border-radius: 8px; background:#fff; border:1px solid var(--border);
@@ -1657,7 +1657,7 @@ const AXPD_CSS = `
 /* right content */
 .axpd .ax-content-right{display:flex; flex-direction:column; gap:26px;}
 .axpd .ax-brand-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-.axpd .ax-brand-tag{color:var(--purple-mid); font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
+.axpd .ax-brand-tag{color:var(--green-mid); font-weight:700; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;}
 .axpd .ax-title{font-family:var(--font-display); font-weight:700; font-size:27px; line-height:1.3; margin-top:4px; letter-spacing:-.01em;}
 .axpd .ax-rating-row{display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap;}
 .axpd .ax-stars{display:flex; gap:2px;}
@@ -1672,7 +1672,7 @@ const AXPD_CSS = `
 .axpd .ax-price-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
 .axpd .ax-deal-price{font-family:var(--font-display); font-weight:700; font-size:34px; color:var(--ink);}
 .axpd .ax-mrp{font-family:var(--font-display); font-size:16px; color:var(--slate); text-decoration:line-through;}
-.axpd .ax-discount{background:var(--sunshine); color:var(--purple); font-weight:800; font-size:13.5px; padding:3px 10px; border-radius:6px;}
+.axpd .ax-discount{background:var(--sunshine); color:var(--green); font-weight:800; font-size:13.5px; padding:3px 10px; border-radius:6px;}
 .axpd .ax-tax-note{font-size:12px; color:var(--slate); margin-top:6px;}
 .axpd .ax-emi-note{
   margin-top:14px; font-size:13px; display:inline-flex; align-items:center; gap:8px;
@@ -1711,7 +1711,7 @@ const AXPD_CSS = `
   padding:12px 14px; cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
 }
 .axpd .ax-variant-card:hover{border-color:var(--red); transform:translateY(-1px); box-shadow:var(--shadow-sm);}
-.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(123, 63, 208,.08);}
+.axpd .ax-variant-card.selected{border-color:var(--red); background:var(--red-tint); box-shadow:0 0 0 3px rgba(15,59,44,.08);}
 .axpd .ax-vc-img{
   width:52px; height:52px; border-radius:10px; background:var(--white);
   border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;
@@ -1743,7 +1743,7 @@ const AXPD_CSS = `
   border:1px solid var(--border); border-radius:12px; background:var(--white); padding:12px 40px 12px 12px;
   cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
 }
-.axpd .ax-address-btn:hover{border-color:var(--red); box-shadow:0 6px 20px rgba(74,36,112,.08); transform:translateY(-1px);}
+.axpd .ax-address-btn:hover{border-color:var(--red); box-shadow:0 6px 20px rgba(24,80,60,.08); transform:translateY(-1px);}
 .axpd .ax-address-ic{
   width:40px; height:40px; border-radius:10px; background:var(--red-tint); color:var(--red);
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
@@ -1789,7 +1789,7 @@ const AXPD_CSS = `
 .axpd .ax-qty-selector button:hover{background:var(--off-white);}
 .axpd .ax-qty-val{width:40px; text-align:center; font-weight:700; font-family:var(--font-display);}
 .axpd .ax-btn-primary{
-  flex:1; min-width:180px; background:var(--purple); color:#FFF7F3; font-weight:700; font-size:14.5px;
+  flex:1; min-width:180px; background:var(--green); color:#f7f6f2; font-weight:700; font-size:14.5px;
   padding:14px 22px; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px;
   transition:background .2s, transform .1s; position:relative; overflow:hidden; cursor:pointer;
 }
@@ -1797,8 +1797,8 @@ const AXPD_CSS = `
 .axpd .ax-btn-primary:active:not(:disabled){transform:scale(.98);}
 .axpd .ax-btn-primary:disabled{opacity:.5; cursor:not-allowed;}
 .axpd .ax-btn-secondary{
-  flex:1; min-width:180px; background:var(--sunshine); color:var(--purple); font-weight:800; font-size:14.5px;
-  box-shadow:0 10px 22px -8px rgba(255,208,20,.7);
+  flex:1; min-width:180px; background:var(--sunshine); color:var(--green); font-weight:800; font-size:14.5px;
+  box-shadow:0 10px 22px -8px rgba(223,232,180,.7);
   padding:14px 22px; border-radius:10px; text-align:center; transition:background .2s, transform .1s; cursor:pointer;
 }
 .axpd .ax-btn-secondary:hover:not(:disabled){background:var(--turbo);}
@@ -1820,7 +1820,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-sec-title:first-child{margin-top:0;}
 .axpd .ax-sec-block{animation:ax-fade-in .35s ease;}
-.axpd .ax-desc-text{font-size:14px; line-height:1.8; color:#4e3d5e;}
+.axpd .ax-desc-text{font-size:14px; line-height:1.8; color:#0f3b2c;}
 .axpd .ax-desc-text + .ax-desc-text{margin-top:10px;}
 
 /* spec table */
@@ -1839,7 +1839,7 @@ const AXPD_CSS = `
 .axpd .ax-review-bars{flex:1; min-width:220px; display:flex; flex-direction:column; gap:7px;}
 .axpd .ax-review-bar-row{display:flex; align-items:center; gap:10px; font-size:12px; color:var(--slate);}
 .axpd .ax-bar-track{flex:1; height:7px; background:var(--border); border-radius: 8px; overflow:hidden;}
-.axpd .ax-bar-fill{height:100%; width:0%; background:#f5a623; border-radius: 8px;}
+.axpd .ax-bar-fill{height:100%; width:0%; background:#f2b01e; border-radius: 8px;}
 .axpd .ax-review-card{border-top:1px solid var(--border); padding:18px 0; display:flex; flex-direction:column; gap:6px;}
 .axpd .ax-review-head{display:flex; align-items:center; gap:10px;}
 .axpd .ax-avatar{
@@ -1848,7 +1848,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-rev-name{font-weight:700; font-size:13.5px;}
 .axpd .ax-rev-date{font-size:11.5px; color:var(--slate);}
-.axpd .ax-review-text{font-size:13.5px; color:#4e3d5e; line-height:1.65;}
+.axpd .ax-review-text{font-size:13.5px; color:#0f3b2c; line-height:1.65;}
 .axpd .ax-review-imgs{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;}
 .axpd .ax-review-imgs img{width:64px; height:64px; border-radius:8px; object-fit:cover; border:1px solid var(--border);}
 .axpd .ax-review-form-wrap{border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin:14px 0; background:var(--white);}
@@ -1869,7 +1869,7 @@ const AXPD_CSS = `
 .axpd .ax-rp-card:hover .ax-rp-media img{transform:scale(1.06);}
 .axpd .ax-rp-tag{
   position:absolute; top:12px; left:12px; z-index:2;
-  background:var(--sunshine); color:var(--purple);
+  background:var(--sunshine); color:var(--green);
   font-size:10px; font-weight:800; letter-spacing:.03em;
   padding:5px 10px; border-radius: 8px; text-transform:uppercase;
 }
@@ -1891,7 +1891,7 @@ const AXPD_CSS = `
 .axpd .ax-rp-btn.liked svg{fill:currentColor;}
 .axpd .ax-rp-chip{
   position:absolute; left:12px; bottom:12px; z-index:2;
-  background:var(--purple); color:#FFF7F3;
+  background:var(--green); color:#f7f6f2;
   font-size:12px; font-weight:700; padding:7px 14px; border-radius: 8px;
 }
 .axpd .ax-rp-info h4{
@@ -1922,7 +1922,7 @@ const AXPD_CSS = `
 .axpd .ax-bank-offer.applied{border-color:var(--green); background:var(--green-tint); box-shadow:0 0 0 1px var(--green) inset;}
 .axpd .ax-bo-head{display:flex; justify-content:space-between; align-items:center; gap:8px;}
 .axpd .ax-bo-bank{font-weight:800; font-size:12.5px; display:flex; align-items:center; gap:6px;}
-.axpd .ax-bo-bank::before{content:''; width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg, var(--purple), var(--lavender)); flex-shrink:0;}
+.axpd .ax-bo-bank::before{content:''; width:8px; height:8px; border-radius:2px; background:linear-gradient(135deg, var(--green), var(--sage)); flex-shrink:0;}
 .axpd .ax-bo-code{font-family:var(--font-display); font-size:10.5px; font-weight:700; color:var(--red); border:1px dashed var(--red); border-radius:6px; padding:2px 8px; cursor:pointer; letter-spacing:.04em; transition:all .2s; background:var(--white);}
 .axpd .ax-bo-code:hover{background:var(--red); color:#fff;}
 .axpd .ax-bo-offer{font-size:13px; font-weight:700; margin-top:7px;}
@@ -1931,14 +1931,14 @@ const AXPD_CSS = `
 .axpd .ax-bo-actions{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:9px;}
 .axpd .ax-bo-save{font-size:11px; font-weight:700; color:#166534; background:#e8f7ee; border-radius:6px; padding:3px 8px; white-space:nowrap;}
 .axpd .ax-bo-apply{border:none; background:var(--ink); color:#fff; font-size:11.5px; font-weight:700; border-radius:6px; padding:5px 14px; cursor:pointer; transition:all .2s; font-family:inherit;}
-.axpd .ax-bo-apply:hover{background:var(--purple-mid);}
+.axpd .ax-bo-apply:hover{background:var(--green-mid);}
 .axpd .ax-bo-apply.applied{background:var(--green);}
 .axpd .ax-cart-offer{padding:9px 12px; border:1px solid var(--border); border-radius:10px;}
 .axpd .ax-co-row{display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; font-weight:700; margin-bottom:8px;}
 .axpd .ax-co-row b{font-family:var(--font-display); font-size:11px; color:var(--slate);}
 .axpd .ax-co-row b.ok{color:var(--green);}
 .axpd .ax-progress{height:6px; background:var(--border); border-radius: 8px; overflow:hidden;}
-.axpd .ax-progress span{display:block; height:100%; background:linear-gradient(90deg, var(--purple), var(--lavender)); border-radius: 8px; transition:width .5s ease;}
+.axpd .ax-progress span{display:block; height:100%; background:linear-gradient(90deg, var(--green), var(--sage)); border-radius: 8px; transition:width .5s ease;}
 .axpd .ax-co-note{font-size:11px; color:var(--slate); background:var(--off-white); border-radius:8px; padding:8px 10px; display:flex; gap:6px; align-items:flex-start; line-height:1.5;}
 .axpd .ax-co-note svg{width:13px; height:13px; color:var(--red); flex-shrink:0; margin-top:1px;}
 
@@ -1953,9 +1953,9 @@ const AXPD_CSS = `
 }
 .axpd .ax-trust-ic svg{width:17px; height:17px;}
 .axpd .ax-ti-green{background:#e8f7ee; color:#16a34a;}
-.axpd .ax-ti-blue{background:var(--red-tint); color:var(--purple);}
-.axpd .ax-ti-purple{background:var(--purple); color:var(--sunshine);}
-.axpd .ax-ti-orange{background:rgba(255,208,20,.22); color:var(--purple);}
+.axpd .ax-ti-blue{background:var(--red-tint); color:var(--green);}
+.axpd .ax-ti-purple{background:var(--green); color:var(--sunshine);}
+.axpd .ax-ti-orange{background:rgba(223,232,180,.22); color:var(--green);}
 .axpd .ax-trust-txt{min-width:0;}
 .axpd .ax-trust-txt b{display:block; font-size:12px; font-weight:700; color:var(--ink); line-height:1.3;}
 .axpd .ax-trust-txt span{display:block; font-size:10.5px; color:var(--slate); line-height:1.35; margin-top:1px;}
@@ -1979,7 +1979,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-help-btn svg{width:15px; height:15px; flex-shrink:0;}
 .axpd .ax-help-call{background:var(--ink); color:#fff; border:1px solid var(--ink);}
-.axpd .ax-help-call:hover{background:var(--purple-mid);}
+.axpd .ax-help-call:hover{background:var(--green-mid);}
 .axpd .ax-help-wa{background:#fff; color:#166534; border:1px solid #b9e6c8;}
 .axpd .ax-help-wa:hover{background:#e8f7ee;}
 
@@ -2114,7 +2114,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-related-subtitle {
   font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-  color: var(--purple-mid); text-transform: uppercase; margin-bottom: 4px;
+  color: var(--green-mid); text-transform: uppercase; margin-bottom: 4px;
 }
 .axpd .ax-related-title {
   font-family:var(--font-display); font-size: 26px; font-weight: 700; color: var(--ink);
@@ -2142,7 +2142,7 @@ const AXPD_CSS = `
 .axpd .ax-related-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 16px 36px rgba(0,0,0,0.08);
-  border-color: rgba(74,36,112,0.3);
+  border-color: rgba(24,80,60,0.3);
 }
 
 /* Framed media with full auto-fit image without crop */
@@ -2172,7 +2172,7 @@ const AXPD_CSS = `
 
 .axpd .ax-related-disc-chip {
   position: absolute; top: 10px; left: 10px;
-  background: var(--sunshine); color: var(--purple);
+  background: var(--sunshine); color: var(--green);
   font-size: 10px; font-weight: 800; padding: 4px 8px;
   border-radius: 6px; letter-spacing: 0.04em; z-index: 2;
 }
@@ -2216,12 +2216,12 @@ const AXPD_CSS = `
 
 .axpd .ax-related-add-btn {
   display: inline-flex; align-items: center; gap: 5px;
-  background: var(--red-tint); color: var(--red-deep); border: 1px solid rgba(74,36,112,0.2);
+  background: var(--red-tint); color: var(--red-deep); border: 1px solid rgba(24,80,60,0.2);
   padding: 6px 14px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
   cursor: pointer; transition: all 0.2s ease;
 }
 .axpd .ax-related-add-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
-.axpd .ax-related-add-btn:hover { background: var(--sunshine); color: var(--purple); border-color: var(--sunshine); }
+.axpd .ax-related-add-btn:hover { background: var(--sunshine); color: var(--green); border-color: var(--sunshine); }
 
 @media (max-width: 1024px) {
   .axpd .ax-related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }

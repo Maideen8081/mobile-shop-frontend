@@ -49,8 +49,8 @@ export default function CategoryCard({ cat, index, onEdit, onDelete }: CategoryC
               key={sub.id}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] text-[11px] font-medium"
               style={{
-                backgroundColor: 'rgba(139,92,246,0.16)',
-                color: '#c4b5fd',
+                backgroundColor: 'rgba(24,80,60,0.16)',
+                color: '#dfe8b4',
               }}
             >
               {sub.name}

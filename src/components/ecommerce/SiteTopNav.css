@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
    PHONEFIX — SITE TOP NAV
-   Palette: Deep Purple #210D35 · Warm Cream #FFF7F3 ·
-   Soft Lavender #D0ADFF · Turbo Yellow #F0E100 · Sunshine Yellow #FFD014
+   Palette: Deep green #0f3b2c · Warm Cream #f7f6f2 ·
+   Soft sage #dfe8b4 · Turbo Yellow #dfe8b4 · Sunshine Yellow #dfe8b4
 
    Three rows on desktop/tablet:
      row 0 — dark announcement strip with "Deals of the Day"
@@ -12,24 +12,24 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 .pfn-root {
-  --pfn-cream: #fff7f3;
+  --pfn-cream: #f7f6f2;
   --pfn-white: #ffffff;
-  --pfn-purple: #210d35;
-  --pfn-purple-soft: #2e1544;
-  --pfn-purple-mid: #4a2470;
-  --pfn-purple-deep: #170826;
-  --pfn-lavender: #d0adff;
-  --pfn-lavender-bright: #e9dbff;
-  --pfn-lavender-soft: rgba(208, 173, 255, 0.18);
-  --pfn-lavender-line: rgba(208, 173, 255, 0.26);
-  --pfn-ink-line: rgba(33, 13, 53, 0.1);
-  --pfn-ink-muted: #6b5a7a;
-  --pfn-yellow: #f0e100;
-  --pfn-sunshine: #ffd014;
-  --pfn-cream-line: rgba(255, 247, 243, 0.16);
-  --pfn-muted: rgba(255, 247, 243, 0.64);
-  --pfn-drop-bg: #1a0a2b;
-  --pfn-drop-line: rgba(208, 173, 255, 0.2);
+  --pfn-green: #0f3b2c;
+  --pfn-green-soft: #18503c;
+  --pfn-green-mid: #18503c;
+  --pfn-green-deep: #0b2e22;
+  --pfn-sage: #dfe8b4;
+  --pfn-sage-bright: #f7f6f2;
+  --pfn-sage-soft: rgba(223,232,180, 0.18);
+  --pfn-sage-line: rgba(223,232,180, 0.26);
+  --pfn-ink-line: rgba(15,59,44, 0.1);
+  --pfn-ink-muted: #5d6762;
+  --pfn-yellow: #dfe8b4;
+  --pfn-sunshine: #dfe8b4;
+  --pfn-cream-line: rgba(247,246,242, 0.16);
+  --pfn-muted: rgba(247,246,242, 0.64);
+  --pfn-drop-bg: #0b2e22;
+  --pfn-drop-line: rgba(223,232,180, 0.2);
 
   position: fixed;
   top: 0;
@@ -38,21 +38,21 @@
   z-index: 9999;
   font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   background:
-    radial-gradient(520px 160px at 0% 30%, rgba(208, 173, 255, 0.35), transparent 70%),
-    radial-gradient(620px 200px at 100% 70%, rgba(208, 173, 255, 0.4), transparent 70%),
+    radial-gradient(520px 160px at 0% 30%, rgba(223,232,180, 0.35), transparent 70%),
+    radial-gradient(620px 200px at 100% 70%, rgba(223,232,180, 0.4), transparent 70%),
     var(--pfn-cream);
   transition: box-shadow 0.3s ease;
   isolation: isolate;
 }
 .pfn-root.pfn-scrolled {
   background:
-    radial-gradient(520px 160px at 0% 30%, rgba(208, 173, 255, 0.3), transparent 70%),
-    radial-gradient(620px 200px at 100% 70%, rgba(208, 173, 255, 0.34), transparent 70%),
+    radial-gradient(520px 160px at 0% 30%, rgba(223,232,180, 0.3), transparent 70%),
+    radial-gradient(620px 200px at 100% 70%, rgba(223,232,180, 0.34), transparent 70%),
     var(--pfn-cream);
   /* Solid: page content must not show through the header while scrolling. */
-  box-shadow: 0 14px 40px rgba(33, 13, 53, 0.16);
+  box-shadow: 0 14px 40px rgba(15,59,44, 0.16);
 }
 .pfn-spacer {
   height: 210px;
@@ -60,7 +60,7 @@
 
 .pfn-inner {
   width: 100%;
-  max-width: 1480px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 28px;
 }
@@ -69,7 +69,7 @@
 .pfn-strip {
   max-height: 42px;
   overflow: hidden;
-  background: linear-gradient(90deg, var(--pfn-purple-deep), var(--pfn-purple) 50%, var(--pfn-purple-deep));
+  background: linear-gradient(90deg, var(--pfn-green-deep), var(--pfn-green) 50%, var(--pfn-green-deep));
   color: var(--pfn-cream);
   transition: max-height 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
 }
@@ -98,16 +98,16 @@
   font-weight: 700;
 }
 .pfn-strip-item > span {
-  color: rgba(255, 247, 243, 0.66);
+  color: rgba(247,246,242, 0.66);
   font-weight: 500;
 }
 .pfn-strip-item svg {
-  color: var(--pfn-lavender);
+  color: var(--pfn-sage);
   flex-shrink: 0;
 }
 .pfn-strip-item + .pfn-strip-item {
   padding-left: 18px;
-  border-left: 1px solid rgba(208, 173, 255, 0.18);
+  border-left: 1px solid rgba(223,232,180, 0.18);
 }
 .pfn-strip-deal {
   display: inline-flex;
@@ -117,18 +117,18 @@
   padding: 0 16px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--pfn-yellow), var(--pfn-sunshine));
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   font-size: 12.5px;
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  box-shadow: 0 6px 18px rgba(255, 208, 20, 0.35);
+  box-shadow: 0 6px 18px rgba(223,232,180, 0.35);
   transition: transform 0.15s, box-shadow 0.2s;
 }
 .pfn-strip-deal:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(255, 208, 20, 0.5);
+  box-shadow: 0 8px 22px rgba(223,232,180, 0.5);
 }
 
 /* ─────────────────────────── Row 1 ─────────────────────────── */
@@ -144,8 +144,8 @@
 }
 .pfn-scrolled .pfn-catbar-inner {
   box-shadow:
-    0 12px 26px -12px rgba(123, 63, 208, 0.6),
-    0 4px 12px rgba(33, 13, 53, 0.22);
+    0 12px 26px -12px rgba(15,59,44, 0.6),
+    0 4px 12px rgba(15,59,44, 0.22);
 }
 @media (prefers-reduced-motion: reduce) {
   .pfn-strip {
@@ -167,12 +167,12 @@
   width: 50px;
   height: 50px;
   border-radius: 15px;
-  background: linear-gradient(145deg, #7b3fd0, var(--pfn-purple-mid) 55%, var(--pfn-purple));
+  background: linear-gradient(145deg, #0f3b2c, var(--pfn-green-mid) 55%, var(--pfn-green));
   color: var(--pfn-cream);
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  box-shadow: 0 10px 24px rgba(74, 36, 112, 0.35);
+  box-shadow: 0 10px 24px rgba(24,80,60, 0.35);
 }
 .pfn-logo-text {
   display: flex;
@@ -186,10 +186,10 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.025em;
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-logo-name span {
-  color: #7b3fd0;
+  color: #0f3b2c;
 }
 .pfn-logo-sub {
   font-size: 13px;
@@ -210,16 +210,16 @@
   padding: 0 5px 0 18px;
   border-radius: var(--radius-full);
   background: var(--pfn-white);
-  border: 1.5px solid rgba(74, 36, 112, 0.55);
+  border: 1.5px solid rgba(24,80,60, 0.55);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 .pfn-search:focus-within {
-  border-color: var(--pfn-purple);
-  box-shadow: 0 0 0 4px rgba(208, 173, 255, 0.35);
+  border-color: var(--pfn-green);
+  box-shadow: 0 0 0 4px rgba(223,232,180, 0.35);
 }
 .pfn-search-icon {
   flex-shrink: 0;
-  color: var(--pfn-purple-mid);
+  color: var(--pfn-green-mid);
 }
 .pfn-search input {
   flex: 1;
@@ -232,10 +232,10 @@
   font-family: var(--font-ui);
   font-size: 14.5px;
   font-weight: 500;
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-search input::placeholder {
-  color: #8a7599;
+  color: #5d6762;
 }
 .pfn-search-btn {
   flex-shrink: 0;
@@ -243,7 +243,7 @@
   padding: 0 24px;
   border: none;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--pfn-purple-mid), var(--pfn-purple));
+  background: linear-gradient(135deg, var(--pfn-green-mid), var(--pfn-green));
   color: var(--pfn-cream);
   font-family: var(--font-ui);
   font-size: 14px;
@@ -252,7 +252,7 @@
   transition: transform 0.15s, box-shadow 0.2s;
 }
 .pfn-search-btn:hover {
-  box-shadow: 0 8px 18px rgba(33, 13, 53, 0.3);
+  box-shadow: 0 8px 18px rgba(15,59,44, 0.3);
 }
 .pfn-search-btn:active {
   transform: scale(0.96);
@@ -268,12 +268,12 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #6b5a7a;
+  color: #5d6762;
   cursor: pointer;
 }
 .pfn-search-clear:hover {
-  background: rgba(74, 36, 112, 0.08);
-  color: var(--pfn-purple);
+  background: rgba(24,80,60, 0.08);
+  color: var(--pfn-green);
 }
 
 /* Contact */
@@ -295,17 +295,17 @@
   text-decoration: none;
 }
 .pfn-contact-phone {
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   font-size: 14px;
   font-weight: 800;
   transition: color 0.2s;
 }
 .pfn-contact-phone:hover {
-  color: var(--pfn-purple-mid);
+  color: var(--pfn-green-mid);
 }
 .pfn-contact-phone svg,
 .pfn-contact-hours svg {
-  color: var(--pfn-purple-mid);
+  color: var(--pfn-green-mid);
   flex-shrink: 0;
 }
 .pfn-contact-hours {
@@ -331,18 +331,18 @@
   border-radius: 50%;
   border: 1px solid var(--pfn-ink-line);
   background: var(--pfn-white);
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   display: grid;
   place-items: center;
   flex-shrink: 0;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(33, 13, 53, 0.06);
+  box-shadow: 0 4px 14px rgba(15,59,44, 0.06);
   transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 .pfn-icon-btn:hover {
-  background: var(--pfn-lavender-bright);
-  border-color: var(--pfn-lavender);
+  background: var(--pfn-sage-bright);
+  border-color: var(--pfn-sage);
   transform: translateY(-1px);
 }
 .pfn-icon-btn:active {
@@ -358,7 +358,7 @@
   border-radius: var(--radius-full);
   border: 2px solid var(--pfn-cream);
   background: var(--pfn-sunshine);
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   font-size: 10px;
   font-weight: 800;
   display: grid;
@@ -388,19 +388,19 @@
   border-radius: var(--radius-full);
   border: 1px solid var(--pfn-ink-line);
   background: var(--pfn-white);
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(33, 13, 53, 0.06);
+  box-shadow: 0 4px 14px rgba(15,59,44, 0.06);
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
 .pfn-account-btn:hover,
 .pfn-account-btn.is-open {
-  background: var(--pfn-lavender-bright);
-  border-color: var(--pfn-lavender);
+  background: var(--pfn-sage-bright);
+  border-color: var(--pfn-sage);
 }
 .pfn-account-btn:active {
   transform: scale(0.97);
@@ -409,7 +409,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(145deg, var(--pfn-purple-mid), var(--pfn-purple));
+  background: linear-gradient(145deg, var(--pfn-green-mid), var(--pfn-green));
   color: var(--pfn-cream);
   font-size: 11px;
   font-weight: 800;
@@ -419,7 +419,7 @@
 }
 .pfn-avatar-guest {
   background: transparent;
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-account-btn .pfn-caret {
   color: var(--pfn-ink-muted);
@@ -431,7 +431,7 @@
 
 /* ─────────────────────────── Row 2 ─────────────────────────── */
 .pfn-catbar {
-  max-width: 1480px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 28px 14px;
 }
@@ -446,11 +446,11 @@
   border-radius: 22px;
   color: var(--pfn-cream);
   background:
-    radial-gradient(600px 120px at 100% 0%, rgba(208, 173, 255, 0.16), transparent 70%),
-    linear-gradient(100deg, var(--pfn-purple-deep), var(--pfn-purple) 45%, var(--pfn-purple-soft));
+    radial-gradient(600px 120px at 100% 0%, rgba(223,232,180, 0.16), transparent 70%),
+    linear-gradient(100deg, var(--pfn-green-deep), var(--pfn-green) 45%, var(--pfn-green-soft));
   box-shadow:
-    0 18px 36px -14px rgba(123, 63, 208, 0.55),
-    0 6px 16px rgba(33, 13, 53, 0.2);
+    0 18px 36px -14px rgba(15,59,44, 0.55),
+    0 6px 16px rgba(15,59,44, 0.2);
 }
 
 .pfn-cats-wrap {
@@ -497,13 +497,13 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 247, 243, 0.24);
-  background: rgba(255, 247, 243, 0.1);
+  border: 1px solid rgba(247,246,242, 0.24);
+  background: rgba(247,246,242, 0.1);
   color: var(--pfn-cream);
   cursor: pointer;
 }
 .pfn-cats-arrow:hover {
-  background: rgba(255, 247, 243, 0.2);
+  background: rgba(247,246,242, 0.2);
 }
 
 .pfn-cat {
@@ -526,21 +526,21 @@
   transition: background 0.18s, color 0.18s, border-color 0.18s;
 }
 .pfn-cat svg {
-  color: var(--pfn-lavender);
+  color: var(--pfn-sage);
   flex-shrink: 0;
   transition: color 0.18s;
 }
 .pfn-cat:hover,
 .pfn-cat.is-open {
-  background: var(--pfn-lavender-soft);
+  background: var(--pfn-sage-soft);
 }
 .pfn-cat.is-current {
   background: var(--pfn-sunshine);
-  color: var(--pfn-purple);
-  box-shadow: 0 4px 14px rgba(255, 208, 20, 0.3);
+  color: var(--pfn-green);
+  box-shadow: 0 4px 14px rgba(223,232,180, 0.3);
 }
 .pfn-cat.is-current svg {
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-cat .pfn-caret {
   color: currentColor;
@@ -550,23 +550,23 @@
 .pfn-cat.is-open .pfn-caret {
   transform: rotate(180deg);
 }
-/* "All Categories" — the light lavender pill on the left of the bar */
+/* "All Categories" — the light sage pill on the left of the bar */
 .pfn-shop-btn,
 .pfn-shop-btn:hover,
 .pfn-shop-btn.is-open {
   padding: 0 18px 0 16px;
   margin-right: 10px;
-  background: var(--pfn-lavender-bright);
-  color: var(--pfn-purple);
+  background: var(--pfn-sage-bright);
+  color: var(--pfn-green);
   font-weight: 800;
-  box-shadow: 0 6px 16px rgba(208, 173, 255, 0.3);
+  box-shadow: 0 6px 16px rgba(223,232,180, 0.3);
 }
 .pfn-shop-btn svg {
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-shop-btn:hover,
 .pfn-shop-btn.is-open {
-  background: var(--pfn-lavender);
+  background: var(--pfn-sage);
 }
 
 /* Service actions */
@@ -580,7 +580,7 @@
   width: 1px;
   height: 30px;
   margin-right: 8px;
-  background: var(--pfn-lavender-line);
+  background: var(--pfn-sage-line);
 }
 .pfn-cta {
   display: flex;
@@ -601,24 +601,24 @@
    otherwise turn this label cream on the yellow button. */
 .pfn-root .pfn-cta-repair,
 .pfn-root .pfn-cta-repair:hover {
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-cta-repair {
   background: var(--pfn-sunshine);
-  color: var(--pfn-purple);
-  box-shadow: 0 6px 18px rgba(255, 208, 20, 0.3);
+  color: var(--pfn-green);
+  box-shadow: 0 6px 18px rgba(223,232,180, 0.3);
 }
 .pfn-cta-repair svg {
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
 .pfn-cta-repair:hover,
 .pfn-cta-repair.is-current {
   background: var(--pfn-yellow);
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(240, 225, 0, 0.45);
+  box-shadow: 0 8px 22px rgba(223,232,180, 0.45);
 }
 .pfn-cta-trade {
-  border: 1.5px solid rgba(255, 247, 243, 0.75);
+  border: 1.5px solid rgba(247,246,242, 0.75);
   background: transparent;
   color: var(--pfn-cream);
 }
@@ -650,11 +650,11 @@
   top: calc(100% + 12px);
   z-index: 10000;
   background:
-    radial-gradient(500px 140px at 100% 0%, rgba(208, 173, 255, 0.12), transparent 70%),
+    radial-gradient(500px 140px at 100% 0%, rgba(223,232,180, 0.12), transparent 70%),
     var(--pfn-drop-bg);
   border: 1px solid var(--pfn-drop-line);
   border-radius: 18px;
-  box-shadow: 0 28px 70px rgba(10, 2, 18, 0.45);
+  box-shadow: 0 28px 70px rgba(11,46,34, 0.45);
   animation: pfn-drop-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--pfn-cream);
 }
@@ -672,8 +672,8 @@
   border-bottom: 1px solid var(--pfn-drop-line);
 }
 .pfn-drop .pfn-avatar {
-  background: linear-gradient(145deg, var(--pfn-lavender-bright), var(--pfn-lavender));
-  color: var(--pfn-purple);
+  background: linear-gradient(145deg, var(--pfn-sage-bright), var(--pfn-sage));
+  color: var(--pfn-green);
 }
 .pfn-avatar-lg {
   width: 42px;
@@ -697,7 +697,7 @@
 .pfn-drop-id span {
   font-size: 11px;
   line-height: 1.35;
-  color: rgba(255, 247, 243, 0.56);
+  color: rgba(247,246,242, 0.56);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -711,7 +711,7 @@
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: rgba(255, 247, 243, 0.86);
+  color: rgba(247,246,242, 0.86);
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 600;
@@ -721,11 +721,11 @@
   transition: background 0.16s, color 0.16s;
 }
 .pfn-drop-row svg {
-  color: var(--pfn-lavender);
+  color: var(--pfn-sage);
   flex-shrink: 0;
 }
 .pfn-drop-row:hover {
-  background: rgba(208, 173, 255, 0.16);
+  background: rgba(223,232,180, 0.16);
   color: var(--pfn-cream);
 }
 .pfn-drop-sep {
@@ -748,7 +748,7 @@
   height: 40px;
   border-radius: 10px;
   background: var(--pfn-sunshine);
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
   font-size: 12.5px;
   font-weight: 800;
   text-decoration: none;
@@ -756,7 +756,7 @@
 }
 .pfn-drop-signin:hover {
   background: var(--pfn-yellow);
-  box-shadow: 0 8px 20px rgba(255, 208, 20, 0.3);
+  box-shadow: 0 8px 20px rgba(223,232,180, 0.3);
   transform: translateY(-1px);
 }
 
@@ -789,20 +789,20 @@
   gap: 10px;
   padding: 8px 9px;
   border-radius: 10px;
-  color: rgba(255, 247, 243, 0.86);
+  color: rgba(247,246,242, 0.86);
   text-decoration: none;
   transition: background 0.16s, color 0.16s;
 }
 .pfn-shop-link:hover {
-  background: rgba(208, 173, 255, 0.16);
+  background: rgba(223,232,180, 0.16);
   color: var(--pfn-cream);
 }
 .pfn-shop-link-icon {
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: rgba(208, 173, 255, 0.12);
-  color: var(--pfn-lavender);
+  background: rgba(223,232,180, 0.12);
+  color: var(--pfn-sage);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -821,7 +821,7 @@
 .pfn-shop-link-text small {
   font-size: 10.5px;
   font-weight: 500;
-  color: rgba(255, 247, 243, 0.48);
+  color: rgba(247,246,242, 0.48);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -838,14 +838,14 @@
   min-width: 0;
   padding: 8px 9px;
   border-radius: 9px;
-  color: rgba(255, 247, 243, 0.82);
+  color: rgba(247,246,242, 0.82);
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.16s, color 0.16s;
 }
 .pfn-shop-cat svg {
-  color: var(--pfn-lavender);
+  color: var(--pfn-sage);
   flex-shrink: 0;
 }
 .pfn-shop-cat span {
@@ -854,7 +854,7 @@
   white-space: nowrap;
 }
 .pfn-shop-cat:hover {
-  background: rgba(208, 173, 255, 0.16);
+  background: rgba(223,232,180, 0.16);
   color: var(--pfn-cream);
 }
 
@@ -880,20 +880,20 @@
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-logo-sub,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-hours,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn .pfn-caret {
-  color: rgba(255, 247, 243, 0.72);
+  color: rgba(247,246,242, 0.72);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-phone svg,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact-hours svg {
-  color: var(--pfn-lavender);
+  color: var(--pfn-sage);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-contact,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-actions {
-  border-left-color: rgba(255, 247, 243, 0.18);
+  border-left-color: rgba(247,246,242, 0.18);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-icon-btn {
-  background: rgba(255, 247, 243, 0.1);
-  border-color: rgba(255, 247, 243, 0.24);
+  background: rgba(247,246,242, 0.1);
+  border-color: rgba(247,246,242, 0.24);
   box-shadow: none;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -901,21 +901,21 @@
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn:hover,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-account-btn.is-open,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-icon-btn:hover {
-  background: rgba(255, 247, 243, 0.2);
-  border-color: rgba(255, 247, 243, 0.4);
+  background: rgba(247,246,242, 0.2);
+  border-color: rgba(247,246,242, 0.4);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-avatar-guest {
   color: var(--pfn-cream);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-badge {
-  border-color: var(--pfn-purple);
+  border-color: var(--pfn-green);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-search {
-  border-color: rgba(255, 247, 243, 0.5);
+  border-color: rgba(247,246,242, 0.5);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-catbar-inner {
-  background: rgba(23, 8, 38, 0.55);
-  border: 1px solid rgba(208, 173, 255, 0.22);
+  background: rgba(11,46,34, 0.55);
+  border: 1px solid rgba(223,232,180, 0.22);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: none;
@@ -1061,7 +1061,7 @@
     width: calc(100% + 28px);
     margin: 0 -14px;
     padding: 9px 14px;
-    background: linear-gradient(100deg, var(--pfn-purple-deep), var(--pfn-purple) 50%, var(--pfn-purple-soft));
+    background: linear-gradient(100deg, var(--pfn-green-deep), var(--pfn-green) 50%, var(--pfn-green-soft));
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
@@ -1078,7 +1078,7 @@
     padding: 0 12px;
     border-radius: var(--radius-full);
     border: 1px solid var(--pfn-cream-line);
-    background: rgba(255, 247, 243, 0.06);
+    background: rgba(247,246,242, 0.06);
     color: var(--pfn-cream);
     font-size: 12px;
     font-weight: 600;
@@ -1088,23 +1088,23 @@
     transition: background 0.18s, color 0.18s, border-color 0.18s;
   }
   .pfn-m-cat svg {
-    color: var(--pfn-lavender);
+    color: var(--pfn-sage);
   }
   .pfn-m-cat.is-current {
     background: var(--pfn-sunshine);
     border-color: transparent;
-    color: var(--pfn-purple);
+    color: var(--pfn-green);
   }
   .pfn-m-cat.is-current svg {
-    color: var(--pfn-purple);
+    color: var(--pfn-green);
   }
   .pfn-m-cat-service {
     border-color: transparent;
-    background: var(--pfn-lavender-bright);
-    color: var(--pfn-purple);
+    background: var(--pfn-sage-bright);
+    color: var(--pfn-green);
   }
   .pfn-m-cat-service svg {
-    color: var(--pfn-purple);
+    color: var(--pfn-green);
   }
 }
 
@@ -1136,8 +1136,8 @@
 }
 .pfn-login-btn {
   padding: 0 20px;
-  background: var(--pfn-purple);
-  border-color: var(--pfn-purple);
+  background: var(--pfn-green);
+  border-color: var(--pfn-green);
   color: var(--pfn-cream);
   text-decoration: none;
 }
@@ -1152,13 +1152,13 @@
   }
 }
 .pfn-login-btn:hover {
-  background: var(--pfn-purple-mid);
-  border-color: var(--pfn-purple-mid);
+  background: var(--pfn-green-mid);
+  border-color: var(--pfn-green-mid);
 }
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn,
 .pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn:hover {
   background: var(--pfn-sunshine);
   border-color: var(--pfn-sunshine);
-  color: var(--pfn-purple);
+  color: var(--pfn-green);
 }
-.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn svg { color: var(--pfn-purple); }
+.pfn-root[data-transparent='true']:not(.pfn-scrolled) .pfn-login-btn svg { color: var(--pfn-green); }

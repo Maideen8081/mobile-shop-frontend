@@ -3,7 +3,7 @@ export const storeKPIs = [
   { id: 2, title: 'Monthly Expenses', value: 684000, prefix: '₹', growth: -4.2, trend: 'down' as const, subtitle: 'vs last month', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)', icon: 'FiCreditCard', sparkline: [32, 28, 38, 34, 42, 38, 48, 44, 52, 48, 56, 52] },
   { id: 3, title: 'Net Profit', value: 601000, prefix: '₹', growth: 22.8, trend: 'up' as const, subtitle: 'margin 46.7%', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)', icon: 'FiDollarSign', sparkline: [18, 22, 28, 24, 35, 32, 42, 38, 48, 45, 52, 50] },
   { id: 4, title: 'Pending Bills', value: 8, suffix: '', growth: -12.5, trend: 'down' as const, subtitle: '3 overdue', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiClock', sparkline: [14, 12, 16, 10, 13, 8, 11, 6, 9, 5, 8, 8] },
-  { id: 5, title: 'Staff Salary Exp', value: 245000, prefix: '₹', growth: 0, trend: 'up' as const, subtitle: '12 employees', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiUsers', sparkline: [20, 20, 22, 22, 24, 24, 24, 24, 26, 26, 28, 28] },
+  { id: 5, title: 'Staff Salary Exp', value: 245000, prefix: '₹', growth: 0, trend: 'up' as const, subtitle: '12 employees', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiUsers', sparkline: [20, 20, 22, 22, 24, 24, 24, 24, 26, 26, 28, 28] },
   { id: 6, title: 'Maintenance Cost', value: 42500, prefix: '₹', growth: -8.3, trend: 'down' as const, subtitle: 'this month', color: '#06b6d4', bgGlow: 'rgba(6,182,212,0.12)', icon: 'FiTool', sparkline: [8, 12, 6, 15, 10, 18, 14, 22, 16, 25, 20, 28] },
   { id: 7, title: 'Rent Due Status', value: 1, suffix: ' due', growth: 0, trend: 'up' as const, subtitle: 'next: May 5th', color: '#f97316', bgGlow: 'rgba(249,115,22,0.12)', icon: 'FiHome', sparkline: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0] },
   { id: 8, title: 'GST/Tax Summary', value: 89500, prefix: '₹', growth: 5.6, trend: 'up' as const, subtitle: 'quarterly payable', color: '#14b8a6', bgGlow: 'rgba(20,184,166,0.12)', icon: 'FiFileText', sparkline: [12, 15, 18, 14, 20, 22, 25, 28, 32, 35, 38, 42] },
@@ -47,7 +47,7 @@ export const revenueExpenseData = [
 ]
 
 export const expenseBreakdown = [
-  { name: 'Shop Rent', value: 85000, color: '#8b5cf6' },
+  { name: 'Shop Rent', value: 85000, color: '#18503c' },
   { name: 'Staff Salary', value: 245000, color: '#4f6bff' },
   { name: 'Electricity', value: 20950, color: '#f59e0b' },
   { name: 'Supplier Pmt', value: 78000, color: '#22c55e' },

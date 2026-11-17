@@ -38,13 +38,13 @@ type PhoneLook = { body: string; screen: string; cams: 'tri' | 'column' | 'bar' 
 const POPULAR: { device: string; brand: string; look: PhoneLook }[] = [
   { device: 'iPhone 16 Pro Max', brand: 'Apple', look: { body: '#3b3b40', screen: 'linear-gradient(160deg,#1c1c22,#c2642f 55%,#2a1a14)', cams: 'tri' } },
   { device: 'iPhone 15 Pro Max', brand: 'Apple', look: { body: '#d9cdb8', screen: 'linear-gradient(160deg,#20201f,#5b4a36 60%,#141414)', cams: 'tri' } },
-  { device: 'iPhone 14 Pro Max', brand: 'Apple', look: { body: '#4a4553', screen: 'linear-gradient(160deg,#160c2c,#a32bd6 50%,#ff3c8a 70%,#120a20)', cams: 'tri' } },
+  { device: 'iPhone 14 Pro Max', brand: 'Apple', look: { body: '#5d6762', screen: 'linear-gradient(160deg,#0b2e22,#0f3b2c 50%,#f08a7b 70%,#0b2e22)', cams: 'tri' } },
   { device: 'Galaxy S25 Ultra', brand: 'Samsung', look: { body: '#7c8088', screen: 'linear-gradient(160deg,#9fb4d8,#5d79b8 55%,#e7ecf5)', cams: 'column' } },
-  { device: 'Galaxy S24 Ultra', brand: 'Samsung', look: { body: '#5b5e66', screen: 'linear-gradient(160deg,#2b2140,#7e5bd1 55%,#c9b3ff)', cams: 'column' } },
+  { device: 'Galaxy S24 Ultra', brand: 'Samsung', look: { body: '#5b5e66', screen: 'linear-gradient(160deg,#0b2e22,#0f3b2c 55%,#dfe8b4)', cams: 'column' } },
   { device: 'Pixel 10 Pro', brand: 'Google', look: { body: '#e7e2d8', screen: 'linear-gradient(160deg,#21362f,#5fae8c 55%,#e9f3ec)', cams: 'bar' } },
   { device: 'OnePlus 13', brand: 'OnePlus', look: { body: '#1f2a3a', screen: 'linear-gradient(160deg,#0f1b2b,#e2463b 55%,#2a0d0d)', cams: 'round' } },
   { device: 'Xiaomi 15 Ultra', brand: 'Xiaomi', look: { body: '#2b2b2b', screen: 'linear-gradient(160deg,#ff7a1a,#ffb347 50%,#3a1a05)', cams: 'round' } },
-  { device: 'Find X8 Pro', brand: 'Oppo', look: { body: '#d8d4e6', screen: 'linear-gradient(160deg,#4b2c86,#c08cff 55%,#f2e9ff)', cams: 'round' } },
+  { device: 'Find X8 Pro', brand: 'Oppo', look: { body: '#d8d4e6', screen: 'linear-gradient(160deg,#0f3b2c,#18503c 55%,#f7f6f2)', cams: 'round' } },
 ]
 
 // Ranges come from the same price table the quote uses, so they always agree.

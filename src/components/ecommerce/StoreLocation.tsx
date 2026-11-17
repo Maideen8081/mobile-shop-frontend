@@ -46,10 +46,10 @@ export default function StoreLocation({ compact = false }: { compact?: boolean }
           </div>
         )}
 
-        <div className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-28px_rgba(33,13,53,0.35)] ring-1 ring-[#210D35]/5">
+        <div className="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-28px_rgba(15,59,44,0.35)] ring-1 ring-[#0f3b2c]/5">
           <div className={`flex flex-col ${compact ? 'p-5 gap-4' : 'p-8 md:p-10 gap-6'}`}>
-            <span className="self-start inline-flex items-center gap-2 rounded-xl bg-[#210D35] text-white px-4 py-2.5 text-sm font-semibold">
-              <span className="material-symbols-outlined text-base text-[#D0ADFF]" aria-hidden="true">storefront</span>
+            <span className="self-start inline-flex items-center gap-2 rounded-xl bg-[#0f3b2c] text-white px-4 py-2.5 text-sm font-semibold">
+              <span className="material-symbols-outlined text-base text-[#dfe8b4]" aria-hidden="true">storefront</span>
               {STORE.name} · Chennai
             </span>
 
@@ -71,14 +71,14 @@ export default function StoreLocation({ compact = false }: { compact?: boolean }
               href={mapsLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-auto self-start inline-flex items-center gap-2 rounded-xl bg-[#210D35] hover:bg-[#2E1544] text-white px-6 py-3.5 text-sm font-bold shadow-[0_10px_24px_-10px_rgba(33,13,53,0.7)] transition-colors"
+              className="mt-auto self-start inline-flex items-center gap-2 rounded-xl bg-[#0f3b2c] hover:bg-[#18503c] text-white px-6 py-3.5 text-sm font-bold shadow-[0_10px_24px_-10px_rgba(15,59,44,0.7)] transition-colors"
             >
               <span className="material-symbols-outlined text-lg" aria-hidden="true">directions</span>
               Open in Google Maps
             </a>
           </div>
 
-          <div className={`relative bg-[#F3E8FF] ${compact ? 'h-60' : 'min-h-[320px] md:min-h-[420px]'}`}>
+          <div className={`relative bg-[#dfe6cf] ${compact ? 'h-60' : 'min-h-[320px] md:min-h-[420px]'}`}>
             <iframe
               title={`Map showing ${STORE.name}, ${STORE.address}`}
               src={mapEmbed}

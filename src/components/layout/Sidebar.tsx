@@ -71,7 +71,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
       <div className="flex items-center gap-2.5 px-7 h-24 shrink-0">
         <div
           className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-          style={{ background: 'linear-gradient(140deg,#e2333f 0%,#a91b27 100%)', boxShadow: '0 6px 14px -4px rgba(203,32,45,0.5)' }}
+          style={{ background: 'linear-gradient(140deg,#e2333f 0%,#a91b27 100%)', boxShadow: '0 6px 14px -4px rgba(168,38,27,0.5)' }}
         >
           <FiSmartphone size={18} className="text-white" />
         </div>
@@ -102,8 +102,8 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
                   aria-current={active ? 'page' : undefined}
                   className={`w-full flex items-center gap-3.5 h-11 px-4 rounded-[10px] text-[15px] transition-all mb-1 ${
                     active
-                      ? 'bg-primary text-white font-medium shadow-[0_10px_20px_-8px_rgba(203,32,45,0.6)]'
-                      : 'text-[#344054] hover:bg-[#fdf2f3] hover:text-primary'
+                      ? 'bg-primary text-white font-medium shadow-[0_10px_20px_-8px_rgba(168,38,27,0.6)]'
+                      : 'text-[#1d2522] hover:bg-[#fdf2f3] hover:text-primary'
                   }`}
                 >
                   <Icon size={18} className="shrink-0" />
@@ -122,7 +122,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
             await adminLogout()
             navigate('/admin/login', { replace: true })
           }}
-          className="w-full flex items-center gap-3.5 h-11 px-4 rounded-[10px] text-[15px] text-[#344054] hover:bg-[#fdf2f3] hover:text-primary transition-colors"
+          className="w-full flex items-center gap-3.5 h-11 px-4 rounded-[10px] text-[15px] text-[#1d2522] hover:bg-[#fdf2f3] hover:text-primary transition-colors"
         >
           <FiLogOut size={18} /> Log out
         </button>

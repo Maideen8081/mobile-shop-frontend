@@ -7,8 +7,8 @@ import { repairService } from '../../services/repairService'
 import SiteTopNav from '../ecommerce/SiteTopNav'
 import { useIsMobile } from './helpers'
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -114,17 +114,17 @@ export default function MobileNotifications() {
   const visible = filter === 'unread' ? items.filter((n) => n.unread) : items
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] pb-10" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] pb-10" style={{ fontFamily: 'var(--font-ui)' }}>
       {!isMobile && <SiteTopNav />}
       <div className="max-w-[720px] mx-auto">
-      <div className={`${isMobile ? 'sticky top-0 z-30' : 'pt-6'} bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6]`}>
+      <div className={`${isMobile ? 'sticky top-0 z-30' : 'pt-6'} bg-[#f7f6f2] px-4 pt-3 pb-3 border-b border-[#ece9e2]`}>
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(15,59,44,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
-            <h1 className="text-title-sm font-bold text-[#1F2937]">Notifications</h1>
-            <p className="text-micro text-[#6B7280]">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
+            <h1 className="text-title-sm font-bold text-[#1d2522]">Notifications</h1>
+            <p className="text-micro text-[#5d6762]">{unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}</p>
           </div>
           {unreadCount > 0 && (
             <button onClick={markAllRead} className="text-caption font-semibold" style={{ color: PURPLE }}>Mark all read</button>
@@ -134,7 +134,7 @@ export default function MobileNotifications() {
           {(['all', 'unread'] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
               className="h-9 px-4 rounded-[8px] text-caption font-semibold capitalize transition"
-              style={filter === f ? { background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})`, color: '#fff' } : { background: '#fff', color: '#6B7280' }}>
+              style={filter === f ? { background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})`, color: '#fff' } : { background: '#fff', color: '#5d6762' }}>
               {f === 'all' ? 'All' : 'Unread'}
             </button>
           ))}
@@ -143,14 +143,14 @@ export default function MobileNotifications() {
 
       <div className="px-4 pt-4">
         {loading ? (
-          <p className="text-caption text-[#6B7280] text-center mt-10">Loading your updates…</p>
+          <p className="text-caption text-[#5d6762] text-center mt-10">Loading your updates…</p>
         ) : visible.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-6`}>
-            <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+            <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(15,59,44,0.1)' }}>
               <FiBell size={32} style={{ color: PURPLE }} />
             </div>
-            <h2 className="text-body font-bold text-[#1F2937] mb-1">No notifications</h2>
-            <p className="text-caption text-[#6B7280]">
+            <h2 className="text-body font-bold text-[#1d2522] mb-1">No notifications</h2>
+            <p className="text-caption text-[#5d6762]">
               {authService.isAuthenticated() ? 'Updates on your orders and repairs will appear here.' : 'Sign in to see updates on your orders and repairs.'}
             </p>
           </div>
@@ -163,11 +163,11 @@ export default function MobileNotifications() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-body-sm font-semibold text-[#1F2937] truncate">{n.title}</p>
+                    <p className="text-body-sm font-semibold text-[#1d2522] truncate">{n.title}</p>
                     {n.unread && <span className="w-2 h-2 rounded-[8px] flex-shrink-0" style={{ background: PURPLE }} />}
                   </div>
-                  <p className="text-caption text-[#6B7280] leading-snug mt-0.5">{n.description}</p>
-                  <p className="text-micro text-[#9CA3AF] mt-1">{n.time}</p>
+                  <p className="text-caption text-[#5d6762] leading-snug mt-0.5">{n.description}</p>
+                  <p className="text-micro text-[#9aa29e] mt-1">{n.time}</p>
                 </div>
               </button>
             ))}

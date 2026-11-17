@@ -111,7 +111,7 @@ function DesktopAddressCreate() {
     /^\d{5,6}$/.test(form.zipCode.replace(/\D/g, ''))
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FFF7F3' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#f7f6f2' }}>
       <SiteTopNav />
 
       <main className="flex items-center justify-center relative overflow-hidden" style={{ padding: '40px 64px' }}>

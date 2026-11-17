@@ -74,13 +74,13 @@ export function Panel({
 export type Tone = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' | 'info' | 'violet'
 
 const toneStyles: Record<Tone, { chip: string; pill: string; text: string; dot: string }> = {
-  neutral: { chip: 'bg-[#f2f4f7] text-[#344054] ring-[#e4e7ec]', pill: 'bg-[#f2f4f7] text-[#475467]', text: 'text-[#344054]', dot: 'bg-[#98a2b3]' },
-  brand: { chip: 'bg-[#fdecee] text-[#a91b27] ring-[#f8c9ce]', pill: 'bg-[#fde3e5] text-[#cb202d]', text: 'text-[#cb202d]', dot: 'bg-[#cb202d]' },
+  neutral: { chip: 'bg-[#f7f6f2] text-[#1d2522] ring-[#e4e7ec]', pill: 'bg-[#f7f6f2] text-[#5d6762]', text: 'text-[#1d2522]', dot: 'bg-[#9aa29e]' },
+  brand: { chip: 'bg-[#fbe1d8] text-[#a91b27] ring-[#f8c9ce]', pill: 'bg-[#fde3e5] text-[#a8261b]', text: 'text-[#a8261b]', dot: 'bg-[#a8261b]' },
   success: { chip: 'bg-[#ecfdf3] text-[#067647] ring-[#abefc6]', pill: 'bg-[#d3f5df] text-[#16a34a]', text: 'text-[#079455]', dot: 'bg-[#17b26a]' },
-  warning: { chip: 'bg-[#fffaeb] text-[#b54708] ring-[#fedf89]', pill: 'bg-[#ffe8c7] text-[#ea8a17]', text: 'text-[#dc6803]', dot: 'bg-[#f79009]' },
-  danger: { chip: 'bg-[#fef3f2] text-[#b42318] ring-[#fecdca]', pill: 'bg-[#fee0e0] text-[#e5484d]', text: 'text-[#d92d20]', dot: 'bg-[#f04438]' },
+  warning: { chip: 'bg-[#eef2d9] text-[#b54708] ring-[#fedf89]', pill: 'bg-[#ffe8c7] text-[#ea8a17]', text: 'text-[#dc6803]', dot: 'bg-[#f79009]' },
+  danger: { chip: 'bg-[#fbe1d8] text-[#a8261b] ring-[#fecdca]', pill: 'bg-[#fee0e0] text-[#e5484d]', text: 'text-[#d92d20]', dot: 'bg-[#f04438]' },
   info: { chip: 'bg-[#eff8ff] text-[#175cd3] ring-[#b2ddff]', pill: 'bg-[#dcebff] text-[#2f7cf6]', text: 'text-[#1570ef]', dot: 'bg-[#2e90fa]' },
-  violet: { chip: 'bg-[#f4f3ff] text-[#5925dc] ring-[#d9d6fe]', pill: 'bg-[#efe3ff] text-[#9b51e0]', text: 'text-[#6938ef]', dot: 'bg-[#7a5af8]' },
+  violet: { chip: 'bg-[#dfe6cf] text-[#0f3b2c] ring-[#c9d2bd]', pill: 'bg-[#f7f6f2] text-[#18503c]', text: 'text-[#0f3b2c]', dot: 'bg-[#18503c]' },
 }
 
 export function KpiCard({
@@ -132,7 +132,7 @@ export function KpiCard({
             {delta != null && (
               <span
                 className={`inline-flex items-center gap-0.5 font-semibold rounded-md px-1.5 py-0.5 ${
-                  delta >= 0 ? 'bg-[#ecfdf3] text-[#067647]' : 'bg-[#fef3f2] text-[#b42318]'
+                  delta >= 0 ? 'bg-[#ecfdf3] text-[#067647]' : 'bg-[#fbe1d8] text-[#a8261b]'
                 }`}
               >
                 {delta >= 0 ? '↑' : '↓'} {Math.abs(delta)}%
@@ -176,11 +176,11 @@ type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'dark'
 
 const btnVariants: Record<BtnVariant, string> = {
   primary:
-    'bg-primary text-white shadow-[0_1px_2px_rgba(16,24,40,0.08),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-primary-hover',
-  secondary: 'bg-white text-[#344054] border border-[#d0d5dd] shadow-[0_1px_2px_rgba(16,24,40,0.05)] hover:bg-[#f9fafb] hover:text-text-primary',
+    'bg-primary text-white shadow-[0_1px_2px_rgba(29,37,34,0.08),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-primary-hover',
+  secondary: 'bg-white text-[#1d2522] border border-[#d0d5dd] shadow-[0_1px_2px_rgba(29,37,34,0.05)] hover:bg-[#f9fafb] hover:text-text-primary',
   ghost: 'text-text-secondary hover:bg-surface-hover hover:text-text-primary',
-  danger: 'bg-danger text-white hover:bg-danger-hover shadow-[0_1px_2px_rgba(16,24,40,0.08)]',
-  dark: 'bg-[#101828] text-white hover:bg-[#1d2939]',
+  danger: 'bg-danger text-white hover:bg-danger-hover shadow-[0_1px_2px_rgba(29,37,34,0.08)]',
+  dark: 'bg-[#1d2522] text-white hover:bg-[#1d2939]',
 }
 
 export function Btn({
@@ -254,7 +254,7 @@ export function Field({
   return (
     <div className={className}>
       <div className="flex items-baseline justify-between gap-2 mb-1.5">
-        <label htmlFor={id} className="text-[13px] font-medium text-[#344054]">
+        <label htmlFor={id} className="text-[13px] font-medium text-[#1d2522]">
           {label}
           {required && <span className="text-danger ml-0.5" aria-hidden="true">*</span>}
         </label>
@@ -307,7 +307,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function ErrorBanner({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
-    <div role="alert" className="flex items-center gap-3 rounded-xl border border-[#fecdca] bg-[#fef3f2] px-4 py-3 text-sm text-[#b42318]">
+    <div role="alert" className="flex items-center gap-3 rounded-xl border border-[#fecdca] bg-[#fbe1d8] px-4 py-3 text-sm text-[#a8261b]">
       <FiAlertTriangle className="shrink-0" />
       <span className="flex-1">{message}</span>
       {onRetry && (
@@ -550,7 +550,7 @@ export function ToolbarBtn({ icon, children, className = '', ...rest }: ButtonHT
   return (
     <button
       type="button"
-      className={`h-10 inline-flex items-center justify-center gap-2 px-4 rounded-[10px] bg-white text-sm font-medium text-text-primary shadow-[0_1px_2px_rgba(16,24,40,0.05)] ring-1 ring-inset ring-[#eceef2] hover:ring-border-dark hover:bg-[#fcfcfd] transition disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`h-10 inline-flex items-center justify-center gap-2 px-4 rounded-[10px] bg-white text-sm font-medium text-text-primary shadow-[0_1px_2px_rgba(29,37,34,0.05)] ring-1 ring-inset ring-[#eceef2] hover:ring-border-dark hover:bg-[#fcfcfd] transition disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       {...rest}
     >
       {icon}
@@ -799,7 +799,7 @@ export function RowMenu({ items, label = 'Row actions' }: { items: RowMenuItem[]
                   it.onClick()
                 }}
                 className={`w-full flex items-center gap-2.5 px-2.5 h-[34px] rounded-lg text-sm text-left transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                  it.danger ? 'text-danger hover:bg-[#fef3f2]' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
+                  it.danger ? 'text-danger hover:bg-[#fbe1d8]' : 'text-text-secondary hover:bg-surface-hover hover:text-text-primary'
                 }`}
               >
                 {it.icon}
@@ -858,7 +858,7 @@ export function Pagination({
                 onClick={() => onPage(p)}
                 aria-current={p === page ? 'page' : undefined}
                 className={`min-w-7 h-7 px-1.5 rounded-md text-xs font-medium tabular transition-colors ${
-                  p === page ? 'bg-primary text-white shadow-[0_4px_10px_-3px_rgba(203,32,45,0.55)]' : 'text-text-label hover:bg-surface-hover hover:text-text-primary'
+                  p === page ? 'bg-primary text-white shadow-[0_4px_10px_-3px_rgba(168,38,27,0.55)]' : 'text-text-label hover:bg-surface-hover hover:text-text-primary'
                 }`}
               >
                 {String(p).padStart(2, '0')}
@@ -883,7 +883,7 @@ export function Thumb({ src, name, rounded = 'rounded-full' }: { src?: string | 
   const [broken, setBroken] = useState(false)
   const showImg = !!src && !broken && /^(https?:|data:|blob:|\/)/.test(src)
   return (
-    <span className={`w-9 h-9 ${rounded} shrink-0 overflow-hidden bg-[#fdecee] text-primary text-sm font-semibold flex items-center justify-center ring-1 ring-inset ring-black/5`}>
+    <span className={`w-9 h-9 ${rounded} shrink-0 overflow-hidden bg-[#fbe1d8] text-primary text-sm font-semibold flex items-center justify-center ring-1 ring-inset ring-black/5`}>
       {showImg ? (
         <img src={src!} alt="" loading="lazy" className="w-full h-full object-cover" onError={() => setBroken(true)} />
       ) : (

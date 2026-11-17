@@ -39,7 +39,7 @@ export default function DeviceTracking() {
           <FiSearch size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
           <input type="text" placeholder="Search by Repair ID, IMEI, or Customer Mobile..." value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 rounded-2xl bg-primary/10 border border-primary/20 text-sm outline-none focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(124,58,237,0.08)]"
+            className="w-full h-12 pl-12 pr-4 rounded-2xl bg-primary/10 border border-primary/20 text-sm outline-none focus:border-primary/50 focus:shadow-[0_0_0_4px_rgba(24,80,60,0.08)]"
           />
         </div>
 

@@ -173,7 +173,7 @@ function PhonesDesktop() {
   }
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#210D35]/30 selection:text-[#3A1E52]">
+    <div className="min-h-screen bg-surface text-on-surface font-body-md selection:bg-[#0f3b2c]/30 selection:text-[#18503c]">
       <SiteTopNav />
 
       {/* ─── HERO CAROUSEL ─── */}
@@ -188,15 +188,15 @@ function PhonesDesktop() {
             <img src={slide.img} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(123, 63, 208,0.06)_0%,transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(15,59,44,0.06)_0%,transparent_60%)]" />
             <div className="relative h-full max-w-[1440px] mx-auto px-6 md:px-16 flex items-center">
               <div className="max-w-3xl">
-                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-black/45 border border-[#FFD014]/40 text-[#FFD014] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
+                <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-[8px] bg-black/45 border border-[#dfe8b4]/40 text-[#dfe8b4] text-sm font-bold tracking-[0.15em] uppercase mb-8 backdrop-blur-md transition-all duration-700 delay-200 ${
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                 }`}>
                   <span className="relative w-2 h-2">
-                    <span className="absolute inset-0 rounded-[8px] bg-[#FFD014] animate-ping" />
-                    <span className="absolute inset-0 rounded-[8px] bg-[#FFD014]" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#dfe8b4] animate-ping" />
+                    <span className="absolute inset-0 rounded-[8px] bg-[#dfe8b4]" />
                   </span>
                   {slide.tag}
                 </div>
@@ -204,9 +204,9 @@ function PhonesDesktop() {
                   i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}>
                   {slide.title[0]}<br />
-                  <span className="relative inline-block text-[#FFD014] italic">
+                  <span className="relative inline-block text-[#dfe8b4] italic">
                     {slide.title[1]}
-                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#FFD014] to-transparent rounded-[8px] opacity-60" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#dfe8b4] to-transparent rounded-[8px] opacity-60" />
                   </span>{' '}
                   <span className="text-white/90">{slide.title[2]}</span>
                 </h1>
@@ -220,7 +220,7 @@ function PhonesDesktop() {
                 }`}>
                   <Link
                     to="/phones"
-                    className="group inline-flex items-center gap-2 bg-[#210D35] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(123, 63, 208,0.3)] hover:shadow-[0_0_60px_rgba(123, 63, 208,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
+                    className="group inline-flex items-center gap-2 bg-[#0f3b2c] text-white font-bold text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 rounded-[8px] shadow-[0_0_30px_rgba(15,59,44,0.3)] hover:shadow-[0_0_60px_rgba(15,59,44,0.5)] hover:scale-105 active:scale-95 transition-all duration-300 animate-float"
                   >
                     <span>Shop Phones</span>
                     <span className="material-symbols-outlined text-lg md:text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -243,7 +243,7 @@ function PhonesDesktop() {
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={`relative h-1.5 rounded-[8px] transition-all duration-500 overflow-hidden ${
-                i === currentSlide ? 'w-16 bg-[#210D35]' : 'w-6 bg-white/30 hover:bg-white/50'
+                i === currentSlide ? 'w-16 bg-[#0f3b2c]' : 'w-6 bg-white/30 hover:bg-white/50'
               }`}
             >
               {i === currentSlide && (
@@ -267,8 +267,8 @@ function PhonesDesktop() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-6 py-2.5 rounded-[8px] text-sm font-bold transition-all duration-300 ${
                   activeTab === tab.key
-                    ? 'bg-[#3A1E52] text-white shadow-lg shadow-black/10'
-                    : 'bg-white border border-[#210D35]/20 text-on-surface-variant hover:border-[#210D35]/40 hover:text-[#3A1E52]'
+                    ? 'bg-[#18503c] text-white shadow-lg shadow-black/10'
+                    : 'bg-white border border-[#0f3b2c]/20 text-on-surface-variant hover:border-[#0f3b2c]/40 hover:text-[#18503c]'
                 }`}
               >
                 {tab.label}
@@ -291,7 +291,7 @@ function PhonesDesktop() {
                   <div
                     key={product.id}
                     onClick={() => navigate(`/product/${product.id}`)}
-                    className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(123, 63, 208,0.10)] hover:border-[#210D35]/25 hover:-translate-y-1"
+                    className="glass-card p-4 rounded-[1.75rem] group cursor-pointer transition-all duration-500 hover:shadow-[0_20px_60px_rgba(15,59,44,0.10)] hover:border-[#0f3b2c]/25 hover:-translate-y-1"
                   >
                     <div className="relative rounded-2xl overflow-hidden bg-white h-[240px] mb-4 flex items-center justify-center p-5">
                       {img && img !== FALLBACK_IMG ? (
@@ -307,13 +307,13 @@ function PhonesDesktop() {
                         </div>
                       )}
                       {tags.length > 0 && (
-                        <span className="absolute top-3 left-3 bg-[#210D35] text-white text-micro font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
+                        <span className="absolute top-3 left-3 bg-[#0f3b2c] text-white text-micro font-bold uppercase tracking-widest px-3 py-1.5 rounded-[8px] shadow-lg">
                           {tags[0]}
                         </span>
                       )}
                       <button
                         onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`) }}
-                        className="absolute bottom-3 right-3 bg-[#210D35] text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(123, 63, 208,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
+                        className="absolute bottom-3 right-3 bg-[#0f3b2c] text-white w-11 h-11 rounded-[8px] flex items-center justify-center shadow-lg hover:shadow-[0_0_30px_rgba(15,59,44,0.4)] hover:scale-110 active:scale-95 transition-all duration-300"
                       >
                         <span className="material-symbols-outlined text-xl">arrow_forward</span>
                       </button>
@@ -323,13 +323,13 @@ function PhonesDesktop() {
                       <h3 className="font-bold text-base md:text-lg text-on-surface mb-1.5 leading-snug">{product.name}</h3>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-[#3A1E52] font-extrabold text-lg">₹{price.current.toLocaleString('en-IN')}</span>
+                          <span className="text-[#18503c] font-extrabold text-lg">₹{price.current.toLocaleString('en-IN')}</span>
                           {price.old && <span className="text-on-surface-variant text-xs line-through">₹{price.old.toLocaleString('en-IN')}</span>}
                         </div>
                         <div className="flex items-center gap-1">
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((s) => (
-                              <span key={s} className={`material-symbols-outlined text-body-sm ${s <= 4 ? 'text-[#e5c364]' : 'text-[#e5c364]/40'}`}>star</span>
+                              <span key={s} className={`material-symbols-outlined text-body-sm ${s <= 4 ? 'text-[#f2b01e]' : 'text-[#f2b01e]/40'}`}>star</span>
                             ))}
                           </div>
                           <span className="text-xs font-bold text-on-surface-variant">{product.rating || '4.9'}</span>
@@ -347,17 +347,17 @@ function PhonesDesktop() {
       {/* ─── TRADE-IN CTA ─── */}
       <section className="py-20 px-6 md:px-12 bg-surface-container-low/20 scroll-reveal">
         <div className="max-w-[1440px] mx-auto">
-          <div className="glass-card rounded-[2.5rem] overflow-hidden border border-[#210D35]/15 relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#3A1E52] via-[#3A1E52]/80 to-transparent z-10" />
+          <div className="glass-card rounded-[2.5rem] overflow-hidden border border-[#0f3b2c]/15 relative shadow-[0_20px_80px_rgba(0,0,0,0.06)]">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#18503c] via-[#18503c]/80 to-transparent z-10" />
             <div className="relative z-20 flex flex-col md:flex-row items-center justify-between p-10 md:p-16">
               <div className="max-w-xl text-center md:text-left">
-                <span className="inline-flex items-center gap-1.5 text-[#210D35] text-xs font-bold uppercase tracking-[0.15em] mb-4">
+                <span className="inline-flex items-center gap-1.5 text-[#0f3b2c] text-xs font-bold uppercase tracking-[0.15em] mb-4">
                   <span className="material-symbols-outlined text-sm">sync_alt</span>
                   Trade-In Offer
                 </span>
-                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-white mb-4">Upgrade & Save Up To <span className="text-[#210D35]">₹30,000</span></h2>
+                <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-white mb-4">Upgrade & Save Up To <span className="text-[#0f3b2c]">₹30,000</span></h2>
                 <p className="text-white/70 text-lg mb-8 max-w-lg">Trade in your old device and get instant credit toward any new phone in our collection.</p>
-                <Link to="/trade-in" className="inline-flex items-center gap-2 bg-[#210D35] text-white font-bold text-base px-8 py-3.5 rounded-[8px] shadow-[0_0_30px_rgba(123, 63, 208,0.3)] hover:shadow-[0_0_50px_rgba(123, 63, 208,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
+                <Link to="/trade-in" className="inline-flex items-center gap-2 bg-[#0f3b2c] text-white font-bold text-base px-8 py-3.5 rounded-[8px] shadow-[0_0_30px_rgba(15,59,44,0.3)] hover:shadow-[0_0_50px_rgba(15,59,44,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
                   Check Trade-In Value
                   <span className="material-symbols-outlined text-lg">arrow_forward</span>
                 </Link>

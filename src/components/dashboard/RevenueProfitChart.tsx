@@ -13,8 +13,8 @@ export default function RevenueProfitChart() {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={revenueProfitData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
             <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 500 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 500 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#5d6762', fontWeight: 500 }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#5d6762', fontWeight: 500 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
             <Tooltip
               contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', backgroundColor: '#172033', color: '#f8fafc', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
               formatter={(v) => [`₹${Number(v).toLocaleString('en-IN')}`, '']}
@@ -24,8 +24,8 @@ export default function RevenueProfitChart() {
               wrapperStyle={{ fontSize: 11, fontWeight: 500, paddingTop: 12 }}
               formatter={(value) => <span className="text-text-muted capitalize">{value}</span>}
             />
-            <Line type="monotone" dataKey="revenue" stroke="#CB202D" strokeWidth={2} dot={{ r: 3, fill: '#CB202D', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#CB202D', stroke: '#ffffff', strokeWidth: 2 }} />
-            <Line type="monotone" dataKey="profit" stroke="#A81D2A" strokeWidth={2} dot={{ r: 3, fill: '#A81D2A', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#A81D2A', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Line type="monotone" dataKey="revenue" stroke="#a8261b" strokeWidth={2} dot={{ r: 3, fill: '#a8261b', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#a8261b', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Line type="monotone" dataKey="profit" stroke="#a8261b" strokeWidth={2} dot={{ r: 3, fill: '#a8261b', strokeWidth: 0 }} activeDot={{ r: 5, fill: '#a8261b', stroke: '#ffffff', strokeWidth: 2 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

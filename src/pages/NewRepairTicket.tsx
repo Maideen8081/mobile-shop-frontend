@@ -380,7 +380,7 @@ export default function NewRepairTicket() {
               onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && fileRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files) }}
-              className="rounded-xl border-2 border-dashed border-border-dark hover:border-primary/50 hover:bg-[#fdecee]/30 transition-colors p-6 text-center cursor-pointer"
+              className="rounded-xl border-2 border-dashed border-border-dark hover:border-primary/50 hover:bg-[#fbe1d8]/30 transition-colors p-6 text-center cursor-pointer"
             >
               <FiImage className="mx-auto text-text-muted mb-2" size={22} />
               <p className="text-sm font-medium text-text-primary">Drop photos here or <span className="text-primary">browse</span></p>
@@ -395,7 +395,7 @@ export default function NewRepairTicket() {
                       className="relative group aspect-square rounded-lg overflow-hidden ring-1 ring-border bg-surface-lighter">
                       <img src={previews[i]} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
                       <button type="button" aria-label={`Remove photo ${i + 1}`} onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))}
-                        className="absolute top-1 right-1 w-6 h-6 rounded-md bg-[#101828]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition">
+                        className="absolute top-1 right-1 w-6 h-6 rounded-md bg-[#1d2522]/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition">
                         <FiX size={12} />
                       </button>
                     </motion.div>

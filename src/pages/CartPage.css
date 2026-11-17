@@ -1,30 +1,30 @@
 /* Desktop cart page. Mobile uses MobileCart (see CartGate). */
 .cx-root {
-  /* PhoneFix palette: Deep Purple · Warm Cream · Soft Lavender · Sunshine/Turbo Yellow */
-  --cx-purple: #210d35;
-  --cx-purple-mid: #4a2470;
-  --cx-cream: #fff7f3;
-  --cx-lavender: #d0adff;
-  --cx-sunshine: #ffd014;
-  --cx-yellow: #f0e100;
+  /* PhoneFix palette: Deep green · Warm Cream · Soft sage · Sunshine/Turbo Yellow */
+  --cx-green: #0f3b2c;
+  --cx-green-mid: #18503c;
+  --cx-cream: #f7f6f2;
+  --cx-sage: #dfe8b4;
+  --cx-sunshine: #dfe8b4;
+  --cx-yellow: #dfe8b4;
 
-  --cx-red: var(--cx-purple);          /* primary (name kept for shared rules) */
-  --cx-red-dark: var(--cx-purple-mid);
-  --cx-primary-2: var(--cx-purple-mid);
-  --cx-lav: rgba(208, 173, 255, 0.28);
-  --cx-lav-2: rgba(208, 173, 255, 0.14);
-  --cx-ink: var(--cx-purple);
-  --cx-ink-2: #4e3d5e;
-  --cx-muted: #7d6c8c;
-  --cx-line: rgba(33, 13, 53, 0.09);
+  --cx-red: var(--cx-green);          /* primary (name kept for shared rules) */
+  --cx-red-dark: var(--cx-green-mid);
+  --cx-primary-2: var(--cx-green-mid);
+  --cx-lav: rgba(223,232,180, 0.28);
+  --cx-lav-2: rgba(223,232,180, 0.14);
+  --cx-ink: var(--cx-green);
+  --cx-ink-2: #0f3b2c;
+  --cx-muted: #5d6762;
+  --cx-line: rgba(15,59,44, 0.09);
   --cx-bg: var(--cx-cream);
   --cx-card: #ffffff;
   --cx-green: #16a34a;
   --cx-green-tint: #e9f9ee;
-  --cx-pink: #fff0f2;
-  --cx-pink-ink: #c0263f;
+  --cx-pink: #fbe1d8;
+  --cx-pink-ink: #0f3b2c;
   --cx-amber: #b45309;
-  --cx-shadow: 0 1px 2px rgba(33, 13, 53, 0.04), 0 10px 30px rgba(33, 13, 53, 0.06);
+  --cx-shadow: 0 1px 2px rgba(15,59,44, 0.04), 0 10px 30px rgba(15,59,44, 0.06);
 
   min-height: 100vh;
   background: var(--cx-bg);
@@ -37,9 +37,9 @@
 .cx-root button:disabled { cursor: not-allowed; }
 
 .cx-wrap {
-  max-width: 1480px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 28px 28px 72px;
+  padding: 8px 28px 72px;
 }
 
 .cx-grid {
@@ -65,7 +65,7 @@
   place-items: center;
   background: linear-gradient(145deg, var(--cx-primary-2), var(--cx-red-dark));
   color: #fff;
-  box-shadow: 0 8px 18px rgba(74, 36, 112, 0.25);
+  box-shadow: 0 8px 18px rgba(24,80,60, 0.25);
 }
 .cx-head h1 {
   margin: 0;
@@ -96,7 +96,7 @@
   font-weight: 500;
   transition: color 0.18s, background 0.18s;
 }
-.cx-clear:hover:not(:disabled) { color: var(--cx-pink-ink); background: #fff0f2; }
+.cx-clear:hover:not(:disabled) { color: var(--cx-pink-ink); background: #fbe1d8; }
 .cx-clear:disabled { opacity: 0.45; }
 
 /* ── Item list ── */
@@ -130,7 +130,7 @@
   border-radius: 8px;
   display: grid;
   place-items: center;
-  border: 2px solid var(--cx-lavender);
+  border: 2px solid var(--cx-sage);
   background: #fff;
   color: transparent;
   transition: background 0.15s, border-color 0.15s;
@@ -140,7 +140,7 @@
   border-color: transparent;
   color: #fff;
 }
-.cx-check input:focus-visible + span { box-shadow: 0 0 0 4px rgba(208, 173, 255, 0.25); }
+.cx-check input:focus-visible + span { box-shadow: 0 0 0 4px rgba(223,232,180, 0.25); }
 
 .cx-thumb {
   width: 120px;
@@ -164,7 +164,7 @@
 }
 .cx-name:hover { color: var(--cx-red); }
 .cx-specs { display: flex; flex-wrap: wrap; color: var(--cx-muted); font-size: 16px; }
-.cx-specs span + span::before { content: '|'; margin: 0 10px; color: rgba(33, 13, 53, 0.25); }
+.cx-specs span + span::before { content: '|'; margin: 0 10px; color: rgba(15,59,44, 0.25); }
 .cx-stock {
   display: inline-flex;
   align-items: center;
@@ -178,7 +178,7 @@
 }
 .cx-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .cx-stock.is-low { background: #fff6e5; color: var(--cx-amber); }
-.cx-stock.is-out { background: #fff0f2; color: var(--cx-pink-ink); }
+.cx-stock.is-out { background: #fbe1d8; color: var(--cx-pink-ink); }
 
 .cx-qty {
   display: inline-flex;
@@ -186,7 +186,7 @@
   gap: 6px;
   height: 52px;
   padding: 0 8px;
-  border: 1px solid rgba(33, 13, 53, 0.14);
+  border: 1px solid rgba(15,59,44, 0.14);
   border-radius: 999px;
   background: #fff;
 }
@@ -231,27 +231,27 @@
   place-items: center;
   transition: background 0.15s, color 0.15s;
 }
-.cx-icon-btn:hover:not(:disabled) { background: #fff0f2; color: var(--cx-pink-ink); }
-.cx-icon-btn.is-soft { width: 34px; height: 34px; color: #9b8aab; }
+.cx-icon-btn:hover:not(:disabled) { background: #fbe1d8; color: var(--cx-pink-ink); }
+.cx-icon-btn.is-soft { width: 34px; height: 34px; color: #5d6762; }
 .cx-icon-btn.is-soft:hover:not(:disabled) { background: var(--cx-lav); color: var(--cx-red); }
 
 .cx-warn { margin: 12px 0 0; font-size: 14px; color: var(--cx-pink-ink); }
 
 /* ── Order summary ── */
-.cx-side { position: sticky; top: calc(var(--pfn-h, 150px) + 20px); }
+.cx-side { position: sticky; top: 16px; }
 .cx-summary {
   overflow: hidden;
   background: var(--cx-card);
   border: 1px solid var(--cx-line);
   border-radius: 22px;
-  box-shadow: 0 16px 40px rgba(33, 13, 53, 0.1);
+  box-shadow: 0 16px 40px rgba(15,59,44, 0.1);
 }
 .cx-summary-head {
   display: flex;
   align-items: center;
   gap: 18px;
   padding: 26px 28px;
-  background: linear-gradient(135deg, var(--cx-purple), var(--cx-purple-mid));
+  background: linear-gradient(135deg, var(--cx-green), var(--cx-green-mid));
   color: var(--cx-red);
 }
 .cx-summary-head h2 {
@@ -274,7 +274,7 @@
   display: flex;
   gap: 8px;
   padding: 5px 5px 5px 14px;
-  border: 1px dashed var(--cx-lavender);
+  border: 1px dashed var(--cx-sage);
   border-radius: 12px;
   background: var(--cx-lav-2);
 }
@@ -343,8 +343,8 @@
   margin-top: 18px;
   border-radius: 12px;
   font-size: 18px;
-  background: linear-gradient(135deg, var(--cx-primary-2), #4c1d95) !important;
-  box-shadow: 0 12px 26px rgba(74, 36, 112, 0.3);
+  background: linear-gradient(135deg, var(--cx-primary-2), #0b2e22) !important;
+  box-shadow: 0 12px 26px rgba(24,80,60, 0.3);
 }
 .cx-btn-outline { background: #fff; border: 1.5px solid var(--cx-ink); color: var(--cx-ink); }
 .cx-btn-outline:hover { border-color: var(--cx-red); color: var(--cx-red); }
@@ -404,7 +404,7 @@
   box-shadow: var(--cx-shadow);
   transition: box-shadow 0.2s, transform 0.2s;
 }
-.cx-rec:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(33, 13, 53, 0.1); }
+.cx-rec:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(15,59,44, 0.1); }
 .cx-rec-img {
   width: 110px;
   height: 116px;
@@ -429,7 +429,7 @@
   overflow: hidden;
 }
 .cx-rec-name:hover { color: var(--cx-red); }
-.cx-rec-rating { display: flex; align-items: center; gap: 5px; color: #f5a524; font-size: 15px; }
+.cx-rec-rating { display: flex; align-items: center; gap: 5px; color: #f2b01e; font-size: 15px; }
 .cx-rec-rating b { color: var(--cx-ink); font-weight: 700; }
 .cx-rec-price { display: flex; align-items: baseline; gap: 10px; }
 .cx-rec-price strong { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
@@ -449,7 +449,7 @@
   color: #fff;
   transition: transform 0.15s, box-shadow 0.2s;
 }
-.cx-rec-add:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(74, 36, 112, 0.35); }
+.cx-rec-add:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(24,80,60, 0.35); }
 .cx-rec-add.is-added { background: var(--cx-green); }
 
 /* ── Responsive ── */
@@ -497,7 +497,7 @@
 .cx-btn-primary {
   background: var(--cx-red);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(123, 63, 208, 0.22);
+  box-shadow: 0 8px 20px rgba(15,59,44, 0.22);
 }
 .cx-btn-primary:hover:not(:disabled) { background: var(--cx-red-dark); transform: translateY(-1px); }
 .cx-btn-primary:disabled { opacity: 0.5; box-shadow: none; }
@@ -615,41 +615,41 @@
 /* Narrow desktop / tablet widths that still render this page */
 
 /* ── Brand colour accents (placed where each is most visible) ── */
-/* Header icon: purple tile, yellow glyph */
+/* Header icon: green tile, yellow glyph */
 .cx-head-icon { color: var(--cx-sunshine); }
-.cx-count { background: var(--cx-lav); color: var(--cx-purple); }
+.cx-count { background: var(--cx-lav); color: var(--cx-green); }
 
 /* Discount tags: yellow so savings catch the eye */
-.cx-off { background: var(--cx-sunshine); color: var(--cx-purple); }
+.cx-off { background: var(--cx-sunshine); color: var(--cx-green); }
 
-/* Order summary: deep purple header with cream text and yellow icon */
+/* Order summary: deep green header with cream text and yellow icon */
 .cx-summary-head { color: var(--cx-sunshine); }
 .cx-summary-head h2 { color: var(--cx-cream); }
-.cx-total strong { color: var(--cx-purple); }
-.cx-promo-form button { background: var(--cx-purple); color: var(--cx-cream); }
+.cx-total strong { color: var(--cx-green); }
+.cx-promo-form button { background: var(--cx-green); color: var(--cx-cream); }
 
 /* Main action: Sunshine Yellow, like the Home "Shop Now" button */
 .cx-checkout {
   background: var(--cx-sunshine) !important;
-  color: var(--cx-purple) !important;
+  color: var(--cx-green) !important;
   border: 0;
-  box-shadow: 0 12px 26px rgba(255, 208, 20, 0.45);
+  box-shadow: 0 12px 26px rgba(223,232,180, 0.45);
 }
 .cx-checkout:hover:not(:disabled) { background: var(--cx-yellow) !important; }
 .cx-checkout:disabled { background: #e8e1d9 !important; color: var(--cx-muted) !important; box-shadow: none; }
-.cx-btn-outline { border-color: var(--cx-purple); color: var(--cx-purple); }
-.cx-btn-outline:hover { background: var(--cx-lav-2); color: var(--cx-purple); }
+.cx-btn-outline { border-color: var(--cx-green); color: var(--cx-green); }
+.cx-btn-outline:hover { background: var(--cx-lav-2); color: var(--cx-green); }
 
-/* Benefits: lavender circles, purple icons */
-.cx-benefits li > span { background: var(--cx-lav); color: var(--cx-purple); }
+/* Benefits: sage circles, green icons */
+.cx-benefits li > span { background: var(--cx-lav); color: var(--cx-green); }
 
-/* Suggestions: purple cart button that turns yellow on hover */
-.cx-rec-add { background: var(--cx-purple); color: var(--cx-cream); }
-.cx-rec-add:hover:not(:disabled) { background: var(--cx-sunshine); color: var(--cx-purple); box-shadow: 0 8px 18px rgba(255, 208, 20, 0.45); }
-.cx-recs-head a { color: var(--cx-purple-mid); }
-.cx-rec:hover { border-color: var(--cx-lavender); }
+/* Suggestions: green cart button that turns yellow on hover */
+.cx-rec-add { background: var(--cx-green); color: var(--cx-cream); }
+.cx-rec-add:hover:not(:disabled) { background: var(--cx-sunshine); color: var(--cx-green); box-shadow: 0 8px 18px rgba(223,232,180, 0.45); }
+.cx-recs-head a { color: var(--cx-green-mid); }
+.cx-rec:hover { border-color: var(--cx-sage); }
 
-/* Selected checkbox: deep purple with a yellow tick */
-.cx-check input:checked + span { background: var(--cx-purple); color: var(--cx-sunshine); }
+/* Selected checkbox: deep green with a yellow tick */
+.cx-check input:checked + span { background: var(--cx-green); color: var(--cx-sunshine); }
 
 .cx-toast-undo { margin-left: 12px; padding: 4px 10px; min-height: 32px; border-radius: 8px; border: 1px solid currentColor; background: transparent; color: inherit; font-weight: 800; cursor: pointer; }

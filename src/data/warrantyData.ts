@@ -65,9 +65,9 @@ export const warrantyKPIs = [
   { id: 3, title: 'Warranty Claims', value: 24, prefix: '', growth: 18.7, trend: 'up' as const, subtitle: 'pending review', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)', icon: 'FiFileText', sparkline: [8, 12, 10, 15, 13, 18, 16, 20, 18, 22] },
   { id: 4, title: 'Claims Approved', value: 156, prefix: '', growth: 22.3, trend: 'up' as const, subtitle: 'this quarter', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)', icon: 'FiCheckCircle', sparkline: [18, 22, 20, 28, 24, 30, 26, 32, 28, 35] },
   { id: 5, title: 'Claims Rejected', value: 18, prefix: '', growth: -5.1, trend: 'down' as const, subtitle: 'this quarter', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)', icon: 'FiXCircle', sparkline: [5, 4, 6, 3, 5, 2, 4, 2, 3, 2] },
-  { id: 6, title: 'Brand Coverage', value: 92, suffix: '%', growth: 3.4, trend: 'up' as const, subtitle: 'of products', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiAward', sparkline: [82, 84, 86, 85, 88, 87, 90, 89, 91, 92] },
+  { id: 6, title: 'Brand Coverage', value: 92, suffix: '%', growth: 3.4, trend: 'up' as const, subtitle: 'of products', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiAward', sparkline: [82, 84, 86, 85, 88, 87, 90, 89, 91, 92] },
   { id: 7, title: 'Revenue Protected', value: 28450000, prefix: '₹', growth: 15.8, trend: 'up' as const, subtitle: 'total coverage value', color: '#06b6d4', bgGlow: 'rgba(6,182,212,0.12)', icon: 'FiDollarSign', sparkline: [22, 30, 28, 38, 35, 45, 42, 52, 48, 58] },
-  { id: 8, title: 'Expired Warranties', value: 324, prefix: '', growth: 6.2, trend: 'up' as const, subtitle: 'total expired', color: '#64748b', bgGlow: 'rgba(100,116,139,0.12)', icon: 'FiCalendar', sparkline: [15, 18, 16, 22, 20, 25, 23, 28, 26, 30] },
+  { id: 8, title: 'Expired Warranties', value: 324, prefix: '', growth: 6.2, trend: 'up' as const, subtitle: 'total expired', color: '#5d6762', bgGlow: 'rgba(100,116,139,0.12)', icon: 'FiCalendar', sparkline: [15, 18, 16, 22, 20, 25, 23, 28, 26, 30] },
 ]
 
 export const warrantyRecords: WarrantyRecord[] = [
@@ -99,7 +99,7 @@ export const warrantyClaims: WarrantyClaim[] = [
 export const brandWarranties: BrandWarranty[] = [
   { id: 1, brand: 'Apple', logo: '🍎', policyName: 'Apple Limited Warranty', defaultDuration: 365, coverageDetails: 'Manufacturing defects, hardware failures. Excludes accidental damage, water damage.', claimSuccessRate: 94, averageSla: 5, activeWarranties: 624, totalClaims: 89, color: '#000000' },
   { id: 2, brand: 'Samsung', logo: '📱', policyName: 'Samsung Standard Warranty', defaultDuration: 365, coverageDetails: 'Manufacturing defects, battery issues, display problems. Excludes physical damage.', claimSuccessRate: 91, averageSla: 6, activeWarranties: 512, totalClaims: 76, color: '#1428A0' },
-  { id: 3, brand: 'OnePlus', logo: '⚡', policyName: 'OnePlus Warranty Program', defaultDuration: 365, coverageDetails: 'Hardware defects, charging port issues, software glitches. Excludes screen cracks.', claimSuccessRate: 88, averageSla: 7, activeWarranties: 298, totalClaims: 45, color: '#EB0028' },
+  { id: 3, brand: 'OnePlus', logo: '⚡', policyName: 'OnePlus Warranty Program', defaultDuration: 365, coverageDetails: 'Hardware defects, charging port issues, software glitches. Excludes screen cracks.', claimSuccessRate: 88, averageSla: 7, activeWarranties: 298, totalClaims: 45, color: '#0f3b2c' },
   { id: 4, brand: 'Xiaomi', logo: '🪐', policyName: 'Xiaomi Warranty Policy', defaultDuration: 365, coverageDetails: 'Manufacturing defects, battery, charging. Excludes unauthorized repairs.', claimSuccessRate: 85, averageSla: 8, activeWarranties: 245, totalClaims: 38, color: '#FF6900' },
   { id: 5, brand: 'Vivo', logo: '📷', policyName: 'Vivo Standard Warranty', defaultDuration: 365, coverageDetails: 'Hardware defects, camera issues, battery problems. Excludes physical damage.', claimSuccessRate: 87, averageSla: 7, activeWarranties: 98, totalClaims: 15, color: '#415CFF' },
   { id: 6, brand: 'Oppo', logo: '📸', policyName: 'Oppo Warranty Service', defaultDuration: 365, coverageDetails: 'Manufacturing defects, charging, display. Excludes water damage.', claimSuccessRate: 86, averageSla: 7, activeWarranties: 85, totalClaims: 12, color: '#1A6B37' },
@@ -117,15 +117,15 @@ export const warrantyAnalytics = {
   brandWiseClaims: [
     { name: 'Apple', value: 35, color: '#000000' },
     { name: 'Samsung', value: 28, color: '#1428A0' },
-    { name: 'OnePlus', value: 18, color: '#EB0028' },
+    { name: 'OnePlus', value: 18, color: '#0f3b2c' },
     { name: 'Xiaomi', value: 12, color: '#FF6900' },
-    { name: 'Others', value: 7, color: '#64748b' },
+    { name: 'Others', value: 7, color: '#5d6762' },
   ],
   expiryDistribution: [
     { name: 'Active (>90 days)', value: 65, color: '#22c55e' },
     { name: 'Expiring Soon (30-90d)', value: 18, color: '#f59e0b' },
     { name: 'Critical (<30 days)', value: 8, color: '#ef4444' },
-    { name: 'Expired', value: 9, color: '#64748b' },
+    { name: 'Expired', value: 9, color: '#5d6762' },
   ],
   claimApprovalRatio: 82.5,
   warrantyRevenueProtected: 28450000,

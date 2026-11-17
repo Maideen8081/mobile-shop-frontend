@@ -23,7 +23,7 @@ export default function MobileTopSection({
       <header
         className="relative w-full px-4 pt-3 pb-12 text-white overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)',
+          background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)',
           borderBottomLeftRadius: 30,
           borderBottomRightRadius: 30,
         }}
@@ -43,7 +43,7 @@ export default function MobileTopSection({
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <button onClick={() => navigate('/notifications')} aria-label="Notifications" className="relative w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
               <Bell size={17} />
-              <span className="absolute top-1.5 right-2 w-2 h-2 bg-white rounded-full ring-2 ring-[#3A1E52]" />
+              <span className="absolute top-1.5 right-2 w-2 h-2 bg-white rounded-full ring-2 ring-[#18503c]" />
             </button>
             <button onClick={() => navigate(icon === 'wishlist' ? '/wishlist' : '/cart')} aria-label={icon === 'wishlist' ? 'Wishlist' : 'Cart'} className="w-9 h-9 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition">
               <Icon size={17} fill="white" />
@@ -52,8 +52,8 @@ export default function MobileTopSection({
         </div>
 
         {/* Corner fills — cover rounded-bottom gaps so content never shows through */}
-        <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)' }} />
-        <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)' }} />
+        <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)' }} />
+        <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)' }} />
       </header>
 
       {showSearch && (
@@ -61,14 +61,14 @@ export default function MobileTopSection({
           onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
           className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full bg-white z-50"
         >
-          <Search size={20} className="text-[#210D35] shrink-0" />
+          <Search size={20} className="text-[#0f3b2c] shrink-0" />
           <input
             readOnly
             onFocus={() => navigate('/search')}
             onClick={() => navigate('/search')}
             placeholder="Search mobiles, accessories..."
             aria-label="Search products"
-            className="flex-1 bg-transparent text-sm text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
+            className="flex-1 bg-transparent text-sm text-[#0f3b2c] placeholder:text-[#5d6762] outline-none min-w-0 cursor-pointer"
           />
         </form>
       )}

@@ -11,8 +11,8 @@ import { readCheckoutCoupon, saveCheckoutCoupon } from '../../utils/checkout'
 import ExitIntentOffer from '../checkout/ExitIntentOffer'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -92,19 +92,19 @@ export default function MobilePayment() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
-        <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
+        <div className="sticky top-0 z-30 bg-[#f7f6f2] px-4 pt-3 pb-3 border-b border-[#ece9e2] flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(15,59,44,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
           <div className="flex-1">
-            <h1 className="text-title-sm font-bold text-[#1F2937]">Payment</h1>
-            <p className="text-micro text-[#6B7280]">Loading cart…</p>
+            <h1 className="text-title-sm font-bold text-[#1d2522]">Payment</h1>
+            <p className="text-micro text-[#5d6762]">Loading cart…</p>
           </div>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <DoubleRingLoader size={48} />
-          <p className="text-label text-[#6B7280] mt-4">Loading your cart…</p>
+          <p className="text-label text-[#5d6762] mt-4">Loading your cart…</p>
         </div>
         {Toast}
       </div>
@@ -184,17 +184,17 @@ export default function MobilePayment() {
 
   if (isCartEmpty) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
-        <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
+        <div className="sticky top-0 z-30 bg-[#f7f6f2] px-4 pt-3 pb-3 border-b border-[#ece9e2] flex items-center gap-3">
+          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(15,59,44,0.12)]">
             <FiChevronLeft size={20} style={{ color: PURPLE }} />
           </button>
-          <h1 className="text-title-sm font-bold text-[#1F2937]">Payment</h1>
+          <h1 className="text-title-sm font-bold text-[#1d2522]">Payment</h1>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <div className={`${card} w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl`}>🛒</div>
-          <h2 className="text-title-sm font-bold text-[#1F2937] mb-1">No items to settle</h2>
-          <p className="text-label text-[#6B7280] mb-6">Add items to cart before checkout</p>
+          <h2 className="text-title-sm font-bold text-[#1d2522] mb-1">No items to settle</h2>
+          <p className="text-label text-[#5d6762] mb-6">Add items to cart before checkout</p>
           <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-body-sm font-semibold text-white"
             style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
             Continue Shopping
@@ -206,14 +206,14 @@ export default function MobilePayment() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28" style={{ fontFamily: 'var(--font-ui)' }}>
-      <div className="sticky top-0 z-30 bg-[#FFFBFB] px-4 pt-3 pb-3 border-b border-[#EEF0F6] flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(123, 63, 208,0.12)]">
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28" style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="sticky top-0 z-30 bg-[#f7f6f2] px-4 pt-3 pb-3 border-b border-[#ece9e2] flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(15,59,44,0.12)]">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="flex-1">
-          <h1 className="text-title-sm font-bold text-[#1F2937]">Complete Payment</h1>
-          <p className="text-micro text-[#6B7280]">Step 3 of 3 · Secure checkout</p>
+          <h1 className="text-title-sm font-bold text-[#1d2522]">Complete Payment</h1>
+          <p className="text-micro text-[#5d6762]">Step 3 of 3 · Secure checkout</p>
         </div>
       </div>
 
@@ -226,13 +226,13 @@ export default function MobilePayment() {
           return (
             <div key={label} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
-                <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-micro font-bold transition ${done ? 'text-white' : active ? 'text-white' : 'bg-white text-[#9CA3AF] border border-[#E5E7EB]'}`}
+                <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-micro font-bold transition ${done ? 'text-white' : active ? 'text-white' : 'bg-white text-[#9aa29e] border border-[#ece9e2]'}`}
                   style={done || active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                   {done ? <FiCheck size={14} /> : step}
                 </div>
-                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-[#9CA3AF]'}`} style={active ? { color: PURPLE } : undefined}>{label}</span>
+                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-[#9aa29e]'}`} style={active ? { color: PURPLE } : undefined}>{label}</span>
               </div>
-              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-[#E5E7EB]'}`} style={done ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined} />}
+              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-[#ece9e2]'}`} style={done ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined} />}
             </div>
           )
         })}
@@ -241,14 +241,14 @@ export default function MobilePayment() {
       <div className="px-4 pt-2 space-y-4">
         {/* Order summary */}
         <div className={`${card} rounded-[20px] p-4`}>
-          <h3 className="text-body-sm font-bold text-[#1F2937] mb-3">Order Summary</h3>
+          <h3 className="text-body-sm font-bold text-[#1d2522] mb-3">Order Summary</h3>
           <div className="space-y-3">
             {items.map((item) => {
               const imgUrl = resolveImage(item)
               const hasImg = imgUrl && !imgErrors[item.productId]
               return (
                 <div key={item.productId} className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-[14px] bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+                  <div className="w-14 h-14 rounded-[14px] bg-[#f7f6f2] flex-shrink-0 flex items-center justify-center overflow-hidden relative">
                     {hasImg ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-contain"
                         onError={() => setImgErrors((p) => ({ ...p, [item.productId]: true }))} />
@@ -260,31 +260,31 @@ export default function MobilePayment() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>
-                    {item.storage && <p className="text-micro text-[#6B7280]">{item.storage}</p>}
+                    <p className="text-label font-semibold text-[#1d2522] truncate">{item.name}</p>
+                    {item.storage && <p className="text-micro text-[#5d6762]">{item.storage}</p>}
                   </div>
-                  <span className="text-label font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                  <span className="text-label font-bold text-[#1d2522]">{formatPrice(item.price * item.quantity)}</span>
                 </div>
               )
             })}
           </div>
-          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="h-px bg-[#ece9e2] my-3" />
           <div className="space-y-1.5 text-caption">
-            <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>{gstLabel()}</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
-            {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({checkoutCoupon?.code})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
+            <div className="flex justify-between text-[#5d6762]"><span>Subtotal</span><span className="font-semibold text-[#1d2522]">{formatPrice(subtotal)}</span></div>
+            <div className="flex justify-between text-[#5d6762]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1d2522' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
+            <div className="flex justify-between text-[#5d6762]"><span>{gstLabel()}</span><span className="font-semibold text-[#1d2522]">{formatPrice(tax)}</span></div>
+            {discount > 0 && <div className="flex justify-between text-[#5d6762]"><span>Coupon ({checkoutCoupon?.code})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
           </div>
-          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="h-px bg-[#ece9e2] my-3" />
           <div className="flex justify-between items-end">
-            <span className="text-micro font-semibold uppercase tracking-wide text-[#6B7280]">Grand Total</span>
-            <span className="text-title font-bold text-[#1F2937]">{formatPrice(grandTotal)}</span>
+            <span className="text-micro font-semibold uppercase tracking-wide text-[#5d6762]">Grand Total</span>
+            <span className="text-title font-bold text-[#1d2522]">{formatPrice(grandTotal)}</span>
           </div>
         </div>
 
         {/* Payment methods */}
         <div>
-          <h3 className="text-body-sm font-bold text-[#1F2937] mb-2 px-1">Payment Method</h3>
+          <h3 className="text-body-sm font-bold text-[#1d2522] mb-2 px-1">Payment Method</h3>
           <div className="space-y-2.5">
             {paymentMethods.map((pm) => {
               const active = selectedMethod === pm.id
@@ -297,13 +297,13 @@ export default function MobilePayment() {
                   disabled={disabled && !active}
                   className={`w-full ${card} rounded-[18px] p-3.5 flex items-center gap-3 border-2 transition ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   style={{ borderColor: active ? PURPLE : 'transparent' }}>
-                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(123, 63, 208,0.1)' : '#FFFBFB' }}>{pm.icon}</div>
+                  <div className="w-11 h-11 rounded-[14px] flex items-center justify-center text-xl flex-shrink-0" style={{ background: active ? 'rgba(15,59,44,0.1)' : '#f7f6f2' }}>{pm.icon}</div>
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-label font-semibold text-[#1F2937]">{pm.label}</p>
+                      <p className="text-label font-semibold text-[#1d2522]">{pm.label}</p>
                       {pm.comingSoon && <span className="text-micro font-bold px-1.5 py-0.5 rounded-[8px] bg-amber-100 text-amber-700">Coming Soon</span>}
                     </div>
-                    <p className="text-micro text-[#6B7280]">{pm.subtitle}</p>
+                    <p className="text-micro text-[#5d6762]">{pm.subtitle}</p>
                   </div>
                   <div className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center ${active ? 'border-[#4FE3C1]' : 'border-[#D1D5DB]'}`}
                     style={active ? { background: SUCCESS } : undefined}>
@@ -319,14 +319,14 @@ export default function MobilePayment() {
               Cash on Delivery is available for orders up to ₹{COD_MAX_ORDER.toLocaleString('en-IN')}. Online payments are launching soon, so please reduce this order to place it now.
             </p>
           )}
-          <p className="mt-2 text-micro text-[#6B7280]">
+          <p className="mt-2 text-micro text-[#5d6762]">
             By placing this order you agree to our <a href="/terms" className="underline">Terms</a> and <a href="/refund-policy" className="underline">Refund Policy</a>.
           </p>
         </div>
       </div>
 
       {/* Fixed pay button */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#ece9e2] px-4 py-3">
         <button data-place-order onClick={handlePayment} disabled={processing || !canPlace}
           className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
@@ -340,9 +340,9 @@ export default function MobilePayment() {
             <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
               <FiCheck size={36} className="text-white" />
             </div>
-            <p className="text-title-sm font-bold text-[#1F2937]">Payment Successful!</p>
-            <p className="text-caption text-[#6B7280] mt-1">Your order has been placed</p>
-            <div className="flex items-center gap-2 text-micro text-[#9CA3AF] mt-4">
+            <p className="text-title-sm font-bold text-[#1d2522]">Payment Successful!</p>
+            <p className="text-caption text-[#5d6762] mt-1">Your order has been placed</p>
+            <div className="flex items-center gap-2 text-micro text-[#9aa29e] mt-4">
               <FiLoader size={12} className="animate-spin" /> Redirecting to confirmation…
             </div>
           </div>

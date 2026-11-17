@@ -12,11 +12,11 @@ import DoubleRingLoader from '../ui/DoubleRingLoader'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 
-const PRIMARY = '#210D35'
+const PRIMARY = '#0f3b2c'
 const DANGER = '#EF4444'
-const INK = '#1F2937'
-const MUTED = '#6B7280'
-const grad = 'linear-gradient(135deg,#210D35 0%,#7B3FD0 100%)'
+const INK = '#1d2522'
+const MUTED = '#5d6762'
+const grad = 'linear-gradient(135deg,#0f3b2c 0%,#0f3b2c 100%)'
 
 const PREFS_KEY = 'profile_prefs'
 type Prefs = { orderUpdates: boolean; promotions: boolean }
@@ -147,7 +147,7 @@ export default function MobileProfile() {
 
   if (!authService.isAuthenticated()) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
           <div className="relative z-10 px-5 pt-4 pb-6">
             <div className="flex items-center justify-between">
@@ -160,17 +160,17 @@ export default function MobileProfile() {
           </div>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center px-6 pb-28 -mt-4">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(15,59,44,0.1)' }}>
             <FiUser size={40} style={{ color: PRIMARY }} />
           </div>
-          <h2 className="text-title font-bold text-[#1F2937] mb-1.5">Welcome!</h2>
-          <p className="text-label text-[#6B7280] text-center mb-8 leading-relaxed max-w-[260px]">
+          <h2 className="text-title font-bold text-[#1d2522] mb-1.5">Welcome!</h2>
+          <p className="text-label text-[#5d6762] text-center mb-8 leading-relaxed max-w-[260px]">
             Sign in to access your profile, orders, wishlist and more.
           </p>
           <button onClick={() => navigate('/login')} className="w-full h-13 rounded-[12px] text-body font-semibold text-white flex items-center justify-center gap-2 mb-3" style={{ background: grad }}>
             Login
           </button>
-          <button onClick={() => navigate('/signup')} className="w-full h-13 rounded-[12px] text-body font-semibold text-[#210D35] flex items-center justify-center gap-2" style={{ background: 'rgba(123, 63, 208,0.08)', border: '1.5px solid rgba(123, 63, 208,0.2)' }}>
+          <button onClick={() => navigate('/signup')} className="w-full h-13 rounded-[12px] text-body font-semibold text-[#0f3b2c] flex items-center justify-center gap-2" style={{ background: 'rgba(15,59,44,0.08)', border: '1.5px solid rgba(15,59,44,0.2)' }}>
             Create Account
           </button>
         </div>
@@ -181,7 +181,7 @@ export default function MobileProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto flex items-center justify-center">
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex items-center justify-center">
         <DoubleRingLoader size={48} label="Loading profile…" />
       </div>
     )
@@ -208,11 +208,11 @@ export default function MobileProfile() {
     { icon: FiCalendar, label: 'Member Since', value: joined || 'Not available', missing: !joined },
   ]
 
-  const card = 'bg-white rounded-[20px] shadow-[0_6px_24px_rgba(33,13,53,0.06)]'
+  const card = 'bg-white rounded-[20px] shadow-[0_6px_24px_rgba(15,59,44,0.06)]'
   const press = 'active:scale-[0.99] transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       <div className="relative overflow-hidden" style={{ background: grad, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
         <span className="absolute -top-10 -right-8 w-40 h-40 rounded-full bg-white/15 blur-2xl" />
         <span className="absolute -bottom-12 -left-10 w-44 h-44 rounded-full bg-white/10 blur-2xl" />
@@ -241,11 +241,11 @@ export default function MobileProfile() {
             const Icon = item.icon
             return (
               <button key={item.label} onClick={() => navigate(item.to)} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} ${i < accountItems.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}>
                   <Icon size={17} />
                 </div>
                 <span className="flex-1 text-body-sm font-semibold" style={{ color: INK }}>{item.label}</span>
-                <FiChevronRight size={18} className="text-[#9CA3AF]" />
+                <FiChevronRight size={18} className="text-[#9aa29e]" />
               </button>
             )
           })}
@@ -261,12 +261,12 @@ export default function MobileProfile() {
             const Icon = r.icon
             return (
               <div key={r.label} className={`flex items-center gap-3 px-4 py-3 ${i < infoRows.length - 1 ? 'border-b border-[#F1F3F7]' : ''}`}>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.06)', color: PRIMARY }}>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.06)', color: PRIMARY }}>
                   <Icon size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-micro" style={{ color: MUTED }}>{r.label}</p>
-                  <p className={`text-body-sm font-semibold truncate ${r.missing ? 'text-[#9CA3AF]' : ''}`} style={!r.missing ? { color: INK } : undefined}>{r.value}</p>
+                  <p className={`text-body-sm font-semibold truncate ${r.missing ? 'text-[#9aa29e]' : ''}`} style={!r.missing ? { color: INK } : undefined}>{r.value}</p>
                 </div>
               </div>
             )
@@ -275,13 +275,13 @@ export default function MobileProfile() {
 
         <SectionTitle>Default Address</SectionTitle>
         <button onClick={() => navigate('/profile/addresses')} className={`${card} ${press} w-full text-left p-4 flex items-start gap-3`}>
-          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}>
             <FiHome size={18} />
           </div>
           {defaultAddress ? (
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-caption font-bold px-2 py-0.5 rounded-full" style={{ background: '#F3E8FF', color: PRIMARY }}>{defaultAddress.addressType || 'Home'}</span>
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full" style={{ background: '#dfe6cf', color: PRIMARY }}>{defaultAddress.addressType || 'Home'}</span>
                 {defaultAddress.isDefault && <span className="text-micro font-semibold" style={{ color: '#059669' }}>Default</span>}
               </div>
               <p className="text-body-sm font-medium leading-snug" style={{ color: INK }}>
@@ -295,37 +295,37 @@ export default function MobileProfile() {
               <p className="text-caption mt-0.5" style={{ color: MUTED }}>Add one to check out faster.</p>
             </div>
           )}
-          <FiChevronRight size={18} className="text-[#9CA3AF] mt-1" />
+          <FiChevronRight size={18} className="text-[#9aa29e] mt-1" />
         </button>
 
         <SectionTitle>Security & Account</SectionTitle>
         <div className={card}>
           <button onClick={() => setChangingPw(true)} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press} border-b border-[#F1F3F7]`}>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}><FiKey size={16} /></div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}><FiKey size={16} /></div>
             <div className="flex-1"><p className="text-body-sm font-semibold" style={{ color: INK }}>Change Password</p><p className="text-micro" style={{ color: MUTED }}>Update your password</p></div>
-            <FiChevronRight size={18} className="text-[#9CA3AF]" />
+            <FiChevronRight size={18} className="text-[#9aa29e]" />
           </button>
           <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#F1F3F7]">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}><FiLock size={16} /></div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}><FiLock size={16} /></div>
             <div className="flex-1"><p className="text-body-sm font-semibold" style={{ color: INK }}>Two-Factor Authentication</p><p className="text-micro" style={{ color: MUTED }}>Coming soon</p></div>
             <Toggle on={false} disabled />
           </div>
           <button onClick={() => setShowDelete(true)} className={`w-full flex items-center gap-3 px-4 py-3.5 text-left ${press}`}>
             <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#FEF2F2', color: DANGER }}><FiAlertTriangle size={16} /></div>
             <div className="flex-1"><p className="text-body-sm font-semibold" style={{ color: DANGER }}>Delete Account</p><p className="text-micro" style={{ color: MUTED }}>Permanently remove your account</p></div>
-            <FiChevronRight size={18} className="text-[#FCA5A5]" />
+            <FiChevronRight size={18} className="text-[#f3a493]" />
           </button>
         </div>
 
         <SectionTitle>Preferences</SectionTitle>
         <div className={card}>
           <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#F1F3F7]">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}><FiBell size={16} /></div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}><FiBell size={16} /></div>
             <div className="flex-1"><p className="text-body-sm font-semibold" style={{ color: INK }}>Order Notifications</p><p className="text-micro" style={{ color: MUTED }}>Updates on orders and repairs</p></div>
             <Toggle on={prefs.orderUpdates} onChange={(v) => updatePref('orderUpdates', v)} />
           </div>
           <div className="flex items-center gap-3 px-4 py-3.5">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(33,13,53,0.08)', color: PRIMARY }}><FiSliders size={16} /></div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.08)', color: PRIMARY }}><FiSliders size={16} /></div>
             <div className="flex-1"><p className="text-body-sm font-semibold" style={{ color: INK }}>Offers & Promotions</p><p className="text-micro" style={{ color: MUTED }}>Deals and special offers</p></div>
             <Toggle on={prefs.promotions} onChange={(v) => updatePref('promotions', v)} />
           </div>
@@ -337,7 +337,7 @@ export default function MobileProfile() {
       </div>
 
       <Sheet open={showLogout} onClose={() => setShowLogout(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-full bg-[#ece9e2] mx-auto mb-4" />
         <h3 className="text-title-sm font-bold text-center" style={{ color: INK }}>Sign out?</h3>
         <p className="text-label text-center mt-1 mb-5" style={{ color: MUTED }}>You'll need to sign in again to access your account.</p>
         <button onClick={() => setShowLogout(false)} className="w-full h-12 rounded-[12px] text-body-sm font-semibold mb-3" style={{ background: '#F3F4F6', color: INK }}>Cancel</button>
@@ -345,7 +345,7 @@ export default function MobileProfile() {
       </Sheet>
 
       <Sheet open={showDelete} onClose={() => setShowDelete(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-full bg-[#ece9e2] mx-auto mb-4" />
         <div className="flex items-center gap-2 justify-center mb-2">
           <FiAlertTriangle size={18} style={{ color: DANGER }} />
           <h3 className="text-title-sm font-bold" style={{ color: DANGER }}>Delete Account</h3>
@@ -358,24 +358,24 @@ export default function MobileProfile() {
       </Sheet>
 
       <Sheet open={editing} onClose={() => setEditing(false)}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-full bg-[#ece9e2] mx-auto mb-4" />
         <h3 className="text-title-sm font-bold mb-4" style={{ color: INK }}>Edit Profile</h3>
         <div className="space-y-3">
-          <Field label="Full Name"><input value={editForm.fullName} onChange={(e) => setEditForm((f) => ({ ...f, fullName: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
-          <Field label="Email"><input value={editForm.email} onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
-          <Field label="Phone Number"><input value={editForm.mobile} onChange={(e) => setEditForm((f) => ({ ...f, mobile: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
+          <Field label="Full Name"><input value={editForm.fullName} onChange={(e) => setEditForm((f) => ({ ...f, fullName: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
+          <Field label="Email"><input value={editForm.email} onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
+          <Field label="Phone Number"><input value={editForm.mobile} onChange={(e) => setEditForm((f) => ({ ...f, mobile: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm font-medium" style={{ color: INK }} /></Field>
         </div>
         <button onClick={() => setEditing(false)} className="w-full h-12 rounded-[12px] text-body-sm font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>Cancel</button>
         <button onClick={handleSaveProfile} disabled={saving} className={`w-full h-12 rounded-[12px] text-body-sm font-semibold text-white disabled:opacity-60 ${press}`} style={{ background: grad }}>{saving ? 'Saving…' : 'Save Changes'}</button>
       </Sheet>
 
       <Sheet open={changingPw} onClose={() => { setChangingPw(false); setPwError('') }}>
-        <div className="w-12 h-1.5 rounded-full bg-[#E5E7EB] mx-auto mb-4" />
+        <div className="w-12 h-1.5 rounded-full bg-[#ece9e2] mx-auto mb-4" />
         <h3 className="text-title-sm font-bold mb-4" style={{ color: INK }}>Change Password</h3>
         <div className="space-y-3">
-          <Field label="Current Password"><input type="password" value={pwForm.oldPassword} onChange={(e) => setPwForm((f) => ({ ...f, oldPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm" style={{ color: INK }} /></Field>
-          <Field label="New Password"><input type="password" value={pwForm.newPassword} onChange={(e) => setPwForm((f) => ({ ...f, newPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm" style={{ color: INK }} /></Field>
-          <Field label="Confirm New Password"><input type="password" value={pwForm.confirmPassword} onChange={(e) => setPwForm((f) => ({ ...f, confirmPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm" style={{ color: INK }} /></Field>
+          <Field label="Current Password"><input type="password" value={pwForm.oldPassword} onChange={(e) => setPwForm((f) => ({ ...f, oldPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm" style={{ color: INK }} /></Field>
+          <Field label="New Password"><input type="password" value={pwForm.newPassword} onChange={(e) => setPwForm((f) => ({ ...f, newPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm" style={{ color: INK }} /></Field>
+          <Field label="Confirm New Password"><input type="password" value={pwForm.confirmPassword} onChange={(e) => setPwForm((f) => ({ ...f, confirmPassword: e.target.value }))} className="w-full h-11 px-3 rounded-xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm" style={{ color: INK }} /></Field>
           {pwError && <p className="text-caption font-medium" style={{ color: DANGER }}>{pwError}</p>}
         </div>
         <button onClick={() => { setChangingPw(false); setPwError('') }} className="w-full h-12 rounded-[12px] text-body-sm font-semibold mt-5 mb-3" style={{ background: '#F3F4F6', color: INK }}>Cancel</button>

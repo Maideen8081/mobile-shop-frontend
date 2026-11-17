@@ -207,7 +207,7 @@ export default function ProductManagement() {
       {loadError && <ErrorBanner message={loadError} onRetry={fetchData} />}
 
       {!loading && categoryOptions.length === 0 && !loadError && (
-        <div className="rounded-xl bg-[#fffaeb] ring-1 ring-inset ring-[#fedf89] px-4 py-3 text-sm text-[#b54708]">
+        <div className="rounded-xl bg-[#eef2d9] ring-1 ring-inset ring-[#fedf89] px-4 py-3 text-sm text-[#b54708]">
           There are no active categories yet. Create one in Categories before adding products.
         </div>
       )}

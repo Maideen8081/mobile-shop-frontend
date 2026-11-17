@@ -1,26 +1,26 @@
 /* Scoped overrides for the Me-website landing experience.
    All Tailwind utility classes inside .we use these CSS custom properties. */
 .we {
-  --color-background: #160823;
-  --color-foreground: #fff7f3;
-  --color-muted: #b9a7cc;
-  --color-border: rgba(255, 247, 243, 0.12);
-  --color-primary: #ffd014;
-  --color-accent: #d0adff;
-  --color-magenta: #7b3fd0;
+  --color-background: #0b2e22;
+  --color-foreground: #f7f6f2;
+  --color-muted: #dfe8b4;
+  --color-border: rgba(247,246,242, 0.12);
+  --color-primary: #dfe8b4;
+  --color-accent: #dfe8b4;
+  --color-coral: #0f3b2c;
 
-  background: #160823;
-  color: #fff7f3;
+  background: #0b2e22;
+  color: #f7f6f2;
   font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
 .we body {
-  background: #160823;
+  background: #0b2e22;
 }
 
 .we ::selection {
-  background: #ffd014;
+  background: #dfe8b4;
   color: #fff;
 }
 
@@ -95,9 +95,9 @@ html.lenis body {
   filter: blur(60px);
   will-change: transform;
 }
-.wem-aurora-a { width: 80vw; height: 80vw; left: -20vw; top: 18%; background: rgba(74, 36, 112, 0.55); animation: wem-drift 14s ease-in-out infinite; }
-.wem-aurora-b { width: 70vw; height: 70vw; right: -25vw; top: 38%; background: rgba(123, 63, 208, 0.4); animation: wem-drift 17s ease-in-out infinite reverse; }
-.wem-aurora-c { width: 60vw; height: 60vw; left: 20vw; bottom: -10%; background: rgba(208, 173, 255, 0.25); animation: wem-drift 20s ease-in-out infinite; }
+.wem-aurora-a { width: 80vw; height: 80vw; left: -20vw; top: 18%; background: rgba(24,80,60, 0.55); animation: wem-drift 14s ease-in-out infinite; }
+.wem-aurora-b { width: 70vw; height: 70vw; right: -25vw; top: 38%; background: rgba(15,59,44, 0.4); animation: wem-drift 17s ease-in-out infinite reverse; }
+.wem-aurora-c { width: 60vw; height: 60vw; left: 20vw; bottom: -10%; background: rgba(223,232,180, 0.25); animation: wem-drift 20s ease-in-out infinite; }
 
 /* Perspective grid floor */
 .wem-floor {
@@ -120,8 +120,8 @@ html.lenis body {
   position: absolute;
   inset: 0 0 -48px;
   background-image:
-    linear-gradient(rgba(123, 63, 208, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(123, 63, 208, 0.35) 1px, transparent 1px);
+    linear-gradient(rgba(15,59,44, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,59,44, 0.35) 1px, transparent 1px);
   background-size: 48px 48px;
   animation: wem-floor 2.4s linear infinite;
   will-change: transform;

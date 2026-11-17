@@ -8,8 +8,8 @@ import DoubleRingLoader from '../ui/DoubleRingLoader'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
-const RED = '#210D35'
-const RED_DEEP = '#3A1E52'
+const RED = '#0f3b2c'
+const RED_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
 
 const typeIcons: Record<string, React.ReactNode> = {
@@ -26,7 +26,7 @@ function Field({ label, value, onChange, error, type = 'text', maxLength }: {
       <label className="text-micro font-bold uppercase tracking-wider text-gray-400 mb-1.5 block">{label}</label>
       <input type={type} value={value} maxLength={maxLength} onChange={e => onChange(e.target.value)}
         className="w-full h-12 px-3.5 rounded-xl text-body-sm bg-white border outline-none transition"
-        style={{ borderColor: error ? '#EF4444' : '#E5E7EB', color: '#111827' }} />
+        style={{ borderColor: error ? '#EF4444' : '#ece9e2', color: '#1d2522' }} />
       {error && <p className="text-micro text-red-500 mt-1 flex items-center gap-1"><FiAlertCircle size={9} /> {error}</p>}
     </div>
   )
@@ -190,8 +190,8 @@ export default function MobileCheckoutAddress() {
           <div className="flex justify-center py-16"><DoubleRingLoader size={36} label="Loading addresses..." /></div>
         ) : addresses.length === 0 && !showForm ? (
           <div className="rounded-2xl p-8 text-center border border-gray-100" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-            <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#F3E8FF]">
-              <FiMapPin size={28} className="text-[#210D35]" />
+            <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#dfe6cf]">
+              <FiMapPin size={28} className="text-[#0f3b2c]" />
             </div>
             <h2 className="text-body font-bold text-gray-900 mb-1">No saved addresses</h2>
             <p className="text-caption text-gray-400 mb-5">Add your delivery address to continue checkout</p>
@@ -209,13 +209,13 @@ export default function MobileCheckoutAddress() {
                   onClick={() => setSelectedId(addr.id ?? null)}
                   className={`rounded-2xl p-4 cursor-pointer border-2 transition-all duration-200`}
                   style={{
-                    background: isSel ? '#FFF5F5' : '#fff',
+                    background: isSel ? '#f7f6f2' : '#fff',
                     borderColor: isSel ? RED : '#F3F4F6',
-                    boxShadow: isSel ? '0 0 0 3px rgba(123, 63, 208,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
+                    boxShadow: isSel ? '0 0 0 3px rgba(15,59,44,0.1)' : '0 2px 8px rgba(0,0,0,0.04)',
                   }}>
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#F3E8FF] flex items-center justify-center shrink-0">
-                      {typeIcons[addr.addressType] || <FiMapPin size={16} className="text-[#210D35]" />}
+                    <div className="w-10 h-10 rounded-xl bg-[#dfe6cf] flex items-center justify-center shrink-0">
+                      {typeIcons[addr.addressType] || <FiMapPin size={16} className="text-[#0f3b2c]" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -250,7 +250,7 @@ export default function MobileCheckoutAddress() {
 
             {!showForm && (
               <button onClick={() => openForm()} className="w-full h-12 rounded-xl text-label font-bold text-white inline-flex items-center justify-center gap-2 active:scale-[0.98] transition"
-                style={{ background: `linear-gradient(135deg,${RED},${RED_DEEP})`, boxShadow: '0 4px 16px rgba(123, 63, 208,0.25)' }}>
+                style={{ background: `linear-gradient(135deg,${RED},${RED_DEEP})`, boxShadow: '0 4px 16px rgba(15,59,44,0.25)' }}>
                 <FiPlus size={16} /> Add New Address
               </button>
             )}

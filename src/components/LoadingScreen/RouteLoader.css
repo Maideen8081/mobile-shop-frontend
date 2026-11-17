@@ -7,8 +7,8 @@
   height: 3px;
   width: 0;
   border-radius: 0 3px 3px 0;
-  background: linear-gradient(90deg, #7b3fd0, #d0adff 50%, #ffd014);
-  box-shadow: 0 0 12px rgba(123, 63, 208, 0.55);
+  background: linear-gradient(90deg, #0f3b2c, #dfe8b4 50%, #dfe8b4);
+  box-shadow: 0 0 12px rgba(15,59,44, 0.55);
   pointer-events: none;
 }
 .rl-bar.is-running { animation: rl-run 1.6s cubic-bezier(0.1, 0.7, 0.3, 1) forwards; }

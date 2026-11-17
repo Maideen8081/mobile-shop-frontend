@@ -171,7 +171,7 @@ function SigningInState({ width, elapsed, shape }: { width: number; elapsed: num
       >
         <svg className="animate-spin shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="9" stroke="#e8eaed" strokeWidth="3" />
-          <path d="M21 12a9 9 0 0 0-9-9" stroke="#210D35" strokeWidth="3" strokeLinecap="round" />
+          <path d="M21 12a9 9 0 0 0-9-9" stroke="#0f3b2c" strokeWidth="3" strokeLinecap="round" />
         </svg>
         <span className="min-w-0 text-left leading-tight">
           <span className="block text-sm font-semibold truncate" style={{ color: '#1b1210' }}>{title}</span>

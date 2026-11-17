@@ -885,7 +885,7 @@ export default function LandingPage() {
                   <source src={slide.video} type="video/mp4" />
                 </video>
               </div>
-              {/* Neutral (not purple) shade on the left only, so the copy stays readable. */}
+              {/* Neutral (not green) shade on the left only, so the copy stays readable. */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent" />
               {/* Top scrim so the see-through nav stays readable over the video. */}
               <div className="home-hero__scrim absolute inset-x-0 top-0" aria-hidden="true" />
@@ -896,13 +896,13 @@ export default function LandingPage() {
                   className="w-full max-w-[540px] hero-copy-swap"
                 >
                   <div
-                    className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-[8px] bg-[#FFD014]/15 border border-[#FFD014]/40 text-[#FFD014] text-xs font-bold tracking-[0.15em] uppercase mb-5 backdrop-blur-md transition-all duration-700 delay-200 ${
+                    className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-[8px] bg-[#dfe8b4]/15 border border-[#dfe8b4]/40 text-[#dfe8b4] text-xs font-bold tracking-[0.15em] uppercase mb-5 backdrop-blur-md transition-all duration-700 delay-200 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                     }`}
                   >
                     <span className="relative w-2 h-2">
-                      <span className="absolute inset-0 rounded-[8px] bg-[#F0E100] animate-ping" />
-                      <span className="absolute inset-0 rounded-[8px] bg-[#F0E100]" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#dfe8b4] animate-ping" />
+                      <span className="absolute inset-0 rounded-[8px] bg-[#dfe8b4]" />
                     </span>
                     {copy.tag}
                   </div>
@@ -914,14 +914,14 @@ export default function LandingPage() {
                   >
                     {copy.title[0]}
                     <br />
-                    <span className="relative inline-block bg-gradient-to-r from-[#FFD014] via-[#F0E100] to-[#FFD014] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(255,208,20,0.35)]">
+                    <span className="relative inline-block bg-gradient-to-r from-[#dfe8b4] via-[#dfe8b4] to-[#dfe8b4] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient italic drop-shadow-[0_0_40px_rgba(223,232,180,0.35)]">
                       {copy.title[1]}
-                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#D0ADFF] to-transparent rounded-[8px] opacity-80 animate-pulse" />
+                      <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#dfe8b4] to-transparent rounded-[8px] opacity-80 animate-pulse" />
                     </span>{' '}
-                    <span className="text-[#FFF7F3]/85">{copy.title[2]}</span>
+                    <span className="text-[#f7f6f2]/85">{copy.title[2]}</span>
                   </SlideHeading>
                   <p
-                    className={`text-[15px] md:text-lg text-[#FFF7F3]/80 leading-relaxed max-w-[500px] mb-7 transition-all duration-700 delay-400 ${
+                    className={`text-[15px] md:text-lg text-[#f7f6f2]/80 leading-relaxed max-w-[500px] mb-7 transition-all duration-700 delay-400 ${
                       i === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                     }`}
                   >
@@ -968,7 +968,7 @@ export default function LandingPage() {
               {i === currentSlide && (
                 /* Real playback progress, so the dash fills as the clip plays out. */
                 <span
-                  className="absolute inset-y-0 left-0 rounded-[8px] bg-[#FFD014]"
+                  className="absolute inset-y-0 left-0 rounded-[8px] bg-[#dfe8b4]"
                   style={{ width: `${Math.min(100, Math.max(0, slideProgress * 100))}%` }}
                 />
               )}
@@ -976,7 +976,7 @@ export default function LandingPage() {
           ))}
         </div>
         {/* Slide counter */}
-        <div className="absolute bottom-6 right-6 md:right-12 z-20 text-[#FFF7F3]/90 text-sm font-mono tracking-wider bg-[#210D35]/80 border border-[#D0ADFF]/30 px-3 py-1.5 rounded-[8px]">
+        <div className="absolute bottom-6 right-6 md:right-12 z-20 text-[#f7f6f2]/90 text-sm font-mono tracking-wider bg-[#0f3b2c]/80 border border-[#dfe8b4]/30 px-3 py-1.5 rounded-[8px]">
           {String(currentSlide + 1).padStart(2, '0')} / {String(heroSlides.length).padStart(2, '0')}
         </div>
         </>
@@ -1166,7 +1166,7 @@ export default function LandingPage() {
                     <Link
                       key={`${dealTab}-${product.id}`}
                       to={`/product/${product.id}`}
-                      className="group bg-white/90 rounded-2xl border border-pf-red/10 p-2.5 hover:border-pf-red/40 hover:shadow-[0_14px_34px_rgba(33,13,53,0.14)] transition-all duration-300"
+                      className="group bg-white/90 rounded-2xl border border-pf-red/10 p-2.5 hover:border-pf-red/40 hover:shadow-[0_14px_34px_rgba(15,59,44,0.14)] transition-all duration-300"
                     >
                       <div className="h-20 md:h-24 rounded-lg bg-white flex items-center justify-center overflow-hidden mb-2">
                         {getProductImage(product) ? (

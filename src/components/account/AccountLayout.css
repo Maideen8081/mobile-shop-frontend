@@ -1,16 +1,16 @@
 /* Shared "My Account" shell (breadcrumb + sidebar). Uses the app tokens from index.css. */
 .acc-wrap {
-  --acc-ink: var(--color-ink, #210d35);
-  --acc-ink-2: var(--color-ink-soft, #4a3a5c);
-  --acc-muted: var(--color-gray, #7c668a);
-  --acc-line: var(--color-line, #ecdff3);
-  --acc-primary: var(--color-primary, #210D35);
-  --acc-primary-2: var(--color-secondary, #3A1E52);
-  --acc-violet: #7B3FD0;
+  --acc-ink: var(--color-ink, #0f3b2c);
+  --acc-ink-2: var(--color-ink-soft, #0f3b2c);
+  --acc-muted: var(--color-gray, #5d6762);
+  --acc-line: var(--color-line, #f7f6f2);
+  --acc-primary: var(--color-primary, #0f3b2c);
+  --acc-primary-2: var(--color-secondary, #18503c);
+  --acc-lime: #0f3b2c;
   --acc-danger: #b4232f;
-  --acc-shadow: 0 10px 30px -12px rgba(33, 13, 53, 0.14);
+  --acc-shadow: 0 10px 30px -12px rgba(15,59,44, 0.14);
 
-  flex: 1; width: 100%; max-width: 1460px; margin: 0 auto; padding: 22px 32px 64px;
+  flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 22px 32px 64px;
   font-family: var(--font-ui); color: var(--acc-ink);
 }
 
@@ -31,21 +31,21 @@
   transition: background 0.15s, color 0.15s;
 }
 .acc-nav a svg, .acc-nav button svg { flex-shrink: 0; }
-.acc-nav a:hover, .acc-nav button:hover { background: #f7efff; }
-.acc-nav a.is-active { background: linear-gradient(90deg, #e4d2fb, #efe3ff); font-weight: 700; }
-.acc-nav a.is-active svg { color: var(--acc-violet); }
+.acc-nav a:hover, .acc-nav button:hover { background: #f7f6f2; }
+.acc-nav a.is-active { background: linear-gradient(90deg, #dfe6cf, #f7f6f2); font-weight: 700; }
+.acc-nav a.is-active svg { color: var(--acc-lime); }
 .acc-nav-count {
   margin-left: auto; min-width: 26px; height: 26px; display: grid; place-items: center; padding: 0 8px; border-radius: 999px;
-  background: #f3e8ff; font-size: 13px; font-weight: 700; color: var(--acc-ink);
+  background: #dfe6cf; font-size: 13px; font-weight: 700; color: var(--acc-ink);
 }
-.acc-nav-dot { margin-left: auto; margin-right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--acc-violet); }
+.acc-nav-dot { margin-left: auto; margin-right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--acc-lime); }
 .acc-nav .acc-signout { color: var(--acc-danger); }
-.acc-nav .acc-signout:hover { background: #fdecee; }
+.acc-nav .acc-signout:hover { background: #fbe1d8; }
 
 /* Trade-in promo */
 .acc-promo {
   position: relative; overflow: hidden; min-height: 200px; padding: 22px 20px; border-radius: 18px;
-  background: linear-gradient(135deg, #fbe4f1 0%, #ecdcff 55%, #d9c2fb 100%);
+  background: linear-gradient(135deg, #f7f6f2 0%, #dfe6cf 55%, #dfe8b4 100%);
 }
 .acc-promo-text { position: relative; z-index: 1; max-width: 66%; }
 .acc-promo h3 { margin: 0 0 10px; font-family: var(--font-display); font-size: 21px; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; color: var(--acc-ink); }
@@ -60,8 +60,8 @@
 /* Decorative phone (pure CSS) */
 .acc-phone {
   position: absolute; border-radius: 26px; pointer-events: none;
-  background: linear-gradient(150deg, #c9a7ff 0%, #8b4fe0 35%, #4b1d8f 70%, #2a0f52 100%);
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35), -18px 24px 40px -10px rgba(33, 13, 53, 0.45);
+  background: linear-gradient(150deg, #dfe8b4 0%, #18503c 35%, #0b2e22 70%, #0b2e22 100%);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.35), -18px 24px 40px -10px rgba(15,59,44, 0.45);
   transform: rotate(14deg);
 }
 .acc-phone::after {
@@ -71,7 +71,7 @@
 .acc-phone i {
   position: absolute; width: 28%; aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle at 40% 40%, #4b4b6e 0%, #121224 55%, #000 70%);
-  box-shadow: 0 0 0 4px rgba(33, 13, 53, 0.55), 0 0 0 6px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 4px rgba(15,59,44, 0.55), 0 0 0 6px rgba(255, 255, 255, 0.25);
 }
 .acc-phone i:nth-child(1) { top: 7%; left: 10%; }
 .acc-phone i:nth-child(2) { top: 7%; left: 44%; }
@@ -79,14 +79,14 @@
 .acc-phone-sm { right: -18px; bottom: -30px; width: 92px; height: 190px; border-radius: 20px; }
 .acc-phone-lg { right: 70px; top: 18px; width: 150px; height: 300px; transform: rotate(28deg); }
 
-/* Shared purple banner used at the top of account pages */
+/* Shared green banner used at the top of account pages */
 .acc-hero {
   position: relative; overflow: hidden; display: flex; align-items: center; gap: 32px; min-height: 182px; padding: 30px 36px;
   border-radius: 22px; color: #fff;
   background:
-    radial-gradient(520px 260px at 88% 40%, rgba(176, 120, 255, 0.55), transparent 65%),
-    linear-gradient(110deg, #3A1E52 0%, #4a2470 45%, #5d2f8f 100%);
-  box-shadow: 0 20px 40px -18px rgba(33, 13, 53, 0.55);
+    radial-gradient(520px 260px at 88% 40%, rgba(24,80,60, 0.55), transparent 65%),
+    linear-gradient(110deg, #18503c 0%, #18503c 45%, #18503c 100%);
+  box-shadow: 0 20px 40px -18px rgba(15,59,44, 0.55);
 }
 
 @media (max-width: 1280px) { .acc-phone-lg { right: 30px; } }

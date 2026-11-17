@@ -26,14 +26,14 @@ export default function FlashSale({ products }: { products: any[] }) {
     <section className="mt-7">
       <div className="flex items-center justify-between px-3.5 mb-3">
         <div className="flex items-center gap-2">
-          <span className="w-8 h-8 rounded-xl bg-[#F3E8FF] text-[#210D35] flex items-center justify-center">
-            <Flame size={18} className="text-[#210D35]" fill="currentColor" />
+          <span className="w-8 h-8 rounded-xl bg-[#dfe6cf] text-[#0f3b2c] flex items-center justify-center">
+            <Flame size={18} className="text-[#0f3b2c]" fill="currentColor" />
           </span>
-          <h2 className="text-title-sm font-extrabold text-[#210D35] tracking-tight">Flash Sale</h2>
+          <h2 className="text-title-sm font-extrabold text-[#0f3b2c] tracking-tight">Flash Sale</h2>
         </div>
         <div className="flex items-center gap-1">
           {[t.h, t.m, t.s].map((u, i) => (
-            <span key={i} className="bg-[#210D35] text-white text-caption font-bold px-1.5 py-1 rounded-md tabular-nums min-w-[26px] text-center">
+            <span key={i} className="bg-[#0f3b2c] text-white text-caption font-bold px-1.5 py-1 rounded-md tabular-nums min-w-[26px] text-center">
               {u}
             </span>
           ))}

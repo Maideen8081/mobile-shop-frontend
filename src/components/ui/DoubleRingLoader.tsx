@@ -5,7 +5,7 @@ interface DoubleRingLoaderProps {
   label?: string
 }
 
-export default function DoubleRingLoader({ size = 48, color = '#210D35', className = '', label }: DoubleRingLoaderProps) {
+export default function DoubleRingLoader({ size = 48, color = '#0f3b2c', className = '', label }: DoubleRingLoaderProps) {
   const stroke = Math.max(3, size * 0.07)
   const r1 = (size - stroke) / 2
   const r2 = r1 * 0.55
@@ -55,7 +55,7 @@ export default function DoubleRingLoader({ size = 48, color = '#210D35', classNa
       </div>
 
       {label && (
-        <p className="mt-3 text-label font-semibold text-[#6B7280]">{label}</p>
+        <p className="mt-3 text-label font-semibold text-[#5d6762]">{label}</p>
       )}
 
       <style>{`

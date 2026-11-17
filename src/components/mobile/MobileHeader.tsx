@@ -60,7 +60,7 @@ export default function MobileHeader() {
     <div className="relative z-50 w-full">
       <header
         className="relative w-full px-4 pt-3 pb-14 text-white overflow-hidden"
-        style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }}
+        style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)', borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }}
       >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -75,7 +75,7 @@ export default function MobileHeader() {
               className="flex items-center gap-0.5 min-w-0 min-h-[24px] active:opacity-70 mt-1"
               aria-label={location ? `Delivery location: ${location}. Change` : 'Set delivery location'}
             >
-              <MapPin size={12} className="text-[#D0ADFF] flex-shrink-0" />
+              <MapPin size={12} className="text-[#dfe8b4] flex-shrink-0" />
               <span className="text-micro text-white/80 font-medium truncate max-w-[130px]">{location ? `Deliver to ${location}` : 'Set location'}</span>
             </button>
           </div>
@@ -88,7 +88,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className={iconBtn}>
             <Heart size={18} />
             {wishlistCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#210D35] text-white text-micro font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#0f3b2c] text-white text-micro font-bold flex items-center justify-center">
                 {badge(wishlistCount)}
               </span>
             )}
@@ -96,7 +96,7 @@ export default function MobileHeader() {
           <button onClick={() => navigate('/cart')} aria-label="Cart" className={iconBtn}>
             <ShoppingBag size={18} />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-white text-[#0f3b2c] text-micro font-bold flex items-center justify-center">
                 {badge(cartCount)}
               </span>
             )}
@@ -105,8 +105,8 @@ export default function MobileHeader() {
       </div>
 
       {/* Corner fills — cover the rounded-bottom gaps so scrolling content never shows through */}
-      <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)' }} />
-      <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#210D35 0%,#2E1544 100%)' }} />
+      <span className="absolute bottom-0 left-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)' }} />
+      <span className="absolute bottom-0 right-0 w-[30px] h-[30px]" style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)' }} />
       </header>
 
       {/* Floating search bar overlapping header bottom (outside header so it isn't clipped) */}
@@ -114,18 +114,18 @@ export default function MobileHeader() {
         onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
         className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full bg-white z-50"
       >
-        <Search size={20} className="text-[#210D35] shrink-0" />
+        <Search size={20} className="text-[#0f3b2c] shrink-0" />
         <input
           readOnly
           onFocus={() => navigate('/search')}
           onClick={() => navigate('/search')}
           placeholder="Search mobiles, accessories..."
           aria-label="Search products"
-          className="flex-1 bg-transparent text-sm text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
+          className="flex-1 bg-transparent text-sm text-[#0f3b2c] placeholder:text-[#5d6762] outline-none min-w-0 cursor-pointer"
         />
-        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><Mic size={17} /></button>
-        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><QrCode size={17} /></button>
-        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#210D35] active:scale-90 transition"><Camera size={17} /></button>
+        <button type="button" aria-label="Voice search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#0f3b2c] active:scale-90 transition"><Mic size={17} /></button>
+        <button type="button" aria-label="Scan QR" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#0f3b2c] active:scale-90 transition"><QrCode size={17} /></button>
+        <button type="button" aria-label="Camera search" onClick={() => navigate('/search')} className="w-9 h-9 flex items-center justify-center text-[#0f3b2c] active:scale-90 transition"><Camera size={17} /></button>
       </form>
     </div>
   )

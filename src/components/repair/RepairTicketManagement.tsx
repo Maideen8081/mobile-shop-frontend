@@ -684,7 +684,7 @@ const counts = useMemo(() => {
                   setStatusUpdating(false)
                 }} disabled={statusUpdating}
                   className="flex-1 h-11 rounded-xl text-sm font-bold text-white transition"
-                  style={{ background: statusUpdating ? '#9CA3AF' : 'linear-gradient(135deg, #CB202D, #A81D2A)' }}
+                  style={{ background: statusUpdating ? '#9aa29e' : 'linear-gradient(135deg, #a8261b, #a8261b)' }}
                 >{statusUpdating ? 'Sending...' : 'Send for Approval'}</button>
               </div>
             </motion.div>

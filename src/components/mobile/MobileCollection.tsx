@@ -23,8 +23,8 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 ]
 
 const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }> = {
-  '': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#210D35 0%,#210D35 100%)' },
-  'all': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#210D35 0%,#210D35 100%)' },
+  '': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#0f3b2c 0%,#0f3b2c 100%)' },
+  'all': { title: 'Shop Everything', subtitle: 'Phones, audio, accessories & more — delivered fast', bg: 'linear-gradient(120deg,#0f3b2c 0%,#0f3b2c 100%)' },
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
@@ -171,7 +171,7 @@ export default function MobileCollection() {
 
   useEffect(() => { load(1, true) }, [categoryName, tab, sortBy, activeFilters.brands, activeFilters.priceRange]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#210D35 100%)' }
+  const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#0f3b2c 100%)' }
 
   const handleFilterApply = (filters: any) => {
     setActiveFilters(filters)
@@ -197,7 +197,7 @@ export default function MobileCollection() {
   }, [activeCategory, categoryName, tab, activeFilters])
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#0F172A] max-w-[480px] mx-auto pb-24 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#1d2522] max-w-[480px] mx-auto pb-24 overflow-x-hidden">
       <PremiumMobileHeader
         title={categoryName || 'All Products'}
         showBack
@@ -218,7 +218,7 @@ export default function MobileCollection() {
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
-            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(123, 63, 208,0.22)]" style={{ background: hero.bg }}>
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(15,59,44,0.22)]" style={{ background: hero.bg }}>
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-[8px] bg-white/20 blur-2xl" />
               <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-[8px] bg-white/15 blur-2xl" />
               <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -234,15 +234,15 @@ export default function MobileCollection() {
             </div>
 
             <div className="flex items-center justify-between mt-3 mb-1">
-              <p className="text-caption font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
+              <p className="text-caption font-semibold text-[#5d6762]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
             </div>
           </div>
 
           <div className="px-3.5">
             {products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <p className="text-body font-bold text-[#0F172A]">No products found</p>
-                <p className="text-label text-[#64748B] mt-1">Try a different filter or category.</p>
+                <p className="text-body font-bold text-[#1d2522]">No products found</p>
+                <p className="text-label text-[#5d6762] mt-1">Try a different filter or category.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2.5">
@@ -271,7 +271,7 @@ export default function MobileCollection() {
 
             {hasMore && !productsLoading && (
               <button onClick={() => load(page + 1, false)} disabled={loadingMore}
-                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#EEF1F4] text-label font-bold text-[#210D35] shadow-[0_2px_8px_rgba(15,23,42,0.04)] active:scale-95 transition disabled:opacity-60">
+                className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#ece9e2] text-label font-bold text-[#0f3b2c] shadow-[0_2px_8px_rgba(29,37,34,0.04)] active:scale-95 transition disabled:opacity-60">
                 {loadingMore ? 'Loading…' : 'Load More'}
               </button>
             )}

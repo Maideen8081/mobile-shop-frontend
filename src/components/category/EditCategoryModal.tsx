@@ -169,7 +169,7 @@ function EditCategoryDialog({ category, existingNames, onClose, onSave, onSubsCh
           exit={{ opacity: 0, scale: 0.96, y: 16 }}
           transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-xl bg-white rounded-2xl border border-border shadow-[0_12px_40px_rgba(15,23,42,0.14)] overflow-hidden"
+          className="w-full max-w-xl bg-white rounded-2xl border border-border shadow-[0_12px_40px_rgba(29,37,34,0.14)] overflow-hidden"
         >
           <div className="flex items-center justify-between p-6 pb-5">
             <div className="flex items-center gap-3">

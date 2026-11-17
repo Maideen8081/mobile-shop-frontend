@@ -5,8 +5,8 @@ import { repairService, appendIfFilled, formatRepairError, type RepairService } 
 import { deviceBrands } from '../../data/repairData'
 import MobileTopSection from './MobileTopSection'
 
-const PURPLE = '#210D35'
-const grad = 'linear-gradient(135deg,#210D35 0%,#7B3FD0 100%)'
+const PURPLE = '#0f3b2c'
+const grad = 'linear-gradient(135deg,#0f3b2c 0%,#0f3b2c 100%)'
 
 const issueQuestions: Record<string, string[]> = {
   'Screen Repair': ['Is the glass only cracked or is the display also affected?', 'Is the touch functionality working?', 'Do you have a screen protector installed?', 'Any dead pixels or discoloration?'],
@@ -175,28 +175,28 @@ export default function MobileBookRepair() {
 
   const field = (label: string, required: boolean, error?: string) => (
     <div>
-      <label className="block text-caption font-semibold text-[#6B7280] mb-1">{label} {required && <span className="text-[#EF4444]">*</span>}</label>
+      <label className="block text-caption font-semibold text-[#5d6762] mb-1">{label} {required && <span className="text-[#EF4444]">*</span>}</label>
       {error && <p className="text-micro text-[#EF4444] mb-1">{error}</p>}
     </div>
   )
 
   if (result) {
     return (
-      <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
-        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(123, 63, 208,0.1)' }}>
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col items-center justify-center px-6 text-center font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+        <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-5" style={{ background: 'rgba(15,59,44,0.1)' }}>
           <FiCheckCircle size={40} style={{ color: PURPLE }} />
         </div>
-        <h1 className="text-title font-extrabold text-[#1F2937] mb-1">Booking Confirmed!</h1>
-        <p className="text-label text-[#6B7280] mb-6">Your repair has been submitted successfully.</p>
-        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(123, 63, 208,0.06)', border: '1.5px solid rgba(123, 63, 208,0.18)' }}>
-          <p className="text-micro text-[#6B7280] mb-1">Your Tracking ID</p>
+        <h1 className="text-title font-extrabold text-[#1d2522] mb-1">Booking Confirmed!</h1>
+        <p className="text-label text-[#5d6762] mb-6">Your repair has been submitted successfully.</p>
+        <div className="w-full rounded-[20px] p-5 mb-6" style={{ background: 'rgba(15,59,44,0.06)', border: '1.5px solid rgba(15,59,44,0.18)' }}>
+          <p className="text-micro text-[#5d6762] mb-1">Your Tracking ID</p>
           <p className="text-heading font-bold font-mono" style={{ color: PURPLE }}>{result.repairId}</p>
-          <p className="text-micro text-[#6B7280] mt-2">Save this ID to track your repair.</p>
+          <p className="text-micro text-[#5d6762] mt-2">Save this ID to track your repair.</p>
         </div>
         <button onClick={() => navigate('/my-repairs')} className="w-full h-12 rounded-[8px] text-body-sm font-bold text-white mb-3" style={{ background: grad }}>
           Track My Repair
         </button>
-        <button onClick={() => navigate('/repairs')} className="w-full h-12 rounded-[8px] text-body-sm font-semibold" style={{ background: '#fff', border: '1.5px solid #E5E7EB', color: '#374151' }}>
+        <button onClick={() => navigate('/repairs')} className="w-full h-12 rounded-[8px] text-body-sm font-semibold" style={{ background: '#fff', border: '1.5px solid #ece9e2', color: '#3d4641' }}>
           Back to Services
         </button>
       </div>
@@ -204,35 +204,35 @@ export default function MobileBookRepair() {
   }
 
   const cardCls = 'bg-white rounded-[22px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-4'
-  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] outline-none text-body-sm text-[#1F2937] focus:border-[#7B3FD0] transition-all'
+  const inputCls = 'w-full h-11 px-4 rounded-2xl bg-[#f7f6f2] border border-[#ece9e2] outline-none text-body-sm text-[#1d2522] focus:border-[#0f3b2c] transition-all'
   const nextBtn = 'flex items-center justify-center gap-1.5 h-11 rounded-[8px] text-label font-bold text-white active:scale-95 transition'
-  const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-[8px] bg-white border border-[#E5E7EB] text-label font-semibold text-[#374151] active:scale-95 transition'
+  const backBtn = 'flex items-center gap-1.5 h-11 px-4 rounded-[8px] bg-white border border-[#ece9e2] text-label font-semibold text-[#3d4641] active:scale-95 transition'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FC] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-8 font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
       <MobileTopSection title="Book a Repair" subtitle={selectedIssue || 'Step by step'} icon="wishlist" />
 
       <div className="px-4 pt-4">
         <div className="relative mb-3">
           <div onClick={() => setShowServicePicker(!showServicePicker)} className="flex items-center gap-2 cursor-pointer active:scale-[0.98] transition">
-            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
+            <div className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>
               <FiSmartphone size={16} />
             </div>
             <div className="flex-1">
-              <p className="text-micro font-semibold text-[#6B7280]">Service</p>
-              <p className="text-body-sm font-bold text-[#1F2937]">{selectedIssue || 'Select a service'}</p>
+              <p className="text-micro font-semibold text-[#5d6762]">Service</p>
+              <p className="text-body-sm font-bold text-[#1d2522]">{selectedIssue || 'Select a service'}</p>
             </div>
-            <svg className={`w-4 h-4 text-[#6B7280] transition-transform ${showServicePicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            <svg className={`w-4 h-4 text-[#5d6762] transition-transform ${showServicePicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
           </div>
           {showServicePicker && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-[#E5E7EB] max-h-56 overflow-y-auto py-1">
+            <div className="absolute top-full left-0 right-0 mt-1 z-20 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-[#ece9e2] max-h-56 overflow-y-auto py-1">
               {services.filter(s => s.is_active).map(s => (
                 <button key={s.id} type="button" onClick={() => { setSelectedIssue(s.name); setShowServicePicker(false) }}
-                  className={`w-full text-left px-4 py-2.5 text-label font-medium transition ${selectedIssue === s.name ? 'text-white' : 'text-[#1F2937] hover:bg-[#F7F8FC]'}`}
+                  className={`w-full text-left px-4 py-2.5 text-label font-medium transition ${selectedIssue === s.name ? 'text-white' : 'text-[#1d2522] hover:bg-[#f7f6f2]'}`}
                   style={selectedIssue === s.name ? { background: PURPLE } : {}}
                 >{s.name}</button>
               ))}
-              {services.filter(s => s.is_active).length === 0 && <p className="px-4 py-2.5 text-label text-[#9CA3AF]">No services available</p>}
+              {services.filter(s => s.is_active).length === 0 && <p className="px-4 py-2.5 text-label text-[#9aa29e]">No services available</p>}
             </div>
           )}
         </div>
@@ -240,22 +240,22 @@ export default function MobileBookRepair() {
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-2">
           {Array.from({ length: totalSteps }).map((_, i) => (
-            <div key={i} className={`h-1 flex-1 rounded-[8px] transition-all duration-300 ${i + 1 <= step ? 'bg-[#7B3FD0]' : 'bg-[#E5E7EB]'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-[8px] transition-all duration-300 ${i + 1 <= step ? 'bg-[#0f3b2c]' : 'bg-[#ece9e2]'}`} />
           ))}
         </div>
-        <p className="text-micro font-semibold text-[#6B7280] mb-4">{progressLabel}</p>
+        <p className="text-micro font-semibold text-[#5d6762] mb-4">{progressLabel}</p>
 
         {/* Step content */}
         <div className={cardCls}>
           {step <= questions.length ? (
             <>
               <p className="text-label font-bold uppercase tracking-wide mb-2" style={{ color: PURPLE }}>Question {step} of {questions.length}</p>
-              <p className="text-body font-semibold text-[#1F2937] mb-3">{questions[step - 1]}</p>
+              <p className="text-body font-semibold text-[#1d2522] mb-3">{questions[step - 1]}</p>
               <textarea
                 value={answers[step - 1]}
                 onChange={(e) => { updateAnswer(step - 1, e.target.value); if (errors.q) setErrors({}) }}
                 rows={4}
-                className="w-full px-4 py-3 rounded-2xl bg-[#F7F8FC] border border-[#E5E7EB] text-body-sm text-[#1F2937] outline-none focus:border-[#7B3FD0] transition-all resize-none"
+                className="w-full px-4 py-3 rounded-2xl bg-[#f7f6f2] border border-[#ece9e2] text-body-sm text-[#1d2522] outline-none focus:border-[#0f3b2c] transition-all resize-none"
                 placeholder="Type your answer..."
               />
               {errors.q && <p className="text-micro text-[#EF4444] mt-1">{errors.q}</p>}
@@ -264,7 +264,7 @@ export default function MobileBookRepair() {
             <>
               <div className="flex items-center gap-2 mb-3">
                 <FiUser size={16} style={{ color: PURPLE }} />
-                <span className="text-body-sm font-bold text-[#1F2937]">Your Details</span>
+                <span className="text-body-sm font-bold text-[#1d2522]">Your Details</span>
               </div>
               <div className="space-y-3">
                 <div>
@@ -289,7 +289,7 @@ export default function MobileBookRepair() {
             <>
               <div className="flex items-center gap-2 mb-3">
                 <FiSmartphone size={16} style={{ color: PURPLE }} />
-                <span className="text-body-sm font-bold text-[#1F2937]">Device Information</span>
+                <span className="text-body-sm font-bold text-[#1d2522]">Device Information</span>
               </div>
               <div className="space-y-3">
                 <div>
@@ -330,17 +330,17 @@ export default function MobileBookRepair() {
             <>
               <div className="flex items-center gap-2 mb-3">
                 <FiImage size={16} style={{ color: PURPLE }} />
-                <span className="text-body-sm font-bold text-[#1F2937]">Device Photos</span>
+                <span className="text-body-sm font-bold text-[#1d2522]">Device Photos</span>
               </div>
-              <div onClick={() => inputRef.current?.click()} className="rounded-2xl border-2 border-dashed border-[#C4B5FD] p-6 text-center cursor-pointer active:scale-[0.99] transition bg-[#F7F8FC]">
+              <div onClick={() => inputRef.current?.click()} className="rounded-2xl border-2 border-dashed border-[#dfe8b4] p-6 text-center cursor-pointer active:scale-[0.99] transition bg-[#f7f6f2]">
                 <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => { if (e.target.files) setImageFiles((prev) => [...prev, ...Array.from(e.target.files!)]) }} />
-                <p className="text-label font-semibold text-[#374151]">Tap to upload photos</p>
-                <p className="text-micro text-[#9CA3AF] mt-1">Show the damage area for faster diagnosis</p>
+                <p className="text-label font-semibold text-[#3d4641]">Tap to upload photos</p>
+                <p className="text-micro text-[#9aa29e] mt-1">Show the damage area for faster diagnosis</p>
               </div>
               {previews.length > 0 && (
                 <div className="grid grid-cols-4 gap-2 mt-3">
                   {previews.map((url, i) => (
-                    <div key={i} className="relative aspect-square rounded-xl bg-white border border-[#E5E7EB] overflow-hidden">
+                    <div key={i} className="relative aspect-square rounded-xl bg-white border border-[#ece9e2] overflow-hidden">
                       <img src={url} alt="" className="w-full h-full object-cover" />
                       <button onClick={() => { URL.revokeObjectURL(url); setImageFiles((f) => f.filter((_, j) => j !== i)) }}
                         className="absolute top-1 right-1 w-5 h-5 rounded-md bg-[#EF4444] text-white flex items-center justify-center">
@@ -351,7 +351,7 @@ export default function MobileBookRepair() {
                 </div>
               )}
               {submitError && (
-                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#F3E8FF] border border-[#FCA5A5] text-micro text-[#B91C1C] mt-3">
+                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#dfe6cf] border border-[#f3a493] text-micro text-[#B91C1C] mt-3">
                   <FiAlertCircle size={12} /> {submitError}
                 </div>
               )}
@@ -371,7 +371,7 @@ export default function MobileBookRepair() {
               {step < questions.length + 3 ? 'Next' : 'Continue'} <FiArrowRight size={14} />
             </button>
           ) : (
-            <button onClick={handleSubmit} disabled={submitting} className={`${nextBtn} flex-1`} style={{ background: submitting ? '#9CA3AF' : grad }}>
+            <button onClick={handleSubmit} disabled={submitting} className={`${nextBtn} flex-1`} style={{ background: submitting ? '#9aa29e' : grad }}>
               <FiSend size={14} /> {submitting ? 'Booking...' : 'Book Now'}
             </button>
           )}

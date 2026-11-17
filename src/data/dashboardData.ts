@@ -1,10 +1,10 @@
 export const kpiCards = [
-  { id: 1, title: "Today's Sales", value: 28450, prefix: '₹', growth: 12.5, trend: 'up' as const, subtitle: 'vs yesterday', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiShoppingBag', sparkline: [18, 25, 20, 35, 28, 42, 38, 50, 45, 55] },
+  { id: 1, title: "Today's Sales", value: 28450, prefix: '₹', growth: 12.5, trend: 'up' as const, subtitle: 'vs yesterday', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiShoppingBag', sparkline: [18, 25, 20, 35, 28, 42, 38, 50, 45, 55] },
   { id: 2, title: "Today's Repairs", value: 18, suffix: '', growth: 8.2, trend: 'up' as const, subtitle: '94% completion', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)', icon: 'FiTool', sparkline: [8, 12, 10, 15, 13, 18, 16, 20, 18, 22] },
   { id: 3, title: 'Pending Repairs', value: 7, suffix: '', growth: -3.1, trend: 'down' as const, subtitle: '2 urgent alerts', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiClock', sparkline: [12, 10, 14, 9, 11, 7, 10, 6, 8, 7] },
   { id: 4, title: 'Total Revenue', value: 5842000, prefix: '₹', growth: 18.7, trend: 'up' as const, subtitle: 'this month', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)', icon: 'FiDollarSign', sparkline: [22, 30, 28, 38, 35, 45, 42, 52, 48, 58] },
   { id: 5, title: 'Net Profit', value: 1428000, prefix: '₹', growth: 22.3, trend: 'up' as const, subtitle: 'margin 24.5%', color: '#06b6d4', bgGlow: 'rgba(6,182,212,0.12)', icon: 'FiTrendingUp', sparkline: [15, 22, 20, 28, 25, 35, 32, 40, 38, 45] },
-  { id: 6, title: 'Total Stock', value: 3842, suffix: '', growth: 2.1, trend: 'up' as const, subtitle: '152 categories', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiPackage', sparkline: [38, 42, 40, 45, 43, 48, 46, 50, 48, 52] },
+  { id: 6, title: 'Total Stock', value: 3842, suffix: '', growth: 2.1, trend: 'up' as const, subtitle: '152 categories', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiPackage', sparkline: [38, 42, 40, 45, 43, 48, 46, 50, 48, 52] },
   { id: 7, title: 'Low Stock Alerts', value: 12, suffix: '', growth: 5.4, trend: 'up' as const, subtitle: 'critical: 4 items', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)', icon: 'FiAlertTriangle', sparkline: [20, 18, 22, 16, 19, 14, 17, 12, 15, 12] },
   { id: 8, title: 'Customer Rating', value: 4.8, suffix: '', growth: 0.3, trend: 'up' as const, subtitle: 'from 1,247 reviews', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiStar', sparkline: [4.2, 4.3, 4.5, 4.4, 4.6, 4.7, 4.5, 4.8, 4.7, 4.8] },
 ]
@@ -35,7 +35,7 @@ export const revenueProfitData = [
 ]
 
 export const categoryData = [
-  { name: 'Smartphones', value: 45, color: '#8b5cf6' },
+  { name: 'Smartphones', value: 45, color: '#18503c' },
   { name: 'Accessories', value: 25, color: '#4f6bff' },
   { name: 'Tablets', value: 15, color: '#22c55e' },
   { name: 'Wearables', value: 10, color: '#f59e0b' },
@@ -44,7 +44,7 @@ export const categoryData = [
 
 export const repairStatusData = [
   { name: 'Completed', value: 145, color: '#22c55e' },
-  { name: 'In Progress', value: 52, color: '#8b5cf6' },
+  { name: 'In Progress', value: 52, color: '#18503c' },
   { name: 'Pending', value: 28, color: '#f59e0b' },
   { name: 'Cancelled', value: 8, color: '#ef4444' },
 ]
@@ -101,7 +101,7 @@ export const recentActivities = [
 ]
 
 export const quickActions = [
-  { id: 1, label: 'Add Sale', icon: '💰', color: '#8b5cf6', desc: 'Record new sale' },
+  { id: 1, label: 'Add Sale', icon: '💰', color: '#18503c', desc: 'Record new sale' },
   { id: 2, label: 'Create Repair', icon: '🔧', color: '#4f6bff', desc: 'New repair ticket' },
   { id: 3, label: 'Add Product', icon: '📦', color: '#22c55e', desc: 'Inventory update' },
   { id: 4, label: 'Add Customer', icon: '👤', color: '#f59e0b', desc: 'New customer' },

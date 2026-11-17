@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
     <div className="admin-theme min-h-screen bg-bg flex flex-col">
       <header className="border-b border-border bg-white/80 backdrop-blur-md px-6 h-16 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center" style={{ boxShadow: '0 4px 12px rgba(203,32,45,0.35)' }}>
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center" style={{ boxShadow: '0 4px 12px rgba(168,38,27,0.35)' }}>
             <FiSmartphone size={18} className="text-white" />
           </div>
           <div>
@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
                 type="submit"
                 disabled={loading}
                 className="w-full h-12 rounded-lg font-semibold text-white transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-                style={{ background: 'linear-gradient(135deg, #D91E36, #A3122A)', boxShadow: '0 4px 16px rgba(217,30,54,0.3)' }}
+                style={{ background: 'linear-gradient(135deg, #a8261b, #0f3b2c)', boxShadow: '0 4px 16px rgba(15,59,44,0.3)' }}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>

@@ -39,7 +39,7 @@
   gap: 7px;
   margin-bottom: 14px;
   padding: 6px 12px;
-  border: 1px solid rgba(123, 63, 208, 0.2);
+  border: 1px solid rgba(15,59,44, 0.2);
   border-radius: 9999px;
   background: var(--color-secondary-container);
   color: var(--color-pf-red-dark);

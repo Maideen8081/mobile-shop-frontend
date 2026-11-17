@@ -32,24 +32,24 @@ export default function SalesAnalyticsChart() {
           <AreaChart data={salesChartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
             <defs>
               <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#CB202D" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#CB202D" stopOpacity={0} />
+                <stop offset="0%" stopColor="#a8261b" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#a8261b" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#A81D2A" stopOpacity={0.15} />
-                <stop offset="100%" stopColor="#A81D2A" stopOpacity={0} />
+                <stop offset="0%" stopColor="#a8261b" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#a8261b" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#5d6762', fontWeight: 500 }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#5d6762', fontWeight: 500 }} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
             <Tooltip
               contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', backgroundColor: '#172033', color: '#f8fafc', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
               formatter={(v) => [`₹${Number(v).toLocaleString('en-IN')}`, '']}
               labelStyle={{ fontWeight: 600, color: '#f8fafc', marginBottom: 4 }}
             />
-            <Area type="monotone" dataKey="sales" stroke="#CB202D" strokeWidth={2} fill="url(#salesGradient)" dot={false} activeDot={{ r: 5, fill: '#CB202D', stroke: '#ffffff', strokeWidth: 2 }} />
-            <Area type="monotone" dataKey="revenue" stroke="#A81D2A" strokeWidth={2} fill="url(#revGradient)" dot={false} activeDot={{ r: 5, fill: '#A81D2A', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Area type="monotone" dataKey="sales" stroke="#a8261b" strokeWidth={2} fill="url(#salesGradient)" dot={false} activeDot={{ r: 5, fill: '#a8261b', stroke: '#ffffff', strokeWidth: 2 }} />
+            <Area type="monotone" dataKey="revenue" stroke="#a8261b" strokeWidth={2} fill="url(#revGradient)" dot={false} activeDot={{ r: 5, fill: '#a8261b', stroke: '#ffffff', strokeWidth: 2 }} />
           </AreaChart>
         </ResponsiveContainer>
       </div>

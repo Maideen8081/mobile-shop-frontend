@@ -89,7 +89,7 @@ export default function WarrantyTracking() {
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder={`Search by ${searchModes.find((m) => m.key === searchMode)?.label}...`}
-                className="w-full h-12 pl-12 pr-4 rounded-xl bg-bg border border-border text-sm text-text-primary placeholder-text-muted outline-none transition-all duration-200 focus:border-primary/50 focus:bg-bg-card focus:shadow-[0_0_0_4px_rgba(124,58,237,0.15)]"
+                className="w-full h-12 pl-12 pr-4 rounded-xl bg-bg border border-border text-sm text-text-primary placeholder-text-muted outline-none transition-all duration-200 focus:border-primary/50 focus:bg-bg-card focus:shadow-[0_0_0_4px_rgba(24,80,60,0.15)]"
               />
             </div>
           </motion.div>

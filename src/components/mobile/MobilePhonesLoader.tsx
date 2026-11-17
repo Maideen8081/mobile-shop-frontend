@@ -10,7 +10,7 @@ const messages = [
 
 const badges = [
   { Icon: Zap, label: 'Fast Delivery', color: '#059669' },
-  { Icon: ShieldCheck, label: 'Genuine', color: '#210D35' },
+  { Icon: ShieldCheck, label: 'Genuine', color: '#0f3b2c' },
   { Icon: Truck, label: 'Free Ship', color: '#0EA5E9' },
   { Icon: Star, label: 'Top Rated', color: '#F59E0B' },
 ]
@@ -43,11 +43,11 @@ export default function MobilePhonesLoader() {
     <div className="flex flex-col items-center py-10 px-5">
       {/* Icon */}
       <div className="relative mb-5">
-        <div className="absolute inset-[-16px] rounded-[8px] bg-[#210D35]/10 blur-xl" />
-        <div className="absolute inset-[-10px] rounded-[8px] border border-[#210D35]/10 ploader-pulse-1" />
-        <div className="absolute inset-[-10px] rounded-[8px] border border-[#210D35]/5 ploader-pulse-2" />
+        <div className="absolute inset-[-16px] rounded-[8px] bg-[#0f3b2c]/10 blur-xl" />
+        <div className="absolute inset-[-10px] rounded-[8px] border border-[#0f3b2c]/10 ploader-pulse-1" />
+        <div className="absolute inset-[-10px] rounded-[8px] border border-[#0f3b2c]/5 ploader-pulse-2" />
 
-        <div className="relative w-[72px] h-[72px] rounded-[8px] bg-gradient-to-br from-[#210D35] to-[#3A1E52] flex items-center justify-center shadow-[0_12px_32px_rgba(123, 63, 208,0.25)]">
+        <div className="relative w-[72px] h-[72px] rounded-[8px] bg-gradient-to-br from-[#0f3b2c] to-[#18503c] flex items-center justify-center shadow-[0_12px_32px_rgba(15,59,44,0.25)]">
           <div className="absolute inset-[3px] rounded-[8px] border border-white/15" />
           <Smartphone size={30} className="text-white" strokeWidth={1.8} />
         </div>
@@ -63,35 +63,35 @@ export default function MobilePhonesLoader() {
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.2 }}
           >
-            <p className="text-body-sm font-bold text-[#1F2937]">{text}</p>
-            <p className="text-micro text-[#9CA3AF] mt-0.5">{sub}</p>
+            <p className="text-body-sm font-bold text-[#1d2522]">{text}</p>
+            <p className="text-micro text-[#9aa29e] mt-0.5">{sub}</p>
           </motion.div>
         </AnimatePresence>
       </div>
 
       {/* Progress */}
       <div className="w-[180px] mt-4">
-        <div className="h-[2px] rounded-[8px] bg-[#F1F5F9] overflow-hidden">
+        <div className="h-[2px] rounded-[8px] bg-[#f7f6f2] overflow-hidden">
           <motion.div
-            className="h-full rounded-[8px] bg-gradient-to-r from-[#210D35] to-[#2E1544]"
+            className="h-full rounded-[8px] bg-gradient-to-r from-[#0f3b2c] to-[#18503c]"
             style={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
           />
         </div>
-        <p className="text-micro text-[#CBD5E1] text-center mt-1.5 font-medium">{(elapsed / 1000).toFixed(1)}s</p>
+        <p className="text-micro text-[#d6d6cd] text-center mt-1.5 font-medium">{(elapsed / 1000).toFixed(1)}s</p>
       </div>
 
       {/* Skeleton cards */}
       <div className="grid grid-cols-2 gap-2.5 mt-6 w-full max-w-[340px]">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-[#F1F5F9] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+          <div key={i} className="bg-white rounded-xl border border-[#f7f6f2] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
             <div className="aspect-square bg-gradient-to-br from-[#F8F9FB] to-[#FDD] ploader-shimmer" style={{ animationDelay: `${i * 150}ms` }} />
             <div className="p-2.5">
-              <div className="h-2.5 bg-[#F1F5F9] rounded-[8px] w-3/4 ploader-shimmer" style={{ animationDelay: `${i * 150 + 100}ms` }} />
+              <div className="h-2.5 bg-[#f7f6f2] rounded-[8px] w-3/4 ploader-shimmer" style={{ animationDelay: `${i * 150 + 100}ms` }} />
               <div className="h-2 bg-[#F8F9FB] rounded-[8px] w-1/2 mt-1.5 ploader-shimmer" style={{ animationDelay: `${i * 150 + 200}ms` }} />
               <div className="flex items-center justify-between mt-2">
-                <div className="h-3 bg-[#F3E8FF] rounded-[8px] w-16 ploader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
-                <div className="h-5 bg-[#210D35]/10 rounded-[8px] w-10 ploader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
+                <div className="h-3 bg-[#dfe6cf] rounded-[8px] w-16 ploader-shimmer" style={{ animationDelay: `${i * 150 + 300}ms` }} />
+                <div className="h-5 bg-[#0f3b2c]/10 rounded-[8px] w-10 ploader-shimmer" style={{ animationDelay: `${i * 150 + 400}ms` }} />
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function MobilePhonesLoader() {
           100% { transform: scale(1.5); opacity: 0; }
         }
         .ploader-shimmer {
-          background: linear-gradient(110deg, #F1F5F9 30%, #FDD 50%, #F1F5F9 70%);
+          background: linear-gradient(110deg, #f7f6f2 30%, #FDD 50%, #f7f6f2 70%);
           background-size: 200% 100%;
           animation: pshimmer 1.8s ease-in-out infinite;
         }

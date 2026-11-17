@@ -4,8 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiChevronLeft, FiCheck, FiCopy, FiTruck, FiShoppingBag, FiStar } from 'react-icons/fi'
 import { orderService, type OrderResponse } from '../../services/orderService'
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
@@ -119,10 +119,10 @@ export default function MobileOrderSuccess() {
     setCopied(true)
   }
 
-  const confetti = ['#210D35', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#7B3FD0']
+  const confetti = ['#0f3b2c', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#0f3b2c']
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Confetti */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {confetti.map((c, i) => (
@@ -157,10 +157,10 @@ export default function MobileOrderSuccess() {
         {/* Order id card */}
         <div className={`${card} rounded-[20px] p-4 flex items-center justify-between`}>
           <div>
-            <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Order ID</p>
-            <p className="text-body font-bold text-[#1F2937]">{displayOrderId}</p>
+            <p className="text-micro text-[#5d6762] font-semibold uppercase tracking-wide">Order ID</p>
+            <p className="text-body font-bold text-[#1d2522]">{displayOrderId}</p>
           </div>
-          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
+          <button onClick={copyId} className="flex items-center gap-1.5 h-9 px-3 rounded-[8px] text-caption font-semibold" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>
             {copied ? <FiCheck size={14} /> : <FiCopy size={14} />}{copied ? 'Copied' : 'Copy'}
           </button>
         </div>
@@ -170,8 +170,8 @@ export default function MobileOrderSuccess() {
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-xl" style={{ background: 'rgba(22,163,74,0.1)' }}>🚚</div>
             <div className="flex-1">
-              <p className="text-micro text-[#6B7280] font-semibold uppercase tracking-wide">Estimated Delivery</p>
-              <p className="text-body font-bold text-[#1F2937]">{deliveryDate}</p>
+              <p className="text-micro text-[#5d6762] font-semibold uppercase tracking-wide">Estimated Delivery</p>
+              <p className="text-body font-bold text-[#1d2522]">{deliveryDate}</p>
             </div>
           </div>
           {/* Timeline */}
@@ -182,13 +182,13 @@ export default function MobileOrderSuccess() {
               return (
                 <div key={step} className="flex items-center flex-1 last:flex-none">
                   <div className="flex flex-col items-center flex-shrink-0">
-                    <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center ${done ? 'text-white' : 'bg-[#F1F5F9] text-[#9CA3AF]'}`}
+                    <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center ${done ? 'text-white' : 'bg-[#f7f6f2] text-[#9aa29e]'}`}
                       style={done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
                       {done ? <FiCheck size={14} /> : <span className="text-micro font-bold">{i + 1}</span>}
                     </div>
-                    <span className={`text-micro mt-1 font-semibold text-center leading-tight ${done ? 'text-[#15803D]' : 'text-[#9CA3AF]'}`}>{label}</span>
+                    <span className={`text-micro mt-1 font-semibold text-center leading-tight ${done ? 'text-[#15803D]' : 'text-[#9aa29e]'}`}>{label}</span>
                   </div>
-                  {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-[8px] ${done && i < currentStep ? '' : 'bg-[#E5E7EB]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
+                  {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-[8px] ${done && i < currentStep ? '' : 'bg-[#ece9e2]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
                 </div>
               )
             })}
@@ -197,26 +197,26 @@ export default function MobileOrderSuccess() {
 
         {/* Items */}
         <div className={`${card} rounded-[20px] p-4`}>
-          <p className="text-body-sm font-bold text-[#1F2937] mb-3">Order Items ({items.length})</p>
+          <p className="text-body-sm font-bold text-[#1d2522] mb-3">Order Items ({items.length})</p>
           <div className="space-y-3">
             {loading ? (
               <div className="space-y-3">
                 {[1, 2].map(i => (
                   <div key={i} className="flex items-center gap-3 animate-pulse">
-                    <div className="w-12 h-12 rounded-[12px] bg-[#F1F5F9]" />
-                    <div className="flex-1 space-y-2"><div className="h-3 bg-[#F1F5F9] rounded w-3/4" /><div className="h-2.5 bg-[#F1F5F9] rounded w-1/2" /></div>
-                    <div className="h-3 bg-[#F1F5F9] rounded w-16" />
+                    <div className="w-12 h-12 rounded-[12px] bg-[#f7f6f2]" />
+                    <div className="flex-1 space-y-2"><div className="h-3 bg-[#f7f6f2] rounded w-3/4" /><div className="h-2.5 bg-[#f7f6f2] rounded w-1/2" /></div>
+                    <div className="h-3 bg-[#f7f6f2] rounded w-16" />
                   </div>
                 ))}
               </div>
             ) : items.length === 0 ? (
-              <p className="text-caption text-[#9CA3AF]">No items found</p>
+              <p className="text-caption text-[#9aa29e]">No items found</p>
             ) : items.map((item: any, idx: number) => {
               const imgUrl = resolveImage(item)
               const hasImg = imgUrl && !imgErrors[item.productId ?? idx]
               return (
                 <div key={item.productId ?? idx} className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-[12px] bg-[#FFFBFB] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="w-12 h-12 rounded-[12px] bg-[#f7f6f2] flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {hasImg ? (
                       <img src={imgUrl} alt={item.name} className="w-full h-full object-contain" onError={() => setImgErrors(p => ({ ...p, [item.productId ?? idx]: true }))} />
                     ) : (
@@ -224,32 +224,32 @@ export default function MobileOrderSuccess() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>
-                    <p className="text-micro text-[#6B7280]">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.ram ? ` · ${item.ram}` : ''}</p>
+                    <p className="text-label font-semibold text-[#1d2522] truncate">{item.name}</p>
+                    <p className="text-micro text-[#5d6762]">Qty: {item.quantity}{item.storage ? ` · ${item.storage}` : ''}{item.ram ? ` · ${item.ram}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-label font-bold text-[#1F2937]">{formatPrice(item.price * item.quantity)}</span>
+                    <span className="text-label font-bold text-[#1d2522]">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 </div>
               )
             })}
           </div>
-          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="h-px bg-[#ece9e2] my-3" />
           <div className="space-y-1.5 text-caption">
-            <div className="flex justify-between text-[#6B7280]"><span>Subtotal</span><span className="font-semibold text-[#1F2937]">{formatPrice(subtotal)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1F2937' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
-            <div className="flex justify-between text-[#6B7280]"><span>{order ? orderTaxLabel(order) : gstLabel()}</span><span className="font-semibold text-[#1F2937]">{formatPrice(tax)}</span></div>
-            {discount > 0 && <div className="flex justify-between text-[#6B7280]"><span>Coupon ({couponCode})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
+            <div className="flex justify-between text-[#5d6762]"><span>Subtotal</span><span className="font-semibold text-[#1d2522]">{formatPrice(subtotal)}</span></div>
+            <div className="flex justify-between text-[#5d6762]"><span>Shipping</span><span className="font-semibold" style={{ color: shipping === 0 ? SUCCESS : '#1d2522' }}>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span></div>
+            <div className="flex justify-between text-[#5d6762]"><span>{order ? orderTaxLabel(order) : gstLabel()}</span><span className="font-semibold text-[#1d2522]">{formatPrice(tax)}</span></div>
+            {discount > 0 && <div className="flex justify-between text-[#5d6762]"><span>Coupon ({couponCode})</span><span className="font-semibold" style={{ color: SUCCESS }}>-{formatPrice(discount)}</span></div>}
           </div>
-          <div className="h-px bg-[#EEF0F6] my-3" />
+          <div className="h-px bg-[#ece9e2] my-3" />
           <div className="flex justify-between items-center">
-            <span className="text-caption text-[#6B7280] font-semibold uppercase tracking-wide">{/cod|cash/i.test(paymentMethod) ? 'To pay on delivery' : String(order?.payment_status || '').toLowerCase() === 'paid' ? 'Total Paid' : 'Amount due'}</span>
-            <span className="text-title-sm font-bold text-[#1F2937]">{formatPrice(grandTotal)}</span>
+            <span className="text-caption text-[#5d6762] font-semibold uppercase tracking-wide">{/cod|cash/i.test(paymentMethod) ? 'To pay on delivery' : String(order?.payment_status || '').toLowerCase() === 'paid' ? 'Total Paid' : 'Amount due'}</span>
+            <span className="text-title-sm font-bold text-[#1d2522]">{formatPrice(grandTotal)}</span>
           </div>
           {paymentMethod && (
             <div className="flex justify-between mt-1.5">
-              <span className="text-micro text-[#6B7280]">Payment Method</span>
-              <span className="text-micro font-semibold text-[#1F2937]">{paymentMethod}</span>
+              <span className="text-micro text-[#5d6762]">Payment Method</span>
+              <span className="text-micro font-semibold text-[#1d2522]">{paymentMethod}</span>
             </div>
           )}
         </div>
@@ -257,19 +257,19 @@ export default function MobileOrderSuccess() {
         {/* Review CTA - only when delivered */}
         {currentStep >= 4 && (
           <div className={`${card} rounded-[20px] p-4`}>
-            <p className="text-body-sm font-bold text-[#1F2937] mb-3">Rate & Review Your Purchase</p>
+            <p className="text-body-sm font-bold text-[#1d2522] mb-3">Rate & Review Your Purchase</p>
             <div className="space-y-2.5">
               {items.map((item: any, idx: number) => (
                 <button key={item.productId ?? idx} onClick={() => navigate(`/product/${item.productId}`)}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-[14px] border border-[#F3E8FF] bg-[#FFFBFB] active:bg-[#F3E8FF] transition-colors">
-                  <div className="w-9 h-9 rounded-[10px] bg-[#F3E8FF] flex items-center justify-center flex-shrink-0">
-                    <FiStar size={16} className="text-[#210D35]" />
+                  className="w-full flex items-center gap-3 p-2.5 rounded-[14px] border border-[#dfe6cf] bg-[#f7f6f2] active:bg-[#dfe6cf] transition-colors">
+                  <div className="w-9 h-9 rounded-[10px] bg-[#dfe6cf] flex items-center justify-center flex-shrink-0">
+                    <FiStar size={16} className="text-[#0f3b2c]" />
                   </div>
                   <div className="flex-1 text-left min-w-0">
-                    <p className="text-label font-semibold text-[#1F2937] truncate">{item.name}</p>
-                    <p className="text-micro text-[#6B7280]">Tap to rate & write a review</p>
+                    <p className="text-label font-semibold text-[#1d2522] truncate">{item.name}</p>
+                    <p className="text-micro text-[#5d6762]">Tap to rate & write a review</p>
                   </div>
-                  <FiChevronLeft size={16} className="text-[#9CA3AF] rotate-180 flex-shrink-0" />
+                  <FiChevronLeft size={16} className="text-[#9aa29e] rotate-180 flex-shrink-0" />
                 </button>
               ))}
             </div>
@@ -278,12 +278,12 @@ export default function MobileOrderSuccess() {
       </div>
 
       {/* Sticky CTAs */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#EEF0F6] px-4 py-3 flex gap-2.5">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#ece9e2] px-4 py-3 flex gap-2.5">
         <button onClick={() => navigate(`/orders?order_id=${orderId}`)} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold text-white inline-flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
           <FiTruck size={15} /> Track Order
         </button>
-        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold border border-[#E5E7EB] text-[#1F2937] inline-flex items-center justify-center gap-2">
+        <button onClick={() => navigate('/collection/all')} className="flex-1 h-12 rounded-[8px] text-body-sm font-semibold border border-[#ece9e2] text-[#1d2522] inline-flex items-center justify-center gap-2">
           <FiShoppingBag size={15} /> Shop More
         </button>
       </div>

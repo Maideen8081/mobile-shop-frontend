@@ -15,13 +15,13 @@ export default function TechnicianBarChart() {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
             <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} domain={[0, 100]} />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#5d6762', fontWeight: 500 }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#5d6762' }} domain={[0, 100]} />
             <Tooltip
               contentStyle={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', backgroundColor: '#172033', color: '#f8fafc', fontSize: 12, boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
             />
-            <Bar dataKey="efficiency" fill="#CB202D" radius={[6, 6, 0, 0]} barSize={28} />
-            <Bar dataKey="repairs" fill="#A81D2A" radius={[6, 6, 0, 0]} barSize={28} />
+            <Bar dataKey="efficiency" fill="#a8261b" radius={[6, 6, 0, 0]} barSize={28} />
+            <Bar dataKey="repairs" fill="#a8261b" radius={[6, 6, 0, 0]} barSize={28} />
           </BarChart>
         </ResponsiveContainer>
       </div>

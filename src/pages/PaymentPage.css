@@ -1,5 +1,5 @@
 /* Desktop checkout — payment step. Builds on CartPage.css + CheckoutAddress.css (.ca-*).
-   Brand palette only: #210d35 purple · #fff7f3 cream · #d0adff lavender · #ffd014 sunshine. */
+   Brand palette only: #0f3b2c green · #f7f6f2 cream · #dfe8b4 sage · #dfe8b4 sunshine. */
 
 /* Heading with secure pill on the right */
 .pp-head > div { flex: 1; min-width: 0; }
@@ -10,7 +10,7 @@
   padding: 10px 18px;
   border-radius: 999px;
   background: var(--ca-lav-20);
-  color: var(--ca-purple);
+  color: var(--ca-green);
   font-size: 15px;
   font-weight: 600;
   white-space: nowrap;
@@ -41,7 +41,7 @@
   background: none;
   text-align: left;
   font: inherit;
-  color: var(--ca-purple);
+  color: var(--ca-green);
   transition: background 0.2s, border-color 0.2s;
 }
 .pp-tab + .pp-tab::before {
@@ -56,7 +56,7 @@
 .pp-tab:hover:not(.is-selected) { background: var(--ca-lav-10); }
 .pp-tab:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ca-lav-35); }
 .pp-tab.is-selected {
-  border: 2px solid var(--ca-purple);
+  border: 2px solid var(--ca-green);
   background: linear-gradient(90deg, var(--ca-lav-20), var(--ca-lav-10));
 }
 .pp-tab.is-selected::before,
@@ -70,9 +70,9 @@
   display: grid;
   place-items: center;
   background: var(--ca-lav-20);
-  color: var(--ca-purple);
+  color: var(--ca-green);
 }
-.pp-tab.is-selected .pp-tab-icon { background: var(--ca-purple); color: var(--ca-sun); }
+.pp-tab.is-selected .pp-tab-icon { background: var(--ca-green); color: var(--ca-sun); }
 .pp-tab-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pp-tab-text strong { font-family: var(--font-display); font-size: 17px; font-weight: 700; line-height: 1.25; }
 .pp-tab:has(.pp-soon) .pp-tab-text { padding-right: 40px; }
@@ -99,7 +99,7 @@
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--ca-purple);
+  color: var(--ca-green);
 }
 .pp-panel-sub { margin: 6px 0 20px; font-size: 16px; color: var(--ca-ink-2); }
 
@@ -111,8 +111,8 @@
   padding: 12px 16px;
   border-left: 4px solid var(--ca-sun);
   border-radius: 10px;
-  background: rgba(255, 208, 20, 0.16);
-  color: var(--ca-purple);
+  background: rgba(223,232,180, 0.16);
+  color: var(--ca-green);
   font-size: 14px;
 }
 .pp-soon-note svg { flex-shrink: 0; }
@@ -130,7 +130,7 @@
   border: 1.5px solid var(--ca-line);
   border-radius: 14px;
   background: #fff;
-  color: var(--ca-purple);
+  color: var(--ca-green);
   font: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -170,7 +170,7 @@
   color: var(--ca-muted);
 }
 
-.pp-label { display: block; margin-bottom: 10px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ca-purple); }
+.pp-label { display: block; margin-bottom: 10px; font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--ca-green); }
 .pp-input-row { height: 54px; padding-right: 6px; }
 .pp-input-row input { padding-right: 10px; }
 .pp-verify {
@@ -178,7 +178,7 @@
   padding: 0 24px;
   border: 0;
   border-radius: 10px;
-  background: var(--ca-purple);
+  background: var(--ca-green);
   color: var(--ca-cream);
   font-weight: 700;
 }
@@ -196,7 +196,7 @@
   padding: 14px 18px;
   border-radius: 12px;
   background: var(--ca-lav-20);
-  color: var(--ca-purple);
+  color: var(--ca-green);
   font-size: 15px;
   font-weight: 500;
 }
@@ -208,7 +208,7 @@
   align-items: center;
   gap: 18px;
   padding: 18px 20px;
-  border: 1.5px solid var(--ca-lavender);
+  border: 1.5px solid var(--ca-sage);
   border-radius: 16px;
   background: linear-gradient(90deg, var(--ca-lav-10), #fff);
 }
@@ -219,12 +219,12 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
-  background: var(--ca-purple);
+  background: var(--ca-green);
   color: var(--ca-sun);
 }
 .pp-cod div { display: flex; flex-direction: column; gap: 2px; }
 .pp-cod div span { font-size: 15px; color: var(--ca-muted); }
-.pp-cod strong { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--ca-purple); }
+.pp-cod strong { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--ca-green); }
 .pp-cod-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .pp-cod-list li { display: flex; align-items: center; gap: 12px; font-size: 16px; color: var(--ca-ink-2); }
 .pp-cod-list svg {
@@ -234,24 +234,24 @@
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--ca-sun);
-  color: var(--ca-purple);
+  color: var(--ca-green);
 }
 
 /* Summary extras */
-.pp-change { margin-left: 4px; font-weight: 700; color: var(--ca-purple); }
+.pp-change { margin-left: 4px; font-weight: 700; color: var(--ca-green); }
 .pp-pay { gap: 12px; }
 .pp-error {
   margin: 14px 0 0;
   padding: 10px 12px;
   border-left: 4px solid var(--ca-sun);
   border-radius: 10px;
-  background: rgba(255, 208, 20, 0.16);
-  color: var(--ca-purple);
+  background: rgba(223,232,180, 0.16);
+  color: var(--ca-green);
   font-size: 14px;
   font-weight: 600;
 }
 .pp-terms { margin: 12px 0 0; text-align: center; font-size: 13px; color: var(--ca-muted); }
-.pp-terms a { color: var(--ca-purple); }
+.pp-terms a { color: var(--ca-green); }
 
 /* ── Responsive ── */
 @media (max-width: 1200px) {

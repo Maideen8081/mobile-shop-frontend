@@ -38,7 +38,7 @@ export default function DeleteModal({ open, category, onClose, onConfirm, loadin
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm bg-white rounded-2xl border border-border shadow-[0_12px_40px_rgba(15,23,42,0.14)] p-6 text-center"
+            className="w-full max-w-sm bg-white rounded-2xl border border-border shadow-[0_12px_40px_rgba(29,37,34,0.14)] p-6 text-center"
           >
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 ${blocked ? 'bg-amber-50' : 'bg-danger/10'}`}>
               {blocked ? <FiLock size={24} className="text-amber-500" /> : <FiAlertTriangle size={24} className="text-danger" />}

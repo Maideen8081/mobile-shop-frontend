@@ -2,12 +2,12 @@ const partners = ['Apple Authorized', 'Samsung Certified', 'Google Pixel Partner
 
 export default function Partners() {
   return (
-    <section className="mt-7 overflow-hidden bg-white border-y border-[#ECDFF6] py-4">
+    <section className="mt-7 overflow-hidden bg-white border-y border-[#f7f6f2] py-4">
       <div className="flex animate-marquee whitespace-nowrap items-center">
         {[0, 1].map((dup) => (
           <div key={dup} className="flex items-center gap-8 mx-6">
             {partners.map((p) => (
-              <span key={p + dup} className="text-title-sm font-extrabold text-[#210D35]/60 uppercase tracking-tighter select-none">{p}</span>
+              <span key={p + dup} className="text-title-sm font-extrabold text-[#0f3b2c]/60 uppercase tracking-tighter select-none">{p}</span>
             ))}
           </div>
         ))}

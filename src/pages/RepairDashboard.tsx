@@ -96,7 +96,7 @@ export default function RepairDashboard() {
       }
     }
 
-    const palette = ['#cb202d', '#f79009', '#2e90fa', '#17b26a', '#7a5af8', '#98a2b3']
+    const palette = ['#a8261b', '#f79009', '#2e90fa', '#17b26a', '#18503c', '#9aa29e']
     const issueCounts: Record<string, number> = {}
     for (const t of tickets as any[]) issueCounts[t.issueCategory || 'Other'] = (issueCounts[t.issueCategory || 'Other'] ?? 0) + 1
     const sortedIssues = Object.entries(issueCounts).sort((a, b) => b[1] - a[1])
@@ -255,13 +255,13 @@ export default function RepairDashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={analytics.monthly} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="rp-recv" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#cb202d" stopOpacity={0.16} /><stop offset="100%" stopColor="#cb202d" stopOpacity={0} /></linearGradient>
+                  <linearGradient id="rp-recv" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#a8261b" stopOpacity={0.16} /><stop offset="100%" stopColor="#a8261b" stopOpacity={0} /></linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke="#eef0f3" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#98a2b3' }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#98a2b3' }} axisLine={false} tickLine={false} width={32} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9aa29e' }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#9aa29e' }} axisLine={false} tickLine={false} width={32} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #e4e7ec', fontSize: 12 }} />
-                <Area type="monotone" dataKey="received" name="Received" stroke="#cb202d" strokeWidth={2.25} fill="url(#rp-recv)" />
+                <Area type="monotone" dataKey="received" name="Received" stroke="#a8261b" strokeWidth={2.25} fill="url(#rp-recv)" />
                 <Area type="monotone" dataKey="completed" name="Completed" stroke="#17b26a" strokeWidth={2.25} fill="transparent" />
               </AreaChart>
             </ResponsiveContainer>

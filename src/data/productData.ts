@@ -1,5 +1,5 @@
 export const productStats = [
-  { id: 1, label: 'Total Products', value: 186, icon: 'FiPackage', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)' },
+  { id: 1, label: 'Total Products', value: 186, icon: 'FiPackage', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)' },
   { id: 2, label: 'Active Products', value: 162, icon: 'FiCheckCircle', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)' },
   { id: 3, label: 'Trending', value: 24, icon: 'FiTrendingUp', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)' },
   { id: 4, label: 'Best Selling', value: 18, icon: 'FiAward', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)' },

@@ -23,7 +23,7 @@ export default function ProductSuggestions({ title = 'You might like', excludeId
 
   return (
     <section className="w-full max-w-3xl mx-auto mt-8 text-left" aria-label={title}>
-      <h2 className="text-base font-bold text-[#210D35] mb-3">{title}</h2>
+      <h2 className="text-base font-bold text-[#0f3b2c] mb-3">{title}</h2>
       <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {items.map((p) => {
           const price = Number(p.minPrice) || 0
@@ -31,7 +31,7 @@ export default function ProductSuggestions({ title = 'You might like', excludeId
             <li key={p.id}>
               <Link
                 to={`/product/${p.id}`}
-                className="flex h-full flex-col rounded-[12px] border border-[#ececea] bg-white p-3 transition hover:shadow-[0_10px_24px_rgba(33,13,53,0.1)]"
+                className="flex h-full flex-col rounded-[12px] border border-[#ececea] bg-white p-3 transition hover:shadow-[0_10px_24px_rgba(15,59,44,0.1)]"
               >
                 <img
                   src={getProductImage(p) || FALLBACK_IMG}
@@ -40,8 +40,8 @@ export default function ProductSuggestions({ title = 'You might like', excludeId
                   className="h-28 w-full object-contain"
                   onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }}
                 />
-                <span className="mt-2 line-clamp-2 text-sm font-semibold text-[#210D35]">{p.name}</span>
-                {price > 0 && <span className="mt-auto pt-1 text-sm font-bold text-[#4A2470]">₹{price.toLocaleString('en-IN')}</span>}
+                <span className="mt-2 line-clamp-2 text-sm font-semibold text-[#0f3b2c]">{p.name}</span>
+                {price > 0 && <span className="mt-auto pt-1 text-sm font-bold text-[#18503c]">₹{price.toLocaleString('en-IN')}</span>}
               </Link>
             </li>
           )

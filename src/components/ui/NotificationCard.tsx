@@ -15,7 +15,7 @@ export default function NotificationCard({
   title,
   description,
   time,
-  color = '#7c3aed',
+  color = '#18503c',
   onClick,
 }: NotificationCardProps) {
   return (

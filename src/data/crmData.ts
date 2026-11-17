@@ -115,7 +115,7 @@ export interface CRMKPI {
 }
 
 export const crmKPIs: CRMKPI[] = [
-  { id: 1, title: 'Total Customers', value: 2847, growth: 14.2, trend: 'up', subtitle: 'vs last month', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiUsers', sparkline: [1800, 1950, 2100, 2280, 2400, 2550, 2680, 2750, 2800, 2847] },
+  { id: 1, title: 'Total Customers', value: 2847, growth: 14.2, trend: 'up', subtitle: 'vs last month', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiUsers', sparkline: [1800, 1950, 2100, 2280, 2400, 2550, 2680, 2750, 2800, 2847] },
   { id: 2, title: 'New Customers (Month)', value: 128, growth: 22.5, trend: 'up', subtitle: 'this month', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)', icon: 'FiUserPlus', sparkline: [65, 72, 88, 95, 85, 105, 98, 112, 120, 128] },
   { id: 3, title: 'Returning Customers', value: 68, suffix: '%', growth: 5.8, trend: 'up', subtitle: 'of total customers', color: '#22c55e', bgGlow: 'rgba(34,197,94,0.12)', icon: 'FiRefreshCw', sparkline: [52, 55, 58, 60, 62, 64, 65, 66, 67, 68] },
   { id: 4, title: 'VIP Customers', value: 142, growth: 18.3, trend: 'up', subtitle: 'platinum tier', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiStar', sparkline: [85, 92, 100, 108, 115, 122, 130, 135, 140, 142] },
@@ -144,7 +144,7 @@ export const loyaltyTiers: LoyaltyTier[] = [
   { id: 'bronze', name: 'Bronze', minPoints: 0, maxPoints: 999, cashback: 1, color: '#cd7f32', bgGradient: 'from-amber-700/20 to-amber-600/10', benefits: ['Basic Support', 'Birthday Offers', 'SMS Updates'], icon: '🥉' },
   { id: 'silver', name: 'Silver', minPoints: 1000, maxPoints: 2999, cashback: 2, color: '#c0c0c0', bgGradient: 'from-gray-400/20 to-gray-300/10', benefits: ['Priority Support', 'Birthday Offers', 'SMS Updates', '5% Extra Discount'], icon: '🥈' },
   { id: 'gold', name: 'Gold', minPoints: 3000, maxPoints: 4999, cashback: 3, color: '#ffd700', bgGradient: 'from-yellow-500/20 to-amber-400/10', benefits: ['Priority Support', 'Birthday Offers', 'Free Delivery', '10% Extra Discount', 'Early Access'], icon: '🥇' },
-  { id: 'platinum', name: 'Platinum', minPoints: 5000, maxPoints: Infinity, cashback: 5, color: '#e5e4e2', bgGradient: 'from-purple-400/20 via-blue-400/10 to-purple-300/10', benefits: ['24/7 Premium Support', 'Birthday Offers', 'Free Delivery', '15% Extra Discount', 'Early Access', 'Free Accessories', 'Exclusive Events'], icon: '💎' },
+  { id: 'platinum', name: 'Platinum', minPoints: 5000, maxPoints: Infinity, cashback: 5, color: '#e5e4e2', bgGradient: 'from-green-800/20 via-emerald-700/10 to-green-700/10', benefits: ['24/7 Premium Support', 'Birthday Offers', 'Free Delivery', '15% Extra Discount', 'Early Access', 'Free Accessories', 'Exclusive Events'], icon: '💎' },
 ]
 
 export const loyaltyTransactions: LoyaltyTransaction[] = [
@@ -265,7 +265,7 @@ export const crmAnalytics = {
     { month: 'Dec', new: 195, returning: 120, churned: 2 },
   ],
   revenueBySegment: [
-    { name: 'Platinum', value: 42, color: '#8b5cf6' },
+    { name: 'Platinum', value: 42, color: '#18503c' },
     { name: 'Gold', value: 28, color: '#4f6bff' },
     { name: 'Silver', value: 18, color: '#22c55e' },
     { name: 'Bronze', value: 12, color: '#f59e0b' },

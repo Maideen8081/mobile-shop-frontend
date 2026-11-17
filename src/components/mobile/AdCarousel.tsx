@@ -33,7 +33,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1200&q=80',
-    accent: '#D0ADFF',
+    accent: '#dfe8b4',
   },
   {
     id: 2,
@@ -44,7 +44,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Explore',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=1200&q=80',
-    accent: '#B78AF0',
+    accent: '#7fae5b',
   },
   {
     id: 3,
@@ -55,7 +55,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=1200&q=80',
-    accent: '#E4D2FB',
+    accent: '#dfe6cf',
   },
   {
     id: 4,
@@ -66,7 +66,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80',
-    accent: '#C7A8FF',
+    accent: '#dfe8b4',
   },
   {
     id: 5,
@@ -77,7 +77,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1200&q=80',
-    accent: '#D0ADFF',
+    accent: '#dfe8b4',
   },
   {
     id: 6,
@@ -88,7 +88,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Explore',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80',
-    accent: '#D9C2FF',
+    accent: '#dfe8b4',
   },
   {
     id: 7,
@@ -99,7 +99,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80',
-    accent: '#B78AF0',
+    accent: '#7fae5b',
   },
   {
     id: 8,
@@ -110,7 +110,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Shop Now',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1561154464-82e9adf32764?auto=format&fit=crop&w=1200&q=80',
-    accent: '#E4D2FB',
+    accent: '#dfe6cf',
   },
   {
     id: 9,
@@ -121,7 +121,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Explore',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=1200&q=80',
-    accent: '#C7A8FF',
+    accent: '#dfe8b4',
   },
   {
     id: 10,
@@ -132,7 +132,7 @@ const BANNERS: AdBanner[] = [
     cta: 'Grab Deals',
     link: '/collection/all',
     image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=1200&q=80',
-    accent: '#D9C2FF',
+    accent: '#dfe8b4',
   },
 ]
 
@@ -158,13 +158,13 @@ export default function AdCarousel() {
   return (
     <section className="mt-7 px-4" style={sectionStyle}>
       <div
-        className={`relative w-full ${heights} rounded-[20px] min-[1024px]:rounded-[28px] overflow-hidden shadow-[0_12px_36px_rgba(15,23,42,0.18)]`}
+        className={`relative w-full ${heights} rounded-[20px] min-[1024px]:rounded-[28px] overflow-hidden shadow-[0_12px_36px_rgba(29,37,34,0.18)]`}
         onMouseEnter={() => swiperRef.current?.autoplay?.stop()}
         onMouseLeave={() => swiperRef.current?.autoplay?.start()}
       >
         {!loaded && (
-          <div className="absolute inset-0 bg-[#F3E8FF] animate-pulse flex items-center justify-center z-30">
-            <div className="w-10 h-10 rounded-[8px] border-4 border-[#E4D2FB] border-t-[#210D35] animate-spin" />
+          <div className="absolute inset-0 bg-[#dfe6cf] animate-pulse flex items-center justify-center z-30">
+            <div className="w-10 h-10 rounded-[8px] border-4 border-[#dfe6cf] border-t-[#0f3b2c] animate-spin" />
           </div>
         )}
 
@@ -225,14 +225,14 @@ export default function AdCarousel() {
                   </p>
                   <div className="flex items-center gap-3 mt-2.5 flex-wrap">
                     <span
-                      className="text-caption sm:text-body font-bold px-3 py-1 rounded-[8px] shadow text-[#210D35]"
+                      className="text-caption sm:text-body font-bold px-3 py-1 rounded-[8px] shadow text-[#0f3b2c]"
                       style={{ background: b.accent }}
                     >
                       {b.offer}
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                      className="flex items-center gap-1 text-micro sm:text-label font-bold px-3.5 py-1.5 rounded-[8px] bg-white text-[#210D35] shadow-md active:scale-95 transition"
+                      className="flex items-center gap-1 text-micro sm:text-label font-bold px-3.5 py-1.5 rounded-[8px] bg-white text-[#0f3b2c] shadow-md active:scale-95 transition"
                     >
                       {b.cta} <ArrowRight size={14} />
                     </button>
@@ -248,13 +248,13 @@ export default function AdCarousel() {
           aria-label="Previous slide"
           className="ad-prev hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-[8px] bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
         >
-          <ChevronLeft size={20} className="text-[#210D35]" />
+          <ChevronLeft size={20} className="text-[#0f3b2c]" />
         </button>
         <button
           aria-label="Next slide"
           className="ad-next hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-[8px] bg-white/85 backdrop-blur items-center justify-center shadow-lg hover:bg-white active:scale-90 transition"
         >
-          <ChevronRight size={20} className="text-[#210D35]" />
+          <ChevronRight size={20} className="text-[#0f3b2c]" />
         </button>
       </div>
 
@@ -263,9 +263,9 @@ export default function AdCarousel() {
         .ad-dots { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
         .ad-bullet {
           width: 6px; height: 6px; border-radius: 8px;
-          background: #CBD5E1; cursor: pointer; transition: all 0.35s ease;
+          background: #d6d6cd; cursor: pointer; transition: all 0.35s ease;
         }
-        .ad-bullet-active { width: 22px; background: #210D35; }
+        .ad-bullet-active { width: 22px; background: #0f3b2c; }
         /* Ken Burns slow zoom on the active slide's image for a premium ad feel */
         .ad-slide-img { transform: scale(1.04); transition: transform 4.5s ease-out; }
         .swiper-slide-active .ad-slide-img { transform: scale(1.12); }

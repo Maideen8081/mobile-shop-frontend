@@ -93,9 +93,9 @@ function buildInvoice(order: TrackOrder, id: string, payment: string): string {
   const rows = order.items.map((i) =>
     `<tr><td>${i.name}${[i.color, i.storage].filter(Boolean).length ? `<br><small>${[i.color, i.storage].filter(Boolean).join(' · ')}</small>` : ''}</td><td>${i.quantity}</td><td>${inr(i.price)}</td><td>${inr(i.price * i.quantity)}</td></tr>`).join('')
   return `<!doctype html><html><head><meta charset="utf-8"><title>Invoice ${id}</title>
-<style>body{font-family:Poppins,system-ui,sans-serif;color:#210d35;padding:40px;max-width:760px;margin:auto}
+<style>body{font-family:Inter,system-ui,sans-serif;color:#1d2522;padding:40px;max-width:760px;margin:auto}
 h1{margin:0}table{width:100%;border-collapse:collapse;margin:24px 0}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee}
-th{background:#f4ecff}small{color:#777}.tot td{border:0;padding:4px 10px}.grand td{font-weight:800;font-size:18px}
+th{background:#dfe6cf}small{color:#777}.tot td{border:0;padding:4px 10px}.grand td{font-weight:800;font-size:18px}
 .head{display:flex;justify-content:space-between;align-items:flex-start}</style></head><body>
 <div class="head"><div><h1>PhoneFix.</h1><p>Premium Mobile Store</p></div><div><strong>Invoice</strong><br>Order ${id}<br>${order.orderDate}</div></div>
 ${order.address ? `<p><strong>Deliver to:</strong> ${order.address}</p>` : ''}<p><strong>Payment:</strong> ${payment}</p>

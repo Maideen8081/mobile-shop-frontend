@@ -26,11 +26,11 @@ export function useMobileToast() {
           ? { icon: '✓', bg: '#22C55E' }
           : t.type === 'error'
             ? { icon: '!', bg: '#EF4444' }
-            : { icon: 'i', bg: '#210D35' }
+            : { icon: 'i', bg: '#0f3b2c' }
         return (
           <div
             key={t.id}
-            className="flex items-center gap-3 pl-3 pr-4 py-3 rounded-2xl bg-white shadow-[0_8px_24px_rgba(17,24,39,0.14)] border border-[#EEF0F6] pointer-events-auto w-full animate-[toastUp_0.32s_cubic-bezier(0.22,1,0.36,1)]"
+            className="flex items-center gap-3 pl-3 pr-4 py-3 rounded-2xl bg-white shadow-[0_8px_24px_rgba(17,24,39,0.14)] border border-[#ece9e2] pointer-events-auto w-full animate-[toastUp_0.32s_cubic-bezier(0.22,1,0.36,1)]"
           >
             <span
               className="flex-shrink-0 w-7 h-7 rounded-[8px] flex items-center justify-center text-white text-body-sm font-bold"
@@ -38,12 +38,12 @@ export function useMobileToast() {
             >
               {theme.icon}
             </span>
-            <span className="text-label font-semibold text-[#1F2937] leading-snug flex-1">{t.message}</span>
+            <span className="text-label font-semibold text-[#1d2522] leading-snug flex-1">{t.message}</span>
             {t.action && (
               <button
                 type="button"
                 onClick={() => { setToasts(prev => prev.filter(x => x.id !== t.id)); t.action?.onClick() }}
-                className="min-h-[44px] px-3 rounded-[8px] text-label font-bold text-[#210D35]"
+                className="min-h-[44px] px-3 rounded-[8px] text-label font-bold text-[#0f3b2c]"
               >
                 {t.action.label}
               </button>

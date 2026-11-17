@@ -94,20 +94,20 @@ export default function CustomerDashboard() {
                 <AreaChart data={growthData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                   <defs>
                     <linearGradient id="crm-new-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#210D35" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#210D35" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#0f3b2c" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#0f3b2c" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="crm-returning-grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3A1E52" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#3A1E52" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#18503c" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#18503c" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e8ecf1" strokeOpacity={0.5} />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9aa29e' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: '#9aa29e' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<ChartTooltip />} />
-                  <Area type="monotone" dataKey="new" stroke="#210D35" fill="url(#crm-new-grad)" strokeWidth={2.5} name="New Customers" />
-                  <Area type="monotone" dataKey="returning" stroke="#3A1E52" fill="url(#crm-returning-grad)" strokeWidth={2.5} name="Returning" />
+                  <Area type="monotone" dataKey="new" stroke="#0f3b2c" fill="url(#crm-new-grad)" strokeWidth={2.5} name="New Customers" />
+                  <Area type="monotone" dataKey="returning" stroke="#18503c" fill="url(#crm-returning-grad)" strokeWidth={2.5} name="Returning" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -144,8 +144,8 @@ export default function CustomerDashboard() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={segmentData} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e8ecf1" strokeOpacity={0.5} horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} width={60} />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: '#9aa29e' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#5d6762' }} axisLine={false} tickLine={false} width={60} />
                   <Tooltip content={<ChartTooltip />} />
                   <Bar dataKey="value" name="Revenue Share" radius={[0, 6, 6, 0]} barSize={20}>
                     {segmentData.map((entry, i) => (

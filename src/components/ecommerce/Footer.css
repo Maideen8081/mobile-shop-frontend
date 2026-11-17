@@ -1,11 +1,11 @@
 .pff {
-  --pff-bg: #FFF7F3;
+  --pff-bg: #f7f6f2;
   --pff-ink: #1b1210;
   --pff-text: #5e4f4a;
   --pff-muted: #8a7a74;
   --pff-line: #ecd9d0;
-  --pff-red: #210D35;
-  --pff-red-deep: #3A1E52;
+  --pff-red: #0f3b2c;
+  --pff-red-deep: #18503c;
 
   background: var(--pff-bg);
   color: var(--pff-text);
@@ -51,7 +51,7 @@
   border-radius: 14px;
   color: #fff;
   background: linear-gradient(135deg, var(--pff-red), var(--pff-red-deep));
-  box-shadow: 0 8px 20px rgba(123, 63, 208, 0.25);
+  box-shadow: 0 8px 20px rgba(15,59,44, 0.25);
 }
 .pff-logo-name {
   display: block;

@@ -50,8 +50,8 @@ export interface ProductCardData {
 }
 
 /** Visual layouts from the Home design:
- *  standard  — light card, image on a lavender swoosh
- *  feature   — dark purple card with spec list and round cart button
+ *  standard  — light card, image on a sage swoosh
+ *  feature   — dark green card with spec list and round cart button
  *  wide      — horizontal card, image left and details right
  *  spotlight — bestseller card with the product on a podium */
 export type ProductCardVariant = 'standard' | 'feature' | 'wide' | 'spotlight'
@@ -60,7 +60,7 @@ interface ProductCardProps extends ProductCardData {
   variant?: ProductCardVariant
   /** Columns to span in the 12-column bento grid. */
   span?: number
-  /** Alternates the standard card's button between violet and deep purple. */
+  /** Alternates the standard card's button between green and deep green. */
   tone?: 'violet' | 'deep'
   order?: number
   wishlisted?: boolean
@@ -88,13 +88,13 @@ const SWATCH_MAP: [string, string][] = [
   ['white', '#f4f4f4'],
   ['gold', '#d9b46a'],
   ['blue', '#3b6fd6'],
-  ['purple', '#9b6bdf'],
-  ['violet', '#9b6bdf'],
-  ['lavender', '#c9a8f5'],
+  ['purple', '#18503c'],
+  ['violet', '#18503c'],
+  ['lavender', '#dfe8b4'],
   ['green', '#4f8a5b'],
   ['mint', '#9fd8c0'],
   ['red', '#c8333f'],
-  ['pink', '#f2a7c3'],
+  ['pink', '#fbe1d8'],
   ['grey', '#9a9aa0'],
   ['gray', '#9a9aa0'],
   ['orange', '#e8762d'],
@@ -318,7 +318,7 @@ export default function ProductCard({
 
   const style = { '--i': order, ...(span ? { '--span': span } : {}) } as CSSProperties
 
-  /* ── feature: dark purple ── */
+  /* ── feature: dark green ── */
   if (variant === 'feature') {
     return (
       <article ref={ref} className="pc pc--feature" style={style}>

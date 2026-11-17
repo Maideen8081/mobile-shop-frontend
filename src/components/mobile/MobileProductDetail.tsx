@@ -21,14 +21,14 @@ import DoubleRingLoader from '../ui/DoubleRingLoader'
 
 const COLOR_PALETTE: Record<string, string> = {
   black: '#1a1a1a', white: '#f0f0f0', silver: '#c0c0c0', gray: '#808080',
-  'titanium gray': '#6b7280', 'titanium black': '#374151', 'natural titanium': '#d4c5a9',
-  'blue titanium': '#2563eb', 'white titanium': '#e5e7eb', green: '#22c55e',
-  midnight: '#1e293b', starlight: '#faf5eb', rose: '#e11d48', gold: '#f59e0b',
-  graphite: '#4b5563', red: '#ef4444', blue: '#3b82f6', purple: '#7c3aed',
+  'titanium gray': '#5d6762', 'titanium black': '#3d4641', 'natural titanium': '#d4c5a9',
+  'blue titanium': '#2563eb', 'white titanium': '#ece9e2', green: '#22c55e',
+  midnight: '#1e293b', starlight: '#faf5eb', rose: '#0f3b2c', gold: '#f59e0b',
+  graphite: '#5d6762', red: '#ef4444', blue: '#3b82f6', purple: '#18503c',
 }
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
 
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
@@ -503,7 +503,7 @@ export default function MobileProductDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: 'var(--font-ui)' }}>
+      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: 'var(--font-ui)' }}>
         <DoubleRingLoader size={56} label="Loading product…" />
       </div>
     )
@@ -512,11 +512,11 @@ export default function MobileProductDetail() {
   if (fetchError || !product) {
     return (
       <div className="min-h-screen bg-white max-w-[480px] mx-auto flex flex-col items-center justify-center p-8 text-center font-sans">
-        <h1 className="text-body font-bold text-[#1F2937] mb-2">Product unavailable</h1>
-        <p className="text-label text-[#6B7280] mb-6">{fetchError || 'This product is no longer available.'}</p>
+        <h1 className="text-body font-bold text-[#1d2522] mb-2">Product unavailable</h1>
+        <p className="text-label text-[#5d6762] mb-6">{fetchError || 'This product is no longer available.'}</p>
         <div className="flex gap-2">
           <button onClick={() => navigate(-1)} className="h-11 px-6 rounded-[8px] text-white text-label font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>Go Back</button>
-          <button onClick={() => navigate('/collection/all')} className="h-11 px-6 rounded-[8px] text-label font-bold border border-[#E5E7EB] text-[#1F2937]">Browse Products</button>
+          <button onClick={() => navigate('/collection/all')} className="h-11 px-6 rounded-[8px] text-label font-bold border border-[#ece9e2] text-[#1d2522]">Browse Products</button>
         </div>
         <ProductSuggestions title="Similar products" excludeId={Number(resolvedId)} />
       </div>
@@ -524,7 +524,7 @@ export default function MobileProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1F2937] overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-[120px] font-sans text-[#1d2522] overflow-x-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       <style>{`
         @keyframes shimmerSlide {
           0% { transform: translateX(-100%); }
@@ -546,7 +546,7 @@ export default function MobileProductDetail() {
         }
         @keyframes pulseBrand {
           0%, 100% { opacity: 1; background-color: #F3EFFE; }
-          50% { opacity: 0.5; background-color: #F3E8FF; }
+          50% { opacity: 0.5; background-color: #dfe6cf; }
         }
         .skel-brand { animation: pulseBrand 1.8s ease-in-out infinite; }
         .skel-stagger-1 { animation: pulseBrand 1.8s ease-in-out 0s infinite; }
@@ -556,29 +556,29 @@ export default function MobileProductDetail() {
         .skel-stagger-5 { animation: pulseBrand 1.8s ease-in-out 0.6s infinite; }
       `}</style>
 
-      {/* Sticky top bar — product page style (white/neutral, no purple gradient) */}
-      <div className="sticky top-0 z-40 w-full bg-[#FFFBFB]/95 backdrop-blur-xl border-b border-[#EEF1F4]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* Sticky top bar — product page style (white/neutral, no green gradient) */}
+      <div className="sticky top-0 z-40 w-full bg-[#f7f6f2]/95 backdrop-blur-xl border-b border-[#ece9e2]" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-3 py-2.5 flex items-center gap-2.5">
-          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <ChevronLeft size={22} className="text-[#210D35]" />
+          <button onClick={() => navigate(-1)} aria-label="Back" className="w-10 h-10 rounded-full bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <ChevronLeft size={22} className="text-[#0f3b2c]" />
           </button>
-          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
-            <Search size={18} className="text-[#7C668A] flex-shrink-0" />
+          <form onSubmit={(e) => { e.preventDefault(); navigate('/search') }} onClick={() => navigate('/search')} className="flex-1 h-11 min-w-0 rounded-full bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(0,0,0,0.06)] flex items-center gap-2 px-3.5 active:scale-[0.99] transition cursor-pointer">
+            <Search size={18} className="text-[#5d6762] flex-shrink-0" />
             <input
               readOnly
               placeholder="Search for products"
               aria-label="Search products"
-              className="flex-1 bg-transparent text-label text-[#210D35] placeholder:text-[#9a86a8] outline-none min-w-0 cursor-pointer"
+              className="flex-1 bg-transparent text-label text-[#0f3b2c] placeholder:text-[#5d6762] outline-none min-w-0 cursor-pointer"
             />
           </form>
-          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <Heart size={19} className={wished ? 'text-[#210D35] fill-[#210D35]' : 'text-[#210D35]'} />
-            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#210D35] rounded-full ring-2 ring-white" />}
+          <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="relative w-10 h-10 rounded-full bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <Heart size={19} className={wished ? 'text-[#0f3b2c] fill-[#0f3b2c]' : 'text-[#0f3b2c]'} />
+            {wished && <span className="absolute top-1 right-1.5 w-2 h-2 bg-[#0f3b2c] rounded-full ring-2 ring-white" />}
           </button>
-          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-full bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
-            <ShoppingBag size={19} className="text-[#210D35]" />
+          <button onClick={() => navigate('/cart')} aria-label="Cart" className="relative w-10 h-10 rounded-full bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(0,0,0,0.08)] flex items-center justify-center active:scale-90 transition flex-shrink-0">
+            <ShoppingBag size={19} className="text-[#0f3b2c]" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#210D35] text-white text-micro font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#0f3b2c] text-white text-micro font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
             )}
           </button>
         </div>
@@ -586,7 +586,7 @@ export default function MobileProductDetail() {
 
       {/* Deal of the day — flash sale banner with countdown */}
       <div className="px-3 mt-3">
-        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)' }}>
+        <div className="relative overflow-hidden rounded-[20px] p-4 text-white" style={{ background: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)' }}>
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Flame size={18} className="text-[#FFD54F]" fill="#FFD54F" />
@@ -611,11 +611,11 @@ export default function MobileProductDetail() {
           {coupons.map((c) => (
             <button key={c.code}
               onClick={() => { navigator.clipboard?.writeText(c.code).catch(() => {}); showToast(`Coupon ${c.code} copied!`, 'success') }}
-              className="snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl bg-white border border-[#E5E7EB] shadow-[0_4px_14px_rgba(123, 63, 208,0.08)] active:scale-[0.97] transition relative overflow-hidden">
-              <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#210D35,#3A1E52)' }}><Tag size={15} className="text-white" /></span>
+              className="snap-start flex-shrink-0 flex items-center gap-2 h-14 pl-3 pr-4 rounded-2xl bg-white border border-[#ece9e2] shadow-[0_4px_14px_rgba(15,59,44,0.08)] active:scale-[0.97] transition relative overflow-hidden">
+              <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#0f3b2c,#18503c)' }}><Tag size={15} className="text-white" /></span>
               <div className="text-left">
-                <p className="text-body-sm font-extrabold leading-tight text-[#1F2937]">{c.label}</p>
-                <p className="text-micro font-bold px-1.5 py-0.5 rounded inline-block mt-0.5" style={{ color: PURPLE, background: '#F3E8FF' }}>{c.code}</p>
+                <p className="text-body-sm font-extrabold leading-tight text-[#1d2522]">{c.label}</p>
+                <p className="text-micro font-bold px-1.5 py-0.5 rounded inline-block mt-0.5" style={{ color: PURPLE, background: '#dfe6cf' }}>{c.code}</p>
               </div>
             </button>
           ))}
@@ -655,13 +655,13 @@ export default function MobileProductDetail() {
                   {!imgLoaded[i] && (
                     <div className="absolute inset-0 bg-gradient-to-br from-[#F1F2F6] via-[#F3EFFE] to-[#F1F2F6] shimmer-overlay flex flex-col items-center justify-center gap-3">
                         <div className="w-16 h-16 rounded-2xl bg-white/50 flex items-center justify-center shadow-sm" style={{ animation: 'pulseBrand 2s ease-in-out infinite' }}>
-                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#210D35" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f3b2c" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="5" y="2" width="14" height="20" rx="3" ry="3" opacity="0.35"/>
                             <line x1="12" y1="18" x2="12" y2="18.01" strokeWidth="2" opacity="0.35"/>
-                            <circle cx="12" cy="18" r="0.5" fill="#210D35" opacity="0.35"/>
+                            <circle cx="12" cy="18" r="0.5" fill="#0f3b2c" opacity="0.35"/>
                           </svg>
                         </div>
-                      <p className="text-micro font-semibold text-[#6B7280]">Loading image...</p>
+                      <p className="text-micro font-semibold text-[#5d6762]">Loading image...</p>
                     </div>
                   )}
                   <img
@@ -707,13 +707,13 @@ export default function MobileProductDetail() {
 
           {/* Floating overlay buttons top-right */}
           <div className="absolute top-3 right-3 z-20 flex flex-col gap-2">
-            <button onClick={toggleWishlist} aria-label="Wishlist" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition" style={wished ? { background: '#FEE2F2' } : undefined}>
+            <button onClick={toggleWishlist} aria-label="Wishlist" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition" style={wished ? { background: '#f7f6f2' } : undefined}>
               <motion.span animate={wished ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
-                <Heart size={21} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#210D35]'} />
+                <Heart size={21} className={wished ? 'text-[#f08a7b] fill-[#f08a7b]' : 'text-[#0f3b2c]'} />
               </motion.span>
             </button>
             <button onClick={handleShare} aria-label="Share" className="w-12 h-12 rounded-[8px] bg-white shadow-[0_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition">
-              <Share2 size={20} className="text-[#210D35]" />
+              <Share2 size={20} className="text-[#0f3b2c]" />
             </button>
           </div>
 
@@ -727,14 +727,14 @@ export default function MobileProductDetail() {
           {/* Rating badge bottom-left */}
           {ratingCount > 0 && rating > 0 && (
             <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-white/90 backdrop-blur shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
-              <span className="text-caption font-bold text-[#1F2937]">{rating.toFixed(1)}</span>
+              <span className="text-caption font-bold text-[#1d2522]">{rating.toFixed(1)}</span>
               <Star size={12} fill="#F59E0B" className="text-[#F59E0B]" />
-              <span className="text-micro text-[#6B7280]">({ratingCount})</span>
+              <span className="text-micro text-[#5d6762]">({ratingCount})</span>
             </div>
           )}
 
           {images.length > 1 && (
-            <div className="absolute bottom-3 right-3 z-20 text-micro font-semibold text-[#1F2937] bg-white/90 backdrop-blur px-2.5 py-1 rounded-[8px] shadow">
+            <div className="absolute bottom-3 right-3 z-20 text-micro font-semibold text-[#1d2522] bg-white/90 backdrop-blur px-2.5 py-1 rounded-[8px] shadow">
               {selectedImage + 1}/{images.length}
             </div>
           )}
@@ -744,7 +744,7 @@ export default function MobileProductDetail() {
         {images.length > 1 && (
           <div className="flex gap-2.5 px-2 py-2 overflow-x-auto scrollbar-hide">
             {images.map((img, i) => (
-              <button key={i} onClick={() => goTo(i)} className={`w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#210D35] scale-105 shadow-[0_4px_12px_rgba(123, 63, 208,0.3)]' : 'border-transparent'}`} style={{ background: '#F1F2F6' }}>
+              <button key={i} onClick={() => goTo(i)} className={`w-[72px] h-[72px] rounded-2xl overflow-hidden flex-shrink-0 border-2 transition ${i === selectedImage ? 'border-[#0f3b2c] scale-105 shadow-[0_4px_12px_rgba(15,59,44,0.3)]' : 'border-transparent'}`} style={{ background: '#F1F2F6' }}>
                 <img src={img || FALLBACK_IMG} alt="" loading="lazy" className="w-full h-full object-cover" />
               </button>
             ))}
@@ -778,7 +778,7 @@ export default function MobileProductDetail() {
           <div className={`${card} p-4 skel-stagger-2`}>
             <div className="grid grid-cols-2 gap-2">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-[#FFFBFB] rounded-xl px-3 py-3 skel-stagger-3">
+                <div key={i} className="bg-[#f7f6f2] rounded-xl px-3 py-3 skel-stagger-3">
                   <div className="h-2 w-12 rounded skel-brand" />
                   <div className="h-3 w-16 rounded mt-1.5 skel-brand" />
                 </div>
@@ -815,7 +815,7 @@ export default function MobileProductDetail() {
           <div className={`${card} p-4 skel-stagger-5`}>
             <div className="grid grid-cols-3 gap-2.5">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex flex-col items-center gap-1.5 bg-[#FFFBFB] rounded-xl px-2 py-3">
+                <div key={i} className="flex flex-col items-center gap-1.5 bg-[#f7f6f2] rounded-xl px-2 py-3">
                   <div className="w-9 h-9 rounded-[8px] skel-brand" />
                   <div className="h-2 w-12 rounded skel-brand" />
                 </div>
@@ -844,9 +844,9 @@ export default function MobileProductDetail() {
 
           {/* Meta: model / category / subcategory */}
           <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1.5">
-            {productModel && <p className="text-micro text-[#9CA3AF]">Model: <span className="font-semibold text-[#6B7280]">{productModel}</span></p>}
-            {productCategory && <p className="text-micro text-[#9CA3AF]">Category: <span className="font-semibold text-[#6B7280]">{productCategory}</span></p>}
-            {productSubCategory && <p className="text-micro text-[#9CA3AF]">Type: <span className="font-semibold text-[#6B7280]">{productSubCategory}</span></p>}
+            {productModel && <p className="text-micro text-[#9aa29e]">Model: <span className="font-semibold text-[#5d6762]">{productModel}</span></p>}
+            {productCategory && <p className="text-micro text-[#9aa29e]">Category: <span className="font-semibold text-[#5d6762]">{productCategory}</span></p>}
+            {productSubCategory && <p className="text-micro text-[#9aa29e]">Type: <span className="font-semibold text-[#5d6762]">{productSubCategory}</span></p>}
           </div>
 
           <div className="flex items-center gap-3 mt-2.5">
@@ -856,18 +856,18 @@ export default function MobileProductDetail() {
                   <span className="text-caption font-bold" style={{ color: SUCCESS }}>{rating.toFixed(1)}</span>
                   <Star size={12} fill="#16A34A" className="text-[#16A34A]" />
                 </div>
-                <span className="text-caption text-[#6B7280]">{Number(ratingCount).toLocaleString('en-IN')} Ratings</span>
+                <span className="text-caption text-[#5d6762]">{Number(ratingCount).toLocaleString('en-IN')} Ratings</span>
               </>
             ) : (
-              <span className="text-caption text-[#6B7280]">No reviews yet</span>
+              <span className="text-caption text-[#5d6762]">No reviews yet</span>
             )}
-            {sold > 0 && <span className="text-caption text-[#6B7280]">· {sold} Sold</span>}
+            {sold > 0 && <span className="text-caption text-[#5d6762]">· {sold} Sold</span>}
           </div>
 
           {/* Price */}
           <div className="flex items-end gap-2.5 mt-3.5 flex-wrap">
             <span className="text-heading font-extrabold">₹{Number(currentPrice).toLocaleString('en-IN')}</span>
-            {mrp > currentPrice && <span className="text-body text-[#9CA3AF] line-through mb-1.5">₹{Number(mrp).toLocaleString('en-IN')}</span>}
+            {mrp > currentPrice && <span className="text-body text-[#9aa29e] line-through mb-1.5">₹{Number(mrp).toLocaleString('en-IN')}</span>}
             {discountPct > 0 && (
               <span className="text-caption font-bold px-2.5 py-1 rounded-[8px] mb-1.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{discountPct}% off</span>
             )}
@@ -876,33 +876,33 @@ export default function MobileProductDetail() {
           {saveAmount > 0 && (
             <p className="text-label font-semibold mt-1.5" style={{ color: SUCCESS }}>You Save ₹{saveAmount.toLocaleString('en-IN')} ({discountPct}%)</p>
           )}
-          <p className="text-caption text-[#6B7280] mt-1">EMI starting from ₹{Math.ceil(Number(currentPrice) / 24).toLocaleString('en-IN')}/month</p>
+          <p className="text-caption text-[#5d6762] mt-1">EMI starting from ₹{Math.ceil(Number(currentPrice) / 24).toLocaleString('en-IN')}/month</p>
 
           {/* Variant quick specs */}
           {(activeVariant?.processor || activeVariant?.display || activeVariant?.camera || activeVariant?.battery) && (
             <div className="grid grid-cols-2 gap-2 mt-3.5">
               {activeVariant?.processor && (
-                <div className="bg-[#FFFBFB] rounded-xl px-3 py-2.5 flex items-start gap-2">
-                  <Zap size={15} className="text-[#210D35] mt-0.5 flex-shrink-0" />
-                  <div className="min-w-0"><p className="text-micro text-[#9CA3AF] uppercase tracking-wide">Processor</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.processor}</p></div>
+                <div className="bg-[#f7f6f2] rounded-xl px-3 py-2.5 flex items-start gap-2">
+                  <Zap size={15} className="text-[#0f3b2c] mt-0.5 flex-shrink-0" />
+                  <div className="min-w-0"><p className="text-micro text-[#9aa29e] uppercase tracking-wide">Processor</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.processor}</p></div>
                 </div>
               )}
               {activeVariant?.display && (
-                <div className="bg-[#FFFBFB] rounded-xl px-3 py-2.5 flex items-start gap-2">
+                <div className="bg-[#f7f6f2] rounded-xl px-3 py-2.5 flex items-start gap-2">
                   <span className="text-body mt-0.5 flex-shrink-0">📱</span>
-                  <div className="min-w-0"><p className="text-micro text-[#9CA3AF] uppercase tracking-wide">Display</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.display}</p></div>
+                  <div className="min-w-0"><p className="text-micro text-[#9aa29e] uppercase tracking-wide">Display</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.display}</p></div>
                 </div>
               )}
               {activeVariant?.camera && (
-                <div className="bg-[#FFFBFB] rounded-xl px-3 py-2.5 flex items-start gap-2">
+                <div className="bg-[#f7f6f2] rounded-xl px-3 py-2.5 flex items-start gap-2">
                   <span className="text-body mt-0.5 flex-shrink-0">📷</span>
-                  <div className="min-w-0"><p className="text-micro text-[#9CA3AF] uppercase tracking-wide">Camera</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.camera}</p></div>
+                  <div className="min-w-0"><p className="text-micro text-[#9aa29e] uppercase tracking-wide">Camera</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.camera}</p></div>
                 </div>
               )}
               {activeVariant?.battery > 0 && (
-                <div className="bg-[#FFFBFB] rounded-xl px-3 py-2.5 flex items-start gap-2">
+                <div className="bg-[#f7f6f2] rounded-xl px-3 py-2.5 flex items-start gap-2">
                   <span className="text-body mt-0.5 flex-shrink-0">🔋</span>
-                  <div className="min-w-0"><p className="text-micro text-[#9CA3AF] uppercase tracking-wide">Battery</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.battery} mAh</p></div>
+                  <div className="min-w-0"><p className="text-micro text-[#9aa29e] uppercase tracking-wide">Battery</p><p className="text-caption font-semibold leading-tight truncate">{activeVariant.battery} mAh</p></div>
                 </div>
               )}
             </div>
@@ -911,7 +911,7 @@ export default function MobileProductDetail() {
           {/* Variation list (functional) */}
           {variants.length > 0 && (
             <div className="mt-4">
-              <p className="text-micro font-bold uppercase tracking-wider text-[#6B7280] mb-2">Select Variant</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-[#5d6762] mb-2">Select Variant</p>
               <div className="flex flex-col gap-2">
                 {variants.map((v: any) => {
                   const selected = (selectedVariantId ? String(v.id) === selectedVariantId : activeVariant?.id === v.id)
@@ -920,23 +920,23 @@ export default function MobileProductDetail() {
                   const vOff = vMrp > vPrice ? Math.round((1 - vPrice / vMrp) * 100) : 0
                   return (
                     <button key={v.id} onClick={() => setSelectedVariantId(String(v.id))}
-                      className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 text-left transition active:scale-[0.99] ${selected ? 'border-transparent' : 'bg-white border-[#E5E7EB]'}`}
-                      style={selected ? { background: '#F3E8FF', borderColor: PURPLE } : undefined}>
+                      className={`w-full flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl border-2 text-left transition active:scale-[0.99] ${selected ? 'border-transparent' : 'bg-white border-[#ece9e2]'}`}
+                      style={selected ? { background: '#dfe6cf', borderColor: PURPLE } : undefined}>
                       <div className="min-w-0">
                         <p className="text-label font-bold truncate">{v.name || `${v.color || ''} ${v.storage || ''} ${v.ram || ''}`.trim()}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          {v.color && <span className="text-micro text-[#6B7280]">{v.color}</span>}
-                          {v.storage && <span className="text-micro text-[#6B7280]">· {v.storage}</span>}
-                          {v.ram && <span className="text-micro text-[#6B7280]">· {v.ram}</span>}
+                          {v.color && <span className="text-micro text-[#5d6762]">{v.color}</span>}
+                          {v.storage && <span className="text-micro text-[#5d6762]">· {v.storage}</span>}
+                          {v.ram && <span className="text-micro text-[#5d6762]">· {v.ram}</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <div className="text-right">
                           <p className="text-body-sm font-extrabold">₹{Number(vPrice).toLocaleString('en-IN')}</p>
-                          {vMrp > vPrice && <p className="text-micro text-[#9CA3AF] line-through">₹{Number(vMrp).toLocaleString('en-IN')}</p>}
+                          {vMrp > vPrice && <p className="text-micro text-[#9aa29e] line-through">₹{Number(vMrp).toLocaleString('en-IN')}</p>}
                         </div>
                         {vOff > 0 && <span className="text-micro font-bold rounded-[8px] px-1.5 py-0.5" style={{ color: SUCCESS, background: '#ECFDF5' }}>{vOff}%</span>}
-                        <span className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#210D35] bg-[#210D35]' : 'border-[#D1D5DB]'}`}>
+                        <span className={`w-5 h-5 rounded-[8px] border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-[#0f3b2c] bg-[#0f3b2c]' : 'border-[#D1D5DB]'}`}>
                           {selected && <Check size={12} className="text-white" />}
                         </span>
                       </div>
@@ -950,11 +950,11 @@ export default function MobileProductDetail() {
           {/* Color selection */}
           {colors.length > 0 && (
             <div className="mt-4">
-              <p className="text-label font-bold mb-2">Color: <span className="font-medium text-[#6B7280] capitalize">{colors[selectedColorIdx]}</span></p>
+              <p className="text-label font-bold mb-2">Color: <span className="font-medium text-[#5d6762] capitalize">{colors[selectedColorIdx]}</span></p>
               <div className="flex gap-3">
                 {colors.map((c: string, i: number) => (
                   <button key={c} onClick={() => { setSelectedColorIdx(i); setSelectedVariantId(null) }}
-                    className={`w-11 h-11 rounded-[8px] border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#210D35] scale-110 shadow-[0_4px_12px_rgba(123, 63, 208,0.35)]' : 'border-[#E5E7EB]'}`}
+                    className={`w-11 h-11 rounded-[8px] border-2 transition active:scale-90 ${i === selectedColorIdx ? 'border-[#0f3b2c] scale-110 shadow-[0_4px_12px_rgba(15,59,44,0.35)]' : 'border-[#ece9e2]'}`}
                     style={{ backgroundColor: COLOR_PALETTE[c.toLowerCase().trim()] || '#ccc' }} title={c} />
                 ))}
               </div>
@@ -968,7 +968,7 @@ export default function MobileProductDetail() {
               <div className="flex gap-2 flex-wrap">
                 {storageOptions.map((s: string, i: number) => (
                   <button key={s} onClick={() => { setSelectedStorageIdx(i); setSelectedVariantId(null) }}
-                    className={`min-w-[48px] h-11 px-3 rounded-2xl text-label font-bold border transition active:scale-95 ${i === selectedStorageIdx ? 'border-transparent text-white' : 'bg-white text-[#1F2937] border-[#E5E7EB]'}`}
+                    className={`min-w-[48px] h-11 px-3 rounded-2xl text-label font-bold border transition active:scale-95 ${i === selectedStorageIdx ? 'border-transparent text-white' : 'bg-white text-[#1d2522] border-[#ece9e2]'}`}
                     style={i === selectedStorageIdx ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                     {s}
                   </button>
@@ -984,7 +984,7 @@ export default function MobileProductDetail() {
               <div className="flex gap-2 flex-wrap">
                 {ramOptions.map((r: string, i: number) => (
                   <button key={r} onClick={() => { setSelectedRamIdx(i); setSelectedVariantId(null) }}
-                    className={`min-w-[48px] h-11 px-3 rounded-2xl text-label font-bold border transition active:scale-95 ${i === selectedRamIdx ? 'border-transparent text-white' : 'bg-white text-[#1F2937] border-[#E5E7EB]'}`}
+                    className={`min-w-[48px] h-11 px-3 rounded-2xl text-label font-bold border transition active:scale-95 ${i === selectedRamIdx ? 'border-transparent text-white' : 'bg-white text-[#1d2522] border-[#ece9e2]'}`}
                     style={i === selectedRamIdx ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
                     {r}
                   </button>
@@ -1009,7 +1009,7 @@ export default function MobileProductDetail() {
           {/* Quantity */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-label font-bold">Quantity</p>
-            <div className="flex items-center rounded-[8px] p-1" style={{ background: '#F3E8FF' }}>
+            <div className="flex items-center rounded-[8px] p-1" style={{ background: '#dfe6cf' }}>
               <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 rounded-[8px] flex items-center justify-center active:scale-90 transition" aria-label="Decrease" style={{ color: PURPLE }}>
                 <Minus size={16} />
               </button>
@@ -1030,9 +1030,9 @@ export default function MobileProductDetail() {
                 <span className="text-title flex-shrink-0">{o.icon}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-label font-bold leading-tight">{o.title}</p>
-                  <p className="text-caption text-[#6B7280] leading-tight truncate">{o.sub}</p>
+                  <p className="text-caption text-[#5d6762] leading-tight truncate">{o.sub}</p>
                 </div>
-                <ChevronRight size={18} className="text-[#9CA3AF] flex-shrink-0" />
+                <ChevronRight size={18} className="text-[#9aa29e] flex-shrink-0" />
               </button>
             ))}
           </div>
@@ -1043,7 +1043,7 @@ export default function MobileProductDetail() {
           <div className="flex items-center gap-2">
             <MapPin size={18} style={{ color: PURPLE }} />
             <span className="text-label font-bold">Delivery</span>
-            <span className="text-label text-[#6B7280]">to {deliveryPincode}</span>
+            <span className="text-label text-[#5d6762]">to {deliveryPincode}</span>
             <button
               className="ml-auto text-caption font-bold"
               style={{ color: PURPLE }}
@@ -1051,7 +1051,7 @@ export default function MobileProductDetail() {
             >Change</button>
           </div>
           <p className="text-label text-[#16A34A] font-semibold mt-2">Free delivery by tomorrow</p>
-          <p className="text-caption text-[#6B7280] mt-0.5">Order within 4 hrs 20 mins</p>
+          <p className="text-caption text-[#5d6762] mt-0.5">Order within 4 hrs 20 mins</p>
         </div>
 
         {/* Highlights grid */}
@@ -1060,7 +1060,7 @@ export default function MobileProductDetail() {
             <h2 className="text-body font-extrabold mb-3">Highlights</h2>
             <div className="grid grid-cols-2 gap-2.5">
               {features.slice(0, 6).map((f: string, i: number) => (
-                <div key={i} className="flex items-start gap-2 text-caption bg-[#FFFBFB] rounded-xl px-3 py-2.5">
+                <div key={i} className="flex items-start gap-2 text-caption bg-[#f7f6f2] rounded-xl px-3 py-2.5">
                   <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#ECFDF5' }}><Check size={13} className="text-[#16A34A]" /></span>
                   <span className="leading-tight">{f}</span>
                 </div>
@@ -1076,9 +1076,9 @@ export default function MobileProductDetail() {
             {deliveryItems.map((d, i) => {
               const Icon = d.icon
               return (
-                <div key={i} className="flex flex-col items-center gap-1.5 text-center bg-[#FFFBFB] rounded-xl px-2 py-3">
-                  <span className="w-9 h-9 rounded-[8px] flex items-center justify-center" style={{ background: '#F3E8FF', color: PURPLE }}><Icon size={16} /></span>
-                  <span className="text-micro font-medium leading-tight text-[#4B5563]">{d.label}</span>
+                <div key={i} className="flex flex-col items-center gap-1.5 text-center bg-[#f7f6f2] rounded-xl px-2 py-3">
+                  <span className="w-9 h-9 rounded-[8px] flex items-center justify-center" style={{ background: '#dfe6cf', color: PURPLE }}><Icon size={16} /></span>
+                  <span className="text-micro font-medium leading-tight text-[#5d6762]">{d.label}</span>
                 </div>
               )
             })}
@@ -1090,7 +1090,7 @@ export default function MobileProductDetail() {
           <div className={`${card} mt-3 p-4`}>
             <h2 className="text-body font-extrabold mb-2">Description</h2>
             <motion.div initial={false} animate={{ height: descOpen ? 'auto' : 60 }} className="overflow-hidden relative">
-              <p className="text-label text-[#4B5563] leading-relaxed">{description}</p>
+              <p className="text-label text-[#5d6762] leading-relaxed">{description}</p>
             </motion.div>
             <button onClick={() => setDescOpen((v) => !v)} className="mt-1 text-label font-bold" style={{ color: PURPLE }}>
               {descOpen ? 'Read Less' : 'Read More'}
@@ -1104,11 +1104,11 @@ export default function MobileProductDetail() {
             <h2 className="text-body font-extrabold mb-3">Care Instructions</h2>
             <div className="space-y-2">
               {careInstructions.map((c: string, i: number) => (
-                <div key={i} className="flex items-start gap-2.5 bg-[#FFFBFB] rounded-xl px-3 py-2.5">
-                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#F3E8FF', color: PURPLE }}>
+                <div key={i} className="flex items-start gap-2.5 bg-[#f7f6f2] rounded-xl px-3 py-2.5">
+                  <span className="w-5 h-5 rounded-[8px] flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#dfe6cf', color: PURPLE }}>
                     <span className="text-micro font-bold">{i + 1}</span>
                   </span>
-                  <span className="text-caption text-[#4B5563] leading-tight">{c}</span>
+                  <span className="text-caption text-[#5d6762] leading-tight">{c}</span>
                 </div>
               ))}
             </div>
@@ -1134,10 +1134,10 @@ export default function MobileProductDetail() {
           <AnimatePresence initial={false}>
             {specsOpen && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                <div className="mt-3 divide-y divide-[#F3E8FF]">
+                <div className="mt-3 divide-y divide-[#dfe6cf]">
                   {specGroups.map(([k, v], i) => (
                     <div key={i} className="flex items-center justify-between py-2.5">
-                      <span className="text-caption text-[#6B7280]">{k}</span>
+                      <span className="text-caption text-[#5d6762]">{k}</span>
                       <span className="text-caption font-semibold text-right max-w-[60%]">{String(v)}</span>
                     </div>
                   ))}
@@ -1157,9 +1157,9 @@ export default function MobileProductDetail() {
             <span className="text-heading font-extrabold leading-none">{productRating.count > 0 ? productRating.average.toFixed(1) : '0.0'}</span>
             <div>
               <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} fill={s <= Math.round(productRating.average) ? '#F59E0B' : 'none'} className={s <= Math.round(productRating.average) ? 'text-[#F59E0B]' : 'text-[#E5E7EB]'} />)}
+                {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} fill={s <= Math.round(productRating.average) ? '#F59E0B' : 'none'} className={s <= Math.round(productRating.average) ? 'text-[#F59E0B]' : 'text-[#ece9e2]'} />)}
               </div>
-              <p className="text-micro text-[#6B7280] mt-0.5">{productRating.count} rating{productRating.count !== 1 ? 's' : ''}</p>
+              <p className="text-micro text-[#5d6762] mt-0.5">{productRating.count} rating{productRating.count !== 1 ? 's' : ''}</p>
             </div>
           </div>
           {productRating.count > 0 && [5, 4, 3, 2, 1].map((star) => {
@@ -1167,9 +1167,9 @@ export default function MobileProductDetail() {
             const pct = productRating.count > 0 ? Math.round((count / productRating.count) * 100) : 0
             return (
               <div key={star} className="flex items-center gap-2 mt-1.5">
-                <span className="text-micro text-[#6B7280] w-3">{star}</span>
+                <span className="text-micro text-[#5d6762] w-3">{star}</span>
                 <Star size={11} fill="#F59E0B" className="text-[#F59E0B]" />
-                <div className="flex-1 h-1.5 rounded-[8px] bg-[#E5E7EB] overflow-hidden">
+                <div className="flex-1 h-1.5 rounded-[8px] bg-[#ece9e2] overflow-hidden">
                   <div className="h-full rounded-[8px]" style={{ width: `${pct}%`, background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }} />
                 </div>
               </div>
@@ -1201,18 +1201,18 @@ export default function MobileProductDetail() {
                 )}
                 <div className="mt-3 space-y-2.5">
                   {reviews.length > 0 ? reviews.map((r: any, i: number) => (
-                    <div key={r.id || i} className="bg-[#FFFBFB] rounded-2xl p-3">
+                    <div key={r.id || i} className="bg-[#f7f6f2] rounded-2xl p-3">
                       <div className="flex items-center gap-2.5">
                         <span className="w-9 h-9 rounded-[8px] flex items-center justify-center text-white font-bold text-label" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>{(r.userName || r.name || 'U').charAt(0).toUpperCase()}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-label font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#210D35]" /></p>
-                          <p className="text-micro text-[#9CA3AF]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.date}</p>
+                          <p className="text-label font-bold leading-tight flex items-center gap-1">{r.userName || r.name} <BadgeCheck size={13} className="text-[#0f3b2c]" /></p>
+                          <p className="text-micro text-[#9aa29e]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : r.date}</p>
                         </div>
                         <div className="flex items-center gap-0.5">
-                          {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={11} fill={s <= r.rating ? '#F59E0B' : 'none'} className={s <= r.rating ? 'text-[#F59E0B]' : 'text-[#E5E7EB]'} />)}
+                          {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={11} fill={s <= r.rating ? '#F59E0B' : 'none'} className={s <= r.rating ? 'text-[#F59E0B]' : 'text-[#ece9e2]'} />)}
                         </div>
                       </div>
-                      <p className="text-caption text-[#4B5563] mt-2 leading-snug">{r.comment}</p>
+                      <p className="text-caption text-[#5d6762] mt-2 leading-snug">{r.comment}</p>
                       {r.images?.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {r.images.map((url: string, j: number) => (
@@ -1222,11 +1222,11 @@ export default function MobileProductDetail() {
                           ))}
                         </div>
                       )}
-                      <span className="inline-flex items-center gap-1 text-micro font-bold text-[#210D35] mt-1.5">Verified Purchase</span>
+                      <span className="inline-flex items-center gap-1 text-micro font-bold text-[#0f3b2c] mt-1.5">Verified Purchase</span>
                     </div>
                   )) : (
                     <div className="text-center py-6">
-                      <p className="text-caption text-[#9CA3AF]">No reviews yet. Be the first to review this product!</p>
+                      <p className="text-caption text-[#9aa29e]">No reviews yet. Be the first to review this product!</p>
                     </div>
                   )}
                 </div>
@@ -1248,23 +1248,23 @@ export default function MobileProductDetail() {
                 const pMrp = p.variants?.[0]?.price && p.variants?.[0]?.discountPrice ? p.variants?.[0].price : (p.oldPrice || 0)
                 const pOff = pMrp > pPrice ? Math.round((1 - pPrice / pMrp) * 100) : 0
                 return (
-                  <div key={p.id} className="snap-start flex-shrink-0 w-[140px] bg-white rounded-2xl shadow-[0_4px_14px_rgba(123, 63, 208,0.08)] overflow-hidden">
+                  <div key={p.id} className="snap-start flex-shrink-0 w-[140px] bg-white rounded-2xl shadow-[0_4px_14px_rgba(15,59,44,0.08)] overflow-hidden">
                     <div className="relative">
-                      <button onClick={() => navigate(`/product/${p.id}`)} className="block w-full h-[130px] bg-[#FFFBFB] flex items-center justify-center">
+                      <button onClick={() => navigate(`/product/${p.id}`)} className="block w-full h-[130px] bg-[#f7f6f2] flex items-center justify-center">
                         <img src={getImageUrl(p.image) || getProductImage(p) || FALLBACK_IMG} alt={p.name} className="w-full h-full object-contain p-2" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                       </button>
                       {pOff > 0 && (
                         <span className="absolute top-2 left-2 text-micro font-bold text-white px-2 py-0.5 rounded-[8px] bg-gradient-to-r from-[#EF4444] to-[#F97316]">{pOff}% off</span>
                       )}
                       <button onClick={() => { if (!authService.isAuthenticated()) { sessionStorage.setItem('redirect_after_login', window.location.pathname); navigate('/login'); return } const wl = new Set<number>((JSON.parse(localStorage.getItem('wishlist') || '[]') as any[]).map((x: any) => typeof x === 'number' ? x : x.id)); if (wl.has(Number(p.id))) wl.delete(Number(p.id)); else wl.add(Number(p.id)); localStorage.setItem('wishlist', JSON.stringify(Array.from(wl))); window.dispatchEvent(new Event('wishlist-updated')); showToast('Wishlist updated', 'success') }} aria-label="Wishlist" className="absolute top-2 right-2 w-7 h-7 rounded-[8px] bg-white shadow flex items-center justify-center">
-                        <Heart size={13} className="text-[#210D35]" />
+                        <Heart size={13} className="text-[#0f3b2c]" />
                       </button>
                     </div>
                     <div className="p-2.5">
                       <p className="text-caption font-semibold line-clamp-2 leading-tight h-8 overflow-hidden">{p.name}</p>
                       <div className="flex items-center gap-1.5 mt-1">
                         <span className="text-label font-bold">₹{Number(pPrice).toLocaleString('en-IN')}</span>
-                        {pOff > 0 && <span className="text-micro text-[#9CA3AF] line-through">₹{Number(pMrp).toLocaleString('en-IN')}</span>}
+                        {pOff > 0 && <span className="text-micro text-[#9aa29e] line-through">₹{Number(pMrp).toLocaleString('en-IN')}</span>}
                       </div>
                       <button onClick={(e) => addRelatedToCart(p, e)} disabled={relatedLoading[p.id]} className={`mt-2 w-full h-9 rounded-xl text-caption font-bold active:scale-95 transition flex items-center justify-center gap-1 ${relatedFlash[p.id] ? 'bg-[#ECFDF5] text-[#16A34A]' : 'text-white'}`} style={relatedFlash[p.id] ? { border: '1.5px solid #16A34A' } : { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>
                         {relatedLoading[p.id] ? <Loader2 size={13} className="animate-spin" /> : relatedFlash[p.id] ? <Check size={13} /> : null}
@@ -1282,16 +1282,16 @@ export default function MobileProductDetail() {
       )}
 
       {/* Sticky bottom action bar */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2.5 bg-white/95 backdrop-blur-xl flex items-center gap-2.5 border-t border-[#EEF1F4]" style={{ boxShadow: '0 -5px 25px rgba(0,0,0,0.10)' }}>
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[480px] px-3 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-2.5 bg-white/95 backdrop-blur-xl flex items-center gap-2.5 border-t border-[#ece9e2]" style={{ boxShadow: '0 -5px 25px rgba(0,0,0,0.10)' }}>
         {/* Wishlist icon button */}
         <button
           onClick={toggleWishlist}
           aria-label="Wishlist"
           className="w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-0.5 active:scale-95 transition flex-shrink-0 border"
-          style={wished ? { background: '#FEE2F2', borderColor: '#FBCFE8' } : { background: '#FFFBFB', borderColor: '#E5E7EB' }}
+          style={wished ? { background: '#f7f6f2', borderColor: '#f7f6f2' } : { background: '#f7f6f2', borderColor: '#ece9e2' }}
         >
-          <Heart size={20} className={wished ? 'text-[#EC4899] fill-[#EC4899]' : 'text-[#210D35]'} />
-          <span className="text-micro font-bold" style={{ color: wished ? '#EC4899' : '#210D35' }}>Save</span>
+          <Heart size={20} className={wished ? 'text-[#f08a7b] fill-[#f08a7b]' : 'text-[#0f3b2c]'} />
+          <span className="text-micro font-bold" style={{ color: wished ? '#f08a7b' : '#0f3b2c' }}>Save</span>
         </button>
 
         <div className="flex-1 flex items-center gap-2.5">
@@ -1313,7 +1313,7 @@ export default function MobileProductDetail() {
           <button
             onClick={handleBuyNow}
             disabled={!inStock || isAdding || isBuying}
-            className="flex-1 h-14 rounded-2xl font-bold text-body-sm text-white shadow-[0_8px_20px_rgba(123, 63, 208,0.35)] active:scale-[0.98] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+            className="flex-1 h-14 rounded-2xl font-bold text-body-sm text-white shadow-[0_8px_20px_rgba(15,59,44,0.35)] active:scale-[0.98] transition disabled:opacity-50 flex items-center justify-center gap-1.5"
             style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}
           >
             {isBuying ? <Loader2 size={17} className="animate-spin" /> : <Zap size={17} fill="white" />}

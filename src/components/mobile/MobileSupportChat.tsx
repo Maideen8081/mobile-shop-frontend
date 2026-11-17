@@ -9,8 +9,8 @@ import {
   useSupportChat,
 } from '../ecommerce/useSupportChat'
 
-const PURPLE = '#210D35'
-const gradient = 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)'
+const PURPLE = '#0f3b2c'
+const gradient = 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)'
 
 export default function MobileSupportChat() {
   const navigate = useNavigate()
@@ -18,7 +18,7 @@ export default function MobileSupportChat() {
   const showStarters = messages.length <= 1
 
   return (
-    <div className="h-[100dvh] bg-[#FFFBFB] max-w-[480px] mx-auto flex flex-col overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Header */}
       <header
         className="flex-shrink-0 px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-4 text-white"
@@ -63,13 +63,13 @@ export default function MobileSupportChat() {
                 <ChatAssistantIcon size={16} />
               </span>
               <div className="bg-white rounded-2xl rounded-bl-[6px] px-3.5 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] min-w-0">
-                <p className="text-body-sm leading-snug text-[#1F2937] whitespace-pre-wrap break-words">{m.text}</p>
-                <time className="block text-micro text-[#9CA3AF] mt-1">{m.time}</time>
+                <p className="text-body-sm leading-snug text-[#1d2522] whitespace-pre-wrap break-words">{m.text}</p>
+                <time className="block text-micro text-[#9aa29e] mt-1">{m.time}</time>
               </div>
             </div>
           ) : (
             <div key={m.id} className="flex justify-end">
-              <div className="max-w-[80%] rounded-2xl rounded-br-[6px] px-3.5 py-2.5 text-white shadow-[0_4px_14px_rgba(123, 63, 208,0.25)]" style={{ background: gradient }}>
+              <div className="max-w-[80%] rounded-2xl rounded-br-[6px] px-3.5 py-2.5 text-white shadow-[0_4px_14px_rgba(15,59,44,0.25)]" style={{ background: gradient }}>
                 <p className="text-body-sm leading-snug whitespace-pre-wrap break-words">{m.text}</p>
                 <time className="block text-micro text-white/75 mt-1 text-right">{m.time}</time>
               </div>
@@ -84,7 +84,7 @@ export default function MobileSupportChat() {
             </span>
             <div className="bg-white rounded-2xl rounded-bl-[6px] px-4 py-3.5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] flex gap-1">
               {[0, 150, 300].map((d) => (
-                <i key={d} className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                <i key={d} className="w-1.5 h-1.5 rounded-full bg-[#9aa29e] animate-bounce" style={{ animationDelay: `${d}ms` }} />
               ))}
             </div>
           </div>
@@ -92,18 +92,18 @@ export default function MobileSupportChat() {
 
         {showStarters && (
           <div className="pt-3">
-            <h2 className="text-micro font-semibold uppercase tracking-wide text-[#6B7280] mb-2">Popular help</h2>
+            <h2 className="text-micro font-semibold uppercase tracking-wide text-[#5d6762] mb-2">Popular help</h2>
             <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.06)] divide-y divide-[#F3F4F6] overflow-hidden">
               {helpLinks.map((item) => {
                 const Icon = item.icon
                 return (
-                  <Link key={item.to} to={item.to} className="flex items-center gap-3 px-4 py-3 active:bg-[#FFF5F5]">
-                    <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(123, 63, 208,0.1)', color: PURPLE }}>
+                  <Link key={item.to} to={item.to} className="flex items-center gap-3 px-4 py-3 active:bg-[#f7f6f2]">
+                    <span className="w-9 h-9 rounded-[8px] flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(15,59,44,0.1)', color: PURPLE }}>
                       <Icon size={17} />
                     </span>
                     <span className="flex-1 min-w-0">
-                      <strong className="block text-label font-semibold text-[#1F2937] truncate">{item.title}</strong>
-                      <em className="block not-italic text-micro text-[#6B7280] truncate">{item.desc}</em>
+                      <strong className="block text-label font-semibold text-[#1d2522] truncate">{item.title}</strong>
+                      <em className="block not-italic text-micro text-[#5d6762] truncate">{item.desc}</em>
                     </span>
                     <ChevronRight size={16} className="text-[#D1D5DB] flex-shrink-0" />
                   </Link>
@@ -123,7 +123,7 @@ export default function MobileSupportChat() {
               type="button"
               onClick={() => send(q)}
               className="flex-shrink-0 h-9 px-3.5 rounded-full bg-white border text-caption font-semibold whitespace-nowrap active:scale-95 transition"
-              style={{ borderColor: 'rgba(123, 63, 208,0.3)', color: PURPLE }}
+              style={{ borderColor: 'rgba(15,59,44,0.3)', color: PURPLE }}
             >
               {q}
             </button>
@@ -132,7 +132,7 @@ export default function MobileSupportChat() {
       )}
 
       {/* Input */}
-      <div className="flex-shrink-0 bg-white border-t border-[#EEF0F6] px-3 pt-2.5 pb-[calc(env(safe-area-inset-bottom)+10px)]">
+      <div className="flex-shrink-0 bg-white border-t border-[#ece9e2] px-3 pt-2.5 pb-[calc(env(safe-area-inset-bottom)+10px)]">
         <form
           className="flex items-center gap-2"
           onSubmit={(e) => {
@@ -147,7 +147,7 @@ export default function MobileSupportChat() {
             aria-label="Type your message"
             autoComplete="off"
             enterKeyHint="send"
-            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#EEF0F6] text-body text-[#1F2937] placeholder:text-[#9CA3AF] outline-none focus:border-[#210D35]"
+            className="flex-1 min-w-0 h-11 px-4 rounded-full bg-[#F7F7F9] border border-[#ece9e2] text-body text-[#1d2522] placeholder:text-[#9aa29e] outline-none focus:border-[#0f3b2c]"
           />
           <button
             type="submit"
@@ -159,7 +159,7 @@ export default function MobileSupportChat() {
             <Send size={18} />
           </button>
         </form>
-        <p className="text-micro text-[#9CA3AF] text-center mt-1.5">
+        <p className="text-micro text-[#9aa29e] text-center mt-1.5">
           Automated assistant · it can’t look up your orders or repairs — see{' '}
           <a href="/orders" className="font-semibold" style={{ color: PURPLE }}>My Orders</a> and{' '}
           <a href="/my-repairs" className="font-semibold" style={{ color: PURPLE }}>My Repairs</a>

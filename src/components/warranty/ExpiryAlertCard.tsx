@@ -35,7 +35,7 @@ export default function ExpiryAlertCard({ alert, onSendReminder, onExtendWarrant
       whileHover={{ y: -4, boxShadow: '0 24px 60px rgba(0,0,0,0.06)' }}
       className="relative rounded-xl bg-bg-card border border-border p-5 overflow-hidden group"
     >
-      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-[8px] blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#210D35' : isWarning ? '#210D35' : '#3A1E52'}, transparent)` }} />
+      <div className="absolute -top-12 -right-12 w-32 h-32 rounded-[8px] blur-3xl group-hover:scale-150 transition-transform duration-700 opacity-20" style={{ background: `radial-gradient(circle, ${isCritical ? '#0f3b2c' : isWarning ? '#0f3b2c' : '#18503c'}, transparent)` }} />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">

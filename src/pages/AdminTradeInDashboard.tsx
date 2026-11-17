@@ -103,7 +103,7 @@ function WorkflowPanel({ trade, onUpdated }: { trade: TradeInSubmission; onUpdat
 
   if (['paid', 'rejected', 'cancelled'].includes(trade.status)) {
     return (
-      <div className={`rounded-xl p-4 text-sm ${trade.status === 'paid' ? 'bg-[#ecfdf3] text-[#067647]' : 'bg-[#fef3f2] text-[#b42318]'}`}>
+      <div className={`rounded-xl p-4 text-sm ${trade.status === 'paid' ? 'bg-[#ecfdf3] text-[#067647]' : 'bg-[#fbe1d8] text-[#a8261b]'}`}>
         {trade.status === 'paid' ? (
           <>Paid {formatINR(trade.finalValue ?? 0)} via {PAYMENT_METHODS.find((m) => m.value === trade.paymentMethod)?.label ?? trade.paymentMethod}. This trade-in is closed.</>
         ) : (
@@ -260,11 +260,11 @@ function TradeDrawer({
                       <li key={label} className="flex-1 flex items-center last:flex-none">
                         <span className="flex flex-col items-center gap-1.5">
                           <span className={`w-6 h-6 rounded-full text-[11px] font-bold flex items-center justify-center ${
-                            i <= stepIndex ? 'bg-[#101828] text-white' : 'bg-surface-lighter text-text-muted ring-1 ring-inset ring-border'
+                            i <= stepIndex ? 'bg-[#1d2522] text-white' : 'bg-surface-lighter text-text-muted ring-1 ring-inset ring-border'
                           }`}>{i < stepIndex || trade.status === 'paid' ? '✓' : i + 1}</span>
                           <span className={`text-[11px] ${i <= stepIndex ? 'text-text-primary font-medium' : 'text-text-muted'}`}>{label}</span>
                         </span>
-                        {i < 3 && <span className={`flex-1 h-px mx-2 mb-5 ${i < stepIndex ? 'bg-[#101828]' : 'bg-border'}`} />}
+                        {i < 3 && <span className={`flex-1 h-px mx-2 mb-5 ${i < stepIndex ? 'bg-[#1d2522]' : 'bg-border'}`} />}
                       </li>
                     ))}
                   </ol>
@@ -327,7 +327,7 @@ function TradeDrawer({
               {trade.status !== 'paid' && (
                 <div className="p-4 border-t border-border-light bg-[#fcfcfd] shrink-0">
                   <button type="button" onClick={() => setConfirmDelete(true)}
-                    className="w-full h-9 rounded-[10px] text-sm font-medium text-text-label hover:text-danger hover:bg-[#fef3f2] inline-flex items-center justify-center gap-2 transition">
+                    className="w-full h-9 rounded-[10px] text-sm font-medium text-text-label hover:text-danger hover:bg-[#fbe1d8] inline-flex items-center justify-center gap-2 transition">
                     <FiTrash2 size={14} /> Delete trade-in
                   </button>
                 </div>

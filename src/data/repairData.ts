@@ -1,5 +1,5 @@
 export const repairKPIs = [
-  { id: 1, title: 'Active Repairs', value: 24, suffix: '', growth: 12.5, trend: 'up' as const, subtitle: 'vs yesterday', color: '#8b5cf6', bgGlow: 'rgba(139,92,246,0.12)', icon: 'FiTool', sparkline: [18, 22, 20, 28, 24, 30, 26, 32, 28, 35] },
+  { id: 1, title: 'Active Repairs', value: 24, suffix: '', growth: 12.5, trend: 'up' as const, subtitle: 'vs yesterday', color: '#18503c', bgGlow: 'rgba(24,80,60,0.12)', icon: 'FiTool', sparkline: [18, 22, 20, 28, 24, 30, 26, 32, 28, 35] },
   { id: 2, title: 'Devices Received Today', value: 8, suffix: '', growth: 14.3, trend: 'up' as const, subtitle: 'new today', color: '#4f6bff', bgGlow: 'rgba(79,107,255,0.12)', icon: 'FiSmartphone', sparkline: [3, 5, 4, 7, 6, 8, 5, 9, 7, 10] },
   { id: 3, title: 'In Progress', value: 15, suffix: '', growth: -5.2, trend: 'down' as const, subtitle: 'being repaired', color: '#f59e0b', bgGlow: 'rgba(245,158,11,0.12)', icon: 'FiClock', sparkline: [12, 14, 13, 16, 15, 18, 17, 20, 18, 15] },
   { id: 4, title: 'Waiting for Parts', value: 6, suffix: '', growth: -8.1, trend: 'down' as const, subtitle: 'parts on order', color: '#ef4444', bgGlow: 'rgba(239,68,68,0.12)', icon: 'FiPackage', sparkline: [8, 7, 9, 6, 8, 5, 7, 4, 6, 6] },
@@ -41,7 +41,7 @@ export interface RepairTechnician {
 }
 
 export const repairTechnicians: RepairTechnician[] = [
-  { id: 1, name: 'Rajesh Kumar', avatar: 'RK', role: 'Senior Technician', active: true, speciality: 'Hardware', efficiency: 96, repairs: 142, rating: 4.9, online: true, color: '#8b5cf6' },
+  { id: 1, name: 'Rajesh Kumar', avatar: 'RK', role: 'Senior Technician', active: true, speciality: 'Hardware', efficiency: 96, repairs: 142, rating: 4.9, online: true, color: '#18503c' },
   { id: 2, name: 'Priya Sharma', avatar: 'PS', role: 'Technician', active: true, speciality: 'Software', efficiency: 93, repairs: 128, rating: 4.8, online: true, color: '#4f6bff' },
   { id: 3, name: 'Amit Singh', avatar: 'AS', role: 'Technician', active: true, speciality: 'Display', efficiency: 88, repairs: 98, rating: 4.6, online: false, color: '#22c55e' },
   { id: 4, name: 'Sneha Patel', avatar: 'SP', role: 'Junior Technician', active: true, speciality: 'Battery', efficiency: 91, repairs: 85, rating: 4.7, online: true, color: '#f59e0b' },
@@ -226,7 +226,7 @@ export const repairAnalytics = {
     { month: 'Jun', completed: 105, received: 110, revenue: 398000 },
   ],
   issueDistribution: [
-    { name: 'Screen Repair', value: 35, color: '#8b5cf6' },
+    { name: 'Screen Repair', value: 35, color: '#18503c' },
     { name: 'Battery', value: 22, color: '#4f6bff' },
     { name: 'Software', value: 18, color: '#22c55e' },
     { name: 'Camera', value: 12, color: '#f59e0b' },

@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════════
    HOME PAGE THEME
-   Warm cream canvas · deep purple ink · soft lavender accents ·
+   Warm cream canvas · deep green ink · soft sage accents ·
    turbo / sunshine yellow highlights.
 
    Everything here is scoped under `.home-theme`, which is only added to
@@ -10,21 +10,21 @@
 
 .home-theme {
   /* ── Palette ── */
-  --home-cream: #fff7f3;
+  --home-cream: #f7f6f2;
   --home-cream-soft: #fff1ea;
-  --home-cream-deep: #f6e4da;
-  --home-purple: #210d35;
-  --home-purple-soft: #3a1e52;
-  --home-purple-muted: #5f4a70;
-  --home-lavender: #d0adff;
-  --home-lavender-soft: rgba(208, 173, 255, 0.24);
-  --home-lavender-line: rgba(33, 13, 53, 0.12);
-  --home-yellow: #f0e100; /* Turbo Yellow */
-  --home-sunshine: #ffd014; /* Sunshine Yellow */
+  --home-cream-deep: #e9e3d4;
+  --home-green: #0f3b2c;
+  --home-green-soft: #18503c;
+  --home-green-muted: #5d6762;
+  --home-sage: #dfe8b4;
+  --home-sage-soft: rgba(223,232,180, 0.24);
+  --home-sage-line: rgba(15,59,44, 0.12);
+  --home-yellow: #dfe8b4; /* Turbo Yellow */
+  --home-sunshine: #dfe8b4; /* Sunshine Yellow */
 
   color-scheme: light;
   background: var(--home-cream);
-  color: var(--home-purple);
+  color: var(--home-green);
 
   /* ── Tailwind theme tokens (inherited by every Home descendant) ── */
   --color-background: var(--home-cream);
@@ -32,201 +32,201 @@
   --color-surface-dim: var(--home-cream-deep);
   --color-surface-bright: #ffffff;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f7efff;
-  --color-surface-container: #f3e8ff;
-  --color-surface-container-high: #ecdcff;
-  --color-surface-container-highest: #e4d2fb;
-  --color-surface-variant: #f3e8ff;
-  --color-surface-tint: var(--home-purple);
+  --color-surface-container-low: #f7f6f2;
+  --color-surface-container: #dfe6cf;
+  --color-surface-container-high: #dfe6cf;
+  --color-surface-container-highest: #dfe6cf;
+  --color-surface-variant: #dfe6cf;
+  --color-surface-tint: var(--home-green);
 
-  --color-on-background: var(--home-purple);
-  --color-on-surface: var(--home-purple);
-  --color-on-surface-variant: var(--home-purple-muted);
-  --color-outline: var(--home-purple-muted);
-  --color-outline-variant: var(--home-lavender-line);
+  --color-on-background: var(--home-green);
+  --color-on-surface: var(--home-green);
+  --color-on-surface-variant: var(--home-green-muted);
+  --color-outline: var(--home-green-muted);
+  --color-outline-variant: var(--home-sage-line);
 
-  --color-primary: var(--home-purple);
-  --color-on-primary: #fff7f3;
-  --color-primary-container: #2e1544;
-  --color-on-primary-container: var(--home-lavender);
+  --color-primary: var(--home-green);
+  --color-on-primary: #f7f6f2;
+  --color-primary-container: #18503c;
+  --color-on-primary-container: var(--home-sage);
 
-  --color-secondary: var(--home-purple);
-  --color-on-secondary: #fff7f3;
-  --color-secondary-container: var(--home-lavender-soft);
-  --color-on-secondary-container: var(--home-purple);
-  --color-secondary-fixed: var(--home-lavender-soft);
-  --color-secondary-fixed-dim: rgba(208, 173, 255, 0.5);
-  --color-on-secondary-fixed: var(--home-purple);
-  --color-on-secondary-fixed-variant: var(--home-purple);
+  --color-secondary: var(--home-green);
+  --color-on-secondary: #f7f6f2;
+  --color-secondary-container: var(--home-sage-soft);
+  --color-on-secondary-container: var(--home-green);
+  --color-secondary-fixed: var(--home-sage-soft);
+  --color-secondary-fixed-dim: rgba(223,232,180, 0.5);
+  --color-on-secondary-fixed: var(--home-green);
+  --color-on-secondary-fixed-variant: var(--home-green);
 
-  --color-pf-red: var(--home-purple);
-  --color-pf-red-dark: var(--home-purple-soft);
-  --color-pf-red-deep: #170826;
-  --color-pf-ink: var(--home-purple);
-  --color-pf-muted: var(--home-purple-muted);
-  --color-pf-line: var(--home-lavender-line);
+  --color-pf-red: var(--home-green);
+  --color-pf-red-dark: var(--home-green-soft);
+  --color-pf-red-deep: #0b2e22;
+  --color-pf-ink: var(--home-green);
+  --color-pf-muted: var(--home-green-muted);
+  --color-pf-line: var(--home-sage-line);
   --color-pf-soft: var(--home-cream-soft);
   --color-gold: var(--home-sunshine);
-  --color-mint: var(--home-purple);
+  --color-mint: var(--home-green);
 
   /* ── SiteTopNav variables (nav is rendered inside the Home wrapper) ── */
-  --pf-red: var(--home-purple);
-  --pf-red-dark: var(--home-purple-soft);
-  --pf-red-deep: #170826;
-  --pf-red-glow: rgba(33, 13, 53, 0.18);
-  --pf-red-tint: rgba(208, 173, 255, 0.26);
-  --pf-ink: var(--home-purple);
-  --pf-muted: var(--home-purple-muted);
-  --pf-border: var(--home-lavender-line);
+  --pf-red: var(--home-green);
+  --pf-red-dark: var(--home-green-soft);
+  --pf-red-deep: #0b2e22;
+  --pf-red-glow: rgba(15,59,44, 0.18);
+  --pf-red-tint: rgba(223,232,180, 0.26);
+  --pf-ink: var(--home-green);
+  --pf-muted: var(--home-green-muted);
+  --pf-border: var(--home-sage-line);
   --pf-soft: var(--home-cream-soft);
   --pf-white: var(--home-cream);
-  --pf-drop-bg: var(--home-purple);
-  --pf-drop-border: rgba(208, 173, 255, 0.22);
-  --pf-drop-text: #fff7f3;
-  --pf-drop-muted: rgba(255, 247, 243, 0.62);
-  --pf-drop-hover: rgba(208, 173, 255, 0.18);
-  --pf-drop-shadow: 0 24px 60px rgba(33, 13, 53, 0.4);
+  --pf-drop-bg: var(--home-green);
+  --pf-drop-border: rgba(223,232,180, 0.22);
+  --pf-drop-text: #f7f6f2;
+  --pf-drop-muted: rgba(247,246,242, 0.62);
+  --pf-drop-hover: rgba(223,232,180, 0.18);
+  --pf-drop-shadow: 0 24px 60px rgba(15,59,44, 0.4);
 
   /* Shared mobile cart bar elevation (defaults live in index.css). */
-  --mcb-shadow-12: rgba(33, 13, 53, 0.12);
-  --mcb-shadow-18: rgba(33, 13, 53, 0.18);
-  --mcb-shadow-38: rgba(33, 13, 53, 0.38);
+  --mcb-shadow-12: rgba(15,59,44, 0.12);
+  --mcb-shadow-18: rgba(15,59,44, 0.18);
+  --mcb-shadow-38: rgba(15,59,44, 0.38);
 }
 
 .home-theme ::selection {
-  background: rgba(208, 173, 255, 0.55);
-  color: var(--home-purple);
+  background: rgba(223,232,180, 0.55);
+  color: var(--home-green);
 }
 
 /* ─── Footer ─────────────────────────────────────────────────────────── */
 
 .home-theme .pff {
   --pff-bg: var(--home-cream);
-  --pff-ink: var(--home-purple);
-  --pff-text: var(--home-purple-muted);
-  --pff-muted: #7c668a;
-  --pff-line: var(--home-lavender-line);
-  --pff-red: var(--home-purple);
-  --pff-red-deep: var(--home-purple-soft);
+  --pff-ink: var(--home-green);
+  --pff-text: var(--home-green-muted);
+  --pff-muted: #5d6762;
+  --pff-line: var(--home-sage-line);
+  --pff-red: var(--home-green);
+  --pff-red-deep: var(--home-green-soft);
 }
 .home-theme .pff-logo-mark {
-  box-shadow: 0 8px 20px rgba(33, 13, 53, 0.25);
+  box-shadow: 0 8px 20px rgba(15,59,44, 0.25);
 }
 
 /* ─── Buttons ────────────────────────────────────────────────────────── */
 
 .home-theme .btn-primary {
-  background: var(--home-purple);
-  color: #fff7f3;
-  box-shadow: 0 10px 26px rgba(33, 13, 53, 0.18);
+  background: var(--home-green);
+  color: #f7f6f2;
+  box-shadow: 0 10px 26px rgba(15,59,44, 0.18);
 }
 .home-theme .btn-primary:hover {
-  background: var(--home-purple-soft);
-  box-shadow: 0 14px 36px rgba(33, 13, 53, 0.28);
+  background: var(--home-green-soft);
+  box-shadow: 0 14px 36px rgba(15,59,44, 0.28);
 }
 
 .home-theme .btn-quiet {
-  background: rgba(208, 173, 255, 0.18);
-  color: var(--home-purple);
-  border-color: rgba(33, 13, 53, 0.18);
+  background: rgba(223,232,180, 0.18);
+  color: var(--home-green);
+  border-color: rgba(15,59,44, 0.18);
 }
 .home-theme .btn-quiet:hover {
-  background: rgba(208, 173, 255, 0.4);
-  border-color: rgba(33, 13, 53, 0.32);
+  background: rgba(223,232,180, 0.4);
+  border-color: rgba(15,59,44, 0.32);
 }
 .home-theme .btn-quiet.is-active {
-  background: var(--home-purple);
-  color: #fff7f3;
+  background: var(--home-green);
+  color: #f7f6f2;
   border-color: transparent;
 }
 
 .home-theme .btn-outline {
-  background: rgba(255, 247, 243, 0.08);
-  color: #fff7f3;
-  border-color: rgba(208, 173, 255, 0.45);
+  background: rgba(247,246,242, 0.08);
+  color: #f7f6f2;
+  border-color: rgba(223,232,180, 0.45);
 }
 .home-theme .btn-outline:hover {
-  background: rgba(208, 173, 255, 0.2);
-  border-color: rgba(208, 173, 255, 0.8);
+  background: rgba(223,232,180, 0.2);
+  border-color: rgba(223,232,180, 0.8);
 }
 
 .home-theme .btn-icon {
   background: #fff;
-  color: var(--home-purple);
-  border-color: rgba(33, 13, 53, 0.16);
-  box-shadow: 0 8px 24px rgba(33, 13, 53, 0.1);
+  color: var(--home-green);
+  border-color: rgba(15,59,44, 0.16);
+  box-shadow: 0 8px 24px rgba(15,59,44, 0.1);
 }
 .home-theme .btn-icon:hover {
-  background: var(--home-purple);
-  color: #fff7f3;
+  background: var(--home-green);
+  color: #f7f6f2;
 }
 
 /* ─── Section headings ───────────────────────────────────────────────── */
 
 .home-theme .sec-eyebrow {
-  background: rgba(208, 173, 255, 0.26);
-  border-color: rgba(33, 13, 53, 0.14);
-  color: var(--home-purple);
+  background: rgba(223,232,180, 0.26);
+  border-color: rgba(15,59,44, 0.14);
+  color: var(--home-green);
 }
 .home-theme .sec-ul {
-  color: var(--home-purple);
+  color: var(--home-green);
 }
 .home-theme .sec-ul__svg {
-  stroke: #b78af0;
+  stroke: #7fae5b;
 }
 
 /* ─── Surfaces / cards ───────────────────────────────────────────────── */
 
 .home-theme .glass-card {
-  background: rgba(255, 247, 243, 0.82);
-  border-color: rgba(33, 13, 53, 0.08);
-  box-shadow: 0 4px 24px rgba(33, 13, 53, 0.05);
+  background: rgba(247,246,242, 0.82);
+  border-color: rgba(15,59,44, 0.08);
+  box-shadow: 0 4px 24px rgba(15,59,44, 0.05);
 }
 .home-theme .glass-card:hover {
-  box-shadow: 0 14px 44px rgba(33, 13, 53, 0.1);
-  border-color: rgba(33, 13, 53, 0.16);
+  box-shadow: 0 14px 44px rgba(15,59,44, 0.1);
+  border-color: rgba(15,59,44, 0.16);
 }
 
 .home-theme .bg-gradient-subtle {
-  background: linear-gradient(135deg, rgba(208, 173, 255, 0.26) 0%, rgba(33, 13, 53, 0.04) 100%);
+  background: linear-gradient(135deg, rgba(223,232,180, 0.26) 0%, rgba(15,59,44, 0.04) 100%);
 }
 .home-theme .shadow-red-subtle {
-  box-shadow: 0 4px 24px rgba(33, 13, 53, 0.06);
+  box-shadow: 0 4px 24px rgba(15,59,44, 0.06);
 }
 .home-theme .shadow-red-medium {
-  box-shadow: 0 8px 40px rgba(33, 13, 53, 0.1);
+  box-shadow: 0 8px 40px rgba(15,59,44, 0.1);
 }
 .home-theme .shadow-red-strong {
-  box-shadow: 0 12px 60px rgba(33, 13, 53, 0.14);
+  box-shadow: 0 12px 60px rgba(15,59,44, 0.14);
 }
 
 
-/* Refurbished rail arrows keep the same purple/lavender treatment. */
+/* Refurbished rail arrows keep the same green/sage treatment. */
 .home-theme .rfc-arrow {
-  border-color: rgba(33, 13, 53, 0.16);
-  color: var(--home-purple);
+  border-color: rgba(15,59,44, 0.16);
+  color: var(--home-green);
 }
 .home-theme .rfc-arrow:hover {
-  box-shadow: 0 10px 24px rgba(33, 13, 53, 0.18);
+  box-shadow: 0 10px 24px rgba(15,59,44, 0.18);
 }
 .home-theme .rfc-vc:hover {
-  box-shadow: 0 10px 22px rgba(33, 13, 53, 0.28);
+  box-shadow: 0 10px 22px rgba(15,59,44, 0.28);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
    HERO VIDEO
    Full-screen video carousel. Primary CTA pops in Sunshine Yellow;
-   the outline button stays cream/lavender over the footage.
+   the outline button stays cream/sage over the footage.
    ══════════════════════════════════════════════════════════════════════ */
 
 .home-theme .home-hero .home-hero__cta {
   background: var(--home-sunshine);
-  color: var(--home-purple);
-  box-shadow: 0 14px 34px -10px rgba(255, 208, 20, 0.6);
+  color: var(--home-green);
+  box-shadow: 0 14px 34px -10px rgba(223,232,180, 0.6);
 }
 .home-theme .home-hero .home-hero__cta:hover {
   background: var(--home-yellow);
-  box-shadow: 0 18px 40px -10px rgba(240, 225, 0, 0.65);
+  box-shadow: 0 18px 40px -10px rgba(223,232,180, 0.65);
 }
 
 /* Fill the screen below the fixed nav (SiteTopNav publishes --pfn-h). */
@@ -238,17 +238,17 @@
   min-height: 0;
 }
 .home-theme .home-hero__content {
-  padding-top: calc(var(--pfn-h, 210px) + 12px);
+  padding-top: 16px;
 }
 .home-theme .home-hero__scrim {
-  height: calc(var(--pfn-h, 210px) + 120px);
+  height: 16px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 55%, transparent 100%);
   pointer-events: none;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
    YELLOW HIGHLIGHTS ACROSS SECTIONS
-   Purple carries the structure, lavender the soft surfaces, and the two
+   green carries the structure, sage the soft surfaces, and the two
    yellows mark the things that should catch the eye: underlines, badges,
    prices and "deal" moments.
    ══════════════════════════════════════════════════════════════════════ */
@@ -258,7 +258,7 @@
   stroke: var(--home-sunshine);
 }
 .home-theme .sec-eyebrow .material-symbols-outlined {
-  color: #7b3fd0;
+  color: #0f3b2c;
 }
 
 
@@ -268,44 +268,44 @@
 }
 .home-theme .btn-quiet.is-active {
   background: var(--home-sunshine);
-  color: var(--home-purple);
+  color: var(--home-green);
 }
 
 /* Footer accents */
 .home-theme .pff a:hover {
-  color: #7b3fd0;
+  color: #0f3b2c;
 }
 
 /* Floating support chat button (rendered outside the Home wrapper). */
 body:has(.home-theme) .support-chat-button-inner {
-  background: radial-gradient(140% 140% at 30% 20%, #3a1e52 0%, #210d35 60%, #12061f 100%);
-  border-color: rgba(208, 173, 255, 0.35);
+  background: radial-gradient(140% 140% at 30% 20%, #18503c 0%, #0f3b2c 60%, #0b2e22 100%);
+  border-color: rgba(223,232,180, 0.35);
   box-shadow:
-    0 16px 40px rgba(33, 13, 53, 0.45),
-    0 0 0 6px rgba(208, 173, 255, 0.14),
-    0 0 28px rgba(208, 173, 255, 0.28),
+    0 16px 40px rgba(15,59,44, 0.45),
+    0 0 0 6px rgba(223,232,180, 0.14),
+    0 0 28px rgba(223,232,180, 0.28),
     inset 0 1px 3px rgba(255, 255, 255, 0.12),
     inset 0 -4px 10px rgba(0, 0, 0, 0.4);
 }
 body:has(.home-theme) .support-chat-button-ring {
-  border-color: rgba(255, 208, 20, 0.6);
+  border-color: rgba(223,232,180, 0.6);
 }
 body:has(.home-theme) .support-chat-popup-badge {
-  color: #210d35;
-  background: rgba(255, 208, 20, 0.35);
+  color: #0f3b2c;
+  background: rgba(223,232,180, 0.35);
 }
 body:has(.home-theme) .support-chat-popup-cta {
-  background: linear-gradient(135deg, #3a1e52 0%, #210d35 100%);
-  color: #fff7f3;
+  background: linear-gradient(135deg, #18503c 0%, #0f3b2c 100%);
+  color: #f7f6f2;
 }
 body:has(.home-theme) .support-chat-wrapper--compact .support-chat-button-inner {
-  background: linear-gradient(135deg, #3a1e52 0%, #210d35 100%);
+  background: linear-gradient(135deg, #18503c 0%, #0f3b2c 100%);
   box-shadow:
-    0 8px 20px rgba(33, 13, 53, 0.38),
-    0 0 0 4px rgba(208, 173, 255, 0.2);
+    0 8px 20px rgba(15,59,44, 0.38),
+    0 0 0 4px rgba(223,232,180, 0.2);
 }
 body:has(.home-theme) .support-chat-wrapper--compact .support-chat-button-ring {
-  border-color: rgba(255, 208, 20, 0.55);
+  border-color: rgba(223,232,180, 0.55);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -314,34 +314,34 @@ body:has(.home-theme) .support-chat-wrapper--compact .support-chat-button-ring {
    profile screens keep their original palette.
    ══════════════════════════════════════════════════════════════════════ */
 
-.home-theme .bg-\[\#CB202D\] { background-color: var(--home-purple); }
-.home-theme .bg-\[\#A81D2A\] { background-color: var(--home-purple-soft); }
-.home-theme .bg-\[\#FEE2E6\] { background-color: rgba(208, 173, 255, 0.28); }
-.home-theme .bg-\[\#FEE2E2\] { background-color: rgba(208, 173, 255, 0.28); }
-.home-theme .bg-\[\#FFFBFB\] { background-color: var(--home-cream); }
-.home-theme .bg-\[\#FFF5F5\] { background-color: var(--home-cream-soft); }
-.home-theme .text-\[\#CB202D\] { color: var(--home-purple); }
-.home-theme .text-\[\#A81D2A\] { color: var(--home-purple); }
-.home-theme .text-\[\#FF5A65\] { color: #7c4dcc; }
-.home-theme .text-\[\#0F172A\] { color: var(--home-purple); }
-.home-theme .text-\[\#1F2937\] { color: var(--home-purple); }
-.home-theme .text-\[\#1E293B\] { color: var(--home-purple); }
-.home-theme .text-\[\#64748B\] { color: var(--home-purple-muted); }
-.home-theme .text-\[\#6B7280\] { color: var(--home-purple-muted); }
-.home-theme .text-\[\#9CA3AF\] { color: #9a86a8; }
-.home-theme .border-\[\#EEF1F4\] { border-color: var(--home-lavender-line); }
-.home-theme .border-\[\#EEF1F6\] { border-color: var(--home-lavender-line); }
-.home-theme .border-\[\#EEF0F6\] { border-color: var(--home-lavender-line); }
-.home-theme .border-\[\#E5E7EB\] { border-color: var(--home-lavender-line); }
-.home-theme .border-\[\#E0E7FF\] { border-color: rgba(33, 13, 53, 0.12); }
-.home-theme .border-\[\#FEE2E2\] { border-color: rgba(33, 13, 53, 0.12); }
-.home-theme .border-\[\#FEE2E6\] { border-color: rgba(33, 13, 53, 0.12); }
-.home-theme .group-active\:text-\[\#CB202D\]:active { color: var(--home-purple); }
+.home-theme .bg-\[\#a8261b\] { background-color: var(--home-green); }
+.home-theme .bg-\[\#a8261b\] { background-color: var(--home-green-soft); }
+.home-theme .bg-\[\#fbe1d8\] { background-color: rgba(223,232,180, 0.28); }
+.home-theme .bg-\[\#fbe1d8\] { background-color: rgba(223,232,180, 0.28); }
+.home-theme .bg-\[\#f7f6f2\] { background-color: var(--home-cream); }
+.home-theme .bg-\[\#f7f6f2\] { background-color: var(--home-cream-soft); }
+.home-theme .text-\[\#a8261b\] { color: var(--home-green); }
+.home-theme .text-\[\#a8261b\] { color: var(--home-green); }
+.home-theme .text-\[\#f08a7b\] { color: #18503c; }
+.home-theme .text-\[\#1d2522\] { color: var(--home-green); }
+.home-theme .text-\[\#1d2522\] { color: var(--home-green); }
+.home-theme .text-\[\#1E293B\] { color: var(--home-green); }
+.home-theme .text-\[\#5d6762\] { color: var(--home-green-muted); }
+.home-theme .text-\[\#5d6762\] { color: var(--home-green-muted); }
+.home-theme .text-\[\#9aa29e\] { color: #5d6762; }
+.home-theme .border-\[\#ece9e2\] { border-color: var(--home-sage-line); }
+.home-theme .border-\[\#ece9e2\] { border-color: var(--home-sage-line); }
+.home-theme .border-\[\#ece9e2\] { border-color: var(--home-sage-line); }
+.home-theme .border-\[\#ece9e2\] { border-color: var(--home-sage-line); }
+.home-theme .border-\[\#E0E7FF\] { border-color: rgba(15,59,44, 0.12); }
+.home-theme .border-\[\#fbe1d8\] { border-color: rgba(15,59,44, 0.12); }
+.home-theme .border-\[\#fbe1d8\] { border-color: rgba(15,59,44, 0.12); }
+.home-theme .group-active\:text-\[\#a8261b\]:active { color: var(--home-green); }
 
 /* Mobile bottom nav active pill */
-.home-theme .bg-\[\#CB202D\].text-white {
-  background-color: var(--home-purple);
-  box-shadow: 0 6px 16px rgba(33, 13, 53, 0.35);
+.home-theme .bg-\[\#a8261b\].text-white {
+  background-color: var(--home-green);
+  box-shadow: 0 6px 16px rgba(15,59,44, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {

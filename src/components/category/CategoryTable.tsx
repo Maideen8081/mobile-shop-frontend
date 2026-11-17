@@ -89,7 +89,7 @@ export default function CategoryTable({ data, sort, onSort, onEdit, onDelete }: 
                     <td colSpan={7} className="!pt-0 bg-[#fcfcfd]">
                       <div className="flex flex-wrap gap-1.5 pl-12 pt-3">
                         {cat.subcategories.map((sub) => (
-                          <span key={sub.id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fdecee] text-primary">
+                          <span key={sub.id} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#fbe1d8] text-primary">
                             {sub.name}
                             <span className="opacity-60">({sub.products})</span>
                           </span>

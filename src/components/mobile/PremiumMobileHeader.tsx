@@ -76,8 +76,8 @@ export default function PremiumMobileHeader({
           width: 40px;
           height: 40px;
           border-radius: 9999px;
-          background: #F3E8FF;
-          border: 1px solid #E9D5FF;
+          background: #dfe6cf;
+          border: 1px solid #dfe6cf;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
           align-items: center;
@@ -86,23 +86,23 @@ export default function PremiumMobileHeader({
         }
         .icon-btn:active {
           transform: scale(0.92);
-          background: #E9D5FF;
+          background: #dfe6cf;
         }
         .icon-btn-red {
           width: 40px;
           height: 40px;
           border-radius: 9999px;
-          background: #210D35;
+          background: #0f3b2c;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(33, 13, 53, 0.25);
+          box-shadow: 0 4px 12px rgba(15,59,44, 0.25);
         }
         .icon-btn-red:active {
           transform: scale(0.92);
-          background: #3A1E52;
+          background: #18503c;
         }
         .filter-pill {
           display: flex;
@@ -111,17 +111,17 @@ export default function PremiumMobileHeader({
           height: 40px;
           padding: 0 12px;
           border-radius: 9999px;
-          background: #210D35;
+          background: #0f3b2c;
           color: white;
           gap: 5px;
           transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
           position: relative;
           flex-shrink: 0;
-          box-shadow: 0 4px 12px rgba(33, 13, 53, 0.25);
+          box-shadow: 0 4px 12px rgba(15,59,44, 0.25);
         }
         .filter-pill:active {
           transform: scale(0.92);
-          background: #3A1E52;
+          background: #18503c;
         }
         .filter-badge {
           position: absolute;
@@ -131,21 +131,21 @@ export default function PremiumMobileHeader({
           height: 18px;
           padding: 0 5px;
           border-radius: 9999px;
-          background: #210D35;
+          background: #0f3b2c;
           color: white;
           font-size: 10px;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 8px rgba(33, 13, 53, 0.3);
+          box-shadow: 0 2px 8px rgba(15,59,44, 0.3);
         }
         .search-bar {
           width: 100%;
           height: 44px;
           border-radius: 9999px;
-          background: #F3E8FF;
-          border: 1px solid #E9D5FF;
+          background: #dfe6cf;
+          border: 1px solid #dfe6cf;
           display: flex;
           align-items: center;
           padding: 0 14px;
@@ -154,9 +154,9 @@ export default function PremiumMobileHeader({
           cursor: pointer;
         }
         .search-bar:focus-within {
-          background: #F3E8FF;
-          border-color: #D0ADFF;
-          box-shadow: 0 0 0 3px rgba(208, 173, 255, 0.2);
+          background: #dfe6cf;
+          border-color: #dfe8b4;
+          box-shadow: 0 0 0 3px rgba(223,232,180, 0.2);
         }
         .badge {
           transform-origin: 100% 0%;
@@ -168,7 +168,7 @@ export default function PremiumMobileHeader({
           100% { transform: scale(1) translate(50%, -50%); opacity: 1; }
         }
         .title-text {
-          background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
+          background: linear-gradient(135deg, #1d2522 0%, #334155 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -180,7 +180,7 @@ export default function PremiumMobileHeader({
           <div className="flex items-center gap-2 min-w-0">
             {showBack && (
               <button onClick={handleBack} aria-label="Back" className="icon-btn">
-                <ChevronLeft size={20} className="text-[#210D35]" />
+                <ChevronLeft size={20} className="text-[#0f3b2c]" />
               </button>
             )}
             <h1 className="text-lg font-bold title-text tracking-tight truncate">
@@ -192,7 +192,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/wishlist')} aria-label="Wishlist" className="icon-btn-red relative">
               <Heart size={18} className="text-white" />
               {wishlistCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#0f3b2c] text-micro font-bold flex items-center justify-center">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -201,7 +201,7 @@ export default function PremiumMobileHeader({
             <button onClick={() => navigate('/cart')} aria-label="Cart" className="icon-btn-red relative">
               <ShoppingBag size={18} className="text-white" />
               {cartCount > 0 && (
-                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#210D35] text-micro font-bold flex items-center justify-center">
+                <span className="badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1.5 rounded-full bg-white text-[#0f3b2c] text-micro font-bold flex items-center justify-center">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -221,8 +221,8 @@ export default function PremiumMobileHeader({
         {showSearch && (
           <div className="px-4 pb-3">
               <div className="search-bar" onClick={() => { if (onSearchClick) onSearchClick(); }}>
-              <Search size={18} className="text-[#210D35] flex-shrink-0" />
-              <span className="text-sm text-[#5F4A70] font-medium select-none">Search phones, brands & more...</span>
+              <Search size={18} className="text-[#0f3b2c] flex-shrink-0" />
+              <span className="text-sm text-[#5d6762] font-medium select-none">Search phones, brands & more...</span>
             </div>
           </div>
         )}
@@ -244,7 +244,7 @@ export default function PremiumMobileHeader({
                   <div
                     className={`w-[64px] h-[64px] rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 ${active ? 'scale-105' : ''}`}
                     style={active
-                      ? { background: 'linear-gradient(135deg,#210D35,#3A1E52)', boxShadow: '0 8px 20px rgba(123, 63, 208,0.35)' }
+                      ? { background: 'linear-gradient(135deg,#0f3b2c,#18503c)', boxShadow: '0 8px 20px rgba(15,59,44,0.35)' }
                       : { background: '#FFFFFF', boxShadow: '0 4px 14px rgba(31,41,55,0.07)' }}
                   >
                     {img ? (
@@ -253,7 +253,7 @@ export default function PremiumMobileHeader({
                       <span className="text-heading leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                     )}
                   </div>
-                  <span className={`text-micro text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#210D35]' : 'text-[#1F2937]'}`}>
+                  <span className={`text-micro text-center leading-tight max-w-[72px] truncate font-semibold ${active ? 'text-[#0f3b2c]' : 'text-[#1d2522]'}`}>
                     {cat.name}
                   </span>
                 </button>

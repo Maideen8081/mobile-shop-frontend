@@ -7,6 +7,7 @@ import { suspendSmoothScroll } from "../utils/smoothScroll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { inr, useLandingProducts } from "../data/websiteCatalog";
 import "../styles/website-experience.css";
+import HomeTopNav from "../components/ecommerce/HomeTopNav";
 import ScrollEndRedirect from "../components/ScrollEndRedirect";
 import { useRingStepper } from "../hooks/useRingStepper";
 
@@ -107,28 +108,20 @@ export default function WebsiteExperience() {
   const rp = products[ringIdx] ?? products[0];
 
   return (
-    <div ref={root} className="we relative" style={{ background: "#160823", color: "#fff7f3", overflowX: "hidden" }}>
-      {/* Nav */}
-      <header className="we-nav fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-4 md:px-10">
-        <Link to="/home" className="font-display text-xl font-bold tracking-tight" style={{ color: "#fff7f3" }}>
-          PhoneFix<span style={{ color: "#ffd014" }}>.</span>
-        </Link>
-        <Link to="/home" className="magnet rounded-full px-5 py-2 text-sm font-medium transition hover:opacity-90" style={{ background: "#ffd014", color: "#160823" }}>
-          Enter the store →
-        </Link>
-      </header>
+    <div ref={root} className="we relative" style={{ background: "#0b2e22", color: "#f7f6f2", overflowX: "hidden" }}>
+      <HomeTopNav />
 
       {/* Scroll progress bar */}
-      <div className="we-progress fixed inset-x-0 top-0 z-[90] h-[3px] origin-left scale-x-0" style={{ background: "linear-gradient(to right, #ffd014, #d0adff, #7b3fd0)" }} />
+      <div className="we-progress fixed inset-x-0 top-0 z-[90] h-[3px] origin-left scale-x-0" style={{ background: "linear-gradient(to right, #dfe8b4, #dfe8b4, #0f3b2c)" }} />
       {/* Custom cursor */}
-      <div className="we-cursor pointer-events-none fixed left-0 top-0 z-[95] -ml-3 -mt-3 hidden h-6 w-6 rounded-full opacity-0 mix-blend-difference md:block" style={{ border: "1px solid #fff7f3" }} />
+      <div className="we-cursor pointer-events-none fixed left-0 top-0 z-[95] -ml-3 -mt-3 hidden h-6 w-6 rounded-full opacity-0 mix-blend-difference md:block" style={{ border: "1px solid #f7f6f2" }} />
 
       {/* ══ 3D PRODUCT RING ══ */}
-      <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-20" style={{ background: "#160823" }}>
-        <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(123, 63, 208,0.35), transparent 65%)" }} />
+      <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-0" style={{ background: "#0b2e22" }}>
+        <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(15,59,44,0.35), transparent 65%)" }} />
         <h1 className="sr-only">PhoneFix — smartphones, accessories and expert phone repairs</h1>
         <div className="relative z-10 mb-4 w-full px-5 md:px-10">
-          <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "#ffd014" }}>In store now · scroll, swipe or use ← → to spin</p>
+          <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "#dfe8b4" }}>In store now · scroll, swipe or use ← → to spin</p>
         </div>
         <div ref={stage} className="relative z-10 mt-6 min-h-0 w-full flex-1 select-none" style={{ perspective: 1900, touchAction: "pan-y" }}>
           <div className="we-ring preserve-3d absolute left-1/2 top-1/2 h-0 w-0">
@@ -150,8 +143,8 @@ export default function WebsiteExperience() {
               type="button"
               onClick={() => step(dir)}
               aria-label={label === "prev" ? "Previous product" : "Next product"}
-              className={`absolute top-1/2 z-20 -mt-7 flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition hover:scale-105 hover:border-[#ffd014] hover:text-[#ffd014] active:scale-95 ${side}`}
-              style={{ background: "rgba(255, 247, 243,0.06)", border: "1px solid rgba(255, 247, 243,0.16)", color: "#fff7f3" }}
+              className={`absolute top-1/2 z-20 -mt-7 flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md transition hover:scale-105 hover:border-[#dfe8b4] hover:text-[#dfe8b4] active:scale-95 ${side}`}
+              style={{ background: "rgba(247,246,242,0.06)", border: "1px solid rgba(247,246,242,0.16)", color: "#f7f6f2" }}
             >
               <Icon size={26} strokeWidth={1.75} />
             </button>
@@ -159,18 +152,18 @@ export default function WebsiteExperience() {
         </div>
         <div className="relative z-10 w-full max-w-xl px-5 text-center">
           <div key={rp.slug}>
-            <span className="rounded-full px-3 py-1 text-xs" style={{ border: "1px solid rgba(255, 247, 243,0.12)", color: "#fff7f3" }}>{rp.tag}</span>
-            <h3 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl" style={{ color: "#fff7f3" }}>{rp.name}</h3>
-            <p className="mt-2" style={{ color: "#b9a7cc" }}>{rp.blurb}</p>
-            {rp.price ? <div className="mt-2 font-display text-3xl" style={{ color: "#ffd014" }}>{inr(rp.price)}</div> : null}
+            <span className="rounded-full px-3 py-1 text-xs" style={{ border: "1px solid rgba(247,246,242,0.12)", color: "#f7f6f2" }}>{rp.tag}</span>
+            <h3 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl" style={{ color: "#f7f6f2" }}>{rp.name}</h3>
+            <p className="mt-2" style={{ color: "#dfe8b4" }}>{rp.blurb}</p>
+            {rp.price ? <div className="mt-2 font-display text-3xl" style={{ color: "#dfe8b4" }}>{inr(rp.price)}</div> : null}
           </div>
-          <Link to={rp.href} className="magnet mt-4 inline-block rounded-full px-8 py-3 font-medium transition hover:opacity-80" style={{ background: "#ffd014", color: "#160823" }}>
+          <Link to={rp.href} className="magnet mt-4 inline-block rounded-full px-8 py-3 font-medium transition hover:opacity-80" style={{ background: "#dfe8b4", color: "#0b2e22" }}>
             {rp.price ? "View product →" : `Shop ${rp.name} →`}
           </Link>
           <div className="mt-2 flex justify-center">
             {products.map((p, i) => (
               <button key={p.slug} type="button" onClick={() => goTo(i)} aria-label={`Show ${p.name}`} aria-current={i === ringIdx} className="px-[3px] py-2">
-                <span className="block h-1.5 rounded-full transition-all" style={{ width: i === ringIdx ? 32 : 6, background: i === ringIdx ? "#ffd014" : "rgba(255, 247, 243,0.12)" }} />
+                <span className="block h-1.5 rounded-full transition-all" style={{ width: i === ringIdx ? 32 : 6, background: i === ringIdx ? "#dfe8b4" : "rgba(247,246,242,0.12)" }} />
               </button>
             ))}
           </div>
@@ -179,7 +172,7 @@ export default function WebsiteExperience() {
 
       {/* Run-out so the last product isn't the page end: landing on it (scroll, arrows, dots)
           shouldn't fire the redirect — scrolling on past it does. */}
-      <div className="flex h-[35vh] items-center justify-center text-xs uppercase tracking-[0.3em]" style={{ color: "#b9a7cc" }}>
+      <div className="flex h-[35vh] items-center justify-center text-xs uppercase tracking-[0.3em]" style={{ color: "#dfe8b4" }}>
         Keep scrolling to enter the store ↓
       </div>
 

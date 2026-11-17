@@ -9,8 +9,8 @@ import GoogleSignInButton from '../auth/GoogleSignInButton'
 import { useMobileToast } from './useMobileToast'
 import EyeIcon from '../auth/EyeIcon'
 
-const PURPLE = '#210D35'
-const PURPLE_DEEP = '#3A1E52'
+const PURPLE = '#0f3b2c'
+const PURPLE_DEEP = '#18503c'
 
 interface LoginFormData { email: string; password: string }
 
@@ -72,10 +72,10 @@ export default function MobileLogin() {
   useEffect(() => { const t = setInterval(nextSlide, 4000); return () => clearInterval(t) }, [nextSlide])
 
   return (
-    <div className="min-h-screen bg-[#FFFBFB] max-w-[480px] mx-auto font-sans text-[#1F2937] flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto font-sans text-[#1d2522] flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
       {/* Brand header */}
       <div className="px-4 pt-5 pb-3 flex items-center gap-3">
-        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#F3E8FF] flex items-center justify-center active:scale-90 transition">
+        <button onClick={() => navigate(-1)} aria-label="Back" className="w-9 h-9 rounded-[8px] bg-[#dfe6cf] flex items-center justify-center active:scale-90 transition">
           <FiChevronLeft size={20} style={{ color: PURPLE }} />
         </button>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold" style={{ background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` }}>M</div>
@@ -89,7 +89,7 @@ export default function MobileLogin() {
             <img src={s.src} alt={s.label} className="w-full h-full object-cover" loading="lazy" />
           </div>
         ))}
-        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(123, 63, 208,0.85), transparent)' }}>
+        <div className="absolute inset-0 flex flex-col justify-end p-4" style={{ background: 'linear-gradient(to top, rgba(15,59,44,0.85), transparent)' }}>
           <p className="text-white text-title font-bold leading-tight">{slides[activeSlide].label}</p>
           <p className="text-white/80 text-caption">Premium mobile engineering</p>
         </div>
@@ -104,37 +104,37 @@ export default function MobileLogin() {
       <div className="flex-1 px-4 mt-4">
         <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] p-5">
           <h1 className="text-heading font-extrabold">Welcome back</h1>
-          <p className="text-label text-[#6B7280] mt-1 mb-5">Log in to your premium account</p>
+          <p className="text-label text-[#5d6762] mt-1 mb-5">Log in to your premium account</p>
 
           {forCart && (
-            <p role="status" className="mb-4 rounded-xl bg-[#F3E8FF] px-4 py-3 text-label font-semibold text-[#210D35]">
+            <p role="status" className="mb-4 rounded-xl bg-[#dfe6cf] px-4 py-3 text-label font-semibold text-[#0f3b2c]">
               Sign in to add items to your cart. We’ll add the item you picked as soon as you’re in.
             </p>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280] mb-1 block">Email Address</label>
+              <label className="text-micro font-bold uppercase tracking-wide text-[#5d6762] mb-1 block">Email Address</label>
               <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9aa29e' }} />
                 <input id="email" name="email" type="email" value={formData.email} onChange={handleChange}
-                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-body-sm bg-[#FFFBFB] border outline-none transition"
-                  style={{ borderColor: errors.email ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                  placeholder="name@example.com" className="w-full h-12 pl-10 pr-3 rounded-2xl text-body-sm bg-[#f7f6f2] border outline-none transition"
+                  style={{ borderColor: errors.email ? '#EF4444' : '#ece9e2', color: '#1d2522' }} />
               </div>
               {errors.email && <p className="text-micro text-[#EF4444] mt-1">{errors.email}</p>}
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-micro font-bold uppercase tracking-wide text-[#6B7280]">Password</label>
+                <label className="text-micro font-bold uppercase tracking-wide text-[#5d6762]">Password</label>
                 <Link to="#" className="text-caption font-semibold" style={{ color: PURPLE }}>Forgot Password?</Link>
               </div>
               <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9CA3AF' }} />
+                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: '#9aa29e' }} />
                 <input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange}
-                  placeholder="••••••••" autoComplete="current-password" className="w-full h-12 pl-10 pr-12 rounded-2xl text-body-sm bg-[#FFFBFB] border outline-none transition"
-                  style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB', color: '#1F2937' }} />
+                  placeholder="••••••••" autoComplete="current-password" className="w-full h-12 pl-10 pr-12 rounded-2xl text-body-sm bg-[#f7f6f2] border outline-none transition"
+                  style={{ borderColor: errors.password ? '#EF4444' : '#ece9e2', color: '#1d2522' }} />
                 <button type="button" onClick={() => setShowPassword(v => !v)} aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition" style={{ color: '#6B7280' }}>
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-xl active:scale-90 transition" style={{ color: '#5d6762' }}>
                   <EyeIcon open={showPassword} />
                 </button>
               </div>
@@ -154,14 +154,14 @@ export default function MobileLogin() {
           </form>
 
           <div className="flex items-center gap-3 my-4">
-            <div className="flex-1 h-px bg-[#E5E7EB]" />
-            <span className="text-micro font-medium text-[#9CA3AF]">or</span>
-            <div className="flex-1 h-px bg-[#E5E7EB]" />
+            <div className="flex-1 h-px bg-[#ece9e2]" />
+            <span className="text-micro font-medium text-[#9aa29e]">or</span>
+            <div className="flex-1 h-px bg-[#ece9e2]" />
           </div>
           <GoogleSignInButton mode="signin" onError={(m) => showToast(m, 'error')} />
         </div>
 
-        <p className="text-center text-label text-[#6B7280] mt-5">
+        <p className="text-center text-label text-[#5d6762] mt-5">
           Don't have an account?{' '}
           <Link to="/signup" className="font-bold" style={{ color: PURPLE }}>Register</Link>
         </p>

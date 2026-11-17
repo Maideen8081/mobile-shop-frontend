@@ -29,7 +29,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -6, boxShadow: '0 24px 80px rgba(0,0,0,0.3)' }}
-      className="relative rounded-xl bg-bg-card border border-border/50 p-5 overflow-hidden group cursor-pointer hover:border-primary/20 hover:shadow-[0_0_30px_rgba(139,92,246,0.08)] transition-all duration-300"
+      className="relative rounded-xl bg-bg-card border border-border/50 p-5 overflow-hidden group cursor-pointer hover:border-primary/20 hover:shadow-[0_0_30px_rgba(24,80,60,0.08)] transition-all duration-300"
     >
       <div className="absolute -top-16 -right-16 w-40 h-40 rounded-[8px] bg-gradient-to-br from-primary/8 to-blue-500/8 blur-2xl group-hover:scale-150 transition-transform duration-700" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 pointer-events-none" />
@@ -102,7 +102,7 @@ export default function ProductCard({ product: p, index, onEdit, onDelete }: Pro
 
         <div className="flex items-center gap-2 pt-3 border-t border-border/50">
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => onEdit?.(p)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 hover:shadow-[0_0_12px_rgba(139,92,246,0.2)] transition-all cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 hover:shadow-[0_0_12px_rgba(24,80,60,0.2)] transition-all cursor-pointer"
           ><FiEdit2 size={13} /> Edit</motion.button>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => onDelete?.(p)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-rose-500/10 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 hover:shadow-[0_0_12px_rgba(239,68,68,0.2)] transition-all cursor-pointer"

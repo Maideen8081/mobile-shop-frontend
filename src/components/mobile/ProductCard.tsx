@@ -7,13 +7,13 @@ function buildTags(product: any): { label: string; cls: string }[] {
   if (product.is_new_arrival || product.newArrival)
     tags.push({ label: 'New', cls: 'bg-[#059669] text-white' })
   if (product.is_best_selling || product.bestSelling)
-    tags.push({ label: 'Bestseller', cls: 'bg-[#210D35] text-white' })
+    tags.push({ label: 'Bestseller', cls: 'bg-[#0f3b2c] text-white' })
   if (product.is_featured || product.featured)
     tags.push({ label: 'Featured', cls: 'bg-[#F59E0B] text-white' })
   if (product.is_trending || product.trending)
     tags.push({ label: 'Trending', cls: 'bg-[#0EA5E9] text-white' })
   if (product.is_refurbished || product.refurbished)
-    tags.push({ label: 'Refurbished', cls: 'bg-[#210D35] text-white' })
+    tags.push({ label: 'Refurbished', cls: 'bg-[#0f3b2c] text-white' })
   return tags
 }
 
@@ -58,20 +58,20 @@ export default function ProductCard({ product }: { product: any }) {
 
       <div className="px-0.5 pt-1.5">
         {product.brand && (
-          <span className="block text-micro font-semibold uppercase tracking-wider text-[#7B3FD0] truncate mb-0.5">
+          <span className="block text-micro font-semibold uppercase tracking-wider text-[#0f3b2c] truncate mb-0.5">
             {product.brand}
           </span>
         )}
-        <h3 className="text-caption font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#210D35] transition-colors">
+        <h3 className="text-caption font-medium text-[#1E293B] leading-snug line-clamp-2 min-h-[2.75em] group-active:text-[#0f3b2c] transition-colors">
           {product.name}
         </h3>
         {price > 0 && (
           <p className="mt-0.5 flex items-baseline gap-1.5">
-            <span className="text-caption font-bold text-[#210D35]">₹{price.toLocaleString('en-IN')}</span>
-            {discountPct > 0 && <s className="text-micro text-[#9CA3AF]">₹{mrp.toLocaleString('en-IN')}</s>}
+            <span className="text-caption font-bold text-[#0f3b2c]">₹{price.toLocaleString('en-IN')}</span>
+            {discountPct > 0 && <s className="text-micro text-[#9aa29e]">₹{mrp.toLocaleString('en-IN')}</s>}
           </p>
         )}
-        {!inStock && <span className="mt-0.5 block text-micro font-semibold text-[#6B7280]">Out of stock</span>}
+        {!inStock && <span className="mt-0.5 block text-micro font-semibold text-[#5d6762]">Out of stock</span>}
       </div>
     </div>
   )

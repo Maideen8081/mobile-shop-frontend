@@ -24,7 +24,7 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 const HERO_COPY: { title: string; subtitle: string; bg: string } = {
   title: 'Premium Smartphones',
   subtitle: 'iPhone, Galaxy, Pixel & more — best prices, full warranty',
-  bg: 'linear-gradient(135deg,#210D35 0%,#3A1E52 100%)',
+  bg: 'linear-gradient(135deg,#0f3b2c 0%,#18503c 100%)',
 }
 
 let cachedCategories: { name: string; count: number; image?: string }[] | null = null
@@ -156,7 +156,7 @@ export default function MobilePhones() {
   }, [activeCategory, tab, activeFilters])
 
   return (
-    <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#0F172A] max-w-[480px] mx-auto pb-24 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8F9FB] font-sans text-[#1d2522] max-w-[480px] mx-auto pb-24 overflow-x-hidden">
       <PremiumMobileHeader
         title="Phones"
         showBack
@@ -177,7 +177,7 @@ export default function MobilePhones() {
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
-            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(123, 63, 208,0.22)]" style={{ background: hero.bg }}>
+            <div className="relative overflow-hidden rounded-3xl p-4 h-[124px] shadow-[0_12px_30px_rgba(15,59,44,0.22)]" style={{ background: hero.bg }}>
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-[8px] bg-white/20 blur-2xl" />
               <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-[8px] bg-white/15 blur-2xl" />
               <div className="absolute right-3 bottom-3 w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center">
@@ -194,14 +194,14 @@ export default function MobilePhones() {
           </div>
 
           <div className="flex items-center justify-between px-3.5 mt-3 mb-1">
-            <p className="text-caption font-semibold text-[#64748B]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
+            <p className="text-caption font-semibold text-[#5d6762]">{products.length} product{products.length !== 1 ? 's' : ''} found</p>
           </div>
 
           <div className="px-3.5">
             {products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <p className="text-body font-bold text-[#0F172A]">No phones found</p>
-                <p className="text-label text-[#64748B] mt-1">Try a different filter or category.</p>
+                <p className="text-body font-bold text-[#1d2522]">No phones found</p>
+                <p className="text-label text-[#5d6762] mt-1">Try a different filter or category.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2.5">
@@ -230,7 +230,7 @@ export default function MobilePhones() {
           </div>
 
           <div className="px-3.5 mt-5">
-            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(123, 63, 208,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#3A1E52,#210D35)' }}>
+            <button onClick={() => navigate('/trade-in')} className="w-full flex items-center justify-between gap-3 rounded-3xl p-4 text-left shadow-[0_12px_30px_rgba(15,59,44,0.18)] active:scale-[0.99] transition" style={{ background: 'linear-gradient(135deg,#18503c,#0f3b2c)' }}>
               <div className="min-w-0">
                 <p className="text-label font-bold text-white leading-tight">Upgrade & Save Up To ₹30,000</p>
                 <p className="text-micro text-white/80 mt-0.5">Trade in your old device for instant credit.</p>

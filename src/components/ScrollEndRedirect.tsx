@@ -64,8 +64,8 @@ export default function ScrollEndRedirect({
         gap: 10,
         padding: '12px 20px',
         borderRadius: 999,
-        background: 'rgba(7,4,10,0.85)',
-        border: '1px solid rgba(246,239,233,0.15)',
+        background: 'rgba(11,46,34,0.85)',
+        border: '1px solid rgba(247,246,242,0.15)',
         backdropFilter: 'blur(12px)',
         color: '#f6efe9',
         fontSize: 14,
@@ -78,7 +78,7 @@ export default function ScrollEndRedirect({
         aria-hidden="true"
         style={{
           width: 16, height: 16, borderRadius: '50%',
-          border: '2px solid rgba(255,59,78,0.3)', borderTopColor: '#ff3b4e',
+          border: '2px solid rgba(24,80,60,0.3)', borderTopColor: '#18503c',
         }}
         className="animate-spin"
       />
@@ -88,7 +88,7 @@ export default function ScrollEndRedirect({
         style={{
           position: 'absolute', left: 0, bottom: 0, height: 2,
           width: leaving ? '100%' : '0%',
-          background: '#ff3b4e',
+          background: '#18503c',
           transition: leaving ? `width ${DELAY_MS}ms linear` : 'none',
         }}
       />

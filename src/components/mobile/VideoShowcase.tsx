@@ -14,7 +14,7 @@ export default function VideoShowcase() {
       </div>
       <div className="flex gap-3 overflow-x-auto px-3.5 pb-1 scrollbar-hide">
         {clips.map((c) => (
-          <div key={c.title} className="w-[280px] flex-shrink-0 rounded-2xl overflow-hidden bg-black relative aspect-video shadow-[0_6px_18px_rgba(33,13,53,0.18)]">
+          <div key={c.title} className="w-[280px] flex-shrink-0 rounded-2xl overflow-hidden bg-black relative aspect-video shadow-[0_6px_18px_rgba(15,59,44,0.18)]">
             <video className="w-full h-full object-cover" autoPlay muted loop playsInline poster={c.poster}>
               <source src={c.video} type="video/mp4" />
             </video>
@@ -23,7 +23,7 @@ export default function VideoShowcase() {
               <span className="text-white text-label font-bold block">{c.title}</span>
               <span className="text-white/60 text-micro">{c.desc}</span>
             </div>
-            <div className="absolute top-2.5 right-2.5 w-9 h-9 rounded-[8px] bg-[#210D35]/55 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+            <div className="absolute top-2.5 right-2.5 w-9 h-9 rounded-[8px] bg-[#0f3b2c]/55 backdrop-blur-sm border border-white/30 flex items-center justify-center">
               <Play size={16} className="text-white" />
             </div>
           </div>

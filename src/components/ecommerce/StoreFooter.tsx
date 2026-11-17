@@ -49,7 +49,7 @@ const COLUMNS: { title: string; links: FooterLink[] }[] = [
 // Only what is live today; add card/UPI badges once online payments launch.
 const PAYMENTS = ['Cash on Delivery']
 
-/** Storefront footer (home page): dark purple band with link columns and newsletter. */
+/** Storefront footer (home page): dark green band with link columns and newsletter. */
 export default function StoreFooter() {
   const categories = useHeaderCategories()
   const hrefFor = (l: FooterLink) =>

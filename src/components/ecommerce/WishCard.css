@@ -1,5 +1,5 @@
 /* Product card used on the Wishlist and Collection pages.
-   Lavender image tile · heart top-right · tag pill · centred name/price · full-width cart button. */
+   sage image tile · heart top-right · tag pill · centred name/price · full-width cart button. */
 .wish-card {
   display: flex;
   flex-direction: column;
@@ -191,7 +191,7 @@
 
 .wish-card-cart:hover:not(:disabled) {
   background: var(--color-pf-red-dark);
-  box-shadow: 0 6px 16px rgba(123, 63, 208, 0.3);
+  box-shadow: 0 6px 16px rgba(15,59,44, 0.3);
 }
 
 .wish-card-cart:active {
@@ -256,28 +256,28 @@
   place-items: center;
   border: 0;
   border-radius: 12px;
-  background: #210d35;
-  color: #fff7f3;
+  background: #0f3b2c;
+  color: #f7f6f2;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(33, 13, 53, 0.25);
+  box-shadow: 0 8px 18px rgba(15,59,44, 0.25);
   transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 .wish-card-quickcart:hover:not(:disabled) {
-  background: #ffd014;
-  color: #210d35;
+  background: #dfe8b4;
+  color: #0f3b2c;
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(255, 208, 20, 0.45);
+  box-shadow: 0 10px 22px rgba(223,232,180, 0.45);
 }
 .wish-card-quickcart:active:not(:disabled) {
   transform: scale(0.94);
 }
 .wish-card-quickcart:focus-visible {
-  outline: 2px solid #4a2470;
+  outline: 2px solid #18503c;
   outline-offset: 2px;
 }
 .wish-card-quickcart:disabled {
   background: #d9d0de;
-  color: #8a7a96;
+  color: #5d6762;
   box-shadow: none;
   cursor: not-allowed;
 }

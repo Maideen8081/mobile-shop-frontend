@@ -10,7 +10,7 @@ type ChatAssistantIconProps = {
 /**
  * "Fixie" — the PhoneFix AI assistant mascot.
  * A speech-bubble shaped bot with a glowing visor face and a sparkle antenna,
- * drawn in the store palette (deep purple · lavender · sunshine yellow).
+ * drawn in the store palette (deep green · sage · sunshine yellow).
  */
 export default function ChatAssistantIcon({ className, size = 52, animated = size >= 28 }: ChatAssistantIconProps) {
   const uid = useId().replace(/:/g, '')
@@ -28,22 +28,22 @@ export default function ChatAssistantIcon({ className, size = 52, animated = siz
     >
       <defs>
         <linearGradient id={id('shell')} x1="14" y1="16" x2="66" y2="66" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#f3eaff" />
-          <stop offset="45%" stopColor="#d0adff" />
-          <stop offset="100%" stopColor="#8a4fe0" />
+          <stop offset="0%" stopColor="#f7f6f2" />
+          <stop offset="45%" stopColor="#dfe8b4" />
+          <stop offset="100%" stopColor="#18503c" />
         </linearGradient>
         <linearGradient id={id('visor')} x1="22" y1="26" x2="58" y2="52" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#2e1250" />
-          <stop offset="100%" stopColor="#14061f" />
+          <stop offset="0%" stopColor="#0b2e22" />
+          <stop offset="100%" stopColor="#0b2e22" />
         </linearGradient>
         <radialGradient id={id('eye')} cx="50%" cy="40%" r="60%">
           <stop offset="0%" stopColor="#fff8c4" />
-          <stop offset="55%" stopColor="#ffd014" />
+          <stop offset="55%" stopColor="#dfe8b4" />
           <stop offset="100%" stopColor="#ffb800" />
         </radialGradient>
         <radialGradient id={id('glow')} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#ffd014" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#ffd014" stopOpacity="0" />
+          <stop offset="0%" stopColor="#dfe8b4" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#dfe8b4" stopOpacity="0" />
         </radialGradient>
         <linearGradient id={id('gloss')} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
@@ -52,9 +52,9 @@ export default function ChatAssistantIcon({ className, size = 52, animated = siz
       </defs>
 
       {/* Antenna + AI sparkle */}
-      <path d="M40 18.5V11" stroke="#8a4fe0" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M40 18.5V11" stroke="#18503c" strokeWidth="2.6" strokeLinecap="round" />
       <circle cx="40" cy="8" r="7" fill={`url(#${id('glow')})`} />
-      <path d="M40 2.5l1.6 4 4 1.5-4 1.5-1.6 4-1.6-4-4-1.5 4-1.5 1.6-4Z" fill="#ffd014">
+      <path d="M40 2.5l1.6 4 4 1.5-4 1.5-1.6 4-1.6-4-4-1.5 4-1.5 1.6-4Z" fill="#dfe8b4">
         {animated && (
           <animateTransform
             attributeName="transform"
@@ -82,12 +82,12 @@ export default function ChatAssistantIcon({ className, size = 52, animated = siz
       <path d="M22 21.5h36c4 0 7.4 2.4 8.8 5.8H13.2c1.4-3.4 4.8-5.8 8.8-5.8Z" fill={`url(#${id('gloss')})`} opacity="0.7" />
 
       {/* Ear pods */}
-      <rect x="5" y="32" width="6" height="12" rx="3" fill="#ffd014" />
-      <rect x="69" y="32" width="6" height="12" rx="3" fill="#ffd014" />
+      <rect x="5" y="32" width="6" height="12" rx="3" fill="#dfe8b4" />
+      <rect x="69" y="32" width="6" height="12" rx="3" fill="#dfe8b4" />
 
       {/* Visor face */}
       <rect x="18" y="26" width="44" height="26" rx="12" fill={`url(#${id('visor')})`} />
-      <rect x="18.6" y="26.6" width="42.8" height="24.8" rx="11.4" stroke="#d0adff" strokeOpacity="0.35" strokeWidth="1.2" />
+      <rect x="18.6" y="26.6" width="42.8" height="24.8" rx="11.4" stroke="#dfe8b4" strokeOpacity="0.35" strokeWidth="1.2" />
 
       {/* Eyes (blink) */}
       <g>
@@ -106,10 +106,10 @@ export default function ChatAssistantIcon({ className, size = 52, animated = siz
       </g>
 
       {/* Smile */}
-      <path d="M35 45c2.8 2.4 7.2 2.4 10 0" stroke="#ffd014" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M35 45c2.8 2.4 7.2 2.4 10 0" stroke="#dfe8b4" strokeWidth="2.2" strokeLinecap="round" />
       {/* Cheeks */}
-      <circle cx="24.5" cy="44.5" r="2.2" fill="#ff8ab3" opacity="0.55" />
-      <circle cx="55.5" cy="44.5" r="2.2" fill="#ff8ab3" opacity="0.55" />
+      <circle cx="24.5" cy="44.5" r="2.2" fill="#fbe1d8" opacity="0.55" />
+      <circle cx="55.5" cy="44.5" r="2.2" fill="#fbe1d8" opacity="0.55" />
 
       {/* Side sparkle */}
       <path d="M66 12l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1 1-2.6Z" fill="#ffffff">

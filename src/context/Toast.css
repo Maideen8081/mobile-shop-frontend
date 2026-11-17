@@ -26,14 +26,14 @@
   border-left: 4px solid var(--toast-accent);
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 14px 34px -10px rgba(33, 13, 53, 0.28), 0 4px 10px -4px rgba(33, 13, 53, 0.12);
+  box-shadow: 0 14px 34px -10px rgba(15,59,44, 0.28), 0 4px 10px -4px rgba(15,59,44, 0.12);
   font-family: var(--font-ui);
   pointer-events: auto;
   animation: app-toast-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 .app-toast--error {
   --toast-accent: var(--color-danger, #d92d20);
-  --toast-tint: #fef3f2;
+  --toast-tint: #fbe1d8;
 }
 
 .app-toast__icon {
@@ -58,7 +58,7 @@
   margin: 0;
   font-size: 13.5px;
   line-height: 1.45;
-  color: #2a2140;
+  color: #0b2e22;
   overflow-wrap: anywhere;
 }
 
@@ -72,10 +72,10 @@
   border: 0;
   border-radius: 8px;
   background: none;
-  color: #8a8199;
+  color: #5d6762;
   cursor: pointer;
 }
-.app-toast__close:hover { background: #f4f1f8; color: #2a2140; }
+.app-toast__close:hover { background: #f4f1f8; color: #0b2e22; }
 .app-toast__close:focus-visible { outline: 2px solid var(--toast-accent); }
 
 /* Time-left bar along the bottom edge */
