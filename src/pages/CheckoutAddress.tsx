@@ -157,16 +157,18 @@ function DesktopCheckoutAddress() {
               </div>
             </header>
 
-            <div className="ca-card">
-              <div className="ca-card-head">
-                <h2>
-                  <span className="ca-card-icon"><Bookmark size={18} /></span>
-                  Saved Addresses {!loading && <span>({addresses.length})</span>}
-                </h2>
-                {!loading && formMode === 'closed' && (
-                  <button className="ca-add-btn" onClick={openNew}><Plus size={18} /> Add New Address</button>
-                )}
-              </div>
+            <div className={`ca-card${!loading && addresses.length === 0 ? ' is-bare' : ''}`}>
+              {(loading || addresses.length > 0) && (
+                <div className="ca-card-head">
+                  <h2>
+                    <span className="ca-card-icon"><Bookmark size={18} /></span>
+                    Saved Addresses {!loading && <span>({addresses.length})</span>}
+                  </h2>
+                  {!loading && formMode === 'closed' && (
+                    <button className="ca-add-btn" onClick={openNew}><Plus size={18} /> Add New Address</button>
+                  )}
+                </div>
+              )}
 
               {loading ? (
                 <div className="ca-list">

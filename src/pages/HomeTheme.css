@@ -214,36 +214,6 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   LOADING SPLASH
-   The app-wide loader is red; inside Home it turns purple/lavender.
-   ══════════════════════════════════════════════════════════════════════ */
-
-.home-theme .pf-loader {
-  --brand: var(--home-lavender);
-  --brand-2: #e7d6ff;
-  background: radial-gradient(90% 55% at 50% 42%, #2e1544 0%, var(--bg) 70%);
-}
-.home-theme .pf-blob--a {
-  background: radial-gradient(closest-side, rgba(208, 173, 255, 0.3), transparent);
-}
-.home-theme .pf-blob--b {
-  background: radial-gradient(closest-side, rgba(208, 173, 255, 0.18), transparent);
-}
-.home-theme .pf-logo {
-  background: linear-gradient(135deg, #3a1e52, #210d35);
-  box-shadow: 0 8px 24px -6px rgba(208, 173, 255, 0.5);
-}
-.home-theme .pf-body {
-  box-shadow: 0 30px 60px -18px rgba(208, 173, 255, 0.4);
-}
-.home-theme .pf-liquid {
-  background: linear-gradient(180deg, #e7d6ff 0%, #a97ae8 45%, #4a2a6a 100%);
-}
-.home-theme .pf-dots i {
-  background: var(--home-lavender);
-}
-
-/* ══════════════════════════════════════════════════════════════════════
    HERO VIDEO
    Full-screen video carousel. Primary CTA pops in Sunshine Yellow;
    the outline button stays cream/lavender over the footage.

@@ -31,6 +31,7 @@ import {
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import StoreFooter from '../components/ecommerce/StoreFooter'
+import StoreLocation from '../components/ecommerce/StoreLocation'
 import { categoryHref, resolveCategoryName, type HeaderCategory } from '../components/ecommerce/navConfig'
 import { categoryService, type Category } from '../services/categoryService'
 import { productService } from '../services/productService'
@@ -736,6 +737,7 @@ export default function HomeStorefront() {
         </ul>
       </main>
 
+      <StoreLocation />
       <StoreFooter />
     </div>
   )

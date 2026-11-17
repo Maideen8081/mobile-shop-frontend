@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import LoadingScreen from './LoadingScreen'
 import { markBooted, useBootHolds } from './bootLoader'
 import { isAdminPath } from '../../route/adminPaths'
 
@@ -8,8 +7,10 @@ import { isAdminPath } from '../../route/adminPaths'
 const SETTLE_MS = 350
 /** Never keep shoppers waiting longer than this, even if an API hangs. */
 const MAX_WAIT_MS = 9000
+/** Fade-out length, kept in sync with the CSS transition below. */
+const FADE_MS = 300
 
-/** Full-screen branded loader shown once, when the storefront first opens. */
+/** Single, minimal app-wide loader shown once while the storefront first loads. */
 export default function AppBootLoader() {
   const { pathname } = useLocation()
   // Admin console has its own loading states; skip the shopper splash there.
@@ -40,14 +41,28 @@ export default function AppBootLoader() {
     return () => window.clearTimeout(t)
   }, [visible, ready, docReady, holds])
 
+  useEffect(() => {
+    if (!ready || !visible) return
+    const t = window.setTimeout(() => {
+      markBooted()
+      setVisible(false)
+    }, FADE_MS)
+    return () => window.clearTimeout(t)
+  }, [ready, visible])
+
   if (!visible) return null
   return (
-    <LoadingScreen
-      isLoaded={ready}
-      onExitComplete={() => {
-        markBooted()
-        setVisible(false)
-      }}
-    />
+    <div
+      role="status"
+      aria-live="polite"
+      className={`fixed inset-0 z-[100001] grid place-items-center bg-[#140720] transition-opacity duration-300 ${
+        ready ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
+      <div className="flex flex-col items-center gap-4 text-white">
+        <span className="h-10 w-10 animate-spin rounded-full border-[3px] border-white/20 border-t-[#ffd014]" />
+        <span className="text-sm font-semibold tracking-wide text-white/70">Loading…</span>
+      </div>
+    </div>
   )
 }

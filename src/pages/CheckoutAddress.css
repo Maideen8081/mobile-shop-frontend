@@ -153,6 +153,14 @@
   border-radius: 22px;
   box-shadow: var(--ca-shadow);
 }
+/* No saved addresses yet: drop the outer card so only the address form shows. */
+.ca-card.is-bare {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.ca-card.is-bare .ca-form { margin: 0; }
 .ca-card-head {
   display: flex;
   align-items: center;

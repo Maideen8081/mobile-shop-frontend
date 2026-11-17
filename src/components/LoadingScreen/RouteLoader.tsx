@@ -4,26 +4,13 @@ import { useBootHold } from './bootLoader'
 import './RouteLoader.css'
 
 /**
- * Suspense fallback while a page's code downloads. During the very first load
- * it also holds the boot splash so the splash doesn't vanish onto a blank page.
+ * Suspense fallback while a page's code downloads. No full-page UI: during the
+ * very first load the app-wide boot loader stays up, and later navigations are
+ * covered by the thin top progress bar.
  */
 export function RouteLoader() {
   useBootHold(true)
-  return (
-    <div className="rl-page" role="status" aria-live="polite">
-      <div className="rl-bar is-running" aria-hidden="true" />
-      <div className="rl-card">
-        <span className="rl-mark" aria-hidden="true">
-          <span className="rl-orbit" />
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="6" y="2.5" width="12" height="19" rx="2.6" />
-            <path d="M10.5 18.5h3" />
-          </svg>
-        </span>
-        <span className="rl-text">Loading<span className="rl-dots"><i>.</i><i>.</i><i>.</i></span></span>
-      </div>
-    </div>
-  )
+  return null
 }
 
 /** Thin top progress bar that runs on every page change. */

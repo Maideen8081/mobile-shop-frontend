@@ -202,7 +202,6 @@ export default function MobileWebsiteExperience() {
   const root = useRef<HTMLDivElement>(null);
   const [reduce] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [needsMotionPermission, setNeedsMotionPermission] = useState(() => typeof orientationApi()?.requestPermission === "function");
-  const [count, setCount] = useState(0);
   const [tag, setTag] = useState("All");
   const [active, setActive] = useState(0);
   const lineupStage = useRef<HTMLDivElement>(null);
@@ -229,20 +228,14 @@ export default function MobileWebsiteExperience() {
     const cleanups: (() => void)[] = [];
 
     const ctx = gsap.context(() => {
-      /* ── Loader iris → hero intro ── */
-      const counter = { v: 0 };
+      /* ── Hero intro ── */
       // The effect re-runs when live products arrive; only play the intro once.
       if (introPlayed.current) {
-        gsap.set(".wem-loader", { display: "none" });
         ScrollTrigger.refresh();
       } else {
       introPlayed.current = true;
       gsap.timeline({ onComplete: () => ScrollTrigger.refresh() })
-        .to(counter, { v: 100, duration: reduce ? 0.1 : 1.1, ease: "power2.inOut", onUpdate: () => setCount(Math.round(counter.v)) })
-        .to(".wem-loader-inner", { scale: 0.85, opacity: 0, duration: reduce ? 0.1 : 0.4, ease: "power2.in" })
-        .to(".wem-loader", { clipPath: "circle(0% at 50% 50%)", duration: reduce ? 0.1 : 0.9, ease: "expo.inOut" }, "<0.1")
-        .set(".wem-loader", { display: "none" })
-        .from(".wem-hero-title .wem-ch", { yPercent: 110, rotateX: -100, opacity: 0, duration: 1.1, stagger: 0.045, ease: "expo.out" }, "-=0.55")
+        .from(".wem-hero-title .wem-ch", { yPercent: 110, rotateX: -100, opacity: 0, duration: 1.1, stagger: 0.045, ease: "expo.out" })
         .from(".wem-hero-phone", { y: 120, rotateY: -70, scale: 0.7, opacity: 0, duration: 1.4, ease: "expo.out" }, "<0.1")
         .from(".wem-orbit-img", { scale: 0, opacity: 0, duration: 0.9, stagger: 0.12, ease: "back.out(2)" }, "-=1")
         .from(".wem-hero-fade", { y: 24, opacity: 0, duration: 0.7, stagger: 0.08, ease: "power3.out" }, "-=0.8");
@@ -450,17 +443,6 @@ export default function MobileWebsiteExperience() {
 
   return (
     <div ref={root} className="we wem relative min-h-screen" style={{ background: C.bg, color: C.fg }}>
-      {/* Loader */}
-      <div className="wem-loader fixed inset-0 z-[100] flex flex-col items-center justify-center" style={{ background: C.primary, color: C.bg, clipPath: "circle(150% at 50% 50%)" }}>
-        <div className="wem-loader-inner flex flex-col items-center">
-          <div className="font-display text-[28vw] font-extrabold leading-none tabular-nums">{count}%</div>
-          <div className="mt-3 h-[3px] w-40 overflow-hidden rounded-full" style={{ background: "rgba(22, 8, 35,0.2)" }}>
-            <div className="h-full rounded-full" style={{ width: `${count}%`, background: C.bg }} />
-          </div>
-          <p className="mt-3 text-micro uppercase tracking-[0.3em]">Powering up the store</p>
-        </div>
-      </div>
-
       {/* Scroll progress */}
       <div className="wem-progress fixed inset-x-0 top-0 z-[60] h-[2px] origin-left scale-x-0" style={{ background: `linear-gradient(90deg, ${C.accent}, ${C.primary}, ${C.magenta})` }} />
 
