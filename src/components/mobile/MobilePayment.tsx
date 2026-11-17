@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import { computeTotals, gstLabel } from '../../utils/checkout'
-import { COD_MAX_ORDER } from './cartLogic'
 import { useNavigate } from 'react-router-dom'
 import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
@@ -11,6 +10,8 @@ import { readCheckoutCoupon, saveCheckoutCoupon } from '../../utils/checkout'
 import ExitIntentOffer from '../checkout/ExitIntentOffer'
 import DoubleRingLoader from '../ui/DoubleRingLoader'
 
+const STEP_COLORS = ['#0f3b2c', '#b4462f', '#b45309']
+const STEP_DEEP = ['#18503c', '#8f3523', '#8a3d08']
 const PURPLE = '#0f3b2c'
 const PURPLE_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
@@ -82,13 +83,12 @@ export default function MobilePayment() {
   const [checkoutCoupon, setCheckoutCoupon] = useState(readCheckoutCoupon)
 
   // One shared pricing function (GST included in prices), same as the server.
-  // grandTotal is declared below; canPlace/codBlocked are derived after it.
+  // grandTotal is declared below; canPlace is derived after it.
   const { subtotal, shipping, tax, discount, total: grandTotal } = useMemo(
     () => computeTotals(items, checkoutCoupon?.discount || 0),
     [items, checkoutCoupon],
   )
-  const codBlocked = grandTotal > COD_MAX_ORDER
-  const canPlace = selectedMethod === 'cod' && !codBlocked && items.length > 0
+  const canPlace = selectedMethod === 'cod' && items.length > 0
 
   if (cartLoading) {
     return (
@@ -223,16 +223,18 @@ export default function MobilePayment() {
           const step = i + 1
           const done = step < 3
           const active = step === 3
+          const color = STEP_COLORS[i]
+          const deep = STEP_DEEP[i]
           return (
             <div key={label} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
                 <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-micro font-bold transition ${done ? 'text-white' : active ? 'text-white' : 'bg-white text-[#9aa29e] border border-[#ece9e2]'}`}
-                  style={done || active ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined}>
+                  style={done || active ? { background: `linear-gradient(135deg,${color},${deep})` } : undefined}>
                   {done ? <FiCheck size={14} /> : step}
                 </div>
-                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-[#9aa29e]'}`} style={active ? { color: PURPLE } : undefined}>{label}</span>
+                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-[#9aa29e]'}`} style={active ? { color } : undefined}>{label}</span>
               </div>
-              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-[#ece9e2]'}`} style={done ? { background: `linear-gradient(135deg,${PURPLE},${PURPLE_DEEP})` } : undefined} />}
+              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-[#ece9e2]'}`} style={done ? { background: `linear-gradient(135deg,${color},${deep})` } : undefined} />}
             </div>
           )
         })}
@@ -314,11 +316,6 @@ export default function MobilePayment() {
             })}
           </div>
 
-          {codBlocked && (
-            <p role="alert" className="mt-2 rounded-[14px] bg-amber-50 px-3 py-2.5 text-caption font-semibold text-amber-800">
-              Cash on Delivery is available for orders up to ₹{COD_MAX_ORDER.toLocaleString('en-IN')}. Online payments are launching soon, so please reduce this order to place it now.
-            </p>
-          )}
           <p className="mt-2 text-micro text-[#5d6762]">
             By placing this order you agree to our <a href="/terms" className="underline">Terms</a> and <a href="/refund-policy" className="underline">Refund Policy</a>.
           </p>

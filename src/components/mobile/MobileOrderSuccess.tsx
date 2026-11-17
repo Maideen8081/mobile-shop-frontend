@@ -6,7 +6,7 @@ import { orderService, type OrderResponse } from '../../services/orderService'
 
 const PURPLE = '#0f3b2c'
 const PURPLE_DEEP = '#18503c'
-const SUCCESS = '#16A34A'
+const SUCCESS = '#0f3b2c'
 const card = 'bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -119,7 +119,7 @@ export default function MobileOrderSuccess() {
     setCopied(true)
   }
 
-  const confetti = ['#0f3b2c', '#16A34A', '#F59E0B', '#EF4444', '#0EA5E9', '#0f3b2c']
+  const confetti = ['#0f3b2c', '#18503c', '#dfe8b4', '#f08a7b', '#dfe6cf', '#0b2e22']
 
   return (
     <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto pb-28 relative overflow-hidden" style={{ fontFamily: 'var(--font-ui)' }}>
@@ -132,7 +132,7 @@ export default function MobileOrderSuccess() {
       </div>
 
       {/* Top banner */}
-      <div className="relative px-4 pt-4 pb-24 text-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
+      <div className="relative px-4 pt-4 pb-24 text-center overflow-hidden" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #18503c)` }}>
         <div className="absolute -top-16 -right-10 w-48 h-48 rounded-[8px] bg-white/15 blur-2xl" />
         <div className="absolute -bottom-12 -left-10 w-40 h-40 rounded-[8px] bg-white/10 blur-2xl" />
         <button onClick={() => navigate('/home')} className="absolute top-4 left-4 w-9 h-9 rounded-[8px] bg-white/20 flex items-center justify-center z-10">
@@ -141,7 +141,7 @@ export default function MobileOrderSuccess() {
         <div className="relative w-24 h-24 mx-auto mt-6">
           <span className="absolute inset-0 rounded-[8px] bg-white/25 animate-ping" />
           <div className="relative w-24 h-24 rounded-[8px] bg-white flex items-center justify-center shadow-xl">
-            <div className="w-16 h-16 rounded-[8px] flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
+            <div className="w-16 h-16 rounded-[8px] flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #18503c)` }}>
               <FiCheck size={34} className="text-white" />
             </div>
           </div>
@@ -183,10 +183,10 @@ export default function MobileOrderSuccess() {
                 <div key={step} className="flex items-center flex-1 last:flex-none">
                   <div className="flex flex-col items-center flex-shrink-0">
                     <div className={`w-9 h-9 rounded-[8px] flex items-center justify-center ${done ? 'text-white' : 'bg-[#f7f6f2] text-[#9aa29e]'}`}
-                      style={done ? { background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` } : undefined}>
+                      style={done ? { background: `linear-gradient(135deg, ${SUCCESS}, #18503c)` } : undefined}>
                       {done ? <FiCheck size={14} /> : <span className="text-micro font-bold">{i + 1}</span>}
                     </div>
-                    <span className={`text-micro mt-1 font-semibold text-center leading-tight ${done ? 'text-[#15803D]' : 'text-[#9aa29e]'}`}>{label}</span>
+                    <span className={`text-micro mt-1 font-semibold text-center leading-tight ${done ? 'text-[#0f3b2c]' : 'text-[#9aa29e]'}`}>{label}</span>
                   </div>
                   {i < STATUS_STEPS.length - 1 && <div className={`flex-1 h-[2px] mx-1 rounded-[8px] ${done && i < currentStep ? '' : 'bg-[#ece9e2]'}`} style={done && i < currentStep ? { background: SUCCESS } : undefined} />}
                 </div>

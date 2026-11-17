@@ -46,7 +46,7 @@ export default function CategoryCarousel({ categories }: { categories: Category[
                   : { background: '#FFFFFF', boxShadow: '0 6px 18px rgba(15,59,44,0.08)' }}
               >
                 {img ? (
-                  <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-full" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                  <img src={img} alt={cat.name} loading="lazy" className="w-full h-full object-contain rounded-full bg-white p-2" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
                 ) : (
                   <span className="text-heading leading-none">{CATEGORY_ICONS[cat.name] || '🛍️'}</span>
                 )}

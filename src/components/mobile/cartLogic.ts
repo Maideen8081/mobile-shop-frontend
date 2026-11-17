@@ -7,8 +7,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000
 export const FREE_SHIPPING_THRESHOLD = 500
 export const TAX_RATE = 0.18
 export const DELIVERY_CHARGE = 49
-/** Largest order accepted as Cash on Delivery (COD_MAX_ORDER on the server). */
-export const COD_MAX_ORDER = 10000
 
 export interface CartItem {
   productId: number

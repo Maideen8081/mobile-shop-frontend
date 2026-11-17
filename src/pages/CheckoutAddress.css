@@ -7,6 +7,8 @@
   --ca-cream: #f7f6f2;
   --ca-sage: #dfe8b4;
   --ca-sun: #dfe8b4;
+  --ca-error: #b4232f;
+  --ca-error-bg: #fdecec;
 
   --ca-ink-2: rgba(15,59,44, 0.82);
   --ca-muted: rgba(15,59,44, 0.58);
@@ -22,7 +24,7 @@
 
 /* ── Shared pieces (also used on the payment step) ── */
 .cx-steps li.is-done { color: var(--ca-ink-2); }
-.cx-steps li.is-done .cx-step-num { background: var(--ca-green); color: var(--ca-sun); }
+.cx-steps li.is-done .cx-step-num { background: var(--step-color); color: #fff; }
 
 .ca-list { display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 22px; }
 
@@ -88,7 +90,9 @@
   margin: 0 0 26px;
   padding: 0;
 }
-.ca-steps li { display: flex; align-items: center; }
+.ca-steps li { display: flex; align-items: center; --step-color: #0f3b2c; }
+.ca-steps li.is-step-2 { --step-color: #b4462f; }
+.ca-steps li.is-step-3 { --step-color: #b45309; }
 .ca-steps li + li::before {
   content: '';
   width: clamp(80px, 14vw, 200px);
@@ -97,7 +101,7 @@
   border-radius: 2px;
   background: var(--ca-lav-35);
 }
-.ca-steps li.is-active::before { background: var(--ca-green); }
+.ca-steps li.is-active::before { background: var(--step-color); }
 .ca-step { display: inline-flex; align-items: center; gap: 14px; color: var(--ca-muted); text-decoration: none; }
 .ca-step-num {
   width: 42px;
@@ -112,15 +116,16 @@
 }
 .ca-step-label { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
 .ca-steps li.is-done .ca-step,
-.ca-steps li.is-active .ca-step { color: var(--ca-green); }
-.ca-steps li.is-done .ca-step-num { background: var(--ca-green); border-color: var(--ca-green); color: var(--ca-sun); }
+.ca-steps li.is-active .ca-step { color: var(--step-color); }
+.ca-steps li.is-done .ca-step-num { background: var(--step-color); border-color: var(--step-color); color: #fff; }
 .ca-steps li.is-active .ca-step-num {
-  background: var(--ca-green);
-  border-color: var(--ca-green);
-  color: var(--ca-cream);
-  box-shadow: 0 0 0 5px var(--ca-lav-35);
+  background: var(--step-color);
+  border-color: var(--step-color);
+  color: #fff;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--step-color) 22%, transparent);
 }
 .ca-steps li.is-active .ca-step-label { font-weight: 700; }
+.ca-steps li:not(.is-done):not(.is-active) .ca-step-num { border-color: var(--step-color); color: var(--step-color); }
 .ca-steps a.ca-step:hover .ca-step-label { text-decoration: underline; }
 
 /* Heading */
@@ -427,7 +432,7 @@
   transition: background 0.2s, border-color 0.2s;
 }
 .ca-form-close:hover { background: var(--ca-lav-20); border-color: var(--ca-sage); }
-.ca-req { color: var(--ca-green); font-weight: 800; }
+.ca-req { color: var(--ca-error); font-weight: 800; }
 
 .ca-form-alert {
   display: flex;
@@ -512,25 +517,25 @@
 .ca-input select {
   appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23210d35' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230f3b2c' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
-.ca-input select.is-placeholder { color: rgba(15,59,44, 0.36); }
+.ca-input select.is-placeholder { color: #5d6762; }
 .ca-input-state { position: absolute; right: 14px; pointer-events: none; }
 .ca-input:has(select) .ca-input-state { right: 38px; }
 
 /* Valid: sage check · Error: green border + yellow wash */
 .ca-field.is-valid .ca-input { border-color: var(--ca-sage); }
 .ca-field.is-valid .ca-input-state { color: var(--ca-green); fill: var(--ca-sage); }
-.ca-field.has-error .ca-input { border: 2px solid var(--ca-green); background: rgba(223,232,180, 0.1); }
-.ca-field.has-error .ca-input:focus-within { box-shadow: 0 0 0 4px rgba(223,232,180, 0.35); }
+.ca-field.has-error .ca-input { border: 2px solid var(--ca-error); background: var(--ca-error-bg); }
+.ca-field.has-error .ca-input:focus-within { box-shadow: 0 0 0 4px rgba(180,35,47, 0.16); }
 .ca-field.has-error .ca-input-icon,
-.ca-field.has-error .ca-input-state { color: var(--ca-green); }
+.ca-field.has-error .ca-input-state { color: var(--ca-error); }
 .ca-field.has-error .ca-input-state { fill: var(--ca-sun); }
 .ca-field-err,
 .ca-field-hint { margin: 0; font-size: 13px; line-height: 1.4; }
-.ca-field-err { font-weight: 600; color: var(--ca-green); }
+.ca-field-err { font-weight: 600; color: var(--ca-error); }
 .ca-field-hint { color: var(--ca-muted); }
 
 /* Address type cards */

@@ -2,15 +2,15 @@
 .osx {
   --osx-paper: #f7f6f2;
   --osx-card: #ffffff;
-  --osx-ink: #1b1210;
-  --osx-ink-2: #4a403d;
-  --osx-muted: #857d79;
-  --osx-line: #ece4e0;
+  --osx-ink: #1d2522;
+  --osx-ink-2: #5d6762;
+  --osx-muted: #5d6762;
+  --osx-line: #ece9e2;
   --osx-red: #0f3b2c;
   --osx-red-dark: #18503c;
   --osx-red-tint: #fbe1d8;
-  --osx-green: #059669;
-  --osx-green-tint: #e7f6f0;
+  --osx-green: #0f3b2c;
+  --osx-green-tint: #dfe6cf;
 
   min-height: 100vh;
   display: flex;
@@ -25,7 +25,7 @@
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 36px 24px 64px;
+  padding: 8px 32px 64px;
 }
 
 /* ── Hero ── */
@@ -36,10 +36,10 @@
   gap: 24px;
   padding: 28px 32px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #065f46 0%, #059669 60%, #10b981 100%);
+  background: linear-gradient(135deg, #0b2e22 0%, #0f3b2c 55%, #18503c 100%);
   color: #fff;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(5, 150, 105, 0.25);
+  box-shadow: 0 18px 40px rgba(15, 59, 44, 0.28);
 }
 .osx-hero::after {
   content: '';
@@ -138,7 +138,7 @@
   background: var(--osx-card);
   border: 1px solid var(--osx-line);
   border-radius: 18px;
-  box-shadow: 0 2px 10px rgba(27, 18, 16, 0.04);
+  box-shadow: 0 2px 10px rgba(15, 59, 44, 0.05);
 }
 .osx-card + .osx-card { margin-top: 20px; }
 .osx-card-head {

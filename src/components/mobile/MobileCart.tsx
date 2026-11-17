@@ -65,6 +65,7 @@ export default function MobileCart() {
     setCartLoading(true)
     cartService.getItems().then(setItems).catch(() => setItems([])).finally(() => setCartLoading(false))
     const handler = () => {
+      setItems(cartService.getCachedItems())
       cartService.getItems().then(setItems).catch(() => setItems([]))
     }
     window.addEventListener('cart-updated', handler)

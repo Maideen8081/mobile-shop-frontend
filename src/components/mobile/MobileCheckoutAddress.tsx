@@ -8,6 +8,8 @@ import DoubleRingLoader from '../ui/DoubleRingLoader'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
+const STEP_COLORS = ['#0f3b2c', '#b4462f', '#b45309']
+const STEP_DEEP = ['#18503c', '#8f3523', '#8a3d08']
 const RED = '#0f3b2c'
 const RED_DEEP = '#18503c'
 const SUCCESS = '#16A34A'
@@ -168,17 +170,19 @@ export default function MobileCheckoutAddress() {
           const step = i + 1
           const done = step < 2
           const active = step === 2
+          const color = STEP_COLORS[i]
+          const deep = STEP_DEEP[i]
           return (
             <div key={label} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
                 <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center text-micro font-bold transition ${
                   done || active ? 'text-white' : 'bg-white text-gray-400 border border-gray-200'
-                }`} style={done || active ? { background: `linear-gradient(135deg,${RED},${RED_DEEP})` } : undefined}>
+                }`} style={done || active ? { background: `linear-gradient(135deg,${color},${deep})` } : undefined}>
                   {done ? <FiCheck size={13} /> : step}
                 </div>
-                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-gray-400'}`} style={active ? { color: RED } : undefined}>{label}</span>
+                <span className={`text-micro mt-1 font-semibold ${active ? '' : 'text-gray-400'}`} style={active ? { color } : undefined}>{label}</span>
               </div>
-              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-gray-200'}`} style={done ? { background: `linear-gradient(135deg,${RED},${RED_DEEP})` } : undefined} />}
+              {i < 2 && <div className={`flex-1 h-[2px] mx-1.5 rounded-[8px] ${done ? '' : 'bg-gray-200'}`} style={done ? { background: `linear-gradient(135deg,${color},${deep})` } : undefined} />}
             </div>
           )
         })}

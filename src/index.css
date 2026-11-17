@@ -31,8 +31,7 @@
   --color-text: #f2f0e8;
   --color-text-muted: #9aa29e;
   --color-text-dim: #5d6762;
-  --color-accent-green: #0f3b2c; /* legacy alias kept as brand red (see --color-accent-red) */
-  --color-accent-green: #18503c;
+  --color-accent-green: #0f3b2c; /* legacy alias kept as brand green */
 
   --font-heading: var(--font-display);
   --font-body: var(--font-ui);

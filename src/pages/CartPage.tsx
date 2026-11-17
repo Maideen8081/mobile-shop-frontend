@@ -144,7 +144,10 @@ export default function CartPage() {
       .then(({ items }) => { if (!cancelled) setCart(toRows(items)) })
       .catch(() => { if (!cancelled) setCart([]) })
       .finally(() => { if (!cancelled) setLoading(false) })
-    const onCartUpdated = () => fetchCart()
+    const onCartUpdated = () => {
+      setCart(toRows(cartService.getCachedItems()))
+      fetchCart()
+    }
     window.addEventListener('cart-updated', onCartUpdated)
     return () => {
       cancelled = true
@@ -223,6 +226,8 @@ export default function CartPage() {
   const removeRow = (item: CartRow, message: string, undoable = true) => {
     withBusy(item.key, async () => {
       setRemovingKeys((r) => [...r, item.key])
+      setCart((prev) => prev.filter((r) => r.key !== item.key))
+      setUnselected((prev) => prev.filter((k) => k !== item.key))
       await cartService.removeItem(item.id, item.variantId)
       await new Promise((r) => setTimeout(r, 220))
       setRemovingKeys((r) => r.filter((k) => k !== item.key))
@@ -249,6 +254,8 @@ export default function CartPage() {
   const handleConfirmClear = async () => {
     setConfirmClear(false)
     if (partialSelection) {
+      const keys = new Set(selectedRows.map((item) => item.key))
+      setCart((prev) => prev.filter((item) => !keys.has(item.key)))
       for (const item of selectedRows) await cartService.removeItem(item.id, item.variantId)
       setUnselected([])
       setNotice({ text: `${selectedRows.length} item${selectedRows.length !== 1 ? 's' : ''} removed`, type: 'ok' })

@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { BUSINESS, POLICY_LINKS } from '../config/business'
-import { COD_MAX_ORDER } from '../components/mobile/cartLogic'
 
 /*
  * Store policies required by Indian payment gateways (privacy, terms, refunds,
@@ -44,7 +43,7 @@ const POLICIES: Record<string, Policy> = {
       { heading: 'Orders and prices', body: [
         'All prices are in Indian Rupees and include GST. The GST share is shown on your invoice.',
         'An order is confirmed when you receive an order number. We may cancel an order if an item is out of stock or mispriced, and you will not be charged.',
-        `Cash on Delivery is available for orders up to ₹${COD_MAX_ORDER.toLocaleString('en-IN')}.`,
+        'Cash on Delivery is available on all orders.',
       ] },
       { heading: 'Cancellations', body: [
         'You can cancel an unpaid order from My Orders until it ships. For paid orders, contact support for a refund.',

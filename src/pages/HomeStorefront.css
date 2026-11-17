@@ -274,13 +274,6 @@
   transition: opacity 0.9s ease;
 }
 .vv-hero-video.is-on { opacity: 1; }
-.vv-hero-shade {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(11, 46, 34, 0.96) 0%, rgba(11, 46, 34, 0.84) 38%, rgba(15, 59, 44, 0.35) 70%, rgba(11, 46, 34, 0.25) 100%),
-    linear-gradient(0deg, rgba(11, 46, 34, 0.55), transparent 40%);
-}
 .vv-hero-copy, .vv-hero-offer { animation: vv-fade 0.6s ease both; }
 .vv-pill {
   display: inline-flex;
@@ -456,6 +449,7 @@
   color: var(--vv-ink);
 }
 .vv-catcircle {
+  position: relative;
   display: grid;
   place-items: center;
   width: 64px;
@@ -464,6 +458,18 @@
   color: var(--vv-ink);
   box-shadow: 0 0 0 5px #fff, 0 0 0 6px var(--vv-line);
   transition: transform 0.2s, box-shadow 0.2s;
+}
+.vv-caticon { position: relative; z-index: 0; }
+.vv-catimg {
+  position: absolute;
+  z-index: 1;
+  inset: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  border-radius: 999px;
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
 }
 .vv-catitem:hover .vv-catcircle {
   transform: translateY(-3px);
@@ -1002,7 +1008,6 @@
 @media (max-width: 900px) {
   .vv-hero { grid-template-columns: 1fr; padding: 28px 22px 48px; }
   .vv-hero-offer { display: none; }
-  .vv-hero-shade { background: rgba(11, 46, 34, 0.8); }
   .vv-perks { display: flex; flex-wrap: wrap; row-gap: 10px; }
   .vv-refurb { grid-template-columns: 1fr; padding: 24px 20px; }
   .vv-refurb-art { height: 160px; }

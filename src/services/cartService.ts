@@ -213,6 +213,14 @@ export const cartService = {
     return getLocalCart().reduce((s, i) => s + i.quantity, 0)
   },
 
+  getCachedItems(): CartItem[] {
+    if (this.isUsingApi()) {
+      syncCachedItemsFromLocal()
+      return cachedCartItems || []
+    }
+    return getLocalCart()
+  },
+
   async addItem(params: {
     productId: number
     variationId: number

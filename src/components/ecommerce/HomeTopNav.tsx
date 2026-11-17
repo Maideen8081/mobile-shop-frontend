@@ -45,7 +45,7 @@ export function Logo({ light = false }: { light?: boolean } = {}) {
 
 export default function HomeTopNav() {
   const navigate = useNavigate()
-  const { cartCount, wishlistCount, isAuth } = useNavState()
+  const { cartCount, wishlistCount, isAuth, user, displayName, initials } = useNavState()
   const headerCats = useHeaderCategories()
   const [query, setQuery] = useState('')
   const [catsOpen, setCatsOpen] = useState(false)
@@ -95,9 +95,16 @@ export default function HomeTopNav() {
             <button type="submit" aria-label="Search"><Search size={18} /></button>
           </form>
           <nav className="vv-actions" aria-label="Account">
-            <Link to={isAuth ? '/profile' : '/login'}>
-              <User size={21} strokeWidth={1.7} />
-              <span>{isAuth ? 'Account' : 'Sign In'}</span>
+            <Link
+              to={isAuth ? '/profile' : '/login'}
+              data-tip={isAuth ? `${displayName || 'Account'}${user.email ? ` · ${user.email}` : ''}` : 'Sign in to your account'}
+            >
+              {isAuth && initials ? (
+                <span className="vv-avatar" title={displayName}>{initials}</span>
+              ) : (
+                <User size={21} strokeWidth={1.7} />
+              )}
+              <span>{isAuth ? displayName.split(' ')[0] || 'Account' : 'Sign In'}</span>
             </Link>
             <Link to="/wishlist">
               <span className="vv-ico">

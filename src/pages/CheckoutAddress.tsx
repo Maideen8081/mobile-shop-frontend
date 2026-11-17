@@ -129,7 +129,7 @@ function DesktopCheckoutAddress() {
           {STEPS.map((label, i) => (
             <li
               key={label}
-              className={i === 1 ? 'is-active' : i === 0 ? 'is-done' : ''}
+              className={`is-step-${i + 1}${i === 1 ? ' is-active' : i === 0 ? ' is-done' : ''}`}
               aria-current={i === 1 ? 'step' : undefined}
             >
               {i === 0 ? (

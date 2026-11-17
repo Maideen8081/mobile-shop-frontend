@@ -639,7 +639,7 @@ function ProductDetailContent() {
         color: activeVariant?.color || '',
       })
       setAdded(true)
-      navigate('/cart')
+      navigate('/checkout/address')
     } catch (err: any) {
       showToast(err?.message || 'Failed to add to cart')
     } finally {

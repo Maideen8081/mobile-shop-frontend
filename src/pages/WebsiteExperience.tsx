@@ -120,9 +120,6 @@ export default function WebsiteExperience() {
       <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-0" style={{ background: "#0b2e22" }}>
         <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(15,59,44,0.35), transparent 65%)" }} />
         <h1 className="sr-only">PhoneFix — smartphones, accessories and expert phone repairs</h1>
-        <div className="relative z-10 mb-4 w-full px-5 md:px-10">
-          <p className="text-xs uppercase tracking-[0.3em]" style={{ color: "#dfe8b4" }}>In store now · scroll, swipe or use ← → to spin</p>
-        </div>
         <div ref={stage} className="relative z-10 mt-6 min-h-0 w-full flex-1 select-none" style={{ perspective: 1900, touchAction: "pan-y" }}>
           <div className="we-ring preserve-3d absolute left-1/2 top-1/2 h-0 w-0">
             {products.map((p) => (

@@ -9,7 +9,6 @@
   --srp-green-mid: #18503c;
   --srp-accent: #18503c;
   --srp-lav: #f7f6f2;
-  --srp-green: var(--color-success, #079455);
   --srp-star: #f2b01e;
 
   min-height: 100vh;

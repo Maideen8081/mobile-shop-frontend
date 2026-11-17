@@ -46,6 +46,7 @@ import phonesVideo from '../assets/Orange_smartphone_exploding_view_1080p_202610
 import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_20261012230812.mp4'
 import internalsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
 import HomeTopNav, { Logo } from '../components/ecommerce/HomeTopNav'
+import FeaturedCollectionsAds from '../components/ecommerce/FeaturedCollectionsAds'
 import './HomeStorefront.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
@@ -479,7 +480,6 @@ export default function HomeStorefront() {
                 <source src={sl.video} type="video/mp4" />
               </video>
             ))}
-            <span className="vv-hero-shade" />
           </div>
 
           <div className="vv-hero-copy" key={`copy-${slide}`}>
@@ -535,10 +535,22 @@ export default function HomeStorefront() {
         <section className="vv-catrow" aria-label="Shop by category">
           {CATEGORY_TILES.map((tile) => {
             const Icon = tile.icon
+            const matchedName = tile.to ? '' : resolveCategoryName(tile.match ?? tile.label, headerCats)
+            const matchedCategory = categories.find((c) => c.name === matchedName)
+            const categoryImage = matchedCategory ? imageUrl(matchedCategory.image) : ''
             return (
               <Link key={tile.label} to={tileHref(tile)} className="vv-catitem">
                 <span className={`vv-catcircle tone-${tile.tone}`}>
-                  <Icon size={26} strokeWidth={1.5} />
+                  <Icon className="vv-caticon" size={26} strokeWidth={1.5} />
+                  {categoryImage && (
+                    <img
+                      className="vv-catimg"
+                      src={categoryImage}
+                      alt=""
+                      loading="lazy"
+                      onError={(e) => e.currentTarget.remove()}
+                    />
+                  )}
                 </span>
                 <span>{tile.label}</span>
               </Link>
@@ -551,6 +563,9 @@ export default function HomeStorefront() {
             <span>View All</span>
           </Link>
         </section>
+
+        {/* ── Featured collections (ad banners) ── */}
+        <FeaturedCollectionsAds categories={headerCats} />
 
         {/* ── Top picks ── */}
         <section className="vv-panel">

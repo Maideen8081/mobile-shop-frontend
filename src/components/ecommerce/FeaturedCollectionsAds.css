@@ -1,0 +1,266 @@
+/* Featured Collections — advertisement grid on the desktop home page. */
+.fca {
+  --fca-ink: #0f3b2c;
+  --fca-ink-soft: #18503c;
+  --fca-bg: #f7f6f2;
+  --fca-line: #ece9e2;
+  --fca-lime: #dfe8b4;
+  --fca-coral: #f08a7b;
+  --fca-accent: #0f3b2c;
+  --fca-blue: var(--fca-accent);
+  margin-top: 26px;
+  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.fca-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.fca .fca-head h2,
+.fca .fca-copy h3 { font-family: inherit; }
+.fca-head h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--fca-ink);
+}
+.fca-viewall {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fca-blue);
+}
+.fca-viewall:hover { text-decoration: underline; }
+
+/* 12-col grid: row 1 = 3 equal tiles, row 2 = wide deal + gaming */
+.fca-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+.fca-laptop, .fca-audio, .fca-home { grid-column: span 4; min-height: 230px; }
+.fca-deal { grid-column: span 7; min-height: 270px; }
+.fca-gaming { grid-column: span 5; min-height: 270px; }
+
+/* ── Card base ── */
+.fca-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 14px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.fca-card:hover { transform: translateY(-3px); box-shadow: 0 18px 34px -18px rgba(11, 46, 34, 0.38); }
+.fca-card:focus-visible { outline: 2px solid var(--fca-blue); outline-offset: 3px; }
+
+.fca-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 58%;
+  padding: 26px 0 26px 28px;
+}
+.fca-copy h3 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.fca-copy p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── Buttons ── */
+.fca-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: gap 0.2s ease;
+}
+.fca-card:hover .fca-btn { gap: 12px; }
+.fca-btn-light { background: var(--fca-bg); color: var(--fca-ink); }
+.fca-btn-dark { background: var(--fca-ink); color: var(--fca-bg); }
+.fca-btn-accent { background: var(--fca-lime); color: #0b2e22; }
+
+/* ── Themes ── */
+.fca-dark {
+  background: linear-gradient(120deg, #0b2e22 0%, #0f3b2c 58%, #18503c 100%);
+  color: var(--fca-bg);
+}
+.fca-dark p { color: rgba(247, 246, 242, 0.76); }
+.fca-light { color: var(--fca-ink); }
+.fca-light p { color: #5d6762; }
+.fca-accent {
+  background: linear-gradient(120deg, #0b2e22 0%, #0f3b2c 55%, #18503c 100%);
+  color: var(--fca-bg);
+}
+.fca-accent p { color: rgba(247, 246, 242, 0.82); }
+
+/* Full-bleed photo on the right that fades into the card colour */
+.fca-photo {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 0;
+  width: 66%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 38%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 38%);
+  transition: transform 0.5s ease;
+}
+.fca-card:hover .fca-photo { transform: scale(1.05); }
+
+/* Laptop */
+.fca-laptop .fca-photo { object-position: 40% 60%; }
+
+/* Audio */
+.fca-audio { background: radial-gradient(120% 120% at 80% 50%, #18503c 0%, #0f3b2c 45%, #0b2e22 100%); }
+.fca-glow {
+  position: absolute;
+  right: 6%;
+  top: 50%;
+  z-index: 0;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(223, 232, 180, 0.28) 0%, transparent 70%);
+  transform: translateY(-50%);
+}
+.fca-product {
+  position: absolute;
+  right: 4%;
+  top: 50%;
+  z-index: 1;
+  height: 82%;
+  width: auto;
+  max-width: 48%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.6));
+  transform: translateY(-50%) rotate(-8deg);
+  transition: transform 0.4s ease;
+}
+.fca-audio:hover .fca-product { transform: translateY(-52%) rotate(-4deg) scale(1.04); }
+
+/* Smart home */
+.fca-home { background: linear-gradient(110deg, #f7f6f2 0%, #ece9e2 100%); }
+.fca-home .fca-photo { width: 62%; object-position: 30% 50%; }
+
+/* Deals */
+.fca-deal { background: linear-gradient(115deg, #f7f6f2 0%, #ece9e2 58%, #dfe8b4 100%); }
+.fca-deal .fca-copy { max-width: 48%; padding-left: 34px; }
+.fca-kicker {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5d6762;
+}
+.fca-copy .fca-deal-title {
+  margin-top: 8px;
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.fca-deal-title em { font-style: normal; color: var(--fca-ink); }
+.fca-copy .fca-deal-sub {
+  margin-top: 6px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--fca-ink);
+}
+.fca-deal-art {
+  position: absolute;
+  inset: 0 0 0 44%;
+  z-index: 1;
+}
+.fca-pedestal {
+  position: absolute;
+  left: 8%;
+  right: 6%;
+  bottom: 8%;
+  height: 34%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #ece9e2 100%);
+  box-shadow: 0 20px 30px -18px rgba(11, 46, 34, 0.26);
+}
+.fca-deal-phone {
+  position: absolute;
+  left: 30%;
+  bottom: 16%;
+  height: 76%;
+  width: auto;
+  filter: drop-shadow(0 16px 18px rgba(0, 0, 0, 0.25));
+  transition: transform 0.4s ease;
+}
+.fca-deal-buds {
+  position: absolute;
+  left: 6%;
+  bottom: 12%;
+  height: 36%;
+  width: auto;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
+}
+.fca-deal-watch {
+  position: absolute;
+  right: 8%;
+  bottom: 16%;
+  height: 50%;
+  width: auto;
+  filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.25));
+}
+.fca-deal:hover .fca-deal-phone { transform: translateY(-6px); }
+
+/* Gaming */
+.fca-gaming .fca-photo {
+  width: 60%;
+  object-position: 62% 40%;
+  mix-blend-mode: luminosity;
+  opacity: 0.95;
+}
+.fca-gaming::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(60% 70% at 80% 55%, rgba(223, 232, 180, 0.32), transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1180px) {
+  .fca-copy h3 { font-size: 20px; }
+  .fca-copy .fca-deal-title { font-size: 34px; }
+  .fca-deal, .fca-gaming { grid-column: span 6; }
+}
+@media (max-width: 900px) {
+  .fca-laptop, .fca-audio, .fca-home, .fca-deal, .fca-gaming { grid-column: 1 / -1; min-height: 200px; }
+  .fca-deal { min-height: 240px; }
+}
+@media (max-width: 520px) {
+  .fca-copy { max-width: 64%; padding: 22px 0 22px 20px; }
+  .fca-deal .fca-copy { max-width: 56%; padding-left: 20px; }
+  .fca-copy .fca-deal-title { font-size: 28px; }
+  .fca-deal-art { left: 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fca-card, .fca-photo, .fca-product, .fca-deal-phone, .fca-btn { transition: none; }
+}
