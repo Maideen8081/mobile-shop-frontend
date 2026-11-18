@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  CreditCard,
   Headphones,
   Headset,
   Heart,
@@ -17,7 +16,6 @@ import {
   Mail,
   MapPin,
   Navigation,
-  Percent,
   Phone,
   Recycle,
   RefreshCw,
@@ -42,7 +40,6 @@ import { requireSignInForWishlist } from '../utils/wishlist'
 import { useToast } from '../context/ToastContext'
 import { BUSINESS } from '../config/business'
 import { useBootHold } from '../components/LoadingScreen/bootLoader'
-import phonesVideo from '../assets/Orange_smartphone_exploding_view_1080p_20261002155324.mp4'
 import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_20261012230812.mp4'
 import internalsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
 import HomeTopNav, { Logo } from '../components/ecommerce/HomeTopNav'
@@ -56,20 +53,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 /* ─────────────────────────── Static content ─────────────────────────── */
 
 const HERO_SLIDES = [
-  {
-    pill: 'New Launch',
-    title: ['Latest Smartphones', 'Now at PhoneFix'],
-    text: 'Discover cutting-edge smartphones from top brands with great offers and assured warranty.',
-    perks: [
-      { icon: Percent, label: ['Up to', '25% Off'] },
-      { icon: CreditCard, label: ['No Cost', 'EMI'] },
-      { icon: ShieldCheck, label: ['Brand', 'Warranty'] },
-    ],
-    cta: { label: 'Shop Now', to: '/phones' },
-    badge: 'Limited Time Offer',
-    offer: { kicker: 'Up to', big: '25%', unit: 'OFF', note: 'On top smartphone brands' },
-    video: phonesVideo,
-  },
   {
     pill: 'Expert Repairs',
     title: ['Your Phone,', 'Fixed by Experts'],

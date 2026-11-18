@@ -859,9 +859,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* ── Wide screens: show more products instead of stretching cards ── */
+/* ── Wide screens: keep the hero in proportion with the wider container ── */
 @media (min-width: 1600px) {
-  .vv-rail { grid-auto-columns: calc((100% - 5 * 16px) / 6); }
   .vv-hero { min-height: 540px; }
 }
 
