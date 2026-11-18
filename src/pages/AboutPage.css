@@ -19,7 +19,7 @@
   color: var(--a-green);
   font-family: var(--font-ui);
 }
-.ab-wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px 0; }
+.ab-wrap { max-width: var(--spacing-container-max); margin: 0 auto; padding: 0 32px 0; }
 .ab-wrap--cta { padding-bottom: 64px; }
 
 /* ── Buttons ── */

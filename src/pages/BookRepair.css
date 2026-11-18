@@ -23,7 +23,7 @@
   color: var(--b-green);
   font-family: var(--font-ui);
 }
-.br-wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px 60px; scroll-margin-top: 16px; }
+.br-wrap { max-width: var(--spacing-container-max); margin: 0 auto; padding: 0 32px 60px; scroll-margin-top: 16px; }
 
 /* Breadcrumb */
 

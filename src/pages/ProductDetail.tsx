@@ -1499,7 +1499,7 @@ const AXPD_CSS = `
 }
 
 /* breadcrumb */
-.axpd .ax-breadcrumb{max-width:1280px; margin:0 auto; padding:14px 32px 0; font-size:12.5px; color:var(--slate); display:flex; gap:6px; flex-wrap:wrap;}
+.axpd .ax-breadcrumb{max-width:var(--spacing-container-max); margin:0 auto; padding:14px 32px 0; font-size:12.5px; color:var(--slate); display:flex; gap:6px; flex-wrap:wrap;}
 .axpd .ax-breadcrumb a{color:var(--slate); font-weight:600; transition:color .2s;}
 .axpd .ax-breadcrumb a:hover{color:var(--red);}
 .axpd .ax-breadcrumb .sep{color:#c9c9cc;}
@@ -1516,7 +1516,7 @@ const AXPD_CSS = `
 .axpd .ax-cat-chip:hover{background:var(--red); color:#fff; border-color:var(--red);}
 
 /* deal strip */
-.axpd .ax-deal-strip{max-width:1280px; margin:16px auto 0; padding:0 32px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);}
+.axpd .ax-deal-strip{max-width:var(--spacing-container-max); margin:16px auto 0; padding:0 32px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-md);}
 .axpd .ax-deal-inner{
   background:linear-gradient(115deg, #0b2e22, var(--green) 55%, var(--green-mid));
   padding:16px 22px 14px;
@@ -1579,7 +1579,7 @@ const AXPD_CSS = `
 }
 
 /* main layout */
-.axpd .ax-page-wrap{max-width:1280px; margin:0 auto; padding:20px 32px;}
+.axpd .ax-page-wrap{max-width:var(--spacing-container-max); margin:0 auto; padding:20px 32px;}
 .axpd .ax-product-grid{display:grid; grid-template-columns:minmax(420px, 640px) minmax(0, 1fr); gap:40px; align-items:start;}
 
 /* sticky gallery column (image + offers don't scroll) */

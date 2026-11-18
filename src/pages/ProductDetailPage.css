@@ -23,7 +23,7 @@
   color: var(--p-green);
 }
 
-.pdx-wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px 60px; }
+.pdx-wrap { max-width: var(--spacing-container-max); margin: 0 auto; padding: 0 32px 60px; }
 
 /* Breadcrumb */
 

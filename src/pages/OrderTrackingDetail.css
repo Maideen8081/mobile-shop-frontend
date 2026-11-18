@@ -16,7 +16,7 @@
   --o-lav-35: rgba(223,232,180, 0.38);
   --o-shadow: 0 1px 2px rgba(15,59,44, 0.04), 0 14px 36px rgba(15,59,44, 0.07);
 
-  max-width: 1280px;
+  max-width: var(--spacing-container-max);
   margin: 0 auto;
   padding: 20px clamp(20px, 3vw, 48px) 56px;
   color: var(--o-green);

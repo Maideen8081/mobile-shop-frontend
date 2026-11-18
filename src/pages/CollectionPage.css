@@ -36,7 +36,7 @@
 .wx-header-top{
   display:flex; align-items:center; justify-content:space-between;
   padding:14px 24px;
-  max-width:1280px; margin:0 auto;
+  max-width:var(--spacing-container-max); margin:0 auto;
   gap:16px;
 }
 .wx-menu-btn{display:none;}
@@ -117,7 +117,7 @@
 
 .wx-header-bottom{border-top:1px solid rgba(255,255,255,.22); padding:12px 24px;}
 .wx-header-bottom-inner{
-  max-width:1280px; margin:0 auto;
+  max-width:var(--spacing-container-max); margin:0 auto;
   display:flex; align-items:center; gap:12px; flex-wrap:wrap;
 }
 .wx-pill-select{
@@ -151,7 +151,7 @@
 .wx-cat-links a.wx-active{background:#fff; color:var(--red);}
 
 /* ===== Hero ===== */
-.wx-hero{max-width:1280px; margin:24px auto 0; padding:0 32px;}
+.wx-hero{max-width:var(--spacing-container-max); margin:24px auto 0; padding:0 32px;}
 .wx-hero-inner{
   position:relative;
   border-radius:var(--radius-lg);
@@ -210,8 +210,8 @@
 .wx-hero-dot:hover{background:rgba(255,255,255,.65);}
 
 /* ===== Breadcrumb / title ===== */
-.wx-page-head{max-width:1280px; margin:0 auto; padding:8px 32px 0;}
-.wx-wishlist-head{max-width:1280px; margin:0 auto; padding:8px 32px 0; display:flex; align-items:flex-start; gap:14px; justify-content:flex-start; text-align:left;}
+.wx-page-head{max-width:var(--spacing-container-max); margin:0 auto; padding:8px 32px 0;}
+.wx-wishlist-head{max-width:var(--spacing-container-max); margin:0 auto; padding:8px 32px 0; display:flex; align-items:flex-start; gap:14px; justify-content:flex-start; text-align:left;}
 .wx-wishlist-head .wx-page-head{max-width:none; padding:0; margin:0; text-align:left;}
 .wx-wishlist-head .wx-breadcrumb{text-align:left; justify-content:flex-start;}
 .wx-wishlist-head .wx-page-head h2{text-align:left;}
@@ -232,7 +232,7 @@
 
 /* ===== Layout ===== */
 .wx-layout{
-  max-width:1280px; margin:0 auto; padding:8px 32px 80px;
+  max-width:var(--spacing-container-max); margin:0 auto; padding:8px 32px 80px;
   display:grid; grid-template-columns:240px 1fr; gap:32px; align-items:start;
 }
 
@@ -389,7 +389,7 @@
 .wx-empty h3{font-size:var(--text-title-sm); font-weight:700;}
 .wx-empty p{font-size:var(--text-label); color:var(--gray-600);}
 
-.wx-wishlist-main{max-width:1280px; margin:0 auto; padding:8px 32px 80px; min-height:45vh;}
+.wx-wishlist-main{max-width:var(--spacing-container-max); margin:0 auto; padding:8px 32px 80px; min-height:45vh;}
 .wx-wishlist-total{font-size:var(--text-label); color:var(--gray-600); font-weight:500;}
 .wx-wishlist-total b{color:var(--red); font-weight:700; font-size:var(--text-body);}
 .wx-wishlist-empty{text-align:center; padding:70px 24px; max-width:480px; margin:0 auto;}

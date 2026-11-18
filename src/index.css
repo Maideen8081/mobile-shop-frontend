@@ -106,7 +106,7 @@
   --color-mint: #0f3b2c; /* legacy alias for brand red; kept for ProfilePage var() refs */
   --color-glass-border: rgba(223,232,180, 0.35);
 
-  --spacing-container-max: 1280px;
+  --spacing-container-max: clamp(1280px, 92vw, 1720px);
   --spacing-gutter: 24px;
   --spacing-margin-desktop: 40px;
   --spacing-margin-mobile: 16px;
@@ -683,7 +683,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 1280px;
+  max-width: var(--spacing-container-max);
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(15,59,44, 0.1), transparent);
 }

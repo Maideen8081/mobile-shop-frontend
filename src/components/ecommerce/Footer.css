@@ -14,7 +14,7 @@
 }
 
 .pff-inner {
-  max-width: 1280px;
+  max-width: var(--spacing-container-max);
   margin: 0 auto;
   padding: 56px 48px 8px;
 }

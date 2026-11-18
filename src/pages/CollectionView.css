@@ -24,7 +24,7 @@
 .cv button { font-family: inherit; cursor: pointer; }
 .cv button:disabled { cursor: not-allowed; }
 .cv-wrap {
-  max-width: 1280px;
+  max-width: var(--spacing-container-max);
   margin: 0 auto;
   padding: 0 28px 0;
 }

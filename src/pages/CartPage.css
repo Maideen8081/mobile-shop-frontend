@@ -37,7 +37,7 @@
 .cx-root button:disabled { cursor: not-allowed; }
 
 .cx-wrap {
-  max-width: 1280px;
+  max-width: var(--spacing-container-max);
   margin: 0 auto;
   padding: 8px 28px 72px;
 }
