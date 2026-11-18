@@ -1023,3 +1023,302 @@
 @media (prefers-reduced-motion: reduce) {
   .vv *, .vv *::before, .vv *::after { animation: none !important; transition: none !important; }
 }
+
+/* Storefront hierarchy */
+.vv-home {
+  --vv-bg: #f4f2eb;
+  --vv-line: #e5dfd2;
+  --vv-card: #fffefa;
+  --vv-shadow: 0 16px 40px -30px rgba(11, 46, 34, 0.36);
+}
+
+.vv-home > main { padding-top: 20px; padding-bottom: clamp(30px, 5vw, 76px); }
+
+.vv-home .vv-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 30%);
+  min-height: clamp(440px, 40vw, 580px);
+  padding: clamp(30px, 5vw, 84px);
+  border: 1px solid rgba(223, 232, 180, 0.32);
+  border-radius: 28px;
+}
+
+.vv-home .vv-hero-media {
+  background: #0b2e22 center right / cover no-repeat;
+}
+
+.vv-home .vv-hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, #081e17 5%, rgba(8, 30, 23, 0.94) 32%, rgba(8, 30, 23, 0.54) 74%, rgba(8, 30, 23, 0.42));
+}
+
+.vv-home .vv-hero h1 {
+  font-size: clamp(50px, 5.6vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.vv-home .vv-hero-offer { grid-column: 2; }
+.vv-home .vv-hero .vv-btn:focus-visible,
+.vv-home .vv-dots button:focus-visible { outline-color: var(--vv-lime); }
+
+.vv-home .vv-categories { margin-top: clamp(28px, 4vw, 56px); }
+.vv-home .vv-catrow { margin-top: 0; padding: 26px 16px; }
+.vv-home .vv-catrow,
+.vv-home .vv-panel,
+.vv-home .vv-store { border: 1px solid var(--vv-line); }
+
+.vv-home .vv-panel {
+  margin-top: clamp(26px, 4vw, 54px);
+  padding: clamp(18px, 2.5vw, 34px);
+  border-radius: 24px;
+}
+
+.vv-home .vv-head h2 { font-size: clamp(24px, 2.7vw, 42px); letter-spacing: -0.025em; }
+.vv-home .vv-card-media { background: #f4f2eb; }
+.vv-home .vv-card-price strong { color: var(--vv-green); }
+.vv-home .vv-card-heart { opacity: 1; }
+.vv-home .vv-panel-reviews { background: #f0f1e7; }
+.vv-home .vv-footer { border-top: 3px solid #baad86; }
+
+@media (max-width: 1180px) {
+  .vv-home .vv-rail { grid-auto-columns: calc((100% - 3 * 16px) / 4); }
+}
+
+@media (max-width: 900px) {
+  .vv-home .vv-hero { grid-template-columns: 1fr; padding-bottom: 52px; }
+  .vv-home .vv-hero h1 { font-size: clamp(38px, 7vw, 60px); }
+  .vv-home .vv-catrow { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 24px; }
+  .vv-home .vv-rail { grid-auto-columns: calc((100% - 2 * 16px) / 3); }
+}
+
+@media (min-width: 901px) {
+  .vv.vv-home {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .vv-home > .vv-nav-shell { flex: none; }
+  .vv-home .vv-topbar { height: 24px; gap: 18px; font-size: clamp(7px, 0.85vh, 10px); }
+  .vv-home .vv-topbar span { gap: 5px; }
+  .vv-home .vv-topbar svg { width: 11px; height: 11px; }
+  .vv-home .vv-header-row { gap: 22px; padding-top: 5px; padding-bottom: 3px; }
+  .vv-home .vv-logo { gap: 6px; }
+  .vv-home .vv-logo-mark { width: 25px; height: 28px; }
+  .vv-home .vv-logo-text b { font-size: clamp(15px, 1.8vh, 21px); }
+  .vv-home .vv-logo-text small { margin-top: 2px; font-size: 6px; letter-spacing: 0.16em; }
+  .vv-home .vv-search { height: 30px; max-width: 460px; padding-left: 12px; }
+  .vv-home .vv-search input { font-size: clamp(8px, 1vh, 11px); }
+  .vv-home .vv-search button { width: 36px; height: 24px; }
+  .vv-home .vv-search button svg { width: 13px; height: 13px; }
+  .vv-home .vv-actions { gap: 14px; }
+  .vv-home .vv-actions a { gap: 1px; font-size: clamp(7px, 0.9vh, 9px); }
+  .vv-home .vv-actions svg { width: 16px; height: 16px; }
+  .vv-home .vv-avatar { width: 21px; height: 21px; font-size: 8px; }
+  .vv-home .vv-ico b { top: -4px; right: -7px; min-width: 13px; height: 13px; font-size: 7px; border-width: 1px; }
+  .vv-home .vv-nav-row { gap: 20px; padding-bottom: 4px; }
+  .vv-home .vv-cats-btn { height: 26px; gap: 6px; padding: 0 10px; font-size: clamp(8px, 0.95vh, 10px); border-radius: 6px; }
+  .vv-home .vv-cats-btn svg { width: 12px; height: 12px; }
+  .vv-home .vv-nav { gap: 16px; }
+  .vv-home .vv-nav a { padding: 3px 0; font-size: clamp(8px, 0.95vh, 10px); }
+
+  .vv-home > main.vv-container {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: clamp(4px, 0.7vh, 9px);
+    padding: clamp(4px, 0.7vh, 9px) clamp(10px, 1.5vw, 28px);
+  }
+
+  .vv-home > main.vv-container > section,
+  .vv-home > main.vv-container > ul { min-width: 0; min-height: 0; margin-top: 0; }
+
+  .vv-home .vv-hero { grid-column: 1 / 4; grid-row: 1 / 3; min-height: 0; height: 100%; padding: 12px 16px; gap: 12px; grid-template-columns: minmax(0, 1fr) auto; border-radius: 10px; }
+  .vv-home .vv-hero-copy { min-width: 0; }
+  .vv-home .vv-pill { padding: 3px 8px; gap: 4px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-pill svg { width: 9px; height: 9px; }
+  .vv-home .vv-hero h1 { margin: 6px 0 5px; font-size: clamp(16px, 2.5vh, 27px); line-height: 1.05; letter-spacing: 0; }
+  .vv-home .vv-hero-copy > p { max-width: none; margin-bottom: 7px; font-size: clamp(7px, 1vh, 10px); line-height: 1.35; }
+  .vv-home .vv-perks { margin-bottom: 8px; padding: 4px 6px; gap: 2px; border-radius: 7px; }
+  .vv-home .vv-perks li { padding: 0 7px; gap: 5px; }
+  .vv-home .vv-perks span { width: 18px; height: 18px; }
+  .vv-home .vv-perks svg { width: 10px; height: 10px; }
+  .vv-home .vv-perks b { font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-btn { height: clamp(20px, 3vh, 28px); padding: 0 12px; gap: 5px; border-radius: 6px; font-size: clamp(7px, 0.95vh, 9px); }
+  .vv-home .vv-btn svg { width: 11px; height: 11px; }
+  .vv-home .vv-hero-offer { grid-column: 2; }
+  .vv-home .vv-ticket { width: clamp(84px, 9vw, 116px); padding: 17px 8px 8px; border-radius: 10px; }
+  .vv-home .vv-ticket-badge { top: -9px; padding: 3px 6px; gap: 3px; font-size: clamp(6px, 0.75vh, 8px); }
+  .vv-home .vv-ticket-badge svg { width: 9px; height: 9px; }
+  .vv-home .vv-ticket-kicker { font-size: clamp(6px, 0.75vh, 8px); }
+  .vv-home .vv-ticket-value { margin: 2px 0; }
+  .vv-home .vv-ticket-value strong { font-size: clamp(23px, 3.6vh, 36px); }
+  .vv-home .vv-ticket-value em { margin-top: 3px; padding: 1px 4px; font-size: clamp(6px, 0.75vh, 8px); }
+  .vv-home .vv-ticket-cut { margin: 6px -8px; }
+  .vv-home .vv-ticket-note { font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-dots { bottom: 6px; }
+  .vv-home .vv-dots button { width: 5px; height: 5px; }
+  .vv-home .vv-dots button.is-on { width: 14px; }
+
+  .vv-home .vv-categories { grid-column: 4 / 7; grid-row: 1 / 2; display: flex; flex-direction: column; gap: 3px; min-height: 0; }
+  .vv-home .vv-categories .vv-head { margin-bottom: 0; }
+  .vv-home .vv-categories .vv-head h2 { font-size: clamp(9px, 1.3vh, 13px); }
+  .vv-home .vv-catrow { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-content: center; gap: 4px; margin-top: 0; padding: 4px 6px; border-radius: 10px; }
+  .vv-home .vv-catitem { gap: 2px; font-size: clamp(6px, 0.85vh, 8px); line-height: 1.1; }
+  .vv-home .vv-catcircle { width: clamp(22px, 3.8vh, 36px); height: clamp(22px, 3.8vh, 36px); box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--vv-line); }
+  .vv-home .vv-caticon { width: 14px; height: 14px; }
+  .vv-home .vv-catimg { inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); padding: 2px; }
+
+  .vv-home .fca { grid-column: 4 / 7; grid-row: 2 / 3; display: flex; flex-direction: column; gap: 4px; font-size: clamp(8px, 0.95vh, 10px); }
+  .vv-home .fca-head { margin-bottom: 0; }
+  .vv-home .fca-head h2 { font-size: clamp(10px, 1.4vh, 14px); }
+  .vv-home .fca-viewall { font-size: clamp(7px, 0.9vh, 9px); }
+  .vv-home .fca-grid { flex: 1; min-height: 0; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .vv-home .fca-laptop,
+  .vv-home .fca-audio,
+  .vv-home .fca-home,
+  .vv-home .fca-deal,
+  .vv-home .fca-gaming { grid-column: auto; min-height: 0; border-radius: 8px; }
+  .vv-home .fca-copy { max-width: 100%; padding: 6px 7px; }
+  .vv-home .fca-copy h3 { font-size: clamp(8px, 1.1vh, 11px); line-height: 1.1; }
+  .vv-home .fca-copy p { display: none; }
+  .vv-home .fca-btn { margin-top: 5px; padding: 3px 6px; gap: 4px; border-radius: 5px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .fca-btn svg { width: 9px; height: 9px; }
+  .vv-home .fca-photo { width: 100%; opacity: 0.35; }
+  .vv-home .fca-product { height: 62%; max-width: 38%; }
+  .vv-home .fca-glow { width: 80px; height: 80px; }
+  .vv-home .fca-deal .fca-copy { max-width: 100%; padding-left: 7px; }
+  .vv-home .fca-kicker { font-size: clamp(5px, 0.7vh, 7px); }
+  .vv-home .fca-copy .fca-deal-title { margin-top: 2px; font-size: clamp(10px, 1.6vh, 15px); }
+  .vv-home .fca-copy .fca-deal-sub { margin-top: 2px; font-size: clamp(6px, 0.9vh, 9px); }
+  .vv-home .fca-deal-art { inset: 0 0 0 45%; opacity: 0.65; }
+
+  .vv-home .vv-panel { display: flex; flex-direction: column; gap: 5px; padding: 7px 9px 8px; border-radius: 10px; }
+  .vv-home .vv-head { margin-bottom: 0; gap: 8px; }
+  .vv-home .vv-head h2 { gap: 5px; font-size: clamp(10px, 1.5vh, 15px); letter-spacing: 0; }
+  .vv-home .vv-head h2 svg { width: 13px; height: 13px; }
+  .vv-home .vv-head-link { gap: 4px; font-size: clamp(7px, 0.9vh, 9px); }
+  .vv-home .vv-head-link svg { width: 10px; height: 10px; }
+
+  .vv-home .vv-panel-picks { grid-column: 1 / 4; grid-row: 3 / 5; }
+  .vv-home .vv-panel-refurb { grid-column: 1 / 4; grid-row: 5 / 7; }
+  .vv-home .vv-rail-wrap { flex: 1; min-height: 0; }
+  .vv-home .vv-rail { height: 100%; grid-auto-columns: calc((100% - 4 * 6px) / 5); gap: 6px; align-items: stretch; }
+  .vv-home .vv-rail-prev,
+  .vv-home .vv-rail-next { width: 24px; height: 24px; top: 38%; }
+  .vv-home .vv-rail-prev { left: -8px; }
+  .vv-home .vv-rail-next { right: -8px; }
+  .vv-home .vv-card { border-radius: 8px; }
+  .vv-home .vv-card-media { flex: 1; aspect-ratio: auto; min-height: 0; margin: 4px 4px 0; border-radius: 6px; }
+  .vv-home .vv-card-media a { padding: 6px; }
+  .vv-home .vv-card-body { flex: none; gap: 2px; padding: 5px 6px 6px; }
+  .vv-home .vv-card-name { min-height: 20px; font-size: clamp(7px, 0.95vh, 9px); line-height: 1.2; }
+  .vv-home .vv-card-rating { gap: 3px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-card-rating svg,
+  .vv-home .vv-stars svg { width: 8px; height: 8px; }
+  .vv-home .vv-card-foot { margin-top: 0; }
+  .vv-home .vv-card-price { gap: 4px; }
+  .vv-home .vv-card-price strong { font-size: clamp(8px, 1.1vh, 11px); }
+  .vv-home .vv-card-price s { font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-card-cart { width: 22px; height: 22px; border-radius: 5px; }
+  .vv-home .vv-card-cart svg { width: 11px; height: 11px; }
+  .vv-home .vv-chip { top: 4px; left: 4px; padding: 1px 4px; font-size: clamp(6px, 0.75vh, 8px); }
+  .vv-home .vv-card-heart { top: 4px; right: 4px; width: 22px; height: 22px; opacity: 1; }
+  .vv-home .vv-card-heart svg { width: 11px; height: 11px; }
+
+  .vv-home .vv-promos { grid-column: 4 / 6; grid-row: 3 / 4; gap: 6px; }
+  .vv-home .vv-promo { min-height: 0; padding: 8px; border-radius: 8px; }
+  .vv-home .vv-promo-kicker { font-size: clamp(5px, 0.7vh, 7px); }
+  .vv-home .vv-promo h3 { margin-top: 2px; font-size: clamp(8px, 1.2vh, 12px); line-height: 1.05; }
+  .vv-home .vv-promo-cta { margin-top: 5px; gap: 4px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-promo-cta svg { width: 9px; height: 9px; }
+  .vv-home .vv-promo img { height: 60%; width: 36%; }
+
+  .vv-home .vv-refurb { grid-column: 6 / 7; grid-row: 3 / 4; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: 0; padding: 4px 6px; border-radius: 8px; }
+  .vv-home .vv-refurb-copy { gap: 6px; min-width: 0; }
+  .vv-home .vv-refurb-icon { width: 24px; height: 24px; border-radius: 6px; }
+  .vv-home .vv-refurb-icon svg { width: 14px; height: 14px; }
+  .vv-home .vv-refurb h2 { margin-top: 0; font-size: clamp(8px, 1.2vh, 12px); line-height: 1.1; }
+  .vv-home .vv-refurb-copy p { display: none; }
+  .vv-home .vv-chips { margin-top: 2px; gap: 2px; }
+  .vv-home .vv-chips li { padding: 1px 3px; gap: 3px; font-size: clamp(5px, 0.7vh, 7px); line-height: 1.1; }
+  .vv-home .vv-chips svg { width: 7px; height: 7px; }
+  .vv-home .vv-refurb-art { display: none; }
+  .vv-home .vv-refurb-offer { gap: 2px; }
+  .vv-home .vv-refurb-offer h3 { font-size: clamp(6px, 0.8vh, 8px); line-height: 1.1; }
+  .vv-home .vv-refurb-bubble { padding: 2px 5px; border-radius: 6px; gap: 4px; }
+  .vv-home .vv-refurb-bubble span { font-size: clamp(5px, 0.7vh, 7px); line-height: 1.1; }
+  .vv-home .vv-refurb-bubble strong { font-size: clamp(9px, 1.3vh, 13px); line-height: 1.1; }
+  .vv-home .vv-refurb-offer .vv-btn { height: clamp(16px, 2.4vh, 22px); padding: 0 6px; font-size: clamp(6px, 0.75vh, 8px); line-height: 1.1; }
+
+  .vv-home .vv-panel-reviews { grid-column: 4 / 6; grid-row: 4 / 5; }
+  .vv-home .vv-avg { gap: 5px; font-size: clamp(6px, 0.85vh, 8px); }
+  .vv-home .vv-avg .vv-stars svg { width: 9px; height: 9px; }
+  .vv-home .vv-reviews { gap: 6px; flex: 1; min-height: 0; }
+  .vv-home .vv-review-nav { width: 20px; height: 20px; }
+  .vv-home .vv-review-nav svg { width: 11px; height: 11px; }
+  .vv-home .vv-review-track { gap: 5px; }
+  .vv-home .vv-review { gap: 6px; padding: 5px; border-radius: 8px; }
+  .vv-home .vv-avatar { width: 24px; height: 24px; font-size: 10px; box-shadow: none; }
+  .vv-home .vv-review figcaption { gap: 3px; font-size: clamp(7px, 0.95vh, 9px); }
+  .vv-home .vv-review figcaption svg { width: 10px; height: 10px; }
+  .vv-home .vv-review .vv-stars { margin: 2px 0 3px; }
+  .vv-home .vv-review .vv-stars svg { width: 7px; height: 7px; }
+  .vv-home .vv-review blockquote { font-size: clamp(6px, 0.8vh, 8px); line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .vv-home .vv-news { grid-column: 6 / 7; grid-row: 4 / 5; grid-template-columns: 1fr; gap: 2px; margin-top: 0; padding: 6px 8px; border-radius: 8px; }
+  .vv-home .vv-news-leaf,
+  .vv-home .vv-news-icon { display: none; }
+  .vv-home .vv-news h2 { font-size: clamp(9px, 1.3vh, 13px); }
+  .vv-home .vv-news-copy p { max-width: none; margin-top: 1px; font-size: clamp(5px, 0.75vh, 7px); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .vv-home .vv-news-form { height: 24px; padding: 2px; }
+  .vv-home .vv-news-form input { padding: 0 6px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-news-form button { padding: 0 8px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-news-note { margin-top: 2px; padding-left: 0; font-size: clamp(5px, 0.7vh, 7px); }
+  .vv-home .vv-news-note svg { width: 9px; height: 9px; }
+
+  .vv-home .vv-benefits { grid-column: 4 / 7; grid-row: 5 / 6; gap: 8px; margin: 0; padding: 6px 10px; border-radius: 8px; }
+  .vv-home .vv-benefits li { gap: 6px; }
+  .vv-home .vv-benefits svg { width: 18px; height: 18px; }
+  .vv-home .vv-benefits span { font-size: clamp(5px, 0.75vh, 7px); line-height: 1.2; }
+  .vv-home .vv-benefits b { font-size: clamp(7px, 0.95vh, 9px); }
+
+  .vv-home .vv-store { grid-column: 4 / 7; grid-row: 6 / 7; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); margin-bottom: 0; padding: 0; border-radius: 8px; }
+  .vv-home .vv-store-info { gap: 0; padding: 4px 8px; }
+  .vv-home .vv-store .vv-promo-kicker { font-size: clamp(5px, 0.7vh, 7px); line-height: 1.1; }
+  .vv-home .vv-store h2 { font-size: clamp(9px, 1.4vh, 14px); line-height: 1.1; }
+  .vv-home .vv-store-info > p { display: none; }
+  .vv-home .vv-store dl { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 8px; margin: 2px 0; }
+  .vv-home .vv-store dl > div { gap: 5px; }
+  .vv-home .vv-store dt { width: 18px; height: 18px; border-radius: 5px; }
+  .vv-home .vv-store dt svg { width: 10px; height: 10px; }
+  .vv-home .vv-store dd { font-size: clamp(6px, 0.8vh, 8px); line-height: 1.1; }
+  .vv-home .vv-store dd small { font-size: clamp(5px, 0.65vh, 7px); line-height: 1.1; }
+  .vv-home .vv-store .vv-btn { height: clamp(16px, 2.4vh, 22px); margin-top: 1px; padding: 0 7px; font-size: clamp(6px, 0.8vh, 8px); line-height: 1.1; }
+  .vv-home .vv-store-map { min-height: 0; }
+
+  .vv-home > .vv-footer { flex: none; }
+  .vv-home .vv-footer-grid { gap: 14px; padding-top: 9px; padding-bottom: 6px; }
+  .vv-home .vv-footer-grid > div + div { padding-left: 14px; }
+  .vv-home .vv-footer-brand p { max-width: none; margin-top: 5px; font-size: clamp(6px, 0.85vh, 8px); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .vv-home .vv-social { gap: 6px; margin-top: 6px; }
+  .vv-home .vv-social a { width: 21px; height: 21px; }
+  .vv-home .vv-social svg { width: 10px; height: 10px; }
+  .vv-home .vv-footer-col h4 { margin-bottom: 5px; font-size: clamp(7px, 0.95vh, 9px); }
+  .vv-home .vv-footer-col li + li { margin-top: 2px; }
+  .vv-home .vv-footer-col li,
+  .vv-home .vv-footer-col a,
+  .vv-home .vv-contact li { font-size: clamp(6px, 0.8vh, 8px); line-height: 1.1; }
+  .vv-home .vv-footer-bottom { padding-top: 5px; padding-bottom: 7px; font-size: clamp(6px, 0.8vh, 8px); }
+  .vv-home .vv-footer-bottom nav { gap: 18px; }
+  .vv-home .vv-locale { padding: 3px 7px; }
+}

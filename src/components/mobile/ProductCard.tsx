@@ -31,9 +31,9 @@ export default function ProductCard({ product }: { product: any }) {
       role="link"
       tabIndex={0}
       aria-label={product.name}
-      className="group flex flex-col items-stretch cursor-pointer select-none"
+      className="mobile-product-card group flex flex-col items-stretch cursor-pointer select-none"
     >
-      <div className="relative aspect-square w-full rounded-xl bg-white overflow-hidden p-[6%]">
+      <div className="mobile-product-media relative aspect-square w-full rounded-xl bg-white overflow-hidden p-[6%]">
         <img
           src={img || FALLBACK_IMG}
           alt={product.name}

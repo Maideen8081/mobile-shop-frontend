@@ -66,6 +66,7 @@ const HERO_SLIDES = [
     badge: 'Trusted Service',
     offer: { kicker: 'Every repair', big: String(BUSINESS.repairWarrantyMonths), unit: 'MONTH', note: 'Warranty on parts & labour' },
     video: repairVideo,
+    poster: '/products/repair-internals.jpg',
   },
   {
     pill: 'Accessories',
@@ -80,6 +81,7 @@ const HERO_SLIDES = [
     badge: 'Top Picks',
     offer: { kicker: 'Delivery at', big: '₹0', unit: 'FREE', note: `On orders over ₹${BUSINESS.freeDeliveryOver}` },
     video: internalsVideo,
+    poster: '/promos/smart-home.jpg',
   },
 ]
 
@@ -442,13 +444,13 @@ export default function HomeStorefront() {
     setReviewStart((s) => (s + dir + TESTIMONIALS.length) % TESTIMONIALS.length)
 
   return (
-    <div className="vv">
+    <div className="vv vv-home">
       <HomeTopNav />
 
       <main className="vv-container">
         {/* ── Hero (video carousel) ── */}
         <section className="vv-hero" aria-roledescription="carousel" aria-label="Featured offers">
-          <div className="vv-hero-media" aria-hidden="true">
+          <div className="vv-hero-media" aria-hidden="true" style={{ backgroundImage: `url(${hero.poster})` }}>
             {HERO_SLIDES.map((sl, i) => (
               <video
                 key={sl.pill}
@@ -515,43 +517,48 @@ export default function HomeStorefront() {
         </section>
 
         {/* ── Category circles ── */}
-        <section className="vv-catrow" aria-label="Shop by category">
-          {CATEGORY_TILES.map((tile) => {
-            const Icon = tile.icon
-            const matchedName = tile.to ? '' : resolveCategoryName(tile.match ?? tile.label, headerCats)
-            const matchedCategory = categories.find((c) => c.name === matchedName)
-            const categoryImage = matchedCategory ? imageUrl(matchedCategory.image) : ''
-            return (
-              <Link key={tile.label} to={tileHref(tile)} className="vv-catitem">
-                <span className={`vv-catcircle tone-${tile.tone}`}>
-                  <Icon className="vv-caticon" size={26} strokeWidth={1.5} />
-                  {categoryImage && (
-                    <img
-                      className="vv-catimg"
-                      src={categoryImage}
-                      alt=""
-                      loading="lazy"
-                      onError={(e) => e.currentTarget.remove()}
-                    />
-                  )}
-                </span>
-                <span>{tile.label}</span>
-              </Link>
-            )
-          })}
-          <Link to="/collection/all" className="vv-catitem">
-            <span className="vv-catcircle tone-white">
-              <LayoutGrid size={24} strokeWidth={1.5} />
-            </span>
-            <span>View All</span>
-          </Link>
+        <section className="vv-categories" aria-labelledby="vv-category-heading">
+          <div className="vv-head">
+            <h2 id="vv-category-heading">Shop by Category</h2>
+          </div>
+          <div className="vv-catrow">
+            {CATEGORY_TILES.map((tile) => {
+              const Icon = tile.icon
+              const matchedName = tile.to ? '' : resolveCategoryName(tile.match ?? tile.label, headerCats)
+              const matchedCategory = categories.find((c) => c.name === matchedName)
+              const categoryImage = matchedCategory ? imageUrl(matchedCategory.image) : ''
+              return (
+                <Link key={tile.label} to={tileHref(tile)} className="vv-catitem">
+                  <span className={`vv-catcircle tone-${tile.tone}`}>
+                    <Icon className="vv-caticon" size={26} strokeWidth={1.5} />
+                    {categoryImage && (
+                      <img
+                        className="vv-catimg"
+                        src={categoryImage}
+                        alt=""
+                        loading="lazy"
+                        onError={(e) => e.currentTarget.remove()}
+                      />
+                    )}
+                  </span>
+                  <span>{tile.label}</span>
+                </Link>
+              )
+            })}
+            <Link to="/collection/all" className="vv-catitem">
+              <span className="vv-catcircle tone-white">
+                <LayoutGrid size={24} strokeWidth={1.5} />
+              </span>
+              <span>View All</span>
+            </Link>
+          </div>
         </section>
 
         {/* ── Featured collections (ad banners) ── */}
         <FeaturedCollectionsAds categories={headerCats} />
 
         {/* ── Top picks ── */}
-        <section className="vv-panel">
+        <section className="vv-panel vv-panel-picks">
           <div className="vv-head">
             <h2>Top Picks For You <Sparkles size={18} className="vv-spark" fill="currentColor" /></h2>
             <Link to="/collection/all?tab=deals" className="vv-head-link">See All Deals <ArrowRight size={15} /></Link>
@@ -607,7 +614,7 @@ export default function HomeStorefront() {
         </section>
 
         {(loading || refurbished.length > 0) && (
-          <section className="vv-panel">
+          <section className="vv-panel vv-panel-refurb">
             <div className="vv-head">
               <h2>Certified Refurbished <Recycle size={18} className="vv-recycle" /></h2>
               <Link to={refurbHref} className="vv-head-link">View All <ArrowRight size={15} /></Link>
@@ -617,7 +624,7 @@ export default function HomeStorefront() {
         )}
 
         {/* ── Testimonials ── */}
-        <section className="vv-panel">
+        <section className="vv-panel vv-panel-reviews">
           <div className="vv-head">
             <h2>Loved By Thousands <Heart size={18} className="vv-heart" fill="currentColor" /></h2>
             <div className="vv-avg">

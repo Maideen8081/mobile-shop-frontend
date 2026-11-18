@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { FALLBACK_IMG } from './fallback'
 
 type Banner = {
@@ -26,13 +26,13 @@ const BANNERS: Banner[] = [
 ]
 
 export default function HeroCarousel() {
-  const navigate = useNavigate()
   const [index, setIndex] = useState(0)
   const startX = useRef(0)
   const dragX = useRef(0)
 
   useEffect(() => {
-    const t = setInterval(() => setIndex((i) => (i + 1) % BANNERS.length), 3000)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const t = setInterval(() => setIndex((i) => (i + 1) % BANNERS.length), 6000)
     return () => clearInterval(t)
   }, [])
 
@@ -43,49 +43,51 @@ export default function HeroCarousel() {
   const onTouchEnd = () => { if (Math.abs(dragX.current) > 50) goTo(dragX.current < 0 ? index + 1 : index - 1) }
 
   return (
-    <section className="px-3.5 mt-4">
+    <section className="mobile-home-hero px-3.5 mt-4" aria-label="Featured offers">
       <div
-        className="relative h-[200px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(15,59,44,0.22)]"
+        className="relative h-[280px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(15,59,44,0.22)]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         <div
-          className="flex h-full transition-transform duration-500 ease-out"
+          className="flex h-full transition-transform duration-500 ease-out motion-reduce:transition-none"
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
           {BANNERS.map((b, i) => (
-            <div
+            <Link
               key={b.id}
+              to={b.link}
+              tabIndex={i === index ? 0 : -1}
+              aria-hidden={i !== index}
               className="relative w-full h-full flex-shrink-0"
-              onClick={() => b.link && navigate(b.link)}
-              role="button"
             >
-              <img src={b.image} alt={b.brand} loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
-              <div className="absolute inset-0 flex flex-col justify-end p-4">
+              <img src={b.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+              <div className="mobile-home-hero-copy absolute inset-0 flex flex-col justify-end px-5 pb-12 pt-5">
                 <span className="self-start mb-2 px-3 py-1 rounded-[8px] bg-white/20 backdrop-blur text-micro font-semibold tracking-wide uppercase text-white">{b.tag}</span>
                 <p className="text-micro font-medium text-white/85">{b.brand}</p>
-                <h3 className="text-white text-title font-extrabold leading-tight drop-shadow-sm">{b.title}</h3>
-                <p className="text-white/90 text-caption mt-0.5 font-medium line-clamp-1">{b.desc}</p>
-                <button
-                  onClick={(e) => { e.stopPropagation(); navigate(b.link) }}
-                  className="mt-2.5 self-start inline-flex items-center gap-1 bg-white text-[#0f3b2c] text-caption font-bold px-4 py-2 rounded-[8px] active:scale-95 transition"
-                >
+                <h2 className="font-display text-white text-title leading-tight">{b.title}</h2>
+                <p className="text-white/90 text-caption mt-1 font-medium">{b.desc}</p>
+                <span className="mt-3 self-start rounded-full bg-[#e7edce] px-4 py-2 text-caption font-bold text-[#0b2e22]">
                   Shop Now
-                </button>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
-        <div className="absolute bottom-3 left-4 flex gap-1.5">
+        <div className="absolute bottom-1 left-4 right-4 flex">
           {BANNERS.map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => goTo(i)}
+              aria-pressed={i === index}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-1.5 rounded-[8px] transition-all ${i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/50'}`}
-            />
+              className="grid h-9 min-w-0 flex-1 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-white"
+            >
+              <span className={`h-1.5 rounded-full ${i === index ? 'w-4 bg-[#e7edce]' : 'w-1.5 bg-white/60'}`} />
+            </button>
           ))}
         </div>
       </div>

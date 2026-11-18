@@ -39,20 +39,14 @@
   font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   color: var(--pfn-green);
-  background:
-    radial-gradient(520px 160px at 0% 30%, rgba(223,232,180, 0.35), transparent 70%),
-    radial-gradient(620px 200px at 100% 70%, rgba(223,232,180, 0.4), transparent 70%),
-    var(--pfn-cream);
+  background: var(--pfn-cream);
+  border-bottom: 1px solid var(--pfn-ink-line);
   transition: box-shadow 0.3s ease;
   isolation: isolate;
 }
 .pfn-root.pfn-scrolled {
-  background:
-    radial-gradient(520px 160px at 0% 30%, rgba(223,232,180, 0.3), transparent 70%),
-    radial-gradient(620px 200px at 100% 70%, rgba(223,232,180, 0.34), transparent 70%),
-    var(--pfn-cream);
-  /* Solid: page content must not show through the header while scrolling. */
-  box-shadow: 0 14px 40px rgba(15,59,44, 0.16);
+  background: var(--pfn-cream);
+  box-shadow: 0 14px 32px -22px rgba(15,59,44, 0.34);
 }
 .pfn-spacer {
   height: 210px;

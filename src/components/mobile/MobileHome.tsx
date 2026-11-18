@@ -97,26 +97,21 @@ export default function MobileHome() {
   }, [])
 
   return (
-    <div className="home-theme min-h-screen bg-[#f7f6f2] font-sans text-[#1d2522] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
+    <div className="home-theme mobile-home min-h-screen font-sans text-[#1d2522] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
 
       {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
-      <div className="sticky top-0 z-50 bg-[#f7f6f2] will-change-transform" style={{ transform: 'translateZ(0)' }}>
+      <div className="mobile-home-header sticky top-0 z-50 will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <MobileHeader />
-        <div className="bg-[#f7f6f2] pt-9 pb-3">
+        <div className="pt-9 pb-3">
           <CategoryCarousel categories={categories} />
         </div>
       </div>
 
-      <div className="px-4 mt-4">
-        <h1 className="text-title-sm font-extrabold text-[#1d2522] leading-snug tracking-tight">
-          Welcome to PhoneFix 👋
-        </h1>
-        <p className="text-label text-[#5d6762] mt-1 leading-snug font-medium">
-          Find the best phones, accessories & deals — all in one place.
-        </p>
-      </div>
-
-      <div className="pb-28">
+      <main className="pb-28">
+        <div className="mobile-home-intro">
+          <h1>PhoneFix</h1>
+          <p>Phones, accessories and expert repairs.</p>
+        </div>
         <HeroCarousel />
         <BenefitsBanner />
 
@@ -135,7 +130,7 @@ export default function MobileHome() {
         <Testimonials />
         <ProductSection title="Recommended For You" viewAllTo="/collection/all" products={recommended} />
         <StoreLocation compact />
-      </div>
+      </main>
 
       <MobileBottomNav />
       <MobileCartBarActions />

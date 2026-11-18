@@ -349,3 +349,51 @@ body:has(.home-theme) .support-chat-wrapper--compact .support-chat-button-ring {
     animation: none;
   }
 }
+
+.mobile-home {
+  --home-cream: #f4f2eb;
+}
+
+.mobile-home-header {
+  background: var(--home-cream);
+  border-bottom: 1px solid var(--home-sage-line);
+  box-shadow: 0 10px 24px -22px rgba(11, 46, 34, 0.5);
+}
+
+.mobile-home-intro {
+  padding: 22px 20px 0;
+}
+
+.mobile-home-intro h1 {
+  color: var(--home-green);
+  font: 400 clamp(36px, 9vw, 48px)/1 var(--font-display);
+  letter-spacing: -0.035em;
+}
+
+.mobile-home-intro p {
+  margin-top: 7px;
+  color: var(--home-green-muted);
+  font-size: 14px;
+}
+
+.mobile-home-hero-copy {
+  background: linear-gradient(0deg, #081e17 0%, rgba(8, 30, 23, 0.86) 35%, rgba(8, 30, 23, 0.1) 100%);
+}
+
+.mobile-home-hero-copy h2 {
+  font-size: clamp(28px, 8vw, 38px);
+  letter-spacing: -0.025em;
+}
+
+.mobile-home :is(.mobile-product-card, .mobile-product-media) {
+  border: 1px solid var(--home-sage-line);
+}
+
+.mobile-home .mobile-product-card {
+  padding: 5px;
+  border-radius: 14px;
+  background: #fffefa;
+  box-shadow: 0 8px 18px -16px rgba(11, 46, 34, 0.5);
+}
+
+.mobile-home .mobile-product-media { background: #f4f2eb; }
