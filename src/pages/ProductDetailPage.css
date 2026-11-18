@@ -57,16 +57,61 @@
   position: relative;
   aspect-ratio: 1 / 1.03;
   overflow: hidden;
-  border: 1px solid #e5dfd2;
-  border-radius: 24px;
-  background: #fffefa;
-  box-shadow: var(--p-shadow);
-  cursor: zoom-in;
 }
 .pdx-stage-img { position: absolute; inset: 0; display: grid; place-items: center; padding: 14%; opacity: 0; transform: scale(0.96); transition: opacity 0.4s, transform 0.5s; }
 .pdx-stage-img.is-active { opacity: 1; transform: none; }
 .pdx-stage-img img { max-width: 100%; max-height: 100%; object-fit: contain; mix-blend-mode: multiply; filter: drop-shadow(0 20px 26px rgba(15,59,44, 0.15)); }
-.pdx-stage:hover .pdx-stage-img.is-active img { transform: scale(1.04); transition: transform 0.5s; }
+.pdx-stage-col { position: relative; min-width: 0; }
+.pdx-zoom-target, .pdx-zoom-preview { display: none; }
+
+@media (any-hover: hover) and (any-pointer: fine) {
+  .pdx-zoom-target { display: block; position: absolute; inset: 0; z-index: 1; cursor: zoom-in; }
+  .pdx-gallery:has(.pdx-stage-col[data-zoom]) { z-index: 3; }
+  .pdx-stage-col[data-zoom] .pdx-zoom-preview {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: calc(100% + 30px);
+    width: 100%;
+    aspect-ratio: 1 / 1.03;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    border: 1px solid #d7dfd0;
+    border-radius: 16px;
+    background: #fffefa;
+    box-shadow: 0 18px 44px rgba(11, 46, 34, 0.16);
+  }
+  .pdx-zoom-image {
+    position: absolute;
+    inset: 0;
+    transform: translate(calc(50% - var(--pdx-zoom-x)), calc(50% - var(--pdx-zoom-y))) scale(2.25);
+    transform-origin: var(--pdx-zoom-x) var(--pdx-zoom-y);
+  }
+  .pdx-zoom-image img {
+    position: absolute;
+    inset: 2%;
+    width: 96%;
+    height: 96%;
+    object-fit: contain;
+  }
+  .pdx-stage-col[data-zoom] .pdx-zoom-lens {
+    position: absolute;
+    top: var(--pdx-zoom-y);
+    left: var(--pdx-zoom-x);
+    width: 44.444%;
+    height: 44.444%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(15, 59, 44, 0.45);
+    background: rgba(223, 232, 180, 0.2);
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 1080px) {
+  .pdx-stage-col[data-zoom] .pdx-zoom-preview { left: 0; border: 0; box-shadow: none; }
+  .pdx-zoom-lens { display: none; }
+}
 
 .pdx-brand-chip {
   position: absolute;
@@ -269,9 +314,10 @@
 
 /* Tabs */
 .pdx-tabs-wrap { margin-top: 22px; scroll-margin-top: 16px; }
-.pdx-tabs { display: flex; gap: 6px; padding: 6px; border: 1px solid var(--p-line); border-radius: 16px; background: #fff; overflow-x: auto; }
-.pdx-tabs button { flex-shrink: 0; min-width: 150px; height: 44px; padding: 0 22px; border: 0; border-radius: 12px; background: none; color: var(--p-green); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.pdx-tabs { display: flex; width: fit-content; max-width: 100%; gap: 6px; padding: 6px; border: 1px solid var(--p-line); border-radius: 16px; background: #fff; overflow-x: auto; }
+.pdx-tabs button { flex-shrink: 0; height: 44px; padding: 0 clamp(12px, 1.4vw, 22px); border: 0; border-radius: 12px; background: none; color: var(--p-green); font: inherit; font-size: 15px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background 0.2s, color 0.2s; }
 .pdx-tabs button:hover:not(.is-active) { background: var(--p-lav-10); }
+.pdx-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .pdx-tabs button.is-active { background: linear-gradient(135deg, var(--p-accent), var(--p-green)); color: #fff; }
 .pdx-tab-body { padding: 22px 6px 0; animation: pdx-fade 0.3s ease-out; }
 .pdx-tab-body h2 { margin: 0 0 10px; font-family: var(--font-display); font-size: 21px; font-weight: 800; }
@@ -440,8 +486,7 @@
   object-position: center;
   transition: opacity 0.35s, transform 0.5s;
 }
-.pdx-stage:hover .pdx-stage-img.is-active img { transform: scale(1.03); }
-/* Until the cut-out is ready, blend the white photo backdrop into the frame. */
+/* Blend the white photo backdrop into the page until the cutout is ready. */
 .pdx-stage-img img:not([data-cut]) { mix-blend-mode: multiply; filter: none; }
 .pdx-stage-img img[data-cut] { mix-blend-mode: normal; filter: drop-shadow(0 22px 28px rgba(15,59,44, 0.22)); }
 .pdx-thumb { padding: 6px; }

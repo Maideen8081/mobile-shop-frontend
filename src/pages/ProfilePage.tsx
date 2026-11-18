@@ -14,7 +14,7 @@ import { useToast } from '../context/ToastContext'
 import { readWishlistIds } from '../utils/wishlist'
 import MobileProfile from '../components/mobile/MobileProfile'
 import { useIsMobile } from '../components/mobile/helpers'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import AccountLayout, { AccountPhone } from '../components/account/AccountLayout'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
@@ -129,7 +129,7 @@ function DesktopProfile() {
     return (
       <div className="pf">
         <SiteTopNav />
-        <DesktopPageLoader text="Loading your profile..." />
+        <PageLoading label="Loading your profile…" className="min-h-[60vh]" />
       </div>
     )
   }

@@ -1,38 +1,27 @@
 import api from '../services/api'
 import { DELIVERY_CHARGE, FREE_SHIPPING_THRESHOLD, TAX_RATE } from '../components/mobile/cartLogic'
 
-export const formatINR = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
+export const formatINR = (n: number) => '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 })
 
 export interface CheckoutCoupon {
   code: string
   discount: number
 }
 
-/**
- * Checkout totals, mirroring the server's order_totals(): listed prices
- * INCLUDE GST, so GST is shown as the included share and never added on top.
- * Delivery is decided on the item subtotal; a coupon comes off the price.
- */
+/** Checkout totals in paise, matching the order API's pricing rules. */
 export function computeTotals(items: { price: number; quantity: number }[], couponDiscount = 0) {
-  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const quantity = items.reduce((s, i) => s + i.quantity, 0)
+  const subtotalPaise = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0)
+  const subtotal = subtotalPaise / 100
+  const quantity = items.reduce((sum, item) => sum + item.quantity, 0)
   const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : DELIVERY_CHARGE
-  const discount = Math.min(Math.max(couponDiscount, 0), subtotal)
-  const payable = subtotal - discount
-  const tax = includedGst(payable)
-  const total = Math.max(0, payable + shipping)
-  return { subtotal, quantity, shipping, tax, discount, total }
+  const discountPaise = Math.min(Math.max(Math.round(couponDiscount * 100), 0), subtotalPaise)
+  const taxPaise = Math.round(subtotalPaise * TAX_RATE)
+  const total = (subtotalPaise + taxPaise + Math.round(shipping * 100) - discountPaise) / 100
+  return { subtotal, quantity, shipping, tax: taxPaise / 100, discount: discountPaise / 100, total }
 }
 
-/** GST contained in a tax-inclusive amount. */
-export function includedGst(amount: number, rate = TAX_RATE): number {
-  if (!(amount > 0)) return 0
-  return Math.round(((amount * rate) / (1 + rate)) * 100) / 100
-}
-
-/** Label for the GST line, e.g. "Incl. GST (18%)". */
 export function gstLabel(ratePercent: number = Math.round(TAX_RATE * 100)): string {
-  return `Incl. GST (${Number(ratePercent.toFixed(2))}%)`
+  return `GST (${Number(ratePercent.toFixed(2))}%)`
 }
 
 /**
@@ -52,7 +41,7 @@ export function orderTaxRate(order: { tax_rate?: unknown; taxRate?: unknown; tax
 export function orderTaxLabel(order: Parameters<typeof orderTaxRate>[0]): string {
   const rate = orderTaxRate(order)
   const included = Number(order.tax_rate ?? order.taxRate) > 0
-  return included ? gstLabel(rate) : `GST (${rate}%)`
+  return included ? `Incl. ${gstLabel(rate)}` : gstLabel(rate)
 }
 
 export function readCheckoutCoupon(): CheckoutCoupon | null {
@@ -83,4 +72,18 @@ export function apiErrorMessage(err: any, fallback: string): string {
   if (typeof data.detail === 'string') return data.detail
   const first = Object.values(data).flat()[0]
   return typeof first === 'string' ? first : fallback
+}
+
+/** Keep confirmation available locally without turning a placed order into a failed checkout. */
+export function saveOrderConfirmation(order: unknown) {
+  try {
+    localStorage.setItem('last_order', JSON.stringify(order))
+    localStorage.removeItem('checkout_coupon')
+    localStorage.removeItem('checkout_address_id')
+    localStorage.removeItem('checkout_delivery_tip')
+  } catch { /* Confirmation can still be opened by its order ID. */ }
+  try {
+    const history = JSON.parse(localStorage.getItem('order_history') || '[]')
+    localStorage.setItem('order_history', JSON.stringify([order, ...(Array.isArray(history) ? history : [])].slice(0, 50)))
+  } catch { /* History is a convenience only. */ }
 }

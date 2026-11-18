@@ -8,7 +8,7 @@ import {
 import { authService, type UserProfile } from '../../services/authService'
 import { addressService, type AddressData } from '../../services/addressService'
 import { useMobileToast } from './useMobileToast'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import PageLoading from '../ui/PageLoading'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
 
@@ -182,7 +182,7 @@ export default function MobileProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex items-center justify-center">
-        <DoubleRingLoader size={48} label="Loading profile…" />
+        <PageLoading label="Loading profile…" />
       </div>
     )
   }

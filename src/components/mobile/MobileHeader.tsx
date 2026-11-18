@@ -53,7 +53,7 @@ export default function MobileHeader() {
   }, [])
 
   const badge = (n: number) => (n > 99 ? '99+' : String(n))
-  const iconBtn = 'relative w-10 h-10 rounded-full bg-white/15 backdrop-blur flex items-center justify-center active:scale-90 transition'
+  const iconBtn = 'relative w-10 h-10 rounded-full border border-white/35 bg-white/20 flex items-center justify-center hover:bg-white/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-safe:active:scale-95'
   const displayName = userName ? userName : (isLoggedIn ? 'Welcome!' : 'Guest')
 
   return (
@@ -112,7 +112,7 @@ export default function MobileHeader() {
       {/* Floating search bar overlapping header bottom (outside header so it isn't clipped) */}
       <form
         onSubmit={(e) => { e.preventDefault(); navigate('/search') }}
-        className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full bg-white z-50"
+        className="absolute left-4 right-4 -bottom-6 flex items-center gap-2 px-4 h-12 rounded-full border border-[#899e90] bg-white shadow-md focus-within:ring-2 focus-within:ring-[#0f3b2c] z-50"
       >
         <Search size={20} className="text-[#0f3b2c] shrink-0" />
         <input

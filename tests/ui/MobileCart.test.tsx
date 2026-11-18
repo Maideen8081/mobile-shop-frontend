@@ -22,17 +22,21 @@ vi.mock('../../src/services/productService', () => ({
 vi.mock('../../src/services/api', () => ({ default: { post: vi.fn(), get: vi.fn() } }))
 
 import MobileCart from '../../src/components/mobile/MobileCart'
+import { ToastProvider } from '../../src/context/ToastContext'
 import api from '../../src/services/api'
 
 function renderCart() {
-  return render(<MemoryRouter><MobileCart /></MemoryRouter>)
+  return render(<MemoryRouter><ToastProvider><MobileCart /></ToastProvider></MemoryRouter>)
 }
 
 // Subtotal 400 → GST 72 + delivery 49 = 521. No platform fee or tip: the server charges neither.
 const grandTotal = () => screen.getByText('Grand Total').parentElement!
 
 describe('MobileCart', () => {
-  beforeEach(() => vi.mocked(api.post).mockReset())
+  beforeEach(() => {
+    vi.mocked(api.post).mockReset()
+    vi.mocked(api.get).mockResolvedValue({ data: { data: [] } })
+  })
 
   it('shows the same total the server will charge', async () => {
     renderCart()
@@ -50,6 +54,7 @@ describe('MobileCart', () => {
     await userEvent.type(screen.getByPlaceholderText('Enter coupon code'), 'save10')
     await userEvent.click(screen.getByRole('button', { name: /apply coupon/i }))
 
+    expect(api.post).toHaveBeenCalledTimes(1)
     expect(api.post).toHaveBeenCalledWith('/api/v1/coupon/apply/', { code: 'SAVE10', subtotal: '400.00' })
     await waitFor(() => expect(within(grandTotal()).getByText('₹481')).toBeInTheDocument())
     expect(JSON.parse(localStorage.getItem('checkout_coupon')!)).toEqual({ code: 'SAVE10', discount: 40 })

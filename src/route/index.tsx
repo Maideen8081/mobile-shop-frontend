@@ -1,13 +1,12 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { lazy as reactLazy, Suspense, type ComponentType, type ReactNode } from 'react'
 import { RouteLoader } from '../components/LoadingScreen/RouteLoader'
 import { LEGACY_ADMIN_PATHS } from './adminPaths'
 import RouteMeta from './RouteMeta'
-import WebsiteGate from '../pages/WebsiteGate'
 import AuthGuard from '../components/AuthGuard'
 import AdminGuard from '../components/AdminGuard'
 
-// Only the home page ships in the main bundle; every other page downloads when first visited.
+// Page bundles download when first visited.
 // After a deploy, an open tab may ask for a page file that no longer exists:
 // reload once to pick up the new build instead of showing a blank screen.
 function lazy<T extends ComponentType<object>>(load: () => Promise<{ default: T }>) {
@@ -112,6 +111,8 @@ const legacyAdminRedirects: { from: string; to: string }[] = LEGACY_ADMIN_PATHS.
 }))
 
 export default function AppRoutes() {
+  const { search, hash } = useLocation()
+
   return (
     <Suspense fallback={<RouteLoader />}>
     <RouteMeta />
@@ -127,7 +128,7 @@ export default function AppRoutes() {
       ))}
 
       {/* Public storefront */}
-      <Route path="/" element={<WebsiteGate />} />
+      <Route path="/" element={<Navigate to={{ pathname: "/home", search, hash }} replace />} />
       <Route path="/search" element={<SearchPageGate />} />
       <Route path="/home" element={<LandingGate />} />
       <Route path="/collection/:category" element={<CollectionGate />} />

@@ -26,7 +26,7 @@
 .cx-steps li.is-done { color: var(--ca-ink-2); }
 .cx-steps li.is-done .cx-step-num { background: var(--step-color); color: #fff; }
 
-.ca-list { display: flex; flex-direction: column; gap: 16px; padding: 4px 20px 22px; }
+.ca-list { display: flex; flex-direction: column; gap: 16px; }
 
 .ca-radio {
   flex-shrink: 0;
@@ -64,17 +64,8 @@
 
 .ca-phone { display: flex; align-items: center; gap: 8px; margin-top: 8px !important; color: var(--ca-ink-2) !important; }
 
-.ca-skel {
-  height: 140px;
-  border-radius: 16px;
-  background: linear-gradient(90deg, var(--ca-lav-10) 25%, var(--ca-cream) 50%, var(--ca-lav-10) 75%);
-  background-size: 200% 100%;
-  animation: cx-shimmer 1.2s infinite linear;
-}
-
 .ca-spin { animation: ca-spin 0.9s linear infinite; }
 @keyframes ca-spin { to { transform: rotate(360deg); } }
-@keyframes cx-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
 /* ── Page ── */
 .ca-page { background: linear-gradient(180deg, var(--ca-cream) 0%, #fff 100%); }
@@ -151,27 +142,21 @@
 }
 .ca-head p { margin: 4px 0 0; font-size: 18px; color: var(--ca-ink-2); }
 
-/* Saved addresses card */
+/* Checkout payment card */
 .ca-card {
   background: #fff;
   border: 1px solid var(--ca-line);
   border-radius: 22px;
   box-shadow: var(--ca-shadow);
 }
-/* No saved addresses yet: drop the outer card so only the address form shows. */
-.ca-card.is-bare {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-.ca-card.is-bare .ca-form { margin: 0; }
+.ca-addresses .ca-form { margin: 0; }
+.ca-addresses .ca-list + .ca-form { margin-top: 16px; }
 .ca-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px 16px;
+  padding-bottom: 16px;
 }
 .ca-card-head h2 {
   display: flex;
@@ -404,7 +389,6 @@
   border-radius: 18px;
   background: linear-gradient(180deg, var(--ca-lav-10), #fff 140px);
 }
-.ca-list + .ca-form { margin-top: 2px; }
 
 .ca-form-head { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
 .ca-form-head > div { flex: 1; }

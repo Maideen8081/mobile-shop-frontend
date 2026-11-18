@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import MobileHeader from './MobileHeader'
-import CategoryCarousel from './CategoryCarousel'
+import MobileCategoryGrid from './MobileCategoryGrid'
 import BenefitsBanner from './BenefitsBanner'
 import HeroCarousel from './HeroCarousel'
 import AdCarousel from './AdCarousel'
@@ -65,7 +65,7 @@ export default function MobileHome() {
       if (cancelled) return
 
       // Only real catalog data: a section with nothing to show is hidden, never filled with mock items.
-      const activeCats = cats.filter((c) => c.status === 'active' && (c.products ?? 0) > 0)
+      const activeCats = cats.filter((c) => c.status === 'active')
       const deals = all.filter((p) => {
         const v = (p.variants || [])[0]
         return v && v.discountPrice > 0 && v.discountPrice < v.price
@@ -99,12 +99,10 @@ export default function MobileHome() {
   return (
     <div className="home-theme mobile-home min-h-screen font-sans text-[#1d2522] max-w-[480px] mx-auto relative" style={{ fontFamily: 'var(--font-ui)' }}>
 
-      {/* Sticky header + category wrapper — stays pinned on scroll, no flicker */}
+      {/* Sticky header with room for the floating search field */}
       <div className="mobile-home-header sticky top-0 z-50 will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <MobileHeader />
-        <div className="pt-9 pb-3">
-          <CategoryCarousel categories={categories} />
-        </div>
+        <div className="h-7" />
       </div>
 
       <main className="pb-28">
@@ -113,6 +111,7 @@ export default function MobileHome() {
           <p>Phones, accessories and expert repairs.</p>
         </div>
         <HeroCarousel />
+        <MobileCategoryGrid categories={categories} />
         <BenefitsBanner />
 
         <FlashSale products={flashSale} />

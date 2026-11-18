@@ -1,6 +1,7 @@
 import { useLayoutEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { scrollToTopNow, startSmoothScroll, stopSmoothScroll } from '../utils/smoothScroll'
+import { isAdminPath } from '../route/adminPaths'
 
 /**
  * Starts every route at the top of the page. Runs before paint, and dispatches
@@ -11,11 +12,19 @@ import { scrollToTopNow, startSmoothScroll, stopSmoothScroll } from '../utils/sm
 export default function ScrollToTop() {
   const { pathname } = useLocation()
 
-  /* Smooth scrolling everywhere except the admin panel. */
-  const isAdmin = pathname.startsWith('/admin')
+  const isAdmin = isAdminPath(pathname)
   useLayoutEffect(() => {
-    if (isAdmin) stopSmoothScroll()
-    else startSmoothScroll()
+    const nativeScroll = window.matchMedia('(pointer: coarse), (prefers-reduced-motion: reduce)')
+    const sync = () => {
+      if (isAdmin || nativeScroll.matches) stopSmoothScroll()
+      else startSmoothScroll()
+    }
+    sync()
+    nativeScroll.addEventListener('change', sync)
+    return () => {
+      nativeScroll.removeEventListener('change', sync)
+      stopSmoothScroll()
+    }
   }, [isAdmin])
 
   useLayoutEffect(() => {

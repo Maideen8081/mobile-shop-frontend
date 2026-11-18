@@ -98,6 +98,11 @@
   box-shadow: 0 4px 20px rgba(24,80,60, 0.05);
   padding: 22px 20px 20px; min-height: 420px;
 }
+.am-list-card:has(.am-empty) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
 .am-list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
 .am-list-head h2 { margin: 0; font-family: var(--font-display); font-size: 21px; font-weight: 700; color: var(--am-ink); }
 

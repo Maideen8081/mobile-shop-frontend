@@ -1,17 +1,18 @@
+import StorefrontIllustration from '../components/ecommerce/StorefrontIllustration'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, BadgePercent, Check, Headphones, Heart, Minus, Plus,
-  Repeat, ShieldCheck, ShoppingBag, ShoppingCart, Star, Tag, Trash2, Truck, X,
+  Repeat, ShieldCheck, ShoppingCart, Star, Tag, Trash2, Truck, X,
 } from 'lucide-react'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import './CartPage.css'
 import { productService } from '../services/productService'
 import { cartService, type CartItem } from '../services/cartService'
 import { FREE_SHIPPING_THRESHOLD } from '../components/mobile/cartLogic'
-import { computeTotals, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../utils/checkout'
+import { computeTotals, formatINR as fmt, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../utils/checkout'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = 'https://picsum.photos/seed/product/300/300'
@@ -89,7 +90,6 @@ function toRows(items: CartItem[]): CartRow[] {
   })
 }
 
-const fmt = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
 
 function addToWishlist(productId: number) {
   try {
@@ -282,12 +282,19 @@ export default function CartPage() {
 
   // Re-check an applied coupon when the cart changes (percentage discounts and
   // minimum-spend rules depend on the subtotal).
+  const validatedCoupon = useRef<{ code: string; subtotal: number } | null>(null)
   const couponCode = coupon?.code
   useEffect(() => {
     if (!couponCode || loading) return
+    if (validatedCoupon.current?.code === couponCode && validatedCoupon.current.subtotal === subtotal) return
     let cancelled = false
     validateCoupon(couponCode, subtotal)
-      .then((c) => { if (!cancelled) { setCoupon(c); saveCheckoutCoupon(c) } })
+      .then((c) => {
+        if (cancelled) return
+        validatedCoupon.current = { code: c.code, subtotal }
+        setCoupon(c)
+        saveCheckoutCoupon(c)
+      })
       .catch((err) => {
         if (cancelled) return
         setCoupon(null)
@@ -303,6 +310,7 @@ export default function CartPage() {
     setPromoBusy(true)
     try {
       const applied = await validateCoupon(code, subtotal)
+      validatedCoupon.current = { code: applied.code, subtotal }
       setCoupon(applied)
       saveCheckoutCoupon(applied)
       setPromoInput('')
@@ -316,6 +324,7 @@ export default function CartPage() {
   }
 
   const removePromo = () => {
+    validatedCoupon.current = null
     setCoupon(null)
     saveCheckoutCoupon(null)
     setPromoMsg(null)
@@ -353,10 +362,10 @@ export default function CartPage() {
 
       <main className="cx-wrap">
         {loading ? (
-          <DesktopPageLoader text="Loading your cart..." />
+          <PageLoading label="Loading your cart…" className="min-h-[60vh]" />
         ) : cart.length === 0 ? (
           <section className="cx-empty">
-            <div className="cx-empty-icon"><ShoppingBag size={34} /></div>
+            <StorefrontIllustration kind="cart" />
             <h2>Your cart is empty</h2>
             <p>Looks like you haven’t added anything yet. Explore the latest phones and accessories.</p>
             <div className="cx-empty-actions">

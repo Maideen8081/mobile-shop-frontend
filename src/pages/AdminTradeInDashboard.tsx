@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -8,7 +9,7 @@ import PageLayout from '../components/layout/PageLayout'
 import Portal from '../components/ui/Portal'
 import {
   Btn, ConfirmDialog, EmptyState, ErrorBanner, ExportBtn, Field, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu,
-  SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, Thumb, ToolbarBtn,
+  SearchBox, ShowingSelect, SortTh, StatusPill, Thumb, ToolbarBtn,
   apiErrorMessage, exportCsv, formatDate, formatINR, inputBase, textareaBase, timeAgo, useTable, type Tone,
 } from '../components/admin/AdminUI'
 import { tradeInService, type TradeInSubmission } from '../services/tradeInService'
@@ -475,7 +476,7 @@ export default function AdminTradeInDashboard() {
         {error ? (
           <ErrorBanner message={error} onRetry={load} />
         ) : loading && !trades.length ? (
-          <div className="table-wrap p-4 space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+          <PageLoading label="Loading trade-ins…" className="py-16" />
         ) : filtered.length === 0 ? (
           <div className="table-wrap">
             <EmptyState

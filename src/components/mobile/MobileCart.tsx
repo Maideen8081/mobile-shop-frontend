@@ -1,8 +1,9 @@
+import StorefrontIllustration from '../ecommerce/StorefrontIllustration'
 import { useState, useEffect, useRef } from 'react'
 import { requireSignInForWishlist } from '../../utils/wishlist'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Minus, Plus, Trash2, Tag, ArrowLeft, ShoppingBag, Heart, Star, Check } from 'lucide-react'
+import { Minus, Plus, Trash2, Tag, ArrowLeft, Heart, Star, Check } from 'lucide-react'
 import { useMobileToast } from './useMobileToast'
 import MobileTopSection from './MobileTopSection'
 import {
@@ -12,12 +13,12 @@ import {
 } from './cartLogic'
 import { useStoreCoupons } from '../../hooks/useStoreCoupons'
 import { couponLabel } from '../../services/offerService'
-import { computeTotals, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
+import { computeTotals, formatINR, gstLabel, readCheckoutCoupon, saveCheckoutCoupon, validateCoupon, type CheckoutCoupon } from '../../utils/checkout'
 import { productService } from '../../services/productService'
 import { getImageUrl, getProductPrice, isInStock } from './helpers'
 import { cartService, type CartItem } from '../../services/cartService'
 import { addToCartWithAuth } from '../../utils/cartAuth'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import PageLoading from '../ui/PageLoading'
 
 const PURPLE = '#0f3b2c'
 const PURPLE2 = '#0f3b2c'
@@ -54,6 +55,7 @@ export default function MobileCart() {
   const liveCoupons = useStoreCoupons()
   // Coupons are validated by the server, which is what applies them to the order.
   const [coupon, setCoupon] = useState<CheckoutCoupon | null>(readCheckoutCoupon)
+  const validatedCoupon = useRef<{ code: string; subtotal: number } | null>(null)
   const [couponBusy, setCouponBusy] = useState(false)
 
   const [recommended, setRecommended] = useState<any[]>([])
@@ -72,12 +74,13 @@ export default function MobileCart() {
     return () => window.removeEventListener('cart-updated', handler)
   }, [])
 
-  // Same pricing as the server: prices include GST; delivery on the subtotal; coupon off the price.
+  // The server applies GST and shipping to the subtotal before coupon discounts.
   const { subtotal, quantity: totalItems, shipping, tax, discount, total: grandTotal } =
     computeTotals(items, coupon?.discount || 0)
   const shippingProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100)
 
   const applyCoupon = (next: CheckoutCoupon | null) => {
+    validatedCoupon.current = next ? { code: next.code, subtotal } : null
     setCoupon(next)
     saveCheckoutCoupon(next)
   }
@@ -89,7 +92,7 @@ export default function MobileCart() {
     try {
       const result = await validateCoupon(code, subtotal)
       applyCoupon(result)
-      showToast(`Coupon "${result.code}" applied — ₹${Math.round(result.discount).toLocaleString('en-IN')} off`, 'success')
+      showToast(`Coupon "${result.code}" applied — ${formatINR(result.discount)} off`, 'success')
     } catch (err: any) {
       showToast(err?.message || `Invalid coupon code "${code}"`, 'error')
     } finally {
@@ -101,6 +104,7 @@ export default function MobileCart() {
   const appliedCode = coupon?.code
   useEffect(() => {
     if (!appliedCode || cartLoading) return
+    if (validatedCoupon.current?.code === appliedCode && validatedCoupon.current.subtotal === subtotal) return
     if (subtotal <= 0) { applyCoupon(null); return }
     let cancelled = false
     validateCoupon(appliedCode, subtotal)
@@ -215,7 +219,7 @@ export default function MobileCart() {
       <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Loading…" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <DoubleRingLoader size={48} label="Loading your cart…" />
+          <PageLoading label="Loading your cart…" />
         </div>
         {Toast}
       </div>
@@ -227,9 +231,7 @@ export default function MobileCart() {
       <div className="h-[100dvh] bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col font-sans" style={{ fontFamily: 'var(--font-ui)' }}>
         <MobileTopSection title="My Cart" subtitle="Review your items" icon="cart" />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-10">
-          <div className="w-28 h-28 rounded-3xl flex items-center justify-center mb-6" style={{ background: 'rgba(15,59,44,0.1)' }}>
-            <ShoppingBag size={44} style={{ color: PURPLE }} />
-          </div>
+          <StorefrontIllustration kind="cart" />
           <h2 className="text-xl font-bold text-[#1d2522]">Your cart is empty</h2>
           <p className="text-label text-[#5d6762] mt-2 max-w-[260px]">Add items from the store to see them here.</p>
           <button onClick={() => navigate('/collection/all')} className="mt-6 h-12 px-8 rounded-[8px] text-white text-body-sm font-bold active:scale-95 transition"
@@ -353,7 +355,7 @@ export default function MobileCart() {
           </div>
           {coupon ? (
             <div className="flex items-center justify-between pl-3 pr-2 py-2.5 rounded-2xl text-caption font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#16A34A' }}>
-              <span className="flex items-center gap-1.5"><Check size={14} /> {coupon.code} applied — ₹{Math.round(discount).toLocaleString('en-IN')} off</span>
+              <span className="flex items-center gap-1.5"><Check size={14} /> {coupon.code} applied — {formatINR(discount)} off</span>
               <button onClick={() => { applyCoupon(null); setCouponCode('') }} className="text-[#5d6762] hover:text-[#EF4444] px-2 py-1 rounded-lg active:scale-90 transition">Remove</button>
             </div>
           ) : (
@@ -396,13 +398,13 @@ export default function MobileCart() {
         <div className={`${card} p-3.5 space-y-2`}>
           <SummaryRow label="Subtotal" value={`₹${subtotal.toLocaleString('en-IN')}`} />
           <SummaryRow label="Shipping" value={shipping === 0 ? 'FREE' : `₹${shipping}`} highlight={shipping === 0} />
-          <SummaryRow label={gstLabel()} value={`₹${Math.round(tax).toLocaleString('en-IN')}`} />
+          <SummaryRow label={gstLabel()} value={formatINR(tax)} />
           {coupon && (
-            <SummaryRow label={`Coupon (${coupon.code})`} value={`-₹${Math.round(discount).toLocaleString('en-IN')}`} highlight />
+            <SummaryRow label={`Coupon (${coupon.code})`} value={`-${formatINR(discount)}`} highlight />
           )}
           <div className="pt-2 border-t border-[#ece9e2] flex items-center justify-between">
             <span className="text-label font-bold text-[#1d2522]">Grand Total</span>
-            <span className="text-title-sm font-bold" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</span>
+            <span className="text-title-sm font-bold" style={{ color: PURPLE }}>{formatINR(grandTotal)}</span>
           </div>
         </div>
 
@@ -413,7 +415,7 @@ export default function MobileCart() {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-micro text-[#5d6762]">Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</p>
-            <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>₹{Math.round(grandTotal).toLocaleString('en-IN')}</p>
+            <p className="text-title-sm font-extrabold leading-none" style={{ color: PURPLE }}>{formatINR(grandTotal)}</p>
           </div>
           <button
             onClick={() => navigate('/checkout/address')}

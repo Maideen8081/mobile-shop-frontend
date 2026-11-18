@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom'
 import { usePageMeta, type PageMeta } from '../hooks/usePageMeta'
 
 const STATIC: Record<string, PageMeta> = {
-  '/': { description: 'Explore phones, audio and charging gear, then step into the PhoneFix store.' },
   '/home': { description: 'Shop the latest smartphones, earbuds, chargers and certified refurbished phones, with fast delivery and expert repairs.' },
   '/search': { title: 'Search' },
   '/repairs': { title: 'Phone Repair Services', description: 'Screen, battery, charging port and water-damage repairs with genuine parts and a 6-month warranty.' },

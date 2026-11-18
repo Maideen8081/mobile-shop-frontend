@@ -1,3 +1,4 @@
+import PageLoading from './ui/PageLoading'
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -27,7 +28,7 @@ export default function AdminGuard({ children }: AdminGuardProps) {
     }
   }, [isAuthenticated, isAdmin, loading, navigate, location])
 
-  if (loading) return null
+  if (loading) return <PageLoading label="Checking admin access…" className="min-h-[60vh]" />
   if (!isAuthenticated || !isAdmin) return null
 
   return <>{children}</>

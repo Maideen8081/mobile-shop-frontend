@@ -1,3 +1,4 @@
+import StorefrontIllustration from '../ecommerce/StorefrontIllustration'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, Trash2, ShoppingCart, Star, RefreshCw } from 'lucide-react'
@@ -13,7 +14,7 @@ import {
   readWishlistIds,
   writeWishlistIds,
 } from '../../utils/wishlist'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import PageLoading from '../ui/PageLoading'
 import MobileTopSection from './MobileTopSection'
 import MobileBottomNav from './MobileBottomNav'
 import { useMobileToast } from './useMobileToast'
@@ -128,13 +129,11 @@ export default function MobileWishlist() {
       <div className={`px-4 pt-4 ${products.length > 0 ? 'pb-[calc(180px+env(safe-area-inset-bottom))]' : 'pb-28'}`}>
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <DoubleRingLoader size={48} label="Loading your wishlist…" />
+            <PageLoading label="Loading your wishlist…" />
           </div>
         ) : products.length === 0 ? (
-          <div className={`${card} rounded-[24px] p-10 text-center mt-10`}>
-            <div className="w-20 h-20 rounded-[8px] mx-auto mb-5 flex items-center justify-center" style={{ background: 'rgba(15,59,44,0.1)' }}>
-              <Heart size={34} style={{ color: PURPLE }} />
-            </div>
+          <div className="px-4 py-10 text-center mt-10">
+            <StorefrontIllustration kind="wishlist" />
             <h2 className="text-title-sm font-bold text-[#1d2522] mb-1">Your wishlist is empty</h2>
             <p className="text-label text-[#5d6762] mb-6">Save your favorite products to find them easily later.</p>
             <button onClick={() => navigate('/collection/all')} className="h-12 px-7 rounded-[8px] text-body-sm font-semibold text-white inline-flex items-center gap-2"
@@ -145,7 +144,7 @@ export default function MobileWishlist() {
         ) : (
           <>
             {unavailableCount > 0 && (
-              <div className="mb-3 px-4 py-3 rounded-2xl bg-[#FEF2F2] border border-[#FECACA] flex items-center justify-between gap-3" role="alert">
+              <div className="mb-3 py-3 flex items-center justify-between gap-3" role="alert">
                 <span className="text-caption font-medium text-[#991B1B]">
                   {unavailableCount} saved {unavailableCount === 1 ? 'item' : 'items'} could not be loaded.
                 </span>

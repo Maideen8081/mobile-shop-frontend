@@ -40,9 +40,10 @@ describe('computeTotals', () => {
 })
 
 describe('formatINR', () => {
-  it('uses Indian digit grouping', () => {
+  it('uses Indian digit grouping and preserves paise', () => {
     expect(formatINR(1234567)).toBe('₹12,34,567')
-    expect(formatINR(99.6)).toBe('₹100')
+    expect(formatINR(99.6)).toBe('₹99.6')
+    expect(formatINR(99.61)).toBe('₹99.61')
   })
 })
 

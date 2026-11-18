@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import { useBootHold } from '../components/LoadingScreen/bootLoader'
@@ -161,7 +161,7 @@ export default function AccessoriesPage() {
     return (
       <>
         <SiteTopNav />
-        <DesktopPageLoader text="Loading accessories..." />
+        <PageLoading label="Loading accessories…" className="min-h-[60vh]" />
       </>
     )
   }

@@ -1,3 +1,5 @@
+import PageLoading from '../components/ui/PageLoading'
+import StorefrontIllustration from '../components/ecommerce/StorefrontIllustration'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
@@ -407,9 +409,7 @@ function SearchResults({ query }: { query: string }) {
               )}
 
               {loading ? (
-                <div className={`srp-grid srp-grid--${view}`}>
-                  {Array.from({ length: 8 }, (_, i) => <div key={i} className="srp-card srp-card--skeleton" />)}
-                </div>
+                <PageLoading label="Searching products…" className="min-h-[40vh]" />
               ) : failed ? (
                 <Notice title="Couldn't load results" text="Please check your connection and try again.">
                   <button type="button" className="srp-btn" onClick={() => navigate(0)}>Try again</button>
@@ -643,7 +643,7 @@ function Notice({ title, text, children }: { title: string; text: string; childr
 function EmptySearch({ onPick }: { onPick: (t: string) => void }) {
   return (
     <div className="srp-notice srp-notice--start">
-      <span className="srp-notice__icon"><Search size={30} /></span>
+      <StorefrontIllustration kind="search" />
       <h3>What are you looking for?</h3>
       <p>Type in the search box above, or try one of these popular searches.</p>
       <div className="srp-popular">

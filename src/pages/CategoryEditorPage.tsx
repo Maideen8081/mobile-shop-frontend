@@ -1,8 +1,9 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiArrowLeft, FiCheckCircle, FiImage, FiLayers } from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
-import { ErrorBanner, PageHeader, Skeleton } from '../components/admin/AdminUI'
+import { ErrorBanner, PageHeader } from '../components/admin/AdminUI'
 import CategoryCreateForm, { type CategoryCreateData } from '../components/category/CategoryCreateForm'
 import { categoryService, subCategoryService } from '../services/categoryService'
 import { useToast } from '../context/ToastContext'
@@ -87,11 +88,7 @@ export default function CategoryEditorPage() {
         <div className="space-y-4 min-w-0">
           {loadError && <ErrorBanner message={loadError} onRetry={loadNames} />}
           {existingNames === null ? (
-            <div className="admin-card p-6 space-y-4">
-              <Skeleton className="h-10" />
-              <Skeleton className="h-40" />
-              <Skeleton className="h-10" />
-            </div>
+            <PageLoading label="Loading category names…" className="py-16" />
           ) : (
             <CategoryCreateForm onSubmit={handleCreate} loading={submitting} existingNames={existingNames} />
           )}

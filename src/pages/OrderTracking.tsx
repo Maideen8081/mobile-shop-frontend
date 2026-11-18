@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -121,16 +122,6 @@ function OrderCard({ order, index, onOpen }: { order: TrackOrder; index: number;
   )
 }
 
-function SkeletonCard() {
-  return (
-    <div className="mo-card is-skeleton" aria-hidden="true">
-      <span className="mo-thumb" />
-      <span className="mo-info"><i /><i /><i /></span>
-      <span className="mo-track"><i /></span>
-    </div>
-  )
-}
-
 export default function OrderTracking() {
   const [params, setParams] = useSearchParams()
   const urlOrderId = params.get('order_id')
@@ -200,7 +191,7 @@ export default function OrderTracking() {
     )
   }
 
-  const showSkeleton = !loaded && orders.length === 0
+  const showLoading = !loaded && orders.length === 0
 
   return (
     <div className="mo">
@@ -234,8 +225,8 @@ export default function OrderTracking() {
           ))}
         </div>
 
-        {showSkeleton ? (
-          <div className="mo-list"><SkeletonCard /><SkeletonCard /><SkeletonCard /></div>
+        {showLoading ? (
+          <PageLoading label="Loading your orders…" className="py-16" />
         ) : visible.length === 0 ? (
           <div className="mo-empty">
             <span className="mo-empty-icon"><ShoppingBag size={34} /></span>

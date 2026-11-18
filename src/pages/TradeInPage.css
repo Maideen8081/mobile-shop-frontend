@@ -164,7 +164,7 @@
 .ti-breakdown b.is-neg { color: var(--t-accent); }
 .ti-note { display: flex; gap: 8px; margin: 0; font-size: 13px; color: var(--t-muted); }
 .ti-note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
-.ti-value-empty { padding: 28px 10px; border: 1.5px dashed var(--t-lav-35); border-radius: 18px; text-align: center; color: var(--t-muted); }
+.ti-value-empty { padding: 28px 10px; text-align: center; color: var(--t-muted); }
 .ti-value-empty svg { width: 40px; height: 40px; color: var(--t-sage); }
 .ti-value-empty p { margin: 10px 0 0; font-size: 14.5px; }
 .ti-perks { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--t-line); display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--t-ink-2); }

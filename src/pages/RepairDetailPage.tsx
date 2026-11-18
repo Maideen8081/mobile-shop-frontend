@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -101,18 +102,7 @@ export default function RepairDetailPage() {
     </div>
   )
 
-  if (loading) {
-    return shell(
-      <div aria-busy="true">
-        <div className="rt-card" style={{ padding: 24, marginBottom: 20 }}>
-          <div className="rt-skel" style={{ height: 22, width: '35%', marginBottom: 12 }} />
-          <div className="rt-skel" style={{ height: 14, width: '50%', marginBottom: 28 }} />
-          <div className="rt-skel" style={{ height: 30, width: '100%' }} />
-        </div>
-        <div className="rt-skel" style={{ height: 240, borderRadius: 18 }} />
-      </div>,
-    )
-  }
+  if (loading) return shell(<PageLoading label="Loading repair details…" className="min-h-[60vh]" />)
 
   if (notFound || !ticket) {
     return shell(

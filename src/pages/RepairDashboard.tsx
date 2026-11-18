@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -8,7 +9,7 @@ import { useLockBodyScroll } from '../hooks/useLockBodyScroll'
 import { RepairStatusBadge } from '../components/repair/WorkflowTracker'
 import { repairStatuses, type RepairStatus } from '../data/repairData'
 import { repairService, type RepairTicket } from '../services/repairService'
-import { Btn, EmptyState, ErrorBanner, Field, KpiCard, Modal, PageHeader, Pagination, Panel, RowMenu, SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, Thumb, ToolbarBtn, apiErrorMessage, formatDate, textareaBase, timeAgo, useTable } from '../components/admin/AdminUI'
+import { Btn, EmptyState, ErrorBanner, Field, KpiCard, Modal, PageHeader, Pagination, Panel, RowMenu, SearchBox, ShowingSelect, SortTh, StatusPill, Thumb, ToolbarBtn, apiErrorMessage, formatDate, textareaBase, timeAgo, useTable } from '../components/admin/AdminUI'
 
 const priorityColors: Record<string, string> = { Low: 'text-text-muted', Medium: 'text-primary', High: 'text-primary', Urgent: 'text-danger' }
 
@@ -353,7 +354,7 @@ export default function RepairDashboard() {
           </div>
         </div>
         {loading && !tickets.length ? (
-          <div className="p-4 space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+          <PageLoading label="Loading repair tickets…" className="py-16" />
         ) : table.total === 0 ? (
           <EmptyState icon={<FiTool size={20} />} title={tickets.length ? 'No tickets match' : 'No repair tickets yet'}
             description={tickets.length ? 'Try another stage or search.' : 'Walk-in tickets and online bookings appear here.'}

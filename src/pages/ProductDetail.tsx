@@ -1,4 +1,4 @@
-import { Component, useState, useMemo, useEffect, useRef } from 'react'
+import { Component, useState, useMemo, useEffect, useRef, type PointerEvent } from 'react'
 import { sendGuestToLogin } from '../utils/cartAuth'
 import { usePageMeta } from '../hooks/usePageMeta'
 import ProductSuggestions, { productErrorMessage } from '../components/ecommerce/ProductSuggestions'
@@ -14,7 +14,7 @@ import { useStoreCoupons } from '../hooks/useStoreCoupons'
 import { couponLabel } from '../services/offerService'
 import { collectProductImages, getImageUrl, getProductImage } from '../components/mobile/helpers'
 import { FALLBACK_IMG } from '../components/mobile/fallback'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import '../pages/CollectionPage.css'
@@ -22,7 +22,7 @@ import { useProductImage } from '../utils/productImage'
 import './ProductDetailPage.css'
 import {
   ArrowLeftRight, Award, BadgeCheck, BatteryCharging, Bell, Cable, Camera, Check, ChevronDown, ChevronLeft,
-  ChevronRight, Cpu, CreditCard, HardDrive, Heart, Layers, MapPin, MemoryStick,
+  ChevronRight, Cpu, CreditCard, FileText, HardDrive, Heart, Layers, MapPin, MemoryStick,
   MessageCircleQuestion, Minus, Monitor, Percent, Plus, RotateCcw, Share2, ShieldCheck, ShoppingCart, Star,
   Tag, Truck, Zap,
 } from 'lucide-react'
@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
     if (this.state.hasError) {
       return (
         <div className="axpd min-h-screen flex items-center justify-center p-6">
-          <div className="bg-white rounded-[14px] p-10 border border-[#ececea] max-w-md mx-auto text-center shadow-[0_20px_50px_rgba(28,28,30,.14)]">
+          <div className="p-10 max-w-md mx-auto text-center">
             <p className="text-4xl mb-4 block">⚠️</p>
             <h2 className="text-xl font-bold text-[#0f3b2c] mb-2">Something went wrong</h2>
             <p className="text-sm text-[#6b6b70] mb-6">{this.state.error?.message || 'An unexpected error occurred'}</p>
@@ -255,8 +255,7 @@ function ProductDetailContent() {
   // Live coupons, the same list the mobile page shows and checkout accepts.
   const storeCoupons = useStoreCoupons()
   const [copiedCode, setCopiedCode] = useState('')
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [lightboxIdx, setLightboxIdx] = useState(0)
+  const zoomGallery = useRef<HTMLDivElement>(null)
   const [notifyOpen, setNotifyOpen] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState('')
   const [tab, setTab] = useState<'desc' | 'specs' | 'reviews' | 'qa'>(() => (rateParam ? 'reviews' : 'desc'))
@@ -459,21 +458,17 @@ function ProductDetailContent() {
     image: images[0]?.startsWith('http') ? images[0] : undefined,
   })
 
-  const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true) }
-  const closeLightbox = () => setLightboxOpen(false)
-  const stepLightbox = (dir: number) => setLightboxIdx((p) => (p + dir + Math.max(images.length, 1)) % Math.max(images.length, 1))
   const stepImage = (dir: number) => { if (images.length) setSelectedImage((p) => (p + dir + images.length) % images.length) }
 
-  useEffect(() => {
-    if (!lightboxOpen) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setLightboxOpen(false)
-      if (e.key === 'ArrowRight') setLightboxIdx((p) => (p + 1) % Math.max(images.length, 1))
-      if (e.key === 'ArrowLeft') setLightboxIdx((p) => (p - 1 + Math.max(images.length, 1)) % Math.max(images.length, 1))
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [lightboxOpen, images.length])
+  const moveZoom = (event: PointerEvent<HTMLDivElement>) => {
+    const gallery = zoomGallery.current
+    if (!gallery || event.pointerType !== 'mouse') return
+    const { left, top, width, height } = event.currentTarget.getBoundingClientRect()
+    const limit = (value: number) => Math.min(100 - 100 / 4.5, Math.max(100 / 4.5, value))
+    gallery.style.setProperty('--pdx-zoom-x', `${limit((event.clientX - left) / width * 100)}%`)
+    gallery.style.setProperty('--pdx-zoom-y', `${limit((event.clientY - top) / height * 100)}%`)
+    gallery.setAttribute('data-zoom', '')
+  }
 
   const currentPrice = activeVariant?.discountPrice || activeVariant?.price || apiProduct?.price || 0
   const oldPriceVal = activeVariant?.price && activeVariant?.discountPrice ? activeVariant.price : (apiProduct?.oldPrice || 0)
@@ -741,7 +736,7 @@ function ProductDetailContent() {
       <div className="axpd min-h-screen bg-[#f7f6f2]">
         <style>{AXPD_CSS}</style>
         <SiteTopNav />
-        <DesktopPageLoader text="Loading product details..." />
+        <PageLoading label="Loading product details…" className="min-h-[60vh]" />
       </div>
     )
   }
@@ -867,8 +862,8 @@ function ProductDetailContent() {
                     </button>
                   ))}
                 </div>
-                <div className="pdx-stage-col">
-                  <div className="pdx-stage" onClick={() => openLightbox(selectedImage)}>
+                <div className="pdx-stage-col" ref={zoomGallery}>
+                  <div className="pdx-stage">
                     {productBrand && <span className="pdx-brand-chip">{productBrand}</span>}
                     {discountPct > 0 && <span className="pdx-off-chip">{discountPct}% OFF</span>}
                     <div className="pdx-stage-actions">
@@ -894,7 +889,25 @@ function ProductDetailContent() {
                         <ProductPhoto src={img} alt={productName} />
                       </div>
                     ))}
+                    {images[selectedImage] && (
+                      <div
+                        className="pdx-zoom-target"
+                        aria-hidden="true"
+                        onPointerEnter={moveZoom}
+                        onPointerMove={moveZoom}
+                        onPointerLeave={() => zoomGallery.current?.removeAttribute('data-zoom')}
+                      >
+                        <span className="pdx-zoom-lens" />
+                      </div>
+                    )}
                   </div>
+                  {images[selectedImage] && (
+                    <div className="pdx-zoom-preview" aria-hidden="true">
+                      <div className="pdx-zoom-image">
+                        <ProductPhoto src={images[selectedImage]} alt="" />
+                      </div>
+                    </div>
+                  )}
                   {images.length > 1 && (
                     <div className="pdx-dots">
                       {images.map((img, i) => (
@@ -932,7 +945,7 @@ function ProductDetailContent() {
                     {oldPriceVal > currentPrice && <s className="pdx-price-mrp">{fmt(oldPriceVal)}</s>}
                     {discountPct > 0 && <span className="pdx-price-off">{discountPct}% OFF</span>}
                   </div>
-                  <p className="pdx-price-tax">Inclusive of all taxes</p>
+                  <p className="pdx-price-tax">GST calculated at checkout</p>
                   {totalSavings > 0 && (
                     <p className="pdx-saving"><Check aria-hidden="true" /> You save <b>{fmt(totalSavings)}</b>{appliedOffer ? ' with bank offer' : ''}</p>
                   )}
@@ -1079,12 +1092,15 @@ function ProductDetailContent() {
             <section className="pdx-tabs-wrap" id="ax-reviews-anchor">
               <div className="pdx-tabs" role="tablist">
                 {([
-                  ['desc', 'Description'],
-                  ['specs', 'Specifications'],
-                  ['reviews', `Reviews (${Number(ratingCount || productReviews.length).toLocaleString('en-IN')})`],
-                  ['qa', `Q&A (${QA.length})`],
-                ] as const).map(([key, label]) => (
-                  <button key={key} role="tab" aria-selected={tab === key} className={tab === key ? 'is-active' : ''} onClick={() => setTab(key)}>{label}</button>
+                  ['desc', 'Description', FileText],
+                  ['specs', 'Specifications', Layers],
+                  ['reviews', `Reviews (${Number(ratingCount || productReviews.length).toLocaleString('en-IN')})`, Star],
+                  ['qa', `Q&A (${QA.length})`, MessageCircleQuestion],
+                ] as const).map(([key, label, Icon]) => (
+                  <button key={key} type="button" role="tab" aria-selected={tab === key} className={tab === key ? 'is-active' : ''} onClick={() => setTab(key)}>
+                    <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+                    {label}
+                  </button>
                 ))}
               </div>
 
@@ -1304,8 +1320,10 @@ function ProductDetailContent() {
                 const rpName = relatedName(rp) || 'Product'
                 return (
                   <div key={rp.id} className="ax-related-card">
-                    <div className="ax-related-media" onClick={() => navigate(`/product/${rp.id}`)} style={{ cursor: 'pointer' }}>
-                      <img src={rpImg} alt={rpName} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
+                    <div className="ax-related-media">
+                      <Link to={`/product/${rp.id}`} aria-label={`View ${rpName}`}>
+                        <img src={rpImg} alt="" loading="lazy" onError={(e) => { if (e.currentTarget.getAttribute('src') !== FALLBACK_IMG) e.currentTarget.src = FALLBACK_IMG }} />
+                      </Link>
                       {rpDisc > 0 && <span className="ax-related-disc-chip">{rpDisc}% OFF</span>}
                       <div className="ax-related-hover-actions">
                         <button className="ax-related-act-btn" aria-label="Add to wishlist" title="Add to wishlist" onClick={(e) => { e.stopPropagation(); toggleWishlist(rp.id) }}>
@@ -1314,13 +1332,11 @@ function ProductDetailContent() {
                       </div>
                     </div>
                     <div className="ax-related-info">
-                      <div className="ax-related-meta">
-                        <span className="ax-related-brand">{rp.brand || 'PhoneFix'}</span>
-                        <span className="ax-related-price-inline">{fmt(rpPrice)}</span>
-                      </div>
-                      <h4 className="ax-related-name" onClick={() => navigate(`/product/${rp.id}`)} style={{ cursor: 'pointer' }}>{rpName}</h4>
+                      {rp.brand && <span className="ax-related-brand">{rp.brand}</span>}
+                      <h4 className="ax-related-name"><Link to={`/product/${rp.id}`}>{rpName}</Link></h4>
                       <div className="ax-related-bottom">
-                        <button className="ax-related-add-btn" onClick={(e) => { e.stopPropagation(); handleRelatedAddToCart(e, rp) }} title="Add to Cart">
+                        <strong className="ax-related-price">{fmt(rpPrice)}</strong>
+                        <button type="button" className="ax-related-add-btn" onClick={(e) => { e.stopPropagation(); handleRelatedAddToCart(e, rp) }} title="Add to Cart">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" /><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" /></svg>
                           <span>Add</span>
                         </button>
@@ -1350,21 +1366,6 @@ function ProductDetailContent() {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
         <span>{toastMsg}</span>
       </div>
-
-      {/* ===== FULL-VIEW LIGHTBOX ===== */}
-      {lightboxOpen && (
-        <div className="ax-lightbox" onClick={closeLightbox}>
-          <button className="ax-lb-close" onClick={closeLightbox} aria-label="Close">✕</button>
-          {images.length > 1 && (
-            <button className="ax-lb-prev" onClick={(e) => { e.stopPropagation(); stepLightbox(-1) }} aria-label="Previous">‹</button>
-          )}
-          <img src={images[lightboxIdx] || images[0]} alt={productName} onClick={(e) => e.stopPropagation()} />
-          {images.length > 1 && (
-            <button className="ax-lb-next" onClick={(e) => { e.stopPropagation(); stepLightbox(1) }} aria-label="Next">›</button>
-          )}
-          {images.length > 1 && <div className="ax-lb-counter">{lightboxIdx + 1} / {images.length}</div>}
-        </div>
-      )}
 
       {/* ===== NOTIFY ME MODAL ===== */}
       {notifyOpen && (
@@ -1998,16 +1999,6 @@ const AXPD_CSS = `
 .axpd .ax-savings-note svg{width:14px; height:14px; flex-shrink:0;}
 .axpd .ax-savings-note b{font-family:var(--font-display);}
 
-/* ===== full-view lightbox ===== */
-.axpd .ax-lightbox{position:fixed; inset:0; background:rgba(12,12,14,.93); z-index:400; display:flex; align-items:center; justify-content:center; animation:ax-fade-in .2s ease;}
-.axpd .ax-lightbox img{max-width:86vw; max-height:82vh; object-fit:contain; border-radius:8px; box-shadow:0 30px 80px rgba(0,0,0,.5);}
-.axpd .ax-lb-close,.axpd .ax-lb-prev,.axpd .ax-lb-next{position:absolute; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); color:#fff; width:44px; height:44px; border-radius: 8px; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; line-height:1;}
-.axpd .ax-lb-close{top:22px; right:22px;}
-.axpd .ax-lb-prev{left:22px; top:50%; transform:translateY(-50%);}
-.axpd .ax-lb-next{right:22px; top:50%; transform:translateY(-50%);}
-.axpd .ax-lb-close:hover,.axpd .ax-lb-prev:hover,.axpd .ax-lb-next:hover{background:var(--red); border-color:var(--red);}
-.axpd .ax-lb-counter{position:absolute; bottom:24px; left:50%; transform:translateX(-50%); color:#fff; font-family:var(--font-display); font-size:13px; background:rgba(255,255,255,.12); padding:6px 16px; border-radius: 8px;}
-
 /* sticky buy bar */
 .axpd .ax-sticky-bar{
   position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--border);
@@ -2110,7 +2101,7 @@ const AXPD_CSS = `
 }
 .axpd .ax-related-head {
   display: flex; align-items: flex-end; justify-content: space-between;
-  margin-bottom: 28px; gap: 16px;
+  margin-bottom: 14px; gap: 12px;
 }
 .axpd .ax-related-subtitle {
   font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
@@ -2128,35 +2119,34 @@ const AXPD_CSS = `
 
 .axpd .ax-related-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
 }
 .axpd .ax-related-card {
   background: var(--white);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 9px;
   transition: transform 0.3s cubic-bezier(0.2,0.7,0.3,1), box-shadow 0.3s ease, border-color 0.3s ease;
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .axpd .ax-related-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow: 0 16px 36px rgba(0,0,0,0.08);
   border-color: rgba(24,80,60,0.3);
 }
 
 /* Framed media with full auto-fit image without crop */
 .axpd .ax-related-media {
-  aspect-ratio: 1 / 1;
+  height: clamp(108px, 12vw, 164px);
   width: 100%;
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid var(--border);
+  background: #f4f3ed;
+  border-radius: 10px;
   overflow: hidden;
   position: relative;
   display: grid; place-items: center;
-  padding: 6%;
 }
+.axpd .ax-related-media > a { position: absolute; inset: 0; padding: 10px; }
 .axpd .ax-related-media img {
   width: 100%;
   height: 100%;
@@ -2183,7 +2173,7 @@ const AXPD_CSS = `
   opacity: 0; transform: translateX(8px);
   transition: all 0.25s ease; z-index: 2;
 }
-.axpd .ax-related-card:hover .ax-related-hover-actions {
+.axpd .ax-related-card:is(:hover, :focus-within) .ax-related-hover-actions {
   opacity: 1; transform: translateX(0);
 }
 .axpd .ax-related-act-btn {
@@ -2196,11 +2186,8 @@ const AXPD_CSS = `
 .axpd .ax-related-act-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
 .axpd .ax-related-act-btn:hover { background: var(--red); color: #fff; border-color: var(--red); transform: scale(1.08); }
 
-.axpd .ax-related-info { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between; }
-.axpd .ax-related-meta { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
-.axpd .ax-related-brand { font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; }
-.axpd .ax-related-rating { display: flex; align-items: center; gap: 3px; font-weight: 700; color: #b08d57; }
-.axpd .ax-related-rating svg { width: 12px; height: 12px; }
+.axpd .ax-related-info { padding: 8px 2px 2px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.axpd .ax-related-brand { font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
 
 .axpd .ax-related-name {
   font-family:var(--font-ui); font-size: 14.5px; font-weight: 600; color: var(--ink);
@@ -2209,26 +2196,31 @@ const AXPD_CSS = `
 }
 .axpd .ax-related-card:hover .ax-related-name { color: var(--red); }
 
-.axpd .ax-related-bottom { display: flex; align-items: center; justify-content: flex-end; margin-top: 8px; }
-.axpd .ax-related-price-box { display: flex; align-items: baseline; gap: 6px; }
+.axpd .ax-related-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 6px; }
 .axpd .ax-related-price { font-family:var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); }
-.axpd .ax-related-old-price { font-family:var(--font-display); font-size: 12px; color: var(--slate); text-decoration: line-through; }
 
 .axpd .ax-related-add-btn {
   display: inline-flex; align-items: center; gap: 5px;
   background: var(--red-tint); color: var(--red-deep); border: 1px solid rgba(24,80,60,0.2);
-  padding: 6px 14px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
+  padding: 5px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
   cursor: pointer; transition: all 0.2s ease;
 }
 .axpd .ax-related-add-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 .axpd .ax-related-add-btn:hover { background: var(--sunshine); color: var(--green); border-color: var(--sunshine); }
 
 @media (max-width: 1024px) {
-  .axpd .ax-related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .axpd .ax-related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 }
 @media (max-width: 640px) {
-  .axpd .ax-related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .axpd .ax-related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .axpd .ax-related-title { font-size: 20px; }
+}
+@media (hover: none) {
+  .axpd .ax-related-hover-actions { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .axpd .ax-related-card, .axpd .ax-related-media img, .axpd .ax-related-hover-actions { transition: none; }
+  .axpd .ax-related-card:hover, .axpd .ax-related-card:hover .ax-related-media img { transform: none; }
 }
 @media (min-width: 901px){
   .axpd .ax-sticky-bar{display:none;}

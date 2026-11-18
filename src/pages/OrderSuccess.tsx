@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { gstLabel, orderTaxLabel } from '../utils/checkout'
+import { useMemo, useState } from 'react'
+import { formatINR as formatPrice, gstLabel, orderTaxLabel } from '../utils/checkout'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  Banknote, Calendar, Check, CircleCheck, Home, LifeBuoy, MessageCircle, Package, PackageCheck,
+  ArrowUpRight, Banknote, Calendar, Check, CircleCheck, Home, LifeBuoy, MessageCircle, Package, PackageCheck,
   Receipt, ShoppingBag, Truck,
 } from 'lucide-react'
 import MobileOrderSuccess from '../components/mobile/MobileOrderSuccess'
@@ -59,18 +59,19 @@ function resolveImage(item: OrderItem): string {
   return `${API_BASE_URL.replace(/\/$/, '')}/${img.replace(/^\//, '')}`
 }
 
-const formatPrice = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN')
-
 function formatDate(value: string | undefined, opts: Intl.DateTimeFormatOptions): string {
   if (!value) return ''
   const d = new Date(value)
   return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('en-IN', opts)
 }
 
-function readLastOrder(): LastOrder | null {
+function readOrder(requestedId: string | null): LastOrder | null {
   try {
     const saved = localStorage.getItem('last_order')
-    return saved ? JSON.parse(saved) : null
+    const latest: LastOrder | null = saved ? JSON.parse(saved) : null
+    if (!requestedId || String(latest?.orderId) === requestedId) return latest
+    const history: LastOrder[] = JSON.parse(localStorage.getItem('order_history') || '[]')
+    return history.find((entry) => String(entry?.orderId) === requestedId) ?? null
   } catch {
     return null
   }
@@ -84,11 +85,16 @@ export default function OrderSuccess() {
 function DesktopOrderSuccess() {
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const [order] = useState<LastOrder | null>(readLastOrder)
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({})
+  const [detailIndex, setDetailIndex] = useState(0)
 
-  const orderId = params.get('order_id') || (order?.orderId != null ? String(order.orderId) : '')
+  const requestedId = params.get('order_id')
+  const order = useMemo(() => readOrder(requestedId), [requestedId])
+  const orderId = requestedId || (order?.orderId != null ? String(order.orderId) : '')
   const items = order?.items || []
+  const detailItem = items[detailIndex] ?? items[0]
+  const detailImage = detailItem ? resolveImage(detailItem) : ''
+  const detailImageKey = `detail-${detailImage}`
   const subtotal = order?.subtotal ?? items.reduce((s, i) => s + i.price * i.quantity, 0)
   const shipping = order?.shipping ?? 0
   const tax = order?.tax ?? 0
@@ -137,41 +143,41 @@ function DesktopOrderSuccess() {
           </div>
         </section>
 
+        <section className="osx-card osx-status-card" aria-labelledby="osx-status">
+          <div className="osx-card-head">
+            <h2 id="osx-status"><Truck size={18} aria-hidden="true" /> Order progress</h2>
+            <span className="osx-estimate">Estimated delivery <strong>{deliveryBy}</strong></span>
+          </div>
+          <div className="osx-card-body">
+            <ol className="osx-timeline">
+              {STEPS.map((step, i) => {
+                const done = i <= stepIndex
+                const current = i === stepIndex + 1
+                const Icon = step.icon
+                return (
+                  <li key={step.key} aria-current={current ? 'step' : undefined} className={`osx-step${done ? ' is-done' : ''}${current ? ' is-current' : ''}`}>
+                    <span className="osx-dot">{done ? <Check size={16} strokeWidth={3} /> : <Icon size={15} />}</span>
+                    <div className="osx-step-text">
+                      <strong>{step.label}</strong>
+                      <span>
+                        {i === 0 && placedOn ? placedOn
+                          : done ? 'Completed'
+                          : current ? 'Up next'
+                          : step.key === 'delivered' ? `Expected ${deliveryBy}` : 'Pending'}
+                      </span>
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
+        </section>
+
         <div className="osx-grid">
           <div>
-            <section className="osx-card" aria-labelledby="osx-status">
-              <div className="osx-card-head">
-                <h2 id="osx-status">Order status</h2>
-                <span>Estimated delivery: <strong style={{ color: 'var(--osx-ink)' }}>{deliveryBy}</strong></span>
-              </div>
-              <div className="osx-card-body">
-                <ol className="osx-timeline">
-                  {STEPS.map((step, i) => {
-                    const done = i <= stepIndex
-                    const current = i === stepIndex + 1
-                    const Icon = step.icon
-                    return (
-                      <li key={step.key} className={`osx-step${done ? ' is-done' : ''}${current ? ' is-current' : ''}`}>
-                        <span className="osx-dot">{done ? <Check size={16} strokeWidth={3} /> : <Icon size={15} />}</span>
-                        <div className="osx-step-text">
-                          <strong>{step.label}</strong>
-                          <span>
-                            {i === 0 && placedOn ? placedOn
-                              : done ? 'Completed'
-                              : current ? 'Up next'
-                              : step.key === 'delivered' ? `Expected ${deliveryBy}` : 'Pending'}
-                          </span>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ol>
-              </div>
-            </section>
-
             <section className="osx-card" aria-labelledby="osx-items">
               <div className="osx-card-head">
-                <h2 id="osx-items">Items in this order</h2>
+                <h2 id="osx-items"><ShoppingBag size={18} aria-hidden="true" /> Items in this order</h2>
                 <span>{itemCount} item{itemCount !== 1 ? 's' : ''}</span>
               </div>
               {items.length === 0 ? (
@@ -206,11 +212,44 @@ function DesktopOrderSuccess() {
                 </ul>
               )}
             </section>
+
+            {detailItem && (
+              <section className="osx-card" aria-labelledby="osx-product">
+                <div className="osx-card-head">
+                  <h2 id="osx-product"><Package size={18} aria-hidden="true" /> Product details</h2>
+                  {items.length > 1 && (
+                    <select className="osx-product-select" aria-label="Choose an ordered product" value={items[detailIndex] ? detailIndex : 0} onChange={(event) => setDetailIndex(Number(event.target.value))}>
+                      {items.map((item, index) => <option key={`${item.productId}-${index}`} value={index}>{index + 1}. {item.name}</option>)}
+                    </select>
+                  )}
+                </div>
+                <div className="osx-product">
+                  <div className="osx-product-image">
+                    {detailImage && !imgErrors[detailImageKey] ? (
+                      <img src={detailImage} alt={detailItem.name} loading="lazy" onError={() => setImgErrors((errors) => ({ ...errors, [detailImageKey]: true }))} />
+                    ) : <Package size={52} strokeWidth={1.25} aria-hidden="true" />}
+                  </div>
+                  <div className="osx-product-info">
+                    <h3>{detailItem.name}</h3>
+                    <dl className="osx-product-specs">
+                      {detailItem.color && <div><dt>Colour</dt><dd>{detailItem.color}</dd></div>}
+                      {detailItem.storage && <div><dt>Storage</dt><dd>{detailItem.storage}</dd></div>}
+                      {detailItem.ram && <div><dt>RAM</dt><dd>{detailItem.ram}</dd></div>}
+                      <div><dt>Quantity</dt><dd>{detailItem.quantity}</dd></div>
+                      <div><dt>Unit price</dt><dd>{formatPrice(detailItem.price)}</dd></div>
+                    </dl>
+                    <Link className="osx-btn osx-btn-ghost" to={`/product/${detailItem.productId}`}>
+                      View product <ArrowUpRight size={16} aria-hidden="true" />
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
           </div>
 
           <aside>
             <section className="osx-card" aria-labelledby="osx-summary">
-              <div className="osx-card-head"><h2 id="osx-summary">Price details</h2></div>
+              <div className="osx-card-head"><h2 id="osx-summary"><Receipt size={18} aria-hidden="true" /> Price details</h2></div>
               <div className="osx-card-body">
                 <dl className="osx-rows">
                   <div className="osx-row"><dt>Subtotal ({itemCount} item{itemCount !== 1 ? 's' : ''})</dt><dd>{formatPrice(subtotal)}</dd></div>

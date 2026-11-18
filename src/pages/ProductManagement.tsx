@@ -1,9 +1,10 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiPlus, FiRefreshCw, FiPackage, FiCheckCircle, FiTrendingUp, FiAward, FiAlertTriangle, FiLayers } from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
 import {
-  Btn, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, SearchBox, ShowingSelect, Skeleton,
+  Btn, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, SearchBox, ShowingSelect,
   ToolbarBtn, exportCsv, useTable, type Tone,
 } from '../components/admin/AdminUI'
 import ProductTable, { productMinPrice, productSorters, productStock } from '../components/product/ProductTable'
@@ -214,7 +215,7 @@ export default function ProductManagement() {
 
 
       {loading ? (
-        <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+        <PageLoading label="Loading products…" className="py-16" />
       ) : products.length === 0 ? (
         loadError ? null : <EmptyState onAction={openCreate} />
       ) : filtered.length === 0 ? (

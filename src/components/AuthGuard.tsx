@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import PageLoading from './ui/PageLoading'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -19,7 +20,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     }
   }, [isAuthenticated, loading, navigate, location])
 
-  if (loading) return null
+  if (loading) return <PageLoading label="Checking your account…" className="min-h-[60vh]" />
   if (!isAuthenticated) return null
 
   return <>{children}</>

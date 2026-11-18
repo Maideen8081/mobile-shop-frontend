@@ -120,9 +120,20 @@ export interface CustomerQuery {
 const unwrap = <T>(r: { data: { data: T } }) => r.data.data
 
 export const adminService = {
-  dashboard: () => api.get(`${BASE}/dashboard/`).then(unwrap<DashboardData>),
+  dashboard: () => api.get(`${BASE}/dashboard/`).then(unwrap<DashboardData>).then((data) => {
+    if (!data?.kpis || ![data.salesTrend, data.revenueTrend, data.ordersByStatus, data.repairsByStatus,
+      data.categories, data.topProducts, data.lowStock, data.recentOrders, data.recentRepairs].every(Array.isArray)) {
+      throw new Error('Could not load dashboard figures. Please try again.')
+    }
+    return data
+  }),
 
-  customers: (query: CustomerQuery) => api.get(`${BASE}/customers/`, { params: query }).then(unwrap<CustomerPage>),
+  customers: (query: CustomerQuery) => api.get(`${BASE}/customers/`, { params: query }).then(unwrap<CustomerPage>).then((data) => {
+    if (!Array.isArray(data?.results) || !data.summary || !Number.isFinite(data.count)) {
+      throw new Error('Could not load customers. Please try again.')
+    }
+    return data
+  }),
 
   customer: (id: number) => api.get(`${BASE}/customers/${id}/`).then(unwrap<AdminCustomerDetail>),
 

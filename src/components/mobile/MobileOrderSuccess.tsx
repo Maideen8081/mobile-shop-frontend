@@ -1,3 +1,4 @@
+import PageLoading from '../ui/PageLoading'
 import { useState, useEffect } from 'react'
 import { gstLabel, orderTaxLabel } from '../../utils/checkout'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -67,7 +68,12 @@ export default function MobileOrderSuccess() {
   const [copied, setCopied] = useState(false)
 
   const localOrder = (() => {
-    try { return JSON.parse(localStorage.getItem('last_order') || 'null') } catch { return null }
+    try {
+      const latest = JSON.parse(localStorage.getItem('last_order') || 'null')
+      if (!orderId || String(latest?.orderId) === orderId) return latest
+      const history = JSON.parse(localStorage.getItem('order_history') || '[]')
+      return Array.isArray(history) ? history.find((entry) => String(entry?.orderId) === orderId) ?? null : null
+    } catch { return null }
   })()
 
   useEffect(() => {
@@ -107,8 +113,8 @@ export default function MobileOrderSuccess() {
   const subtotal = order ? Number(order.subtotal) : (localOrder?.subtotal ?? 0)
   const shipping = order ? Number(order.shipping_charge) : (localOrder?.shipping ?? 0)
   const tax = order ? Number(order.tax) : (localOrder?.tax ?? 0)
-  const discount = localOrder?.discount || 0
-  const couponCode = localOrder?.couponCode || ''
+  const discount = order?.discount ?? localOrder?.discount ?? 0
+  const couponCode = order?.coupon_code ?? localOrder?.couponCode ?? ''
   const paymentMethod = order?.payment_method || localOrder?.paymentMethod || ''
 
   const deliveryStatus = order?.delivery_status || localOrder?.status || 'order_placed'
@@ -149,7 +155,7 @@ export default function MobileOrderSuccess() {
         <h1 className="text-title font-bold text-white mt-4">Order Confirmed!</h1>
         <p className="text-label text-white/80 mt-1">Thank you — your order has been placed.</p>
         <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-[8px] bg-white/20 text-micro font-semibold text-white">
-          <FiCheck size={12} /> Payment Successful
+          <FiCheck size={12} /> {/cod|cash/i.test(paymentMethod) ? 'Pay on delivery' : order?.payment_status === 'paid' ? 'Payment received' : 'Order received'}
         </span>
       </div>
 
@@ -200,15 +206,7 @@ export default function MobileOrderSuccess() {
           <p className="text-body-sm font-bold text-[#1d2522] mb-3">Order Items ({items.length})</p>
           <div className="space-y-3">
             {loading ? (
-              <div className="space-y-3">
-                {[1, 2].map(i => (
-                  <div key={i} className="flex items-center gap-3 animate-pulse">
-                    <div className="w-12 h-12 rounded-[12px] bg-[#f7f6f2]" />
-                    <div className="flex-1 space-y-2"><div className="h-3 bg-[#f7f6f2] rounded w-3/4" /><div className="h-2.5 bg-[#f7f6f2] rounded w-1/2" /></div>
-                    <div className="h-3 bg-[#f7f6f2] rounded w-16" />
-                  </div>
-                ))}
-              </div>
+              <PageLoading label="Loading order items…" className="py-10" />
             ) : items.length === 0 ? (
               <p className="text-caption text-[#9aa29e]">No items found</p>
             ) : items.map((item: any, idx: number) => {

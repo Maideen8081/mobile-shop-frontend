@@ -1,3 +1,4 @@
+import PageLoading from '../ui/PageLoading'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FiChevronLeft, FiPackage, FiTruck, FiTool, FiBell } from 'react-icons/fi'
@@ -143,7 +144,7 @@ export default function MobileNotifications() {
 
       <div className="px-4 pt-4">
         {loading ? (
-          <p className="text-caption text-[#5d6762] text-center mt-10">Loading your updates…</p>
+          <PageLoading label="Loading your updates…" className="py-12" />
         ) : visible.length === 0 ? (
           <div className={`${card} rounded-[24px] p-10 text-center mt-6`}>
             <div className="w-20 h-20 rounded-[8px] mx-auto mb-4 flex items-center justify-center" style={{ background: 'rgba(15,59,44,0.1)' }}>

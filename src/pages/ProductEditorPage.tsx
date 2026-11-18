@@ -1,8 +1,9 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
-import { Btn, ErrorBanner, PageHeader, Skeleton } from '../components/admin/AdminUI'
+import { Btn, ErrorBanner, PageHeader } from '../components/admin/AdminUI'
 import ProductForm from '../components/product/ProductForm'
 import { productService } from '../services/productService'
 import { categoryService, subCategoryService, type SubCategory } from '../services/categoryService'
@@ -93,12 +94,7 @@ export default function ProductEditorPage() {
       {loadError ? (
         <ErrorBanner message={loadError} onRetry={load} />
       ) : loading ? (
-        <div className="admin-card p-6 space-y-4">
-          <Skeleton className="h-10" />
-          <div className="grid grid-cols-2 gap-4"><Skeleton className="h-10" /><Skeleton className="h-10" /></div>
-          <Skeleton className="h-32" />
-          <Skeleton className="h-48" />
-        </div>
+        <PageLoading label="Loading product details…" className="py-16" />
       ) : noCategories ? (
         <div className="admin-card p-8 text-center">
           <p className="text-sm font-semibold text-text-primary">Create a category first</p>

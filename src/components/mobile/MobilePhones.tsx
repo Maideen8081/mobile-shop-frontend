@@ -8,7 +8,7 @@ import { cartService } from '../../services/cartService'
 import PremiumProductCard from './PremiumProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
-import MobilePhonesLoader from './MobilePhonesLoader'
+import PageLoading from '../ui/PageLoading'
 import PremiumMobileHeader from './PremiumMobileHeader'
 import PremiumFilterPanel from './PremiumFilterPanel'
 
@@ -173,7 +173,7 @@ export default function MobilePhones() {
       />
 
       {loading ? (
-        <MobilePhonesLoader />
+        <PageLoading label="Loading phones…" className="min-h-[50vh]" />
       ) : (
         <>
           <div className="px-3.5 pt-3.5">

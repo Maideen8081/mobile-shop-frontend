@@ -508,19 +508,6 @@
 .cx-empty {
   text-align: center;
   padding: 72px 24px;
-  background: var(--cx-card);
-  border: 1px solid var(--cx-line);
-  border-radius: var(--radius-xl, 16px);
-}
-.cx-empty-icon {
-  display: grid;
-  place-items: center;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 20px;
-  border-radius: 50%;
-  background: var(--cx-red-tint);
-  color: var(--cx-red);
 }
 .cx-empty h2 { margin: 0; font-family: var(--font-display); font-size: var(--text-heading); }
 .cx-empty p { margin: 10px auto 24px; max-width: 380px; color: var(--cx-muted); font-size: var(--text-body); line-height: 1.5; }

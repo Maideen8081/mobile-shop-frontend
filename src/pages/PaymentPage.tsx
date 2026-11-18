@@ -1,7 +1,8 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  ArrowLeft, ArrowRight, AtSign, Banknote, Check, CreditCard, Headphones, Landmark, Loader2, Lock,
+  ArrowLeft, AtSign, Banknote, Check, CreditCard, Headphones, Landmark, Lock,
   MapPin, RotateCcw, ShieldCheck, Smartphone, Truck, Wallet, Zap,
 } from 'lucide-react'
 import { FREE_SHIPPING_THRESHOLD } from '../components/mobile/cartLogic'
@@ -13,8 +14,9 @@ import { authService } from '../services/authService'
 import { cartService, type CartItem } from '../services/cartService'
 import { addressService, type AddressData } from '../services/addressService'
 import OrderSummary from '../components/checkout/OrderSummary'
-import { apiErrorMessage, computeTotals, formatINR, readCheckoutCoupon, saveCheckoutCoupon } from '../utils/checkout'
-import ExitIntentOffer from '../components/checkout/ExitIntentOffer'
+import { apiErrorMessage, computeTotals, formatINR, readCheckoutCoupon, saveCheckoutCoupon, saveOrderConfirmation } from '../utils/checkout'
+import CheckoutOffers from '../components/checkout/CheckoutOffers'
+import PlaceOrderButton from '../components/checkout/PlaceOrderButton'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import './CartPage.css'
@@ -240,27 +242,19 @@ function DesktopPayment() {
       const lastOrder = {
         orderId: order.id,
         items,
-        total: Number(order.grand_total) || totals.total,
-        subtotal: Number(order.subtotal) || totals.subtotal,
+        total: Number(order.grand_total ?? totals.total),
+        subtotal: Number(order.subtotal ?? totals.subtotal),
         shipping: Number(order.shipping_charge ?? totals.shipping),
-        tax: Number(order.tax) || totals.tax,
+        tax: Number(order.tax ?? totals.tax),
         discount: Number(order.discount ?? totals.discount),
-        couponCode: coupon?.code || '',
+        couponCode: order.coupon_code || '',
         paymentMethod: 'Cash on Delivery',
         deliveryDate: order.est_delivery || '',
         orderDate: order.created_at || new Date().toISOString(),
         status: order.delivery_status || 'order_placed',
       }
-      localStorage.setItem('last_order', JSON.stringify(lastOrder))
-      try {
-        const history = JSON.parse(localStorage.getItem('order_history') || '[]')
-        localStorage.setItem('order_history', JSON.stringify([lastOrder, ...history].slice(0, 50)))
-      } catch { /* history is a convenience only */ }
-
-      await cartService.clearCart()
-      localStorage.removeItem('checkout_coupon')
-      localStorage.removeItem('checkout_address_id')
-      localStorage.removeItem('checkout_delivery_tip')
+      saveOrderConfirmation(lastOrder)
+      await cartService.clearCart().catch(() => {})
       showToast('Order placed successfully!', 'success')
       navigate(`/checkout/success?order_id=${order.id}`, { replace: true })
     } catch (err: any) {
@@ -277,8 +271,10 @@ function DesktopPayment() {
     }
   }
 
+  if (loading) return <><SiteTopNav /><PageLoading label="Loading payment details…" className="min-h-[60vh]" /></>
+
   const isCod = method === 'cod'
-  const canPay = isCod && !loading && !placing && !!address && items.length > 0
+  const canPay = isCod && !placing && !!address && items.length > 0
 
   return (
     <div className="cx-root ca-page pp-page">
@@ -350,7 +346,7 @@ function DesktopPayment() {
           </section>
 
           <aside className="cx-side">
-            <OrderSummary items={items} coupon={coupon} loading={loading}>
+            <OrderSummary items={items} coupon={coupon}>
               {address && (
                 <p className="ca-deliver-note">
                   <MapPin size={16} />
@@ -361,15 +357,23 @@ function DesktopPayment() {
                 </p>
               )}
               {error && <p className="pp-error" role="alert">{error}</p>}
-              <button className="ca-continue pp-pay" data-place-order disabled={!canPay} onClick={handlePlaceOrder}>
-                {placing
-                  ? <><Loader2 size={20} className="ca-spin" /> Placing order…</>
-                  : <><Lock size={20} /> {isCod ? `Place Order · Pay ${formatINR(totals.total)} on delivery` : `Pay ${formatINR(totals.total)}`} <ArrowRight size={20} /></>}
-              </button>
-              {!isCod && !loading && (
+              {items.length > 0 && address && (
+                <CheckoutOffers
+                  productIds={items.map((item) => Number(item.productId)).filter(Boolean)}
+                  subtotal={totals.subtotal}
+                  disabled={placing}
+                  appliedCoupon={coupon}
+                  onChange={(next) => {
+                    saveCheckoutCoupon(next)
+                    setCoupon(next)
+                  }}
+                />
+              )}
+              <PlaceOrderButton total={totals.total} available={isCod} disabled={!canPay} placing={placing} onPlaceOrder={handlePlaceOrder} />
+              {!isCod && (
                 <p className="ca-warn">Online payments are coming soon. Choose Cash on Delivery to place your order.</p>
               )}
-              {!loading && items.length === 0 && <p className="ca-warn">Your cart is empty.</p>}
+              {items.length === 0 && <p className="ca-warn">Your cart is empty.</p>}
               <p className="pp-terms">By placing this order you agree to our <Link to="/terms">Terms</Link> and <Link to="/refund-policy">Refund Policy</Link>.</p>
             </OrderSummary>
           </aside>
@@ -383,18 +387,6 @@ function DesktopPayment() {
         </ul>
       </main>
 
-      <ExitIntentOffer
-        productIds={items.map((it) => it.productId)}
-        subtotal={totals.subtotal}
-        cartItems={items}
-        enabled={!loading && !placing && !!address && items.length > 0}
-        appliedCoupon={coupon}
-        onApplyCoupon={(c) => {
-          saveCheckoutCoupon(c)
-          setCoupon(c)
-          showToast(`${c.code} applied — you save ${formatINR(c.discount)}`, 'success')
-        }}
-      />
     </div>
   )
 }

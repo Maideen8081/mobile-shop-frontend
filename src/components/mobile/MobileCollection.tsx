@@ -1,18 +1,19 @@
+import StorefrontIllustration from '../ecommerce/StorefrontIllustration'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { getWishlistCount, requireSignInForWishlist } from '../../utils/wishlist'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Sparkles, Flame, TrendingUp, Star, Trophy } from 'lucide-react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { Sparkles, Flame, TrendingUp, Star, Trophy, Tag, Recycle } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { categoryService } from '../../services/categoryService'
 import { cartService } from '../../services/cartService'
 import PremiumProductCard from './PremiumProductCard'
 import MobileBottomNav from './MobileBottomNav'
 import MobileCartBarActions from './MobileCartBarActions'
-import MobileCollectionLoader from './MobileCollectionLoader'
+import PageLoading from '../ui/PageLoading'
 import PremiumMobileHeader from './PremiumMobileHeader'
 import PremiumFilterPanel from './PremiumFilterPanel'
 
-type TabKey = 'all' | 'new' | 'trending' | 'best' | 'featured'
+type TabKey = 'all' | 'new' | 'trending' | 'best' | 'featured' | 'deals' | 'refurbished'
 
 const TABS: { key: TabKey; label: string; icon: any }[] = [
   { key: 'all', label: 'All', icon: Sparkles },
@@ -20,6 +21,8 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
   { key: 'trending', label: 'Trending', icon: TrendingUp },
   { key: 'best', label: 'Best Sellers', icon: Trophy },
   { key: 'featured', label: 'Featured', icon: Star },
+  { key: 'deals', label: 'Deals', icon: Tag },
+  { key: 'refurbished', label: 'Refurbished', icon: Recycle },
 ]
 
 const HERO_COPY: Record<string, { title: string; subtitle: string; bg: string }> = {
@@ -36,18 +39,21 @@ const cacheKeyFor = (category: string, tab: string, sort: string) => `${category
 export default function MobileCollection() {
   const navigate = useNavigate()
   const { category } = useParams<{ category: string }>()
-  const categoryName = category ? decodeURIComponent(category) : ''
-  const activeTab: TabKey = 'all'
+  const categoryName = category || ''
+  const [searchParams] = useSearchParams()
+  const urlTab = searchParams.get('tab')
+  const tab: TabKey = TABS.find((entry) => entry.key === (urlTab === 'popular' ? 'featured' : urlTab))?.key ?? 'all'
+  const searchTerm = searchParams.get('search') || ''
 
-  const cacheKey = cacheKeyFor(categoryName, activeTab, 'newest')
+  const cacheKey = `${cacheKeyFor(categoryName, tab, 'newest')}|${searchTerm}||`
   const latestRequest = useRef(0)
 
   const [products, setProducts] = useState<any[]>(() => cachedProducts[cacheKey]?.items || [])
   const [loadingMore, setLoadingMore] = useState(false)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [page, setPage] = useState(() => cachedProducts[cacheKey]?.page ?? 1)
   const [hasMore, setHasMore] = useState(() => cachedProducts[cacheKey]?.hasMore ?? false)
   const [sortBy, setSortBy] = useState('newest')
-  const [tab, setTab] = useState<TabKey>(activeTab)
   const [categories, setCategories] = useState<{ name: string; count: number; image?: string }[]>(() => cachedCategories || [])
   const [categoriesLoaded, setCategoriesLoaded] = useState(() => cachedCategories !== null)
   const [productsLoading, setProductsLoading] = useState(() => !cachedProducts[cacheKey])
@@ -70,10 +76,8 @@ export default function MobileCollection() {
   const loading = !categoriesLoaded || productsLoading
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
-  const tabTrackRef = useRef<HTMLDivElement>(null)
   const [filterOpen, setFilterOpen] = useState(false)
 
-  useEffect(() => { setTab(activeTab) }, [activeTab])
   useEffect(() => { setActiveCategory(categoryName || 'all') }, [categoryName])
 
   useEffect(() => {
@@ -101,16 +105,6 @@ export default function MobileCollection() {
   }, [])
 
   useEffect(() => {
-    const track = tabTrackRef.current
-    if (!track) return
-    const activeEl = track.querySelector('[data-active="true"]') as HTMLElement | null
-    if (activeEl) {
-      const left = activeEl.offsetLeft - track.clientWidth / 2 + activeEl.clientWidth / 2
-      track.scrollTo({ left: Math.max(0, left), behavior: 'smooth' })
-    }
-  }, [tab])
-
-  useEffect(() => {
     if (cachedCategories) { setCategoriesLoaded(true); return }
     categoryService.list().then((cats) => {
       const mapped = (cats || []).filter((c: any) => c.status === 'active').map((c: any) => ({ name: c.name, count: typeof c.products === 'number' ? c.products : 0, image: c.image }))
@@ -122,14 +116,16 @@ export default function MobileCollection() {
   const load = (pageNum: number, replace: boolean) => {
     const brandKey = activeFilters.brands.join(',')
     const priceKey = activeFilters.priceRange ? `${activeFilters.priceRange.min}-${activeFilters.priceRange.max}` : ''
-    const key = `${cacheKeyFor(categoryName, tab, sortBy)}|${brandKey}|${priceKey}`
+    const key = `${cacheKeyFor(categoryName, tab, sortBy)}|${searchTerm}|${brandKey}|${priceKey}`
     const requestId = ++latestRequest.current
+    setLoadFailed(false)
     const cached = cachedProducts[key]
     if (replace && cached) {
       setProducts(cached.items)
       setPage(cached.page)
       setHasMore(cached.hasMore)
       setProductsLoading(false)
+      setLoadingMore(false)
       return
     }
 
@@ -143,25 +139,29 @@ export default function MobileCollection() {
     if (tab === 'trending') params.is_trending = true
     if (tab === 'best') params.is_best_selling = true
     if (tab === 'featured') params.is_featured = true
+    if (tab === 'deals') params.has_discount = true
+    if (tab === 'refurbished') params.is_refurbished = true
+    if (searchTerm) params.search = searchTerm
     if (brandKey) params.brand = brandKey
     if (activeFilters.priceRange) {
       if (activeFilters.priceRange.min > 0) params.price_min = activeFilters.priceRange.min
       if (activeFilters.priceRange.max > 0) params.price_max = activeFilters.priceRange.max
     }
 
-    setProductsLoading(true)
-    setLoadingMore(pageNum > 1)
-    productService.list(params).then((res: any) => {
-      const items = Array.isArray(res) ? res : (res?.results || res?.data || [])
+    setProductsLoading(replace)
+    setLoadingMore(!replace)
+    productService.listPaginated(params).then(({ results: items, next }) => {
       const merged = replace ? items : [...products, ...items]
-      const more = items.length >= 12
+      const more = Boolean(next)
       cachedProducts[key] = { items: merged, page: pageNum, hasMore: more }
       if (requestId !== latestRequest.current) return
       setProducts(merged)
       setHasMore(more)
       setPage(pageNum)
     }).catch(() => {
-      if (replace && requestId === latestRequest.current) setProducts([])
+      if (requestId !== latestRequest.current) return
+      if (replace) { setProducts([]); setHasMore(false) }
+      setLoadFailed(true)
     }).finally(() => {
       if (requestId !== latestRequest.current) return
       setProductsLoading(false)
@@ -169,19 +169,20 @@ export default function MobileCollection() {
     })
   }
 
-  useEffect(() => { load(1, true) }, [categoryName, tab, sortBy, activeFilters.brands, activeFilters.priceRange]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    load(1, true)
+    return () => { latestRequest.current += 1 }
+  }, [categoryName, tab, sortBy, searchTerm, activeFilters.brands, activeFilters.priceRange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const hero = HERO_COPY[categoryName.toLowerCase()] || { title: categoryName, subtitle: 'Explore the latest products in this category', bg: 'linear-gradient(120deg,#0EA5E9 0%,#0f3b2c 100%)' }
 
   const handleFilterApply = (filters: any) => {
     setActiveFilters(filters)
-    if (filters.categories.length > 0) {
-      navigate(`/collection/${encodeURIComponent(filters.categories[0])}`)
-    } else {
-      setActiveCategory('all')
-      navigate('/collection/all')
-    }
-    setTab(filters.tags.includes('new') ? 'new' : filters.tags.includes('trending') ? 'trending' : filters.tags.includes('best') ? 'best' : filters.tags.includes('featured') ? 'featured' : 'all')
+    const params = new URLSearchParams(searchParams)
+    const nextTab = TABS.find((entry) => filters.tags.includes(entry.key))?.key
+    if (nextTab && nextTab !== 'all') params.set('tab', nextTab)
+    else params.delete('tab')
+    navigate({ pathname: `/collection/${encodeURIComponent(filters.categories[0] || 'all')}`, search: params.toString() })
     setSortBy(filters.sortBy)
     setFilterOpen(false)
   }
@@ -214,7 +215,7 @@ export default function MobileCollection() {
       />
 
       {loading ? (
-        <MobileCollectionLoader />
+        <PageLoading label="Loading products…" className="min-h-[40vh]" />
       ) : (
         <>
           <div className="px-3.5 pt-3.5">
@@ -239,8 +240,14 @@ export default function MobileCollection() {
           </div>
 
           <div className="px-3.5">
-            {products.length === 0 ? (
+            {products.length === 0 && loadFailed ? (
+              <div className="py-12 text-center" role="alert">
+                <p className="font-semibold">Couldn’t load products.</p>
+                <button type="button" className="mt-3 text-[#0f3b2c] underline" onClick={() => load(1, true)}>Try again</button>
+              </div>
+            ) : products.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
+                <StorefrontIllustration kind="search" />
                 <p className="text-body font-bold text-[#1d2522]">No products found</p>
                 <p className="text-label text-[#5d6762] mt-1">Try a different filter or category.</p>
               </div>
@@ -272,7 +279,7 @@ export default function MobileCollection() {
             {hasMore && !productsLoading && (
               <button onClick={() => load(page + 1, false)} disabled={loadingMore}
                 className="w-full mt-4 h-11 rounded-[8px] bg-white border border-[#ece9e2] text-label font-bold text-[#0f3b2c] shadow-[0_2px_8px_rgba(29,37,34,0.04)] active:scale-95 transition disabled:opacity-60">
-                {loadingMore ? 'Loading…' : 'Load More'}
+                {loadingMore ? 'Loading…' : loadFailed ? 'Retry loading more products' : 'Load More'}
               </button>
             )}
           </div>

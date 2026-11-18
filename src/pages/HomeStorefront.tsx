@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import PageLoading from '../components/ui/PageLoading'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
   BadgeCheck,
-  BatteryCharging,
-  Cable,
   ChevronLeft,
   ChevronRight,
   Clock,
-  Headphones,
   Headset,
   Heart,
   LayoutGrid,
@@ -16,27 +14,23 @@ import {
   Mail,
   MapPin,
   Navigation,
+  Pause,
   Phone,
+  Play,
   Recycle,
   RefreshCw,
   ShieldCheck,
   ShoppingCart,
-  Smartphone,
   Sparkles,
   Star,
-  Tablet,
   Truck,
-  Watch,
-  Wrench,
   Zap,
-  type LucideIcon,
 } from 'lucide-react'
-import { categoryHref, resolveCategoryName, type HeaderCategory } from '../components/ecommerce/navConfig'
+import { categoryHref, iconForCategory, resolveCategoryName, type HeaderCategory } from '../components/ecommerce/navConfig'
 import { categoryService, type Category } from '../services/categoryService'
 import { productService } from '../services/productService'
-import { productsData } from '../data/productData'
 import { addToCartWithAuth } from '../utils/cartAuth'
-import { requireSignInForWishlist } from '../utils/wishlist'
+import { readWishlistIds, requireSignInForWishlist, writeWishlistIds } from '../utils/wishlist'
 import { useToast } from '../context/ToastContext'
 import { BUSINESS } from '../config/business'
 import { useBootHold } from '../components/LoadingScreen/bootLoader'
@@ -44,11 +38,11 @@ import repairVideo from '../assets/Repairing_smartphone_internal_ci…_1080p_202
 import internalsVideo from '../assets/Smartphone_internal_components_1080p_20261002155902.mp4'
 import HomeTopNav, { Logo } from '../components/ecommerce/HomeTopNav'
 import FeaturedCollectionsAds from '../components/ecommerce/FeaturedCollectionsAds'
+import CategoryRail from '../components/ecommerce/CategoryRail'
 import './HomeStorefront.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 const FALLBACK_IMG = '/phones/ios-a.png'
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 /* ─────────────────────────── Static content ─────────────────────────── */
 
@@ -91,26 +85,6 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
 // Keyless embed URL: no Maps API key or billing account needed.
 const MAP_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=12&output=embed`
 
-interface CategoryTile {
-  label: string
-  /** Name used to find the matching backend category. */
-  match?: string
-  to?: string
-  icon: LucideIcon
-  tone: string
-}
-
-const CATEGORY_TILES: CategoryTile[] = [
-  { label: 'Smartphones', icon: Smartphone, tone: 'sky' },
-  { label: 'Tablets', icon: Tablet, tone: 'peach' },
-  { label: 'Smart Watches', icon: Watch, tone: 'cream' },
-  { label: 'Earbuds', icon: Headphones, tone: 'rose' },
-  { label: 'Headphones', icon: Headset, tone: 'sky' },
-  { label: 'Power Banks', icon: BatteryCharging, tone: 'peach' },
-  { label: 'Chargers', match: 'Chargers', icon: Cable, tone: 'lilac' },
-  { label: 'Repairs', to: '/book-repair', icon: Wrench, tone: 'sand' },
-]
-
 const PROMOS = [
   { kicker: 'New Arrivals', title: ['Fresh Phones', 'Just In'], to: '/collection/all?tab=new', img: '/products/phone-10t.png', tone: 'sage' },
   { kicker: 'Expert Repairs', title: ['Make Your Phone', 'Like New'], to: '/book-repair', img: '/products/repair-internals.png', tone: 'sand' },
@@ -132,8 +106,8 @@ const BENEFITS = [
 ]
 
 const FOOTER_COLS = [
-  { title: 'Shop', links: [['All Categories', '/collection/all'], ['New Arrivals', '/collection/all?tab=new'], ['Best Sellers', '/collection/all?tab=trending'], ['Deals', '/collection/all?tab=deals'], ['Accessories', '/accessories']] },
-  { title: 'Customer Service', links: [['Track Order', '/orders'], ['Returns & Refunds', '/refund-policy'], ['Shipping Info', '/shipping-policy'], ['Support Chat', '/support'], ['Book a Repair', '/book-repair']] },
+  { title: 'Shop', links: [['All Categories', '/collection/all'], ['New Arrivals', '/collection/all?tab=new'], ['Best Sellers', '/collection/all?tab=best'], ['Deals', '/collection/all?tab=deals'], ['Accessories', '/accessories']] },
+  { title: 'Customer Service', links: [['Track Order', '/orders'], ['Returns & Refunds', '/refund-policy'], ['Shipping Info', '/shipping-policy'], ['Book a Repair', '/book-repair']] },
   { title: 'Company', links: [['About Us', '/about'], ['Repair Services', '/repairs'], ['Trade In', '/trade-in'], ['My Account', '/profile'], ['Wishlist', '/wishlist']] },
 ] as const
 
@@ -202,7 +176,7 @@ function PickCard({
   const { price, mrp } = priceOf(product)
   const off = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0
   const rating = Number(product?.rating) || 0
-  const count = Number(product?.reviewCount ?? product?.reviews_count ?? product?.sold) || 0
+  const count = Number(product?.reviewCount ?? product?.reviews_count) || 0
   const name = String(product?.name ?? product?.product_name ?? '')
   const to = `/product/${product.id}`
   const outOfStock = product?.inStock === false || product?.totalStock === 0
@@ -231,10 +205,12 @@ function PickCard({
       </div>
       <div className="vv-card-body">
         <Link to={to} className="vv-card-name">{name}</Link>
-        <div className="vv-card-rating">
-          <Stars value={rating || 5} size={12} />
-          {count > 0 && <span>({count.toLocaleString('en-IN')})</span>}
-        </div>
+        {rating > 0 && (
+          <div className="vv-card-rating">
+            <Stars value={rating} size={12} />
+            {count > 0 && <span>({count.toLocaleString('en-IN')})</span>}
+          </div>
+        )}
         <div className="vv-card-foot">
           <div className="vv-card-price">
             <strong>{price > 0 ? inr(price) : 'View price'}</strong>
@@ -260,24 +236,28 @@ export default function HomeStorefront() {
   const [categories, setCategories] = useState<Category[]>(cache?.categories ?? [])
   const [picks, setPicks] = useState<any[]>(cache?.picks ?? [])
   const [refurbished, setRefurbished] = useState<any[]>(cache?.refurbished ?? [])
+  const heroSection = useRef<HTMLElement>(null)
+  const [heroPaused, setHeroPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const heroVideos = useRef<(HTMLVideoElement | null)[]>([])
   const refurbRail = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(() => !cache)
   useBootHold(loading)
   const [slide, setSlide] = useState(0)
   const [reviewStart, setReviewStart] = useState(0)
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState<{ ok: boolean; text: string } | null>(null)
   const rail = useRef<HTMLDivElement>(null)
-  const [wishlist, setWishlist] = useState<Set<number>>(() => {
-    try {
-      return new Set(JSON.parse(localStorage.getItem('wishlist') || '[]'))
-    } catch {
-      return new Set()
-    }
-  })
+  const [wishlist, setWishlist] = useState(() => new Set(readWishlistIds()))
 
-  /* Data: categories + top picks (trending first, then new arrivals; bundled catalogue as fallback) */
+  useEffect(() => {
+    const syncWishlist = () => setWishlist(new Set(readWishlistIds()))
+    window.addEventListener('wishlist-updated', syncWishlist)
+    window.addEventListener('storage', syncWishlist)
+    return () => {
+      window.removeEventListener('wishlist-updated', syncWishlist)
+      window.removeEventListener('storage', syncWishlist)
+    }
+  }, [])
+
+  /* Load the live categories and featured products. */
   useEffect(() => {
     let cancelled = false
     Promise.allSettled([
@@ -293,18 +273,16 @@ export default function HomeStorefront() {
         ...(a.status === 'fulfilled' ? a.value : []),
       ]
       const seen = new Set<string>()
-      let list = merged.filter((p: any) => {
+      const list = merged.filter((p: any) => {
         const k = String(p.id)
         if (seen.has(k)) return false
         seen.add(k)
         return true
-      })
-      if (list.length === 0) list = productsData.filter((p: any) => p.trending || p.newArrival)
-      list = list.slice(0, 10)
-      let rf = r.status === 'fulfilled' ? r.value : []
-      if (rf.length === 0) rf = productsData.filter((p: any) => p.refurbished)
-      rf = rf.slice(0, 10)
-      cache = { categories: cats, picks: list, refurbished: rf }
+      }).slice(0, 10)
+      const rf = r.status === 'fulfilled' ? r.value.slice(0, 10) : []
+      if ([c, t, a, r].every((result) => result.status === 'fulfilled')) {
+        cache = { categories: cats, picks: list, refurbished: rf }
+      }
       setCategories(cats)
       setPicks(list)
       setRefurbished(rf)
@@ -315,18 +293,23 @@ export default function HomeStorefront() {
 
   /* Hero auto-advance */
   useEffect(() => {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
-    const t = window.setInterval(() => setSlide((s) => (s + 1) % HERO_SLIDES.length), 6000)
+    if (heroPaused) return
+    const t = window.setInterval(() => {
+      if (!document.hidden && !heroSection.current?.matches(':hover, :focus-within')) {
+        setSlide((s) => (s + 1) % HERO_SLIDES.length)
+      }
+    }, 6000)
     return () => window.clearInterval(t)
-  }, [])
+  }, [heroPaused])
 
   /* Play only the active slide's video; pause everything while the tab is hidden. */
   useEffect(() => {
+    let visible = false
+    const videos = heroVideos.current
     const sync = () => {
-      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-      heroVideos.current.forEach((v, i) => {
+      videos.forEach((v, i) => {
         if (!v) return
-        if (i === slide && !document.hidden && !reduceMotion) {
+        if (i === slide && visible && !document.hidden && !heroPaused) {
           if (v.readyState === 0) v.load()
           void v.play().catch(() => {})
         } else {
@@ -334,42 +317,31 @@ export default function HomeStorefront() {
         }
       })
     }
-    sync()
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      sync()
+    })
+    if (heroSection.current) observer.observe(heroSection.current)
     document.addEventListener('visibilitychange', sync)
-    return () => document.removeEventListener('visibilitychange', sync)
-  }, [slide])
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', sync)
+      videos.forEach((video) => video?.pause())
+    }
+  }, [slide, heroPaused])
 
   const headerCats: HeaderCategory[] = categories.map((c) => ({ id: c.id, name: c.name }))
-  const tileHref = (tile: CategoryTile) =>
-    tile.to ?? categoryHref(resolveCategoryName(tile.match ?? tile.label, headerCats))
-
-  const subscribe = (e: FormEvent) => {
-    e.preventDefault()
-    const value = email.trim()
-    if (!EMAIL_RE.test(value)) {
-      setSubscribed({ ok: false, text: 'Please enter a valid email address.' })
-      return
-    }
-    // No newsletter API yet: remember the address in this browser only.
-    try { localStorage.setItem('newsletter_email', value) } catch { /* storage blocked */ }
-    setEmail('')
-    setSubscribed({ ok: true, text: 'Thanks! You’ll hear about new launches and offers first.' })
-  }
 
   const toggleWishlist = (id: number) => {
     if (!requireSignInForWishlist(navigate)) return
-    setWishlist((prev) => {
-      const next = new Set(prev)
-      const added = !next.has(id)
-      if (added) next.add(id)
-      else next.delete(id)
-      try {
-        localStorage.setItem('wishlist', JSON.stringify(Array.from(next)))
-      } catch { /* storage unavailable */ }
-      window.dispatchEvent(new Event('wishlist-updated'))
+    const ids = readWishlistIds()
+    const added = !ids.includes(id)
+    try {
+      writeWishlistIds(added ? [...ids, id] : ids.filter((item) => item !== id))
       showToast(added ? 'Added to wishlist' : 'Removed from wishlist', 'success')
-      return next
-    })
+    } catch {
+      showToast('Could not update your wishlist', 'error')
+    }
   }
 
   const addToCart = async (product: any) => {
@@ -397,47 +369,38 @@ export default function HomeStorefront() {
   const scrollRail = (dir: 1 | -1, ref = rail) => {
     const el = ref.current
     if (!el) return
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' })
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
   }
 
   const hero = HERO_SLIDES[slide]
   const refurbHref = categoryHref(resolveCategoryName('Refurbished Devices', headerCats))
 
   const renderRail = (list: any[], ref: React.RefObject<HTMLDivElement | null>) => (
-    <div className="vv-rail-wrap">
-      <div className="vv-rail" ref={ref} aria-busy={loading}>
-        {loading
-          ? [0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="vv-card is-skeleton" aria-hidden="true">
-                <div className="vv-card-media" />
-                <div className="vv-card-body">
-                  <span className="vv-sk" />
-                  <span className="vv-sk short" />
-                  <span className="vv-sk short" />
-                </div>
-              </div>
-            ))
-          : list.map((p) => (
-              <PickCard
-                key={p.id}
-                product={p}
-                liked={wishlist.has(Number(p.id))}
-                onToggleLike={() => toggleWishlist(Number(p.id))}
-                onAdd={() => addToCart(p)}
-              />
-            ))}
+    loading ? <PageLoading label="Loading products…" className="py-12" /> : (
+      <div className="vv-rail-wrap">
+        <div className="vv-rail" ref={ref}>
+          {list.map((p) => (
+            <PickCard
+              key={p.id}
+              product={p}
+              liked={wishlist.has(Number(p.id))}
+              onToggleLike={() => toggleWishlist(Number(p.id))}
+              onAdd={() => addToCart(p)}
+            />
+          ))}
+        </div>
+        {list.length > 5 && (
+          <>
+            <button type="button" className="vv-round vv-rail-prev" onClick={() => scrollRail(-1, ref)} aria-label="Previous products">
+              <ChevronLeft size={18} />
+            </button>
+            <button type="button" className="vv-round vv-rail-next" onClick={() => scrollRail(1, ref)} aria-label="More products">
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
       </div>
-      {!loading && list.length > 5 && (
-        <>
-          <button type="button" className="vv-round vv-rail-prev" onClick={() => scrollRail(-1, ref)} aria-label="Previous products">
-            <ChevronLeft size={18} />
-          </button>
-          <button type="button" className="vv-round vv-rail-next" onClick={() => scrollRail(1, ref)} aria-label="More products">
-            <ChevronRight size={18} />
-          </button>
-        </>
-      )}
-    </div>
+    )
   )
 
   const reviews = [0, 1, 2].map((i) => TESTIMONIALS[(reviewStart + i) % TESTIMONIALS.length])
@@ -450,7 +413,7 @@ export default function HomeStorefront() {
 
       <main className="vv-container">
         {/* ── Hero (video carousel) ── */}
-        <section className="vv-hero" aria-roledescription="carousel" aria-label="Featured offers">
+        <section ref={heroSection} className="vv-hero" aria-roledescription="carousel" aria-label="Featured offers">
           <div className="vv-hero-media" aria-hidden="true" style={{ backgroundImage: `url(${hero.poster})` }}>
             {HERO_SLIDES.map((sl, i) => (
               <video
@@ -460,7 +423,7 @@ export default function HomeStorefront() {
                 muted
                 loop
                 playsInline
-                preload={i === 0 ? 'auto' : 'none'}
+                preload="none"
                 tabIndex={-1}
               >
                 <source src={sl.video} type="video/mp4" />
@@ -502,13 +465,20 @@ export default function HomeStorefront() {
             </div>
           </div>
 
-          <div className="vv-dots" role="tablist" aria-label="Choose slide">
+          <button
+            type="button"
+            className="vv-hero-playback"
+            aria-label={heroPaused ? 'Play featured offers' : 'Pause featured offers'}
+            onClick={() => setHeroPaused((paused) => !paused)}
+          >
+            {heroPaused ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
+          </button>
+          <div className="vv-dots" role="group" aria-label="Choose slide">
             {HERO_SLIDES.map((sl, i) => (
               <button
                 key={sl.pill}
                 type="button"
-                role="tab"
-                aria-selected={i === slide}
+                aria-current={i === slide ? 'true' : undefined}
                 aria-label={`Slide ${i + 1}: ${sl.pill}`}
                 className={i === slide ? 'is-on' : ''}
                 onClick={() => setSlide(i)}
@@ -517,55 +487,51 @@ export default function HomeStorefront() {
           </div>
         </section>
 
-        {/* ── Category circles ── */}
-        <section className="vv-categories" aria-labelledby="vv-category-heading">
-          <div className="vv-head">
-            <h2 id="vv-category-heading">Shop by Category</h2>
-          </div>
-          <div className="vv-catrow">
-            {CATEGORY_TILES.map((tile) => {
-              const Icon = tile.icon
-              const matchedName = tile.to ? '' : resolveCategoryName(tile.match ?? tile.label, headerCats)
-              const matchedCategory = categories.find((c) => c.name === matchedName)
-              const categoryImage = matchedCategory ? imageUrl(matchedCategory.image) : ''
-              return (
-                <Link key={tile.label} to={tileHref(tile)} className="vv-catitem">
-                  <span className={`vv-catcircle tone-${tile.tone}`}>
-                    <Icon className="vv-caticon" size={26} strokeWidth={1.5} />
-                    {categoryImage && (
-                      <img
-                        className="vv-catimg"
-                        src={categoryImage}
-                        alt=""
-                        loading="lazy"
-                        onError={(e) => e.currentTarget.remove()}
-                      />
-                    )}
-                  </span>
-                  <span>{tile.label}</span>
-                </Link>
-              )
-            })}
-            <Link to="/collection/all" className="vv-catitem">
-              <span className="vv-catcircle tone-white">
-                <LayoutGrid size={24} strokeWidth={1.5} />
-              </span>
-              <span>View All</span>
-            </Link>
-          </div>
-        </section>
+        {/* ── Shop by Category ── */}
+        <CategoryRail className="vv-categories" headingClassName="vv-head" trackClassName="vv-catrow">
+          {categories.map((category) => {
+            const Icon = iconForCategory(category.name)
+            const categoryImage = imageUrl(category.image)
+            return (
+              <Link key={category.id} to={categoryHref(category.name)} className="vv-catitem">
+                <span className="vv-catmedia">
+                  <Icon className="vv-caticon" size={44} strokeWidth={1.5} />
+                  {categoryImage && (
+                    <img
+                      key={categoryImage}
+                      className="vv-catimg"
+                      src={categoryImage}
+                      alt=""
+                      loading="lazy"
+                      onError={(e) => { e.currentTarget.hidden = true }}
+                    />
+                  )}
+                </span>
+                <span>{category.name}</span>
+              </Link>
+            )
+          })}
+          <Link to="/collection/all" className="vv-catitem">
+            <span className="vv-catmedia">
+              <LayoutGrid size={44} strokeWidth={1.5} />
+            </span>
+            <span>View All</span>
+          </Link>
+        </CategoryRail>
 
         {/* ── Featured collections (ad banners) ── */}
         <FeaturedCollectionsAds categories={headerCats} />
 
         {/* ── Top picks ── */}
-        <section className="vv-panel">
-          <div className="vv-head">
-            <h2>Top Picks For You <Sparkles size={18} className="vv-spark" fill="currentColor" /></h2>
-            <Link to="/collection/all?tab=deals" className="vv-head-link">See All Deals <ArrowRight size={15} /></Link>
-          </div>
-          {renderRail(picks, rail)}
-        </section>
+        {(loading || picks.length > 0) && (
+          <section className="vv-product-section">
+            <div className="vv-head">
+              <h2>Top Picks For You <Sparkles size={18} className="vv-spark" fill="currentColor" /></h2>
+              <Link to="/collection/all?tab=deals" className="vv-head-link">See All Deals <ArrowRight size={15} /></Link>
+            </div>
+            {renderRail(picks, rail)}
+          </section>
+        )}
 
         {/* ── Promo tiles ── */}
         <section className="vv-promos">
@@ -573,7 +539,7 @@ export default function HomeStorefront() {
             <Link key={p.kicker} to={p.to} className={`vv-promo tone-${p.tone}`}>
               <div>
                 <span className="vv-promo-kicker">{p.kicker}</span>
-                <h3>{p.title[0]}<br />{p.title[1]}</h3>
+                <h3>{p.title.join(' ')}</h3>
                 <span className="vv-promo-cta">Shop Now <ArrowRight size={14} /></span>
               </div>
               <img src={p.img} alt="" loading="lazy" />
@@ -615,7 +581,7 @@ export default function HomeStorefront() {
         </section>
 
         {(loading || refurbished.length > 0) && (
-          <section className="vv-panel">
+          <section className="vv-product-section">
             <div className="vv-head">
               <h2>Certified Refurbished <Recycle size={18} className="vv-recycle" /></h2>
               <Link to={refurbHref} className="vv-head-link">View All <ArrowRight size={15} /></Link>
@@ -625,7 +591,7 @@ export default function HomeStorefront() {
         )}
 
         {/* ── Testimonials ── */}
-        <section className="vv-panel vv-panel-reviews">
+        <section className="vv-reviews-section">
           <div className="vv-head">
             <h2>Loved By Thousands <Heart size={18} className="vv-heart" fill="currentColor" /></h2>
             <div className="vv-avg">
@@ -654,33 +620,6 @@ export default function HomeStorefront() {
             <button type="button" className="vv-review-nav" onClick={() => moveReviews(1)} aria-label="Next reviews">
               <ChevronRight size={18} />
             </button>
-          </div>
-        </section>
-
-        {/* ── Newsletter ── */}
-        <section className="vv-news">
-          <svg className="vv-news-leaf" viewBox="0 0 200 220" aria-hidden="true">
-            <path d="M100 214C40 200 6 150 10 96 14 44 52 8 100 6c48 2 86 38 90 90 4 54-30 104-90 118Z" fill="currentColor" />
-          </svg>
-          <span className="vv-news-icon"><Mail size={34} strokeWidth={1.3} /></span>
-          <div className="vv-news-copy">
-            <h2>Stay in the Loop</h2>
-            <p>Get exclusive deals, new arrivals and tech tips straight to your inbox.</p>
-          </div>
-          <div className="vv-news-form-wrap">
-            <form className="vv-news-form" onSubmit={subscribe} noValidate>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setSubscribed(null) }}
-                placeholder="Enter your email address"
-                aria-label="Email address"
-              />
-              <button type="submit">Subscribe</button>
-            </form>
-            <p className={`vv-news-note${subscribed && !subscribed.ok ? ' is-error' : ''}`} role="status">
-              <ShieldCheck size={13} /> {subscribed ? subscribed.text : 'We respect your privacy. Unsubscribe anytime.'}
-            </p>
           </div>
         </section>
 
@@ -738,10 +677,10 @@ export default function HomeStorefront() {
 
       {/* ── Footer ── */}
       <footer className="vv-footer">
-        <div className="vv-container vv-footer-grid">
+        <div className="vv-container vv-footer-intro">
           <div className="vv-footer-brand">
             <Logo light />
-            <p>Your one-stop shop for phones, accessories and expert repairs. Fix, buy and upgrade with {BUSINESS.name}.</p>
+            <p>Phones, accessories and expert repairs in Chennai.</p>
             <div className="vv-social">
               {[
                 ['Facebook', BUSINESS.facebookUrl, 'M14 8h3V4h-3c-2.8 0-4 1.7-4 4.2V10H7v4h3v8h4v-8h3l1-4h-4V8.6c0-.4.3-.6.6-.6Z'],
@@ -756,6 +695,13 @@ export default function HomeStorefront() {
                 ))}
             </div>
           </div>
+          <Link className="vv-footer-support" to="/support">
+            <Headset size={19} aria-hidden="true" />
+            Get support
+            <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="vv-container vv-footer-grid">
           {FOOTER_COLS.map((col) => (
             <div key={col.title} className="vv-footer-col">
               <h4>{col.title}</h4>
@@ -766,13 +712,13 @@ export default function HomeStorefront() {
               </ul>
             </div>
           ))}
-          <div className="vv-footer-col">
+          <div className="vv-footer-col vv-footer-contact">
             <h4>Visit &amp; Contact</h4>
             <ul className="vv-contact">
-              <li>{BUSINESS.city}</li>
-              <li>{BUSINESS.hours}</li>
-              {BUSINESS.phoneTel && <li><a href={`tel:${BUSINESS.phoneTel}`}>{BUSINESS.phoneDisplay}</a></li>}
-              <li><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></li>
+              <li><MapPin size={16} aria-hidden="true" /><a href={MAPS_LINK} target="_blank" rel="noopener noreferrer">{BUSINESS.city}</a></li>
+              <li><Clock size={16} aria-hidden="true" /><span>{BUSINESS.hours}</span></li>
+              {BUSINESS.phoneTel && <li><Phone size={16} aria-hidden="true" /><a href={`tel:${BUSINESS.phoneTel}`}>{BUSINESS.phoneDisplay}</a></li>}
+              <li><Mail size={16} aria-hidden="true" /><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></li>
             </ul>
           </div>
         </div>

@@ -59,7 +59,6 @@ export default function FeaturedCollectionsAds({ categories }: Props) {
             <span className="fca-btn fca-btn-dark">Shop Deals <ArrowRight size={14} /></span>
           </div>
           <div className="fca-deal-art" aria-hidden="true">
-            <span className="fca-pedestal" />
             <img className="fca-deal-phone" src="/products/phone-10t.png" alt="" loading="lazy" />
             <img className="fca-deal-buds" src="/products/earbuds-pro.png" alt="" loading="lazy" />
             <img className="fca-deal-watch" src="/promos/watch.png" alt="" loading="lazy" />
@@ -70,8 +69,8 @@ export default function FeaturedCollectionsAds({ categories }: Props) {
         <Link to={href('Gaming')} className="fca-card fca-accent fca-gaming">
           <img className="fca-photo" src="/promos/gaming.jpg" alt="" loading="lazy" />
           <div className="fca-copy">
-            <h3>Upgrade<br />Your Game</h3>
-            <p>Consoles, accessories<br />and more.</p>
+            <h3>Upgrade Your Game</h3>
+            <p>Consoles, accessories and more.</p>
             <span className="fca-btn fca-btn-accent">Shop Gaming <ArrowRight size={14} /></span>
           </div>
         </Link>

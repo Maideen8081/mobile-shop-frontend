@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -9,7 +10,7 @@ import PageLayout from '../components/layout/PageLayout'
 import Portal from '../components/ui/Portal'
 import {
   Btn, ConfirmDialog, EmptyState, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu,
-  SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, Thumb, ToolbarBtn,
+  SearchBox, ShowingSelect, SortTh, StatusPill, Thumb, ToolbarBtn,
   apiErrorMessage, exportCsv, formatINR, inputBase, toneForStatus, useTable,
 } from '../components/admin/AdminUI'
 import { orderService, type OrderResponse } from '../services/orderService'
@@ -372,7 +373,7 @@ export default function AdminOrders() {
         {error ? (
           <ErrorBanner message={error} onRetry={load} />
         ) : loading && !orders.length ? (
-          <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+          <PageLoading label="Loading orders…" className="py-16" />
         ) : filtered.length === 0 ? (
           <div className="table-wrap">
             <EmptyState icon={<FiShoppingBag size={20} />} title={orders.length ? 'No orders match' : 'No orders yet'}

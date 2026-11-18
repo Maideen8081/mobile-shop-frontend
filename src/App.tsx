@@ -4,8 +4,8 @@ import { ToastProvider } from './context/ToastContext'
 import { AuthProvider } from './context/AuthContext'
 import SupportChatButton from './components/ecommerce/SupportChatButton'
 import AppBootLoader from './components/LoadingScreen/AppBootLoader'
-import { RouteProgressBar } from './components/LoadingScreen/RouteLoader'
 import PendingCartResumer from './components/PendingCartResumer'
+import './styles/storefront-motion.css'
 
 function App() {
   return (
@@ -14,7 +14,6 @@ function App() {
         <ScrollToTop />
         <PendingCartResumer />
         <AppBootLoader />
-        <RouteProgressBar />
         <AppRoutes />
         <SupportChatButton />
       </ToastProvider>

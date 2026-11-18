@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
@@ -254,18 +255,7 @@ export default function CustomerRepairTracking() {
       )}
 
       {loading ? (
-        <div className="rt-list" aria-busy="true">
-          {[0, 1, 2].map(i => (
-            <div key={i} className="rt-tcard" style={{ padding: 22, display: 'flex', gap: 18 }}>
-              <div className="rt-skel" style={{ width: 84, height: 84, borderRadius: 18, flexShrink: 0 }} />
-              <div style={{ flex: 1 }}>
-                <div className="rt-skel" style={{ height: 18, width: '40%', marginBottom: 10 }} />
-                <div className="rt-skel" style={{ height: 12, width: '60%', marginBottom: 18 }} />
-                <div className="rt-skel" style={{ height: 10, width: '100%' }} />
-              </div>
-            </div>
-          ))}
-        </div>
+        <PageLoading label="Loading your repairs…" className="py-16" />
       ) : error && tickets.length === 0 ? (
         <div className="rt-empty" role="alert">
           <div className="rt-empty-icon"><Icon name="wifi_off" /></div>

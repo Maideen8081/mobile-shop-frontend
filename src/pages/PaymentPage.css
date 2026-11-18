@@ -239,7 +239,6 @@
 
 /* Summary extras */
 .pp-change { margin-left: 4px; font-weight: 700; color: var(--ca-green); }
-.pp-pay { gap: 12px; }
 .pp-error {
   margin: 14px 0 0;
   padding: 10px 12px;

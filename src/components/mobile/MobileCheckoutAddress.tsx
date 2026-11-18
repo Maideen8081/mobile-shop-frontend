@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiChevronLeft, FiPlus, FiEdit2, FiTrash2, FiPhone, FiCheck, FiLoader, FiMapPin, FiAlertCircle } from 'react-icons/fi'
 import { Home, Briefcase } from 'lucide-react'
 import { addressService, type AddressData } from '../../services/addressService'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import PageLoading from '../ui/PageLoading'
 import { authService } from '../../services/authService'
 import { useMobileToast } from './useMobileToast'
 
@@ -151,6 +151,8 @@ export default function MobileCheckoutAddress() {
     setConfirmDelete(null)
   }
 
+  if (loading) return <PageLoading label="Loading delivery addresses…" className="min-h-dvh" />
+
   return (
     <div className="min-h-screen bg-white max-w-[480px] mx-auto font-sans text-gray-900 pb-28">
       {/* Header */}
@@ -190,10 +192,8 @@ export default function MobileCheckoutAddress() {
 
       {/* Content */}
       <div className="px-4 mt-3 space-y-3">
-        {loading ? (
-          <div className="flex justify-center py-16"><DoubleRingLoader size={36} label="Loading addresses..." /></div>
-        ) : addresses.length === 0 && !showForm ? (
-          <div className="rounded-2xl p-8 text-center border border-gray-100" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+        {addresses.length === 0 && !showForm ? (
+          <div className="p-8 text-center">
             <div className="w-16 h-16 rounded-[8px] mx-auto mb-4 flex items-center justify-center bg-[#dfe6cf]">
               <FiMapPin size={28} className="text-[#0f3b2c]" />
             </div>

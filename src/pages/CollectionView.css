@@ -667,9 +667,6 @@
   align-items: center;
   gap: 8px;
   padding: 64px 20px;
-  border: 1px dashed var(--cv-sage);
-  border-radius: 18px;
-  background: #fff;
   text-align: center;
   color: var(--cv-green-mid);
 }

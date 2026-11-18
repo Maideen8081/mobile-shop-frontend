@@ -1,9 +1,10 @@
+import StorefrontIllustration from '../components/ecommerce/StorefrontIllustration'
 import { useState, useEffect, useCallback } from 'react'
 import { BUSINESS } from '../config/business'
 import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { addManyToCartWithAuth, addToCartWithAuth } from '../utils/cartAuth'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import { useToast } from '../context/ToastContext'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import {
@@ -247,18 +248,14 @@ export default function WishlistPage() {
         </header>
 
         {loading ? (
-          <DesktopPageLoader text="Loading your wishlist..." />
+          <PageLoading label="Loading your wishlist…" className="min-h-[60vh]" />
         ) : (
           <div className={`wishlist-layout${products.length === 0 ? ' wishlist-layout--empty' : ''}`}>
             <section className="wishlist-grid-section" aria-labelledby="wishlist-heading">
               <h2 id="wishlist-heading" className="visually-hidden">Wishlist items</h2>
               {products.length === 0 ? (
                 <div className="wishlist-empty">
-                  <div className="empty-ring">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 20.5s-7.2-4.4-9.2-8.8C1.4 8.6 3.2 5.5 6.3 5.5c1.9 0 3.2 1 4.2 2.3h3C14.4 6.1 15.8 5 17.8 5c3.1 0 4.9 3.1 3.5 6.2-2 4.4-9.2 8.8-9.2 8.8z"/>
-                    </svg>
-                  </div>
+                  <StorefrontIllustration kind="wishlist" />
                   <h2>Your wishlist is empty</h2>
                   <p>Save devices you like and they'll be waiting here.</p>
                   <Link to="/collection/all" className="wishlist-browse-btn">Browse Products</Link>

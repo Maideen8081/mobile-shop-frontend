@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { productService } from '../services/productService'
 import { categoryService } from '../services/categoryService'
 import { useIsMobile } from '../components/mobile/helpers'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
 import MobilePhones from '../components/mobile/MobilePhones'
@@ -167,7 +167,7 @@ function PhonesDesktop() {
     return (
       <>
         <SiteTopNav />
-        <DesktopPageLoader text="Loading phones..." />
+        <PageLoading label="Loading phones…" className="min-h-[60vh]" />
       </>
     )
   }

@@ -17,7 +17,7 @@ import { FALLBACK_IMG } from './fallback'
 import { useStoreCoupons } from '../../hooks/useStoreCoupons'
 import { couponLabel } from '../../services/offerService'
 import MobileCartBarActions from './MobileCartBarActions'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import PageLoading from '../ui/PageLoading'
 
 const COLOR_PALETTE: Record<string, string> = {
   black: '#1a1a1a', white: '#f0f0f0', silver: '#c0c0c0', gray: '#808080',
@@ -504,7 +504,7 @@ export default function MobileProductDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto font-sans flex flex-col items-center justify-center" style={{ fontFamily: 'var(--font-ui)' }}>
-        <DoubleRingLoader size={56} label="Loading product…" />
+        <PageLoading label="Loading product…" />
       </div>
     )
   }

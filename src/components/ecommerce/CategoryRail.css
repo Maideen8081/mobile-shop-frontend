@@ -1,0 +1,34 @@
+.category-rail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.category-rail-controls {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.category-rail-controls button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #ccd8c9;
+  border-radius: 50%;
+  background: #fffefa;
+  color: #0f3b2c;
+  cursor: pointer;
+}
+.category-rail-controls button:hover { background: #e7eddf; }
+.category-rail-track {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+  padding: 4px 3px 8px;
+  scroll-padding-inline: 3px;
+}
+.category-rail-track::-webkit-scrollbar { display: none; }
+.category-rail-track > a { scroll-snap-align: start; }

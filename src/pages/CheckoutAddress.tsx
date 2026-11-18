@@ -1,3 +1,4 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -118,6 +119,8 @@ function DesktopCheckoutAddress() {
     navigate('/checkout/payment')
   }
 
+  if (loading || itemsLoading) return <><SiteTopNav /><PageLoading label="Loading delivery addresses…" className="min-h-[60vh]" /></>
+
   const canContinue = Boolean(selectedId) && formMode !== 'edit' && items.length > 0
 
   return (
@@ -157,86 +160,78 @@ function DesktopCheckoutAddress() {
               </div>
             </header>
 
-            <div className={`ca-card${!loading && addresses.length === 0 ? ' is-bare' : ''}`}>
-              {(loading || addresses.length > 0) && (
+            <div className="ca-addresses">
+              {(addresses.length > 0) && (
                 <div className="ca-card-head">
                   <h2>
                     <span className="ca-card-icon"><Bookmark size={18} /></span>
-                    Saved Addresses {!loading && <span>({addresses.length})</span>}
+                    Saved Addresses <span>({addresses.length})</span>
                   </h2>
-                  {!loading && formMode === 'closed' && (
+                  {formMode === 'closed' && (
                     <button className="ca-add-btn" onClick={openNew}><Plus size={18} /> Add New Address</button>
                   )}
                 </div>
               )}
 
-              {loading ? (
-                <div className="ca-list">
-                  {[0, 1].map((n) => <div key={n} className="ca-skel" />)}
-                </div>
-              ) : (
-                <>
-                  {addresses.length > 0 && formMode !== 'edit' && (
-                    <div className="ca-list" role="radiogroup" aria-label="Delivery address">
-                      {addresses.map((a) => {
-                        const isSelected = a.id === selectedId
-                        const Icon = TYPE_ICONS[a.addressType] || MapPin
-                        return (
-                          <div
-                            key={a.id}
-                            role="radio"
-                            aria-checked={isSelected}
-                            tabIndex={isSelected || (!selectedId && a === addresses[0]) ? 0 : -1}
-                            className={`ca-addr${isSelected ? ' is-selected' : ''}`}
-                            onClick={() => setSelectedId(a.id!)}
-                            onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedId(a.id!) } }}
-                          >
-                            <span className="ca-radio" aria-hidden="true" />
-                            <span className="ca-addr-icon" aria-hidden="true"><Icon size={28} strokeWidth={1.75} /></span>
-                            <div className="ca-addr-body">
-                              <div className="ca-addr-chips">
-                                <span className="ca-chip"><Icon size={13} /> {a.addressType}</span>
-                                {a.isDefault && <span className="ca-chip is-default">Default</span>}
-                              </div>
-                              <strong className="ca-addr-name">{a.fullName}</strong>
-                              {addressLines(a).map((line) => <p key={line}>{line}</p>)}
-                              <p className="ca-phone"><Phone size={16} /> {a.mobile}</p>
-                            </div>
-
-                            <div className="ca-addr-side" onClick={(e) => e.stopPropagation()}>
-                              {isSelected && <span className="ca-deliver-tag"><Check size={15} strokeWidth={2.5} /> Deliver Here</span>}
-                              {confirmDelete === a.id ? (
-                                <div className="ca-confirm">
-                                  <span>Delete this address?</span>
-                                  <button className="ca-text-btn" onClick={() => setConfirmDelete(null)}>Keep</button>
-                                  <button className="ca-danger" onClick={() => handleDelete(a.id!)} disabled={deleting === a.id}>
-                                    {deleting === a.id ? <Loader2 size={14} className="ca-spin" /> : <Trash2 size={14} />} Delete
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="ca-addr-actions">
-                                  <button className="ca-text-btn" onClick={() => openEdit(a)}><Pencil size={18} /> Edit</button>
-                                  <span className="ca-divider" aria-hidden="true" />
-                                  <button className="ca-text-btn" onClick={() => setConfirmDelete(a.id!)}><Trash2 size={18} /> Delete</button>
-                                </div>
-                              )}
-                            </div>
+              {addresses.length > 0 && formMode !== 'edit' && (
+                <div className="ca-list" role="radiogroup" aria-label="Delivery address">
+                  {addresses.map((a) => {
+                    const isSelected = a.id === selectedId
+                    const Icon = TYPE_ICONS[a.addressType] || MapPin
+                    return (
+                      <div
+                        key={a.id}
+                        role="radio"
+                        aria-checked={isSelected}
+                        tabIndex={isSelected || (!selectedId && a === addresses[0]) ? 0 : -1}
+                        className={`ca-addr${isSelected ? ' is-selected' : ''}`}
+                        onClick={() => setSelectedId(a.id!)}
+                        onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setSelectedId(a.id!) } }}
+                      >
+                        <span className="ca-radio" aria-hidden="true" />
+                        <span className="ca-addr-icon" aria-hidden="true"><Icon size={28} strokeWidth={1.75} /></span>
+                        <div className="ca-addr-body">
+                          <div className="ca-addr-chips">
+                            <span className="ca-chip"><Icon size={13} /> {a.addressType}</span>
+                            {a.isDefault && <span className="ca-chip is-default">Default</span>}
                           </div>
-                        )
-                      })}
-                    </div>
-                  )}
+                          <strong className="ca-addr-name">{a.fullName}</strong>
+                          {addressLines(a).map((line) => <p key={line}>{line}</p>)}
+                          <p className="ca-phone"><Phone size={16} /> {a.mobile}</p>
+                        </div>
 
-                  {formMode !== 'closed' && (
-                    <AddressForm
-                      key={editingAddress?.id ?? 'new'}
-                      initialAddress={editingAddress}
-                      onSaved={handleSaved}
-                      onCancel={closeForm}
-                      canCancel={addresses.length > 0}
-                    />
-                  )}
-                </>
+                        <div className="ca-addr-side" onClick={(e) => e.stopPropagation()}>
+                          {isSelected && <span className="ca-deliver-tag"><Check size={15} strokeWidth={2.5} /> Deliver Here</span>}
+                          {confirmDelete === a.id ? (
+                            <div className="ca-confirm">
+                              <span>Delete this address?</span>
+                              <button className="ca-text-btn" onClick={() => setConfirmDelete(null)}>Keep</button>
+                              <button className="ca-danger" onClick={() => handleDelete(a.id!)} disabled={deleting === a.id}>
+                                {deleting === a.id ? <Loader2 size={14} className="ca-spin" /> : <Trash2 size={14} />} Delete
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="ca-addr-actions">
+                              <button className="ca-text-btn" onClick={() => openEdit(a)}><Pencil size={18} /> Edit</button>
+                              <span className="ca-divider" aria-hidden="true" />
+                              <button className="ca-text-btn" onClick={() => setConfirmDelete(a.id!)}><Trash2 size={18} /> Delete</button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {formMode !== 'closed' && (
+                <AddressForm
+                  key={editingAddress?.id ?? 'new'}
+                  initialAddress={editingAddress}
+                  onSaved={handleSaved}
+                  onCancel={closeForm}
+                  canCancel={addresses.length > 0}
+                />
               )}
             </div>
 
@@ -246,7 +241,7 @@ function DesktopCheckoutAddress() {
           </section>
 
           <aside className="cx-side">
-            <OrderSummary items={items} coupon={coupon} loading={itemsLoading}>
+            <OrderSummary items={items} coupon={coupon}>
               {selected && formMode !== 'edit' ? (
                 <p className="ca-deliver-note">
                   <MapPin size={16} />
@@ -256,7 +251,7 @@ function DesktopCheckoutAddress() {
               <button className="ca-continue" disabled={!canContinue} onClick={handleContinue}>
                 Continue to Payment <ArrowRight size={20} />
               </button>
-              {!canContinue && !loading && !itemsLoading && (
+              {!canContinue && (
                 <p className="ca-warn">
                   {items.length === 0
                     ? 'Your cart is empty — add something before checking out.'

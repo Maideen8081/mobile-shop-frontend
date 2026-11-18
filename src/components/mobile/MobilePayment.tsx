@@ -1,14 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
-import { computeTotals, gstLabel } from '../../utils/checkout'
+import { apiErrorMessage, computeTotals, formatINR as formatPrice, gstLabel } from '../../utils/checkout'
 import { useNavigate } from 'react-router-dom'
-import { FiLoader, FiCheck, FiChevronLeft } from 'react-icons/fi'
+import { FiCheck, FiChevronLeft } from 'react-icons/fi'
 import { useMobileToast } from './useMobileToast'
 import { orderService } from '../../services/orderService'
 import { authService } from '../../services/authService'
 import { cartService } from '../../services/cartService'
-import { readCheckoutCoupon, saveCheckoutCoupon } from '../../utils/checkout'
-import ExitIntentOffer from '../checkout/ExitIntentOffer'
-import DoubleRingLoader from '../ui/DoubleRingLoader'
+import { readCheckoutCoupon, saveCheckoutCoupon, saveOrderConfirmation } from '../../utils/checkout'
+import CheckoutOffers from '../checkout/CheckoutOffers'
+import PlaceOrderButton from '../checkout/PlaceOrderButton'
+import PageLoading from '../ui/PageLoading'
 
 const STEP_COLORS = ['#0f3b2c', '#b4462f', '#b45309']
 const STEP_DEEP = ['#18503c', '#8f3523', '#8a3d08']
@@ -42,10 +43,6 @@ function resolveImage(item: any): string {
   return ''
 }
 
-function formatPrice(n: number): string {
-  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-}
-
 type PaymentMethod = 'card' | 'razorpay' | 'paypal' | 'netbanking' | 'cod'
 
 const paymentMethods: { id: PaymentMethod; label: string; subtitle: string; icon: string; comingSoon?: boolean }[] = [
@@ -63,7 +60,6 @@ export default function MobilePayment() {
   const [cartLoading, setCartLoading] = useState(true)
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('cod')
   const [processing, setProcessing] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
@@ -80,9 +76,13 @@ export default function MobilePayment() {
     try { return Number(localStorage.getItem('checkout_address_id') || '0') || null } catch { return null }
   }, [])
 
+  useEffect(() => {
+    if (!checkoutAddressId) navigate('/checkout/address', { replace: true })
+  }, [checkoutAddressId, navigate])
+
   const [checkoutCoupon, setCheckoutCoupon] = useState(readCheckoutCoupon)
 
-  // One shared pricing function (GST included in prices), same as the server.
+  // Use the same pricing rules as the order API.
   // grandTotal is declared below; canPlace is derived after it.
   const { subtotal, shipping, tax, discount, total: grandTotal } = useMemo(
     () => computeTotals(items, checkoutCoupon?.discount || 0),
@@ -90,28 +90,9 @@ export default function MobilePayment() {
   )
   const canPlace = selectedMethod === 'cod' && items.length > 0
 
-  if (cartLoading) {
-    return (
-      <div className="min-h-screen bg-[#f7f6f2] max-w-[480px] mx-auto flex flex-col" style={{ fontFamily: 'var(--font-ui)' }}>
-        <div className="sticky top-0 z-30 bg-[#f7f6f2] px-4 pt-3 pb-3 border-b border-[#ece9e2] flex items-center gap-3">
-          <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-[8px] bg-white flex items-center justify-center shadow-[0_4px_14px_rgba(15,59,44,0.12)]">
-            <FiChevronLeft size={20} style={{ color: PURPLE }} />
-          </button>
-          <div className="flex-1">
-            <h1 className="text-title-sm font-bold text-[#1d2522]">Payment</h1>
-            <p className="text-micro text-[#5d6762]">Loading cart…</p>
-          </div>
-        </div>
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <DoubleRingLoader size={48} />
-          <p className="text-label text-[#5d6762] mt-4">Loading your cart…</p>
-        </div>
-        {Toast}
-      </div>
-    )
-  }
+  if (!checkoutAddressId || cartLoading) return <PageLoading label="Loading payment details…" className="min-h-dvh" />
 
-  const isCartEmpty = items.length === 0 && !processing && !success
+  const isCartEmpty = items.length === 0 && !processing
 
   const handlePayment = async () => {
     if (!authService.isAuthenticated()) {
@@ -124,8 +105,6 @@ export default function MobilePayment() {
     if (!canPlace) return
     setProcessing(true)
     try {
-      const isCod = selectedMethod === 'cod'
-
       const apiOrder = await orderService.create({
         items: items.map((it: any) => ({
           product_id: it.productId || 0,
@@ -145,41 +124,37 @@ export default function MobilePayment() {
         subtotal,
         shipping,
         tax,
-        payment_method: isCod ? 'Cash on Delivery' : selectedMethod,
+        payment_method: 'cod',
         delivery_address_id: checkoutAddressId,
         discount: checkoutCoupon?.discount || 0,
         coupon_code: checkoutCoupon?.code || undefined,
       })
-
-      setSuccess(true)
-      showToast(isCod ? 'Order placed successfully!' : 'Payment successful!', 'success')
 
       const d = new Date()
       d.setDate(d.getDate() + 5)
 
       const lastOrder = {
         orderId: apiOrder.id,
-        items, total: grandTotal, subtotal, shipping, tax,
-        discount: checkoutCoupon?.discount || 0,
-        couponCode: checkoutCoupon?.code || '',
-        paymentMethod: isCod ? 'Cash on Delivery' : selectedMethod,
+        items,
+        total: Number(apiOrder.grand_total ?? grandTotal),
+        subtotal: Number(apiOrder.subtotal ?? subtotal),
+        shipping: Number(apiOrder.shipping_charge ?? shipping),
+        tax: Number(apiOrder.tax ?? tax),
+        discount: Number(apiOrder.discount ?? discount),
+        couponCode: apiOrder.coupon_code || '',
+        paymentMethod: 'Cash on Delivery',
         deliveryDate: apiOrder.est_delivery || d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
         orderDate: apiOrder.created_at || new Date().toISOString(),
         status: apiOrder.delivery_status || 'order_placed',
       }
-      localStorage.setItem('last_order', JSON.stringify(lastOrder))
-      const history = JSON.parse(localStorage.getItem('order_history') || '[]')
-      history.unshift(lastOrder)
-      localStorage.setItem('order_history', JSON.stringify(history.slice(0, 50)))
-      await cartService.clearCart()
-      localStorage.removeItem('checkout_coupon')
-      localStorage.removeItem('checkout_address_id')
-      localStorage.removeItem('checkout_delivery_tip')
-      setTimeout(() => navigate(`/checkout/success?order_id=${apiOrder.id}`), 1500)
-    } catch {
-      showToast('Payment failed. Please try again.', 'error')
+      saveOrderConfirmation(lastOrder)
+      await cartService.clearCart().catch(() => {})
+      showToast('Order placed successfully!', 'success')
+      navigate(`/checkout/success?order_id=${apiOrder.id}`, { replace: true })
+    } catch (error) {
+      showToast(apiErrorMessage(error, 'We couldn’t place your order. Please try again.'), 'error')
+      setProcessing(false)
     }
-    setProcessing(false)
   }
 
   if (isCartEmpty) {
@@ -284,6 +259,18 @@ export default function MobilePayment() {
           </div>
         </div>
 
+        {items.length > 0 && (
+          <CheckoutOffers
+            productIds={items.map((item) => Number(item.productId)).filter(Boolean)}
+            subtotal={subtotal}
+            disabled={processing}
+            appliedCoupon={checkoutCoupon}
+            onChange={(next) => {
+              saveCheckoutCoupon(next)
+              setCheckoutCoupon(next)
+            }}
+          />
+        )}
         {/* Payment methods */}
         <div>
           <h3 className="text-body-sm font-bold text-[#1d2522] mb-2 px-1">Payment Method</h3>
@@ -324,39 +311,9 @@ export default function MobilePayment() {
 
       {/* Fixed pay button */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40 bg-white border-t border-[#ece9e2] px-4 py-3">
-        <button data-place-order onClick={handlePayment} disabled={processing || !canPlace}
-          className="w-full h-12 rounded-[8px] text-body-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-70"
-          style={{ background: `linear-gradient(135deg, ${PURPLE}, ${PURPLE_DEEP})` }}>
-          {processing ? <><FiLoader size={18} className="animate-spin" /> Placing order…</> : <>Place order · Pay {formatPrice(grandTotal)} on delivery</>}
-        </button>
+        <PlaceOrderButton total={grandTotal} disabled={!canPlace} placing={processing} onPlaceOrder={handlePayment} />
       </div>
 
-      {success && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-8" style={{ backdropFilter: 'blur(6px)' }}>
-          <div className={`${card} rounded-[24px] p-8 flex flex-col items-center text-center animate-[fadeInUp_.4s_ease]`}>
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mb-4" style={{ background: `linear-gradient(135deg, ${SUCCESS}, #15803D)` }}>
-              <FiCheck size={36} className="text-white" />
-            </div>
-            <p className="text-title-sm font-bold text-[#1d2522]">Payment Successful!</p>
-            <p className="text-caption text-[#5d6762] mt-1">Your order has been placed</p>
-            <div className="flex items-center gap-2 text-micro text-[#9aa29e] mt-4">
-              <FiLoader size={12} className="animate-spin" /> Redirecting to confirmation…
-            </div>
-          </div>
-        </div>
-      )}
-      <ExitIntentOffer
-        productIds={items.map((it) => Number(it.productId)).filter(Boolean)}
-        subtotal={subtotal}
-        cartItems={items}
-        enabled={!processing && !success && items.length > 0}
-        appliedCoupon={checkoutCoupon}
-        onApplyCoupon={(c) => {
-          saveCheckoutCoupon(c)
-          setCheckoutCoupon(c)
-          showToast(`${c.code} applied — you save ${formatPrice(c.discount)}`, 'success')
-        }}
-      />
       {Toast}
     </div>
   )

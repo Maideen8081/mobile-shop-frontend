@@ -1,9 +1,10 @@
+import PageLoading from '../components/ui/PageLoading'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { FiPlus, FiGrid, FiRefreshCw, FiFolder, FiCheckCircle, FiXCircle } from 'react-icons/fi'
 import PageLayout from '../components/layout/PageLayout'
 import {
-  Btn, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, SearchBox, ShowingSelect, Skeleton,
+  Btn, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, SearchBox, ShowingSelect,
   ToolbarBtn, exportCsv, useTable, type Tone,
 } from '../components/admin/AdminUI'
 import CategoryTable, { categorySorters } from '../components/category/CategoryTable'
@@ -207,7 +208,7 @@ export default function CategoryManagement() {
 
 
       {loading ? (
-        <div className="table-wrap p-4 space-y-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+        <PageLoading label="Loading categories…" className="py-16" />
       ) : catList.length === 0 ? (
         error ? null : <EmptyState onAction={openCreate} />
       ) : filtered.length === 0 ? (

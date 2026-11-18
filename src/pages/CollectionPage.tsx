@@ -1,3 +1,5 @@
+import PageLoading from '../components/ui/PageLoading'
+import StorefrontIllustration from '../components/ecommerce/StorefrontIllustration'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -14,7 +16,6 @@ import {
   LayoutGrid,
   List,
   Smartphone,
-  Sparkles,
   ShoppingCart,
   Tag,
 } from 'lucide-react'
@@ -68,8 +69,10 @@ const DEFAULT_HERO_ART = ['/phones/ios-b.png', '/phones/ios-a.png']
 function getTabParams(tab: string): Record<string, boolean> {
   if (tab === 'new') return { is_new_arrival: true }
   if (tab === 'trending') return { is_trending: true }
-  if (tab === 'popular') return { is_featured: true }
+  if (tab === 'best') return { is_best_selling: true }
+  if (tab === 'popular' || tab === 'featured') return { is_featured: true }
   if (tab === 'refurbished') return { is_refurbished: true }
+  if (tab === 'deals') return { has_discount: true }
   return {}
 }
 
@@ -215,7 +218,7 @@ function pageList(current: number, total: number): (number | '…')[] {
 export default function CollectionPage() {
   const navigate = useNavigate()
   const { show: showToast } = useToast()
-  const categoryName = decodeURIComponent(useParams<{ category: string }>().category || 'all')
+  const categoryName = useParams<{ category: string }>().category || 'all'
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') || 'all'
   const searchQuery = searchParams.get('search') || ''
@@ -224,6 +227,8 @@ export default function CollectionPage() {
   const [items, setItems] = useState<any[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [retry, setRetry] = useState(0)
   useBootHold(loading)
   const [page, setPage] = useState(1)
   const [sortBy, setSortBy] = useState('popular')
@@ -296,6 +301,7 @@ export default function CollectionPage() {
     const ordering = SORT_OPTIONS.find((o) => o.value === sortBy)?.ordering || '-created_at'
     const key = `${scope}|${sortBy}|${brandFilter.join(',')}|${price ? `${price.min}-${price.max}` : 'any'}|${page}`
     const cached = pageCache[key]
+    setLoadFailed(false)
     if (cached) {
       setItems(cached.items)
       setTotal(cached.total)
@@ -319,10 +325,10 @@ export default function CollectionPage() {
         setItems(results)
         setTotal(t)
       })
-      .catch(() => { if (!cancelled) { setItems([]); setTotal(0) } })
+      .catch(() => { if (!cancelled) { setItems([]); setTotal(0); setLoadFailed(true) } })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [scope, sortBy, brandFilter, price, page]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scope, sortBy, brandFilter, price, page, retry]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Apply the price slider shortly after the shopper stops dragging */
   useEffect(() => {
@@ -664,18 +670,16 @@ export default function CollectionPage() {
           {/* ── Products ── */}
           <section aria-busy={loading} aria-label={`${title} products`}>
             {loading ? (
-              <div className={`cv-grid is-${view}`}>
-                {Array.from({ length: 8 }, (_, i) => (
-                  <div key={i} className="cv-skel" aria-hidden="true">
-                    <div className="cv-sk cv-sk-img" />
-                    <div className="cv-sk cv-sk-line" />
-                    <div className="cv-sk cv-sk-line short" />
-                  </div>
-                ))}
+              <PageLoading label="Loading products…" className="min-h-[40vh]" />
+            ) : loadFailed ? (
+              <div className="cv-empty" role="alert">
+                <h3>Couldn’t load products</h3>
+                <p>Check your connection and try again.</p>
+                <button type="button" className="cv-btn cv-btn-dark" onClick={() => setRetry((value) => value + 1)}>Try again</button>
               </div>
             ) : items.length === 0 ? (
               <div className="cv-empty">
-                <Sparkles size={32} />
+                <StorefrontIllustration kind="search" />
                 <h3>No products found</h3>
                 <p>Try removing a filter or choosing another category.</p>
                 <button type="button" className="cv-btn cv-btn-dark" onClick={clearAll}>Clear filters</button>

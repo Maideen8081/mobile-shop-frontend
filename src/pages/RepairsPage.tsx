@@ -1,3 +1,4 @@
+import { useBackgroundVideo } from '../hooks/useBackgroundVideo'
 import { useState, useEffect, useRef } from 'react'
 import { BUSINESS } from '../config/business'
 import { Link } from 'react-router-dom'
@@ -65,21 +66,12 @@ function DesktopRepairs() {
 
   // Restarted on every slide change so a manual pick gets a full 5s.
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const t = setTimeout(() => setCurrentSlide((p) => (p + 1) % heroSlides.length), 5000)
     return () => clearTimeout(t)
   }, [currentSlide])
 
-  // Pause the background clip while the tab is hidden.
-  useEffect(() => {
-    const onVisibility = () => {
-      const video = videoRef.current
-      if (!video) return
-      if (document.hidden) video.pause()
-      else void video.play().catch(() => {})
-    }
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => document.removeEventListener('visibilitychange', onVisibility)
-  }, [])
+  useBackgroundVideo(videoRef)
 
   useEffect(() => {
     repairService.getServices().then(setApiServices).catch(() => {})
@@ -105,7 +97,7 @@ function DesktopRepairs() {
       <main className="rp-wrap">
         {/* ── Hero with the repair video ── */}
         <section className="rp-hero">
-          <video ref={videoRef} className="rp-hero-video" autoPlay muted loop playsInline preload="auto" aria-hidden="true" tabIndex={-1}>
+          <video ref={videoRef} className="rp-hero-video" muted loop playsInline preload="none" poster="/products/repair-internals.jpg" aria-hidden="true" tabIndex={-1}>
             <source src={repairVideo} type="video/mp4" />
           </video>
           <span className="rp-hero-shade" aria-hidden="true" />

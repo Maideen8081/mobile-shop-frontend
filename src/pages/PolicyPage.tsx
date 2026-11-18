@@ -41,7 +41,7 @@ const POLICIES: Record<string, Policy> = {
     description: 'The terms that apply when you shop, book repairs or trade in at PhoneFix.',
     sections: [
       { heading: 'Orders and prices', body: [
-        'All prices are in Indian Rupees and include GST. The GST share is shown on your invoice.',
+        'All prices are in Indian Rupees. GST is shown at checkout and on your invoice.',
         'An order is confirmed when you receive an order number. We may cancel an order if an item is out of stock or mispriced, and you will not be charged.',
         'Cash on Delivery is available on all orders.',
       ] },

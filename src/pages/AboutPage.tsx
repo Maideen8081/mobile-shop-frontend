@@ -1,3 +1,4 @@
+import { useBackgroundVideo } from '../hooks/useBackgroundVideo'
 import { useEffect, useRef } from 'react'
 import { BUSINESS } from '../config/business'
 import { Link } from 'react-router-dom'
@@ -46,17 +47,7 @@ const initials = (name: string) => name.split(' ').map((p) => p[0]).join('').sli
 export default function AboutPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Pause the background clip while the tab is hidden.
-  useEffect(() => {
-    const onVisibility = () => {
-      const v = videoRef.current
-      if (!v) return
-      if (document.hidden) v.pause()
-      else void v.play().catch(() => {})
-    }
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => document.removeEventListener('visibilitychange', onVisibility)
-  }, [])
+  useBackgroundVideo(videoRef)
 
   // Reveal sections as they scroll into view.
   useEffect(() => {
@@ -74,7 +65,7 @@ export default function AboutPage() {
       <main className="ab-wrap">
         {/* ── Hero ── */}
         <section className="ab-hero">
-          <video ref={videoRef} className="ab-hero-video" autoPlay muted loop playsInline preload="auto" aria-hidden="true" tabIndex={-1}>
+          <video ref={videoRef} className="ab-hero-video" muted loop playsInline preload="none" poster="/products/repair-internals.jpg" aria-hidden="true" tabIndex={-1}>
             <source src={heroVideo} type="video/mp4" />
           </video>
           <span className="ab-hero-shade" aria-hidden="true" />

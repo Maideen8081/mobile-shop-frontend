@@ -1,0 +1,73 @@
+.storefront-illustration {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 120px;
+  height: 108px;
+  margin: 0 auto 16px;
+}
+.storefront-illustration::before {
+  content: '';
+  position: absolute;
+  inset: 6px 12px;
+  border: 1px solid #dce3d2;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 27%, #fffefa, #e6ecdc);
+}
+.storefront-illustration img {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 8px rgba(11, 46, 34, 0.2));
+}
+.storefront-illustration-icon {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #fffefa;
+  background: #0f3b2c;
+  color: #fff;
+}
+.cv-empty .storefront-illustration { margin-bottom: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.cv-hero-copy, .ab-hero-copy, .ti-hero-text, .osx-hero-text, .pdx-title, .mobile-home-intro) {
+    animation: storefront-enter 280ms cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  .storefront-illustration img {
+    animation: storefront-enter 360ms cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  .storefront-illustration-icon {
+    animation: storefront-badge-in 260ms 90ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  }
+  :is(.vv-card-heart, .wish-card-heart)[aria-pressed='true'] svg,
+  .mobile-store-nav [aria-current='page'] svg {
+    animation: storefront-badge-in 200ms ease-out;
+  }
+  :is(.pdx-tabs button, .vv-service-nav a, .vv-actions a):is(:hover, :focus-visible) svg {
+    transform: translateY(-1px);
+  }
+  :is(.pdx-tabs, .vv-service-nav, .vv-actions) svg { transition: transform 160ms ease; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-product-media img { transition: none; }
+  .mobile-product-card:active .mobile-product-media img { scale: 1; }
+  .mobile-store-nav :is(button, button span) { transition: none; }
+  .mobile-store-nav button:active { scale: 1; }
+}
+
+@keyframes storefront-enter {
+  from { opacity: 0.7; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes storefront-badge-in {
+  from { opacity: 0.7; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
+}

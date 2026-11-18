@@ -634,9 +634,6 @@
   align-items: center;
   padding: 56px 24px;
   text-align: center;
-  background: #fff;
-  border: 1px dashed #dfe6cf;
-  border-radius: 20px;
 }
 .srp-notice--start { max-width: 720px; margin: 40px auto 0; }
 .srp-notice__icon {

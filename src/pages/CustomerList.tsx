@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import PageLoading from '../components/ui/PageLoading'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   FiEye, FiLogIn, FiMail, FiMapPin, FiPhone, FiRefreshCw, FiShoppingBag,
@@ -7,7 +8,7 @@ import {
 import PageLayout from '../components/layout/PageLayout'
 import {
   ConfirmDialog, EmptyState, ErrorBanner, ExportBtn, FilterMenu, FilterSelect, KpiCard, PageHeader, Pagination, RowMenu,
-  SearchBox, ShowingSelect, Skeleton, SortTh, StatusPill, ToolbarBtn,
+  SearchBox, ShowingSelect, SortTh, StatusPill, ToolbarBtn,
   apiErrorMessage, exportCsv, formatDate, formatINR, timeAgo, toneForStatus, type SortState,
 } from '../components/admin/AdminUI'
 import { adminService, type AdminCustomer, type AdminCustomerDetail, type CustomerPage, type CustomerQuery, type SignInMethod } from '../services/adminService'
@@ -130,8 +131,7 @@ function CustomerDrawer({
               {error && <div className="p-6"><ErrorBanner message={error} /></div>}
               {!detail && !error && (
                 <div className="p-6 space-y-4">
-                  <div className="flex items-center gap-4"><Skeleton className="w-14 h-14 !rounded-full" /><div className="space-y-2 flex-1"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-56" /></div></div>
-                  <Skeleton className="h-20" /><Skeleton className="h-32" /><Skeleton className="h-32" />
+                  <PageLoading label="Loading customer details…" className="py-12" />
                 </div>
               )}
               {detail && (
@@ -293,6 +293,7 @@ export default function CustomerList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [openId, setOpenId] = useState<number | null>(null)
+  const request = useRef(0)
 
   // Debounce typing so we don't hit the API on every keystroke.
   useEffect(() => {
@@ -301,19 +302,22 @@ export default function CustomerList() {
   }, [searchInput])
 
   const load = useCallback(async () => {
+    const id = ++request.current
     setLoading(true)
     setError('')
     try {
-      setData(await adminService.customers(query))
+      const result = await adminService.customers(query)
+      if (id === request.current) setData(result)
     } catch (e) {
-      setError(apiErrorMessage(e, 'Could not load customers.'))
+      if (id === request.current) setError(apiErrorMessage(e, 'Could not load customers.'))
     } finally {
-      setLoading(false)
+      if (id === request.current) setLoading(false)
     }
   }, [query])
 
   useEffect(() => {
     load()
+    return () => { request.current += 1 }
   }, [load])
 
   const pageSize = query.page_size ?? 10
@@ -396,7 +400,7 @@ export default function CustomerList() {
         {error ? (
           <ErrorBanner message={error} onRetry={load} />
         ) : !data && loading ? (
-          <div className="table-wrap p-4 space-y-3">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+          <PageLoading label="Loading customers…" className="py-16" />
         ) : data && data.results.length === 0 ? (
           <div className="table-wrap">
             <EmptyState

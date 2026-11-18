@@ -1,27 +1,37 @@
-/* Route-level loading: thin top progress bar only. */
-.rl-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100000;
-  height: 3px;
-  width: 0;
-  border-radius: 0 3px 3px 0;
-  background: linear-gradient(90deg, #0f3b2c, #dfe8b4 50%, #dfe8b4);
-  box-shadow: 0 0 12px rgba(15,59,44, 0.55);
-  pointer-events: none;
+.page-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #424c5b;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
 }
-.rl-bar.is-running { animation: rl-run 1.6s cubic-bezier(0.1, 0.7, 0.3, 1) forwards; }
-.rl-bar.is-done {
-  width: 100%;
-  opacity: 0;
-  transition: width 0.25s ease, opacity 0.35s ease 0.2s;
+
+.boot-loading-bar {
+  display: block;
+  width: 144px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e3e5e9;
 }
-@keyframes rl-run {
-  from { width: 0; }
-  to { width: 82%; }
+.boot-loading-bar::after {
+  content: '';
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: #526c93;
+  animation: boot-loading-slide 1.2s ease-in-out infinite alternate;
+}
+@keyframes boot-loading-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(163%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rl-bar.is-running { animation-duration: 0.01s; }
+  .boot-loading-bar::after { animation: none; margin-inline: auto; }
 }

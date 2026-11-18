@@ -10,7 +10,7 @@ import { authService, type UserProfile } from '../services/authService'
 import { orderService } from '../services/orderService'
 import SiteTopNav from '../components/ecommerce/SiteTopNav'
 import '../components/ecommerce/SiteTopNav.css'
-import DesktopPageLoader from '../components/ui/DesktopPageLoader'
+import PageLoading from '../components/ui/PageLoading'
 import MobileAddressManagement from '../components/mobile/MobileAddressManagement'
 import { useIsMobile } from '../components/mobile/helpers'
 import { useToast } from '../context/ToastContext'
@@ -354,7 +354,7 @@ function DesktopAddressManagement() {
             </div>
 
             {loading ? (
-              <DesktopPageLoader text="Loading your addresses..." />
+              <PageLoading label="Loading your addresses…" className="min-h-[60vh]" />
             ) : addresses.length === 0 ? (
               <div className="am-empty">
                 <span className="am-empty-icon"><MapPin size={26} /></span>

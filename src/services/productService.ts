@@ -81,6 +81,7 @@ export interface ProductListParams {
   is_new_arrival?: boolean
   is_featured?: boolean
   is_refurbished?: boolean
+  has_discount?: boolean
   search?: string
   brand?: string
   price_min?: number
@@ -232,9 +233,9 @@ export const productService = {
         const data = unwrapData<any>(r as any)
         return {
           results: toArray(data).map(normalizeProduct),
-          count: data?.count ?? data?.total ?? data?.results?.length ?? 0,
-          next: data?.next ?? null,
-          previous: data?.previous ?? null,
+          count: r.data?.count ?? data?.count ?? data?.total ?? toArray(data).length,
+          next: r.data?.next ?? data?.next ?? null,
+          previous: r.data?.previous ?? data?.previous ?? null,
         }
       }),
     ),

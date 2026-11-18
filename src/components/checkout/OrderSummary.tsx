@@ -18,10 +18,9 @@ function resolveImage(raw?: string): string {
 const isRealSpec = (v?: string) => Boolean(v && v.trim() && v.trim().toUpperCase() !== 'N/A')
 
 /** Order summary card shared by the address and payment steps. */
-export default function OrderSummary({ items, coupon, loading, children }: {
+export default function OrderSummary({ items, coupon, children }: {
   items: CartItem[]
   coupon: CheckoutCoupon | null
-  loading?: boolean
   children?: ReactNode
 }) {
   const [expanded, setExpanded] = useState(false)
@@ -39,13 +38,11 @@ export default function OrderSummary({ items, coupon, loading, children }: {
       <div className="osum-head">
         <ShoppingBag size={30} strokeWidth={1.75} />
         <h2>Order Summary</h2>
-        {!loading && <span>{itemLabel}</span>}
+        <span>{itemLabel}</span>
       </div>
 
       <div className="osum-body">
-        {loading ? (
-          <div className="osum-skel"><span /><span /><span /></div>
-        ) : items.length > 0 && (
+        {items.length > 0 && (
           <>
             <ul className="osum-items">
               {shown.map((i) => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
+  ArrowLeftRight,
   ChevronDown,
   ChevronRight,
   Heart,
@@ -11,6 +12,7 @@ import {
   ShoppingCart,
   Truck,
   User,
+  Wrench,
 } from 'lucide-react'
 import { BUSINESS } from '../../config/business'
 import { categoryHref } from './navConfig'
@@ -22,9 +24,12 @@ const NAV_LINKS = [
   { label: 'Shop', to: '/collection/all' },
   { label: 'Deals', to: '/collection/all?tab=deals' },
   { label: 'New Arrivals', to: '/collection/all?tab=new' },
-  { label: 'Repairs', to: '/repairs' },
-  { label: 'Trade In', to: '/trade-in' },
-  { label: 'Track Order', to: '/orders' },
+]
+
+const SERVICE_LINKS = [
+  { label: 'Repairs', to: '/repairs', icon: Wrench },
+  { label: 'Trade In', to: '/trade-in', icon: ArrowLeftRight },
+  { label: 'Track Order', to: '/orders', icon: Truck },
 ]
 
 export function Logo({ light = false }: { light?: boolean } = {}) {
@@ -45,7 +50,7 @@ export function Logo({ light = false }: { light?: boolean } = {}) {
 
 export default function HomeTopNav() {
   const navigate = useNavigate()
-  const { cartCount, wishlistCount, isAuth, user, displayName, initials } = useNavState()
+  const { cartCount, wishlistCount, isAuth, displayName, initials } = useNavState()
   const headerCats = useHeaderCategories()
   const [query, setQuery] = useState('')
   const [catsOpen, setCatsOpen] = useState(false)
@@ -97,14 +102,18 @@ export default function HomeTopNav() {
           <nav className="vv-actions" aria-label="Account">
             <Link
               to={isAuth ? '/profile' : '/login'}
-              data-tip={isAuth ? `${displayName || 'Account'}${user.email ? ` · ${user.email}` : ''}` : 'Sign in to your account'}
+              className="vv-account-link"
+              aria-label={isAuth && displayName ? `Open account for ${displayName}` : undefined}
+              data-tip={isAuth ? displayName || 'My account' : 'Sign in to your account'}
             >
-              {isAuth && initials ? (
-                <span className="vv-avatar" title={displayName}>{initials}</span>
-              ) : (
-                <User size={21} strokeWidth={1.7} />
-              )}
-              <span>{isAuth ? displayName.split(' ')[0] || 'Account' : 'Sign In'}</span>
+              <span className="vv-ico">
+                {isAuth && initials ? (
+                  <span className="vv-account-avatar" aria-hidden="true">{initials}</span>
+                ) : (
+                  <User size={21} strokeWidth={1.7} />
+                )}
+              </span>
+              <span className="vv-account-label">{isAuth ? displayName.split(' ')[0] || 'Account' : 'Sign In'}</span>
             </Link>
             <Link to="/wishlist">
               <span className="vv-ico">
@@ -113,7 +122,7 @@ export default function HomeTopNav() {
               </span>
               <span>Wishlist</span>
             </Link>
-            <Link to="/cart">
+            <Link to="/cart" className="vv-action-cart">
               <span className="vv-ico">
                 <ShoppingCart size={21} strokeWidth={1.7} />
                 {cartCount > 0 && <b>{cartCount}</b>}
@@ -140,6 +149,14 @@ export default function HomeTopNav() {
           <nav className="vv-nav" aria-label="Main">
             {NAV_LINKS.map((l) => (
               <Link key={l.label} to={l.to} className={l.to === '/home' ? 'is-active' : ''}>{l.label}</Link>
+            ))}
+          </nav>
+          <nav className="vv-service-nav" aria-label="Services">
+            {SERVICE_LINKS.map(({ label, to, icon: Icon }) => (
+              <Link key={to} to={to} className={to === '/orders' ? 'vv-track-order' : undefined}>
+                <Icon size={17} strokeWidth={1.7} aria-hidden="true" />
+                {label}
+              </Link>
             ))}
           </nav>
         </div>
