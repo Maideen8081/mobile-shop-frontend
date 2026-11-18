@@ -470,9 +470,9 @@ export default function MobileWebsiteExperience() {
           </div>
         </div>
 
-        <h1 className="wem-hero-title relative z-0 w-full text-center font-display font-extrabold leading-[0.85] tracking-tighter" style={{ fontSize: "clamp(64px, 22vw, 120px)", transformOrigin: "50% 100%" }}>
+        <h1 className="wem-hero-title relative z-0 w-full text-center font-display font-extrabold leading-[0.9] tracking-tight" style={{ fontSize: "clamp(52px, 17vw, 100px)", transformOrigin: "50% 100%" }}>
           <Split text="MOBILE" className="block" style={{ color: C.fg }} />
-          <Split text="SHOP" className="block" style={{ color: "transparent", WebkitTextStroke: `2px ${C.fg}` }} />
+          <Split text="SHOP" className="block" style={{ color: C.primary }} />
         </h1>
 
         {/* 3D stage: phone with masked glare, accessories orbiting around it */}
@@ -677,7 +677,7 @@ export default function MobileWebsiteExperience() {
           <div key={n} className="wem-step sticky mb-5" style={{ top: `calc(env(safe-area-inset-top) + ${76 + i * 16}px)`, perspective: 1000 }}>
             <div className="wem-step-card relative min-h-[280px] overflow-hidden rounded-[30px] p-6" style={{ transformOrigin: "50% 0%", background: bg, border: `1px solid ${C.border}`, boxShadow: "0 -10px 40px rgba(0,0,0,0.5)" }}>
               <div className="relative z-10 max-w-[62%]">
-                <div className="font-display text-[72px] font-extrabold leading-[0.85] tracking-tighter" style={{ color: "transparent", WebkitTextStroke: `1.5px ${i === 2 ? C.bg : C.fg}` }}>{n}</div>
+                <div className="font-display text-[72px] font-extrabold leading-[0.9] tracking-tight" style={{ color: "transparent", WebkitTextStroke: `1.5px ${i === 2 ? C.bg : C.fg}` }}>{n}</div>
                 <h3 className="mt-4 font-display text-2xl font-bold">{t}</h3>
                 <p className="mt-2 text-body-sm leading-relaxed" style={{ color: i === 2 ? "rgba(255,255,255,0.85)" : C.muted }}>{d}</p>
               </div>
@@ -749,7 +749,7 @@ export default function MobileWebsiteExperience() {
         <div className="relative z-10">
           <h2 className="font-display font-extrabold leading-[0.95] tracking-tighter" style={{ fontSize: "clamp(52px, 16vw, 90px)" }}>
             <Split text="Drop in." className="wem-rv block" />
-            <Split text="Power up." className="wem-rv block" style={{ color: "transparent", WebkitTextStroke: `2px ${C.fg}` }} />
+            <Split text="Power up." className="wem-rv block" style={{ color: C.primary }} />
           </h2>
           <p className="wem-reveal mx-auto mt-4 max-w-[17rem] text-body" style={{ color: C.muted }}>Found something you like? Pick up where you left off.</p>
           <div className="wem-reveal relative mt-8 inline-block">

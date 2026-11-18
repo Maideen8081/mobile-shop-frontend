@@ -204,3 +204,47 @@ html.lenis body {
   .wem-bob, .wem-bob-alt, .wem-aurora, .wem-floor-grid::before, .wem-orbit-spin, .wem-orbit-face,
   .wem-card-in, .wem-shine::after, .wem-pulse { animation: none; }
 }
+
+.we-shelf {
+  height: max(540px, calc(100svh - 175px));
+  background: radial-gradient(ellipse at 50% 38%, #235643, #0b2e22 66%, #081e17);
+}
+
+.we-shelf-stage .ring-item {
+  --ring-item-height: clamp(240px, calc(100svh - 425px), 470px);
+  width: 340px;
+  height: var(--ring-item-height);
+  margin-left: -170px;
+  margin-top: calc(var(--ring-item-height) / -2);
+}
+
+.we-shelf-image {
+  border-radius: 18px;
+  filter: drop-shadow(0 24px 38px rgba(0,0,0,0.34));
+}
+
+.we-shelf-title {
+  font-size: clamp(26px, 3vw, 44px);
+  line-height: 1.05;
+}
+
+.we-shelf-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding-inline: 22px;
+  border: 1px solid rgba(247,246,242,0.28);
+  border-radius: 999px;
+  color: #f7f6f2;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.we-shelf-link:hover { background: rgba(247,246,242,0.1); }
+.we-shelf-link-primary { background: #e7edce; color: #0b2e22; }
+.we-shelf-link-primary:hover { background: #fffefa; }
+
+.wem-hero {
+  background: radial-gradient(ellipse at 50% 44%, #235643, #0b2e22 64%, #081e17);
+}

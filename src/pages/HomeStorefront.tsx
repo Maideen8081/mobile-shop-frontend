@@ -323,9 +323,10 @@ export default function HomeStorefront() {
   /* Play only the active slide's video; pause everything while the tab is hidden. */
   useEffect(() => {
     const sync = () => {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
       heroVideos.current.forEach((v, i) => {
         if (!v) return
-        if (i === slide && !document.hidden) {
+        if (i === slide && !document.hidden && !reduceMotion) {
           if (v.readyState === 0) v.load()
           void v.play().catch(() => {})
         } else {
@@ -558,7 +559,7 @@ export default function HomeStorefront() {
         <FeaturedCollectionsAds categories={headerCats} />
 
         {/* ── Top picks ── */}
-        <section className="vv-panel vv-panel-picks">
+        <section className="vv-panel">
           <div className="vv-head">
             <h2>Top Picks For You <Sparkles size={18} className="vv-spark" fill="currentColor" /></h2>
             <Link to="/collection/all?tab=deals" className="vv-head-link">See All Deals <ArrowRight size={15} /></Link>
@@ -614,7 +615,7 @@ export default function HomeStorefront() {
         </section>
 
         {(loading || refurbished.length > 0) && (
-          <section className="vv-panel vv-panel-refurb">
+          <section className="vv-panel">
             <div className="vv-head">
               <h2>Certified Refurbished <Recycle size={18} className="vv-recycle" /></h2>
               <Link to={refurbHref} className="vv-head-link">View All <ArrowRight size={15} /></Link>

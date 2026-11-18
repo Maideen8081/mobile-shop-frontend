@@ -117,19 +117,18 @@ export default function WebsiteExperience() {
       <div className="we-cursor pointer-events-none fixed left-0 top-0 z-[95] -ml-3 -mt-3 hidden h-6 w-6 rounded-full opacity-0 mix-blend-difference md:block" style={{ border: "1px solid #f7f6f2" }} />
 
       {/* ══ 3D PRODUCT RING ══ */}
-      <section id="shelf" className="we-shelf relative flex h-screen flex-col items-center justify-between overflow-hidden pb-6 pt-0" style={{ background: "#0b2e22" }}>
+      <section id="shelf" className="we-shelf relative flex flex-col items-center justify-between overflow-hidden pb-6 pt-0">
         <div className="ring-glow pointer-events-none absolute left-1/2 top-[45%] h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl" style={{ background: "radial-gradient(circle, rgba(15,59,44,0.35), transparent 65%)" }} />
         <h1 className="sr-only">PhoneFix — smartphones, accessories and expert phone repairs</h1>
-        <div ref={stage} className="relative z-10 mt-6 min-h-0 w-full flex-1 select-none" style={{ perspective: 1900, touchAction: "pan-y" }}>
+        <div ref={stage} className="we-shelf-stage relative z-10 mt-3 min-h-0 w-full flex-1 select-none" style={{ perspective: 1900, touchAction: "pan-y" }}>
           <div className="we-ring preserve-3d absolute left-1/2 top-1/2 h-0 w-0">
             {products.map((p) => (
               <div
                 key={p.slug}
                 className="ring-item preserve-3d absolute left-0 top-0"
-                style={{ width: 340, height: "min(52vh, 560px)", marginLeft: -170, marginTop: "calc(min(52vh, 560px) / -2)" }}
               >
                 <div className="flex h-full w-full items-center justify-center" style={{ backfaceVisibility: "hidden" }}>
-                  <img src={p.src} alt={p.name} draggable={false} className="max-h-full max-w-full object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" />
+                  <img src={p.src} alt={p.name} draggable={false} className="we-shelf-image max-h-full max-w-full object-contain" />
                 </div>
               </div>
             ))}
@@ -150,13 +149,16 @@ export default function WebsiteExperience() {
         <div className="relative z-10 w-full max-w-xl px-5 text-center">
           <div key={rp.slug}>
             <span className="rounded-full px-3 py-1 text-xs" style={{ border: "1px solid rgba(247,246,242,0.12)", color: "#f7f6f2" }}>{rp.tag}</span>
-            <h3 className="mt-3 font-display text-3xl font-bold tracking-tight md:text-5xl" style={{ color: "#f7f6f2" }}>{rp.name}</h3>
+            <h3 className="we-shelf-title mt-3 font-display tracking-tight" style={{ color: "#f7f6f2" }}>{rp.name}</h3>
             <p className="mt-2" style={{ color: "#dfe8b4" }}>{rp.blurb}</p>
             {rp.price ? <div className="mt-2 font-display text-3xl" style={{ color: "#dfe8b4" }}>{inr(rp.price)}</div> : null}
           </div>
-          <Link to={rp.href} className="magnet mt-4 inline-block rounded-full px-8 py-3 font-medium transition hover:opacity-80" style={{ background: "#dfe8b4", color: "#0b2e22" }}>
-            {rp.price ? "View product →" : `Shop ${rp.name} →`}
-          </Link>
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <Link to="/home" className="we-shelf-link we-shelf-link-primary">Shop the store</Link>
+            <Link to={rp.href} className="we-shelf-link">
+              {rp.price ? "View product" : `Shop ${rp.name}`}
+            </Link>
+          </div>
           <div className="mt-2 flex justify-center">
             {products.map((p, i) => (
               <button key={p.slug} type="button" onClick={() => goTo(i)} aria-label={`Show ${p.name}`} aria-current={i === ringIdx} className="px-[3px] py-2">

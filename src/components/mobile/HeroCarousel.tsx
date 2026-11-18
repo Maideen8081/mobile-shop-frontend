@@ -27,12 +27,17 @@ const BANNERS: Banner[] = [
 
 export default function HeroCarousel() {
   const [index, setIndex] = useState(0)
+  const carousel = useRef<HTMLElement>(null)
   const startX = useRef(0)
   const dragX = useRef(0)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const t = setInterval(() => setIndex((i) => (i + 1) % BANNERS.length), 6000)
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const t = setInterval(() => {
+      if (!carousel.current?.matches(':hover, :focus-within')) {
+        setIndex((i) => (i + 1) % BANNERS.length)
+      }
+    }, 6000)
     return () => clearInterval(t)
   }, [])
 
@@ -43,9 +48,9 @@ export default function HeroCarousel() {
   const onTouchEnd = () => { if (Math.abs(dragX.current) > 50) goTo(dragX.current < 0 ? index + 1 : index - 1) }
 
   return (
-    <section className="mobile-home-hero px-3.5 mt-4" aria-label="Featured offers">
+    <section ref={carousel} className="px-3.5 mt-4" aria-label="Featured offers">
       <div
-        className="relative h-[280px] rounded-3xl overflow-hidden shadow-[0_12px_34px_rgba(15,59,44,0.22)]"
+        className="relative h-[280px] rounded-3xl bg-[#0b2e22] overflow-hidden shadow-[0_12px_34px_rgba(15,59,44,0.22)]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -60,7 +65,7 @@ export default function HeroCarousel() {
               to={b.link}
               tabIndex={i === index ? 0 : -1}
               aria-hidden={i !== index}
-              className="relative w-full h-full flex-shrink-0"
+              className="relative block w-full h-full flex-shrink-0 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-white"
             >
               <img src={b.image} alt="" loading={i === 0 ? 'eager' : 'lazy'} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG }} />
               <div className="mobile-home-hero-copy absolute inset-0 flex flex-col justify-end px-5 pb-12 pt-5">

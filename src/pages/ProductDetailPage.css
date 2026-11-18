@@ -5,7 +5,7 @@
   --p-green: #0f3b2c;
   --p-green-mid: #18503c;
   --p-accent: #0f3b2c;
-  --p-cream: #f7f6f2;
+  --p-cream: #f4f2eb;
   --p-sage: #dfe8b4;
   --p-sun: #dfe8b4;
   --p-ink-2: rgba(15,59,44, 0.8);
@@ -57,10 +57,10 @@
   position: relative;
   aspect-ratio: 1 / 1.03;
   overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  border: 1px solid #e5dfd2;
+  border-radius: 24px;
+  background: #fffefa;
+  box-shadow: var(--p-shadow);
   cursor: zoom-in;
 }
 .pdx-stage-img { position: absolute; inset: 0; display: grid; place-items: center; padding: 14%; opacity: 0; transform: scale(0.96); transition: opacity 0.4s, transform 0.5s; }
